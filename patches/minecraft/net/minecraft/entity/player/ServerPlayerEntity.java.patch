@@ -129,7 +129,7 @@
     public ServerPlayerEntity(MinecraftServer p_i45285_1_, ServerWorld p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_) {
        super(p_i45285_2_, p_i45285_2_.func_241135_u_(), p_i45285_2_.func_242107_v(), p_i45285_3_);
        p_i45285_4_.field_73090_b = this;
-@@ -185,7 +_,45 @@
+@@ -185,11 +_,49 @@
        this.field_70138_W = 1.0F;
        this.func_205734_a(p_i45285_2_);
        this.field_244528_co = p_i45285_1_.func_244435_a(this);
@@ -146,7 +146,7 @@
 +   // If this is an issue, PRs are welcome
 +   public final BlockPos getSpawnPoint(ServerWorld worldserver) {
 +      final BlockPos blockposition = worldserver.func_241135_u_();
-+      if (worldserver.func_230315_m_().func_218272_d() && worldserver.getServerWorldInfo().func_76077_q() != GameType.ADVENTURE) {
++      if (worldserver.func_230315_m_().func_218272_d() && worldserver.worldDataServer.func_76077_q() != GameType.ADVENTURE) {
 +         int i = Math.max(0, this.field_71133_b.func_184108_a(worldserver));
 +         int j = MathHelper.func_76128_c(worldserver.func_175723_af().func_177729_b(blockposition.func_177958_n(), blockposition.func_177952_p()));
 +         if (j < i) {
@@ -176,6 +176,11 @@
  
     private void func_205734_a(ServerWorld p_205734_1_) {
        BlockPos blockpos = p_205734_1_.func_241135_u_();
+-      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.func_73046_m().func_240793_aU_().func_76077_q() != GameType.ADVENTURE) {
++      if (p_205734_1_.func_230315_m_().func_218272_d() && p_205734_1_.worldDataServer.func_76077_q() != GameType.ADVENTURE) {
+          int i = Math.max(0, this.field_71133_b.func_184108_a(p_205734_1_));
+          int j = MathHelper.func_76128_c(p_205734_1_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
+          if (j < i) {
 @@ -234,6 +_,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {

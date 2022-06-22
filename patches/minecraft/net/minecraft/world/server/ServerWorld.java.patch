@@ -130,7 +130,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,35 +_,161 @@
+@@ -173,9 +_,106 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -173,32 +173,6 @@
  
     public ServerWorld(MinecraftServer p_i241885_1_, Executor p_i241885_2_, SaveFormat.LevelSave p_i241885_3_, IServerWorldInfo p_i241885_4_, RegistryKey<World> p_i241885_5_, DimensionType p_i241885_6_, IChunkStatusListener p_i241885_7_, ChunkGenerator p_i241885_8_, boolean p_i241885_9_, long p_i241885_10_, List<ISpecialSpawner> p_i241885_12_, boolean p_i241885_13_) {
        super(p_i241885_4_, p_i241885_5_, p_i241885_6_, p_i241885_1_::func_213185_aS, false, p_i241885_9_, p_i241885_10_);
--      this.field_241107_Q_ = p_i241885_13_;
--      this.field_73061_a = p_i241885_1_;
--      this.field_241104_N_ = p_i241885_12_;
--      this.field_241103_E_ = p_i241885_4_;
--      this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
--         return p_i241885_1_.func_241755_D_().func_217481_x();
--      });
--      this.field_85177_Q = new Teleporter(this);
--      this.func_72966_v();
--      this.func_72947_a();
--      this.func_175723_af().func_177725_a(p_i241885_1_.func_175580_aG());
--      this.field_217494_c = this.func_217481_x().func_215752_a(() -> {
--         return new RaidManager(this);
--      }, RaidManager.func_234620_a_(this.func_230315_m_()));
--      if (!p_i241885_1_.func_71264_H()) {
--         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
--      }
--
--      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
--      if (this.func_230315_m_().func_236046_h_()) {
--         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
--      } else {
--         this.field_241105_O_ = null;
--      }
--
--   }
 +      this.pvpMode = p_i241885_1_.func_71219_W();
 +      convertable = p_i241885_3_;
 +      uuid = WorldUUID.getUUID(p_i241885_1_.field_71310_m.func_237291_a_(p_i241885_5_));
@@ -232,9 +206,9 @@
 +         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
 +      }
 +
-+      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
++      this.field_241106_P_ = new StructureManager(this, this.worldDataServer.func_230418_z_());
 +      if (this.func_230315_m_().func_236046_h_()) {
-+         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
++         this.field_241105_O_ = new DragonFightManager(this, this.worldDataServer.func_230418_z_().func_236221_b_(), this.worldDataServer.func_230402_B_());
 +      } else {
 +         this.field_241105_O_ = null;
 +      }
@@ -260,30 +234,15 @@
 +      }
 +      worldDataServer.world = this;
 +      // CraftBukkit end
-+      this.field_241107_Q_ = p_i241885_13_;
-+      this.field_73061_a = p_i241885_1_;
-+      this.field_241104_N_ = p_i241885_12_;
-+      this.field_241103_E_ = p_i241885_4_;
-+      this.field_241102_C_ = new ServerChunkProvider(this, p_i241885_3_, p_i241885_1_.func_195563_aC(), p_i241885_1_.func_240792_aT_(), p_i241885_2_, p_i241885_8_, p_i241885_1_.func_184103_al().func_72395_o(), p_i241885_1_.func_230540_aS_(), p_i241885_7_, () -> {
-+         return p_i241885_1_.func_241755_D_().func_217481_x();
-+      });
-+      this.field_85177_Q = new Teleporter(this);
-+      this.func_72966_v();
-+      this.func_72947_a();
-+      this.func_175723_af().func_177725_a(p_i241885_1_.func_175580_aG());
-+      this.field_217494_c = this.func_217481_x().func_215752_a(() -> {
-+         return new RaidManager(this);
-+      }, RaidManager.func_234620_a_(this.func_230315_m_()));
-+      if (!p_i241885_1_.func_71264_H()) {
-+         p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
-+      }
-+
-+      this.field_241106_P_ = new StructureManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_());
-+      if (this.func_230315_m_().func_236046_h_()) {
-+         this.field_241105_O_ = new DragonFightManager(this, p_i241885_1_.func_240793_aU_().func_230418_z_().func_236221_b_(), p_i241885_1_.func_240793_aU_().func_230402_B_());
-+      } else {
-+         this.field_241105_O_ = null;
-+      }
+       this.field_241107_Q_ = p_i241885_13_;
+       this.field_73061_a = p_i241885_1_;
+       this.field_241104_N_ = p_i241885_12_;
+@@ -200,8 +_,37 @@
+       } else {
+          this.field_241105_O_ = null;
+       }
+-
+-   }
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      this.initCapabilities();
 +   }
@@ -578,21 +537,23 @@
  
     private void func_73051_P() {
 -      this.field_241103_E_.func_76080_g(0);
-+      // CraftBukkit start
-       this.field_241103_E_.func_76084_b(false);
+-      this.field_241103_E_.func_76084_b(false);
 -      this.field_241103_E_.func_76090_f(0);
+-      this.field_241103_E_.func_76069_a(false);
++      // CraftBukkit start
++      this.worldDataServer.func_76084_b(false);
 +      // If we stop due to everyone sleeping we should reset the weather duration to some other random value.
 +      // Not that everyone ever manages to get the whole server to sleep at the same time....
-+      if (!this.field_241103_E_.func_76059_o()) {
-+         this.field_241103_E_.func_76080_g(0);
++      if (!this.worldDataServer.func_76059_o()) {
++         this.worldDataServer.func_76080_g(0);
 +      }
 +      // CraftBukkit end
-       this.field_241103_E_.func_76069_a(false);
++      this.worldDataServer.func_76069_a(false);
 +      // CraftBukkit start
 +      // If we stop due to everyone sleeping we should reset the weather duration to some other random value.
 +      // Not that everyone ever manages to get the whole server to sleep at the same time....
-+      if (!this.field_241103_E_.func_76061_m()) {
-+         this.field_241103_E_.func_76090_f(0);
++      if (!this.worldDataServer.func_76061_m()) {
++         this.worldDataServer.func_76090_f(0);
 +      }
 +      // CraftBukkit end
     }
@@ -755,7 +716,7 @@
                 }
  
                 p_217464_1_.field_70175_ag = false;
-@@ -678,16 +_,21 @@
+@@ -678,22 +_,27 @@
     public void func_217445_a(@Nullable IProgressUpdate p_217445_1_, boolean p_217445_2_, boolean p_217445_3_) {
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
        if (!p_217445_3_) {
@@ -787,6 +748,13 @@
        }
     }
  
+    private void func_73042_a() {
+       if (this.field_241105_O_ != null) {
+-         this.field_73061_a.func_240793_aU_().func_230413_a_(this.field_241105_O_.func_186088_a());
++         this.worldDataServer.func_230413_a_(this.field_241105_O_.func_186088_a());
+       }
+ 
+       this.func_72863_F().func_217227_h().func_212775_b();
 @@ -703,7 +_,7 @@
        List<Entity> list = Lists.newArrayList();
        ServerChunkProvider serverchunkprovider = this.func_72863_F();
@@ -1214,6 +1182,15 @@
              ++i;
           }
        }
+@@ -1098,7 +_,7 @@
+ 
+    @Nullable
+    public BlockPos func_241117_a_(Structure<?> p_241117_1_, BlockPos p_241117_2_, int p_241117_3_, boolean p_241117_4_) {
+-      return !this.field_73061_a.func_240793_aU_().func_230418_z_().func_236222_c_() ? null : this.func_72863_F().func_201711_g().func_235956_a_(this, p_241117_1_, p_241117_2_, p_241117_3_, p_241117_4_);
++      return !this.worldDataServer.func_230418_z_().func_236222_c_() ? null : this.func_72863_F().func_201711_g().func_235956_a_(this, p_241117_1_, p_241117_2_, p_241117_3_, p_241117_4_);
+    }
+ 
+    @Nullable
 @@ -1131,7 +_,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
@@ -1241,6 +1218,20 @@
           this.func_195593_d(p_230547_1_, p_230547_2_);
        }
  
+@@ -1352,11 +_,11 @@
+    }
+ 
+    public boolean func_241109_A_() {
+-      return this.field_73061_a.func_240793_aU_().func_230418_z_().func_236228_i_();
++      return this.worldDataServer.func_230418_z_().func_236228_i_();
+    }
+ 
+    public long func_72905_C() {
+-      return this.field_73061_a.func_240793_aU_().func_230418_z_().func_236221_b_();
++      return this.worldDataServer.func_230418_z_().func_236221_b_();
+    }
+ 
+    @Nullable
 @@ -1399,15 +_,49 @@
     }
  
