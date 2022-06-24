@@ -38,26 +38,26 @@ public class InstallUtils {
     private static final PrintStream origin = System.out;
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
-    public static String forgeStart = libPath + "net/minecraftforge/forge/" + Version.FORGE + "/forge-1.19-" + Version.FORGE;
+    public static String forgeStart = libPath + "net/minecraftforge/forge/" + Version.FORGE.value + "/forge-1.19-" + Version.FORGE.value;
     public static File universalJar = new File(forgeStart + "-universal.jar");
     public static File serverJar = new File(forgeStart + "-server.jar");
 
     public static File lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
     public static File installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
 
-    public static String otherStart = libPath + "net/minecraft/server/1.19-" + Version.MCP + "/server-1.19-" + Version.MCP;
+    public static String otherStart = libPath + "net/minecraft/server/1.19-" + Version.MCP.value + "/server-1.19-" + Version.MCP.value;
     public static File extra = new File(otherStart + "-extra.jar");
     public static File slim = new File(otherStart + "-slim.jar");
     public static File srg = new File(otherStart + "-srg.jar");
 
-    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.19-" + Version.MCP + "/mcp_config-1.19-" + Version.MCP;
+    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.19-" + Version.MCP.value + "/mcp_config-1.19-" + Version.MCP.value;
     public static File mcpZip = new File(mcpStart + ".zip");
     public static File mcpTxt = new File(mcpStart + "-mappings.txt");
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
-        copyFileFromJar(universalJar, "data/forge-1.19-" + Version.FORGE + "-universal.jar");
+        copyFileFromJar(universalJar, "data/forge-1.19-" + Version.FORGE.value + "-universal.jar");
 
         if (mcpZip.exists()) {
             if (!mcpTxt.exists()) {
@@ -76,7 +76,7 @@ public class InstallUtils {
                                 stringToUrl(libPath + "de/siegmar/fastcsv/2.0.0/fastcsv-2.0.0.jar"),
                                 stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
                                 stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
-                                stringToUrl(libPath + "net/sf/opencsv/opencsv/4.4/opencsv-4.4.jar"),
+                                stringToUrl(libPath + "com/opencsv/opencsv/4.4/opencsv-4.4.jar"),
                                 stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
                                 stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3jar"),
                                 stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar")});
@@ -97,6 +97,7 @@ public class InstallUtils {
             run("net.minecraftforge.jarsplitter.ConsoleTool",
                     new String[]{"--input", libPath + "minecraft_server.1.19.jar", "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mcpTxt.getAbsolutePath()},
                     new URL[]{
+                            stringToUrl(libPath + "net/minecraftforge/srgutils/0.4.11/srgutils-0.4.11.jar"),
                             stringToUrl(libPath + "net/minecraftforge/jarsplitter/1.1.4/jarsplitter-1.1.4.jar"),
                             stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar")});
             unmute();
@@ -104,13 +105,12 @@ public class InstallUtils {
 
         if (!srg.exists()) {
             System.out.println(i18n.get("installation.srgjar"));
-            run("net.md_5.specialsource.SpecialSource", new String[]{"--in-jar", slim.getAbsolutePath(), "--out-jar", srg.getAbsolutePath(), "--srg-in", mcpTxt.getAbsolutePath()},
+            run("net.minecraftforge.fart.Main", new String[]{"--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mcpTxt.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
                     new URL[]{
-                            stringToUrl(libPath + "net/md-5/SpecialSource/1.11.0/SpecialSource-1.11.0.jar"),
+                            stringToUrl(libPath + "net/minecraftforge/ForgeAutoRenamingTool/0.1.22/ForgeAutoRenamingTool-0.1.22-all.jar"),
+                            stringToUrl(libPath + "net/minecraftforge/srgutils/0.4.11/srgutils-0.4.11.jar"),
                             stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
                             stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
-                            stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
-                            stringToUrl(libPath + "net/sf/opencsv/opencsv/4.4/opencsv-4.4.jar"),
                             stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
                             stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3.jar"),
                             stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar")});
@@ -163,7 +163,7 @@ public class InstallUtils {
     }
 
     private static void run(String mainClass, String[] args, URL[] classPath) throws Exception {
-        Class.forName(mainClass, true, new URLClassLoader(classPath, getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, args);
+        Class.forName(mainClass, true, new URLClassLoader(classPath, getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, new Object[] { args });
     }
 
     private static ClassLoader getParentClassloader() {
@@ -175,6 +175,7 @@ public class InstallUtils {
     }
 
     private static URL stringToUrl(String path) throws Exception {
+        new JarLoader().loadJar(new File(path));
         return new File(path).toURI().toURL();
     }
 

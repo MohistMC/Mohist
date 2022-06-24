@@ -24,7 +24,6 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.AutoDeleteMods;
 import com.mohistmc.util.AutoDeletePlugins;
-import com.mohistmc.util.CustomFlagsHandler;
 import com.mohistmc.util.InstallUtils;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.PluginsModsDelete;
@@ -53,8 +52,6 @@ public class MohistMCStart {
     public static void main(String[] args) throws Exception {
         mainArgs = new ArrayList<>(Arrays.asList(args));
         MohistConfigUtil.copyMohistConfig();
-        CustomFlagsHandler.handleCustomArgs();
-
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
@@ -85,8 +82,6 @@ public class MohistMCStart {
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
         // Used to avoid mods using BusBuilder.builder().build() themselves
         Class.forName("net.minecraftforge.eventbus.api.BusBuilder").getClassLoader();
-
-        UpdateUtils.versionCheck();
 
         if (mainArgs.contains("-noserver"))
             System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.

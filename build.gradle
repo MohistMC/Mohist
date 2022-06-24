@@ -1290,7 +1290,9 @@ project(':forge') {
             MANIFESTS.each { pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                            'Main-Class': 'com.mohistmc.server.MohistMCStart',
+                            'Premain-Class': 'com.mohistmc.util.JarLoader',
+                            'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
+                            'Main-Class': 'com.mohistmc.MohistMCStart',
                             'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
                     ])
                 } else {

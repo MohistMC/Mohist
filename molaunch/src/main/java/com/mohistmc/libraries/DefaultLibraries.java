@@ -82,7 +82,7 @@ public class DefaultLibraries {
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
         LinkedHashMap<File, String> temp = new LinkedHashMap<>();
-        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
+        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt")));
         String str;
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
