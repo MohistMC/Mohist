@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public enum Version {
-    FORGE("41.0.45"), MCP("20220607.102129"), MOHIST("1.19-dev");
+    FORGE("41.0.45"), MCP("20220607.102129"), MOHIST("dev"), MINECRAFT("1.19");
 
     public final String value;
 }

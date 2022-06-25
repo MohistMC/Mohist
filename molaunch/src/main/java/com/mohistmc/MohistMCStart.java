@@ -72,8 +72,6 @@ public class MohistMCStart {
             startInstallation();
         }
         CustomLibraries.loadCustomLibs();
-        new JarLoader().loadJar(InstallUtils.extra);
-        new JarLoader().loadJar(InstallUtils.universalJar);
 
         //The server can be run with Java 16+
         Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();

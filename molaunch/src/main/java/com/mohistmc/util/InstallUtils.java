@@ -31,6 +31,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -38,26 +40,121 @@ public class InstallUtils {
     private static final PrintStream origin = System.out;
     public static String libPath = JarTool.getJarDir() + "/libraries/";
 
-    public static String forgeStart = libPath + "net/minecraftforge/forge/" + Version.FORGE.value + "/forge-1.19-" + Version.FORGE.value;
+    public static String mohistVer = Version.MOHIST.value;
+    public static String forgeVer = Version.FORGE.value;
+    public static String mcpVer = Version.MCP.value;
+    public static String mcVer = Version.MINECRAFT.value;
+
+    public static String forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
     public static File universalJar = new File(forgeStart + "-universal.jar");
     public static File serverJar = new File(forgeStart + "-server.jar");
 
     public static File lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
     public static File installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
 
-    public static String otherStart = libPath + "net/minecraft/server/1.19-" + Version.MCP.value + "/server-1.19-" + Version.MCP.value;
+    public static String otherStart = libPath + "net/minecraft/server/" + mcVer + "-" + mcpVer + "/server-" + mcVer + "-" + mcpVer;
     public static File extra = new File(otherStart + "-extra.jar");
     public static File slim = new File(otherStart + "-slim.jar");
     public static File srg = new File(otherStart + "-srg.jar");
 
-    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/1.19-" + Version.MCP.value + "/mcp_config-1.19-" + Version.MCP.value;
+    public static String mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
     public static File mcpZip = new File(mcpStart + ".zip");
     public static File mcpTxt = new File(mcpStart + "-mappings.txt");
+
+    public static File minecraft_server = new File(libPath + "minecraft_server." +  mcVer + ".jar");
+
+    public static File fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
+    public static File fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
+    public static File javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
+    public static File mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
+
+    public static File mojmap = new File(otherStart + "-mappings.txt");
+    public static File mc_unpacked = new File(otherStart + "-unpacked.jar");
+
+    public static File mergedMapping = new File(mcpStart + "-mappings-merged.txt");
+
+    public static File win_args  = new File(libPath + "net/minecraftforge/forge/win_args.txt");
+    public static File unix_args  = new File(libPath + "net/minecraftforge/forge/unix_args.txt");
+    public static File jvm_args  = new File(JarTool.getJarDir() + "/user_jvm_args.txt");
 
     public static void startInstallation() throws Exception {
         System.out.println(i18n.get("installation.start"));
         copyFileFromJar(lzma, "data/server.lzma");
         copyFileFromJar(universalJar, "data/forge-1.19-" + Version.FORGE.value + "-universal.jar");
+
+        copyFileFromJar(lzma, "data/server.lzma");
+        copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
+        copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
+        copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
+        copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
+        copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
+
+        copyFileFromJar(win_args,"data/win_args.txt");
+        copyFileFromJar(unix_args,"data/unix_args.txt");
+        copyFileFromJar(jvm_args,"data/user_jvm_args.txt");
+
+        if (mohistVer == null || mcpVer == null) {
+            System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
+            System.exit(0);
+        }
+
+        if (minecraft_server.exists()) {
+            mute();
+            run("net.minecraftforge.installertools.ConsoleTool",
+                    new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
+                    new URL[]{
+                            stringToUrl(libPath + "net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"),
+                            stringToUrl(libPath + "net/md-5/SpecialSource/1.11.0/SpecialSource-1.11.0.jar"),
+                            stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
+                            stringToUrl(libPath + "com/google/code/gson/gson/2.8.9/gson-2.8.9.jar"),
+                            stringToUrl(libPath + "de/siegmar/fastcsv/2.0.0/fastcsv-2.0.0.jar"),
+                            stringToUrl(libPath + "net/minecraftforge/srgutils/0.4.11/srgutils-0.4.11.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
+                            stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
+                            stringToUrl(libPath + "com/opencsv/opencsv/4.4/opencsv-4.4.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3.jar"),
+                            stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar"),
+                            stringToUrl(libPath + "org/apache/commons/commons-text/1.3/commons-text-1.3.jar"),
+                            stringToUrl(libPath + "org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar"),
+                            stringToUrl(libPath + "commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar"),
+                            stringToUrl(libPath + "org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"),
+                            stringToUrl(libPath + "commons-logging/commons-logging/1.2/commons-logging-1.2.jar"),
+                            stringToUrl(libPath + "commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar")
+            });
+            unmute();
+            if (!mc_unpacked.exists()) {
+                System.out.println("[Mohist] Extract bundler");
+                mute();
+                run("net.minecraftforge.installertools.ConsoleTool",
+                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only"},
+                        new URL[]{
+                                stringToUrl(libPath + "net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"),
+                                stringToUrl(libPath + "net/md-5/SpecialSource/1.11.0/SpecialSource-1.11.0.jar"),
+                                stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
+                                stringToUrl(libPath + "com/google/code/gson/gson/2.8.9/gson-2.8.9.jar"),
+                                stringToUrl(libPath + "de/siegmar/fastcsv/2.0.0/fastcsv-2.0.0.jar"),
+                                stringToUrl(libPath + "net/minecraftforge/srgutils/0.4.11/srgutils-0.4.11.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-commons/9.3/asm-commons-9.3.jar"),
+                                stringToUrl(libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar"),
+                                stringToUrl(libPath + "com/opencsv/opencsv/4.4/opencsv-4.4.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-analysis/9.3/asm-analysis-9.3.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm-tree/9.3/asm-tree-9.3.jar"),
+                                stringToUrl(libPath + "org/ow2/asm/asm/9.3/asm-9.3.jar"),
+                                stringToUrl(libPath + "org/apache/commons/commons-text/1.3/commons-text-1.3.jar"),
+                                stringToUrl(libPath + "org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar"),
+                                stringToUrl(libPath + "commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar"),
+                                stringToUrl(libPath + "org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"),
+                                stringToUrl(libPath + "commons-logging/commons-logging/1.2/commons-logging-1.2.jar"),
+                                stringToUrl(libPath + "commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar")
+                        });
+                unmute();
+            }
+        } else {
+            System.out.println(i18n.get("installation.minecraftserver"));
+        }
+
+
 
         if (mcpZip.exists()) {
             if (!mcpTxt.exists()) {
@@ -70,7 +167,7 @@ public class InstallUtils {
                         new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
                         new URL[]{
                                 stringToUrl(libPath + "net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"),
-                                stringToUrl(libPath + "net/md-5/SpecialSource/.11.0/SpecialSource-.11.0.jar"),
+                                stringToUrl(libPath + "net/md-5/SpecialSource/1.11.0/SpecialSource-1.11.0.jar"),
                                 stringToUrl(libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar"),
                                 stringToUrl(libPath + "com/google/code/gson/gson/2.8.9/gson-2.8.9.jar"),
                                 stringToUrl(libPath + "de/siegmar/fastcsv/2.0.0/fastcsv-2.0.0.jar"),
@@ -195,12 +292,17 @@ public class InstallUtils {
         System.setOut(origin);
     }
 
-    private static void copyFileFromJar(File file, String pathInJar) throws Exception {
+    private static void copyFileFromJar(File file, String pathInJar) throws IOException {
         InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
         if (!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is)) || file.length() <= 1) {
             file.getParentFile().mkdirs();
             file.createNewFile();
-            if (is != null) Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (is != null) {
+                try {
+                    Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                }
+            }
             else {
                 System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");
                 System.exit(0);
