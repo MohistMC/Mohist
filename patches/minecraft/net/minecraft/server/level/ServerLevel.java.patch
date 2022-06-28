@@ -8,7 +8,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -146,6 +_,10 @@
+@@ -146,7 +_,12 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -17,8 +17,10 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
  import org.slf4j.Logger;
++import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
+    public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
 @@ -166,7 +_,7 @@
     private final MinecraftServer f_8548_;
     public final ServerLevelData f_8549_;
@@ -64,10 +66,11 @@
        boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
-@@ -226,6 +_,7 @@
+@@ -226,6 +_,8 @@
        }
  
        this.f_143245_ = new SleepStatus();
++      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
 +      this.initCapabilities();
     }
  

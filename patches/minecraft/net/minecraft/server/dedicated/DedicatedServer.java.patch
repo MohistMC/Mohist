@@ -16,7 +16,7 @@
  import net.minecraft.server.ConsoleInput;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerInterface;
-@@ -49,11 +_,16 @@
+@@ -49,11 +_,18 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.CreativeModeTab;
  import net.minecraft.world.item.Items;
@@ -30,6 +30,8 @@
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_19_R1.util.ForwardLogHandler;
++import org.bukkit.event.server.RemoteServerCommandEvent;
++import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
@@ -72,7 +74,18 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -159,11 +_,13 @@
+@@ -156,14 +_,24 @@
+          return false;
+       } else {
+          this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
++         // CraftBukkit start
++         server.loadPlugins();
++         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++         // CraftBukkit end
++         // Spigot start
++         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++         org.spigotmc.SpigotConfig.registerCommands();
++         // Spigot end
           long i = Util.m_137569_();
           SkullBlockEntity.m_222885_(this.f_236721_, this);
           GameProfileCache.m_11004_(this.m_129797_());
@@ -101,6 +114,70 @@
        }
     }
  
+@@ -300,7 +_,16 @@
+    public void m_139665_() {
+       while(!this.f_139600_.isEmpty()) {
+          ConsoleInput consoleinput = this.f_139600_.remove(0);
+-         this.m_129892_().m_230957_(consoleinput.f_135929_, consoleinput.f_135928_);
++
++         // CraftBukkit start - ServerCommand for preprocessing
++         ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.f_135928_);
++         server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) continue;
++         consoleinput = new ConsoleInput(event.getCommand(), consoleinput.f_135929_);
++
++         // this.getCommands().performCommand(servercommand.source, servercommand.msg); // Called in dispatchServerCommand
++         server.dispatchServerCommand(console, consoleinput);
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -496,13 +_,43 @@
+    }
+ 
+    public String m_7138_() {
+-      return "";
++      // CraftBukkit start - Whole method
++      StringBuilder result = new StringBuilder();
++      org.bukkit.plugin.Plugin[] plugins = server.getPluginManager().getPlugins();
++      result.append(server.getName());
++      result.append(" on Bukkit ");
++      result.append(server.getBukkitVersion());
++
++      if (plugins.length > 0 && server.getQueryPlugins()) {
++         result.append(": ");
++
++         for (int i = 0; i < plugins.length; i++) {
++            if (i > 0) {
++               result.append("; ");
++            }
++
++            result.append(plugins[i].getDescription().getName());
++            result.append(" ");
++            result.append(plugins[i].getDescription().getVersion().replaceAll(";", ","));
++         }
++      }
++
++      return result.toString();
++      // CraftBukkit end
+    }
+ 
+    public String m_7261_(String p_139644_) {
+       this.f_139602_.m_11512_();
+       this.m_18709_(() -> {
+-         this.m_129892_().m_230957_(this.f_139602_.m_11514_(), p_139644_);
++         // CraftBukkit start - fire RemoteServerCommandEvent
++         RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, p_139644_);
++         server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), f_139602_.m_11514_());
++         server.dispatchServerCommand(remoteConsole, serverCommand);
++         // CraftBukkit end
+       });
+       return this.f_139602_.m_11513_();
+    }
 @@ -546,5 +_,10 @@
  
     public Optional<MinecraftServer.ServerResourcePackInfo> m_214042_() {

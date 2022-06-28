@@ -32,3 +32,18 @@
                 int i = ServerConnectionListener.this.f_9702_.m_7032_();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
                 ServerConnectionListener.this.f_9704_.add(connection);
+@@ -203,4 +_,14 @@
+          }
+       }
+    }
++
++   // CraftBukkit start
++   public void acceptConnections() {
++      synchronized (this.f_9703_) {
++         for (final ChannelFuture future : this.f_9703_) {
++            future.channel().config().setAutoRead(true);
++         }
++      }
++   }
++   // CraftBukkit end
+ }

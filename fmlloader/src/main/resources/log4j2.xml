@@ -22,8 +22,8 @@
             <PatternLayout>
                 <LoggerNamePatternSelector defaultPattern="%highlightForge{[%d{HH:mm:ss}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg{nolookup}}%n%tEx}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlightForge{[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
-                    <PatternMatch key="com.mojang." pattern="%highlightForge{[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="%highlightForge{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
+                    <PatternMatch key="com.mojang." pattern="%highlightForge{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
@@ -31,8 +31,8 @@
             <PatternLayout>
                 <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg{nolookup}}{strip}%n">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}{strip}%n"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>

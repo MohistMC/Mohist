@@ -1,5 +1,41 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.commands;
+ 
++import com.google.common.base.Joiner;
+ import com.google.common.collect.Maps;
++import com.mohistmc.forge.ModsCommandDispatcher;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
+@@ -12,6 +_,8 @@
+ import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.brigadier.tree.RootCommandNode;
+ import com.mojang.logging.LogUtils;
++import java.util.Collection;
++import java.util.LinkedHashSet;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.function.Predicate;
+@@ -104,6 +_,8 @@
+ import net.minecraft.server.commands.data.DataCommands;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
++import org.bukkit.event.player.PlayerCommandSendEvent;
++import org.bukkit.event.server.ServerCommandEvent;
+ import org.slf4j.Logger;
+ 
+ public class Commands {
+@@ -113,7 +_,7 @@
+    public static final int f_165684_ = 2;
+    public static final int f_165685_ = 3;
+    public static final int f_165686_ = 4;
+-   private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
++   private final CommandDispatcher<CommandSourceStack> f_82090_ = new ModsCommandDispatcher(this);
+ 
+    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
+       AdvancementCommands.m_136310_(this.f_82090_);
 @@ -175,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -9,7 +45,7 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -199,12 +_,19 @@
+@@ -199,17 +_,71 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -26,9 +62,62 @@
 +      });
 +   }
 +
++   // CraftBukkit start
++   public int dispatchServerCommand(CommandSourceStack sender, String command) {
++      Joiner joiner = Joiner.on(" ");
++      if (command.startsWith("/")) {
++         command = command.substring(1);
++      }
++
++      ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
++      org.bukkit.Bukkit.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return 0;
++      }
++      command = event.getCommand();
++
++      String[] args = command.split(" ");
++
++      String cmd = args[0];
++      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
++      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++
++      // Block disallowed commands
++      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
++              || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
++              || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++         return 0;
++      }
++
++      // Handle vanilla commands;
++      if (sender.m_81372_().getCraftServer().getCommandBlockOverride(args[0])) {
++         args[0] = "minecraft:" + args[0];
++      }
++
++      String newCommand = joiner.join(args);
++      return this.performCommand(sender, newCommand, newCommand);
++   }
++   // CraftBukkit end
++
     public int m_230957_(CommandSourceStack p_230958_, String p_230959_) {
-       return this.m_82117_(p_230958_, p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_);
+-      return this.m_82117_(p_230958_, p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_);
++      // CraftBukkit start
++      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
++   }
++
++   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
++      return this.performCommand(commandlistenerwrapper, s.startsWith("/") ? s.substring(1) : s, label);
++      // CraftBukkit end
     }
+ 
+    public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
++      return this.performCommand(p_82118_, p_82119_, p_82119_);
++   }
++
++   public int performCommand(CommandSourceStack p_82118_, String p_82119_, String label) { // CraftBukkit
+       StringReader stringreader = new StringReader(p_82119_);
+       p_82118_.m_81377_().m_129905_().m_6521_(() -> {
+          return "/" + p_82119_;
 @@ -217,7 +_,17 @@
  
        try {
@@ -48,25 +137,53 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              p_82118_.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -273,7 +_,8 @@
-       Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
+@@ -226,7 +_,7 @@
+             if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
+                int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
+                MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
+-                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_82119_));
++                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
+                });
+                if (j > 10) {
+                   mutablecomponent1.m_130946_("...");
+@@ -270,10 +_,38 @@
+    }
+ 
+    public void m_82095_(ServerPlayer p_82096_) {
+-      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
++      // CraftBukkit start
++      // Register Vanilla commands into builtRoot as before
++      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues
++      RootCommandNode vanillaRoot = new RootCommandNode();
++
++      RootCommandNode<CommandSourceStack> vanilla = p_82096_.f_8924_.vanillaCommandDispatcher.m_82094_().getRoot();
++      map.put(vanilla, vanillaRoot);
++      this.m_82112_(vanilla, vanillaRoot, p_82096_.m_20203_(), (Map) map);
++
++      // Now build the global commands in a second pass
++
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
        map.put(this.f_82090_.getRoot(), rootcommandnode);
 -      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
 +      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
++
++      Collection<String> bukkit = new LinkedHashSet<>();
++      for (CommandNode node : rootcommandnode.getChildren()) {
++         bukkit.add(node.getName());
++      }
++
++      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_82096_.getBukkitEntity(), new LinkedHashSet<>(bukkit));
++      event.getPlayer().getServer().getPluginManager().callEvent(event);
++
++      // Remove labels that were removed during the event
++      for (String orig : bukkit) {
++         if (!event.getCommands().contains(orig)) {
++            // rootcommandnode.removeCommand(orig); Mohsit TODO
++         }
++      }
++      // CraftBukkit end
++
        p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
-@@ -366,7 +_,10 @@
-       }
-    }
- 
--   public static enum CommandSelection {
-+    public void performPrefixedCommand(CommandSourceStack icommandlistener, String toDispatcher, String toDispatcher1) {
-+    }
-+
-+    public static enum CommandSelection {
-       ALL(true, true),
-       DEDICATED(false, true),
-       INTEGRATED(true, false);

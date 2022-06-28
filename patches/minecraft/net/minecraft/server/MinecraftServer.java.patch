@@ -33,13 +33,16 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -153,7 +_,11 @@
+@@ -152,8 +_,14 @@
+ import net.minecraft.world.level.storage.loot.PredicateManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import org.apache.commons.lang3.SystemUtils;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.Main;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
++import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
 +import org.spigotmc.SlackActivityAccountant;
  
@@ -63,7 +66,7 @@
     @Nullable
     private String f_129739_;
     public MinecraftServer.ReloadableResources f_129740_;
-@@ -239,9 +_,31 @@
+@@ -239,9 +_,30 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  
@@ -84,9 +87,8 @@
 +   // Spigot start
 +   public static final int TPS = 20;
 +   public static final int TICK_TIME = 1000000000 / TPS;
-+   private static final int SAMPLE_INTERVAL = 20; // Paper
++   private static final int SAMPLE_INTERVAL = 100;
 +   public final double[] recentTps = new double[ 3 ];
-+   public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
 +   // Spigot end
 +
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
@@ -159,7 +161,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -364,9 +_,10 @@
+@@ -364,12 +_,15 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registry.f_122819_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -170,6 +172,12 @@
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
           }
        }
+-
++      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
++      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
++      this.f_129755_.acceptConnections();
+       worldborder.m_61931_(serverleveldata.m_5813_());
+    }
  
 @@ -378,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
@@ -218,7 +226,20 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -620,6 +_,7 @@
+@@ -614,27 +_,48 @@
+ 
+    }
+ 
++   // Spigot Start
++   private static double calcTps(double avg, double exp, double tps)
++    {
++       return ( avg * exp ) + ( tps * ( 1 - exp ) );
++    }
++    // Spigot End
++
+    protected void m_130011_() {
+       try {
+          if (!this.m_7038_()) {
              throw new IllegalStateException("Failed to initialize server");
           }
  
@@ -226,6 +247,36 @@
           this.f_129726_ = Util.m_137550_();
           this.f_129757_.m_134908_(Component.m_237113_(this.f_129709_));
           this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
+          this.f_129757_.m_238078_(this.m_214000_());
+          this.m_129878_(this.f_129757_);
+ 
++         // Spigot start
++         Arrays.fill( recentTps, 20 );
++         long curTime, tickSection = Util.m_137550_(), tickCount = 1;
+          while(this.f_129764_) {
+-            long i = Util.m_137550_() - this.f_129726_;
++            long i = (curTime = Util.m_137550_()) - this.f_129726_;
+             if (i > 2000L && this.f_129726_ - this.f_129718_ >= 15000L) {
+                long j = i / 50L;
+-               f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
++               //LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+                this.f_129726_ += j * 50L;
+                this.f_129718_ = this.f_129726_;
+             }
+ 
++            if ( tickCount++ % SAMPLE_INTERVAL == 0 )
++            {
++               double currentTps = 1E3 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
++               recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
++               recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
++               recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
++               tickSection = curTime;
++            }
++            // Spigot end
++
+             if (this.f_177877_) {
+                this.f_177877_ = false;
+                this.f_177876_ = new MinecraftServer.TimeProfiler(Util.m_137569_(), this.f_129766_);
 @@ -653,6 +_,8 @@
              this.f_129717_ = true;
              JvmProfiler.f_185340_.m_183597_(this.f_129737_);
@@ -331,6 +382,14 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
+@@ -1280,6 +_,7 @@
+       }).thenAcceptAsync((p_212919_) -> {
+          this.f_129740_.close();
+          this.f_129740_ = p_212919_;
++         this.server.syncCommands(); // SPIGOT-5884: Lost on reload
+          this.f_129730_.m_10509_(p_129862_);
+          this.f_129749_.m_6645_(m_129817_(this.f_129730_));
+          this.f_129740_.f_206585_.m_206868_(this.m_206579_());
 @@ -1287,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());

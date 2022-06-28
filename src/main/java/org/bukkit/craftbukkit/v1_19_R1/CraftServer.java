@@ -7,7 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.api.ServerAPI;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import jline.console.ConsoleReader;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -92,6 +95,8 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -129,8 +134,10 @@ import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftBossBar;
 import org.bukkit.craftbukkit.v1_19_R1.boss.CraftKeyedBossbar;
 import org.bukkit.craftbukkit.v1_19_R1.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.v1_19_R1.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_19_R1.command.CraftCommandMap;
 import org.bukkit.craftbukkit.v1_19_R1.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_19_R1.generator.CraftWorldInfo;
@@ -220,7 +227,7 @@ public final class CraftServer implements Server {
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
     private final CraftCommandMap commandMap = new CraftCommandMap(this);
-    private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
+    public final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     private final StructureManager structureManager;
@@ -776,6 +783,8 @@ public final class CraftServer implements Server {
         Validate.notNull(sender, "Sender cannot be null");
         Validate.notNull(commandLine, "CommandLine cannot be null");
 
+        commandLine = commandLine(sender, commandLine);
+        if (commandLine == null) return false;
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
         }
@@ -787,6 +796,33 @@ public final class CraftServer implements Server {
         }
 
         return false;
+    }
+
+    public String commandLine(CommandSender sender, String commandLine) {
+        CommandSourceStack commandSource;
+        if (sender instanceof CraftEntity) {
+            commandSource = ((CraftEntity) sender).getHandle().createCommandSourceStack();
+        } else if (sender == Bukkit.getConsoleSender()) {
+            commandSource = ServerAPI.getNMSServer().createCommandSourceStack();
+        } else if (sender instanceof CraftBlockCommandSender) {
+            commandSource = ((CraftBlockCommandSender) sender).getWrapper();
+        } else {
+            return commandLine;
+        }
+        StringReader stringreader = new StringReader("/" + commandLine);
+        if (stringreader.canRead() && stringreader.peek() == '/') {
+            stringreader.skip();
+        }
+        ParseResults<CommandSourceStack> parse = ServerAPI.getNMSServer().getCommands().getDispatcher().parse(stringreader, commandSource);
+        CommandEvent event = new CommandEvent(parse);
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            return null;
+        } else if (event.getException() != null) {
+            return null;
+        } else {
+            String s = event.getParseResults().getReader().getString();
+            return s.startsWith("/") ? s.substring(1) : s;
+        }
     }
 
     @Override
@@ -1111,6 +1147,13 @@ public final class CraftServer implements Server {
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         console.levels.remove(handle.dimension());
         return true;
+    }
+
+    public void removeWorld(ServerLevel world) {
+        if (world == null) {
+            return;
+        }
+        this.worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
     }
 
     public DedicatedServer getServer() {

@@ -8,16 +8,17 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.FilteredText;
-@@ -94,6 +_,8 @@
+@@ -94,6 +_,9 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_19_R1.command.ColouredConsoleSender;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -122,9 +_,13 @@
+@@ -122,9 +_,14 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -28,6 +29,7 @@
     public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
++      p_203842_.console = ColouredConsoleSender.getInstance();
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
        this.f_11204_ = p_203844_;

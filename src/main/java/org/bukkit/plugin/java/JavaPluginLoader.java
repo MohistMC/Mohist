@@ -52,7 +52,7 @@ public final class JavaPluginLoader implements PluginLoader {
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
-    private final LibraryLoader libraryLoader;
+    //private final LibraryLoader libraryLoader;
 
     /**
      * This class was not meant to be constructed explicitly
@@ -64,6 +64,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(instance != null, "Server cannot be null");
         server = instance;
 
+        /*
         LibraryLoader libraryLoader = null;
         try {
             libraryLoader = new LibraryLoader(server.getLogger());
@@ -72,6 +73,7 @@ public final class JavaPluginLoader implements PluginLoader {
             server.getLogger().warning("Could not initialize LibraryLoader (missing dependencies?)");
         }
         this.libraryLoader = libraryLoader;
+         */
     }
 
     @Override
@@ -140,7 +142,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         final PluginClassLoader loader;
         try {
-            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file, (libraryLoader != null) ? libraryLoader.createLoader(description) : null);
+            loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file, null);
         } catch (InvalidPluginException ex) {
             throw ex;
         } catch (Throwable ex) {

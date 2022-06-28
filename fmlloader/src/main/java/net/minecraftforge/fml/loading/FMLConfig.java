@@ -82,7 +82,7 @@ public class FMLConfig
     }
 
     public static boolean runVersionCheck() {
-        return INSTANCE.configData.<Boolean>getOptional("versionCheck").orElse(Boolean.TRUE);
+        return INSTANCE.configData.<Boolean>getOptional("versionCheck").orElse(Boolean.FALSE);
     }
 
     public static String defaultConfigPath() {

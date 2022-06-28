@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -422,6 +423,7 @@ public class ForgeMod
         {
             ModelLoaderRegistry.init();
         }
+        EventDispatcherRegistry.init();
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)
@@ -433,7 +435,7 @@ public class ForgeMod
 
     public void preInit(FMLCommonSetupEvent evt)
     {
-        VersionChecker.startVersionCheck();
+        //VersionChecker.startVersionCheck();
         VanillaPacketSplitter.register();
     }
 
