@@ -264,6 +264,7 @@ public final class CraftServer implements Server {
         }));
         this.serverVersion = "1.19";
         this.structureManager = new CraftStructureManager(console.getStructureManager());
+        this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         Bukkit.setServer(this);
 
         //ForgeInjectBukkit.init();
