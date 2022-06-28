@@ -13,11 +13,9 @@ import org.bukkit.entity.EntityType;
  * @Created at 20.02.2022 - 20:40 GMT+1
  * © Copyright 2021 / 2022 - M1lcolm
  */
-public class MohistModsTameableEntity extends CraftTameableAnimal
-{
-    public MohistModsTameableEntity ( CraftServer server, TamableAnimal entity )
-    {
-        super( server, entity );
+public class MohistModsTameableEntity extends CraftTameableAnimal {
+    public MohistModsTameableEntity(CraftServer server, TamableAnimal entity) {
+        super(server, entity);
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();

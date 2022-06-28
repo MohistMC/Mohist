@@ -34,8 +34,7 @@ public class MohistModsProjectileEntity extends CraftProjectile {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "CustomProjectileEntity{" + entityName + '}';
     }
 }

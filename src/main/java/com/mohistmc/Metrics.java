@@ -50,18 +50,19 @@ import org.spigotmc.SpigotConfig;
 
 /**
  * bStats collects some data for plugin authors.
- *
+ * <p>
  * Check out https://bStats.org/ to learn more about bStats!
  */
 public class Metrics {
 
+    public static final ScheduledExecutorService METRICS = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("Metrics"));
     private final String name;
     private final String serverUUID;
     private final List<CustomChart> charts = new ArrayList<>();
 
     public Metrics(String name, String serverUUID) {
-            this.name = name;
-            this.serverUUID = serverUUID;
+        this.name = name;
+        this.serverUUID = serverUUID;
 
         startSubmitting();
     }
@@ -105,9 +106,6 @@ public class Metrics {
         charts.add(chart);
     }
 
-    public static final ScheduledExecutorService METRICS = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("Metrics"));
-
-
     private void startSubmitting() {
         METRICS.scheduleAtFixedRate(() -> {
             if (MinecraftServer.getServer().hasStopped()) {
@@ -147,14 +145,18 @@ public class Metrics {
         pluginData.add(getPluginData());
         data.put("plugins", pluginData);
 
-        try { sendData(data); } catch (Exception ignored) {}
+        try {
+            sendData(data);
+        } catch (Exception ignored) {
+        }
     }
 
     public static abstract class CustomChart {
         final String chartId;
 
         CustomChart(String chartId) {
-            if (chartId == null || chartId.isEmpty()) throw new IllegalArgumentException("ChartId cannot be null or empty!");
+            if (chartId == null || chartId.isEmpty())
+                throw new IllegalArgumentException("ChartId cannot be null or empty!");
             this.chartId = chartId;
         }
 
@@ -165,7 +167,9 @@ public class Metrics {
                 JSONObject data = getChartData();
                 if (data == null) return null;
                 chart.put("data", data);
-            } catch (Throwable t) { return null; }
+            } catch (Throwable t) {
+                return null;
+            }
             return chart;
         }
 
@@ -262,7 +266,10 @@ public class Metrics {
                                 "This has nearly no effect on the server performance!\n" +
                                 "Check out https://bStats.org/ to learn more :)"
                 ).copyDefaults(true);
-                try { config.save(configFile); } catch (IOException ignored) {}
+                try {
+                    config.save(configFile);
+                } catch (IOException ignored) {
+                }
             }
 
             String serverUUID = config.getString("serverUuid");
@@ -310,7 +317,7 @@ public class Metrics {
 
                     Map<String, Integer> modslist = new HashMap<>();
                     String[] mods = ServerAPI.getModList().replace("[", "").replace("]", "").split(", ");
-                    for(String x : mods){
+                    for (String x : mods) {
                         if (x.equals("minecraft") || x.equals("forge") || x.equals("mohist")) {
                             continue;
                         }

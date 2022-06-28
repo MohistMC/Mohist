@@ -27,13 +27,13 @@ import org.bukkit.Bukkit;
 public class CustomEventBus extends EventBus {
 
     public static final CustomEventBus BUS = new CustomEventBus(BusBuilder.builder());
+
     public CustomEventBus(BusBuilder busBuilder) {
         super(busBuilder);
     }
 
     @Override
-    public boolean post(Event event)
-    {
+    public boolean post(Event event) {
         if (Bukkit.getServer() != null) {
             BukkitHookForgeEvent bukkitHookForgeEvent = new BukkitHookForgeEvent(event);
             if (bukkitHookForgeEvent.getHandlers().getRegisteredListeners().length > 0) {

@@ -2,8 +2,7 @@ package com.mohistmc.dynamicenumutil;
 
 public class MohistEnumHelper {
 
-    public static <T extends Enum<? >> T addEnum0(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues)
-    {
+    public static <T extends Enum<?>> T addEnum0(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object... paramValues) {
         return addEnum(enumType, enumName, paramTypes, paramValues);
     }
 

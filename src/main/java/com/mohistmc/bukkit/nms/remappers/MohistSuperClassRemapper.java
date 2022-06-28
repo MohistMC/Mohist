@@ -33,12 +33,13 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
+
 public class MohistSuperClassRemapper {
     public static Map<String, Class<?>> defineClass = Maps.newHashMap();
 
     public static void init(ClassNode node) {
 
-        boolean remapSpClass  = false;
+        boolean remapSpClass = false;
         switch (node.superName) {
             case ASMUtils.urlclassLoaderdesc:
                 node.superName = Type.getInternalName(DelegateURLClassLoder.class);

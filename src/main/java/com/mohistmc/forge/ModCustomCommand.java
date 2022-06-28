@@ -24,7 +24,6 @@ import com.mojang.brigadier.tree.CommandNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
@@ -47,14 +46,41 @@ import org.bukkit.entity.minecart.CommandMinecart;
 
 public class ModCustomCommand extends BukkitCommand {
 
-    private final Commands dispatcher;
     public final CommandNode<CommandSourceStack> vanillaCommand;
+    private final Commands dispatcher;
 
     public ModCustomCommand(Commands dispatcher, CommandNode<CommandSourceStack> vanillaCommand) {
         super(vanillaCommand.getName(), "A Mod provided command.", vanillaCommand.getUsageText(), Collections.EMPTY_LIST);
         this.dispatcher = dispatcher;
         this.vanillaCommand = vanillaCommand;
         this.setPermission(getPermission(vanillaCommand));
+    }
+
+    public static CommandSourceStack getListener(CommandSender sender) {
+        if (sender instanceof Player) {
+            return ((CraftPlayer) sender).getHandle().createCommandSourceStack();
+        }
+        if (sender instanceof BlockCommandSender) {
+            return ((CraftBlockCommandSender) sender).getWrapper();
+        }
+        if (sender instanceof CommandMinecart) {
+            return ((CraftMinecartCommand) sender).getHandle().getCommandBlock().createCommandSourceStack();
+        }
+        if (sender instanceof RemoteConsoleCommandSender) {
+            return ((DedicatedServer) MinecraftServer.getServer()).rconConsoleSource.createCommandSourceStack();
+        }
+        if (sender instanceof ConsoleCommandSender) {
+            return ((CraftServer) sender.getServer()).getServer().createCommandSourceStack();
+        }
+        if (sender instanceof ProxiedCommandSender) {
+            return ((ProxiedNativeCommandSender) sender).getHandle();
+        }
+
+        throw new IllegalArgumentException("Cannot make " + sender + " a forge mod command listener");
+    }
+
+    public static String getPermission(CommandNode<CommandSourceStack> vanillaCommand) {
+        return "mods.command." + ((vanillaCommand.getRedirect() == null) ? vanillaCommand.getName() : vanillaCommand.getRedirect().getName());
     }
 
     @Override
@@ -81,33 +107,6 @@ public class ModCustomCommand extends BukkitCommand {
         });
 
         return results;
-    }
-
-    public static CommandSourceStack getListener(CommandSender sender) {
-        if (sender instanceof Player) {
-            return ((CraftPlayer) sender).getHandle().createCommandSourceStack();
-        }
-        if (sender instanceof BlockCommandSender) {
-            return ((CraftBlockCommandSender) sender).getWrapper();
-        }
-        if (sender instanceof CommandMinecart) {
-            return ((CraftMinecartCommand)sender).getHandle().getCommandBlock().createCommandSourceStack();
-        }
-        if (sender instanceof RemoteConsoleCommandSender) {
-            return ((DedicatedServer) MinecraftServer.getServer()).rconConsoleSource.createCommandSourceStack();
-        }
-        if (sender instanceof ConsoleCommandSender) {
-            return ((CraftServer) sender.getServer()).getServer().createCommandSourceStack();
-        }
-        if (sender instanceof ProxiedCommandSender) {
-            return ((ProxiedNativeCommandSender) sender).getHandle();
-        }
-
-        throw new IllegalArgumentException("Cannot make " + sender + " a forge mod command listener");
-    }
-
-    public static String getPermission(CommandNode<CommandSourceStack> vanillaCommand) {
-        return "mods.command." + ((vanillaCommand.getRedirect() == null) ? vanillaCommand.getName() : vanillaCommand.getRedirect().getName());
     }
 
     private String toDispatcher(String[] args, String name) {

@@ -1,17 +1,16 @@
 package com.mohistmc.api;
 
 import io.netty.util.internal.ConcurrentSet;
-import net.minecraft.server.MinecraftServer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 
@@ -38,11 +37,11 @@ public class ServerAPI {
         return Bukkit.getPluginManager().getPlugin(pluginname) != null;
     }
 
-    public static void registerBukkitEvents(Listener listener, Plugin plugin){
+    public static void registerBukkitEvents(Listener listener, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public static MinecraftServer getNMSServer(){
+    public static MinecraftServer getNMSServer() {
         return MinecraftServer.getServer();
     }
 }

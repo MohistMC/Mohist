@@ -15,7 +15,8 @@ public class MohistModsMinecartContainer extends CraftMinecartContainer {
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();
-        }    }
+        }
+    }
 
     @Override
     public AbstractMinecartContainer getHandle() {
@@ -31,6 +32,7 @@ public class MohistModsMinecartContainer extends CraftMinecartContainer {
             return EntityType.FORGE_MOD_MINECART_CONTAINER;
         }
     }
+
     @Override
     public String toString() {
         return "CraftCustomMinecartContainer{" + getType() + '}';

@@ -4073,7 +4073,7 @@ public enum Material implements Keyed {
 
     private String modName;
     private NamespacedKey keyForge;
-    private boolean isForgeBlock = false;
+    public boolean isForgeBlock = false;
 
     private Material(final int id) {
         this(id, 64);

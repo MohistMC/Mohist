@@ -43,17 +43,16 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
 public class RemapUtils {
 
+    public static final String nmspackage = "net.minecraft.server.v1_19_R1";
+    private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
-    private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
-    public static final String nmspackage = "net.minecraft.server.v1_19_R1";
 
     public static void init() {
         jarMapping = new MohistJarMapping();
@@ -188,7 +187,7 @@ public class RemapUtils {
         return className.startsWith("net.minecraft.server.") || className.startsWith("com.mohistmc.");
     }
 
-    public static boolean needRemap(String className){
+    public static boolean needRemap(String className) {
         return className.startsWith("net.minecraft.") || className.startsWith("net.minecraftforge.") || className.startsWith("net.minecraft.server.v1_16_R3.");
     }
 }

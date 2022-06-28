@@ -13,11 +13,9 @@ import org.bukkit.entity.EntityType;
  * @Created at 20.02.2022 - 21:02 GMT+1
  * © Copyright 2021 / 2022 - M1lcolm
  */
-public class MohistModsMonster extends CraftMonster
-{
-    public MohistModsMonster ( CraftServer server, Monster entity )
-    {
-        super( server, entity );
+public class MohistModsMonster extends CraftMonster {
+    public MohistModsMonster(CraftServer server, Monster entity) {
+        super(server, entity);
         this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
         if (entityName == null) {
             entityName = entity.getName().getString();

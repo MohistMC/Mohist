@@ -29,11 +29,16 @@ import java.util.Arrays;
 import java.util.List;
 import sun.misc.Unsafe;
 
-public class MohistJDK9EnumHelper
-{
+public class MohistJDK9EnumHelper {
     private static MethodHandles.Lookup implLookup = null;
     private static boolean isSetup = false;
     private static sun.misc.Unsafe unsafe;
+
+    static {
+        if (!isSetup) {
+            setup();
+        }
+    }
 
     private static void setup() {
         if (isSetup) {
@@ -173,12 +178,6 @@ public class MohistJDK9EnumHelper
         }
     }
 
-    static {
-        if (!isSetup) {
-            setup();
-        }
-    }
-
     public static void setField(Object obj, Object value, Field field) throws ReflectiveOperationException {
         if (obj == null) {
             setStaticField(field, value);
@@ -205,7 +204,7 @@ public class MohistJDK9EnumHelper
             return getStaticField(field);
         } else {
             try {
-                return (T)unsafe.getObject(obj, unsafe.objectFieldOffset(field));
+                return (T) unsafe.getObject(obj, unsafe.objectFieldOffset(field));
             } catch (Exception e) {
                 throw new ReflectiveOperationException(e);
             }
@@ -215,7 +214,7 @@ public class MohistJDK9EnumHelper
     public static <T> T getStaticField(Field field) throws ReflectiveOperationException {
         try {
             implLookup.ensureInitialized(field.getDeclaringClass());
-            return (T)unsafe.getObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
+            return (T) unsafe.getObject(unsafe.staticFieldBase(field), unsafe.staticFieldOffset(field));
         } catch (Exception e) {
             throw new ReflectiveOperationException(e);
         }

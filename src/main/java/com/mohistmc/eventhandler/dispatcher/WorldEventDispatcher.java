@@ -54,7 +54,7 @@ public class WorldEventDispatcher {
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event) {
         if (event.getWorld() instanceof ServerLevel) {
-            ((CraftServer)Bukkit.getServer()).removeWorld(((ServerLevel) event.getWorld()));
+            ((CraftServer) Bukkit.getServer()).removeWorld(((ServerLevel) event.getWorld()));
         }
     }
 }

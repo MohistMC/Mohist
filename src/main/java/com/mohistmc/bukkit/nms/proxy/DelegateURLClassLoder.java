@@ -39,7 +39,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 8:41 PM
  */

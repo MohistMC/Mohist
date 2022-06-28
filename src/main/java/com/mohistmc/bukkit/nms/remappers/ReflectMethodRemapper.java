@@ -44,22 +44,28 @@ import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:51 PM
  */
 public class ReflectMethodRemapper extends MethodRemapper {
 
-    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
-    private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
     public static final String className = "java/lang/Class";
     public static final String LookupName = "java/lang/invoke/MethodHandles$Lookup";
     public static final String reflectName = "java/lang/reflect/";
+    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
+    private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
     public static Set<String> proxyClass = new HashSet<>(Arrays.asList(className + ";getField", className + ";getDeclaredField", className + ";getMethod", className + ";getDeclaredMethod", className + ";getSimpleName"));
     public static Set<String> Lookup = new HashSet<>(Arrays.asList(className + ";unreflect", className + ";findSpecial", className + ";findStatic", className + ";findVirtual", className + ";findGetter", className + ";findSetter", className + ";findStaticGetter", className + ";findStaticSetter", className + ";findVarHandle"));
     public static Set<String> reflect = new HashSet<>(Arrays.asList(reflectName + "Method;getName", reflectName + "Field;getName"));
 
 
+    public ReflectMethodRemapper(MethodVisitor mv, Remapper remapper) {
+        super(mv, remapper);
+    }
+
+    public ReflectMethodRemapper(int api, MethodVisitor mv, Remapper remapper) {
+        super(api, mv, remapper);
+    }
 
     public static void init() {
         for (String s : proxyClass) {
@@ -96,14 +102,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper(LookupName, "findVarHandle", VarHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
-    }
-
-    public ReflectMethodRemapper(MethodVisitor mv, Remapper remapper) {
-        super(mv, remapper);
-    }
-
-    public ReflectMethodRemapper(int api, MethodVisitor mv, Remapper remapper) {
-        super(api, mv, remapper);
     }
 
     private static void registerMethodRemapper(String owner, String name, Class<?> returnType, Class<?>[] args, Class<?> remapOwner) {
