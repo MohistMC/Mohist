@@ -16,7 +16,7 @@
  import net.minecraft.server.ConsoleInput;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerInterface;
-@@ -49,11 +_,13 @@
+@@ -49,11 +_,16 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.CreativeModeTab;
  import net.minecraft.world.item.Items;
@@ -26,7 +26,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.v1_19_R1.util.ForwardLogHandler;
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
@@ -49,6 +52,26 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
+@@ -95,6 +_,19 @@
+ 
+          }
+       };
++
++      // CraftBukkit start - TODO: handle command-line logging arguments
++      java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
++      global.setUseParentHandlers(false);
++      for (java.util.logging.Handler handler : global.getHandlers()) {
++         global.removeHandler(handler);
++      }
++      global.addHandler(new ForwardLogHandler());
++      final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
++
++      System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
++      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
++      // CraftBukkit end
+       thread.setDaemon(true);
+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
+       thread.start();
 @@ -159,11 +_,13 @@
           long i = Util.m_137569_();
           SkullBlockEntity.m_222885_(this.f_236721_, this);

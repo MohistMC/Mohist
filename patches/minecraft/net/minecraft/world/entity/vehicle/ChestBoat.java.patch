@@ -18,12 +18,10 @@
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
     private static final int f_219867_ = 27;
-@@ -147,6 +_,51 @@
- 
-    public boolean m_6542_(Player p_219896_) {
+@@ -149,6 +_,51 @@
        return this.m_219954_(p_219896_);
-+   }
-+
+    }
+ 
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
@@ -67,6 +65,36 @@
 +   @Override
 +   public Location getLocation() {
 +      return getBukkitEntity().getLocation();
-    }
- 
++   }
++
     @Nullable
+    public AbstractContainerMenu m_7208_(int p_219910_, Inventory p_219911_, Player p_219912_) {
+       if (this.f_219865_ != null && p_219912_.m_5833_()) {
+@@ -186,5 +_,27 @@
+ 
+    public void m_213775_() {
+       this.f_219864_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
++   }
++
++   // Forge Start
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
+    }
+ }

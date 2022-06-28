@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.serialization.DataResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,15 +89,27 @@ class NamespacedHolderHelper<T>
         return Optional.ofNullable(this.holders.get(value));
     }
 
-    Holder<T> getOrCreateHolder(ResourceKey<T> key)
+    DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key)
     {
-        return this.holdersByName.computeIfAbsent(key.location(), k ->
+        Holder.Reference<T> ref = this.holdersByName.get(key.location());
+        if (ref == null)
         {
             if (this.holderLookup != null)
-                throw new IllegalStateException("This registry can't create new holders without value");
+                return DataResult.error("This registry can't create new holders without value (requested key: " + key + ")");
             if (this.frozen)
-                throw new IllegalStateException("Registry is already frozen (trying to add key " + k + ")");
-            return Holder.Reference.createStandAlone(this.self, key);
+                return DataResult.error("Registry is already frozen (trying to add key " + key + ")");
+
+            ref = Holder.Reference.createStandAlone(this.self, key);
+            this.holdersByName.put(key.location(), ref);
+        }
+        return DataResult.success(ref);
+    }
+
+    Holder<T> getOrCreateHolderOrThrow(ResourceKey<T> key)
+    {
+        return getOrCreateHolder(key).getOrThrow(false, msg ->
+        {
+            throw new IllegalStateException(msg);
         });
     }
 
