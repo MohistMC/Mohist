@@ -253,6 +253,11 @@ public class EntityPotionEffectEvent extends EntityEvent implements Cancellable 
          * When a villager gets regeneration after a trade.
          */
         VILLAGER_TRADE,
+
+        /**
+         * When an entity gets the effect from a warden.
+         */
+        WARDEN,
         /**
          * When an entity comes in contact with a wither rose.
          */

@@ -6,7 +6,7 @@
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19-dev)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19-dev)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/badge/Forge-1.19--41.0.45-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.9.html)
-[![](https://img.shields.io/badge/jdk-17.0.3+7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
+[![](https://img.shields.io/badge/jdk-17.0.3+7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.4.2-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.4.2/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
@@ -25,8 +25,8 @@ Progress
 
 - [ ] Rectify Forge([**7f77d24f4**](https://github.com/MinecraftForge/MinecraftForge/commit/7f77d24f4))  
 - [ ] Start patch
-  * CraftBukkit([**b2557f6ac**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/b2557f6ac))
-  * Bukkit([**45d9c73c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/45d9c73c))
+-   * Bukkit([**d5a777e7**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/d5a777e7))
+  * CraftBukkit([**82f757467**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/82f757467))
 
 Getting Help
 ------

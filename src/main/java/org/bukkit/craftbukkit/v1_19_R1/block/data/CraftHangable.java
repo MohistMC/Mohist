@@ -1,9 +1,8 @@
-package org.bukkit.craftbukkit.v1_19_R1.block.data.type;
+package org.bukkit.craftbukkit.v1_19_R1.block.data;
 
-import org.bukkit.block.data.type.Lantern;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+import org.bukkit.block.data.Hangable;
 
-public abstract class CraftLantern extends CraftBlockData implements Lantern {
+public abstract class CraftHangable extends CraftBlockData implements Hangable {
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty HANGING = getBoolean("hanging");
 

@@ -188,6 +188,7 @@ import org.bukkit.generator.WorldInfo;
 import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.*;
 import org.bukkit.loot.LootTable;
+import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
@@ -263,7 +264,6 @@ public final class CraftServer implements Server {
         }));
         this.serverVersion = "1.19";
         this.structureManager = new CraftStructureManager(console.getStructureManager());
-        this.scoreboardManager = new CraftScoreboardManager( console, new ServerScoreboard( console ) );
         Bukkit.setServer(this);
 
         //ForgeInjectBukkit.init();
@@ -326,6 +326,11 @@ public final class CraftServer implements Server {
         TicketType.PLUGIN.timeout = configuration.getInt("chunk-gc.period-in-ticks");
         minimumAPI = configuration.getString("settings.minimum-api");
         loadIcon();
+
+        // Set map color cache
+        if (configuration.getBoolean("settings.use-map-color-cache")) {
+            MapPalette.setMapColorCache(new org.bukkit.craftbukkit.v1_19_R1.map.CraftMapColorCache(logger));
+        }
     }
 
     public boolean getCommandBlockOverride(String command) {
@@ -816,7 +821,7 @@ public final class CraftServer implements Server {
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerLevel world : console.getAllLevels()) {
-            world.getServer().getWorldData().setDifficulty(config.difficulty);
+            world.worldDataServer.setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
             for (SpawnCategory spawnCategory : SpawnCategory.values()) {
                 if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
@@ -1369,6 +1374,16 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public boolean shouldSendChatPreviews() {
+        return this.getServer().previewsChat();
+    }
+
+    @Override
+    public boolean isEnforcingSecureProfiles() {
+        return this.getServer().enforceSecureProfile();
+    }
+
+    @Override
     public boolean getHideOnlinePlayers() {
         return console.hidesOnlinePlayers();
     }
@@ -1794,6 +1809,11 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public int getMaxChainedNeighborUpdates() {
+        return this.getServer().getMaxChainedNeighborUpdates();
+    }
+
+    @Override
     public HelpMap getHelpMap() {
         return helpMap;
     }
@@ -1805,25 +1825,25 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public int getMonsterSpawnLimit() {
-        return getSpawnLimit(SpawnCategory.ANIMAL);
+        return getSpawnLimit(SpawnCategory.MONSTER);
     }
 
     @Override
     @Deprecated
     public int getAnimalSpawnLimit() {
-        return getSpawnLimit(SpawnCategory.WATER_ANIMAL);
+        return getSpawnLimit(SpawnCategory.ANIMAL);
     }
 
     @Override
     @Deprecated
     public int getWaterAnimalSpawnLimit() {
-        return getSpawnLimit(SpawnCategory.WATER_AMBIENT);
+        return getSpawnLimit(SpawnCategory.WATER_ANIMAL);
     }
 
     @Override
     @Deprecated
     public int getWaterAmbientSpawnLimit() {
-        return getSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE);
+        return getSpawnLimit(SpawnCategory.WATER_AMBIENT);
     }
 
     @Override
@@ -1844,7 +1864,6 @@ public final class CraftServer implements Server {
     }
 
     @Override
-    @Deprecated
     public boolean isPrimaryThread() {
         return Thread.currentThread().equals(console.serverThread)/* || console.hasStopped()*/; // All bets are off if we have shut down (e.g. due to watchdog)
     }

@@ -16,7 +16,7 @@ public class MohistServerListPingEvent extends org.bukkit.event.server.ServerLis
     private final Object[] players;
 
     public MohistServerListPingEvent(Connection connection, MinecraftServer server) {
-        super(((InetSocketAddress) connection.getRemoteAddress()).getAddress(), server.getMotd(), server.getPlayerList().getMaxPlayers());
+        super(((InetSocketAddress) connection.getRemoteAddress()).getAddress(), server.getMotd(), server.previewsChat(), server.getPlayerList().getMaxPlayers());
         this.icon = ((CraftServer) Bukkit.getServer()).getServerIcon();
         this.players = server.getPlayerList().players.toArray();
     }
