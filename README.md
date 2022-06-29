@@ -37,11 +37,10 @@ Upstream Projects
 
 A Special Thanks To:
 -------------
-<a href="https://serverjars.com/"><img src="https://serverjars.com/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
-<a href="https://www.bisecthosting.com/mohistmc"><img src="https://cdn.discordapp.com/attachments/303673296929685504/709610584680955944/Asset_5.png" width="200"></a>
 
-<a href="https://www.jetbrains.com/"><img src="https://blog.jetbrains.com/wp-content/uploads/2015/12/JetBrains_Drive_to_develop.png" width="200"></a>
+<a href="https://www.bisecthosting.com/mohistmc"><img src="https://www.bisecthosting.com/partners/custom-banners/118608b8-6e45-4301-b244-41934cdac6d1.png"></a>
+
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
 [YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
