@@ -52,28 +52,4 @@ public class DynmapFix {
         classNode.accept(classWriter);
         return classWriter.toByteArray();
     }
-
-    public static byte[] replaceBukkitVersionHelperGeneric(byte[] basicClass) {
-        ClassReader classReader = new ClassReader(basicClass);
-        ClassNode classNode = new ClassNode();
-        ClassWriter classWriter = new ClassWriter(0);
-        classReader.accept(classNode, 0);
-
-        for (MethodNode method : classNode.methods) {
-            for (AbstractInsnNode next : method.instructions) {
-                if (next instanceof LdcInsnNode) {
-                    LdcInsnNode ldcInsnNode = (LdcInsnNode) next;
-                    if (ldcInsnNode.cst instanceof String) {
-                        String str = (String) ldcInsnNode.cst;
-                        if ("[Lnet.minecraft.server.BiomeBase;".equals(str)) {
-                            ldcInsnNode.cst = "[Lnet.minecraft.world.biome.Biome;";
-                        }
-                    }
-                }
-            }
-        }
-
-        classNode.accept(classWriter);
-        return classWriter.toByteArray();
-    }
 }
