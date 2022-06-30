@@ -1741,6 +1741,16 @@ public final class Bukkit {
         return server.getEntity(uuid);
     }
 
+    // Paper start
+    /**
+     * Gets the current server TPS
+     * @return current server TPS (1m, 5m, 15m in Paper-Server)
+     */
+    @NotNull
+    public static double[] getTPS() {
+        return server.getTPS();
+    }
+
     /**
      * Get the advancement specified by this key.
      *

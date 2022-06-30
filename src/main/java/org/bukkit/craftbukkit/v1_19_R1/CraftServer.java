@@ -2285,6 +2285,18 @@ public final class CraftServer implements Server {
         return CraftMagicNumbers.INSTANCE;
     }
 
+    // Paper - Add getTPS API - Further improve tick loop
+    @Override
+    public double[] getTPS() {
+        return new double[] {
+                net.minecraft.server.MinecraftServer.getServer().tps5s.getAverage(), // Purpur
+                net.minecraft.server.MinecraftServer.getServer().tps1.getAverage(),
+                net.minecraft.server.MinecraftServer.getServer().tps5.getAverage(),
+                net.minecraft.server.MinecraftServer.getServer().tps15.getAverage()
+        };
+    }
+    // Paper end
+
     // Spigot start
     private final org.bukkit.Server.Spigot spigot = new org.bukkit.Server.Spigot()
     {
