@@ -25,7 +25,7 @@ Progress
 
 - [ ] Rectify Forge([**be7275443**](https://github.com/MinecraftForge/MinecraftForge/commit/be7275443))  
 - [ ] Start patch
--   * Bukkit([**d5a777e7**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/d5a777e7))
+  * Bukkit([**d5a777e7**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/d5a777e7))
   * CraftBukkit([**82f757467**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/82f757467))
 
 Getting Help
@@ -35,10 +35,14 @@ Getting Help
 
 Upstream Projects
 ------
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
+* [**Purpur**](https://github.com/PurpurMC/Purpur.git) - plugin support.
+* [**Pufferfish**](https://github.com/pufferfish-gg/Pufferfish.git) - plugin support.
+* [**Mirai**](https://github.com/etil2jz/Mirai.git.git) - plugin support.
 
 A Special Thanks To:
 -------------
