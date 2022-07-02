@@ -1,22 +1,12 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -1,5 +_,8 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.server.gui;
  
 +import com.destroystokyo.paper.gui.GuiStatsComponent;
-+import com.github.weisj.darklaf.LafManager;
-+import com.github.weisj.darklaf.theme.OneDarkTheme;
  import com.google.common.collect.Lists;
  import com.mojang.logging.LogQueues;
  import com.mojang.logging.LogUtils;
-@@ -48,6 +_,7 @@
-       } catch (Exception exception) {
-       }
- 
-+      LafManager.install(new OneDarkTheme());
-       final JFrame jframe = new JFrame("Minecraft server");
-       final MinecraftServerGui minecraftservergui = new MinecraftServerGui(p_139922_);
-       jframe.setDefaultCloseOperation(2);
 @@ -90,8 +_,8 @@
  
     private JComponent m_139932_() {
