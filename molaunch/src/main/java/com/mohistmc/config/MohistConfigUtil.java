@@ -27,6 +27,7 @@ import java.util.HashMap;
 public class MohistConfigUtil {
 
     public static File mohistyml = new File("mohist-config/mohist.yml");
+
     private static HashMap<String, String> argsConfig = new HashMap<>();
 
     public static String getString(File f, String key, String defaultReturn) {

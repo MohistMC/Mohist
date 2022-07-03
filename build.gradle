@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+    }
+}
+
 import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
@@ -112,6 +123,7 @@ subprojects {
             name = 'minecraft'
             url = 'https://libraries.minecraft.net/'
         }
+        maven { url 'https://maven.mohistmc.com/' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -207,6 +219,10 @@ def sharedDeps = {
 
     // spigot
     installer 'net.md-5:bungeecord-chat:1.16-R0.4'
+
+    implementation ('com.mohistmc.yaml:yaml:0.2'){
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -765,6 +781,7 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: "com.github.johnrengelman.shadow"
 
     sourceSets {
         main {
@@ -1252,7 +1269,7 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
+    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar', shadowJar]) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -1382,6 +1399,12 @@ project(':forge') {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    }
+
+    shadowJar {
+        dependencies {
+            include(dependency("com.mohistmc.yaml:yaml:0.2"))
+        }
     }
 }
 

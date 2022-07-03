@@ -6,6 +6,7 @@ version '0.1'
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.mohistmc.com/' }
 }
 
 dependencies {
@@ -15,4 +16,8 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'
+
+    implementation ('com.mohistmc.yaml:yaml:0.2'){
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
 }

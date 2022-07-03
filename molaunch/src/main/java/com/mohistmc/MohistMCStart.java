@@ -62,7 +62,7 @@ public class MohistMCStart {
                     "                                                    \n" + "\n" +
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
 
-        //Alert the user that Java 11 is still recommended to use to have a better compatibility.
+        //Alert the user that Java 17 is still recommended to use to have a better compatibility.
         if (javaVersion < 61.0) {
             System.out.println(i18n.get("oldjava.use"));
         }
