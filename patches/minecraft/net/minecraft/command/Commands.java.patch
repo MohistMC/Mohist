@@ -54,7 +54,7 @@
  
     public Commands(Commands.EnvironmentType p_i232148_1_) {
        AdvancementCommand.func_198199_a(this.field_197062_b);
-@@ -186,16 +_,77 @@
+@@ -186,16 +_,67 @@
        if (p_i232148_1_.field_237219_d_) {
           PublishCommand.func_198581_a(this.field_197062_b);
        }
@@ -126,16 +126,6 @@
 +   public String labell;
     public int func_197059_a(CommandSource p_197059_1_, String p_197059_2_) {
 +      if (labell == null) labell = p_197059_2_; // Mohist
-+      // CraftBukkit end
-+      // Mohist start - Call ServerCommandEvent for command blocks
-+      ServerCommandEvent bukevent = new ServerCommandEvent(p_197059_1_.getBukkitSender(), p_197059_2_);
-+      Bukkit.getPluginManager().callEvent(bukevent);
-+      if (bukevent.isCancelled()) return 0;
-+      final String label;
-+      if (p_197059_2_.equals(labell)) label = bukevent.getCommand();
-+      else label = labell;
-+      p_197059_2_ = bukevent.getCommand();
-+      // Mohist end
        StringReader stringreader = new StringReader(p_197059_2_);
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
@@ -161,7 +151,7 @@
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 IFormattableTextComponent iformattabletextcomponent1 = (new StringTextComponent("")).func_240699_a_(TextFormatting.GRAY).func_240700_a_((p_211705_1_) -> {
 -                  return p_211705_1_.func_240715_a_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, p_197059_2_));
-+                  return p_211705_1_.func_240715_a_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
++                  return p_211705_1_.func_240715_a_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, labell));
                 });
                 if (j > 10) {
                    iformattabletextcomponent1.func_240702_b_("...");
