@@ -807,7 +807,7 @@
        }
 +   }
  
-+   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
++   public void setSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
 +      if (slotIn == EquipmentSlotType.MAINHAND) {
 +         this.playEquipSound(stack, silent);
 +         this.field_71071_by.field_70462_a.set(this.field_71071_by.field_70461_c, stack);

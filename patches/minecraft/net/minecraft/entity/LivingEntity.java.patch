@@ -1084,7 +1084,7 @@
     public abstract ItemStack func_184582_a(EquipmentSlotType p_184582_1_);
  
 +   // CraftBukkit start
-+   public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
++   public void setSlot(EquipmentSlotType slotIn, ItemStack stack, boolean silent) {
 +      this.func_184201_a(slotIn, stack);
 +   }
 +   // CraftBukkit end

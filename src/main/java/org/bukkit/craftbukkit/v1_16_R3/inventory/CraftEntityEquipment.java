@@ -161,7 +161,7 @@ public class CraftEntityEquipment implements EntityEquipment {
     }
 
     private void setEquipment(EquipmentSlotType slot, ItemStack stack, boolean silent) {
-        entity.getHandle().setItemStackToSlot(slot, CraftItemStack.asNMSCopy(stack), silent);
+        entity.getHandle().setSlot(slot, CraftItemStack.asNMSCopy(stack), silent);
     }
 
     @Override

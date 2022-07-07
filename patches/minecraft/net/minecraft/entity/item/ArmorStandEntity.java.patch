@@ -61,10 +61,10 @@
  
     public void func_184201_a(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_) {
 +      // CraftBukkit start
-+      this.setItemStackToSlot(p_184201_1_, p_184201_2_, false);
++      this.setSlot(p_184201_1_, p_184201_2_, false);
 +   }
 +
-+   public void setItemStackToSlot(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_, boolean silent) {
++   public void setSlot(EquipmentSlotType p_184201_1_, ItemStack p_184201_2_, boolean silent) {
 +      // CraftBukkit end
        switch(p_184201_1_.func_188453_a()) {
        case HAND:
