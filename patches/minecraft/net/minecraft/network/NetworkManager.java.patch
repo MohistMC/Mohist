@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetworkManager.java
 +++ b/net/minecraft/network/NetworkManager.java
-@@ -1,7 +_,23 @@
+@@ -1,7 +_,21 @@
  package net.minecraft.network;
  
 +import java.net.InetAddress;
@@ -18,8 +18,6 @@
 +
  import com.google.common.collect.Queues;
  import com.google.common.util.concurrent.ThreadFactoryBuilder;
-+import com.mohistmc.netty.NettyPacketCompressor;
-+import com.mohistmc.netty.NettyPacketDecompressor;
 +
  import io.netty.bootstrap.Bootstrap;
  import io.netty.channel.Channel;
@@ -173,38 +171,6 @@
        (new Bootstrap()).group(field_179296_e.func_179281_c()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_initChannel_1_) throws Exception {
              p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
-@@ -328,23 +_,23 @@
- 
-    public void func_179289_a(int p_179289_1_) {
-       if (p_179289_1_ >= 0) {
--         if (this.field_150746_k.pipeline().get("decompress") instanceof NettyCompressionDecoder) {
--            ((NettyCompressionDecoder)this.field_150746_k.pipeline().get("decompress")).func_179303_a(p_179289_1_);
-+         if (this.field_150746_k.pipeline().get("decompress") instanceof NettyPacketDecompressor) {
-+            ((NettyPacketDecompressor)this.field_150746_k.pipeline().get("decompress")).setThreshold(p_179289_1_);
-          } else {
--            this.field_150746_k.pipeline().addBefore("decoder", "decompress", new NettyCompressionDecoder(p_179289_1_));
-+            this.field_150746_k.pipeline().addBefore("decoder", "decompress", new NettyPacketDecompressor(p_179289_1_));
-          }
- 
--         if (this.field_150746_k.pipeline().get("compress") instanceof NettyCompressionEncoder) {
--            ((NettyCompressionEncoder)this.field_150746_k.pipeline().get("compress")).func_179299_a(p_179289_1_);
-+         if (this.field_150746_k.pipeline().get("compress") instanceof NettyPacketCompressor) {
-+            ((NettyPacketCompressor)this.field_150746_k.pipeline().get("compress")).setThreshold(p_179289_1_);
-          } else {
--            this.field_150746_k.pipeline().addBefore("encoder", "compress", new NettyCompressionEncoder(p_179289_1_));
-+            this.field_150746_k.pipeline().addBefore("encoder", "compress", new NettyPacketCompressor(p_179289_1_));
-          }
-       } else {
--         if (this.field_150746_k.pipeline().get("decompress") instanceof NettyCompressionDecoder) {
-+         if (this.field_150746_k.pipeline().get("decompress") instanceof NettyPacketDecompressor) {
-             this.field_150746_k.pipeline().remove("decompress");
-          }
- 
--         if (this.field_150746_k.pipeline().get("compress") instanceof NettyCompressionEncoder) {
-+         if (this.field_150746_k.pipeline().get("compress") instanceof NettyPacketCompressor) {
-             this.field_150746_k.pipeline().remove("compress");
-          }
-       }
 @@ -354,7 +_,7 @@
     public void func_179293_l() {
        if (this.field_150746_k != null && !this.field_150746_k.isOpen()) {
