@@ -34,9 +34,7 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
@@ -62,7 +60,6 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -256,9 +253,9 @@ public class ForgeMod
                 }
 
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
                                 WATER_STILL = new ResourceLocation("block/water_still"),
@@ -291,13 +288,13 @@ public class ForgeMod
                         }
 
                         @Override
-                        public int getColorTint()
+                        public int getTintColor()
                         {
                             return 0xFF3F76E4;
                         }
 
                         @Override
-                        public int getColorTint(FluidState state, BlockAndTintGetter getter, BlockPos pos)
+                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos)
                         {
                             return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
                         }
@@ -332,9 +329,9 @@ public class ForgeMod
                 }
 
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
                                 LAVA_FLOW = new ResourceLocation("block/lava_flow");
@@ -419,10 +416,6 @@ public class ForgeMod
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 
-        if (FMLEnvironment.dist == Dist.CLIENT)
-        {
-            ModelLoaderRegistry.init();
-        }
         EventDispatcherRegistry.init();
     }
 
@@ -498,9 +491,9 @@ public class ForgeMod
             event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(FluidType.Properties.create().density(1024).viscosity(1024))
             {
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
                                 MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
