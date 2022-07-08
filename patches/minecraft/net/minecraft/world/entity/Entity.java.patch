@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -31,6 +_,7 @@
+ import net.minecraft.commands.arguments.EntityAnchorArgument;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
++import net.minecraft.core.PositionImpl;
+ import net.minecraft.core.SectionPos;
+ import net.minecraft.core.particles.BlockParticleOption;
+ import net.minecraft.core.particles.ParticleTypes;
 @@ -116,9 +_,11 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
@@ -453,7 +461,7 @@
        }
     }
  
-+   public void teleportTo(ServerLevel handle, BlockPos blockPos) {
++   public void teleportTo(ServerLevel handle, PositionImpl blockPos) {
 +   }
 +
     public boolean m_6052_() {

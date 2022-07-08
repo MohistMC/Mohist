@@ -1,8 +1,11 @@
 package org.bukkit.craftbukkit.v1_19_R1.entity;
 
+import com.google.common.base.Preconditions;
+import java.util.stream.Collectors;
 import org.bukkit.TreeSpecies;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class CraftBoat extends CraftVehicle implements Boat {
@@ -19,6 +22,18 @@ public class CraftBoat extends CraftVehicle implements Boat {
     @Override
     public void setWoodType(TreeSpecies species) {
         getHandle().setType(getBoatType(species));
+    }
+
+    @Override
+    public Type getBoatType() {
+        return boatTypeFromNms(getHandle().getBoatType());
+    }
+
+    @Override
+    public void setBoatType(Type type) {
+        Preconditions.checkArgument(type != null, "Boat.Type cannot be null");
+
+        getHandle().setType(boatTypeToNms(type));
     }
 
     @Override
@@ -66,13 +81,18 @@ public class CraftBoat extends CraftVehicle implements Boat {
     }
 
     @Override
+    public Status getStatus() {
+        return boatStatusFromNms(getHandle().status);
+    }
+
+    @Override
     public net.minecraft.world.entity.vehicle.Boat getHandle() {
         return (net.minecraft.world.entity.vehicle.Boat) entity;
     }
 
     @Override
     public String toString() {
-        return "CraftBoat";
+        return "CraftBoat{boatType=" + getBoatType() + ",status=" + getStatus() + ",passengers=" + getPassengers().stream().map(Entity::toString).collect(Collectors.joining("-", "{", "}")) + "}";
     }
 
     @Override
@@ -80,6 +100,44 @@ public class CraftBoat extends CraftVehicle implements Boat {
         return EntityType.BOAT;
     }
 
+    public static Boat.Type boatTypeFromNms(net.minecraft.world.entity.vehicle.Boat.Type boatType) {
+        return switch (boatType) {
+            default -> throw new EnumConstantNotPresentException(Type.class, boatType.name());
+            case OAK -> Type.OAK;
+            case BIRCH -> Type.BIRCH;
+            case ACACIA -> Type.ACACIA;
+            case JUNGLE -> Type.JUNGLE;
+            case SPRUCE -> Type.SPRUCE;
+            case DARK_OAK -> Type.DARK_OAK;
+            case MANGROVE -> Type.MANGROVE;
+        };
+    }
+
+    public static net.minecraft.world.entity.vehicle.Boat.Type boatTypeToNms(Boat.Type type) {
+        return switch (type) {
+            default -> throw new EnumConstantNotPresentException(net.minecraft.world.entity.vehicle.Boat.Type.class, type.name());
+            case MANGROVE -> net.minecraft.world.entity.vehicle.Boat.Type.MANGROVE;
+            case SPRUCE -> net.minecraft.world.entity.vehicle.Boat.Type.SPRUCE;
+            case DARK_OAK -> net.minecraft.world.entity.vehicle.Boat.Type.DARK_OAK;
+            case JUNGLE -> net.minecraft.world.entity.vehicle.Boat.Type.JUNGLE;
+            case ACACIA -> net.minecraft.world.entity.vehicle.Boat.Type.ACACIA;
+            case BIRCH -> net.minecraft.world.entity.vehicle.Boat.Type.BIRCH;
+            case OAK -> net.minecraft.world.entity.vehicle.Boat.Type.OAK;
+        };
+    }
+
+    public static Status boatStatusFromNms(net.minecraft.world.entity.vehicle.Boat.Status enumStatus) {
+        return switch (enumStatus) {
+            default -> throw new EnumConstantNotPresentException(Status.class, enumStatus.name());
+            case IN_AIR -> Status.IN_AIR;
+            case ON_LAND -> Status.ON_LAND;
+            case UNDER_WATER -> Status.UNDER_WATER;
+            case UNDER_FLOWING_WATER -> Status.UNDER_FLOWING_WATER;
+            case IN_WATER -> Status.IN_WATER;
+        };
+    }
+
+    @Deprecated
     public static TreeSpecies getTreeSpecies(net.minecraft.world.entity.vehicle.Boat.Type boatType) {
         switch (boatType) {
             case SPRUCE:
@@ -98,6 +156,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
         }
     }
 
+    @Deprecated
     public static net.minecraft.world.entity.vehicle.Boat.Type getBoatType(TreeSpecies species) {
         switch (species) {
             case REDWOOD:
