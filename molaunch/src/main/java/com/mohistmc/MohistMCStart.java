@@ -64,13 +64,13 @@ public class MohistMCStart {
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
 
         if (MohistConfigUtil.bMohist("check_libraries", "true")) {
-            DefaultLibraries.downloadRepoLibs();
+            DefaultLibraries.run();
             new v_1_19().run();
         }
         CustomLibraries.loadCustomLibs();
 
         //The server can be run with Java 16+
-        if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
+        if (Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
             System.out.println("Setting launch args");
             new MohistModuleManager(DataParser.launchArgs);
             System.out.println("Done");
@@ -89,21 +89,18 @@ public class MohistMCStart {
         }
 
         List<String> forgeArgs = new ArrayList<>();
-        for(String arg : DataParser.launchArgs.stream()
+        forgeArgs.add("--add-modules ALL-MODULE-PATH");
+        for (String arg : DataParser.launchArgs.stream()
                 .filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
         }
 
-        /*
-        String[] args_ = Stream.concat(forgeArgs.stream(), Arrays.stream(args)).toArray(String[]::new);
 
+        String[] args_ = Stream.concat(forgeArgs.stream(), Arrays.stream(args)).toArray(String[]::new);
+        System.out.println(args_);
         var cl = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
         var method = cl.getMethod("main", String[].class);
         method.invoke(null, (Object) args_);
-
-        System.out.println(args_);
-
-         */
     }
 }

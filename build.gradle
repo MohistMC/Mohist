@@ -1,14 +1,3 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "dev.vankka:gradle-plugin:1.2.1"
-    }
-}
-
 import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
@@ -794,7 +783,6 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'dev.vankka.dependencydownload.plugin'
 
     sourceSets {
         main {
@@ -1271,14 +1259,6 @@ project(':forge') {
             ]
             getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
         }
-    }
-    
-    task generateMohistLibraries(type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
-        var conf = configurations.autolibraries
-        configuration = conf
-        file = "data/mohist_libraries.txt"
-        // Not necessary to include in the resource
-        includeShadowJarRelocations = false
     }
 
     universalJar {

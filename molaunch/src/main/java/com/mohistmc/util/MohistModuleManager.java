@@ -19,6 +19,7 @@
 package com.mohistmc.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -31,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.AccessControlContext;
@@ -67,50 +69,62 @@ public class MohistModuleManager {
             sun.misc.Unsafe unsafe = this.getUnsafe();
             unsafe.putObject(MohistModuleManager.class, unsafe.objectFieldOffset(Class.class.getDeclaredField("module")), Class.class.getModule());
             this.moduleOptionAvailable = true;
-
             this.applyLaunchArgs(args);
         } catch (Exception e) {
             e.printStackTrace();
-			/*
-			Adding module options cannot be done dynamically, but we can still add modules dynamically.
-			The other way to add module options is run the server jar again with the needed flags.
-			 */
         }
     }
 
-    public void applyLaunchArgs(List<String> args) {
+    public static void addToPath(Path path) {
+        try {
+            ClassLoader loader = ClassLoader.getPlatformClassLoader();
+            Field ucpField;
+            try {
+                ucpField = loader.getClass().getDeclaredField("ucp");
+            } catch (NoSuchFieldException e) {
+                ucpField = loader.getClass().getSuperclass().getDeclaredField("ucp");
+            }
+            long offset = Unsafe.objectFieldOffset(ucpField);
+            Object ucp = Unsafe.getObject(loader, offset);
+            if (ucp == null) {
+                var cl = Class.forName("jdk.internal.loader.URLClassPath");
+                var handle = Unsafe.lookup().findConstructor(cl, MethodType.methodType(void.class, URL[].class, AccessControlContext.class));
+                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
+                Unsafe.putObjectVolatile(loader, offset, ucp);
+            }
+            Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
+            Unsafe.lookup().unreflect(method).invoke(ucp, path.toUri().toURL());
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public void applyLaunchArgs(List<String> args) throws IOException {
         //Just read each lines of launch args
-        for(String arg : args) {
-            if(arg.startsWith("-p ")) {
+        Path path = Paths.get("libraries", "net", "minecraftforge", "forge", (OSUtil.getOS().equals(OSUtil.OS.WINDOWS) ? "win" : "unix") + "_args.txt");
+
+        for (String arg : Files.lines(path).collect(Collectors.toList())) {
+            if (arg.startsWith("-p ")) {
                 try {
                     loadModules(arg.substring(2).trim());
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }
-/*				this.loadModules(Arrays.stream(arg.replaceAll("-p ", "").split(":")).map(File::new).toArray(File[]::new));
-				for(File f : Arrays.stream(arg.replaceAll("-p ", "").split(":")).map(File::new).toArray(File[]::new)) {
-					try {
-						new JarLoader().loadJar(f);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}*/
-            } else if(arg.startsWith("--add-opens")) {
+            } else if (arg.startsWith("--add-opens")) {
                 String option = arg.split("--add-opens ")[1];
                 this.addOpens(option.split("/")[0], option.split("/")[1].split("=")[0], option.split("=")[1]);
-            } else if(arg.startsWith("--add-exports")) {
+            } else if (arg.startsWith("--add-exports")) {
                 String option = arg.split("--add-exports ")[1];
                 this.addExports(option.split("/")[0], option.split("/")[1].split("=")[0], option.split("=")[1]);
-            } else if(arg.startsWith("-D")) {
+            } else if (arg.startsWith("-D")) {
                 String[] params = arg.split("=");
                 if (params.length == 2) {
-                    //System.out.println(params[0]+ "="+params[1]);
                     System.setProperty(params[0].replace("-D", ""), params[1]);
                 }
             }
         }
 
-        this.addExportsToAllUnnamed("cpw.mods.bootstraplauncher", "cpw.mods.bootstraplauncher");
+        this.addExportsToAllUnnamed("cpw.mods.securejarhandler", "cpw.mods.bootstraplauncher");
     }
 
     public boolean isModuleOptionAvailable() {
@@ -145,15 +159,16 @@ public class MohistModuleManager {
     This method allows to dynamically add a module option
      */
     private boolean addModuleOption(String methodName, String moduleFrom, String packageName, String moduleTo) {
+        System.out.println("Module option: \nmethodName: " + methodName + "\nmoduleFrom: " + moduleFrom + "\npackageName: " + packageName + "\nmoduleTo: " + moduleTo);
         try {
             Optional<Module> moduleFrom_ = findModule(moduleFrom);
             Optional<Module> moduleTo_ = findModule(moduleTo);
-            if(!moduleFrom_.isPresent()) return false; //The module hasn't been found, we can't add the module option.
+            if (!moduleFrom_.isPresent()) return false; //The module hasn't been found, we can't add the module option.
 
             //The target module has been found
-            if(moduleTo_.isPresent()) {
+            if (moduleTo_.isPresent()) {
                 Class.forName("jdk.internal.module.Modules").getMethod(methodName, Module.class, String.class, Module.class).invoke(null, moduleFrom_.get(), packageName, moduleTo_.get());
-            } else if(methodName.endsWith("Unnamed")) {
+            } else if (methodName.endsWith("Unnamed")) {
                 //The target module hasn't been found, the only option is to use allUnnamed methods.
                 Class.forName("jdk.internal.module.Modules").getMethod(methodName, Module.class, String.class).invoke(null, moduleFrom_.get(), packageName);
             }
@@ -176,7 +191,7 @@ public class MohistModuleManager {
     Load one or multiples module(s) dynamically.
      */
     public void loadModules(File... moduleFiles) {
-        for(File f : moduleFiles) {
+        for (File f : moduleFiles) {
             System.out.println("Loading module+ " + f.getName());
         }
         ModuleLayer currentModuleLayer = this.getDefaultModuleLayer();
@@ -185,7 +200,7 @@ public class MohistModuleManager {
         final Configuration configuration = currentModuleLayer.configuration().resolveAndBind(moduleFinder, ModuleFinder.of(), moduleNames);
         final ModuleLayer moduleLayer = currentModuleLayer.defineModulesWithOneLoader(configuration, ClassLoader.getSystemClassLoader());
         this.loadedModules.addAll(moduleLayer.modules());
-        for(Module m : moduleLayer.modules()) {
+        for (Module m : moduleLayer.modules()) {
             try {
                 Class.forName("jdk.internal.module.Modules").getMethod("loadModule", String.class).invoke(null, m.getName());
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
@@ -195,32 +210,9 @@ public class MohistModuleManager {
         }
     }
 
-    public static void addToPath(Path path) {
-        try {
-            ClassLoader loader = ClassLoader.getPlatformClassLoader();
-            Field ucpField;
-            try {
-                ucpField = loader.getClass().getDeclaredField("ucp");
-            } catch (NoSuchFieldException e) {
-                ucpField = loader.getClass().getSuperclass().getDeclaredField("ucp");
-            }
-            long offset = Unsafe.objectFieldOffset(ucpField);
-            Object ucp = Unsafe.getObject(loader, offset);
-            if (ucp == null) {
-                var cl = Class.forName("jdk.internal.loader.URLClassPath");
-                var handle = Unsafe.lookup().findConstructor(cl, MethodType.methodType(void.class, URL[].class, AccessControlContext.class));
-                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
-                Unsafe.putObjectVolatile(loader, offset, ucp);
-            }
-            Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
-            Unsafe.lookup().unreflect(method).invoke(ucp, path.toUri().toURL());
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
     //Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
-    public void loadModules(String modulePath) throws Throwable{
+    public void loadModules(String modulePath) throws Throwable {
+        System.out.println(modulePath);
         // Find all extra modules
         ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(MohistModuleManager::addToPath).toArray(Path[]::new));
         MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));

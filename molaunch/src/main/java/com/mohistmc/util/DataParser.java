@@ -10,6 +10,7 @@ public class DataParser {
     public static HashMap<String, String> versionMap = new HashMap<>();
     public static List<String> launchArgs = new ArrayList<>();
     public static List<File> librariesClassPath = new ArrayList<>();
+
     public static void parseVersions() {
         versionMap.put("forge", FileUtil.readFileFromJar("versions/forge.txt").get(0));
         versionMap.put("minecraft", FileUtil.readFileFromJar("versions/minecraft.txt").get(0));
@@ -18,11 +19,11 @@ public class DataParser {
     }
 
     public static void parseLaunchArgs() {
-        launchArgs.addAll(FileUtil.readFileFromJar("data/"+(OSUtil.getOS().equals(OSUtil.OS.WINDOWS) ? "win" : "unix") + "_args.txt"));
+        launchArgs.addAll(FileUtil.readFileFromJar("data/" + (OSUtil.getOS().equals(OSUtil.OS.WINDOWS) ? "win" : "unix") + "_args.txt"));
     }
 
     public static void parseLibrariesClassPath() {
-        for(String lib : FileUtil.readFileFromJar("data/libraries.txt").get(0).split(";")) {
+        for (String lib : FileUtil.readFileFromJar("data/libraries.txt").get(0).split(";")) {
             librariesClassPath.add(new File(lib));
         }
     }

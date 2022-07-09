@@ -1,6 +1,6 @@
 package com.mohistmc.action;
 
-public interface  Version {
+public interface Version {
 
     void run();
 }

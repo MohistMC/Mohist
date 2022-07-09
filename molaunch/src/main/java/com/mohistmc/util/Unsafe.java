@@ -15,6 +15,8 @@ public class Unsafe {
     private static final sun.misc.Unsafe unsafe;
     private static final MethodHandles.Lookup lookup;
     private static final MethodHandle defineClass;
+    private static final MethodHandle H_DEF_CLASS;
+    private static final CallerClass INSTANCE;
 
     static {
         try {
@@ -40,6 +42,39 @@ public class Unsafe {
             defineClass = Objects.requireNonNull(mh);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static {
+        MethodHandle handle;
+        try {
+            handle = lookup().findStatic(ClassLoader.class, "defineClass0", MethodType.methodType(Class.class,
+                    ClassLoader.class, Class.class, String.class, byte[].class, int.class, int.class, ProtectionDomain.class,
+                    boolean.class, int.class, Object.class));
+        } catch (Throwable t) {
+            try {
+                handle = MethodHandles.dropArguments(
+                        lookup().findVirtual(ClassLoader.class, "defineClassInternal", MethodType.methodType(Class.class,
+                                Class.class, String.class, byte[].class, ProtectionDomain.class, boolean.class, int.class, Object.class)),
+                        4, Arrays.asList(int.class, int.class));
+            } catch (Throwable t2) {
+                handle = null;
+            }
+        }
+        H_DEF_CLASS = handle;
+    }
+
+    static {
+        boolean securityManagerPresent = false;
+        try {
+            Class.forName("java.lang.SecurityManager");
+            securityManagerPresent = true;
+        } catch (Throwable ignored) {
+        }
+        if (securityManagerPresent) {
+            INSTANCE = new SecurityManagerCallerClass();
+        } else {
+            INSTANCE = new StackWalkerCallerClassimplements();
         }
     }
 
@@ -272,28 +307,6 @@ public class Unsafe {
         }
     }
 
-    private static final MethodHandle H_DEF_CLASS;
-
-    static {
-        MethodHandle handle;
-        try {
-            handle = lookup().findStatic(ClassLoader.class, "defineClass0", MethodType.methodType(Class.class,
-                    ClassLoader.class, Class.class, String.class, byte[].class, int.class, int.class, ProtectionDomain.class,
-                    boolean.class, int.class, Object.class));
-        } catch (Throwable t) {
-            try {
-                handle = MethodHandles.dropArguments(
-                        lookup().findVirtual(ClassLoader.class, "defineClassInternal", MethodType.methodType(Class.class,
-                                Class.class, String.class, byte[].class, ProtectionDomain.class, boolean.class, int.class, Object.class)),
-                        4, Arrays.asList(int.class, int.class));
-            } catch (Throwable t2) {
-                handle = null;
-            }
-        }
-        H_DEF_CLASS = handle;
-    }
-
-
     public static Object allocateInstance(Class<?> aClass) throws InstantiationException {
         return unsafe.allocateInstance(aClass);
     }
@@ -446,19 +459,9 @@ public class Unsafe {
         return INSTANCE.getCallerClass();
     }
 
-    private static final CallerClass INSTANCE;
+    private interface CallerClass {
 
-    static {
-        boolean securityManagerPresent = false;
-        try {
-            Class.forName("java.lang.SecurityManager");
-            securityManagerPresent = true;
-        } catch (Throwable ignored) {}
-        if (securityManagerPresent) {
-            INSTANCE = new SecurityManagerCallerClass();
-        } else {
-            INSTANCE = new StackWalkerCallerClassimplements();
-        }
+        Class<?> getCallerClass();
     }
 
     private static class SecurityManagerCallerClass extends SecurityManager implements CallerClass {
@@ -482,10 +485,5 @@ public class Unsafe {
         public Class<?> getCallerClass() {
             return walker.walk(s -> s.skip(3).findFirst().orElseThrow().getDeclaringClass());
         }
-    }
-
-    private interface CallerClass {
-
-        Class<?> getCallerClass();
     }
 }

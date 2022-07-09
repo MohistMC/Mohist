@@ -2,29 +2,15 @@ package com.mohistmc.action.v_1_19;
 
 import com.mohistmc.action.Action;
 import com.mohistmc.action.Version;
-import com.mohistmc.network.download.DownloadMcpConfig;
-import com.mohistmc.network.download.DownloadMinecraftJar;
-import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
-import dev.vankka.dependencydownload.DependencyManager;
-import dev.vankka.dependencydownload.dependency.Dependency;
-import dev.vankka.dependencydownload.path.CleanupPathProvider;
-import dev.vankka.dependencydownload.path.DependencyPathProvider;
-import dev.vankka.dependencydownload.repository.Repository;
-import dev.vankka.dependencydownload.repository.StandardRepository;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class v_1_19 implements Version {
 
@@ -33,57 +19,9 @@ public class v_1_19 implements Version {
     @Override
     public void run() {
         try {
-            new DownloadLibraries();
             new Install_1_19();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    static class DownloadLibraries extends Action {
-
-        protected DownloadLibraries() throws IOException {
-            super();
-            DependencyPathProvider dependencyPathProvider = new CleanupPathProvider() {
-
-                public final Path baseDirPath = JarTool.getJarDir().toPath();
-
-                @Override
-                public Path getCleanupPath() {
-                    return baseDirPath;
-                }
-
-                @Override
-                public Path getDependencyPath(Dependency dependency, boolean relocated) {
-                    return baseDirPath.resolve("libraries")
-                            .resolve(dependency.getGroupId().replace(".", "/"))
-                            .resolve(dependency.getArtifactId())
-                            .resolve(dependency.getVersion())
-                            .resolve(dependency.getFileName());
-                }
-            };
-
-            DependencyManager manager = new DependencyManager(dependencyPathProvider);
-            manager.loadFromResource(new URL("jar:file:" + JarTool.getJarPath() + "!/data/mohist_libraries.txt"));
-
-            Executor executor = Executors.newCachedThreadPool();
-            List<Repository> standardRepositories = new ArrayList<>();
-            standardRepositories.add(new StandardRepository("https://maven.minecraftforge.net/"));
-            standardRepositories.add(new StandardRepository("https://repo.maven.apache.org/maven2/"));
-            standardRepositories.add(new StandardRepository("https://maven.mohistmc.com/libraries/"));
-
-            manager.downloadAll(executor, standardRepositories).join();
-            manager.loadAll(executor, path -> {
-                try {
-                    new JarLoader().loadJar(path.toFile());
-                    loadedLibsPaths.add(path.toFile().getAbsolutePath());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }).join();
-
-            DownloadMcpConfig.run(mcVer, mcpVer);
-            DownloadMinecraftJar.run(minecraft_server);
         }
     }
 
@@ -132,9 +70,9 @@ public class v_1_19 implements Version {
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
 
-            copyFileFromJar(win_args,"data/win_args.txt");
-            copyFileFromJar(unix_args,"data/unix_args.txt");
-            copyFileFromJar(jvm_args,"data/user_jvm_args.txt");
+            copyFileFromJar(win_args, "data/win_args.txt");
+            copyFileFromJar(unix_args, "data/unix_args.txt");
+            copyFileFromJar(jvm_args, "data/user_jvm_args.txt");
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");

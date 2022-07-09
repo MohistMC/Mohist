@@ -2,11 +2,9 @@ package com.mohistmc.util;
 
 public class OSUtil {
 
-    public enum OS {
-        WINDOWS, LINUX, MAC, SOLARIS
-    };// Operating systems.
-
     private static OS os = null;
+
+    ;// Operating systems.
 
     public static OS getOS() {
         if (os == null) {
@@ -22,5 +20,9 @@ public class OSUtil {
             }
         }
         return os;
+    }
+
+    public enum OS {
+        WINDOWS, LINUX, MAC, SOLARIS
     }
 }

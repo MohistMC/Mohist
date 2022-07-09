@@ -29,7 +29,7 @@ public class DownloadMcpConfig {
             return;
         mcp_config.getParentFile().mkdirs();
         try {
-            UpdateUtils.downloadFile("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/"+ mc_version + "-"+ mcp_version + "/mcp_config-"+ mc_version + "-"+ mcp_version +".zip",
+            UpdateUtils.downloadFile("https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/" + mc_version + "-" + mcp_version + "/mcp_config-" + mc_version + "-" + mcp_version + ".zip",
                     mcp_config);
         } catch (Exception e) {
             System.out.println("Can't find mcp_config");
