@@ -7,6 +7,7 @@ version '0.1'
 repositories {
     mavenCentral()
     maven { url 'https://maven.mohistmc.com/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -17,7 +18,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'
 
-    implementation ('com.mohistmc.yaml:yaml:0.2'){
-        exclude group: 'org.yaml', module: 'snakeyaml'
-    }
+    implementation 'com.mohistmc.yaml:yaml:0.2'
+
+    implementation 'com.mohistmc:MinecraftMetaJavaApi:1.2'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'dev.vankka:dependencydownload-runtime:1.2.2-SNAPSHOT'
+    implementation 'dev.vankka:dependencydownload-common:1.2.1'
 }

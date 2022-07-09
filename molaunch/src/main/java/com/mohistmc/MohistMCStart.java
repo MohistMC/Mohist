@@ -18,31 +18,27 @@
 
 package com.mohistmc;
 
+import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.util.AutoDeleteMods;
-import com.mohistmc.util.AutoDeletePlugins;
-import com.mohistmc.util.InstallUtils;
-import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.PluginsModsDelete;
+import com.mohistmc.util.DataParser;
+import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
-import static com.mohistmc.util.InstallUtils.startInstallation;
-import static com.mohistmc.util.InstallUtils.universalJar;
-import static com.mohistmc.util.PluginsModsDelete.checkPlugins;
 
 public class MohistMCStart {
 
-    public static ArrayList<String> mainArgs = null;
+    public static List<String> mainArgs = new ArrayList<>();
     public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
 
     public static String getVersion() {
@@ -50,8 +46,13 @@ public class MohistMCStart {
     }
 
     public static void main(String[] args) throws Exception {
-        mainArgs = new ArrayList<>(Arrays.asList(args));
+        mainArgs.addAll(List.of(args));
+        DataParser.parseVersions();
+        DataParser.parseLaunchArgs();
+        DataParser.parseLibrariesClassPath();
+
         MohistConfigUtil.copyMohistConfig();
+
         if (MohistConfigUtil.bMohist("show_logo", "true"))
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
@@ -62,24 +63,21 @@ public class MohistMCStart {
                     "                                                    \n" + "\n" +
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
 
-        //Alert the user that Java 17 is still recommended to use to have a better compatibility.
-        if (javaVersion < 61.0) {
-            System.out.println(i18n.get("oldjava.use"));
-        }
-
         if (MohistConfigUtil.bMohist("check_libraries", "true")) {
-            DefaultLibraries.run();
-            startInstallation();
+            DefaultLibraries.downloadRepoLibs();
+            new v_1_19().run();
         }
         CustomLibraries.loadCustomLibs();
 
         //The server can be run with Java 16+
-        Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
+        if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
+            System.out.println("Setting launch args");
+            new MohistModuleManager(DataParser.launchArgs);
+            System.out.println("Done");
+        }
 
         // make sure gson use this EnumTypeAdapter
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-        // Used to avoid mods using BusBuilder.builder().build() themselves
-        Class.forName("net.minecraftforge.eventbus.api.BusBuilder").getClassLoader();
 
         if (mainArgs.contains("-noserver"))
             System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
@@ -90,10 +88,19 @@ public class MohistMCStart {
             writeInfos();
         }
 
-        if (!MohistConfigUtil.bMohist("disable_plugins_blacklist", "false"))
-            checkPlugins(AutoDeletePlugins.LIST, PluginsModsDelete.PLUGIN);
+        List<String> forgeArgs = new ArrayList<>();
+        for(String arg : DataParser.launchArgs.stream()
+                .filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
+            forgeArgs.add(arg.split(" ")[0]);
+            forgeArgs.add(arg.split(" ")[1]);
+        }
 
-        if (!MohistConfigUtil.bMohist("disable_mods_blacklist", "false"))
-            checkPlugins(AutoDeleteMods.LIST, PluginsModsDelete.MOD);
+        String[] args_ = Stream.concat(forgeArgs.stream(), Arrays.stream(args)).toArray(String[]::new);
+
+        var cl = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
+        var method = cl.getMethod("main", String[].class);
+        method.invoke(null, (Object) args_);
+
+        System.out.println(args_);
     }
 }

@@ -5,7 +5,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+        classpath "dev.vankka:gradle-plugin:1.2.1"
     }
 }
 
@@ -48,7 +48,7 @@ ext {
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
     TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
-    JLINE_VERSION = '3.12.+'
+    JLINE_VERSION = '3.12.1'
     NIGHTCONFIG_VERSION = '3.6.4'
     JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
     SLF4J_API_VERSION = '1.8.0-beta4'
@@ -65,12 +65,17 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = '1.19-41.0.64'
     FORGE_VERSION = '41.0.64'
+    MOHIST_VERSION = '1.19'
 
+    SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
     MIN_TAG_FOR_CHANGELOG = "41.0"
+    
+    // remove :fatjar
+    BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
 }
 
 println('Version: ' + VERSION +
@@ -123,6 +128,7 @@ subprojects {
             name = 'minecraft'
             url = 'https://libraries.minecraft.net/'
         }
+	maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
     }
 
@@ -230,6 +236,12 @@ def sharedDeps = {
     installer 'org.lwjgl:lwjgl-opengl:3.2.2'
     installer 'org.lwjgl:lwjgl-stb:3.2.2'
     */
+
+    autolibraries BIN_PATCHER
+    autolibraries SPECIAL_SOURCE
+    autolibraries INSTALLER_TOOLS
+    autolibraries JAR_SPLITTER
+    autolibraries FART
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -508,6 +520,7 @@ project(':fmlonly') {
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
+        implementation project(':molaunch')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
@@ -768,7 +781,7 @@ project(':fmlonly') {
         packedDependencies = PACKED_DEPS
         from(extraTxts)
         //TODO: make FML installer logo?
-        from(rootProject.file('/forge_installer_logo.png')) {
+        from(rootProject.file('/forge/forge_installer_logo.png')) {
             rename { 'big_logo.png' }
         }
     }
@@ -781,7 +794,7 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: "com.github.johnrengelman.shadow"
+    apply plugin: 'dev.vankka.dependencydownload.plugin'
 
     sourceSets {
         main {
@@ -821,6 +834,9 @@ project(':forge') {
         }
         moduleonly
         api.extendsFrom(installer)
+        autolibraries
+        autolibraries.extendsFrom(installer)
+        autolibraries.extendsFrom(moduleonly)
     }
 
     dependencies {
@@ -847,15 +863,6 @@ project(':forge') {
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
         runs {
-            forge_client {
-                property 'eventbus.checkTypesOnDispatch', 'true'
-                args '--launchTarget', 'forgeclientdev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-                mods {
-                    minecraft { source sourceSets.main }
-                }
-            }
-
             forge_server {
                 args '--launchTarget', 'forgeserverdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
@@ -933,6 +940,22 @@ project(':forge') {
                 'Implementation-Title':     'FML Launcher',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'com/mohistmc/': [
+                    'Specification-Title'   : 'Mohist',
+                    'Specification-Vendor'  : 'MohistMC',
+                    'Specification-Version':  MOHIST_VERSION,
+                    'Implementation-Title'  : 'Mohist',
+                    'Implementation-Version': '1.19-' + MOHIST_VERSION,
+                    'Implementation-Vendor' : 'MohistMC'
+            ] as LinkedHashMap,
+            'org/bukkit/craftbukkit/v1_19_R1/': [
+                    'Specification-Title'   : MCP_VERSION,
+                    'Specification-Vendor'  : 'SpigotMC',
+                    'Specification-Version':  '1.19',
+                    'Implementation-Title'  : 'Spigot',
+                    'Implementation-Version': '7e29f765-296df566-9fb885e8',
+                    'Implementation-Vendor' : 'SpigotMC'
             ] as LinkedHashMap
         ]
     }
@@ -987,11 +1010,6 @@ project(':forge') {
     }
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
-
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
 
     task checkPatches(type: CheckPatches, dependsOn: genPatches) {
         patchDir = file("$rootDir/patches")
@@ -1254,6 +1272,14 @@ project(':forge') {
             getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
         }
     }
+    
+    task generateMohistLibraries(type: dev.vankka.dependencydownload.task.GenerateDependencyDownloadResourceTask) {
+        var conf = configurations.autolibraries
+        configuration = conf
+        file = "data/mohist_libraries.txt"
+        // Not necessary to include in the resource
+        includeShadowJarRelocations = false
+    }
 
     universalJar {
         duplicatesStrategy = 'exclude'
@@ -1269,7 +1295,7 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar', shadowJar]) {
+    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -1279,7 +1305,9 @@ project(':forge') {
         def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
                 [
                         'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
-                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar",
+                        "libraries/cpw/mods/bootstraplauncher/1.1.1/bootstraplauncher-1.1.1.jar",
+                        "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
                 ]
         def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
         if (rootProject.downloadServerRaw.dest.exists()) {
@@ -1337,10 +1365,16 @@ project(':forge') {
         from(project(':mclanguage').tasks.jar.outputs) {
             rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
-
-        from(project(':molaunch').project.sourceSets.main.output){
+        from(project(':lowcodelanguage').tasks.jar.outputs) {
+            rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
+        from(project(':molaunch').project.sourceSets.main.output)
+
+        from(rootProject.file('server_files/version.txt')) {
+            filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
+            rename { 'versions/mohist.txt' }
+        }
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MC_VERSION])
             rename { 'versions/minecraft.txt' }
@@ -1359,6 +1393,7 @@ project(':forge') {
             rename { 'data/libraries.txt' }
         }
 
+	    from(generateMohistLibraries)
         from(rootProject.file('server_files/args.txt')) {
             filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
             rename { 'data/win_args.txt' }
@@ -1375,6 +1410,8 @@ project(':forge') {
     }
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
+        archiveBaseName = 'mohist'
+        version = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge/forge_installer_logo.png')) {
             rename { 'big_logo.png' }
@@ -1399,12 +1436,6 @@ project(':forge') {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-    }
-
-    shadowJar {
-        dependencies {
-            include(dependency("com.mohistmc.yaml:yaml:0.2"))
-        }
     }
 }
 
