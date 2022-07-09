@@ -18,6 +18,7 @@
 
 package com.mohistmc.libraries;
 
+import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
@@ -38,6 +39,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+
+import static com.mohistmc.util.MohistModuleManager.addToPath;
+
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
 
@@ -48,6 +52,7 @@ public class DefaultLibraries {
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
         for (File lib : getDefaultLibs().keySet()) {
+            v_1_19.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
                 continue;
             }
@@ -64,6 +69,10 @@ public class DefaultLibraries {
             System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
+                if(lib.getName().endsWith(".jar")) {
+                    new JarLoader().loadJar(lib);
+                    addToPath(lib.toPath());
+                }
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(url, ""));
             } catch (Exception e) {

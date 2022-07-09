@@ -20,6 +20,7 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.DataParser;
+import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import java.io.BufferedOutputStream;
@@ -89,16 +90,8 @@ public abstract class Action {
         this.minecraft_server = new File(libPath + "minecraft_server." + mcVer + ".jar");
     }
 
-    protected void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
-        System.out.println("EXECUTING CLASS " + mainClass);
-        System.out.println(getParentClassloader() == null);
-        try {
-            Class.forName(mainClass);
-            System.out.println("found class 2");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[0]));
+    protected void run(String mainClass, String[] args,  List<URL> classPath) throws Exception {
+        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, new Object[] { args });
     }
 
     private ClassLoader getParentClassloader() {
@@ -111,8 +104,11 @@ public abstract class Action {
 
     protected List<URL> stringToUrl(List<String> strs) throws Exception {
         List<URL> temp = new ArrayList<>();
-        for (String t : strs)
-            temp.add(new File(t).toURI().toURL());
+        for (String t : strs) {
+            File file = new File(t);
+            new JarLoader().loadJar(file);
+            temp.add(file.toURI().toURL());
+        }
         return temp;
     }
 

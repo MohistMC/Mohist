@@ -61,5 +61,6 @@ public class JarLoader {
             m.setAccessible(true);
             m.invoke((URLClassLoader) cl, path.toURI().toURL());
         }
+        System.out.println(path);
     }
 }

@@ -1373,7 +1373,6 @@ project(':forge') {
             rename { 'data/libraries.txt' }
         }
 
-	    from(generateMohistLibraries)
         from(rootProject.file('server_files/args.txt')) {
             filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
             rename { 'data/win_args.txt' }

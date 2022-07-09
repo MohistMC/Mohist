@@ -19,7 +19,6 @@
 package com.mohistmc.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -32,7 +31,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.AccessControlContext;
@@ -42,11 +40,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Shawiiz_z
@@ -57,18 +54,8 @@ public class MohistModuleManager {
 
     private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
 
-    List<Module> loadedModules = new ArrayList<>();
-    private boolean moduleOptionAvailable = false;
-
     public MohistModuleManager(List<String> args) {
         try {
-			/*
-			This code allows to call methods in the jdk.internal.module.Modules class.
-			If this fails, methods won't be able to be called, but modules can still be loaded.
-			 */
-            sun.misc.Unsafe unsafe = this.getUnsafe();
-            unsafe.putObject(MohistModuleManager.class, unsafe.objectFieldOffset(Class.class.getDeclaredField("module")), Class.class.getModule());
-            this.moduleOptionAvailable = true;
             this.applyLaunchArgs(args);
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,23 +86,22 @@ public class MohistModuleManager {
         }
     }
 
-    public void applyLaunchArgs(List<String> args) throws IOException {
+    public void applyLaunchArgs(List<String> args) {
         //Just read each lines of launch args
-        Path path = Paths.get("libraries", "net", "minecraftforge", "forge", (OSUtil.getOS().equals(OSUtil.OS.WINDOWS) ? "win" : "unix") + "_args.txt");
+        List<String> opens = new ArrayList<>();
+        List<String> exports = new ArrayList<>();
+        exports.add("cpw.mods.bootstraplauncher/cpw.mods.bootstraplauncher=ALL-UNNAMED");
 
-        for (String arg : Files.lines(path).collect(Collectors.toList())) {
+        for (String arg : args) {
             if (arg.startsWith("-p ")) {
                 try {
                     loadModules(arg.substring(2).trim());
                 } catch (Throwable e) {
-                    throw new RuntimeException(e);
                 }
             } else if (arg.startsWith("--add-opens")) {
-                String option = arg.split("--add-opens ")[1];
-                this.addOpens(option.split("/")[0], option.split("/")[1].split("=")[0], option.split("=")[1]);
+                opens.add(arg.substring("--add-opens ".length()).trim());
             } else if (arg.startsWith("--add-exports")) {
-                String option = arg.split("--add-exports ")[1];
-                this.addExports(option.split("/")[0], option.split("/")[1].split("=")[0], option.split("=")[1]);
+                exports.add(arg.substring("--add-exports ".length()).trim());
             } else if (arg.startsWith("-D")) {
                 String[] params = arg.split("=");
                 if (params.length == 2) {
@@ -124,90 +110,111 @@ public class MohistModuleManager {
             }
         }
 
-        this.addExportsToAllUnnamed("cpw.mods.securejarhandler", "cpw.mods.bootstraplauncher");
-    }
-
-    public boolean isModuleOptionAvailable() {
-        return this.moduleOptionAvailable;
-    }
-
-    /*
-    Find and get a module by its name in the current module layer and the modules that are dynamically loaded.
-     */
-    public Optional<Module> findModule(String name) {
-        return Stream.concat(this.getDefaultModuleLayer().modules().stream(), this.loadedModules.stream()).filter(module -> module.getName().equals(name)).findAny();
-    }
-
-    public boolean addOpens(String moduleName, String packageName, String applyTo) {
-        return this.addModuleOption("addOpens", moduleName, packageName, applyTo);
-    }
-
-    public boolean addOpensToAllUnnamed(String moduleName, String packageName) {
-        return this.addModuleOption("addOpensToAllUnnamed", moduleName, packageName, null);
-    }
-
-    public boolean addExports(String moduleName, String packageName, String applyTo) {
-        return this.addModuleOption("addExports", moduleName, packageName, applyTo);
-    }
-
-    public boolean addExportsToAllUnnamed(String moduleName, String packageName) {
-        return this.addModuleOption("addExportsToAllUnnamed", moduleName, packageName, null);
-    }
-
-    /*
-    Methods that should be used: addExports, addExportsToAllUnnamed, addOpens, addOpensToAllUnnamed
-    This method allows to dynamically add a module option
-     */
-    private boolean addModuleOption(String methodName, String moduleFrom, String packageName, String moduleTo) {
-        System.out.println("Module option: \nmethodName: " + methodName + "\nmoduleFrom: " + moduleFrom + "\npackageName: " + packageName + "\nmoduleTo: " + moduleTo);
         try {
-            Optional<Module> moduleFrom_ = findModule(moduleFrom);
-            Optional<Module> moduleTo_ = findModule(moduleTo);
-            if (!moduleFrom_.isPresent()) return false; //The module hasn't been found, we can't add the module option.
-
-            //The target module has been found
-            if (moduleTo_.isPresent()) {
-                Class.forName("jdk.internal.module.Modules").getMethod(methodName, Module.class, String.class, Module.class).invoke(null, moduleFrom_.get(), packageName, moduleTo_.get());
-            } else if (methodName.endsWith("Unnamed")) {
-                //The target module hasn't been found, the only option is to use allUnnamed methods.
-                Class.forName("jdk.internal.module.Modules").getMethod(methodName, Module.class, String.class).invoke(null, moduleFrom_.get(), packageName);
-            }
-
-            return true;
-        } catch (Exception e) {
+            addOpens(opens);
+            addExports(exports);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        return false;
+
     }
 
-    /*
-    Load only one module dynamically (actually calling loadModules method but with one argument)
-     */
-    public void loadModule(File moduleFile) {
-        this.loadModules(moduleFile);
-    }
+    public static void addExports(String module, String pkg, String target){
+        if(target == null) target = "ALL-UNNAMED";
 
-    /*
-    Load one or multiples module(s) dynamically.
-     */
-    public void loadModules(File... moduleFiles) {
-        for (File f : moduleFiles) {
-            System.out.println("Loading module+ " + f.getName());
+        try {
+            addExports(List.of(module + "/" + pkg + "=" + target));
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
-        ModuleLayer currentModuleLayer = this.getDefaultModuleLayer();
-        final ModuleFinder moduleFinder = ModuleFinder.of(Arrays.stream(moduleFiles).map(File::toPath).toArray(Path[]::new));
-        final Set<String> moduleNames = moduleFinder.findAll().stream().map(moduleRef -> moduleRef.descriptor().name()).collect(Collectors.toSet());
-        final Configuration configuration = currentModuleLayer.configuration().resolveAndBind(moduleFinder, ModuleFinder.of(), moduleNames);
-        final ModuleLayer moduleLayer = currentModuleLayer.defineModulesWithOneLoader(configuration, ClassLoader.getSystemClassLoader());
-        this.loadedModules.addAll(moduleLayer.modules());
-        for (Module m : moduleLayer.modules()) {
-            try {
-                Class.forName("jdk.internal.module.Modules").getMethod("loadModule", String.class).invoke(null, m.getName());
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-                     ClassNotFoundException e) {
-                e.printStackTrace();
+    }
+
+    private static void addExports(List<String> exports) throws Throwable {
+        MethodHandle implAddExportsMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExports", MethodType.methodType(void.class, String.class, Module.class));
+        MethodHandle implAddExportsToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExportsToAllUnnamed", MethodType.methodType(void.class, String.class));
+
+        addExtra(exports, implAddExportsMH, implAddExportsToAllUnnamedMH);
+    }
+
+    public static void addOpens(String module, String pkg, String target){
+        if(target == null) target = "ALL-UNNAMED";
+
+        try {
+            addOpens(List.of(module + "/" + pkg + "=" + target));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void addOpens(List<String> opens) throws Throwable {
+        MethodHandle implAddOpensMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpens", MethodType.methodType(void.class, String.class, Module.class));
+        MethodHandle implAddOpensToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpensToAllUnnamed", MethodType.methodType(void.class, String.class));
+
+        addExtra(opens, implAddOpensMH, implAddOpensToAllUnnamedMH);
+    }
+
+    private static ParserData parseModuleExtra(String extra) {
+        String[] all = extra.split("=", 2);
+        if(all.length < 2) {
+            return null;
+        }
+
+        String[] source = all[0].split("/", 2);
+        if(source.length < 2) {
+            return null;
+        }
+        return new ParserData(source[0], source[1], all[1]);
+    }
+
+    private record ParserData(String module, String packages, String target) {
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == this) return true;
+            if(obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (ParserData) obj;
+            return Objects.equals(this.module, that.module) &&
+                    Objects.equals(this.packages, that.packages) &&
+                    Objects.equals(this.target, that.target);
+        }
+
+        @Override
+        public String toString() {
+            return "ParserData[" +
+                    "module=" + module + ", " +
+                    "packages=" + packages + ", " +
+                    "target=" + target + ']';
+        }
+
+
+    }
+
+
+    private static void addExtra(List<String> extras, MethodHandle implAddExtraMH, MethodHandle implAddExtraToAllUnnamedMH) {
+        extras.forEach(extra -> {
+            ParserData data = parseModuleExtra(extra);
+            if(data != null) {
+                ModuleLayer.boot().findModule(data.module).ifPresent(m -> {
+                    try {
+                        if("ALL-UNNAMED".equals(data.target)) {
+                            implAddExtraToAllUnnamedMH.invokeWithArguments(m, data.packages);
+                            System.out.println("Added extra to all unnamed modules: " + data);
+                        } else {
+                            ModuleLayer.boot().findModule(data.target).ifPresent(tm -> {
+                                try {
+                                    implAddExtraMH.invokeWithArguments(m, data.packages, tm);
+                                    System.out.println("Added extra: " + data);
+                                } catch (Throwable t) {
+                                    throw new RuntimeException(t);
+                                }
+                            });
+                        }
+                    } catch (Throwable t) {
+                        throw new RuntimeException(t);
+                    }
+                });
             }
-        }
+        });
     }
 
     //Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
@@ -281,22 +288,6 @@ public class MohistModuleManager {
                 throw new RuntimeException(throwable);
             }
         }))));
-    }
-
-    /*
-    Get the module layer (calling ModuleLayer.boot)
-     */
-    private ModuleLayer getDefaultModuleLayer() {
-        return ModuleLayer.boot();
-    }
-
-    /*
-    Get the unsafe class instance
-     */
-    public sun.misc.Unsafe getUnsafe() throws IllegalAccessException, NoSuchFieldException {
-        Field f = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-        f.setAccessible(true);
-        return (sun.misc.Unsafe) f.get(null);
     }
 }
 

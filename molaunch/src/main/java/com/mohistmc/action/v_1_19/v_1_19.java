@@ -14,7 +14,7 @@ import java.util.List;
 
 public class v_1_19 implements Version {
 
-    private static List<String> loadedLibsPaths = new ArrayList<>();
+    public static List<String> loadedLibsPaths = new ArrayList<>();
 
     @Override
     public void run() {
@@ -82,13 +82,13 @@ public class v_1_19 implements Version {
             if (minecraft_server.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries")),
+                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
                 if (!mc_unpacked.exists()) {
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only")),
+                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -104,7 +104,7 @@ public class v_1_19 implements Version {
                     System.out.println(i18n.get("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new ArrayList<>(Arrays.asList("--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings")),
+                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -120,7 +120,7 @@ public class v_1_19 implements Version {
             if (!mojmap.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "DOWNLOAD_MOJMAPS", "--version", mcVer, "--side", "server", "--output", mojmap.getAbsolutePath())),
+                        new String[]{"--task", "DOWNLOAD_MOJMAPS", "--version", mcVer, "--side", "server", "--output", mojmap.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -128,7 +128,7 @@ public class v_1_19 implements Version {
             if (!mergedMapping.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right")),
+                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -136,10 +136,10 @@ public class v_1_19 implements Version {
             if (!slim.exists() || !extra.exists()) {
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
+                        new String[]{"--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
+                        new String[]{"--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -147,7 +147,7 @@ public class v_1_19 implements Version {
             if (!srg.exists()) {
                 mute();
                 run("net.minecraftforge.fart.Main",
-                        new ArrayList<>(Arrays.asList("--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix")),
+                        new String[]{"--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -172,7 +172,7 @@ public class v_1_19 implements Version {
                     || !storedMohistMD5.equals(mohistMD5)) {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())),
+                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
                         stringToUrl(new ArrayList<>(Arrays.asList(
                                 libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",

@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
+import static com.mohistmc.util.MohistModuleManager.addExports;
 
 public class MohistMCStart {
 
@@ -49,7 +50,6 @@ public class MohistMCStart {
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
-        DataParser.parseLibrariesClassPath();
 
         MohistConfigUtil.copyMohistConfig();
 
@@ -79,8 +79,7 @@ public class MohistMCStart {
         // make sure gson use this EnumTypeAdapter
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
 
-        if (mainArgs.contains("-noserver"))
-            System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
+        addExports("cpw.mods.securejarhandler", "cpw.mods.niofs.union", "ALL-UNNAMED");
 
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
@@ -89,7 +88,6 @@ public class MohistMCStart {
         }
 
         List<String> forgeArgs = new ArrayList<>();
-        forgeArgs.add("--add-modules ALL-MODULE-PATH");
         for (String arg : DataParser.launchArgs.stream()
                 .filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
             forgeArgs.add(arg.split(" ")[0]);
@@ -97,10 +95,10 @@ public class MohistMCStart {
         }
 
 
-        String[] args_ = Stream.concat(forgeArgs.stream(), Arrays.stream(args)).toArray(String[]::new);
+        String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
         System.out.println(args_);
         var cl = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
-        var method = cl.getMethod("main", String[].class);
+        var method = cl.getDeclaredMethod("main", String[].class);
         method.invoke(null, (Object) args_);
     }
 }
