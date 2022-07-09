@@ -148,7 +148,6 @@ public class v_1_19 implements Version {
                         stringToUrl(loadedLibsPaths));
                 unmute();
                 if (!mc_unpacked.exists()) {
-                    System.out.println(i18n.get("installation.bundler"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only")),
@@ -181,7 +180,6 @@ public class v_1_19 implements Version {
             if (isCorrupted(srg)) srg.delete();
 
             if (!mojmap.exists()) {
-                System.out.println(i18n.get("installation.mojmap"));
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--task", "DOWNLOAD_MOJMAPS", "--version", mcVer, "--side", "server", "--output", mojmap.getAbsolutePath())),
@@ -190,7 +188,6 @@ public class v_1_19 implements Version {
             }
 
             if (!mergedMapping.exists()) {
-                System.out.println(i18n.get("installation.mergedmapping"));
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right")),
@@ -199,7 +196,6 @@ public class v_1_19 implements Version {
             }
 
             if (!slim.exists() || !extra.exists()) {
-                System.out.println(i18n.get("installation.jars"));
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
@@ -211,7 +207,6 @@ public class v_1_19 implements Version {
             }
 
             if (!srg.exists()) {
-                System.out.println(i18n.get("installation.srgjar"));
                 mute();
                 run("net.minecraftforge.fart.Main",
                         new ArrayList<>(Arrays.asList("--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix")),
@@ -237,14 +232,13 @@ public class v_1_19 implements Version {
                     || storedMohistMD5 == null
                     || !storedServerMD5.equals(serverMD5)
                     || !storedMohistMD5.equals(mohistMD5)) {
-                System.out.println(i18n.get("installation.forgejar"));
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())),
                         stringToUrl(new ArrayList<>(Arrays.asList(
                                 libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                libPath + "com/google/guava/guava/25.1-jre/guava-25.1-jre.jar",
+                                libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
                                 libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                                 libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
                                 libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",

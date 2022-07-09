@@ -95,6 +95,7 @@ public class MohistMCStart {
             forgeArgs.add(arg.split(" ")[1]);
         }
 
+        /*
         String[] args_ = Stream.concat(forgeArgs.stream(), Arrays.stream(args)).toArray(String[]::new);
 
         var cl = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
@@ -102,5 +103,7 @@ public class MohistMCStart {
         method.invoke(null, (Object) args_);
 
         System.out.println(args_);
+
+         */
     }
 }

@@ -128,12 +128,17 @@ public abstract class Action {
         System.setOut(origin);
     }
 
-    protected void copyFileFromJar(File file, String pathInJar) throws Exception {
+    protected void copyFileFromJar(File file, String pathInJar) {
         InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
         if(!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is)) || file.length() <= 1) {
             file.getParentFile().mkdirs();
-            file.createNewFile();
-            if(is != null) Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if(is != null) {
+                try {
+                    file.createNewFile();
+                    Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                }
+            }
             else {
                 System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");
                 System.exit(0);
