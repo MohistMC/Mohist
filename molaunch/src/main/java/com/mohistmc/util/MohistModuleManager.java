@@ -90,7 +90,6 @@ public class MohistModuleManager {
         //Just read each lines of launch args
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
-        exports.add("cpw.mods.bootstraplauncher/cpw.mods.bootstraplauncher=ALL-UNNAMED");
 
         for (String arg : args) {
             if (arg.startsWith("-p ")) {
@@ -115,6 +114,12 @@ public class MohistModuleManager {
             addExports(exports);
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+        for (String s : opens) {
+            System.out.println(s);
+        }
+        for (String s : exports) {
+            System.out.println(s);
         }
 
     }

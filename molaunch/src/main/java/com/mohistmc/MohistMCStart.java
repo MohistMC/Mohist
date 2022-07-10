@@ -25,6 +25,8 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
+import cpw.mods.modlauncher.InvalidLauncherSetupException;
+import cpw.mods.modlauncher.Launcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.stream.Stream;
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
 import static com.mohistmc.util.MohistModuleManager.addExports;
+import static com.mohistmc.util.MohistModuleManager.addOpens;
 
 public class MohistMCStart {
 
@@ -78,7 +81,8 @@ public class MohistMCStart {
 
         // make sure gson use this EnumTypeAdapter
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-
+        addOpens("cpw.mods.bootstraplauncher", "cpw.mods.bootstraplauncher", "ALL-UNNAMED");
+        addExports("cpw.mods.bootstraplauncher", "cpw.mods.bootstraplauncher", "ALL-UNNAMED");
         addExports("cpw.mods.securejarhandler", "cpw.mods.niofs.union", "ALL-UNNAMED");
 
         if (!hasAcceptedEULA()) {
@@ -94,11 +98,24 @@ public class MohistMCStart {
             forgeArgs.add(arg.split(" ")[1]);
         }
 
-
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
-        System.out.println(args_);
-        var cl = Class.forName("cpw.mods.bootstraplauncher.BootstrapLauncher");
-        var method = cl.getDeclaredMethod("main", String[].class);
-        method.invoke(null, (Object) args_);
+        System.out.println(Arrays.stream(args_).toList());
+        Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
+        Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
+        //BootstrapLauncher.main(args_);
+        new Runner().runLauncher(args_);
     }
+
+    private static class Runner {
+        private void runLauncher(final String[] result) {
+            try {
+                Launcher.main(result);
+            } catch (InvalidLauncherSetupException e) {
+                System.err.println("The server is missing critical libraries and cannot load. Please run the installer to correct this");
+                System.exit(1);
+            }
+        }
+    }
+
+
 }
