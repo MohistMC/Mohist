@@ -104,6 +104,15 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
+@@ -178,7 +_,7 @@
+             this.f_139603_ = RconThread.m_11615_(this);
+          }
+ 
+-         if (this.m_139669_() > 0L) {
++         if (false && this.m_139669_() > 0L) { // Spigot - disable
+             Thread thread1 = new Thread(new ServerWatchdog(this));
+             thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
+             thread1.setName("Server Watchdog");
 @@ -187,12 +_,13 @@
           }
  
