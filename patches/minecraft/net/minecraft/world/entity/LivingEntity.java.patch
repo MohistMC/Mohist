@@ -163,7 +163,7 @@
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
              })) {
 -               if (!this.f_19853_.f_46443_) {
-+               if (!this.f_19853_.f_46443_ && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent(this, mobeffectinstance))) {
++               if (!this.f_19853_.f_46443_ && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Expired(this, mobeffectinstance))) {
                    iterator.remove();
                    this.m_7285_(mobeffectinstance);
                 }
@@ -195,7 +195,7 @@
           for(flag = false; iterator.hasNext(); flag = true) {
 -            this.m_7285_(iterator.next());
 +            MobEffectInstance effect = iterator.next();
-+            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
++            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
 +            this.m_7285_(effect);
 +            iterator.remove();
 +         }
@@ -213,7 +213,7 @@
 +         boolean flag;
 +         for(flag = false; iterator.hasNext(); flag = true) {
 +            MobEffectInstance effect = iterator.next();
-+            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
++            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
 +            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
 +            if (event.isCancelled()) {
 +               continue;
@@ -243,7 +243,7 @@
           return false;
        } else {
           MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionAddedEvent(this, mobeffectinstance, p_147208_, p_147209_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
@@ -251,7 +251,7 @@
     }
  
     public boolean m_7301_(MobEffectInstance p_21197_) {
-+      net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_21197_);
++      net.minecraftforge.event.entity.living.MobEffectEvent.Applicable event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +      if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
        if (this.m_6336_() == MobType.f_21641_) {
@@ -261,7 +261,7 @@
     }
  
     public boolean m_21195_(MobEffect p_21196_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, p_21196_))) return false;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
 +      MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
 +      if (mobeffectinstance != null) {
 +         this.m_7285_(mobeffectinstance);
@@ -272,7 +272,7 @@
 +   }
 +
 +   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, p_21196_))) return false;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
@@ -626,7 +626,7 @@
     }
  
     public void m_8119_() {
-+      if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
++      if (net.minecraftforge.common.ForgeHooks.onLivingTick(this)) return;
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
@@ -823,7 +823,7 @@
 +      Iterator<MobEffectInstance> itr = this.f_20945_.values().iterator();
 +      while (itr.hasNext()) {
 +         MobEffectInstance effect = itr.next();
-+         if (effect.isCurativeItem(curativeItem) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) {
++         if (effect.isCurativeItem(curativeItem) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) {
 +            this.m_7285_(effect);
 +            itr.remove();
 +            ret = true;

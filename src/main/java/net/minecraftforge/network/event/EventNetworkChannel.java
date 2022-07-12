@@ -25,7 +25,6 @@ import java.util.function.Supplier;
  * @see NetworkRegistry#newEventChannel(ResourceLocation, Supplier, Predicate, Predicate)
  * @see NetworkRegistry.ChannelBuilder#newEventChannel(ResourceLocation, Supplier, Predicate, Predicate)
  */
-
 public class EventNetworkChannel
 {
     private final NetworkInstance instance;

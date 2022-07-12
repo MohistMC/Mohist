@@ -8,14 +8,10 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.*;
-import java.util.Set;
 import net.minecraft.util.Mth;
-
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;

@@ -33,21 +33,19 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -152,8 +_,14 @@
+@@ -152,7 +_,12 @@
  import net.minecraft.world.level.storage.loot.PredicateManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import org.apache.commons.lang3.SystemUtils;
++import net.minecraftforge.event.level.LevelEvent;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.Main;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 +import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
-+import org.spigotmc.SlackActivityAccountant;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-    private static final Logger f_129750_ = LogUtils.getLogger();
 @@ -188,7 +_,7 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
@@ -157,7 +155,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(Level.f_46428_)));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(f_129762_.get(Level.f_46428_)));
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
@@ -169,7 +167,7 @@
 +            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, null, null, null);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(f_129762_.get(resourcekey)));
           }
        }
 -
@@ -222,7 +220,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
              try {
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverlevel2));
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(serverlevel2));
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
@@ -420,7 +418,7 @@
           }
  
           this.f_129754_.m_6180_("tick");
-+         net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(serverlevel, p_129954_);
++         net.minecraftforge.event.ForgeEventFactory.onPreLevelTick(serverlevel, p_129954_);
  
           try {
              serverlevel.m_8793_(p_129954_);
@@ -428,7 +426,7 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
-+         net.minecraftforge.event.ForgeEventFactory.onPostWorldTick(serverlevel, p_129954_);
++         net.minecraftforge.event.ForgeEventFactory.onPostLevelTick(serverlevel, p_129954_);
  
           this.f_129754_.m_7238_();
           this.f_129754_.m_7238_();

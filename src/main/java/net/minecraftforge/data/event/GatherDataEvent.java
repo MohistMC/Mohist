@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.event.lifecycle;
+package net.minecraftforge.data.event;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import java.util.LinkedHashMap;
 import net.minecraft.DetectedVersion;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -17,6 +16,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

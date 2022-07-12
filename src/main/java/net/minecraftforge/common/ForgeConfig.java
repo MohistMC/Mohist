@@ -65,7 +65,6 @@ public class ForgeConfig {
                     .translation("forge.configgui.zombieBabyChance")
                     .worldRestart()
                     .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
-
             fixAdvancementLoading = builder
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
                     .translation("forge.configgui.fixAdvancementLoading")
@@ -110,9 +109,9 @@ public class ForgeConfig {
                     .worldRestart()
                     .define("indexModPackCachesOnThread", false);
 
+
             builder.pop();
         }
-
     }
 
     /**

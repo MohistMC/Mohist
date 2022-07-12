@@ -5,10 +5,10 @@
 
 package net.minecraftforge.common.loot;
 
-import com.mojang.datafixers.Products;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.function.Predicate;
 
+import com.mojang.datafixers.Products;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.BendingTrunkPlacer;
@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A base implementation of a Global Loot Modifier for modders to extend.
- * Takes care of ILootCondition matching and comes with a base serializer
- * implementation that takes care of Forge registry things.
+ * Takes care of ILootCondition matching and comes with the base codec to extend.
  */
 public abstract class LootModifier implements IGlobalLootModifier
 {

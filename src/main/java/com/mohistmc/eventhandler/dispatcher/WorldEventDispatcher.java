@@ -19,7 +19,7 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
@@ -32,9 +32,9 @@ public class WorldEventDispatcher {
 
     //For WorldLoadEvent
     @SubscribeEvent(receiveCanceled = true)
-    public void onWorldLoadEvent(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel handle = (ServerLevel) event.getWorld();
+    public void onWorldLoadEvent(LevelEvent.Load event) {
+        if (event.getLevel() instanceof ServerLevel) {
+            ServerLevel handle = (ServerLevel) event.getLevel();
             CraftWorld craftWorld = handle.getWorld();
             Bukkit.getPluginManager().callEvent(new WorldLoadEvent(craftWorld));
             Bukkit.getPluginManager().callEvent(new WorldInitEvent(craftWorld));
@@ -43,18 +43,18 @@ public class WorldEventDispatcher {
 
     //For WorldSaveEvent
     @SubscribeEvent(receiveCanceled = true)
-    public void onWorldSaveEvent(WorldEvent.Save event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ServerLevel handle = (ServerLevel) event.getWorld();
+    public void onWorldSaveEvent(LevelEvent.Save event) {
+        if (event.getLevel() instanceof ServerLevel) {
+            ServerLevel handle = (ServerLevel) event.getLevel();
             WorldSaveEvent save = new WorldSaveEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(save);
         }
     }
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ServerLevel) {
-            ((CraftServer) Bukkit.getServer()).removeWorld(((ServerLevel) event.getWorld()));
+    public void onWorldUnload(LevelEvent.Unload event) {
+        if (event.getLevel() instanceof ServerLevel) {
+            ((CraftServer) Bukkit.getServer()).removeWorld(((ServerLevel) event.getLevel()));
         }
     }
 }

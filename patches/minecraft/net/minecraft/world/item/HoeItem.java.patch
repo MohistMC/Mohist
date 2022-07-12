@@ -6,7 +6,7 @@
  public class HoeItem extends DiggerItem {
 +   /**
 +    * @deprecated Forge: This map is patched out of vanilla code.
-+    * Listen to {@link net.minecraftforge.event.world.BlockEvent.BlockToolModificationEvent}
++    * Listen to {@link net.minecraftforge.event.level.BlockEvent.BlockToolModificationEvent}
 +    * or override {@link net.minecraftforge.common.extensions.IForgeBlock#getToolModifiedState(BlockState, UseOnContext, net.minecraftforge.common.ToolAction, boolean)}.
 +    */
 +   @Deprecated

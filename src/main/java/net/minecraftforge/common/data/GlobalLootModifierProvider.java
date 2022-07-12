@@ -15,10 +15,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -73,7 +71,6 @@ public abstract class GlobalLootModifierProvider implements DataProvider
         {
             entries.add(new ResourceLocation(modid, name));
             Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
-
             DataProvider.saveStable(cache, json, modifierPath);
         }));
 
@@ -88,7 +85,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      * Passes in the data needed to create the file without any extra objects.
      *
      * @param modifier      The name of the modifier, which will be the file name.
-     * @param serializer    The instance to serialize
+     * @param instance      The instance to serialize
      */
     public <T extends IGlobalLootModifier> void add(String modifier, T instance)
     {

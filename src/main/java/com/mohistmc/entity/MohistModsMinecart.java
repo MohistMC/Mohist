@@ -15,7 +15,7 @@ public class MohistModsMinecart extends CraftMinecart {
 
     public MohistModsMinecart(CraftServer server, AbstractMinecart entity) {
         super(server, entity);
-        this.entityType = EntityType.valueOf(ServerAPI.entityTypeMap.get(ForgeRegistries.ENTITIES.getKey(entity.getType())));
+        this.entityType = EntityType.valueOf(ServerAPI.entityTypeMap.get(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())));
     }
 
     @Override

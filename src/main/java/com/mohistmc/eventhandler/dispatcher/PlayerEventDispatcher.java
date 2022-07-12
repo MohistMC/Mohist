@@ -29,8 +29,8 @@ public class PlayerEventDispatcher {
     //For PlayerAdvancementDoneEvent
     @SubscribeEvent
     public void onAdvancementDone(AdvancementEvent event) {
-        if (event.getPlayer() instanceof ServerPlayer) {
-            ServerPlayer player = (ServerPlayer) event.getPlayer();
+        if (event.getEntity() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) event.getEntity();
             Bukkit.getPluginManager().callEvent(new PlayerAdvancementDoneEvent(player.getBukkitEntity(), event.getAdvancement().bukkit));
         }
     }

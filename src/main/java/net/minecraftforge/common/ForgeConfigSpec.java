@@ -834,7 +834,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return Lists.newArrayList(path);
         }
 
-
         /**
          * Returns the actual value for the configuration setting, throwing if the config has not yet been loaded.
          *
@@ -843,6 +842,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
          *                              not yet been built
          * @throws IllegalStateException if the associated config has not yet been loaded
          */
+        @Override
         public T get()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");

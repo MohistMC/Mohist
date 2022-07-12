@@ -23,6 +23,7 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;

@@ -5,24 +5,18 @@
 
 package net.minecraftforge.common.loot;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +41,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-    
+
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
@@ -81,7 +75,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
         //use layered config to fetch modifier data files (modifiers missing from config are disabled)
         for (ResourceLocation location : finalLocations)
         {
-            Codec<? extends IGlobalLootModifier> codec = ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(location);
+            Codec<? extends IGlobalLootModifier> codec = ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getValue(location);
             if (codec == null)
             {
                 LOGGER.warn("Unknown or unregistered codec for GlobalLootModifier: {}", location);

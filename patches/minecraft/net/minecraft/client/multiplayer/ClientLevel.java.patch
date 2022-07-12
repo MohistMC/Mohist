@@ -8,6 +8,14 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.tags.BlockTags;
+@@ -85,6 +_,7 @@
+ import net.minecraft.world.ticks.LevelTickAccess;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.event.level.LevelEvent;
+ import org.slf4j.Logger;
+ 
+ @OnlyIn(Dist.CLIENT)
 @@ -121,6 +_,8 @@
     private int f_194123_;
     private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
@@ -31,7 +39,7 @@
        this.m_46465_();
        this.m_46466_();
 +      this.gatherCapabilities();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(this));
     }
  
     public void m_194171_(Runnable p_194172_) {
@@ -47,7 +55,7 @@
     }
  
     private void m_104739_(int p_104740_, Entity p_104741_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_104741_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_104741_, this))) return;
        this.m_171642_(p_104740_, Entity.RemovalReason.DISCARDED);
        this.f_171631_.m_157653_(p_104741_);
 +      p_104741_.onAddedToWorld();
@@ -116,7 +124,7 @@
           ClientLevel.this.f_104566_.remove(p_171716_);
 +
 +          p_171716_.onRemovedFromWorld();
-+          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_171716_, ClientLevel.this));
++          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_171716_, ClientLevel.this));
 +
 +         if (p_171716_.isMultipartEntity()) {
 +            for (net.minecraftforge.entity.PartEntity<?> part : p_171716_.getParts()) {

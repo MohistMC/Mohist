@@ -149,7 +149,7 @@ public class ModifiableBiomeInfo
 
             /**
              * {@return Builder for client special effects}
-             *
+             * 
              * @deprecated Use {@link #getSpecialEffects()} as it provides read access. TODO remove this by 1.20
              */
             @Deprecated(forRemoval=true, since="1.19")

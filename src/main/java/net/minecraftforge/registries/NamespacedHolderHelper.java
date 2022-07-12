@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.mojang.serialization.DataResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +22,8 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.mojang.serialization.DataResult;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.util.RandomSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,6 +97,7 @@ class NamespacedHolderHelper<T>
         {
             if (this.holderLookup != null)
                 return DataResult.error("This registry can't create new holders without value (requested key: " + key + ")");
+
             if (this.frozen)
                 return DataResult.error("Registry is already frozen (trying to add key " + key + ")");
 
