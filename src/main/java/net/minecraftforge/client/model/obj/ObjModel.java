@@ -11,6 +11,8 @@ import com.google.common.collect.Sets;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import java.util.Collections;
+import java.util.HashSet;
 import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -67,6 +69,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     };
 
     private final Map<String, ModelGroup> parts = Maps.newHashMap();
+    private final Set<String> rootComponentNames = Collections.unmodifiableSet(parts.keySet());
+    private Set<String> allComponentNames;
 
     private final List<Vector3f> positions = Lists.newArrayList();
     private final List<Vec2> texCoords = Lists.newArrayList();
@@ -360,6 +364,22 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         return combined;
     }
 
+    public Set<String> getRootComponentNames()
+    {
+        return rootComponentNames;
+    }
+
+    @Override
+    public Set<String> getConfigurableComponentNames()
+    {
+        if (allComponentNames != null)
+            return allComponentNames;
+        var names = new HashSet<String>();
+        for (var group : parts.values())
+            group.addNamesRecursively(names);
+        return allComponentNames = Collections.unmodifiableSet(names);
+    }
+
     private Pair<BakedQuad, Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform)
     {
         boolean needsNormalRecalculation = false;
@@ -553,6 +573,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                                  : Stream.of())
                          .collect(Collectors.toSet());
         }
+
+        protected void addNamesRecursively(Set<String> names)
+        {
+            names.add(name());
+        }
     }
 
     public class ModelGroup extends ModelObject
@@ -594,6 +619,14 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             for (ModelObject part : parts.values())
                 combined.addAll(part.getTextures(owner, modelGetter, missingTextureErrors));
             return combined;
+        }
+
+        @Override
+        protected void addNamesRecursively(Set<String> names)
+        {
+            super.addNamesRecursively(names);
+            for (ModelObject object : parts.values())
+                object.addNamesRecursively(names);
         }
     }
 
