@@ -87,6 +87,7 @@ public class MohistModuleManager {
         //Just read each lines of launch args
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
+        opens.add("java.base/java.lang.invoke=ALL-UNNAMED");
         exports.add("cpw.mods.securejarhandler/cpw.mods.niofs.union=ALL-UNNAMED");
         exports.add("cpw.mods.securejarhandler/cpw.mods.jarhandling=ALL-UNNAMED");
 
@@ -111,12 +112,6 @@ public class MohistModuleManager {
             Thread.sleep(500);
         } catch (Throwable e) {
             e.printStackTrace();
-        }
-        for (String s : opens) {
-            System.out.println(s);
-        }
-        for (String s : exports) {
-            System.out.println(s);
         }
 
     }
@@ -200,12 +195,12 @@ public class MohistModuleManager {
                     try {
                         if("ALL-UNNAMED".equals(data.target)) {
                             implAddExtraToAllUnnamedMH.invokeWithArguments(m, data.packages);
-                            System.out.println("Added extra to all unnamed modules: " + data);
+                            // System.out.println("Added extra to all unnamed modules: " + data);
                         } else {
                             ModuleLayer.boot().findModule(data.target).ifPresent(tm -> {
                                 try {
                                     implAddExtraMH.invokeWithArguments(m, data.packages, tm);
-                                    System.out.println("Added extra: " + data);
+                                    // System.out.println("Added extra: " + data);
                                 } catch (Throwable t) {
                                     throw new RuntimeException(t);
                                 }
@@ -221,7 +216,6 @@ public class MohistModuleManager {
 
     //Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
     public void loadModules(String modulePath) throws Throwable {
-        System.out.println(modulePath);
         // Find all extra modules
         ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(MohistModuleManager::addToPath).toArray(Path[]::new));
         MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));

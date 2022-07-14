@@ -64,20 +64,19 @@ public class MohistMCStart {
                     "                                                    \n" + "\n" +
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
 
+
         if (MohistConfigUtil.bMohist("check_libraries", "true")) {
             DefaultLibraries.run();
+            new v_1_19().run();
         }
         CustomLibraries.loadCustomLibs();
-        new v_1_19().run();
 
-        System.out.println("Setting launch args");
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
         }
         new MohistModuleManager(DataParser.launchArgs);
-        System.out.println("Done");
 
 
         // make sure gson use this EnumTypeAdapter
@@ -90,7 +89,6 @@ public class MohistMCStart {
         }
 
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
-        System.out.println(Arrays.stream(args_).toList());
         BootstrapLauncher.main(args_);
     }
 
