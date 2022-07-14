@@ -1,5 +1,24 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
+@@ -4,7 +_,9 @@
+ import com.mojang.logging.LogUtils;
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.OutputStream;
++import java.nio.charset.StandardCharsets;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.util.Objects;
+@@ -32,7 +_,7 @@
+          InputStream inputstream = Files.newInputStream(p_139840_);
+ 
+          try {
+-            properties.load(inputstream);
++            properties.load(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
+          } catch (Throwable throwable1) {
+             if (inputstream != null) {
+                try {
 @@ -60,7 +_,7 @@
           OutputStream outputstream = Files.newOutputStream(p_139877_);
  
