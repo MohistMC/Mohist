@@ -225,12 +225,6 @@ def sharedDeps = {
     installer 'org.lwjgl:lwjgl-opengl:3.2.2'
     installer 'org.lwjgl:lwjgl-stb:3.2.2'
     */
-
-    autolibraries BIN_PATCHER
-    autolibraries SPECIAL_SOURCE
-    autolibraries INSTALLER_TOOLS
-    autolibraries JAR_SPLITTER
-    autolibraries FART
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -824,9 +818,6 @@ project(':forge') {
         }
         moduleonly
         api.extendsFrom(installer)
-        autolibraries
-        autolibraries.extendsFrom(installer)
-        autolibraries.extendsFrom(moduleonly)
     }
 
     dependencies {
