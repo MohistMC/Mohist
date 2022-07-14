@@ -22,18 +22,16 @@ import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
-import cpw.mods.modlauncher.InvalidLauncherSetupException;
-import cpw.mods.modlauncher.Launcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
@@ -68,22 +66,22 @@ public class MohistMCStart {
 
         if (MohistConfigUtil.bMohist("check_libraries", "true")) {
             DefaultLibraries.run();
-            new v_1_19().run();
         }
         CustomLibraries.loadCustomLibs();
+        new v_1_19().run();
 
-        //The server can be run with Java 16+
-        if (Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
-            System.out.println("Setting launch args");
-            new MohistModuleManager(DataParser.launchArgs);
-            System.out.println("Done");
+        System.out.println("Setting launch args");
+        List<String> forgeArgs = new ArrayList<>();
+        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
+            forgeArgs.add(arg.split(" ")[0]);
+            forgeArgs.add(arg.split(" ")[1]);
         }
+        new MohistModuleManager(DataParser.launchArgs);
+        System.out.println("Done");
+
 
         // make sure gson use this EnumTypeAdapter
-        Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-        addOpens("cpw.mods.bootstraplauncher", "cpw.mods.bootstraplauncher", "ALL-UNNAMED");
-        addExports("cpw.mods.bootstraplauncher", "cpw.mods.bootstraplauncher", "ALL-UNNAMED");
-        addExports("cpw.mods.securejarhandler", "cpw.mods.niofs.union", "ALL-UNNAMED");
+        // Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
 
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
@@ -91,30 +89,9 @@ public class MohistMCStart {
             writeInfos();
         }
 
-        List<String> forgeArgs = new ArrayList<>();
-        for (String arg : DataParser.launchArgs.stream()
-                .filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
-            forgeArgs.add(arg.split(" ")[0]);
-            forgeArgs.add(arg.split(" ")[1]);
-        }
-
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
         System.out.println(Arrays.stream(args_).toList());
-        Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
-        Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
-        //BootstrapLauncher.main(args_);
-        new Runner().runLauncher(args_);
-    }
-
-    private static class Runner {
-        private void runLauncher(final String[] result) {
-            try {
-                Launcher.main(result);
-            } catch (InvalidLauncherSetupException e) {
-                System.err.println("The server is missing critical libraries and cannot load. Please run the installer to correct this");
-                System.exit(1);
-            }
-        }
+        BootstrapLauncher.main(args_);
     }
 
 

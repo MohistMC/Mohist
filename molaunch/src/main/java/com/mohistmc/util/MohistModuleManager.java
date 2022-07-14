@@ -53,18 +53,15 @@ import java.util.stream.Collectors;
 public class MohistModuleManager {
 
     private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
+    private static String MODULE_PATH = null;
 
     public MohistModuleManager(List<String> args) {
-        try {
-            this.applyLaunchArgs(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.applyLaunchArgs(args);
     }
 
     public static void addToPath(Path path) {
         try {
-            ClassLoader loader = ClassLoader.getPlatformClassLoader();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Field ucpField;
             try {
                 ucpField = loader.getClass().getDeclaredField("ucp");
@@ -90,28 +87,28 @@ public class MohistModuleManager {
         //Just read each lines of launch args
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
+        exports.add("cpw.mods.securejarhandler/cpw.mods.niofs.union=ALL-UNNAMED");
+        exports.add("cpw.mods.securejarhandler/cpw.mods.jarhandling=ALL-UNNAMED");
 
-        for (String arg : args) {
+        args.parallelStream().parallel().forEach(arg -> {
             if (arg.startsWith("-p ")) {
-                try {
-                    loadModules(arg.substring(2).trim());
-                } catch (Throwable e) {
-                }
+                MODULE_PATH = arg.substring(2).trim();
             } else if (arg.startsWith("--add-opens")) {
                 opens.add(arg.substring("--add-opens ".length()).trim());
             } else if (arg.startsWith("--add-exports")) {
                 exports.add(arg.substring("--add-exports ".length()).trim());
             } else if (arg.startsWith("-D")) {
-                String[] params = arg.split("=");
-                if (params.length == 2) {
-                    System.setProperty(params[0].replace("-D", ""), params[1]);
-                }
+                String[] params = arg.substring(2).split("=", 2);
+                System.setProperty(params[0], params[1]);
             }
-        }
+        });
 
         try {
+            loadModules(MODULE_PATH);
+            Thread.sleep(500);
             addOpens(opens);
             addExports(exports);
+            Thread.sleep(500);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -233,7 +230,7 @@ public class MohistModuleManager {
         Configuration config = Configuration.resolveAndBind(finder, List.of(ModuleLayer.boot().configuration()), finder, finder.findAll().stream().peek(mref -> {
             try {
                 // Load all extra modules in system class loader (unnamed modules for now)
-                loadModuleMH.invokeWithArguments(ClassLoader.getSystemClassLoader(), mref);
+                loadModuleMH.invokeWithArguments(Thread.currentThread().getContextClassLoader(), mref);
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);
             }
@@ -274,7 +271,7 @@ public class MohistModuleManager {
         IMPL_LOOKUP.findSetter(Configuration.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(nameToModuleMap));
 
         // Define all extra modules and add all of the new config "nameToModule" to boot module layer config
-        ((Map<String, Module>) IMPL_LOOKUP.findGetter(ModuleLayer.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot())).putAll((Map<String, Module>) IMPL_LOOKUP.findStatic(Module.class, "defineModules", MethodType.methodType(Map.class, Configuration.class, Function.class, ModuleLayer.class)).invokeWithArguments(ModuleLayer.boot().configuration(), (Function<String, ClassLoader>) name -> ClassLoader.getSystemClassLoader(), ModuleLayer.boot()));
+        ((Map<String, Module>) IMPL_LOOKUP.findGetter(ModuleLayer.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot())).putAll((Map<String, Module>) IMPL_LOOKUP.findStatic(Module.class, "defineModules", MethodType.methodType(Map.class, Configuration.class, Function.class, ModuleLayer.class)).invokeWithArguments(ModuleLayer.boot().configuration(), (Function<String, ClassLoader>) name -> Thread.currentThread().getContextClassLoader(), ModuleLayer.boot()));
 
         // Add all of resolved modules
         modulesSet.addAll(oldBootModules);
