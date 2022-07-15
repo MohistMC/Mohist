@@ -29,12 +29,9 @@ import com.mohistmc.util.i18n.i18n;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -69,8 +66,8 @@ public class DefaultLibraries {
             System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
-                if(lib.getName().endsWith(".jar")) {
-                    new JarLoader().loadJar(lib);
+                if (lib.getName().endsWith(".jar")) {
+                    new JarLoader().loadJar(lib.toPath());
                     addToPath(lib.toPath());
                 }
                 currentSize.addAndGet(lib.length());

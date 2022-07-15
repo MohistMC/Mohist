@@ -18,49 +18,50 @@
 
 package com.mohistmc.util;
 
-import com.mohistmc.util.i18n.i18n;
-import java.io.File;
 import java.lang.instrument.Instrumentation;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.jar.JarFile;
+import java.nio.file.Path;
+import java.security.AccessControlContext;
 
 public class JarLoader {
-
-    private static Instrumentation inst = null;
 
     public JarLoader() {
     }
 
     // The JRE will call method before launching your main()
     public static void agentmain(final String a, final Instrumentation inst) {
-        JarLoader.inst = inst;
     }
 
     // Don't forget to specify -javaagent:<mohist jar> on Java 9+,
     // if you load main Mohist jar from -cp rather than direct -jar
     public static void premain(String agentArgs, Instrumentation inst) {
-        JarLoader.inst = inst;
     }
 
-    public void loadJar(File path) throws Exception {
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (!(cl instanceof URLClassLoader)) {
-            // If Java 9 or higher use Instrumentation
-            //System.out.println(path);
-            if (inst == null) {
-                System.out.println(i18n.get("jarloader.classpath1"));
-                System.out.println(i18n.get("jarloader.classpath2"));
-                System.exit(1);
+    public void loadJar(Path path) {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Field ucpField;
+            try {
+                ucpField = loader.getClass().getDeclaredField("ucp");
+            } catch (NoSuchFieldException e) {
+                ucpField = loader.getClass().getSuperclass().getDeclaredField("ucp");
             }
-            inst.appendToSystemClassLoaderSearch(new JarFile(path));
-        } else {
-            // If Java 8 or below fallback to old method
-            Method m = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            m.setAccessible(true);
-            m.invoke((URLClassLoader) cl, path.toURI().toURL());
+            long offset = Unsafe.objectFieldOffset(ucpField);
+            Object ucp = Unsafe.getObject(loader, offset);
+            if (ucp == null) {
+                var cl = Class.forName("jdk.internal.loader.URLClassPath");
+                var handle = Unsafe.lookup().findConstructor(cl, MethodType.methodType(void.class, URL[].class, AccessControlContext.class));
+                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
+                Unsafe.putObjectVolatile(loader, offset, ucp);
+            }
+            Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
+            Unsafe.lookup().unreflect(method).invoke(ucp, path.toUri().toURL());
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>" + path);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
-        System.out.println(path);
     }
 }

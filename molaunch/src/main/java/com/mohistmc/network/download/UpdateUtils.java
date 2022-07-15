@@ -18,7 +18,6 @@
 
 package com.mohistmc.network.download;
 
-import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
 import java.io.File;
@@ -30,7 +29,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,17 +71,6 @@ public class UpdateUtils {
             throw new Exception("md5");
         }
         System.out.println(i18n.get("download.file.ok", f.getName()));
-    }
-
-    public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
-        System.out.println(i18n.get("jarfile.restart"));
-        if (cmd.stream().anyMatch(s -> s.contains("-Xms")))
-            System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(JarTool.getJarDir());
-        pb.inheritIO().start().waitFor();
-        Thread.sleep(2000);
-        if (shutdown) System.exit(0);
     }
 
     public static String getSize(long size) {

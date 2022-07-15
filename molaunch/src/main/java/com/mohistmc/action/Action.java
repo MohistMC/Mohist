@@ -20,7 +20,6 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.DataParser;
-import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import java.io.BufferedOutputStream;
@@ -90,23 +89,22 @@ public abstract class Action {
         this.minecraft_server = new File(libPath + "minecraft_server." + mcVer + ".jar");
     }
 
-    protected void run(String mainClass, String[] args,  List<URL> classPath) throws Exception {
-        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, new Object[] { args });
-    }
-
-    private ClassLoader getParentClassloader() {
+    protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
         try {
-            return (ClassLoader) ClassLoader.class.getDeclaredMethod("getPlatformClassLoader").invoke(null);
-        } catch (Exception e) {
-            return null;
+            Class.forName(mainClass);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found: " + e.getMessage());
         }
+        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
+        Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
+        loader.clearAssertionStatus();
+        loader.close();
     }
 
     protected List<URL> stringToUrl(List<String> strs) throws Exception {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
-            new JarLoader().loadJar(file);
             temp.add(file.toURI().toURL());
         }
         return temp;

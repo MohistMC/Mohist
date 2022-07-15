@@ -27,16 +27,14 @@ import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
-import static com.mohistmc.util.MohistModuleManager.addExports;
-import static com.mohistmc.util.MohistModuleManager.addOpens;
 
 public class MohistMCStart {
 
