@@ -9,11 +9,15 @@ apply plugin: 'org.javamodularity.moduleplugin'
 repositories {
     mavenCentral()
     maven { url 'https://maven.mohistmc.com/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
-
 dependencies {
     implementation "com.mohistmc.yaml:Yaml:0.1"
+    implementation "cpw.mods:securejarhandler:1.0.3"
+    implementation "com.google.code.gson:gson:2.8.7"
+    implementation 'dev.vankka:dependencydownload-runtime:1.2.2-SNAPSHOT'
+    implementation 'dev.vankka:dependencydownload-common:1.2.1'
 }

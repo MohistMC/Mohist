@@ -1362,13 +1362,15 @@ project(':forge') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.18.1-" + JenkinsNumber.info()
+        archiveVersion = "1.18.2-" + JenkinsNumber.info()
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
                 [
                         'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
-                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+                        "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar",
+                        "libraries/cpw/mods/bootstraplauncher/1.0.0/bootstraplauncher-1.0.0.jar",
+                        "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
                 ]
         def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
         if (rootProject.downloadServerRaw.dest.exists()) {
@@ -1395,7 +1397,9 @@ project(':forge') {
             MANIFESTS.each { pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                            'Main-Class': 'com.mohistmc.server.MohistMCStart',
+                            'Premain-Class': 'com.mohistmc.util.JarLoader',
+                            'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
+                            'Main-Class': 'com.mohistmc.MohistMCStart',
                             'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
                     ])
                 } else {
@@ -1420,6 +1424,9 @@ project(':forge') {
         }
         from(project(':javafmllanguage').tasks.jar.outputs) {
             rename { 'data/javafmllanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
+        }
+        from(project(':lowcodelanguage').tasks.jar.outputs) {
+            rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
         from(project(':mclanguage').tasks.jar.outputs) {
             rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
