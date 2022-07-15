@@ -428,15 +428,23 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, cause, vanillaEvent, position));
     }
 
+    @Deprecated
     @Nullable
     public static Component onServerChatEvent(ServerGamePacketListenerImpl net, String raw, Component comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
+        var event = onServerChatEvent(net, raw, comp, null, null);
+        return event == null ? null : event.getComponent();
+    }
+
+    @Nullable
+    public static ServerChatEvent onServerChatEvent(ServerGamePacketListenerImpl net, String raw, Component comp, @Nullable String filtered, @Nullable Component filteredComp)
+    {
+        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp, filtered, filteredComp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
         }
-        return event.getComponent();
+        return event;
     }
 
 

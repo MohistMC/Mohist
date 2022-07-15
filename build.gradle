@@ -38,7 +38,7 @@ ext {
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
     MCP_VERSION = '20220404.173914'
-    SPI_VERSION = '4.0.10'
+    SPI_VERSION = '4.0.15-4.x'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
@@ -48,10 +48,11 @@ ext {
     ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
+    JARJAR_VERSION = '0.2.26'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.1.51'
-    FORGE_VERSION = '40.1.51'
+    VERSION = '1.18.2-40.1.60'
+    FORGE_VERSION = '40.1.60'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
@@ -210,6 +211,7 @@ def sharedDeps = {
     installer 'org.jline:jline-terminal:3.12.1' //Dep of TerminaalConsoleeAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
+    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
 
     // bukkit
     //installer 'commons-lang:commons-lang:2.6'
