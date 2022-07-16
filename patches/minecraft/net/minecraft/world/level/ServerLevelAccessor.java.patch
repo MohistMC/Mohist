@@ -14,7 +14,7 @@
     }
 +
 +   default void addFreshEntityWithPassengers(Entity p_47206_, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      p_47206_.m_142428_().forEach(this::m_7967_);
++      p_47206_.m_142428_().forEach(p_46964_ -> addFreshEntity(p_46964_, spawnReason));
 +   }
 +
 +   @Override

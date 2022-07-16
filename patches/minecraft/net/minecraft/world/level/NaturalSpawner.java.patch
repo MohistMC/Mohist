@@ -75,22 +75,23 @@
              m_47045_(mobcategory, p_47030_, p_47031_, p_47032_::m_47127_, p_47032_::m_47131_);
           }
        }
-@@ -179,13 +_,18 @@
+@@ -179,13 +_,21 @@
                          }
  
                          mob.m_7678_(d0, (double)i, d1, p_47040_.f_46441_.nextFloat() * 360.0F, 0.0F);
 -                        if (m_46991_(p_47040_, mob, d2)) {
--                           spawngroupdata = mob.m_6518_(p_47040_, p_47040_.m_6436_(mob.m_142538_()), MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
--                           ++j;
--                           ++l1;
--                           p_47040_.m_47205_(mob);
--                           p_47044_.m_47100_(mob, p_47041_);
--                           if (j >= mob.m_5792_()) {
 +                        int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mob, p_47040_, d0, i, d1, null, MobSpawnType.NATURAL);
 +                        if (canSpawn != -1 && (canSpawn == 1 || m_46991_(p_47040_, mob, d2))) {
-+                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor) p_47040_, (float)d0, (float)i, (float)d1, null, MobSpawnType.NATURAL))
-+                              // CraftBukkit start
-+                            p_47040_.addFreshEntityWithPassengers(mob, CreatureSpawnEvent.SpawnReason.NATURAL);
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor) p_47040_, (float) d0, (float) i, (float) d1, null, MobSpawnType.NATURAL))
+                            spawngroupdata = mob.m_6518_(p_47040_, p_47040_.m_6436_(mob.m_142538_()), MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
+-                           ++j;
+-                           ++l1;
++                           // CraftBukkit start
++                           p_47040_.addFreshSpawnReason = CreatureSpawnEvent.SpawnReason.NATURAL;
+                            p_47040_.m_47205_(mob);
+-                           p_47044_.m_47100_(mob, p_47041_);
+-                           if (j >= mob.m_5792_()) {
++                           p_47040_.resetAddFreshSpawnReason();
 +                           if (!mob.m_146910_()) {
 +                              ++j;
 +                              ++k1;

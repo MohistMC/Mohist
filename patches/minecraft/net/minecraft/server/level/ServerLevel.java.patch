@@ -156,13 +156,19 @@
        }
     }
  
-@@ -740,15 +_,36 @@
+@@ -739,16 +_,42 @@
+       return list.isEmpty() ? null : list.get(this.f_46441_.nextInt(list.size()));
     }
  
++
++   public CreatureSpawnEvent.SpawnReason addFreshSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT;
++   public void resetAddFreshSpawnReason() {
++      addFreshSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT;
++   }
     public boolean m_7967_(Entity p_8837_) {
 -      return this.m_8872_(p_8837_);
 +      // CraftBukkit start
-+      return this.addFreshEntity(p_8837_, CreatureSpawnEvent.SpawnReason.DEFAULT);
++      return this.addFreshEntity(p_8837_, addFreshSpawnReason);
 +   }
 +
 +   public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
