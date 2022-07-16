@@ -58,12 +58,14 @@
              }
           }
  
-@@ -128,14 +_,14 @@
+@@ -128,14 +_,18 @@
        p_53450_.m_186460_(p_53451_, this, m_53468_(p_53450_.f_46441_));
        if (p_53450_.m_46469_().m_46207_(GameRules.f_46131_)) {
           if (!p_53449_.m_60710_(p_53450_, p_53451_)) {
 -            p_53450_.m_7471_(p_53451_, false);
-+            fireExtinguished(p_53450_, p_53451_); // CraftBukkit - invalid place location
++            if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_53450_, p_53451_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++               p_53450_.m_7471_(p_53451_, false);
++            }
           }
  
           BlockState blockstate = p_53450_.m_8055_(p_53451_.m_7495_());
@@ -72,25 +74,34 @@
           int i = p_53449_.m_61143_(f_53408_);
           if (!flag && p_53450_.m_46471_() && this.m_53428_(p_53450_, p_53451_) && p_53452_.nextFloat() < 0.2F + (float)i * 0.03F) {
 -            p_53450_.m_7471_(p_53451_, false);
-+            fireExtinguished(p_53450_, p_53451_); // CraftBukkit - extinguished by rain
++            if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_53450_, p_53451_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++               p_53450_.m_7471_(p_53451_, false);
++            }
           } else {
              int j = Math.min(15, i + p_53452_.nextInt(3) / 2);
              if (i != j) {
-@@ -147,26 +_,26 @@
+@@ -147,26 +_,30 @@
                 if (!this.m_53485_(p_53450_, p_53451_)) {
                    BlockPos blockpos = p_53451_.m_7495_();
                    if (!p_53450_.m_8055_(blockpos).m_60783_(p_53450_, blockpos, Direction.UP) || i > 3) {
--                     p_53450_.m_7471_(p_53451_, false);
-+                     fireExtinguished(p_53450_, p_53451_); // CraftBukkit
++                     if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_53450_, p_53451_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                        p_53450_.m_7471_(p_53451_, false);
++                     }
++                  }
++
++                  return;
++               }
++
++               if (i == 15 && p_53452_.nextInt(4) == 0 && !this.canCatchFire(p_53450_, p_53451_.m_7495_(), Direction.UP)) {
++                  if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callBlockFadeEvent(p_53450_, p_53451_, Blocks.f_50016_.m_49966_()).isCancelled()) {
+                      p_53450_.m_7471_(p_53451_, false);
                    }
- 
-                   return;
-                }
- 
+-
+-                  return;
+-               }
+-
 -               if (i == 15 && p_53452_.nextInt(4) == 0 && !this.m_7599_(p_53450_.m_8055_(p_53451_.m_7495_()))) {
 -                  p_53450_.m_7471_(p_53451_, false);
-+               if (i == 15 && p_53452_.nextInt(4) == 0 && !this.canCatchFire(p_53450_, p_53451_.m_7495_(), Direction.UP)) {
-+                  fireExtinguished(p_53450_, p_53451_); // CraftBukkit
                    return;
                 }
              }
