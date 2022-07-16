@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Barrel;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.block.data.Bisected;
@@ -82,6 +83,7 @@ import org.bukkit.block.data.type.Scaffolding;
 import org.bukkit.block.data.type.SculkCatalyst;
 import org.bukkit.block.data.type.SculkSensor;
 import org.bukkit.block.data.type.SculkShrieker;
+import org.bukkit.block.data.type.SculkVein;
 import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.Slab;
@@ -890,9 +892,9 @@ public enum Material implements Keyed {
     NETHER_BRICK_STAIRS(12085, Stairs.class),
     SCULK(17870),
     /**
-     * BlockData: {@link Waterlogged}
+     * BlockData: {@link SculkVein}
      */
-    SCULK_VEIN(11615, Waterlogged.class),
+    SCULK_VEIN(11615, SculkVein.class),
     /**
      * BlockData: {@link SculkCatalyst}
      */
@@ -2543,9 +2545,9 @@ public enum Material implements Keyed {
      */
     COMPOSTER(31247, Levelled.class),
     /**
-     * BlockData: {@link Directional}
+     * BlockData: {@link Barrel}
      */
-    BARREL(22396, Directional.class),
+    BARREL(22396, Barrel.class),
     /**
      * BlockData: {@link Furnace}
      */

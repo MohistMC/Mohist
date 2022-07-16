@@ -10,22 +10,28 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateHolder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockSupport;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R1.CraftSoundGroup;
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlockSupport;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
 
 public class CraftBlockData implements BlockData {
@@ -539,5 +545,32 @@ public class CraftBlockData implements BlockData {
     @Override
     public SoundGroup getSoundGroup() {
         return CraftSoundGroup.getSoundGroup(state.getSoundType());
+    }
+
+    @Override
+    public boolean isSupported(org.bukkit.block.Block block) {
+        Preconditions.checkArgument(block != null, "block must not be null");
+
+        CraftBlock craftBlock = (CraftBlock) block;
+        return state.canSurvive(craftBlock.getCraftWorld().getHandle(), craftBlock.getPosition());
+    }
+
+    @Override
+    public boolean isSupported(Location location) {
+        Preconditions.checkArgument(location != null, "location must not be null");
+
+        CraftWorld world = (CraftWorld) location.getWorld();
+        Preconditions.checkArgument(world != null, "location must not have a null world");
+
+        BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return state.canSurvive(world.getHandle(), position);
+    }
+
+    @Override
+    public boolean isFaceSturdy(BlockFace face, BlockSupport support) {
+        Preconditions.checkArgument(face != null, "face must not be null");
+        Preconditions.checkArgument(support != null, "support must not be null");
+
+        return state.isFaceSturdy(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CraftBlock.blockFaceToNotch(face), CraftBlockSupport.toNMS(support));
     }
 }
