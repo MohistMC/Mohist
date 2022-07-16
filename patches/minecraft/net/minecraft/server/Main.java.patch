@@ -140,7 +140,7 @@
                    PrimaryLevelData primaryleveldata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
                    return Pair.of(primaryleveldata, registryaccess$writable.m_203557_());
                 }
-@@ -181,22 +_,44 @@
+@@ -181,22 +_,37 @@
           }
  
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
@@ -150,6 +150,10 @@
 -            dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
 -            dedicatedserver1.m_129975_(optionset.has(optionspec2));
 -            dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
+-            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-               dedicatedserver1.m_139667_();
+-            }
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
@@ -158,23 +162,13 @@
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(optionset, config.get(), ops.get(),p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               // Mohist start - fix mixin
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               MinecraftServer.options = optionset;
++               MinecraftServer.datapackconfiguration = config.get();
++               MinecraftServer.registryreadops = ops.get();
++               // Mohist end
 +            }
-+            /*
-+            dedicatedserver1.setSingleplayerName(optionset.valueOf(optionspec8));
-+            dedicatedserver1.setPort(optionset.valueOf(optionspec11));
-+            dedicatedserver1.setDemo(optionset.has(optionspec2));
-+            dedicatedserver1.setId(optionset.valueOf(optionspec12));
-+            */
-             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
--            if (flag1 && !GraphicsEnvironment.isHeadless()) {
--               dedicatedserver1.m_139667_();
--            }
-+			dedicatedserver1.options = optionset;
-+            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
-+               // dedicatedserver1.showGui();
-+            }
-+
 +            if (optionset.has("port")) {
 +               int port = (Integer) optionset.valueOf("port");
 +               if (port > 0) {

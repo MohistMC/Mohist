@@ -41,17 +41,6 @@
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
     static final Logger f_139598_ = LogUtils.getLogger();
-@@ -78,8 +_,8 @@
-    @Nullable
-    private final Component f_142863_;
- 
--   public DedicatedServer(Thread p_203713_, LevelStorageSource.LevelStorageAccess p_203714_, PackRepository p_203715_, WorldStem p_203716_, DedicatedServerSettings p_203717_, DataFixer p_203718_, MinecraftSessionService p_203719_, GameProfileRepository p_203720_, GameProfileCache p_203721_, ChunkProgressListenerFactory p_203722_) {
--      super(p_203713_, p_203714_, p_203715_, p_203716_, Proxy.NO_PROXY, p_203718_, p_203719_, p_203720_, p_203721_, p_203722_);
-+   public DedicatedServer(joptsimple.OptionSet p_139607_, DataPackConfig p_139608_, DynamicOps<Tag> registryreadops, Thread p_203713_, LevelStorageSource.LevelStorageAccess p_203714_, PackRepository p_203715_, WorldStem p_203716_, DedicatedServerSettings p_203717_, DataFixer p_203718_, MinecraftSessionService p_203719_, GameProfileRepository p_203720_, GameProfileCache p_203721_, ChunkProgressListenerFactory p_203722_) {
-+      super(p_139607_, p_139608_, registryreadops, p_203713_, p_203714_, p_203715_, p_203716_, Proxy.NO_PROXY, p_203718_, p_203719_, p_203720_, p_203721_, p_203722_);
-       this.f_139604_ = p_203717_;
-       this.f_139602_ = new RconConsoleSource(this);
-       this.f_139606_ = TextFilterClient.m_143736_(p_203717_.m_139777_().f_139724_);
 @@ -89,8 +_,16 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {

@@ -84,10 +84,10 @@
     private volatile boolean f_195494_;
  
 +   // CraftBukkit start
-+   public final DataPackConfig datapackconfiguration;
-+   public final DynamicOps<Tag> registryreadops;
++   public static DataPackConfig datapackconfiguration;
++   public static DynamicOps<Tag> registryreadops;
 +   public org.bukkit.craftbukkit.v1_18_R2.CraftServer server;
-+   public OptionSet options;
++   public static OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
 +   public ConsoleReader reader;
@@ -112,24 +112,12 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -273,7 +_,7 @@
-       return s;
-    }
- 
--   public MinecraftServer(Thread p_206546_, LevelStorageSource.LevelStorageAccess p_206547_, PackRepository p_206548_, WorldStem p_206549_, Proxy p_206550_, DataFixer p_206551_, @Nullable MinecraftSessionService p_206552_, @Nullable GameProfileRepository p_206553_, @Nullable GameProfileCache p_206554_, ChunkProgressListenerFactory p_206555_) {
-+   public MinecraftServer(OptionSet options, DataPackConfig datapackconfiguration, DynamicOps<Tag> registryreadops, Thread p_206546_, LevelStorageSource.LevelStorageAccess p_206547_, PackRepository p_206548_, WorldStem p_206549_, Proxy p_206550_, DataFixer p_206551_, @Nullable MinecraftSessionService p_206552_, @Nullable GameProfileRepository p_206553_, @Nullable GameProfileCache p_206554_, ChunkProgressListenerFactory p_206555_) {
-       super("Server");
-       this.f_129746_ = p_206549_.f_206894_();
-       this.f_129749_ = p_206549_.f_206895_();
-@@ -296,7 +_,36 @@
+@@ -296,7 +_,33 @@
        this.f_129741_ = new StructureManager(p_206549_.f_206892_(), p_206547_, p_206551_);
        this.f_129725_ = p_206546_;
        this.f_129738_ = Util.m_183991_();
 +      // CraftBukkit start
-+      this.options = options;
-+      this.datapackconfiguration = datapackconfiguration;
-+      this.registryreadops = registryreadops;
-+      this.vanillaCommandDispatcher = p_206549_.f_206893_().f_206847_; // CraftBukkit
++      this.vanillaCommandDispatcher = p_206549_.f_206893_().f_206847_;
 +
 +      // Try to see if we're actually running in a terminal, disable jline if not
 +      if (System.console() == null && System.getProperty("jline.terminal") == null) {
