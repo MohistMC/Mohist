@@ -76,10 +76,6 @@ public class MohistMCStart {
         }
         new MohistModuleManager(DataParser.launchArgs);
 
-
-        // make sure gson use this EnumTypeAdapter
-        // Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
@@ -89,6 +85,4 @@ public class MohistMCStart {
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
         BootstrapLauncher.main(args_);
     }
-
-
 }

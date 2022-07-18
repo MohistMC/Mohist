@@ -20,6 +20,7 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.DataParser;
+import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import java.io.BufferedOutputStream;
@@ -94,6 +95,7 @@ public abstract class Action {
             Class.forName(mainClass);
         } catch (ClassNotFoundException e) {
             System.out.println("Class not found: " + e.getMessage());
+            return;
         }
         URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
         Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
@@ -105,6 +107,7 @@ public abstract class Action {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
+            new JarLoader().loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
         return temp;

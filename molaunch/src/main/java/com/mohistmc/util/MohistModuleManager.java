@@ -279,8 +279,6 @@ public class MohistModuleManager {
                     "packages=" + packages + ", " +
                     "target=" + target + ']';
         }
-
-
     }
 }
 
