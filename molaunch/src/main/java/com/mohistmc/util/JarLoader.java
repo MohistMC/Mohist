@@ -59,7 +59,6 @@ public class JarLoader {
             }
             Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
             Unsafe.lookup().unreflect(method).invoke(ucp, path.toUri().toURL());
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>" + path);
         } catch (Throwable t) {
             t.printStackTrace();
         }

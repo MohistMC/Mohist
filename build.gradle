@@ -215,9 +215,7 @@ def sharedDeps = {
     // spigot
     installer 'net.md-5:bungeecord-chat:1.16-R0.4'
 
-    implementation ('com.mohistmc.yaml:yaml:0.2'){
-        exclude group: 'org.yaml', module: 'snakeyaml'
-    }
+    installer 'com.mohistmc.yaml:yaml:0.2'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
