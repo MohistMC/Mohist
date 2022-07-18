@@ -68,13 +68,11 @@ public class MohistMCStart {
 					"                                                    \n" + "\n" +
 					"                                      " + i18n.get("mohist.launch.welcomemessage"));
 
-		if(MohistConfigUtil.bMohist("check_libraries", "true")) {
+		CustomLibraries.loadCustomLibs();
+		if(!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
 			DefaultLibraries.downloadRepoLibs();
 			new v_1_18_2().run();
 		}
-
-		CustomLibraries.loadCustomLibs();
-		//new JarLoader().loadJar(v.extra);
 
 		//The server can be run with Java 16+
 		if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {

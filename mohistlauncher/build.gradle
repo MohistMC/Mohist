@@ -15,7 +15,7 @@ repositories {
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
 dependencies {
-    implementation "com.mohistmc.yaml:Yaml:0.1"
+    implementation "com.mohistmc.yaml:yaml:0.2"
     implementation "cpw.mods:securejarhandler:1.0.3"
     implementation "com.google.code.gson:gson:2.8.7"
     implementation 'dev.vankka:dependencydownload-runtime:1.2.2-SNAPSHOT'

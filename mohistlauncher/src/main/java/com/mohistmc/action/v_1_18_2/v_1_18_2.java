@@ -18,14 +18,18 @@
 
 package com.mohistmc.action.v_1_18_2;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.Action;
 import com.mohistmc.action.Version;
+import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadMcpConfig;
 import com.mohistmc.network.download.DownloadMinecraftJar;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
+import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
+import com.mohistmc.yaml.file.YamlConfiguration;
 import dev.vankka.dependencydownload.DependencyManager;
 import dev.vankka.dependencydownload.dependency.Dependency;
 import dev.vankka.dependencydownload.path.CleanupPathProvider;
@@ -48,6 +52,17 @@ import java.util.concurrent.Executors;
 public class v_1_18_2 implements Version {
 
 	private static List<String> loadedLibsPaths = new ArrayList<>();
+
+    public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
+        if (cmd.stream().anyMatch(s -> s.contains("-Xms")))
+            System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.directory(JarTool.getJarDir());
+        pb.inheritIO().start().waitFor();
+        Thread.sleep(2000);
+        if (shutdown) System.exit(0);
+    }
+
 
     @Override
     public void run() {
@@ -106,8 +121,10 @@ public class v_1_18_2 implements Version {
         }
     }
 
-    static class Install_1_18_2 extends Action {
+    public static class Install_1_18_2 extends Action {
 
+        public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
+        public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         public File fmlloader;
         public File fmlcore;
         public File javafmllanguage;
@@ -143,6 +160,8 @@ public class v_1_18_2 implements Version {
 
         private void install() throws Exception {
             System.out.println(i18n.get("installation.start"));
+            launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+            launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
 			copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
 			copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
@@ -285,6 +304,9 @@ public class v_1_18_2 implements Version {
             fw.close();
 
             System.out.println(i18n.get("installation.finished"));
+            yml.set("mohist.installationfinished", true);
+            yml.save(MohistConfigUtil.mohistyml);
+            restartServer(launchArgs, true);
         }
 
     }
