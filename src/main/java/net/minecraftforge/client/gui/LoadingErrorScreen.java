@@ -97,10 +97,10 @@ public class LoadingErrorScreen extends ErrorScreen {
     public static class LoadingEntryList extends ObjectSelectionList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
             super(Objects.requireNonNull(parent.minecraft), parent.width, parent.height, 35, parent.height - 50,
-                    Math.max(
-                            errors.stream().mapToInt(error -> parent.font.split(new TranslatableComponent(error.getMessage() != null ? error.getMessage() : ""), parent.width - 20).size()).max().orElse(0),
-                            warnings.stream().mapToInt(warning -> parent.font.split(new TranslatableComponent(warning.formatToString() != null ? warning.formatToString() : ""), parent.width - 20).size()).max().orElse(0)
-                    ) * parent.minecraft.font.lineHeight + 8);
+              Math.max(
+                errors.stream().mapToInt(error -> parent.font.split(new TranslatableComponent(error.getMessage() != null ? error.getMessage() : ""), parent.width - 20).size()).max().orElse(0),
+                warnings.stream().mapToInt(warning -> parent.font.split(new TranslatableComponent(warning.formatToString() != null ? warning.formatToString() : ""), parent.width - 20).size()).max().orElse(0)
+              ) * parent.minecraft.font.lineHeight + 8);
             boolean both = !errors.isEmpty() && !warnings.isEmpty();
             if (both)
                 addEntry(new LoadingMessageEntry(parent.errorHeader, true));

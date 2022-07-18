@@ -48,11 +48,11 @@ ext {
     ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
-    JARJAR_VERSION = '0.2.26'
+    JARJAR_VERSION = '0.3.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.1.60'
-    FORGE_VERSION = '40.1.60'
+    VERSION = '1.18.2-40.1.68'
+    FORGE_VERSION = '40.1.68'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
@@ -384,6 +384,8 @@ def sharedFmlonlyForge = { Project prj ->
         run.args '--fml.mcVersion', MC_VERSION
         run.args '--fml.forgeGroup', prj.group
         run.args '--fml.mcpVersion', MCP_VERSION
+
+        run.jvmArgs '-Djava.net.preferIPv6Addresses=system'
 
         if (run.name.contains('client')) {
             run.client true
@@ -1117,7 +1119,8 @@ project(':forge') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
-                    jvm: ["-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
+                    jvm: ['-Djava.net.preferIPv6Addresses=system',
+                          "-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
