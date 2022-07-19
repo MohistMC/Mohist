@@ -47,6 +47,7 @@ public class MohistMCStart {
 	public static String getFullVersion() {
 		return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
 	}
+
 	public static List<String> mainArgs = new ArrayList<>();
 
 	public static void main(String[] args) throws Exception {
@@ -54,11 +55,10 @@ public class MohistMCStart {
 
 		DataParser.parseVersions();
 		DataParser.parseLaunchArgs();
-		DataParser.parseLibrariesClassPath();
 
 		MohistConfigUtil.copyMohistConfig();
 
-		if(MohistConfigUtil.bMohist("show_logo", "true"))
+		if (MohistConfigUtil.bMohist("show_logo", "true"))
 			System.out.println("\n" + "\n" +
 					" __    __   ______   __  __   __   ______   ______  \n" +
 					"/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
@@ -69,37 +69,29 @@ public class MohistMCStart {
 					"                                      " + i18n.get("mohist.launch.welcomemessage"));
 
 		CustomLibraries.loadCustomLibs();
-		if(!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
+		if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
 			DefaultLibraries.downloadRepoLibs();
 			new v_1_18_2().run();
 		}
 
-		//The server can be run with Java 16+
-		if(Float.parseFloat(System.getProperty("java.class.version")) >= 60.0) {
+		List<String> forgeArgs = new ArrayList<>();
+		for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
+			forgeArgs.add(arg.split(" ")[0]);
+			forgeArgs.add(arg.split(" ")[1]);
 			System.out.println("Setting launch args");
 			new MohistModuleManager(DataParser.launchArgs);
 			System.out.println("Done");
 		}
 
-		if(MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
+		if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
 
-		if(mainArgs.contains("-noserver"))
-			System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
-
-		if(!hasAcceptedEULA()) {
+		if (!hasAcceptedEULA()) {
 			System.out.println(i18n.get("eula"));
 			while (!"true".equals(new Scanner(System.in).next())) ;
 			writeInfos();
 		}
 
-		List<String> forgeArgs = new ArrayList<>();
-		for(String arg : DataParser.launchArgs.stream()
-				.filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
-			forgeArgs.add(arg.split(" ")[0]);
-			forgeArgs.add(arg.split(" ")[1]);
-		}
-
 		String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
 		BootstrapLauncher.startServer(args_);
-    }
+	}
 }

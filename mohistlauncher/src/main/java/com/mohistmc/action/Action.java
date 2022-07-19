@@ -20,6 +20,7 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.DataParser;
+import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 
@@ -107,8 +108,11 @@ public abstract class Action {
 
     protected List<URL> stringToUrl(List<String> strs) throws Exception {
         List<URL> temp = new ArrayList<>();
-        for (String t : strs)
-            temp.add(new File(t).toURI().toURL());
+        for (String t : strs) {
+            File file = new File(t);
+            new JarLoader().loadJar(file.toPath());
+            temp.add(file.toURI().toURL());
+        }
         return temp;
     }
 
