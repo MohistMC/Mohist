@@ -78,10 +78,8 @@ public class MohistMCStart {
 		for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
 			forgeArgs.add(arg.split(" ")[0]);
 			forgeArgs.add(arg.split(" ")[1]);
-			System.out.println("Setting launch args");
-			new MohistModuleManager(DataParser.launchArgs);
-			System.out.println("Done");
 		}
+		new MohistModuleManager(DataParser.launchArgs);
 
 		if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
 

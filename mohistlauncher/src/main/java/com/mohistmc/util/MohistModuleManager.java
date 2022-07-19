@@ -158,7 +158,6 @@ public class MohistModuleManager {
 			addExports(exports);
 			Thread.sleep(500);
 		} catch (Throwable e) {
-			e.printStackTrace();
 		}
 
 	}
