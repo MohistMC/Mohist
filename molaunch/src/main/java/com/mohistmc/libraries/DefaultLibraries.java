@@ -36,9 +36,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-
-import static com.mohistmc.util.MohistModuleManager.addToPath;
-
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
 
@@ -68,7 +65,6 @@ public class DefaultLibraries {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 if (lib.getName().endsWith(".jar")) {
                     new JarLoader().loadJar(lib.toPath());
-                    addToPath(lib.toPath());
                 }
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(url, ""));

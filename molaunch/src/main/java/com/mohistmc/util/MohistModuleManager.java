@@ -63,30 +63,6 @@ public class MohistModuleManager {
         yml.save(MohistConfigUtil.mohistyml);
     }
 
-    public static void addToPath(Path path) {
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            Field ucpField;
-            try {
-                ucpField = loader.getClass().getDeclaredField("ucp");
-            } catch (NoSuchFieldException e) {
-                ucpField = loader.getClass().getSuperclass().getDeclaredField("ucp");
-            }
-            long offset = Unsafe.objectFieldOffset(ucpField);
-            Object ucp = Unsafe.getObject(loader, offset);
-            if (ucp == null) {
-                var cl = Class.forName("jdk.internal.loader.URLClassPath");
-                var handle = Unsafe.lookup().findConstructor(cl, MethodType.methodType(void.class, URL[].class, AccessControlContext.class));
-                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
-                Unsafe.putObjectVolatile(loader, offset, ucp);
-            }
-            Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
-            Unsafe.lookup().unreflect(method).invoke(ucp, path.toUri().toURL());
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
     public static void addExports(String module, String pkg, String target) {
         if (target == null) target = "ALL-UNNAMED";
 
@@ -165,9 +141,6 @@ public class MohistModuleManager {
         //Just read each lines of launch args
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
-        opens.add("java.base/java.lang.invoke=ALL-UNNAMED");
-        //exports.add("cpw.mods.securejarhandler/cpw.mods.niofs.union=ALL-UNNAMED");
-        //exports.add("cpw.mods.securejarhandler/cpw.mods.jarhandling=ALL-UNNAMED");
 
         args.parallelStream().parallel().forEach(arg -> {
             if (arg.startsWith("-p ")) {
@@ -189,7 +162,6 @@ public class MohistModuleManager {
             addExports(exports);
             Thread.sleep(500);
         } catch (Throwable e) {
-            e.printStackTrace();
         }
 
     }
@@ -197,7 +169,7 @@ public class MohistModuleManager {
     //Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
     public void loadModules(String modulePath) throws Throwable {
         // Find all extra modules
-        ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(MohistModuleManager::addToPath).toArray(Path[]::new));
+        ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(JarLoader::loadJar).toArray(Path[]::new));
         MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));
 
         // Resolve modules to a new config

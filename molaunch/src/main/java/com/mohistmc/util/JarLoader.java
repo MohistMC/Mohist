@@ -40,7 +40,7 @@ public class JarLoader {
     public static void premain(String agentArgs, Instrumentation inst) {
     }
 
-    public void loadJar(Path path) {
+    public static void loadJar(Path path) {
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Field ucpField;
@@ -54,7 +54,7 @@ public class JarLoader {
             if (ucp == null) {
                 var cl = Class.forName("jdk.internal.loader.URLClassPath");
                 var handle = Unsafe.lookup().findConstructor(cl, MethodType.methodType(void.class, URL[].class, AccessControlContext.class));
-                ucp = handle.invoke(new URL[]{}, (AccessControlContext) null);
+                ucp = handle.invoke(new URL[]{}, null);
                 Unsafe.putObjectVolatile(loader, offset, ucp);
             }
             Method method = ucp.getClass().getDeclaredMethod("addURL", URL.class);
