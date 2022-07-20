@@ -370,7 +370,7 @@
              iterator.remove();
           }
  
-@@ -808,16 +_,45 @@
+@@ -808,16 +_,44 @@
     }
  
     public boolean func_195064_c(EffectInstance p_195064_1_) {
@@ -380,7 +380,6 @@
 +   }
 +
 +   public boolean addEffect(EffectInstance effectInstanceIn, EntityPotionEffectEvent.Cause cause) {
-+      org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(effectInstanceIn, cause));
 +         return true;
