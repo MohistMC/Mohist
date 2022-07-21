@@ -119,7 +119,7 @@
                       PrimaryLevelData primaryleveldata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
                       return Pair.of(primaryleveldata, registryaccess$writable.m_203557_());
                    }
-@@ -178,22 +_,33 @@
+@@ -178,22 +_,38 @@
           }
  
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
@@ -133,7 +133,12 @@
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(optionset, config.get(), ops.get(), p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++               // Mohist start - fix mixin
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++               MinecraftServer.options = optionset;
++               MinecraftServer.datapackconfiguration = config.get();
++               MinecraftServer.registryreadops = ops.get();
++               // Mohist end
 +            }
              dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));

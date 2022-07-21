@@ -16,15 +16,6 @@
  import org.slf4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
-@@ -45,7 +_,7 @@
-    private int f_194467_ = 0;
- 
-    public IntegratedServer(Thread p_235248_, Minecraft p_235249_, LevelStorageSource.LevelStorageAccess p_235250_, PackRepository p_235251_, WorldStem p_235252_, Services p_235253_, ChunkProgressListenerFactory p_235254_) {
--      super(p_235248_, p_235250_, p_235251_, p_235252_, p_235249_.m_91096_(), p_235249_.m_91295_(), p_235253_, p_235254_);
-+      super(null, null, null, p_235248_, p_235250_, p_235251_, p_235252_, p_235249_.m_91096_(), p_235249_.m_91295_(), p_235253_, p_235254_);
-       this.m_236740_(p_235249_.m_91094_().m_92548_());
-       this.m_129975_(p_235249_.m_91402_());
-       this.m_129823_(new IntegratedPlayerList(this, this.m_206579_(), this.f_129745_));
 @@ -58,11 +_,12 @@
        this.m_129997_(true);
        this.m_129999_(true);

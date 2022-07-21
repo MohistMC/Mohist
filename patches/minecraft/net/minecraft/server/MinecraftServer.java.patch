@@ -69,10 +69,10 @@
     private volatile boolean f_195494_;
  
 +   // CraftBukkit start
-+   public final DataPackConfig datapackconfiguration;
-+   public final DynamicOps<Tag> registryreadops;
++   public static DataPackConfig datapackconfiguration;
++   public static DynamicOps<Tag> registryreadops;
 +   public CraftServer server;
-+   public OptionSet options;
++   public static OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
 +   public ConsoleReader reader;
@@ -96,24 +96,12 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -257,7 +_,7 @@
-       return s;
-    }
- 
--   public MinecraftServer(Thread p_236723_, LevelStorageSource.LevelStorageAccess p_236724_, PackRepository p_236725_, WorldStem p_236726_, Proxy p_236727_, DataFixer p_236728_, Services p_236729_, ChunkProgressListenerFactory p_236730_) {
-+   public MinecraftServer(OptionSet options, DataPackConfig datapackconfiguration, DynamicOps<Tag> registryreadops, Thread p_236723_, LevelStorageSource.LevelStorageAccess p_236724_, PackRepository p_236725_, WorldStem p_236726_, Proxy p_236727_, DataFixer p_236728_, Services p_236729_, ChunkProgressListenerFactory p_236730_) {
-       super("Server");
-       this.f_129746_ = p_236726_.f_206894_();
-       this.f_129749_ = p_236726_.f_206895_();
-@@ -281,8 +_,38 @@
+@@ -281,8 +_,35 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
 +         // CraftBukkit start
-+         this.options = options;
-+         this.datapackconfiguration = datapackconfiguration;
-+         this.registryreadops = registryreadops;
-+         this.vanillaCommandDispatcher = p_236726_.f_206893_().f_206847_; // CraftBukkit
++         this.vanillaCommandDispatcher = p_236726_.f_206893_().f_206847_;
 +
 +         // Try to see if we're actually running in a terminal, disable jline if not
 +         if (System.console() == null && System.getProperty("jline.terminal") == null) {
