@@ -114,6 +114,7 @@ subprojects {
         }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
