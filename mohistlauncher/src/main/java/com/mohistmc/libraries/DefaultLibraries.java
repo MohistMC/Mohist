@@ -18,6 +18,7 @@
 
 package com.mohistmc.libraries;
 
+import com.mohistmc.action.v_1_18_2.v_1_18_2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
@@ -42,6 +43,7 @@ public class DefaultLibraries {
 		AtomicLong currentSize = new AtomicLong();
 		Set<File> defaultLibs = new LinkedHashSet<>();
 		for (File lib : libs.keySet()) {
+			v_1_18_2.loadedLibsPaths.add(lib.getAbsolutePath());
 			if(lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
 				continue;
 			}
@@ -55,11 +57,12 @@ public class DefaultLibraries {
 			lib.getParentFile().mkdirs();
 
 			String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-			System.out.println(
-					i18n.get("libraries.global.percentage") +
-							Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
+			System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
 			try {
 				UpdateUtils.downloadFile(u, lib, libs.get(lib));
+				if (lib.getName().endsWith(".jar")) {
+					new JarLoader().loadJar(lib.toPath());
+				}
 				currentSize.addAndGet(lib.length());
 				fail.remove(u.replace(url, ""));
 			} catch (Exception e) {
@@ -76,32 +79,9 @@ public class DefaultLibraries {
 		} else System.out.println(i18n.get("libraries.check.end"));
 	}
 
-	public static void downloadRepoLibs() throws Exception {
-		HashMap<File, List<String>> dependencies = new HashMap<>();
-		dependencies.put(new File("libraries/dev/vankka/dependencydownload-common/1.2.1/dependencydownload-common-1.2.1.jar"), new ArrayList<>(Arrays.asList("e6b19d4a5e3687432530a0aa9edf6fcc", "https://repo1.maven.org/maven2/dev/vankka/dependencydownload-common/1.2.1/dependencydownload-common-1.2.1.jar")));
-		dependencies.put(new File("libraries/dev/vankka/dependencydownload-runtime/1.2.2-SNAPSHOT/dependencydownload-runtime-1.2.2-20220425.122523-9.jar"), new ArrayList<>(Arrays.asList("e8cee80f1719c02ef3076ff42bab0ad9", "https://s01.oss.sonatype.org/content/repositories/snapshots/dev/vankka/dependencydownload-runtime/1.2.2-SNAPSHOT/dependencydownload-runtime-1.2.2-20220425.122523-9.jar")));
-
-		for (File lib : dependencies.keySet()) {
-			if(lib.exists() && Objects.equals(MD5Util.getMd5(lib), dependencies.get(lib).get(0))) {
-				System.out.println("Loading library " + lib.getName());
-				new JarLoader().loadJar(lib.toPath());
-				continue;
-			}
-			System.out.println("Downloading " + lib.getName() + "...");
-			lib.getParentFile().mkdirs();
-			try {
-				UpdateUtils.downloadFile(dependencies.get(lib).get(1), lib, dependencies.get(lib).get(0));
-				new JarLoader().loadJar(lib.toPath());
-				System.out.println("Downloaded and loaded " + lib.getName() + ". md5: " + MD5Util.getMd5(lib));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
 		LinkedHashMap<File, String> temp = new LinkedHashMap<>();
-		BufferedReader b = new BufferedReader(new InputStreamReader(Objects.requireNonNull(DefaultLibraries.class.getClassLoader().getResourceAsStream("data/mohist-libraries.txt"))));
+		BufferedReader b = new BufferedReader(new InputStreamReader(Objects.requireNonNull(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))));
 		String str;
 		while ((str = b.readLine()) != null) {
 			String[] s = str.split("\\|");

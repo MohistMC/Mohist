@@ -70,7 +70,7 @@ public class MohistMCStart {
 
 		CustomLibraries.loadCustomLibs();
 		if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
-			DefaultLibraries.downloadRepoLibs();
+			DefaultLibraries.run();
 			new v_1_18_2().run();
 		}
 
