@@ -17,7 +17,10 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 dependencies {
     implementation "com.mohistmc.yaml:yaml:0.2"
     implementation "cpw.mods:securejarhandler:1.0.3"
-    implementation "com.google.code.gson:gson:2.8.7"
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'dev.vankka:dependencydownload-runtime:1.2.2-SNAPSHOT'
     implementation 'dev.vankka:dependencydownload-common:1.2.1'
+    implementation 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
 }

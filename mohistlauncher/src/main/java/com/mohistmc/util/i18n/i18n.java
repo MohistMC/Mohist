@@ -69,6 +69,6 @@ public class i18n {
 
     public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().equals("Asia/Shanghai") || getLocale().contains("CN") || getCountry().contains("CN");
+        return timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
     }
 }

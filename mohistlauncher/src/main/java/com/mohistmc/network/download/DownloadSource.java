@@ -19,29 +19,29 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.util.i18n.i18n;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
+@ToString
+@AllArgsConstructor
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("http://120.232.41.28:1001/"),
+    CHINA("http://s1.devicloud.cn:25119/"),
     GITHUB("https://mavenmirror.mohistmc.com/");
 
+    public static final DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
+    @Getter
     String url;
 
-    DownloadSource(String url) {
-        this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
     public static DownloadSource get(){
-        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", "MOHIST");
+        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds))
                 return me;
         }
-        return DownloadSource.MOHIST;
+        return defaultSource;
     }
 }
