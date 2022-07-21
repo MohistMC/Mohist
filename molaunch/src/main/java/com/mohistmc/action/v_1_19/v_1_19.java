@@ -51,9 +51,6 @@ public class v_1_19 implements Version {
         public File mojmap;
         public File mc_unpacked;
         public File mergedMapping;
-        public File win_args;
-        public File unix_args;
-        public File jvm_args;
 
         protected Install_1_19() throws Exception {
             super();
@@ -65,10 +62,6 @@ public class v_1_19 implements Version {
             this.mojmap = new File(otherStart + "-mappings.txt");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
-
-            this.win_args = new File(libPath + "net/minecraftforge/forge/win_args.txt");
-            this.unix_args = new File(libPath + "net/minecraftforge/forge/unix_args.txt");
-            this.jvm_args = new File(JarTool.getJarDir(), "user_jvm_args.txt");
 
             install();
         }
@@ -84,10 +77,6 @@ public class v_1_19 implements Version {
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-
-            copyFileFromJar(win_args, "data/win_args.txt");
-            copyFileFromJar(unix_args, "data/unix_args.txt");
-            copyFileFromJar(jvm_args, "data/user_jvm_args.txt");
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
