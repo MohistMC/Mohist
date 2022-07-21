@@ -27,12 +27,8 @@ import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
 import java.lang.module.ResolvedModule;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.AccessControlContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -161,7 +157,7 @@ public class MohistModuleManager {
             addOpens(opens);
             addExports(exports);
             Thread.sleep(500);
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
 
     }

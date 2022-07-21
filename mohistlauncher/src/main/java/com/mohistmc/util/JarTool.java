@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author Mgazul
@@ -57,11 +58,7 @@ public class JarTool {
 
         String path = JarTool.class.getProtectionDomain().getCodeSource()
                 .getLocation().getFile();
-        try {
-            path = java.net.URLDecoder.decode(path, "UTF-8");
-        } catch (java.io.UnsupportedEncodingException e) {
-            return null;
-        }
+        path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
         return new File(path);
     }
 
@@ -69,7 +66,7 @@ public class JarTool {
         File file = new File(targetFilePath);
         try {
             OutputStream os = new FileOutputStream(file);
-            int bytesRead = 0;
+            int bytesRead;
             byte[] buffer = new byte[8192];
             while ((bytesRead = inputStream.read(buffer, 0, 8192)) != -1) {
                 os.write(buffer, 0, bytesRead);

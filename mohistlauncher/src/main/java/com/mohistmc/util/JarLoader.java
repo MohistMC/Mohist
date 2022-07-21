@@ -26,6 +26,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.security.AccessControlContext;
 
+@SuppressWarnings("ALL")
 public class JarLoader {
 
     public JarLoader() {

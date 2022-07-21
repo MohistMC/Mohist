@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
  * feshfans 2018/5/11 18:46
  * email: feshfans@163.com
  **/
+@SuppressWarnings("ALL")
 public class UTF8Control extends ResourceBundle.Control {
     @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)

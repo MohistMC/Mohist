@@ -137,7 +137,7 @@ public abstract class Action {
                 try {
                     file.createNewFile();
                     Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             } else {
                 System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");
