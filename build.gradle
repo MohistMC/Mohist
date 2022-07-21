@@ -1376,14 +1376,31 @@ project(':forge') {
                         "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
                 ]
         def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-        if (rootProject.downloadServerRaw.dest.exists()) {
-            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
-                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
-                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-            }
-        } else {
-            println("Can't read server")
-        }
+        CLASS_PATH +=
+                (
+                        [
+                                "libraries/com/github/oshi/oshi-core/5.8.5/oshi-core-5.8.5.jar",
+                                "libraries/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar",
+                                "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
+                                "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
+                                "libraries/com/mojang/authlib/3.3.39/authlib-3.3.39.jar",
+                                "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
+                                "libraries/com/mojang/datafixerupper/4.1.27/datafixerupper-4.1.27.jar",
+                                "libraries/com/mojang/javabridge/1.2.24/javabridge-1.2.24.jar",
+                                "libraries/com/mojang/logging/1.0.0/logging-1.0.0.jar",
+                                "libraries/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
+                                "libraries/io/netty/netty-all/4.1.68.Final/netty-all-4.1.68.Final.jar",
+                                "libraries/it/unimi/dsi/fastutil/8.5.6/fastutil-8.5.6.jar",
+                                "libraries/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar",
+                                "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
+                                "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
+                                "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
+                                "libraries/org/apache/logging/log4j/log4j-api/2.17.0/log4j-api-2.17.0.jar",
+                                "libraries/org/apache/logging/log4j/log4j-core/2.17.0/log4j-core-2.17.0.jar",
+                                "libraries/org/apache/logging/log4j/log4j-slf4j18-impl/2.17.0/log4j-slf4j18-impl-2.17.0.jar",
+                                "libraries/org/slf4j/slf4j-api/1.8.0-beta4/slf4j-api-1.8.0-beta4.jar"
+                        ].findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+                )
         def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
                 TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
