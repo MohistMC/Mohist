@@ -19,7 +19,7 @@ include ':clean'
 include ':fmlonly'
 include ':forge'
 
-include 'molaunch'
+include 'mohistlauncher'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")

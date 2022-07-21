@@ -502,7 +502,7 @@ project(':fmlonly') {
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
-        implementation project(':molaunch')
+        implementation project(':mohistlauncher')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
@@ -1367,7 +1367,7 @@ project(':forge') {
             rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
-        from(project(':molaunch').project.sourceSets.main.output)
+        from(project(':mohistlauncher').project.sourceSets.main.output)
 
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
@@ -1386,11 +1386,6 @@ project(':forge') {
             rename { 'versions/mcp.txt' }
         }
 
-        from(rootProject.file('server_files/libraries.txt')) {
-            filter(ReplaceTokens, tokens: [CLASS_PATH: CLASS_PATH.join(';')])
-            rename { 'data/libraries.txt' }
-        }
-
         from(rootProject.file('server_files/args.txt')) {
             filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
             rename { 'data/win_args.txt' }
@@ -1399,10 +1394,6 @@ project(':forge') {
         from(rootProject.file('server_files/args.txt')) {
             filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
             rename { 'data/unix_args.txt' }
-        }
-
-        from(rootProject.file('server_files/user_jvm_args.txt')) {
-            rename { 'data/user_jvm_args.txt' }
         }
     }
 
