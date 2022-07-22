@@ -43,7 +43,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,15 +_,55 @@
+@@ -97,15 +_,62 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -55,8 +55,6 @@
     private final BiomeManager f_46420_;
     private final ResourceKey<Level> f_46421_;
     private long f_186455_;
--
--   protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -67,7 +65,9 @@
 +   private final CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
-+   public org.bukkit.generator.ChunkGenerator generator;
++   public static org.bukkit.generator.ChunkGenerator generator;
++   public static org.bukkit.World.Environment environment;
++   public static org.bukkit.generator.BiomeProvider biomeProvider;
 +
 +   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
@@ -88,10 +88,15 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
-+   protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env) {
++   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
++      generator = gen;
++      environment = env;
++      biomeProvider = bp;
++   }
+ 
+    protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
 +      super(Level.class);
-+      this.generator = gen;
-+      this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
++      this.world = new CraftWorld((ServerLevel) this,  generator, biomeProvider, environment);
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {

@@ -132,14 +132,7 @@
  
     private void m_129841_(DimensionDataStorage p_129842_) {
        p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
-@@ -327,12 +_,13 @@
-       List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
-       Registry<LevelStem> registry = worldgensettings.m_204655_();
-       LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
--      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true);
-+      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, null, null, null);
-       this.f_129762_.put(Level.f_46428_, serverlevel);
-       DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
+@@ -333,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
@@ -147,12 +140,8 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -364,12 +_,15 @@
-          if (resourcekey != LevelStem.f_63971_) {
-             ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registry.f_122819_, resourcekey.m_135782_());
-             DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
--            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
-+            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, null, null, null);
+@@ -367,9 +_,12 @@
+             ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(f_129762_.get(resourcekey)));

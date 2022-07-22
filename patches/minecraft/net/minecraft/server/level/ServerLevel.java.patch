@@ -40,7 +40,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -183,18 +_,31 @@
+@@ -183,13 +_,22 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -49,33 +49,21 @@
     private final StructureManager f_214997_;
     private final StructureCheck f_196556_;
     private final boolean f_8561_;
--
--   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
--      super(p_215002_, p_215003_, p_215004_.m_204521_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
 +   private LevelCapabilityData capabilityData;
 +
 +   // CraftBukkit start
 +   public PrimaryLevelData worldDataServer;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
-+
-+   public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
-+      super(p_215002_, p_215003_, p_215004_.m_204521_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_(), gen, biomeProvider, env);
+ 
+    public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
+       super(p_215002_, p_215003_, p_215004_.m_204521_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
 +      this.pvpMode = p_214999_.m_129799_();
 +      convertable = p_215001_;
 +      uuid = WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
-       this.f_8549_ = p_215002_;
-       ChunkGenerator chunkgenerator = p_215004_.m_63990_();
-+      if (gen != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.v1_19_R1.generator.CustomChunkGenerator(this, chunkgenerator, gen);
-+      }
-+      // CraftBukkit end
-       boolean flag = p_214999_.m_6365_();
-       DataFixer datafixer = p_214999_.m_129933_();
-       EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
 @@ -226,6 +_,8 @@
        }
  
