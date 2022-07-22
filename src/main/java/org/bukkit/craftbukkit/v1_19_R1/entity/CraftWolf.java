@@ -43,4 +43,23 @@ public class CraftWolf extends CraftTameableAnimal implements Wolf {
     public void setCollarColor(DyeColor color) {
         getHandle().setCollarColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
     }
+    @Override
+    public boolean isWet() {
+        return getHandle().isWet();
+    }
+
+    @Override
+    public float getTailAngle() {
+        return getHandle().getTailAngle();
+    }
+
+    @Override
+    public boolean isInterested() {
+        return getHandle().isInterested();
+    }
+
+    @Override
+    public void setInterested(boolean flag) {
+        getHandle().setIsInterested(flag);
+    }
 }
