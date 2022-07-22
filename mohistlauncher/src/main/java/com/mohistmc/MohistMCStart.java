@@ -63,6 +63,9 @@ public class MohistMCStart {
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
 
 
+        if (System.getProperty("log4j.configurationFile") == null) {
+            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+        }
         CustomLibraries.loadCustomLibs();
         if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
             DefaultLibraries.run();

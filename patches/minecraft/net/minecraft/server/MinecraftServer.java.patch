@@ -64,7 +64,7 @@
     @Nullable
     private String f_129739_;
     public MinecraftServer.ReloadableResources f_129740_;
-@@ -239,9 +_,30 @@
+@@ -239,9 +_,29 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  
@@ -75,7 +75,6 @@
 +   public static OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
-+   public ConsoleReader reader;
 +   public static int currentTick = 0; // Paper - Further improve tick loop
 +   public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 +   public int autosavePeriod;
@@ -96,7 +95,7 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -281,8 +_,35 @@
+@@ -281,8 +_,18 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
@@ -108,23 +107,6 @@
 +            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
 +            org.bukkit.craftbukkit.Main.useJline = false;
 +         }
-+
-+         try {
-+            reader = new ConsoleReader(System.in, System.out);
-+            reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
-+         } catch (Throwable e) {
-+            try {
-+               // Try again with jline disabled for Windows users without C++ 2008 Redistributable
-+               System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+               System.setProperty("user.language", "en");
-+               Main.useJline = false;
-+               reader = new ConsoleReader(System.in, System.out);
-+               reader.setExpandEvents(false);
-+            } catch (IOException ex) {
-+               f_129750_.warn((String) null, ex);
-+            }
-+         }
-+
        }
 +      // CraftBukkit end
     }
