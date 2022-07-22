@@ -22,7 +22,7 @@
             <PatternLayout>
                 <LoggerNamePatternSelector defaultPattern="%highlightForge{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlightForge{[%d{HH:mm:ss} /%level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
+                    <PatternMatch key="net.minecraft." pattern="%highlightForge{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
                     <PatternMatch key="com.mojang." pattern="%highlightForge{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%tEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
