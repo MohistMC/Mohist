@@ -4,7 +4,7 @@
     private final byte[] field_179302_a = new byte[8192];
     private final Deflater field_179300_b;
     private int field_179301_c;
-+   private static final boolean DISABLE_PACKET_DEBUG = Boolean.parseBoolean(System.getProperty("forge.disablePacketCompressionDebug", "false"));
++   private static final boolean DISABLE_PACKET_DEBUG = Boolean.parseBoolean(System.getProperty("forge.disablePacketCompressionDebug", "true"));
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
  
     public NettyCompressionEncoder(int p_i46005_1_) {
