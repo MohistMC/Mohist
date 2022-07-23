@@ -326,7 +326,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,318 @@
+@@ -293,187 +_,305 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -484,22 +484,9 @@
 -      } else {
 -         return this.field_72404_b.size() >= this.field_72405_c && !this.func_183023_f(p_206258_2_) ? new TranslationTextComponent("multiplayer.disconnect.server_full") : null;
 -      }
-+   // CraftBukkit start - Whole method, SocketAddress to LoginListener, added hostname to signature, return EntityPlayer
++   // CraftBukkit start - Whole method, SocketAddress to LoginListener, added hostname to signature, return ServerPlayerEntity
 +   public ServerPlayerEntity canPlayerLogin(ServerLoginNetHandler netHandler, GameProfile gameProfile, SocketAddress socketaddress) {
-+       // Moved from processLogin
-+       IFormattableTextComponent iformattabletextcomponent1;
-+       UUID uuid = PlayerEntity.func_146094_a(gameProfile);
-+       List<ServerPlayerEntity> playerEntityList = Lists.newArrayList();
-+       for (ServerPlayerEntity player : this.field_72404_b) {
-+           if (player.func_110124_au().equals(uuid)) {
-+               playerEntityList.add(player);
-+           }
-+       }
-+       for (ServerPlayerEntity entityPlayer : playerEntityList) {
-+           func_72391_b(entityPlayer);
-+           entityPlayer.field_71135_a.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.duplicate_login", new Object[0]));
-+       }
-+       ServerPlayerEntity entity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(World.field_234918_g_), gameProfile, new PlayerInteractionManager(this.field_72400_f.func_71218_a(World.field_234918_g_)));
++       ServerPlayerEntity entity = func_148545_a(gameProfile);
 +       Player player = entity.getBukkitEntity();
 +
 +       String hostname = netHandler == null ? "" : netHandler.hostname;
@@ -508,7 +495,7 @@
 +       PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), realAddress);
 +       if (func_152608_h().func_152702_a(gameProfile) && !func_152608_h().func_152683_b(gameProfile).func_73682_e()) {
 +           ProfileBanEntry profilebanentry = this.field_72401_g.func_152683_b(gameProfile);
-+           iformattabletextcomponent1 = new TranslationTextComponent("multiplayer.disconnect.banned.reason", profilebanentry.func_73686_f());
++           IFormattableTextComponent iformattabletextcomponent1 = new TranslationTextComponent("multiplayer.disconnect.banned.reason", profilebanentry.func_73686_f());
 +           if (profilebanentry.func_73680_d() != null) {
 +               iformattabletextcomponent1.func_230529_a_(new TranslationTextComponent("multiplayer.disconnect.banned.expiration", field_72403_e.format(profilebanentry.func_73680_d())));
 +           }
@@ -519,7 +506,7 @@
 +           event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
 +       } else if (func_72363_f().func_152708_a(socketaddress) && !func_72363_f().func_152709_b(socketaddress).func_73682_e()) {
 +           IPBanEntry ipbanentry = this.field_72413_h.func_152709_b(socketaddress);
-+           iformattabletextcomponent1 = new TranslationTextComponent("multiplayer.disconnect.banned_ip.reason", ipbanentry.func_73686_f());
++           IFormattableTextComponent iformattabletextcomponent1 = new TranslationTextComponent("multiplayer.disconnect.banned_ip.reason", ipbanentry.func_73686_f());
 +           if (ipbanentry.func_73680_d() != null) {
 +               iformattabletextcomponent1.func_230529_a_(new TranslationTextComponent("multiplayer.disconnect.banned_ip.expiration", field_72403_e.format(ipbanentry.func_73680_d())));
 +           }

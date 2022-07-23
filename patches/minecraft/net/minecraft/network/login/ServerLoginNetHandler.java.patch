@@ -59,7 +59,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,29 +_,74 @@
+@@ -72,29 +_,68 @@
  
     }
  
@@ -125,13 +125,8 @@
     public void func_147326_c() {
 -      if (!this.field_147337_i.isComplete()) {
 -         this.field_147337_i = this.func_152506_a(this.field_147337_i);
-+      // Spigot start - Moved to initUUID
-+      /*
-+      if (!this.loginGameProfile.isComplete()) {
-+         this.loginGameProfile = this.getOfflineProfile(this.loginGameProfile);
-       }
-+      */
-+      // Spigot end
+-      }
++      initUUID();
  
 -      ITextComponent itextcomponent = this.field_147327_f.func_184103_al().func_206258_a(this.field_147333_a.func_74430_c(), this.field_147337_i);
 -      if (itextcomponent != null) {
@@ -164,18 +159,17 @@
     }
  
     public String func_147317_d() {
-@@ -130,7 +_,21 @@
+@@ -130,7 +_,20 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic().getEncoded(), this.field_147330_e));
        } else {
 -         this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
-+	     // this.currentLoginState = ServerLoginNetHandler.State.NEGOTIATING;
++	     // this.state = ServerLoginNetHandler.State.NEGOTIATING;
 +         // Spigot start
 +         new Thread("User Authenticator #" + field_147331_b.incrementAndGet()) {
 +            @Override
 +            public void run() {
 +               try {
-+                  initUUID();
 +                  new LoginHandler().fireEvents();
 +               } catch (Exception ex) {
 +                  disconnect("Failed to verify username!");
