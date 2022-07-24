@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/network/internal/FMLProxyPacket.java
++++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/FMLProxyPacket.java
+@@ -11,7 +11,6 @@
+ import net.minecraft.network.play.client.C17PacketCustomPayload;
+ import net.minecraft.network.play.server.S3FPacketCustomPayload;
+ import org.apache.logging.log4j.Level;
+-import org.apache.logging.log4j.core.helpers.Integers;
+ import com.google.common.collect.ConcurrentHashMultiset;
+ import com.google.common.collect.Multiset;
+ import com.google.common.collect.Multiset.Entry;
+@@ -21,6 +20,7 @@
+ import cpw.mods.fml.common.network.NetworkRegistry;
+ import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+ import cpw.mods.fml.relauncher.Side;
++import org.apache.logging.log4j.core.util.Integers;
+ 
+ public class FMLProxyPacket extends Packet {
+     final String channel;

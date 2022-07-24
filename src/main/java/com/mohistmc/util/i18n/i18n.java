@@ -44,7 +44,7 @@ public class i18n {
     }
 
     public static boolean isLang(String lang) {
-        return isTimezone("Asia/Shanghai") || getLocale().contains(lang) || getCountry().contains(lang);
+        return isTimezone("Asia/Shanghai") || rb.getLocale().getCountry().equals(lang);
     }
 
     public static boolean isTimezone(String timezone) {
