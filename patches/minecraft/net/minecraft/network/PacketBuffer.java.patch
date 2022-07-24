@@ -8,16 +8,40 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.math.BlockPos;
-@@ -37,7 +_,7 @@
+@@ -36,10 +_,8 @@
+ import net.minecraft.util.math.SectionPos;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.util.text.ITextComponent;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -287,7 +_,16 @@
+@@ -135,12 +_,10 @@
+       return this;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public long[] func_186873_b(@Nullable long[] p_186873_1_) {
+       return this.func_189423_a(p_186873_1_, this.readableBytes() / 8);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public long[] func_189423_a(@Nullable long[] p_189423_1_, int p_189423_2_) {
+       int i = this.func_150792_a();
+       if (p_189423_1_ == null || p_189423_1_.length != i) {
+@@ -167,7 +_,6 @@
+       return this;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public SectionPos func_218667_g() {
+       return SectionPos.func_218170_a(this.readLong());
+    }
+@@ -292,7 +_,16 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -35,7 +59,7 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -295,8 +_,21 @@
+@@ -300,8 +_,21 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -59,7 +83,7 @@
           }
  
           this.func_150786_a(compoundnbt);
-@@ -312,7 +_,12 @@
+@@ -317,12 +_,16 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
@@ -72,4 +96,9 @@
 +         // CraftBukkit end
           return itemstack;
        }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public String func_218666_n() {
+       return this.func_150789_c(32767);
     }
