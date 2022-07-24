@@ -19,7 +19,7 @@
 package com.mohistmc.bukkit.nms.proxy;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
-import com.mohistmc.util.MohistJDK9EnumHelper;
+import com.mohistmc.dynamicenumutil.MohistJDK17EnumHelper;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -148,15 +148,15 @@ public class DelegateURLClassLoder extends URLClassLoader {
                     if (attributes != null) {
                         try {
                             try {
-                                Object versionInfo = MohistJDK9EnumHelper.getField(pkg, Package.class.getDeclaredField("versionInfo"));
+                                Object versionInfo = MohistJDK17EnumHelper.getField(pkg, Package.class.getDeclaredField("versionInfo"));
                                 if (versionInfo != null) {
                                     Class<?> Package$VersionInfo = Class.forName("java.lang.Package$VersionInfo");
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), Package$VersionInfo.getDeclaredField("implTitle"));
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), Package$VersionInfo.getDeclaredField("implVersion"));
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), Package$VersionInfo.getDeclaredField("implVendor"));
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), Package$VersionInfo.getDeclaredField("specTitle"));
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), Package$VersionInfo.getDeclaredField("specVersion"));
-                                    MohistJDK9EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), Package$VersionInfo.getDeclaredField("specVendor"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), Package$VersionInfo.getDeclaredField("implTitle"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), Package$VersionInfo.getDeclaredField("implVersion"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), Package$VersionInfo.getDeclaredField("implVendor"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), Package$VersionInfo.getDeclaredField("specTitle"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), Package$VersionInfo.getDeclaredField("specVersion"));
+                                    MohistJDK17EnumHelper.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), Package$VersionInfo.getDeclaredField("specVendor"));
                                 }
                             } catch (Exception ignored) {
                             }

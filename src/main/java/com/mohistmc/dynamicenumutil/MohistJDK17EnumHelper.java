@@ -37,7 +37,7 @@ public class MohistJDK17EnumHelper {
             Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
             Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
-            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            unsafe = (Unsafe) unsafeField.get(null);
             Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             implLookup = (MethodHandles.Lookup) unsafe.getObject(unsafe.staticFieldBase(implLookupField), unsafe.staticFieldOffset(implLookupField));
         } catch (Exception e) {
@@ -97,7 +97,6 @@ public class MohistJDK17EnumHelper {
         return addEnum(enumType, enumName, paramTypes, paramValues);
     }
 
-    @SuppressWarnings({"unchecked", "serial"})
     public static <T extends Enum<?>> T addEnum(final Class<T> enumType, String enumName, final Class<?>[] paramTypes, Object[] paramValues) {
         if (!isSetup) {
             setup();
@@ -132,7 +131,6 @@ public class MohistJDK17EnumHelper {
         if (valuesField == null) {
             final List<String> lines = new ArrayList<>();
             lines.add(String.format("Could not find $VALUES field for enum: %s", enumType.getName()));
-            //lines.add(String.format("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF));
             lines.add(String.format("Flags: %s", String.format("%16s", Integer.toBinaryString(flags)).replace(' ', '0')));
             lines.add("Fields:");
             for (Field field : fields) {
