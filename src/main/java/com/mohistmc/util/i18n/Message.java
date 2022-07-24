@@ -44,6 +44,6 @@ public class Message {
 
     public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().equals("Asia/Shanghai") || Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
+        return timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
     }
 }
