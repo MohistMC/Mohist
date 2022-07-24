@@ -1,13 +1,22 @@
 --- a/net/minecraft/network/NettyCompressionDecoder.java
 +++ b/net/minecraft/network/NettyCompressionDecoder.java
-@@ -28,8 +_,8 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.network;
+ 
++import com.mohistmc.api.ServerAPI;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.Unpooled;
+ import io.netty.channel.ChannelHandlerContext;
+@@ -28,8 +_,10 @@
                 throw new DecoderException("Badly compressed packet - size of " + i + " is below server threshold of " + this.field_179304_b);
              }
  
 -            if (i > 2097152) {
 -               throw new DecoderException("Badly compressed packet - size of " + i + " is larger than protocol maximum of " + 2097152);
-+            if (i > 8388608) {
-+               throw new DecoderException("Badly compressed packet - size of " + i + " is larger than protocol maximum of " + 8388608);
++            int packetsizelimits = ServerAPI.hasMod("randompatches") ? 2097152 : 8388608;
++
++            if (i > packetsizelimits) {
++               throw new DecoderException("Badly compressed packet - size of " + i + " is larger than protocol maximum of " + packetsizelimits);
              }
  
              byte[] abyte = new byte[packetbuffer.readableBytes()];
