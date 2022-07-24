@@ -1,6 +1,6 @@
 package com.mohistmc.entity;
 
-import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.EntityAPI;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftAnimals;
@@ -14,12 +14,12 @@ import org.bukkit.entity.EntityType;
  * © Copyright 2021 / 2022 - M1lcolm
  */
 public class MohistModsAnimals extends CraftAnimals {
+
+    public String entityName;
+
     public MohistModsAnimals(CraftServer server, Animal entity) {
         super(server, entity);
-        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
-        if (entityName == null) {
-            entityName = entity.getName().getString();
-        }
+        this.entityName = EntityAPI.entityName(entity);
     }
 
 
@@ -30,16 +30,11 @@ public class MohistModsAnimals extends CraftAnimals {
 
     @Override
     public EntityType getType() {
-        EntityType type = EntityType.fromName(this.entityName);
-        if (type != null) {
-            return type;
-        } else {
-            return EntityType.FORGE_MOD_ANIMAL;
-        }
+        return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_ANIMAL);
     }
 
     @Override
     public String toString() {
-        return "CraftCustomTameableAnimal{" + entityName + '}';
+        return "MohistModsAnimals{" + entityName + '}';
     }
 }

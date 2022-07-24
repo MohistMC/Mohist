@@ -1,5 +1,6 @@
 package com.mohistmc.entity;
 
+import com.mohistmc.api.EntityAPI;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
@@ -10,8 +11,7 @@ public class MohistModsEntity extends CraftEntity {
 
     public MohistModsEntity(CraftServer server, net.minecraft.world.entity.Entity entity) {
         super(server, entity);
-        entityName = entity.getName().getString();
-
+        this.entityName = EntityAPI.entityName(entity);
     }
 
     @Override
@@ -26,6 +26,6 @@ public class MohistModsEntity extends CraftEntity {
 
     @Override
     public EntityType getType() {
-        return EntityType.UNKNOWN;
+        return EntityAPI.entityType(entityName);
     }
 }
