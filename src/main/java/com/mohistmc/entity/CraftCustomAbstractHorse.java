@@ -18,6 +18,7 @@
 
 package com.mohistmc.entity;
 
+import com.mohistmc.api.EntityAPI;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftAbstractHorse;
@@ -27,8 +28,11 @@ import org.bukkit.entity.Horse;
 
 public class CraftCustomAbstractHorse extends CraftAbstractHorse {
 
+    public String entityName;
+
     public CraftCustomAbstractHorse(CraftServer server, AbstractHorseEntity entity) {
         super(server, entity);
+        this.entityName = EntityAPI.entityName(entity);
     }
 
     @Override
@@ -38,12 +42,7 @@ public class CraftCustomAbstractHorse extends CraftAbstractHorse {
 
     @Override
     public EntityType getType() {
-        EntityType type = EntityType.fromName(this.entityName);
-        if (type != null) {
-            return type;
-        } else {
-            return EntityType.FORGE_MOD_HORSE;
-        }
+        return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_HORSE);
     }
 
     @Override

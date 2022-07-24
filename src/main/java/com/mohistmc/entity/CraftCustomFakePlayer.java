@@ -65,7 +65,7 @@ public class CraftCustomFakePlayer extends CraftPlayer {
     }
 
     @Override
-    public boolean isFakePlayer(){
+    public boolean isFakePlayer() {
         return true;
     }
 }
