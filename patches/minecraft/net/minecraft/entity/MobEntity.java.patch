@@ -356,7 +356,7 @@
           this.func_110160_i(true, true);
        }
  
-@@ -1347,7 +_,15 @@
+@@ -1347,7 +_,14 @@
  
        int i = EnchantmentHelper.func_90036_a(this);
        if (i > 0) {
@@ -367,7 +367,6 @@
 +         if (!combustEvent.isCancelled()) {
 +            p_70652_1_.putCallCombustEvent(false);
 +            p_70652_1_.func_70015_d(combustEvent.getDuration());
-+            p_70652_1_.putCallCombustEvent(true);
 +         }
 +         // CraftBukkit end
        }

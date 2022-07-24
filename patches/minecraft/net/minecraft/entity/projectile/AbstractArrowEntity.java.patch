@@ -61,7 +61,7 @@
           this.func_70106_y();
        }
  
-@@ -320,7 +_,15 @@
+@@ -320,7 +_,14 @@
        boolean flag = entity.func_200600_R() == EntityType.field_200803_q;
        int k = entity.func_223314_ad();
        if (this.func_70027_ad() && !flag) {
@@ -72,7 +72,6 @@
 +         if (!combustEvent.isCancelled()) {
 +            entity.putCallCombustEvent(false);
 +            entity.func_70015_d(combustEvent.getDuration());
-+            entity.putCallCombustEvent(true);
 +         }
 +         // CraftBukkit end
        }

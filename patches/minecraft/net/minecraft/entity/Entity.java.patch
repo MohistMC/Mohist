@@ -286,7 +286,7 @@
     public void func_70030_z() {
        this.field_70170_p.func_217381_Z().func_76320_a("entityBaseTick");
        if (this.func_184218_aH() && this.func_184187_bx().field_70128_L) {
-@@ -449,12 +_,50 @@
+@@ -449,12 +_,49 @@
  
     protected void func_70044_A() {
        if (!this.func_230279_az_()) {
@@ -322,7 +322,6 @@
 +   public void setFire(int p_70015_1_, boolean callEvent) {
 +      this.putCallCombustEvent(callEvent);
 +      this.func_70015_d(p_70015_1_);
-+      this.putCallCombustEvent(true);
 +   }
 +
     public void func_70015_d(int p_70015_1_) {
@@ -338,6 +337,15 @@
        int i = p_70015_1_ * 20;
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.func_92093_a((LivingEntity)this, i);
+@@ -463,7 +_,7 @@
+       if (this.field_190534_ay < i) {
+          this.func_241209_g_(i);
+       }
+-
++      this.putCallCombustEvent(true);
+    }
+ 
+    public void func_241209_g_(int p_241209_1_) {
 @@ -546,6 +_,26 @@
              block.func_176216_a(this.field_70170_p, this);
           }
@@ -753,7 +761,7 @@
        byte b0 = this.field_70180_af.func_187225_a(field_184240_ax);
        if (p_70052_2_) {
           this.field_70180_af.func_187227_b(field_184240_ax, (byte)(b0 | 1 << p_70052_1_));
-@@ -1939,16 +_,55 @@
+@@ -1939,16 +_,54 @@
     }
  
     public void func_70050_g(int p_70050_1_) {
@@ -786,7 +794,6 @@
 +         if (!entityCombustEvent.isCancelled()) {
 +            putCallCombustEvent(false);
 +            this.func_70015_d(entityCombustEvent.getDuration());
-+            putCallCombustEvent(true);
 +         }
 +         // CraftBukkit end
        }

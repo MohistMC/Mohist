@@ -457,7 +457,7 @@
                 }
  
                 f = f + f1;
-@@ -1058,8 +_,16 @@
+@@ -1058,8 +_,15 @@
                 if (p_71059_1_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_71059_1_).func_110143_aJ();
                    if (j > 0 && !p_71059_1_.func_70027_ad()) {
@@ -470,7 +470,6 @@
 +                        flag4 = true;
 +                        p_71059_1_.putCallCombustEvent(false);
 +                        p_71059_1_.func_70015_d(combustEvent.getDuration());
-+                        p_71059_1_.putCallCombustEvent(true);
 +                     }
 +                     // CraftBukkit end
                    }
@@ -533,7 +532,7 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1137,7 +_,15 @@
+@@ -1137,7 +_,14 @@
                       float f5 = f4 - ((LivingEntity)p_71059_1_).func_110143_aJ();
                       this.func_195067_a(Stats.field_188111_y, Math.round(f5 * 10.0F));
                       if (j > 0) {
@@ -544,7 +543,6 @@
 +                        if (!combustEvent.isCancelled()) {
 +                           entity.putCallCombustEvent(false);
 +                           entity.func_70015_d(combustEvent.getDuration());
-+                           entity.putCallCombustEvent(true);
 +                        }
 +                        // CraftBukkit end
                       }

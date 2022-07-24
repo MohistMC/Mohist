@@ -10,7 +10,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-@@ -111,7 +_,15 @@
+@@ -111,7 +_,14 @@
        if (!p_196262_4_.func_230279_az_()) {
           p_196262_4_.func_241209_g_(p_196262_4_.func_223314_ad() + 1);
           if (p_196262_4_.func_223314_ad() == 0) {
@@ -21,7 +21,6 @@
 +            if (!event.isCancelled()) {
 +               p_196262_4_.putCallCombustEvent(false);
 +               p_196262_4_.func_70015_d(event.getDuration());
-+               p_196262_4_.putCallCombustEvent(true);
 +            }
 +            // CraftBukkit end
           }
