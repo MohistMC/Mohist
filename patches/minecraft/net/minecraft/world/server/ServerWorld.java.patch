@@ -163,7 +163,7 @@
 +
 +   private final boolean ignoreEmptyTimeThis;
 +   {
-+      this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds") || IGNORE_EMPTY_TIME_LIST.contains(this.getServerWorldInfo().func_76065_j());
++      this.ignoreEmptyTimeThis = IGNORE_EMPTY_TIME_LIST.contains("all_worlds") || IGNORE_EMPTY_TIME_LIST.contains(this.worldDataServer.func_76065_j());
 +   }
 +   // Mohist end
 +
@@ -1232,7 +1232,7 @@
     }
  
     @Nullable
-@@ -1399,15 +_,49 @@
+@@ -1399,15 +_,45 @@
     }
  
     public static void func_241121_a_(ServerWorld p_241121_0_) {
@@ -1279,9 +1279,5 @@
 +   @Override
 +   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
 +      return this.partEntities.values();
-+   }
-+
-+   public IServerWorldInfo getServerWorldInfo(){
-+      return this.func_73046_m().func_240793_aU_().func_230407_G_();
     }
  }
