@@ -1,5 +1,6 @@
 package com.mohistmc.entity;
 
+import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
@@ -12,10 +13,8 @@ public class MohistModsMinecartContainer extends CraftMinecartContainer {
 
     public MohistModsMinecartContainer(CraftServer server, AbstractMinecartContainer entity) {
         super(server, entity);
-        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
-        if (entityName == null) {
-            entityName = entity.getName().getString();
-        }    }
+        this.entityName = EntityAPI.entityName(entity);
+    }
 
     @Override
     public AbstractMinecartContainer getHandle() {
@@ -33,6 +32,6 @@ public class MohistModsMinecartContainer extends CraftMinecartContainer {
     }
     @Override
     public String toString() {
-        return "CraftCustomMinecartContainer{" + getType() + '}';
+        return "MohistModsMinecartContainer{" + getType() + '}';
     }
 }

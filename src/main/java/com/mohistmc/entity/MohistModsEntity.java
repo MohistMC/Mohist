@@ -1,5 +1,6 @@
 package com.mohistmc.entity;
 
+import com.mohistmc.api.EntityAPI;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
@@ -10,8 +11,7 @@ public class MohistModsEntity extends CraftEntity {
 
     public MohistModsEntity(CraftServer server, net.minecraft.world.entity.Entity entity) {
         super(server, entity);
-        entityName = entity.getName().getString();
-
+        this.entityName = EntityAPI.entityName(entity);
     }
 
     @Override
@@ -26,6 +26,11 @@ public class MohistModsEntity extends CraftEntity {
 
     @Override
     public EntityType getType() {
-        return EntityType.UNKNOWN;
+        EntityType type = EntityType.fromName(this.entityName);
+        if (type != null) {
+            return type;
+        } else {
+            return EntityType.FORGE_MOD_CHEST_HORSE;
+        }
     }
 }

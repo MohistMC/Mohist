@@ -1,5 +1,6 @@
 package com.mohistmc.entity;
 
+import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
@@ -11,10 +12,7 @@ public class MohistModsProjectileEntity extends CraftProjectile {
 
     public MohistModsProjectileEntity(CraftServer server, Projectile entity) {
         super(server, entity);
-        this.entityName = ServerAPI.entityTypeMap.get(entity.getType());
-        if (entityName == null) {
-            entityName = entity.getName().getString();
-        }
+        this.entityName = EntityAPI.entityName(entity);
     }
 
     @Override
@@ -36,7 +34,7 @@ public class MohistModsProjectileEntity extends CraftProjectile {
     @Override
     public String toString()
     {
-        return "CustomProjectileEntity{" + entityName + '}';
+        return "MohistModsProjectileEntity{" + entityName + '}';
     }
 }
 

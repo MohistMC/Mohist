@@ -69,7 +69,6 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
-    public String entityName;
     private CraftEntityEquipment equipment;
 
     public CraftLivingEntity(final CraftServer server, final net.minecraft.world.entity.LivingEntity entity) {
@@ -78,7 +77,6 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (entity instanceof Mob || entity instanceof net.minecraft.world.entity.decoration.ArmorStand) {
             equipment = new CraftEntityEquipment(this);
         }
-        entityName = entity.getName().getString();
     }
 
     @Override
