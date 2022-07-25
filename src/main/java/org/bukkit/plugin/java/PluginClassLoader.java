@@ -146,8 +146,7 @@ final class PluginClassLoader extends URLClassLoader {
                 return result;
             }
         }
-
-        throw new ClassNotFoundException(name);
+        return Thread.currentThread().getContextClassLoader().loadClass(name.equals("org.bukkit.craftbukkit.util.CraftLegacy") ? "org.bukkit.craftbukkit.v1_19_R1.util.CraftLegacy" : name);
     }
 
     @Override
@@ -155,7 +154,7 @@ final class PluginClassLoader extends URLClassLoader {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
-            if (RemapUtils.needRemap(name.replace('/','.'))) {
+            if (RemapUtils.isNMSClass(name.replace('/','.'))) {
                 ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
                 if(remappedClassMapping == null){
                     throw new ClassNotFoundException(name.replace('/','.'));
