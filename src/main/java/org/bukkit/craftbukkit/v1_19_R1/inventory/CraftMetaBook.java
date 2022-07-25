@@ -355,6 +355,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         if (this.pages != null) {
             meta.pages = new ArrayList<String>(this.pages);
         }
+        meta.spigot = meta.new SpigotMeta(); // Spigot
         return meta;
     }
 

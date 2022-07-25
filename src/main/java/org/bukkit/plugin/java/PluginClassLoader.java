@@ -118,7 +118,6 @@ final class PluginClassLoader extends URLClassLoader {
                 return result;
             }
         } catch (ClassNotFoundException ex) {
-            return Thread.currentThread().getContextClassLoader().loadClass(name);
         }
 
         if (checkGlobal) {

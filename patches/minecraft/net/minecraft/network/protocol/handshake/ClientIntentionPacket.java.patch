@@ -1,22 +1,60 @@
 --- a/net/minecraft/network/protocol/handshake/ClientIntentionPacket.java
 +++ b/net/minecraft/network/protocol/handshake/ClientIntentionPacket.java
-@@ -11,6 +_,7 @@
-    private final String f_134721_;
-    private final int f_134722_;
+@@ -1,16 +_,29 @@
+ package net.minecraft.network.protocol.handshake;
+ 
++import com.google.gson.Gson;
++import com.mojang.authlib.properties.Property;
++import java.util.Objects;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.network.ConnectionProtocol;
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.protocol.Packet;
++import net.minecraftforge.network.NetworkConstants;
++import net.minecraftforge.network.NetworkHooks;
++import org.spigotmc.SpigotConfig;
+ 
+ public class ClientIntentionPacket implements Packet<ServerHandshakePacketListener> {
+    private static final int f_179799_ = 255;
+    private final int f_134720_;
+-   private final String f_134721_;
+-   private final int f_134722_;
++   public final String f_134721_;
++   public String original_ip;
++   public final int f_134722_;
     private final ConnectionProtocol f_134723_;
 +   private String fmlVersion = net.minecraftforge.network.NetworkConstants.NETVERSION;
++
++   // Mohist start - Support ip forward
++   private static final String EXTRA_DATA = "extraData";
++   private static final Gson GSON = new Gson();
++   // Mohist end
  
     public ClientIntentionPacket(String p_134726_, int p_134727_, ConnectionProtocol p_134728_) {
        this.f_134720_ = SharedConstants.m_183709_().getProtocolVersion();
-@@ -21,14 +_,16 @@
+@@ -21,14 +_,30 @@
  
     public ClientIntentionPacket(FriendlyByteBuf p_179801_) {
        this.f_134720_ = p_179801_.m_130242_();
 -      this.f_134721_ = p_179801_.m_130136_(255);
-+      String hostName = p_179801_.m_130136_(255);
++      String hostName = p_179801_.m_130136_(Short.MAX_VALUE); // Spigot
        this.f_134722_ = p_179801_.readUnsignedShort();
        this.f_134723_ = ConnectionProtocol.m_129583_(p_179801_.m_130242_());
 +      this.fmlVersion = net.minecraftforge.network.NetworkHooks.getFMLVersion(hostName);
++      // Mohist start - Support ip forward
++      if (SpigotConfig.bungee && !Objects.equals(this.fmlVersion, net.minecraftforge.network.NetworkConstants.NETVERSION)) {
++         String[] split = hostName.split("\0");
++         if (split.length == 4) {
++            Property[] properties = GSON.fromJson(split[3], Property[].class);
++            for (Property property : properties) {
++               if (Objects.equals(property.getName(), EXTRA_DATA)) {
++                  String extraData = property.getValue().replace("\1", "\0");
++                  this.fmlVersion = NetworkHooks.getFMLVersion(split[0] + extraData);
++               }
++            }
++         }
++      }
++      // Mohist end
 +      this.f_134721_ = hostName.split("\0")[0];
     }
  
