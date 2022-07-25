@@ -180,10 +180,6 @@ public class RemapUtils {
     }
 
     public static boolean isNMSClass(String className) {
-        return className.startsWith("net.minecraft.server.") || className.startsWith("com.mohistmc.");
-    }
-
-    public static boolean needRemap(String className) {
-        return className.startsWith("net.minecraft.") || className.startsWith("net.minecraftforge.") || className.startsWith("net.minecraft.server.v1_16_R3.");
+        return className.startsWith("net.minecraft.");
     }
 }

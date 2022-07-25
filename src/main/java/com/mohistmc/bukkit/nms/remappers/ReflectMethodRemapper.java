@@ -155,15 +155,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
     }
 
     private void redirectVirtual(int opcode, String owner, String name, String desc, boolean itf) {
-        if (desc.equals("()[B")) {
-            if (name.equals("toByteArray")) {
-                if (owner.equals("com/comphenix/net/sf/cglib/asm/$ClassWriter")) {
-                    super.visitMethodInsn(opcode, owner, name, desc, itf);
-                    super.visitMethodInsn(Opcodes.INVOKESTATIC, ProxyClassWriter.class.getName().replace('.', '/'), "remapClass", "([B)[B", false);
-                    return;
-                }
-            }
-        }
         MethodRedirectRule rule = findRule(opcode, owner, name, desc, itf);
         if (rule != null) {
             opcode = Opcodes.INVOKESTATIC;
