@@ -32,7 +32,7 @@
  
     public ClientIntentionPacket(String p_134726_, int p_134727_, ConnectionProtocol p_134728_) {
        this.f_134720_ = SharedConstants.m_183709_().getProtocolVersion();
-@@ -21,14 +_,30 @@
+@@ -21,14 +_,31 @@
  
     public ClientIntentionPacket(FriendlyByteBuf p_179801_) {
        this.f_134720_ = p_179801_.m_130242_();
@@ -54,6 +54,7 @@
 +            }
 +         }
 +      }
++      this.original_ip = hostName;
 +      // Mohist end
 +      this.f_134721_ = hostName.split("\0")[0];
     }
