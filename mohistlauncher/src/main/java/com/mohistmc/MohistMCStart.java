@@ -72,8 +72,6 @@ public class MohistMCStart {
             new v_1_19().run();
         }
 
-        Class.forName("org.apache.commons.lang3.Validate");
-
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
             forgeArgs.add(arg.split(" ")[0]);

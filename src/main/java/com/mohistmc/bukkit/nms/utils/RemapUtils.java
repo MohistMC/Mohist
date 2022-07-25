@@ -48,7 +48,6 @@ import org.objectweb.asm.tree.ClassNode;
  */
 public class RemapUtils {
 
-    public static final String nmspackage = "net.minecraft.server.v1_19_R1";
     private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
@@ -60,11 +59,8 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
-        jarMapping.packages.put("org/apache/commons/lang/", "org/apache/commons/lang3/");
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
-
-        //relocations.put("net.minecraft.server", nmspackage);
         try {
             jarMapping.loadMappings(
                     new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
