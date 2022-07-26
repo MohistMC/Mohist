@@ -5,8 +5,10 @@
 
 package net.minecraftforge.network;
 
+import com.mojang.logging.LogUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.util.Attribute;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,9 +23,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.slf4j.Logger;
 
 public class MCRegisterPacketHandler
 {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final MCRegisterPacketHandler INSTANCE = new MCRegisterPacketHandler();
 
     public static class ChannelList {
@@ -62,7 +66,11 @@ public class MCRegisterPacketHandler
             for (int cur = 0; cur < all.length; cur++) {
                 if (all[cur] == '\0') {
                     String s = new String(all, last, cur - last, StandardCharsets.UTF_8);
-                    rl.add(new ResourceLocation(s));
+                    try {
+                        rl.add(new ResourceLocation(s));
+                    } catch (ResourceLocationException ex) {
+                        LOGGER.warn("Invalid channel name received: {}. Ignoring", s);
+                    }
                     last = cur + 1;
                 }
             }

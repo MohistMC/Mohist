@@ -188,7 +188,7 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
         getVariantBuilder(block)
-                .partialState().setModels(models);
+            .partialState().setModels(models);
     }
 
     public void axisBlock(RotatedPillarBlock block) {
@@ -205,8 +205,8 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void axisBlock(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end) {
         axisBlock(block,
-                models().cubeColumn(name(block), side, end),
-                models().cubeColumnHorizontal(name(block) + "_horizontal", side, end));
+            models().cubeColumn(name(block), side, end),
+            models().cubeColumnHorizontal(name(block) + "_horizontal", side, end));
     }
 
     public void axisBlockWithRenderType(RotatedPillarBlock block, String renderType) {
@@ -223,8 +223,8 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void axisBlockWithRenderType(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end, String renderType) {
         axisBlock(block,
-                models().cubeColumn(name(block), side, end).renderType(renderType),
-                models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType));
+            models().cubeColumn(name(block), side, end).renderType(renderType),
+            models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType));
     }
 
     public void axisBlockWithRenderType(RotatedPillarBlock block, ResourceLocation renderType) {
@@ -241,17 +241,17 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void axisBlockWithRenderType(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end, ResourceLocation renderType) {
         axisBlock(block,
-                models().cubeColumn(name(block), side, end).renderType(renderType),
-                models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType));
+            models().cubeColumn(name(block), side, end).renderType(renderType),
+            models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType));
     }
 
     public void axisBlock(RotatedPillarBlock block, ModelFile vertical, ModelFile horizontal) {
         getVariantBuilder(block)
-                .partialState().with(RotatedPillarBlock.AXIS, Axis.Y)
+            .partialState().with(RotatedPillarBlock.AXIS, Axis.Y)
                 .modelForState().modelFile(vertical).addModel()
-                .partialState().with(RotatedPillarBlock.AXIS, Axis.Z)
+            .partialState().with(RotatedPillarBlock.AXIS, Axis.Z)
                 .modelForState().modelFile(horizontal).rotationX(90).addModel()
-                .partialState().with(RotatedPillarBlock.AXIS, Axis.X)
+            .partialState().with(RotatedPillarBlock.AXIS, Axis.X)
                 .modelForState().modelFile(horizontal).rotationX(90).rotationY(90).addModel();
     }
 
@@ -275,11 +275,11 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void horizontalBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {
         getVariantBuilder(block)
-                .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(modelFunc.apply(state))
-                        .rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
-                        .build()
-                );
+            .forAllStates(state -> ConfiguredModel.builder()
+                    .modelFile(modelFunc.apply(state))
+                    .rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
+                    .build()
+            );
     }
 
     public void horizontalFaceBlock(Block block, ModelFile model) {
@@ -296,12 +296,12 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void horizontalFaceBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {
         getVariantBuilder(block)
-                .forAllStates(state -> ConfiguredModel.builder()
-                        .modelFile(modelFunc.apply(state))
-                        .rotationX(state.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
-                        .rotationY((((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) + (state.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
-                        .build()
-                );
+            .forAllStates(state -> ConfiguredModel.builder()
+                    .modelFile(modelFunc.apply(state))
+                    .rotationX(state.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                    .rotationY((((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) + (state.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                    .build()
+            );
     }
 
     public void directionalBlock(Block block, ModelFile model) {
@@ -318,14 +318,14 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void directionalBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {
         getVariantBuilder(block)
-                .forAllStates(state -> {
-                    Direction dir = state.getValue(BlockStateProperties.FACING);
-                    return ConfiguredModel.builder()
-                            .modelFile(modelFunc.apply(state))
-                            .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
-                            .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + angleOffset) % 360)
-                            .build();
-                });
+            .forAllStates(state -> {
+                Direction dir = state.getValue(BlockStateProperties.FACING);
+                return ConfiguredModel.builder()
+                    .modelFile(modelFunc.apply(state))
+                    .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
+                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + angleOffset) % 360)
+                    .build();
+            });
     }
 
     public void stairsBlock(StairBlock block, ResourceLocation texture) {
@@ -392,26 +392,26 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void stairsBlock(StairBlock block, ModelFile stairs, ModelFile stairsInner, ModelFile stairsOuter) {
         getVariantBuilder(block)
-                .forAllStatesExcept(state -> {
-                    Direction facing = state.getValue(StairBlock.FACING);
-                    Half half = state.getValue(StairBlock.HALF);
-                    StairsShape shape = state.getValue(StairBlock.SHAPE);
-                    int yRot = (int) facing.getClockWise().toYRot(); // Stairs model is rotated 90 degrees clockwise for some reason
-                    if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
-                        yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
-                    }
-                    if (shape != StairsShape.STRAIGHT && half == Half.TOP) {
-                        yRot += 90; // Top stairs are rotated 90 degrees clockwise
-                    }
-                    yRot %= 360;
-                    boolean uvlock = yRot != 0 || half == Half.TOP; // Don't set uvlock for states that have no rotation
-                    return ConfiguredModel.builder()
-                            .modelFile(shape == StairsShape.STRAIGHT ? stairs : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? stairsInner : stairsOuter)
-                            .rotationX(half == Half.BOTTOM ? 0 : 180)
-                            .rotationY(yRot)
-                            .uvLock(uvlock)
-                            .build();
-                }, StairBlock.WATERLOGGED);
+            .forAllStatesExcept(state -> {
+               Direction facing = state.getValue(StairBlock.FACING);
+               Half half = state.getValue(StairBlock.HALF);
+               StairsShape shape = state.getValue(StairBlock.SHAPE);
+               int yRot = (int) facing.getClockWise().toYRot(); // Stairs model is rotated 90 degrees clockwise for some reason
+               if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
+                   yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
+               }
+               if (shape != StairsShape.STRAIGHT && half == Half.TOP) {
+                   yRot += 90; // Top stairs are rotated 90 degrees clockwise
+               }
+               yRot %= 360;
+               boolean uvlock = yRot != 0 || half == Half.TOP; // Don't set uvlock for states that have no rotation
+               return ConfiguredModel.builder()
+                       .modelFile(shape == StairsShape.STRAIGHT ? stairs : shape == StairsShape.INNER_LEFT || shape == StairsShape.INNER_RIGHT ? stairsInner : stairsOuter)
+                       .rotationX(half == Half.BOTTOM ? 0 : 180)
+                       .rotationY(yRot)
+                       .uvLock(uvlock)
+                       .build();
+            }, StairBlock.WATERLOGGED);
     }
 
     public void slabBlock(SlabBlock block, ResourceLocation doubleslab, ResourceLocation texture) {
@@ -424,9 +424,9 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void slabBlock(SlabBlock block, ModelFile bottom, ModelFile top, ModelFile doubleslab) {
         getVariantBuilder(block)
-                .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM).addModels(new ConfiguredModel(bottom))
-                .partialState().with(SlabBlock.TYPE, SlabType.TOP).addModels(new ConfiguredModel(top))
-                .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
+            .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM).addModels(new ConfiguredModel(bottom))
+            .partialState().with(SlabBlock.TYPE, SlabType.TOP).addModels(new ConfiguredModel(top))
+            .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
     }
 
     public void buttonBlock(ButtonBlock block, ResourceLocation texture) {
@@ -483,7 +483,7 @@ public abstract class BlockStateProvider implements DataProvider {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 builder.part().modelFile(side).rotationY((((int) dir.toYRot()) + 180) % 360).uvLock(true).addModel()
-                        .condition(e.getValue(), true);
+                    .condition(e.getValue(), true);
             }
         });
     }
@@ -491,40 +491,40 @@ public abstract class BlockStateProvider implements DataProvider {
     public void fenceBlock(FenceBlock block, ResourceLocation texture) {
         String baseName = key(block).toString();
         fourWayBlock(block,
-                models().fencePost(baseName + "_post", texture),
-                models().fenceSide(baseName + "_side", texture));
+            models().fencePost(baseName + "_post", texture),
+            models().fenceSide(baseName + "_side", texture));
     }
 
     public void fenceBlock(FenceBlock block, String name, ResourceLocation texture) {
         fourWayBlock(block,
-                models().fencePost(name + "_fence_post", texture),
-                models().fenceSide(name + "_fence_side", texture));
+            models().fencePost(name + "_fence_post", texture),
+            models().fenceSide(name + "_fence_side", texture));
     }
 
     public void fenceBlockWithRenderType(FenceBlock block, ResourceLocation texture, String renderType) {
         String baseName = key(block).toString();
         fourWayBlock(block,
-                models().fencePost(baseName + "_post", texture).renderType(renderType),
-                models().fenceSide(baseName + "_side", texture).renderType(renderType));
+            models().fencePost(baseName + "_post", texture).renderType(renderType),
+            models().fenceSide(baseName + "_side", texture).renderType(renderType));
     }
 
     public void fenceBlockWithRenderType(FenceBlock block, String name, ResourceLocation texture, String renderType) {
         fourWayBlock(block,
-                models().fencePost(name + "_fence_post", texture).renderType(renderType),
-                models().fenceSide(name + "_fence_side", texture).renderType(renderType));
+            models().fencePost(name + "_fence_post", texture).renderType(renderType),
+            models().fenceSide(name + "_fence_side", texture).renderType(renderType));
     }
 
     public void fenceBlockWithRenderType(FenceBlock block, ResourceLocation texture, ResourceLocation renderType) {
         String baseName = key(block).toString();
         fourWayBlock(block,
-                models().fencePost(baseName + "_post", texture).renderType(renderType),
-                models().fenceSide(baseName + "_side", texture).renderType(renderType));
+            models().fencePost(baseName + "_post", texture).renderType(renderType),
+            models().fenceSide(baseName + "_side", texture).renderType(renderType));
     }
 
     public void fenceBlockWithRenderType(FenceBlock block, String name, ResourceLocation texture, ResourceLocation renderType) {
         fourWayBlock(block,
-                models().fencePost(name + "_fence_post", texture).renderType(renderType),
-                models().fenceSide(name + "_fence_side", texture).renderType(renderType));
+            models().fencePost(name + "_fence_post", texture).renderType(renderType),
+            models().fenceSide(name + "_fence_side", texture).renderType(renderType));
     }
 
     public void fenceGateBlock(FenceGateBlock block, ResourceLocation texture) {
@@ -610,42 +610,42 @@ public abstract class BlockStateProvider implements DataProvider {
 
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture),
-                models().wallSide(baseName + "_side", texture),
-                models().wallSideTall(baseName + "_side_tall", texture));
+            models().wallSide(baseName + "_side", texture),
+            models().wallSideTall(baseName + "_side_tall", texture));
     }
 
     private void wallBlockInternalWithRenderType(WallBlock block, String baseName, ResourceLocation texture, ResourceLocation renderType) {
         wallBlock(block, models().wallPost(baseName + "_post", texture).renderType(renderType),
-                models().wallSide(baseName + "_side", texture).renderType(renderType),
-                models().wallSideTall(baseName + "_side_tall", texture).renderType(renderType));
+            models().wallSide(baseName + "_side", texture).renderType(renderType),
+            models().wallSideTall(baseName + "_side_tall", texture).renderType(renderType));
     }
 
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
-            .put(Direction.EAST,  BlockStateProperties.EAST_WALL)
-            .put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
-            .put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
-            .put(Direction.WEST,  BlockStateProperties.WEST_WALL)
-            .build();
+    		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
+    		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
+    		.put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
+    		.put(Direction.WEST,  BlockStateProperties.WEST_WALL)
+    		.build();
 
     public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel()
-                .condition(WallBlock.UP, true).end();
+                    .condition(WallBlock.UP, true).end();
         WALL_PROPS.entrySet().stream()
-                .filter(e -> e.getKey().getAxis().isHorizontal())
-                .forEach(e -> {
-                    wallSidePart(builder, side, e, WallSide.LOW);
-                    wallSidePart(builder, sideTall, e, WallSide.TALL);
-                });
+        	.filter(e -> e.getKey().getAxis().isHorizontal())
+        	.forEach(e -> {
+        		wallSidePart(builder, side, e, WallSide.LOW);
+        		wallSidePart(builder, sideTall, e, WallSide.TALL);
+        	});
     }
 
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
-                .modelFile(model)
-                .rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
-                .uvLock(true)
-                .addModel()
-                .condition(entry.getValue(), height);
+        	.modelFile(model)
+        		.rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
+        		.uvLock(true)
+        		.addModel()
+    		.condition(entry.getValue(), height);
     }
 
     public void paneBlock(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge) {
@@ -692,15 +692,15 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void paneBlock(IronBarsBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
-                .part().modelFile(post).addModel().end();
+            .part().modelFile(post).addModel().end();
         PipeBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 boolean alt = dir == Direction.SOUTH;
                 builder.part().modelFile(alt || dir == Direction.WEST ? sideAlt : side).rotationY(dir.getAxis() == Axis.X ? 90 : 0).addModel()
-                        .condition(e.getValue(), true).end()
-                        .part().modelFile(alt || dir == Direction.EAST ? noSideAlt : noSide).rotationY(dir == Direction.WEST ? 270 : dir == Direction.SOUTH ? 90 : 0).addModel()
-                        .condition(e.getValue(), false);
+                    .condition(e.getValue(), true).end()
+                    .part().modelFile(alt || dir == Direction.EAST ? noSideAlt : noSide).rotationY(dir == Direction.WEST ? 270 : dir == Direction.SOUTH ? 90 : 0).addModel()
+                    .condition(e.getValue(), false);
             }
         });
     }
@@ -790,8 +790,8 @@ public abstract class BlockStateProvider implements DataProvider {
             }
 
             return ConfiguredModel.builder().modelFile(model)
-                    .rotationY(yRot)
-                    .build();
+                .rotationY(yRot)
+                .build();
         }, DoorBlock.POWERED);
     }
 

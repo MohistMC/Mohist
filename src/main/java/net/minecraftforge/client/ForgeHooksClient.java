@@ -960,10 +960,6 @@ public class ForgeHooksClient
     @NotNull
     public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean cull)
     {
-        if (chunkRenderType != RenderType.translucent())
-            return Sheets.cutoutBlockSheet();
-        if (!Minecraft.useShaderTransparency())
-            return Sheets.translucentCullBlockSheet();
         return RenderTypeHelper.getEntityRenderType(chunkRenderType, cull);
     }
 
