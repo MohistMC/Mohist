@@ -9,6 +9,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.Validate;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
 
 public class CraftMerchantCustom extends CraftMerchant {
 
@@ -32,12 +33,11 @@ public class CraftMerchantCustom extends CraftMerchant {
         private final Component title;
         private final MerchantOffers trades = new MerchantOffers();
         private net.minecraft.world.entity.player.Player tradingPlayer;
-        private Level tradingWorld;
         protected CraftMerchant craftMerchant;
 
         public MinecraftMerchant(String title) {
             Validate.notNull(title, "Title cannot be null");
-            this.title = Component.literal(title);
+            this.title = CraftChatMessage.fromString(title)[0];
         }
 
         @Override
@@ -48,9 +48,6 @@ public class CraftMerchantCustom extends CraftMerchant {
         @Override
         public void setTradingPlayer(net.minecraft.world.entity.player.Player entityhuman) {
             this.tradingPlayer = entityhuman;
-            if (entityhuman != null) {
-                this.tradingWorld = entityhuman.level;
-            }
         }
 
         @Override
