@@ -87,7 +87,7 @@ public abstract class Action {
         this.mcpZip = new File(mcpStart + ".zip");
         this.mcpTxt = new File(mcpStart + "-mappings.txt");
 
-        this.minecraft_server = new File(libPath + "minecraft_server." + mcVer + ".jar");
+        this.minecraft_server = libPath + "net/minecraft/server/" + mcVer  + "/server-" + mcVer + ".jar");
     }
 
     protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
