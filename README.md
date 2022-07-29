@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Mohist 1.19</h1>
+  <h1>Mohist 1.19.1</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
@@ -17,7 +17,7 @@
 
 | Version | Support |
 |---------|---------|
-| 1.19    | Wait    |
+| 1.19.1   | Wait    |
 | 1.16.5  | Active  |
 
 Progress
