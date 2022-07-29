@@ -103,7 +103,7 @@
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
-@@ -305,11 +_,14 @@
+@@ -305,11 +_,13 @@
        float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -114,7 +114,6 @@
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
  
-+
 +   /** Forge: Use ItemStack sensitive version. */
 +   @Deprecated
     public int m_6473_() {

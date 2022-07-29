@@ -88,7 +88,7 @@ public class ModCustomCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         CommandSourceStack icommandlistener = getListener(sender);
-        dispatcher.performCommand(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel));
+        dispatcher.performPrefixedCommand(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel));
         return true;
     }
 

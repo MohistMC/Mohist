@@ -5,4 +5,3 @@
 # checkSAS also supports names using . so simplest way to find the correct line to add is to get the AT line from the bot 
 #   and remove the access modifier.
 #==================================================================================================================================
-net/minecraft/client/resources/model/ModelResourceLocation # ModelResourceLocation class, TODO: Remove in 1.19

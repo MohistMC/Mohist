@@ -205,6 +205,7 @@ public class v_1_19 implements Version {
             yml.save(MohistConfigUtil.mohistyml);
 
             restartServer(launchArgs, true);
+            System.out.println(launchArgs.toString());
         }
     }
 }

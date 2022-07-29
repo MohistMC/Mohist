@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/rootplacers/RootPlacerType.java
++++ b/net/minecraft/world/level/levelgen/feature/rootplacers/RootPlacerType.java
+@@ -11,7 +_,7 @@
+       return Registry.m_122961_(Registry.f_235742_, p_225905_, new RootPlacerType<>(p_225906_));
+    }
+ 
+-   public RootPlacerType(Codec<P> p_225902_) {
++   private RootPlacerType(Codec<P> p_225902_) {
+       this.f_225899_ = p_225902_;
+    }
+ 

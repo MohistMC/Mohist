@@ -1,14 +1,14 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -63,6 +_,7 @@
+@@ -66,6 +_,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.ServerScoreboard;
 +import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.server.network.FilteredText;
-@@ -94,6 +_,9 @@
+ import net.minecraft.server.network.ServerGamePacketListenerImpl;
+@@ -96,6 +_,9 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -18,7 +18,7 @@
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -122,9 +_,14 @@
+@@ -125,9 +_,14 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -33,7 +33,7 @@
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
        this.f_11204_ = p_203844_;
-@@ -157,6 +_,7 @@
+@@ -160,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
@@ -41,7 +41,7 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -165,6 +_,7 @@
+@@ -168,6 +_,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
@@ -49,16 +49,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -181,7 +_,7 @@
- 
-       this.m_215627_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.f_130599_);
-       servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
--      this.f_11196_.add(p_11263_);
-+      this.addPlayer(p_11263_);
-       this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
-       this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
- 
-@@ -237,9 +_,10 @@
+@@ -240,9 +_,10 @@
        }
  
        p_11263_.m_143429_();
@@ -70,7 +61,7 @@
        Set<Objective> set = Sets.newHashSet();
  
        for(PlayerTeam playerteam : p_11274_.m_83491_()) {
-@@ -297,6 +_,7 @@
+@@ -300,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
           f_11188_.debug("loading single player");
@@ -78,7 +69,7 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -305,6 +_,7 @@
+@@ -308,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
@@ -86,7 +77,7 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
-@@ -319,6 +_,7 @@
+@@ -322,6 +_,7 @@
     }
  
     public void m_11286_(ServerPlayer p_11287_) {
@@ -94,7 +85,7 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -397,6 +_,11 @@
+@@ -400,6 +_,11 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_, p_215626_);
     }
  
@@ -106,12 +97,7 @@
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
        this.f_11196_.remove(p_11237_);
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
-@@ -455,10 +_,11 @@
-       this.m_11229_(serverplayer, serverlevel1);
-       this.m_11289_(serverplayer);
-       serverlevel1.m_8845_(serverplayer);
--      this.f_11196_.add(serverplayer);
-+      this.addPlayer(serverplayer);
+@@ -462,6 +_,7 @@
        this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
@@ -119,7 +105,7 @@
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
-@@ -543,6 +_,7 @@
+@@ -546,6 +_,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
@@ -127,7 +113,7 @@
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
-@@ -552,6 +_,7 @@
+@@ -555,6 +_,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
@@ -135,8 +121,22 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -764,19 +_,32 @@
+@@ -784,13 +_,6 @@
+       if (serverstatscounter == null) {
+          File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
+          File file2 = new File(file1, uuid + ".json");
+-         if (!file2.exists()) {
+-            File file3 = new File(file1, p_11240_.m_7755_().getString() + ".json");
+-            Path path = file3.toPath();
+-            if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
+-               file3.renameTo(file2);
+-            }
+-         }
  
+          serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
+          this.f_11202_.put(uuid, serverstatscounter);
+@@ -799,6 +_,26 @@
+       return serverstatscounter;
     }
  
 +   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
@@ -159,23 +159,10 @@
 +      return serverstatisticsmanager;
 +   }
 +
-    public ServerStatsCounter m_11239_(Player p_11240_) {
-       UUID uuid = p_11240_.m_20148_();
-       ServerStatsCounter serverstatscounter = this.f_11202_.get(uuid);
-       if (serverstatscounter == null) {
-          File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
-          File file2 = new File(file1, uuid + ".json");
--         if (!file2.exists()) {
--            File file3 = new File(file1, p_11240_.m_7755_().getString() + ".json");
--            Path path = file3.toPath();
--            if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
--               file3.renameTo(file2);
--            }
--         }
- 
-          serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
-          this.f_11202_.put(uuid, serverstatscounter);
-@@ -795,6 +_,8 @@
+    public PlayerAdvancements m_11296_(ServerPlayer p_11297_) {
+       UUID uuid = p_11297_.m_20148_();
+       PlayerAdvancements playeradvancements = this.f_11203_.get(uuid);
+@@ -809,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
        }
  
@@ -184,7 +171,7 @@
        playeradvancements.m_135979_(p_11297_);
        return playeradvancements;
     }
-@@ -824,7 +_,7 @@
+@@ -838,7 +_,7 @@
     }
  
     public List<ServerPlayer> m_11314_() {
@@ -193,7 +180,7 @@
     }
  
     @Nullable
-@@ -841,6 +_,7 @@
+@@ -855,6 +_,7 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
@@ -201,7 +188,7 @@
        this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  
-@@ -853,5 +_,13 @@
+@@ -867,5 +_,13 @@
  
     public boolean m_11316_() {
        return this.f_11209_;

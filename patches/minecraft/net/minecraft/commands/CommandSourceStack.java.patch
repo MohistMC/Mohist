@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/CommandSourceStack.java
 +++ b/net/minecraft/commands/CommandSourceStack.java
-@@ -33,7 +_,7 @@
+@@ -36,7 +_,7 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
@@ -9,7 +9,7 @@
     public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.player"));
     public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.entity"));
     public final CommandSource f_81288_;
-@@ -297,4 +_,10 @@
+@@ -343,4 +_,10 @@
     public RegistryAccess m_5894_() {
        return this.f_81294_.m_206579_();
     }

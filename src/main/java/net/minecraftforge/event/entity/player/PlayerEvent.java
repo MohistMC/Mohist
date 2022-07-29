@@ -6,8 +6,8 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
-
 import java.util.Optional;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
@@ -111,7 +111,7 @@ public class PlayerEvent extends LivingEvent
         private float newSpeed = 0.0f;
         private final Optional<BlockPos> pos; // Y position of -1 notes unknown location
 
-        public BreakSpeed(Player player, BlockState state, float original,  @Nullable BlockPos pos)
+        public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos)
         {
             super(player);
             this.state = state;

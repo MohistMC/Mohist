@@ -1,7 +1,15 @@
 --- a/net/minecraft/world/level/block/JukeboxBlock.java
 +++ b/net/minecraft/world/level/block/JukeboxBlock.java
-@@ -63,7 +_,7 @@
-       }
+@@ -48,7 +_,6 @@
+       if (p_54281_.m_61143_(f_54254_)) {
+          this.m_54260_(p_54282_, p_54283_);
+          p_54281_ = p_54281_.m_61124_(f_54254_, Boolean.valueOf(false));
+-         p_54282_.m_220407_(GameEvent.f_238649_, p_54283_, GameEvent.Context.m_223722_(p_54281_));
+          p_54282_.m_7731_(p_54283_, p_54281_, 2);
+          p_54282_.m_220407_(GameEvent.f_157792_, p_54283_, GameEvent.Context.m_223719_(p_54284_, p_54281_));
+          return InteractionResult.m_19078_(p_54282_.f_46443_);
+@@ -68,7 +_,7 @@
+ 
     }
  
 -   private void m_54260_(Level p_54261_, BlockPos p_54262_) {

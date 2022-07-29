@@ -1,14 +1,22 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -20,6 +_,7 @@
- import java.util.Optional;
+@@ -19,6 +_,7 @@
  import java.util.Set;
+ import java.util.concurrent.CancellationException;
  import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.ExecutionException;
  import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-@@ -166,11 +_,28 @@
+@@ -132,6 +_,7 @@
+ import net.minecraft.util.FutureChain;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.StringUtil;
++import net.minecraft.util.thread.BlockableEventLoop;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.effect.MobEffects;
+@@ -178,11 +_,28 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.apache.commons.lang3.StringUtils;
@@ -25,7 +33,7 @@
 +import org.bukkit.event.player.PlayerKickEvent;
  import org.slf4j.Logger;
  
- public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
+ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, TickablePacketListener, ServerGamePacketListener {
     static final Logger f_9744_ = LogUtils.getLogger();
     private static final int f_143608_ = 15000;
 +   /**
@@ -36,10 +44,10 @@
 +   @Deprecated
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
-    public final Connection f_9742_;
-@@ -210,6 +_,28 @@
-    private final ChatPreviewThrottler f_215196_ = new ChatPreviewThrottler();
-    private final AtomicReference<Instant> f_215197_ = new AtomicReference<>(Instant.EPOCH);
+    private static final int f_241635_ = 4096;
+@@ -227,6 +_,28 @@
+    private final LastSeenMessagesValidator f_241654_ = new LastSeenMessagesValidator();
+    private final FutureChain f_241681_;
  
 +   private final CraftServer cserver;
 +   public boolean processedDisconnect;
@@ -66,36 +74,37 @@
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_) {
        this.f_9745_ = p_9770_;
        this.f_9742_ = p_9771_;
-@@ -218,6 +_,9 @@
-       p_9772_.f_8906_ = this;
-       this.f_9747_ = Util.m_137550_();
-       p_9772_.m_8967_().m_7674_();
-+
+@@ -242,7 +_,9 @@
+          this.f_240889_ = SignedMessageChain.Decoder.f_243004_;
+       }
+ 
+-      this.f_241681_ = new FutureChain(p_9770_);
++	  this.f_241681_ = new FutureChain(p_9770_);
 +      // CraftBukkit start - add fields and methods
 +      this.cserver = p_9770_.server;
     }
  
     public void m_9933_() {
-@@ -315,12 +_,40 @@
+@@ -340,10 +_,39 @@
        return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
     }
  
 +   // CraftBukkit star
     public void m_9942_(Component p_9943_) {
--      this.f_9742_.m_129514_(new ClientboundDisconnectPacket(p_9943_), (p_9828_) -> {
+-      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.m_243092_(() -> {
 -         this.f_9742_.m_129507_(p_9943_);
 +      disconnect(CraftChatMessage.fromComponent(p_9943_));
 +   }
 +   // CraftBukkit end
 +
-+   public void disconnect(String s) {
++   public void disconnect(String p_9943_) {
 +      // CraftBukkit start - fire PlayerKickEvent
 +      if (this.processedDisconnect) {
 +         return;
 +      }
 +      String leaveMessage = ChatFormatting.YELLOW + this.f_9743_.m_6302_() + " left the game.";
 +
-+      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), s, leaveMessage);
++      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), p_9943_, leaveMessage);
 +
 +      if (this.cserver.getServer().m_130010_()) {
 +         this.cserver.getPluginManager().callEvent(event);
@@ -107,20 +116,18 @@
 +      }
 +      this.f_9743_.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +      // Send the possibly modified leave message
-+      s = event.getReason();
-+      final Component ichatbasecomponent = CraftChatMessage.fromString(s, true)[0];
++      p_9943_ = event.getReason();
++      final Component ichatbasecomponent = CraftChatMessage.fromString(p_9943_, true)[0];
 +      // CraftBukkit end
-+      this.f_9742_.m_129514_(new ClientboundDisconnectPacket(ichatbasecomponent), (p_9828_) -> {
++      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.m_243092_(() -> {
 +         this.f_9742_.m_129507_(ichatbasecomponent);
-       });
+       }));
++
 +      this.m_7026_(ichatbasecomponent); // CraftBukkit - fire quit instantly
        this.f_9742_.m_129540_();
--      this.f_9745_.m_18709_(this.f_9742_::m_129541_);
-+      this.f_9745_.m_6681_(this.f_9742_::m_129541_);
+       this.f_9745_.m_18709_(this.f_9742_::m_129541_);
     }
- 
-    private <T, R> void m_9801_(T p_9802_, Consumer<R> p_9803_, BiFunction<TextFilter, T, CompletableFuture<R>> p_9804_) {
-@@ -413,9 +_,11 @@
+@@ -432,9 +_,11 @@
              }
  
              entity.m_19890_(d3, d4, d5, f, f1);
@@ -132,7 +139,7 @@
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
-@@ -432,7 +_,7 @@
+@@ -451,7 +_,7 @@
     }
  
     private boolean m_9793_(Entity p_9794_) {
@@ -141,7 +148,7 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
-@@ -944,6 +_,10 @@
+@@ -980,6 +_,10 @@
        this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
     }
  
@@ -152,7 +159,7 @@
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
        PacketUtils.m_131359_(p_9889_, this, this.f_9743_.m_9236_());
        BlockPos blockpos = p_9889_.m_134281_();
-@@ -1004,7 +_,7 @@
+@@ -1040,7 +_,7 @@
        Vec3 vec3 = blockhitresult.m_82450_();
        BlockPos blockpos = blockhitresult.m_82425_();
        Vec3 vec31 = Vec3.m_82512_(blockpos);
@@ -161,7 +168,7 @@
           Vec3 vec32 = vec3.m_82546_(vec31);
           double d0 = 1.0000001D;
           if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
-@@ -1012,7 +_,7 @@
+@@ -1048,7 +_,7 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
              if (blockpos.m_123342_() < i) {
@@ -170,7 +177,31 @@
                    InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                    if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                       Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
-@@ -1383,11 +_,13 @@
+@@ -1184,10 +_,12 @@
+                if (this.m_242598_(playerchatmessage)) {
+                   this.f_241681_.m_241849_(() -> {
+                      CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_241775_().f_241656_());
+-                     CompletableFuture<PlayerChatMessage> completablefuture1 = this.f_9745_.m_236742_().m_243107_(this.f_9743_, playerchatmessage);
++                     CompletableFuture<PlayerChatMessage> completablefuture1 = net.minecraftforge.common.ForgeHooks.getServerChatSubmittedDecorator().m_243107_(this.f_9743_, playerchatmessage);
+                      return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_243197_) -> {
+                         FilterMask filtermask = completablefuture.join().f_243010_();
+-                        PlayerChatMessage playerchatmessage1 = completablefuture1.join().m_243072_(filtermask);
++                        PlayerChatMessage playerchatmessage1 = completablefuture1.join();
++                        if (playerchatmessage1 == null) return; // Forge: ServerChatEvent was canceled if this is null.
++                        playerchatmessage1 = playerchatmessage1.m_243072_(filtermask);
+                         this.m_243086_(playerchatmessage1);
+                      }, this.f_9745_);
+                   });
+@@ -1375,7 +_,7 @@
+ 
+    private CompletableFuture<Component> m_215246_(String p_215247_) {
+       Component component = Component.m_237113_(p_215247_);
+-      CompletableFuture<Component> completablefuture = this.f_9745_.m_236742_().m_236961_(this.f_9743_, component).thenApply((p_238202_) -> {
++      CompletableFuture<Component> completablefuture = net.minecraftforge.common.ForgeHooks.getServerChatPreviewDecorator().m_236961_(this.f_9743_, component).thenApply((p_238202_) -> {
+          return !component.equals(p_238202_) ? p_238202_ : null;
+       });
+       completablefuture.thenAcceptAsync((p_242747_) -> {
+@@ -1524,11 +_,13 @@
              return;
           }
  
@@ -185,7 +216,7 @@
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
-@@ -1409,7 +_,7 @@
+@@ -1550,7 +_,7 @@
  
                 public void m_141994_() {
                    if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrb) && !(entity instanceof AbstractArrow) && entity != ServerGamePacketListenerImpl.this.f_9743_) {
@@ -194,7 +225,7 @@
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
                       ServerGamePacketListenerImpl.f_9744_.warn("Player {} tried to attack an invalid entity", (Object)ServerGamePacketListenerImpl.this.f_9743_.m_7755_().getString());
-@@ -1596,6 +_,7 @@
+@@ -1749,6 +_,7 @@
     }
  
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {
@@ -202,7 +233,7 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
-@@ -1616,8 +_,107 @@
+@@ -1769,8 +_,107 @@
        return this.f_9743_;
     }
  

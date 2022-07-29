@@ -15,7 +15,7 @@
        if (p_44845_.m_41619_()) {
           return 0;
        } else {
-@@ -120,6 +_,12 @@
+@@ -120,6 +_,13 @@
  
     private static void m_44850_(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {
        if (!p_44852_.m_41619_()) {
@@ -25,6 +25,7 @@
 +            }
 +            return;
 +         }
++
           ListTag listtag = p_44852_.m_41785_();
  
           for(int i = 0; i < listtag.size(); ++i) {

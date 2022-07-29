@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/featuresize/FeatureSizeType.java
++++ b/net/minecraft/world/level/levelgen/feature/featuresize/FeatureSizeType.java
+@@ -12,7 +_,7 @@
+       return Registry.m_122961_(Registry.f_122888_, p_68304_, new FeatureSizeType<>(p_68305_));
+    }
+ 
+-   public FeatureSizeType(Codec<P> p_68301_) {
++   private FeatureSizeType(Codec<P> p_68301_) {
+       this.f_68298_ = p_68301_;
+    }
+ 

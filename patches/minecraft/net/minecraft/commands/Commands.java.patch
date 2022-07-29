@@ -9,7 +9,7 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -12,6 +_,8 @@
+@@ -13,6 +_,8 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
@@ -18,7 +18,7 @@
  import java.util.Map;
  import java.util.Set;
  import java.util.function.Predicate;
-@@ -104,6 +_,8 @@
+@@ -107,6 +_,8 @@
  import net.minecraft.server.commands.data.DataCommands;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
@@ -27,7 +27,7 @@
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -113,7 +_,7 @@
+@@ -116,7 +_,7 @@
     public static final int f_165684_ = 2;
     public static final int f_165685_ = 3;
     public static final int f_165686_ = 4;
@@ -36,7 +36,7 @@
  
     public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
        AdvancementCommands.m_136310_(this.f_82090_);
-@@ -175,7 +_,7 @@
+@@ -178,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -45,7 +45,7 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -199,17 +_,71 @@
+@@ -202,24 +_,78 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -56,12 +56,19 @@
        });
     }
  
+-   public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 +   public Commands() {
 +      this.f_82090_.setConsumer((p_82104_, p_82105_, p_82106_) -> {
 +         p_82104_.getSource().m_81342_(p_82104_, p_82105_, p_82106_);
 +      });
 +   }
-+
++   
++      public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
+       CommandContextBuilder<S> commandcontextbuilder = p_242928_.getContext();
+       CommandContextBuilder<S> commandcontextbuilder1 = commandcontextbuilder.withSource(p_242890_.apply(commandcontextbuilder.getSource()));
+       return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
+    }
+ 
 +   // CraftBukkit start
 +   public int dispatchServerCommand(CommandSourceStack sender, String command) {
 +      Joiner joiner = Joiner.on(" ");
@@ -95,36 +102,37 @@
 +      }
 +
 +      String newCommand = joiner.join(args);
-+      return this.performCommand(sender, newCommand, newCommand);
++      return this.performPrefixedCommand(sender, newCommand, newCommand);
 +   }
 +   // CraftBukkit end
 +
     public int m_230957_(CommandSourceStack p_230958_, String p_230959_) {
--      return this.m_82117_(p_230958_, p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_);
+-      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
+-      return this.m_242674_(this.f_82090_.parse(p_230959_, p_230958_), p_230959_);
 +      // CraftBukkit start
 +      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
 +   }
 +
 +   public int performPrefixedCommand(CommandSourceStack commandlistenerwrapper, String s, String label) {
-+      return this.performCommand(commandlistenerwrapper, s.startsWith("/") ? s.substring(1) : s, label);
++      s = s.startsWith("/") ? s.substring(1) : s;
++      return this.performCommand(this.f_82090_.parse(s, commandlistenerwrapper), s, label);
 +      // CraftBukkit end
     }
  
-    public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
-+      return this.performCommand(p_82118_, p_82119_, p_82119_);
+    public int m_242674_(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
++      return this.performCommand(p_242844_, p_242841_, p_242841_);
 +   }
 +
-+   public int performCommand(CommandSourceStack p_82118_, String p_82119_, String label) { // CraftBukkit
-       StringReader stringreader = new StringReader(p_82119_);
-       p_82118_.m_81377_().m_129905_().m_6521_(() -> {
-          return "/" + p_82119_;
-@@ -217,7 +_,17 @@
++   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
+       CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
+       commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
+          return "/" + p_242841_;
+@@ -227,7 +_,16 @@
  
        try {
           try {
--            return this.f_82090_.execute(stringreader, p_82118_);
-+            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
-+            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
+-            return this.f_82090_.execute(p_242844_);
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(p_242844_);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() instanceof Exception exception) {
 +                  throw exception;
@@ -135,18 +143,18 @@
 +            }
 +            return this.f_82090_.execute(event.getParseResults());
           } catch (CommandRuntimeException commandruntimeexception) {
-             p_82118_.m_81352_(commandruntimeexception.m_79226_());
+             commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -226,7 +_,7 @@
+@@ -236,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
--                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_82119_));
+-                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
 +                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
                 });
                 if (j > 10) {
-                   mutablecomponent1.m_130946_("...");
-@@ -270,10 +_,38 @@
+                   mutablecomponent1.m_7220_(CommonComponents.f_238772_);
+@@ -280,10 +_,38 @@
     }
  
     public void m_82095_(ServerPlayer p_82096_) {

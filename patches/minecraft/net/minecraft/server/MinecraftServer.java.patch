@@ -8,7 +8,7 @@
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import java.awt.image.BufferedImage;
  import java.io.ByteArrayOutputStream;
-@@ -46,6 +_,8 @@
+@@ -45,6 +_,8 @@
  import java.util.function.Function;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
@@ -17,15 +17,15 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -59,6 +_,7 @@
+@@ -58,6 +_,7 @@
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
  import net.minecraft.gametest.framework.GameTestTicker;
 +import net.minecraft.nbt.Tag;
  import net.minecraft.network.chat.ChatDecorator;
- import net.minecraft.network.chat.ChatSender;
+ import net.minecraft.network.chat.ChatType;
  import net.minecraft.network.chat.Component;
-@@ -145,6 +_,7 @@
+@@ -144,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.PlayerDataStorage;
@@ -33,7 +33,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -152,7 +_,12 @@
+@@ -151,7 +_,12 @@
  import net.minecraft.world.level.storage.loot.PredicateManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -46,7 +46,7 @@
  import org.slf4j.Logger;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-@@ -188,7 +_,7 @@
+@@ -187,7 +_,7 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
     private final ServerConnectionListener f_129755_;
@@ -55,7 +55,7 @@
     private final ServerStatus f_129757_ = new ServerStatus();
     private final RandomSource f_129758_ = RandomSource.m_216327_();
     private final DataFixer f_129759_;
-@@ -231,7 +_,7 @@
+@@ -230,7 +_,7 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
     private float f_129737_;
@@ -64,7 +64,7 @@
     @Nullable
     private String f_129739_;
     public MinecraftServer.ReloadableResources f_129740_;
-@@ -239,9 +_,29 @@
+@@ -238,9 +_,29 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  
@@ -95,7 +95,7 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -281,8 +_,18 @@
+@@ -280,8 +_,18 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
@@ -114,19 +114,19 @@
  
     private void m_129841_(DimensionDataStorage p_129842_) {
        p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
-@@ -333,6 +_,7 @@
+@@ -332,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(f_129762_.get(Level.f_46428_)));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -367,9 +_,12 @@
+@@ -366,9 +_,12 @@
              ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(f_129762_.get(resourcekey)));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(resourcekey)));
           }
        }
 -
@@ -136,7 +136,7 @@
        worldborder.m_61931_(serverleveldata.m_5813_());
     }
  
-@@ -378,6 +_,7 @@
+@@ -377,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.m_7726_();
@@ -144,7 +144,7 @@
           ChunkPos chunkpos = new ChunkPos(serverchunkcache.m_214994_().m_224579_().m_183230_());
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
-@@ -430,6 +_,13 @@
+@@ -429,6 +_,13 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -158,7 +158,7 @@
     private void m_129940_(ChunkProgressListener p_129941_) {
        ServerLevel serverlevel = this.m_129783_();
        f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
-@@ -458,6 +_,7 @@
+@@ -457,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.m_7726_().m_6692_(chunkpos, true);
              }
@@ -166,7 +166,7 @@
           }
        }
  
-@@ -528,6 +_,8 @@
+@@ -527,6 +_,8 @@
     }
  
     public void m_7041_() {
@@ -175,15 +175,15 @@
        if (this.f_177872_.m_142763_()) {
           this.m_236737_();
        }
-@@ -572,6 +_,7 @@
+@@ -571,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
              try {
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(serverlevel2));
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(serverlevel2));
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -614,32 +_,117 @@
+@@ -613,12 +_,72 @@
  
     }
  
@@ -256,7 +256,8 @@
           this.f_129726_ = Util.m_137550_();
           this.f_129757_.m_134908_(Component.m_237113_(this.f_129709_));
           this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
-          this.f_129757_.m_238078_(this.m_214000_());
+@@ -626,20 +_,45 @@
+          this.f_129757_.m_242958_(this.m_214005_());
           this.m_129878_(this.f_129757_);
  
 +         // Spigot start
@@ -410,6 +411,15 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
+@@ -1121,7 +_,7 @@
+    }
+ 
+    public boolean m_214000_() {
+-      return false;
++      return net.minecraftforge.common.ForgeMod.isServerChatPreviewEnabled();
+    }
+ 
+    public boolean m_129918_() {
 @@ -1280,6 +_,7 @@
        }).thenAcceptAsync((p_212919_) -> {
           this.f_129740_.close();
@@ -485,7 +495,7 @@
     public RegistryAccess.Frozen m_206579_() {
        return this.f_129746_;
     }
-@@ -1815,4 +_,28 @@
+@@ -1821,4 +_,28 @@
           };
        }
     }

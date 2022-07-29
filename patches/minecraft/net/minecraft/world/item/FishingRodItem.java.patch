@@ -5,9 +5,9 @@
        return 1;
     }
 +
-+   /* ******************** FORGE START ******************** */
++    /* ******************** FORGE START ******************** */
 +
-+   @Override
++    @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_FISHING_ROD_ACTIONS.contains(toolAction);
 +   }

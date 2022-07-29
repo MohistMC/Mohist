@@ -14,8 +14,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.43,)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.43,)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -23,9 +23,10 @@ Util.init() //Init all our extension methods!
 ext {
     JAR_SIGNER = null
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.19'
-    MC_VERSION = '1.19'
-    MCP_VERSION = '20220607.102129'
+    MAPPING_VERSION = '1.19.1'
+    MC_VERSION = '1.19.1'
+    MC_NEXT_VERSION = '1.20'
+    MCP_VERSION = '20220727.212338'
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -52,9 +53,9 @@ ext {
     JARJAR_VERSION = '0.3.9'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19-41.1.0'
-    FORGE_VERSION = '41.1.0'
-    MOHIST_VERSION = '1.19'
+    VERSION = '1.19.1-42.0.0'
+    FORGE_VERSION = '42.0.0'
+    MOHIST_VERSION = '1.19.1'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
@@ -73,7 +74,7 @@ println('Version: ' + VERSION +
         ' Arch: ' + System.getProperty('os.arch'))
 
 task downloadVersionManifest(type: Download) {
-    src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
+    src 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
     dest file('build/versions/version_manifest.json')
     useETag 'all'
     onlyIfModified true
@@ -358,7 +359,7 @@ def sharedFmlonlyForge = { Project prj ->
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
-        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -378,7 +379,8 @@ def sharedFmlonlyForge = { Project prj ->
         run.workingDirectory prj.file('run')
 
         if (run.name.contains('client') || run.name.contains('data')) {
-            run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
+            // Natives are loaded from the classpath now in all cases
+            // run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
             run.args '--assetsDir', prj.downloadAssets.output
             run.args '--assetIndex', "{asset_index}"
         }
@@ -554,8 +556,7 @@ project(':fmlonly') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
-                    jvm: ['-Djava.net.preferIPv6Addresses=system',
-                          "-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
+                    jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
@@ -925,13 +926,13 @@ project(':forge') {
                     'Specification-Vendor'  : 'MohistMC',
                     'Specification-Version':  MOHIST_VERSION,
                     'Implementation-Title'  : 'Mohist',
-                    'Implementation-Version': '1.19-' + MOHIST_VERSION,
+                    'Implementation-Version': '1.19.1-' + MOHIST_VERSION,
                     'Implementation-Vendor' : 'MohistMC'
             ] as LinkedHashMap,
             'org/bukkit/craftbukkit/v1_19_R1/': [
                     'Specification-Title'   : MCP_VERSION,
                     'Specification-Vendor'  : 'SpigotMC',
-                    'Specification-Version':  '1.19',
+                    'Specification-Version':  '1.19.1',
                     'Implementation-Title'  : 'Spigot',
                     'Implementation-Version': '7e29f765-296df566-9fb885e8',
                     'Implementation-Vendor' : 'SpigotMC'
@@ -1271,7 +1272,7 @@ project(':forge') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = "1.19-dev"
+        archiveVersion = "1.19.1-dev"
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
