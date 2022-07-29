@@ -2,10 +2,18 @@ mohist:
   check_update: true
   lang: xx_XX
   custom_flags: aaaa bbbb
+  check_libraries: true
   disable_mods_blacklist: false
   disable_plugins_blacklist: false
   check_update_auto_download: false
+  use_custom_java11: false
   show_logo: true
+  optimize_explosions: true
+  prevent_from_entering_unloaded_chunks: true
+  forge_ignore_optional_mods_version_check: false
+  ignore_empty_time: all_worlds
+  chunk_unload_delay: 5
+  enable_worldedit_fix: true
   networkmanager:
     enable: false
     debug: false
