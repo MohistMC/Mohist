@@ -181,7 +181,7 @@ public class v_1_19 implements Version {
                                 libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
                                 libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
-                                libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
+                                libPath + "net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar",
                                 libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
                                 libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
                                 libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
@@ -204,7 +204,6 @@ public class v_1_19 implements Version {
             yml.set("mohist.installationfinished", true);
             yml.save(MohistConfigUtil.mohistyml);
             restartServer(launchArgs, true);
-            System.out.println(launchArgs.toString());
         }
     }
 }

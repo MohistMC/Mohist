@@ -63,4 +63,8 @@ public class MohistConfigUtil {
             System.out.println("File copy exception!");
         }
     }
+
+    public static boolean INSTALLATIONFINISHED() {
+        return bMohist("installationfinished", String.valueOf(false));
+    }
 }
