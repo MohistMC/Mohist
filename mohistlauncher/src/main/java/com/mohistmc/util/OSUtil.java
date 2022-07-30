@@ -24,25 +24,27 @@ package com.mohistmc.util;
  * @date 09/05/2022 22:16
  */
 public class OSUtil {
-	public enum OS {
-		WINDOWS, LINUX, MAC, SOLARIS
-	};// Operating systems.
+    private static OS os = null;
 
-	private static OS os = null;
+    ;// Operating systems.
 
-	public static OS getOS() {
-		if (os == null) {
-			String operSys = System.getProperty("os.name").toLowerCase();
-			if (operSys.contains("win")) {
-				os = OS.WINDOWS;
-			} else if (operSys.contains("nix") || operSys.contains("nux") || operSys.contains("aix")) {
-				os = OS.LINUX;
-			} else if (operSys.contains("mac")) {
-				os = OS.MAC;
-			} else if (operSys.contains("sunos")) {
-				os = OS.SOLARIS;
-			}
-		}
-		return os;
-	}
+    public static OS getOS() {
+        if (os == null) {
+            String operSys = System.getProperty("os.name").toLowerCase();
+            if (operSys.contains("win")) {
+                os = OS.WINDOWS;
+            } else if (operSys.contains("nix") || operSys.contains("nux") || operSys.contains("aix")) {
+                os = OS.LINUX;
+            } else if (operSys.contains("mac")) {
+                os = OS.MAC;
+            } else if (operSys.contains("sunos")) {
+                os = OS.SOLARIS;
+            }
+        }
+        return os;
+    }
+
+    public enum OS {
+        WINDOWS, LINUX, MAC, SOLARIS
+    }
 }

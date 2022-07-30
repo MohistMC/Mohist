@@ -28,7 +28,7 @@ public class DownloadMinecraftJar {
         if (Files.exists(minecraft_server.toPath()))
             return;
         minecraft_server.getParentFile().mkdirs();
-		try {
+        try {
             UpdateUtils.downloadFile("https://launcher.mojang.com/v1/objects/c8f83c5655308435b3dcf03c06d9fe8740a77469/server.jar", minecraft_server);
         } catch (Exception e) {
             System.out.println("Can't download minecraft_server");

@@ -22,32 +22,17 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.Action;
 import com.mohistmc.action.Version;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.network.download.DownloadMcpConfig;
-import com.mohistmc.network.download.DownloadMinecraftJar;
-import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
 import com.mohistmc.yaml.file.YamlConfiguration;
-import dev.vankka.dependencydownload.DependencyManager;
-import dev.vankka.dependencydownload.dependency.Dependency;
-import dev.vankka.dependencydownload.path.CleanupPathProvider;
-import dev.vankka.dependencydownload.path.DependencyPathProvider;
-import dev.vankka.dependencydownload.repository.Repository;
-import dev.vankka.dependencydownload.repository.StandardRepository;
-
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class v_1_18_2 implements Version {
 
@@ -107,11 +92,11 @@ public class v_1_18_2 implements Version {
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
-			copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
-			copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
-			copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
-			copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
-			copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
+            copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
 
             if (mohistVer == null || mcpVer == null) {
@@ -130,7 +115,7 @@ public class v_1_18_2 implements Version {
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only")),
-							stringToUrl(loadedLibsPaths));
+                            stringToUrl(loadedLibsPaths));
                     unmute();
                 }
             } else {
@@ -146,7 +131,7 @@ public class v_1_18_2 implements Version {
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new ArrayList<>(Arrays.asList("--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings")),
-							stringToUrl(loadedLibsPaths));
+                            stringToUrl(loadedLibsPaths));
                     unmute();
                 }
             } else {
@@ -158,21 +143,12 @@ public class v_1_18_2 implements Version {
             if (isCorrupted(slim)) slim.delete();
             if (isCorrupted(srg)) srg.delete();
 
-            if (!mojmap.exists()) {
-                System.out.println(i18n.get("installation.mojmap"));
-                mute();
-                run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "DOWNLOAD_MOJMAPS", "--version", mcVer, "--side", "server", "--output", mojmap.getAbsolutePath())),
-						stringToUrl(loadedLibsPaths));
-                unmute();
-            }
-
             if (!mergedMapping.exists()) {
                 System.out.println(i18n.get("installation.mergedmapping"));
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right")),
-						stringToUrl(loadedLibsPaths));
+                        stringToUrl(loadedLibsPaths));
                 unmute();
             }
 
@@ -181,10 +157,10 @@ public class v_1_18_2 implements Version {
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
-						stringToUrl(loadedLibsPaths));
+                        stringToUrl(loadedLibsPaths));
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
                         new ArrayList<>(Arrays.asList("--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
-						stringToUrl(loadedLibsPaths));
+                        stringToUrl(loadedLibsPaths));
                 unmute();
             }
 
@@ -193,7 +169,7 @@ public class v_1_18_2 implements Version {
                 mute();
                 run("net.minecraftforge.fart.Main",
                         new ArrayList<>(Arrays.asList("--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix")),
-						stringToUrl(loadedLibsPaths));
+                        stringToUrl(loadedLibsPaths));
                 unmute();
             }
 

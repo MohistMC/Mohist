@@ -23,8 +23,12 @@ import com.mohistmc.util.DataParser;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -40,7 +44,7 @@ public abstract class Action {
     public String forgeVer;
     public String mcpVer;
     public String mcVer;
-    public String libPath = new File(JarTool.getJarDir(), "libraries").getAbsolutePath()+"/";
+    public String libPath = new File(JarTool.getJarDir(), "libraries").getAbsolutePath() + "/";
 
     public String forgeStart;
     public File universalJar;
@@ -83,20 +87,20 @@ public abstract class Action {
         this.mcpZip = new File(mcpStart + ".zip");
         this.mcpTxt = new File(mcpStart + "-mappings.txt");
 
-        this.minecraft_server = new File(libPath + "minecraft_server." +  mcVer + ".jar");
+        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
     }
 
     protected void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
-		System.out.println("EXECUTING CLASS " + mainClass);
-		System.out.println(getParentClassloader()==null);
-		try {
-			Class.forName(mainClass);
-			System.out.println("found class 2");
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-		Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[0]));
-	}
+        System.out.println("EXECUTING CLASS " + mainClass);
+        System.out.println(getParentClassloader() == null);
+        try {
+            Class.forName(mainClass);
+            System.out.println("found class 2");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[0]));
+    }
 
     private ClassLoader getParentClassloader() {
         try {
@@ -110,7 +114,7 @@ public abstract class Action {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
-            new JarLoader().loadJar(file.toPath());
+            JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
         return temp;
@@ -121,7 +125,7 @@ public abstract class Action {
      */
     protected void mute() throws Exception {
         File out = new File(libPath + "com/mohistmc/installation/installationLogs.txt");
-        if(!out.exists()) {
+        if (!out.exists()) {
             out.getParentFile().mkdirs();
             out.createNewFile();
         }

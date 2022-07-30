@@ -50,211 +50,211 @@ import static com.mohistmc.action.v_1_18_2.v_1_18_2.Install_1_18_2.yml;
  */
 public class MohistModuleManager {
 
-	private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
-	private static String MODULE_PATH = null;
+    private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
+    private static String MODULE_PATH = null;
 
-	public MohistModuleManager(List<String> args) throws Exception {
-		this.applyLaunchArgs(args);
-		yml.set("mohist.installationfinished", false);
-		yml.save(MohistConfigUtil.mohistyml);
-	}
+    public MohistModuleManager(List<String> args) throws Exception {
+        this.applyLaunchArgs(args);
+        yml.set("mohist.installationfinished", false);
+        yml.save(MohistConfigUtil.mohistyml);
+    }
 
-	public static void addExports(String module, String pkg, String target) {
-		if (target == null) target = "ALL-UNNAMED";
+    public static void addExports(String module, String pkg, String target) {
+        if (target == null) target = "ALL-UNNAMED";
 
-		try {
-			addExports(List.of(module + "/" + pkg + "=" + target));
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            addExports(List.of(module + "/" + pkg + "=" + target));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 
-	private static void addExports(List<String> exports) throws Throwable {
-		MethodHandle implAddExportsMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExports", MethodType.methodType(void.class, String.class, Module.class));
-		MethodHandle implAddExportsToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExportsToAllUnnamed", MethodType.methodType(void.class, String.class));
+    private static void addExports(List<String> exports) throws Throwable {
+        MethodHandle implAddExportsMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExports", MethodType.methodType(void.class, String.class, Module.class));
+        MethodHandle implAddExportsToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddExportsToAllUnnamed", MethodType.methodType(void.class, String.class));
 
-		addExtra(exports, implAddExportsMH, implAddExportsToAllUnnamedMH);
-	}
+        addExtra(exports, implAddExportsMH, implAddExportsToAllUnnamedMH);
+    }
 
-	public static void addOpens(String module, String pkg, String target) {
-		if (target == null) target = "ALL-UNNAMED";
+    public static void addOpens(String module, String pkg, String target) {
+        if (target == null) target = "ALL-UNNAMED";
 
-		try {
-			addOpens(List.of(module + "/" + pkg + "=" + target));
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            addOpens(List.of(module + "/" + pkg + "=" + target));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 
-	private static void addOpens(List<String> opens) throws Throwable {
-		MethodHandle implAddOpensMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpens", MethodType.methodType(void.class, String.class, Module.class));
-		MethodHandle implAddOpensToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpensToAllUnnamed", MethodType.methodType(void.class, String.class));
+    private static void addOpens(List<String> opens) throws Throwable {
+        MethodHandle implAddOpensMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpens", MethodType.methodType(void.class, String.class, Module.class));
+        MethodHandle implAddOpensToAllUnnamedMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddOpensToAllUnnamed", MethodType.methodType(void.class, String.class));
 
-		addExtra(opens, implAddOpensMH, implAddOpensToAllUnnamedMH);
-	}
+        addExtra(opens, implAddOpensMH, implAddOpensToAllUnnamedMH);
+    }
 
-	private static ParserData parseModuleExtra(String extra) {
-		String[] all = extra.split("=", 2);
-		if (all.length < 2) {
-			return null;
-		}
+    private static ParserData parseModuleExtra(String extra) {
+        String[] all = extra.split("=", 2);
+        if (all.length < 2) {
+            return null;
+        }
 
-		String[] source = all[0].split("/", 2);
-		if (source.length < 2) {
-			return null;
-		}
-		return new ParserData(source[0], source[1], all[1]);
-	}
+        String[] source = all[0].split("/", 2);
+        if (source.length < 2) {
+            return null;
+        }
+        return new ParserData(source[0], source[1], all[1]);
+    }
 
-	private static void addExtra(List<String> extras, MethodHandle implAddExtraMH, MethodHandle implAddExtraToAllUnnamedMH) {
-		extras.forEach(extra -> {
-			ParserData data = parseModuleExtra(extra);
-			if (data != null) {
-				ModuleLayer.boot().findModule(data.module).ifPresent(m -> {
-					try {
-						if ("ALL-UNNAMED".equals(data.target)) {
-							implAddExtraToAllUnnamedMH.invokeWithArguments(m, data.packages);
-							// System.out.println("Added extra to all unnamed modules: " + data);
-						} else {
-							ModuleLayer.boot().findModule(data.target).ifPresent(tm -> {
-								try {
-									implAddExtraMH.invokeWithArguments(m, data.packages, tm);
-									// System.out.println("Added extra: " + data);
-								} catch (Throwable t) {
-									throw new RuntimeException(t);
-								}
-							});
-						}
-					} catch (Throwable t) {
-						throw new RuntimeException(t);
-					}
-				});
-			}
-		});
-	}
+    private static void addExtra(List<String> extras, MethodHandle implAddExtraMH, MethodHandle implAddExtraToAllUnnamedMH) {
+        extras.forEach(extra -> {
+            ParserData data = parseModuleExtra(extra);
+            if (data != null) {
+                ModuleLayer.boot().findModule(data.module).ifPresent(m -> {
+                    try {
+                        if ("ALL-UNNAMED".equals(data.target)) {
+                            implAddExtraToAllUnnamedMH.invokeWithArguments(m, data.packages);
+                            // System.out.println("Added extra to all unnamed modules: " + data);
+                        } else {
+                            ModuleLayer.boot().findModule(data.target).ifPresent(tm -> {
+                                try {
+                                    implAddExtraMH.invokeWithArguments(m, data.packages, tm);
+                                    // System.out.println("Added extra: " + data);
+                                } catch (Throwable t) {
+                                    throw new RuntimeException(t);
+                                }
+                            });
+                        }
+                    } catch (Throwable t) {
+                        throw new RuntimeException(t);
+                    }
+                });
+            }
+        });
+    }
 
-	public void applyLaunchArgs(List<String> args) {
-		//Just read each lines of launch args
-		List<String> opens = new ArrayList<>();
-		List<String> exports = new ArrayList<>();
+    public void applyLaunchArgs(List<String> args) {
+        //Just read each lines of launch args
+        List<String> opens = new ArrayList<>();
+        List<String> exports = new ArrayList<>();
 
-		args.parallelStream().parallel().forEach(arg -> {
-			if (arg.startsWith("-p ")) {
-				MODULE_PATH = arg.substring(2).trim();
-			} else if (arg.startsWith("--add-opens")) {
-				opens.add(arg.substring("--add-opens ".length()).trim());
-			} else if (arg.startsWith("--add-exports")) {
-				exports.add(arg.substring("--add-exports ".length()).trim());
-			} else if (arg.startsWith("-D")) {
-				String[] params = arg.substring(2).split("=", 2);
-				System.setProperty(params[0], params[1]);
-			}
-		});
+        args.parallelStream().parallel().forEach(arg -> {
+            if (arg.startsWith("-p ")) {
+                MODULE_PATH = arg.substring(2).trim();
+            } else if (arg.startsWith("--add-opens")) {
+                opens.add(arg.substring("--add-opens ".length()).trim());
+            } else if (arg.startsWith("--add-exports")) {
+                exports.add(arg.substring("--add-exports ".length()).trim());
+            } else if (arg.startsWith("-D")) {
+                String[] params = arg.substring(2).split("=", 2);
+                System.setProperty(params[0], params[1]);
+            }
+        });
 
-		try {
-			loadModules(MODULE_PATH);
-			Thread.sleep(500);
-			addOpens(opens);
-			addExports(exports);
-			Thread.sleep(500);
-		} catch (Throwable e) {
-		}
+        try {
+            loadModules(MODULE_PATH);
+            Thread.sleep(500);
+            addOpens(opens);
+            addExports(exports);
+            Thread.sleep(500);
+        } catch (Throwable e) {
+        }
 
-	}
+    }
 
-	//Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
-	public void loadModules(String modulePath) throws Throwable {
-		// Find all extra modules
-		ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(JarLoader::loadJar).toArray(Path[]::new));
-		MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));
+    //Codesnipped from (https://github.com/IzzelAliz/Arclight/blob/f98046185ebfc183a242ac5497619dc35d741042/forge-installer/src/main/java/io/izzel/arclight/forgeinstaller/ForgeInstaller.java#L420)
+    public void loadModules(String modulePath) throws Throwable {
+        // Find all extra modules
+        ModuleFinder finder = ModuleFinder.of(Arrays.stream(modulePath.split(OSUtil.getOS() == OSUtil.OS.WINDOWS ? ";" : ":")).map(Paths::get).peek(JarLoader::loadJar).toArray(Path[]::new));
+        MethodHandle loadModuleMH = IMPL_LOOKUP.findVirtual(Class.forName("jdk.internal.loader.BuiltinClassLoader"), "loadModule", MethodType.methodType(void.class, ModuleReference.class));
 
-		// Resolve modules to a new config
-		Configuration config = Configuration.resolveAndBind(finder, List.of(ModuleLayer.boot().configuration()), finder, finder.findAll().stream().peek(mref -> {
-			try {
-				// Load all extra modules in system class loader (unnamed modules for now)
-				loadModuleMH.invokeWithArguments(Thread.currentThread().getContextClassLoader(), mref);
-			} catch (Throwable throwable) {
-				throw new RuntimeException(throwable);
-			}
-		}).map(ModuleReference::descriptor).map(ModuleDescriptor::name).collect(Collectors.toList()));
+        // Resolve modules to a new config
+        Configuration config = Configuration.resolveAndBind(finder, List.of(ModuleLayer.boot().configuration()), finder, finder.findAll().stream().peek(mref -> {
+            try {
+                // Load all extra modules in system class loader (unnamed modules for now)
+                loadModuleMH.invokeWithArguments(Thread.currentThread().getContextClassLoader(), mref);
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        }).map(ModuleReference::descriptor).map(ModuleDescriptor::name).collect(Collectors.toList()));
 
-		// Copy the new config graph to boot module layer config
-		MethodHandle graphGetter = IMPL_LOOKUP.findGetter(Configuration.class, "graph", Map.class);
-		HashMap<ResolvedModule, Set<ResolvedModule>> graphMap = new HashMap<>((Map<ResolvedModule, Set<ResolvedModule>>) graphGetter.invokeWithArguments(config));
-		MethodHandle cfSetter = IMPL_LOOKUP.findSetter(ResolvedModule.class, "cf", Configuration.class);
-		// Reset all extra resolved modules config to boot module layer config
-		graphMap.forEach((k, v) -> {
-			try {
-				cfSetter.invokeWithArguments(k, ModuleLayer.boot().configuration());
-				v.forEach(m -> {
-					try {
-						cfSetter.invokeWithArguments(m, ModuleLayer.boot().configuration());
-					} catch (Throwable throwable) {
-						throw new RuntimeException(throwable);
-					}
-				});
-			} catch (Throwable throwable) {
-				throw new RuntimeException(throwable);
-			}
-		});
-		graphMap.putAll((Map<ResolvedModule, Set<ResolvedModule>>) graphGetter.invokeWithArguments(ModuleLayer.boot().configuration()));
-		IMPL_LOOKUP.findSetter(Configuration.class, "graph", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(graphMap));
+        // Copy the new config graph to boot module layer config
+        MethodHandle graphGetter = IMPL_LOOKUP.findGetter(Configuration.class, "graph", Map.class);
+        HashMap<ResolvedModule, Set<ResolvedModule>> graphMap = new HashMap<>((Map<ResolvedModule, Set<ResolvedModule>>) graphGetter.invokeWithArguments(config));
+        MethodHandle cfSetter = IMPL_LOOKUP.findSetter(ResolvedModule.class, "cf", Configuration.class);
+        // Reset all extra resolved modules config to boot module layer config
+        graphMap.forEach((k, v) -> {
+            try {
+                cfSetter.invokeWithArguments(k, ModuleLayer.boot().configuration());
+                v.forEach(m -> {
+                    try {
+                        cfSetter.invokeWithArguments(m, ModuleLayer.boot().configuration());
+                    } catch (Throwable throwable) {
+                        throw new RuntimeException(throwable);
+                    }
+                });
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        });
+        graphMap.putAll((Map<ResolvedModule, Set<ResolvedModule>>) graphGetter.invokeWithArguments(ModuleLayer.boot().configuration()));
+        IMPL_LOOKUP.findSetter(Configuration.class, "graph", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(graphMap));
 
-		// Reset boot module layer resolved modules as new config resolved modules to prepare define modules
-		Set<ResolvedModule> oldBootModules = ModuleLayer.boot().configuration().modules();
-		MethodHandle modulesSetter = IMPL_LOOKUP.findSetter(Configuration.class, "modules", Set.class);
-		HashSet<ResolvedModule> modulesSet = new HashSet<>(config.modules());
-		modulesSetter.invokeWithArguments(ModuleLayer.boot().configuration(), new HashSet<>(modulesSet));
+        // Reset boot module layer resolved modules as new config resolved modules to prepare define modules
+        Set<ResolvedModule> oldBootModules = ModuleLayer.boot().configuration().modules();
+        MethodHandle modulesSetter = IMPL_LOOKUP.findSetter(Configuration.class, "modules", Set.class);
+        HashSet<ResolvedModule> modulesSet = new HashSet<>(config.modules());
+        modulesSetter.invokeWithArguments(ModuleLayer.boot().configuration(), new HashSet<>(modulesSet));
 
-		// Prepare to add all of the new config "nameToModule" to boot module layer config
-		MethodHandle nameToModuleGetter = IMPL_LOOKUP.findGetter(Configuration.class, "nameToModule", Map.class);
-		HashMap<String, ResolvedModule> nameToModuleMap = new HashMap<>((Map<String, ResolvedModule>) nameToModuleGetter.invokeWithArguments(ModuleLayer.boot().configuration()));
-		nameToModuleMap.putAll((Map<String, ResolvedModule>) nameToModuleGetter.invokeWithArguments(config));
-		IMPL_LOOKUP.findSetter(Configuration.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(nameToModuleMap));
+        // Prepare to add all of the new config "nameToModule" to boot module layer config
+        MethodHandle nameToModuleGetter = IMPL_LOOKUP.findGetter(Configuration.class, "nameToModule", Map.class);
+        HashMap<String, ResolvedModule> nameToModuleMap = new HashMap<>((Map<String, ResolvedModule>) nameToModuleGetter.invokeWithArguments(ModuleLayer.boot().configuration()));
+        nameToModuleMap.putAll((Map<String, ResolvedModule>) nameToModuleGetter.invokeWithArguments(config));
+        IMPL_LOOKUP.findSetter(Configuration.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(nameToModuleMap));
 
-		// Define all extra modules and add all of the new config "nameToModule" to boot module layer config
-		((Map<String, Module>) IMPL_LOOKUP.findGetter(ModuleLayer.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot())).putAll((Map<String, Module>) IMPL_LOOKUP.findStatic(Module.class, "defineModules", MethodType.methodType(Map.class, Configuration.class, Function.class, ModuleLayer.class)).invokeWithArguments(ModuleLayer.boot().configuration(), (Function<String, ClassLoader>) name -> Thread.currentThread().getContextClassLoader(), ModuleLayer.boot()));
+        // Define all extra modules and add all of the new config "nameToModule" to boot module layer config
+        ((Map<String, Module>) IMPL_LOOKUP.findGetter(ModuleLayer.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot())).putAll((Map<String, Module>) IMPL_LOOKUP.findStatic(Module.class, "defineModules", MethodType.methodType(Map.class, Configuration.class, Function.class, ModuleLayer.class)).invokeWithArguments(ModuleLayer.boot().configuration(), (Function<String, ClassLoader>) name -> Thread.currentThread().getContextClassLoader(), ModuleLayer.boot()));
 
-		// Add all of resolved modules
-		modulesSet.addAll(oldBootModules);
-		modulesSetter.invokeWithArguments(ModuleLayer.boot().configuration(), new HashSet<>(modulesSet));
+        // Add all of resolved modules
+        modulesSet.addAll(oldBootModules);
+        modulesSetter.invokeWithArguments(ModuleLayer.boot().configuration(), new HashSet<>(modulesSet));
 
-		// Reset cache of boot module layer
-		IMPL_LOOKUP.findSetter(ModuleLayer.class, "modules", Set.class).invokeWithArguments(ModuleLayer.boot(), null);
-		IMPL_LOOKUP.findSetter(ModuleLayer.class, "servicesCatalog", Class.forName("jdk.internal.module.ServicesCatalog")).invokeWithArguments(ModuleLayer.boot(), null);
+        // Reset cache of boot module layer
+        IMPL_LOOKUP.findSetter(ModuleLayer.class, "modules", Set.class).invokeWithArguments(ModuleLayer.boot(), null);
+        IMPL_LOOKUP.findSetter(ModuleLayer.class, "servicesCatalog", Class.forName("jdk.internal.module.ServicesCatalog")).invokeWithArguments(ModuleLayer.boot(), null);
 
-		// Add reads from extra modules to jdk modules
-		MethodHandle implAddReadsMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddReads", MethodType.methodType(void.class, Module.class));
-		config.modules().forEach(rm -> ModuleLayer.boot().findModule(rm.name()).ifPresent(m -> oldBootModules.forEach(brm -> ModuleLayer.boot().findModule(brm.name()).ifPresent(bm -> {
-			try {
-				implAddReadsMH.invokeWithArguments(m, bm);
-			} catch (Throwable throwable) {
-				throw new RuntimeException(throwable);
-			}
-		}))));
-	}
+        // Add reads from extra modules to jdk modules
+        MethodHandle implAddReadsMH = IMPL_LOOKUP.findVirtual(Module.class, "implAddReads", MethodType.methodType(void.class, Module.class));
+        config.modules().forEach(rm -> ModuleLayer.boot().findModule(rm.name()).ifPresent(m -> oldBootModules.forEach(brm -> ModuleLayer.boot().findModule(brm.name()).ifPresent(bm -> {
+            try {
+                implAddReadsMH.invokeWithArguments(m, bm);
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
+            }
+        }))));
+    }
 
-	private record ParserData(String module, String packages, String target) {
+    private record ParserData(String module, String packages, String target) {
 
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == this) return true;
-			if (obj == null || obj.getClass() != this.getClass()) return false;
-			var that = (ParserData) obj;
-			return Objects.equals(this.module, that.module) &&
-					Objects.equals(this.packages, that.packages) &&
-					Objects.equals(this.target, that.target);
-		}
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (ParserData) obj;
+            return Objects.equals(this.module, that.module) &&
+                    Objects.equals(this.packages, that.packages) &&
+                    Objects.equals(this.target, that.target);
+        }
 
-		@Override
-		public String toString() {
-			return "ParserData[" +
-					"module=" + module + ", " +
-					"packages=" + packages + ", " +
-					"target=" + target + ']';
-		}
+        @Override
+        public String toString() {
+            return "ParserData[" +
+                    "module=" + module + ", " +
+                    "packages=" + packages + ", " +
+                    "target=" + target + ']';
+        }
 
 
-	}
+    }
 }
 

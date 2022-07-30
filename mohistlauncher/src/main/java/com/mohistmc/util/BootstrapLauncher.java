@@ -21,14 +21,21 @@ package com.mohistmc.util;
 import cpw.mods.cl.JarModuleFinder;
 import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.jarhandling.SecureJar;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
@@ -53,12 +60,12 @@ public class BootstrapLauncher {
             var filename = path.getFileName().toString();
 
             for (var filter : ignores) {
-                if(filename.startsWith(filter)) {
+                if (filename.startsWith(filter)) {
                     continue outer;
                 }
             }
 
-            if(filenameMap.containsKey(filename)) {
+            if (filenameMap.containsKey(filename)) {
                 mergeMap.computeIfAbsent(filenameMap.get(filename), k -> new ArrayList<>()).add(path);
                 continue;
             }
@@ -96,7 +103,7 @@ public class BootstrapLauncher {
 
     private static Map<String, Integer> getMergeFilenameMap() {
         var mergeModules = System.getProperty("mergeModules");
-        if(mergeModules == null) return Map.of();
+        if (mergeModules == null) return Map.of();
         // `mergeModules` is a semicolon-separated set of comma-separated set of paths, where each (comma) set of paths is
         // combined into a single modules
         // example: filename1.jar,filename2.jar;filename2.jar,filename3.jar
@@ -114,28 +121,12 @@ public class BootstrapLauncher {
         return filenameMap;
     }
 
-    private record PackageTracker(Set<String> packages, Path... paths) implements BiPredicate<String, String> {
-        @Override
-        public boolean test(final String path, final String basePath) {
-            // This method returns true if the given path is allowed within the JAR (filters out 'bad' paths)
-
-            if(packages.isEmpty() || // This is the first jar, nothing is claimed yet, so allow everything
-                    path.startsWith("META-INF/")) // Every module can have their own META-INF
-                return true;
-
-            int idx = path.lastIndexOf('/');
-            return idx < 0 || // Resources at the root are allowed to co-exist
-                    idx == path.length() - 1 || // All directories can have a potential to exist without conflict, we only care about real files.
-                    !packages.contains(path.substring(0, idx).replace('/', '.')); // If the package hasn't been used by a previous JAR
-        }
-    }
-
     private static List<String> loadLegacyClassPath() {
         var legacyCpPath = System.getProperty("legacyClassPath.file");
 
-        if(legacyCpPath != null) {
+        if (legacyCpPath != null) {
             var legacyCPFileCandidatePath = Paths.get(legacyCpPath);
-            if(Files.exists(legacyCPFileCandidatePath) && Files.isRegularFile(legacyCPFileCandidatePath)) {
+            if (Files.exists(legacyCPFileCandidatePath) && Files.isRegularFile(legacyCPFileCandidatePath)) {
                 try {
                     return Files.readAllLines(legacyCPFileCandidatePath);
                 } catch (IOException e) {
@@ -147,5 +138,21 @@ public class BootstrapLauncher {
         var legacyClasspath = System.getProperty("legacyClassPath", System.getProperty("java.class.path"));
         Objects.requireNonNull(legacyClasspath, "Missing legacyClassPath, cannot bootstrap");
         return Arrays.asList(legacyClasspath.split(File.pathSeparator));
+    }
+
+    private record PackageTracker(Set<String> packages, Path... paths) implements BiPredicate<String, String> {
+        @Override
+        public boolean test(final String path, final String basePath) {
+            // This method returns true if the given path is allowed within the JAR (filters out 'bad' paths)
+
+            if (packages.isEmpty() || // This is the first jar, nothing is claimed yet, so allow everything
+                    path.startsWith("META-INF/")) // Every module can have their own META-INF
+                return true;
+
+            int idx = path.lastIndexOf('/');
+            return idx < 0 || // Resources at the root are allowed to co-exist
+                    idx == path.length() - 1 || // All directories can have a potential to exist without conflict, we only care about real files.
+                    !packages.contains(path.substring(0, idx).replace('/', '.')); // If the package hasn't been used by a previous JAR
+        }
     }
 }

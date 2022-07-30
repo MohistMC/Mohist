@@ -36,7 +36,7 @@ public enum DownloadSource {
     @Getter
     String url;
 
-    public static DownloadSource get(){
+    public static DownloadSource get() {
         String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds))

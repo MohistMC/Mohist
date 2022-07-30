@@ -25,71 +25,66 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
-import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
-
-import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
 
 public class MohistMCStart {
 
-	public static String getFullVersion() {
-		return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
-	}
+    public static List<String> mainArgs = new ArrayList<>();
 
-	public static List<String> mainArgs = new ArrayList<>();
+    public static String getFullVersion() {
+        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
+    }
 
-	public static void main(String[] args) throws Exception {
-		mainArgs.addAll(List.of(args));
+    public static void main(String[] args) throws Exception {
+        mainArgs.addAll(List.of(args));
 
-		DataParser.parseVersions();
-		DataParser.parseLaunchArgs();
+        DataParser.parseVersions();
+        DataParser.parseLaunchArgs();
 
-		MohistConfigUtil.copyMohistConfig();
+        MohistConfigUtil.copyMohistConfig();
 
-		if (MohistConfigUtil.bMohist("show_logo", "true"))
-			System.out.println("\n" + "\n" +
-					" __    __   ______   __  __   __   ______   ______  \n" +
-					"/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-					"\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-					" \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-					"  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-					"                                                    \n" + "\n" +
-					"                                      " + i18n.get("mohist.launch.welcomemessage"));
+        if (MohistConfigUtil.bMohist("show_logo", "true"))
+            System.out.println("\n" + "\n" +
+                    " __    __   ______   __  __   __   ______   ______  \n" +
+                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+                    "                                                    \n" + "\n" +
+                    "                                      " + i18n.get("mohist.launch.welcomemessage"));
 
-		CustomLibraries.loadCustomLibs();
-		if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
-			DefaultLibraries.run();
-			new v_1_18_2().run();
-		}
+        CustomLibraries.loadCustomLibs();
+        if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
+            DefaultLibraries.run();
+            new v_1_18_2().run();
+        }
 
-		List<String> forgeArgs = new ArrayList<>();
-		for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
-			forgeArgs.add(arg.split(" ")[0]);
-			forgeArgs.add(arg.split(" ")[1]);
-		}
-		new MohistModuleManager(DataParser.launchArgs);
+        List<String> forgeArgs = new ArrayList<>();
+        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
+            forgeArgs.add(arg.split(" ")[0]);
+            forgeArgs.add(arg.split(" ")[1]);
+        }
+        new MohistModuleManager(DataParser.launchArgs);
 
-		if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
+        if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
 
-		if (!hasAcceptedEULA()) {
-			System.out.println(i18n.get("eula"));
-			while (!"true".equals(new Scanner(System.in).next())) ;
-			writeInfos();
-		}
+        if (!hasAcceptedEULA()) {
+            System.out.println(i18n.get("eula"));
+            while (!"true".equals(new Scanner(System.in).next())) ;
+            writeInfos();
+        }
 
-		String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
-		BootstrapLauncher.startServer(args_);
-	}
+        String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
+        BootstrapLauncher.startServer(args_);
+    }
 }

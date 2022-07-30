@@ -58,8 +58,8 @@ public class JarTool {
 
         String path = JarTool.class.getProtectionDomain().getCodeSource()
                 .getLocation().getFile();
-		path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
-		return new File(path);
+        path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
+        return new File(path);
     }
 
     public static void inputStreamFile(InputStream inputStream, String targetFilePath) {
