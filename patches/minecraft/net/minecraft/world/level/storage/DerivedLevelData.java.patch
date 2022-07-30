@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/DerivedLevelData.java
++++ b/net/minecraft/world/level/storage/DerivedLevelData.java
+@@ -13,7 +_,7 @@
+ 
+ public class DerivedLevelData implements ServerLevelData {
+    private final WorldData f_78076_;
+-   private final ServerLevelData f_78077_;
++   public final ServerLevelData f_78077_;
+ 
+    public DerivedLevelData(WorldData p_78079_, ServerLevelData p_78080_) {
+       this.f_78076_ = p_78079_;
