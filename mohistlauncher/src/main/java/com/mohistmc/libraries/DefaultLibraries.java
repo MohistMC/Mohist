@@ -63,9 +63,7 @@ public class DefaultLibraries {
             System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
-                if (lib.getName().endsWith(".jar")) {
-                    new JarLoader().loadJar(lib.toPath());
-                }
+                JarLoader.loadJar(lib.toPath());
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(url, ""));
             } catch (Exception e) {

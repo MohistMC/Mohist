@@ -42,6 +42,7 @@ public class JarLoader {
     }
 
     public static void loadJar(Path path) {
+        if (!path.toFile().getName().endsWith(".jar")) return;
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Field ucpField;

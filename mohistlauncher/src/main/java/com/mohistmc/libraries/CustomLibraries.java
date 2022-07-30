@@ -31,7 +31,7 @@ public class CustomLibraries {
 
         for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
             if (!DefaultLibraries.getDefaultLibs().keySet().toString().contains(lib.getName()))
-                new JarLoader().loadJar(lib.toPath());
+                JarLoader.loadJar(lib.toPath());
             System.out.println(lib.getName() + " custom library loaded successfully.");
         }
     }

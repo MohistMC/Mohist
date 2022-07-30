@@ -87,7 +87,7 @@ public abstract class Action {
         this.mcpZip = new File(mcpStart + ".zip");
         this.mcpTxt = new File(mcpStart + "-mappings.txt");
 
-        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer  + "/server-" + mcVer + ".jar");
+        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
     }
 
     protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
@@ -107,7 +107,7 @@ public abstract class Action {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
-            new JarLoader().loadJar(file.toPath());
+            JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
         return temp;

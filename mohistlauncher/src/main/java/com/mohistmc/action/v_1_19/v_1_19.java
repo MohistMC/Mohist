@@ -121,14 +121,6 @@ public class v_1_19 implements Version {
             if (isCorrupted(slim)) slim.delete();
             if (isCorrupted(srg)) srg.delete();
 
-            if (!mojmap.exists()) {
-                mute();
-                run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "DOWNLOAD_MOJMAPS", "--version", mcVer, "--side", "server", "--output", mojmap.getAbsolutePath()},
-                        stringToUrl(loadedLibsPaths));
-                unmute();
-            }
-
             if (!mergedMapping.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
