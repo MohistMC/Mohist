@@ -52,7 +52,7 @@ public class MohistMCStart {
 
         MohistConfigUtil.copyMohistConfig();
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.bMohist("show_logo", "true"))
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.bMohist("show_logo", "true")) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
                     "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
@@ -61,6 +61,7 @@ public class MohistMCStart {
                     "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                     "                                                    \n" + "\n" +
                     "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+        }
 
 
         if (System.getProperty("log4j.configurationFile") == null) {
