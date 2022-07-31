@@ -61,6 +61,10 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
+        jarMapping.classes.put("catserver/api/bukkit/ForgeEventV2", "com/mohistmc/api/event/BukkitHookForgeEvent");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/bukkit/ForgeEventV2", "handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/bukkit/ForgeEventV2", "forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
+        jarMapping.registerMethodMapping("catserver/api/bukkit/bukkit/ForgeEventV2", "getForgeEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;", "com/mohistmc/api/event/BukkitHookForgeEvent", "getEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;");
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
