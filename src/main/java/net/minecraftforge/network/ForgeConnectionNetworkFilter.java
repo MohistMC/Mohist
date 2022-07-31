@@ -6,11 +6,12 @@
 package net.minecraftforge.network;
 
 import java.util.List;
-
-import io.netty.channel.ChannelHandler;
 import java.util.Map;
 import java.util.function.BiConsumer;
+
 import javax.annotation.Nullable;
+
+import io.netty.channel.ChannelHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketDirection;
@@ -18,7 +19,6 @@ import net.minecraft.network.ProtocolType;
 import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -63,7 +63,7 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
     protected boolean isNecessary(NetworkManager manager)
     {
         // not needed on local connections, because packets are not encoded to bytes there
-        return !manager.isMemoryConnection() && !VanillaPacketSplitter.isRemoteCompatible(manager);
+        return !manager.isMemoryConnection() && VanillaPacketSplitter.isRemoteCompatible(manager);
     }
 
     private static void splitPacket(IPacket<?> packet, List<? super IPacket<?>> out)

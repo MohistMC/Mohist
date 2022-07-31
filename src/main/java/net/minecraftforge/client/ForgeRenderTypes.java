@@ -6,10 +6,11 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderState.TextureState;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderType.State;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -18,8 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.renderer.RenderState.TextureState;
+import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
 public enum ForgeRenderTypes

@@ -50,10 +50,6 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         gatherCapabilities(() -> null);
     }
 
-    public final void gatherCapsAndRevive() {
-        reviveCaps();
-    }
-
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
         gatherCapabilities(() -> parent);
