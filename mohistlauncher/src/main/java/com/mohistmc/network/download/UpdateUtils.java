@@ -101,7 +101,7 @@ public class UpdateUtils {
         rbc.close();
         percentage = 0;
         String MD5 = MD5Util.getMd5(f);
-        if (md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
+        if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
             System.out.println(i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             throw new Exception("md5");
