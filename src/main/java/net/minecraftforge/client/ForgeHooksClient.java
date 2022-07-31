@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client;
@@ -28,9 +14,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -65,6 +53,7 @@ import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -117,6 +106,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
@@ -130,6 +120,60 @@ public class ForgeHooksClient
     private static final Logger LOGGER = LogManager.getLogger();
 
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+    /**
+     * Contains the *extra* GUI layers.
+     * The current top layer stays in Minecraft#currentScreen, and the rest serve as a background for it.
+     */
+    private static final Stack<Screen> guiLayers = new Stack<>();
+
+    public static void resizeGuiLayers(Minecraft minecraft, int width, int height)
+    {
+        guiLayers.forEach(screen -> screen.resize(minecraft, width, height));
+    }
+
+    public static void clearGuiLayers(Minecraft minecraft)
+    {
+        while(guiLayers.size() > 0)
+            popGuiLayerInternal(minecraft);
+    }
+
+    private static void popGuiLayerInternal(Minecraft minecraft)
+    {
+        if (minecraft.screen != null)
+            minecraft.screen.removed();
+        minecraft.screen = guiLayers.pop();
+    }
+
+    public static void pushGuiLayer(Minecraft minecraft, Screen screen)
+    {
+        if (minecraft.screen != null)
+            guiLayers.push(minecraft.screen);
+        minecraft.screen = Objects.requireNonNull(screen);
+        screen.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+        NarratorChatListener.INSTANCE.sayNow(screen.getNarrationMessage());
+    }
+
+    public static void popGuiLayer(Minecraft minecraft)
+    {
+        if (guiLayers.size() == 0)
+        {
+            minecraft.setScreen(null);
+            return;
+        }
+
+        popGuiLayerInternal(minecraft);
+        if (minecraft.screen != null)
+            NarratorChatListener.INSTANCE.sayNow(minecraft.screen.getNarrationMessage());
+    }
+
+    public static float getGuiFarPlane()
+    {
+        // 1000 units for the overlay background,
+        // and 2000 units for each layered Screen,
+
+        return 1000.0F + 2000.0F * (1 + guiLayers.size());
+    }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlotType slot, String type)
     {
@@ -160,6 +204,11 @@ public class ForgeHooksClient
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+    }
+
+    public static boolean renderSpecificFirstPersonArm(MatrixStack poseStack, IRenderTypeBuffer multiBufferSource, int packedLight, AbstractClientPlayerEntity player, HandSide arm)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, player, arm));
     }
 
     public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
@@ -297,6 +346,18 @@ public class ForgeHooksClient
     }
 
     public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
+    {
+        mStack.pushPose();
+        guiLayers.forEach(layer -> {
+            // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
+            drawScreenInternal(layer, mStack, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTicks);
+            mStack.translate(0,0,2000);
+        });
+        drawScreenInternal(screen, mStack, mouseX, mouseY, partialTicks);
+        mStack.popPose();
+    }
+
+    private static void drawScreenInternal(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
             screen.render(mStack, mouseX, mouseY, partialTicks);
