@@ -1,0 +1,69 @@
+--- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
++++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
+@@ -16,6 +_,10 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.level.material.Fluids;
++import org.bukkit.World;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlockStates;
++import org.bukkit.event.block.CauldronLevelChangeEvent;
+ 
+ public class LayeredCauldronBlock extends AbstractCauldronBlock {
+    public static final int f_153512_ = 1;
+@@ -66,15 +_,38 @@
+    public static void m_153559_(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
+       int i = p_153560_.m_61143_(f_153514_) - 1;
+       BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
+-      p_153561_.m_46597_(p_153562_, blockstate);
+-      p_153561_.m_220407_(GameEvent.f_157792_, p_153562_, GameEvent.Context.m_223722_(blockstate));
+-   }
++       changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++   }
++
++   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
++      int i = p_153560_.m_61143_(f_153514_) - 1;
++      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
++      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++   }
++
++   // CraftBukkit start
++   public static boolean changeLevel(BlockState iblockdata, Level world, BlockPos blockposition, BlockState newBlock, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
++      CraftBlockState newState = CraftBlockStates.getBlockState(world, blockposition);
++      newState.setData(newBlock);
++
++      CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
++              world.getWorld().getBlockAt(blockposition.m_123341_(), blockposition.m_123342_(), blockposition.m_123343_()),
++              (entity == null) ? null : entity.getBukkitEntity(), reason, newState
++      );
++      world.getCraftServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return false;
++      }
++      newState.update(true);
++      world.m_220407_(GameEvent.f_157792_, blockposition, GameEvent.Context.m_223722_(newBlock));
++      return true;
++   }
++    // CraftBukkit end
+ 
+    public void m_141997_(BlockState p_153539_, Level p_153540_, BlockPos p_153541_, Biome.Precipitation p_153542_) {
+       if (CauldronBlock.m_182450_(p_153540_, p_153542_) && p_153539_.m_61143_(f_153514_) != 3 && this.f_153519_.test(p_153542_)) {
+          BlockState blockstate = p_153539_.m_61122_(f_153514_);
+-         p_153540_.m_46597_(p_153541_, blockstate);
+-         p_153540_.m_220407_(GameEvent.f_157792_, p_153541_, GameEvent.Context.m_223722_(blockstate));
++         changeLevel(p_153539_, p_153540_, p_153541_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL); // CraftBukkit
+       }
+    }
+ 
+@@ -91,6 +_,11 @@
+          BlockState blockstate = p_153544_.m_61124_(f_153514_, Integer.valueOf(p_153544_.m_61143_(f_153514_) + 1));
+          p_153545_.m_46597_(p_153546_, blockstate);
+          p_153545_.m_220407_(GameEvent.f_157792_, p_153546_, GameEvent.Context.m_223722_(blockstate));
++         // CraftBukkit start
++         if (!changeLevel(p_153544_, p_153545_, p_153546_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL)) {
++            return;
++         }
++         // CraftBukkit end
+          p_153545_.m_46796_(1047, p_153546_, 0);
+       }
+    }

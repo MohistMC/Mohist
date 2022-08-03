@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/CustomFunctionData.java
++++ b/net/minecraft/server/CustomFunctionData.java
+@@ -42,7 +42,7 @@
+     }
+ 
+     public CommandDispatcher<CommandListenerWrapper> getDispatcher() {
+-        return this.server.getCommands().getDispatcher();
++        return this.server.vanillaCommandDispatcher.getDispatcher(); // CraftBukkit
+     }
+ 
+     public void tick() {

@@ -1,0 +1,143 @@
+--- a/net/minecraft/world/level/storage/WorldDataServer.java
++++ b/net/minecraft/world/level/storage/WorldDataServer.java
+@@ -42,6 +42,15 @@
+ import net.minecraft.world.level.timers.CustomFunctionCallbackTimers;
+ import org.slf4j.Logger;
+ 
++// CraftBukkit start
++import net.minecraft.network.protocol.game.PacketPlayOutServerDifficulty;
++import net.minecraft.server.level.EntityPlayer;
++import net.minecraft.server.level.WorldServer;
++import org.bukkit.Bukkit;
++import org.bukkit.event.weather.ThunderChangeEvent;
++import org.bukkit.event.weather.WeatherChangeEvent;
++// CraftBukkit end
++
+ public class WorldDataServer implements IWorldDataServer, SaveData {
+ 
+     private static final Logger LOGGER = LogUtils.getLogger();
+@@ -81,6 +90,19 @@
+     private final Set<String> knownServerBrands;
+     private boolean wasModded;
+     private final CustomFunctionCallbackTimerQueue<MinecraftServer> scheduledEvents;
++    // CraftBukkit start - Add world and pdc
++    private WorldServer world;
++    protected NBTBase pdc;
++
++    public void setWorld(WorldServer world) {
++        if (this.world != null) {
++            return;
++        }
++        this.world = world;
++        world.getWorld().readBukkitValues(pdc);
++        pdc = null;
++    }
++    // CraftBukkit end
+ 
+     private WorldDataServer(@Nullable DataFixer datafixer, int i, @Nullable NBTTagCompound nbttagcompound, boolean flag, int j, int k, int l, float f, long i1, long j1, int k1, int l1, int i2, boolean flag1, int j2, boolean flag2, boolean flag3, boolean flag4, WorldBorder.c worldborder_c, int k2, int l2, @Nullable UUID uuid, Set<String> set, CustomFunctionCallbackTimerQueue<MinecraftServer> customfunctioncallbacktimerqueue, @Nullable NBTTagCompound nbttagcompound1, NBTTagCompound nbttagcompound2, WorldSettings worldsettings, GeneratorSettings generatorsettings, Lifecycle lifecycle) {
+         if (!generatorsettings.dimensions().containsKey(WorldDimension.OVERWORLD)) {
+@@ -128,7 +150,8 @@
+             return (NBTBase) dynamic.get("DimensionData").get("1").get("DragonFight").orElseEmptyMap().getValue();
+         });
+ 
+-        return new WorldDataServer(datafixer, i, nbttagcompound, dynamic.get("WasModded").asBoolean(false), dynamic.get("SpawnX").asInt(0), dynamic.get("SpawnY").asInt(0), dynamic.get("SpawnZ").asInt(0), dynamic.get("SpawnAngle").asFloat(0.0F), j, dynamic.get("DayTime").asLong(j), levelversion.levelDataVersion(), dynamic.get("clearWeatherTime").asInt(0), dynamic.get("rainTime").asInt(0), dynamic.get("raining").asBoolean(false), dynamic.get("thunderTime").asInt(0), dynamic.get("thundering").asBoolean(false), dynamic.get("initialized").asBoolean(true), dynamic.get("DifficultyLocked").asBoolean(false), WorldBorder.c.read(dynamic, WorldBorder.DEFAULT_SETTINGS), dynamic.get("WanderingTraderSpawnDelay").asInt(0), dynamic.get("WanderingTraderSpawnChance").asInt(0), (UUID) dynamic.get("WanderingTraderId").read(UUIDUtil.CODEC).result().orElse((Object) null), (Set) dynamic.get("ServerBrands").asStream().flatMap((dynamic1) -> {
++        // CraftBukkit - decompile error
++        return new WorldDataServer(datafixer, i, nbttagcompound, dynamic.get("WasModded").asBoolean(false), dynamic.get("SpawnX").asInt(0), dynamic.get("SpawnY").asInt(0), dynamic.get("SpawnZ").asInt(0), dynamic.get("SpawnAngle").asFloat(0.0F), j, dynamic.get("DayTime").asLong(j), levelversion.levelDataVersion(), dynamic.get("clearWeatherTime").asInt(0), dynamic.get("rainTime").asInt(0), dynamic.get("raining").asBoolean(false), dynamic.get("thunderTime").asInt(0), dynamic.get("thundering").asBoolean(false), dynamic.get("initialized").asBoolean(true), dynamic.get("DifficultyLocked").asBoolean(false), WorldBorder.c.read(dynamic, WorldBorder.DEFAULT_SETTINGS), dynamic.get("WanderingTraderSpawnDelay").asInt(0), dynamic.get("WanderingTraderSpawnChance").asInt(0), (UUID) dynamic.get("WanderingTraderId").read(UUIDUtil.CODEC).result().orElse(null), (Set) dynamic.get("ServerBrands").asStream().flatMap((dynamic1) -> {
+             return dynamic1.asString().result().stream();
+         }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new CustomFunctionCallbackTimerQueue<>(CustomFunctionCallbackTimers.SERVER_CALLBACKS, dynamic.get("ScheduledEvents").asStream()), (NBTTagCompound) dynamic.get("CustomBossEvents").orElseEmptyMap().getValue(), nbttagcompound1, worldsettings, generatorsettings, lifecycle);
+     }
+@@ -148,7 +171,7 @@
+ 
+     private void setTagData(IRegistryCustom iregistrycustom, NBTTagCompound nbttagcompound, @Nullable NBTTagCompound nbttagcompound1) {
+         NBTTagList nbttaglist = new NBTTagList();
+-        Stream stream = this.knownServerBrands.stream().map(NBTTagString::valueOf);
++        Stream<NBTTagString> stream = this.knownServerBrands.stream().map(NBTTagString::valueOf); // CraftBukkit - decompile error
+ 
+         Objects.requireNonNull(nbttaglist);
+         stream.forEach(nbttaglist::add);
+@@ -163,7 +186,7 @@
+         nbttagcompound.put("Version", nbttagcompound2);
+         nbttagcompound.putInt("DataVersion", SharedConstants.getCurrentVersion().getWorldVersion());
+         DynamicOps<NBTBase> dynamicops = RegistryOps.create(DynamicOpsNBT.INSTANCE, iregistrycustom);
+-        DataResult dataresult = GeneratorSettings.CODEC.encodeStart(dynamicops, this.worldGenSettings);
++        DataResult<NBTBase> dataresult = GeneratorSettings.CODEC.encodeStart(dynamicops, this.worldGenSettings); // CraftBukkit - decompile error
+         Logger logger = WorldDataServer.LOGGER;
+ 
+         Objects.requireNonNull(logger);
+@@ -211,6 +234,8 @@
+             nbttagcompound.putUUID("WanderingTraderId", this.wanderingTraderId);
+         }
+ 
++        nbttagcompound.putString("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++        world.getWorld().storeBukkitValues(nbttagcompound); // CraftBukkit - add pdc
+     }
+ 
+     @Override
+@@ -328,6 +353,20 @@
+ 
+     @Override
+     public void setThundering(boolean flag) {
++        // CraftBukkit start
++        if (this.thundering == flag) {
++            return;
++        }
++
++        org.bukkit.World world = Bukkit.getWorld(getLevelName());
++        if (world != null) {
++            ThunderChangeEvent thunder = new ThunderChangeEvent(world, flag);
++            Bukkit.getServer().getPluginManager().callEvent(thunder);
++            if (thunder.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
+         this.thundering = flag;
+     }
+ 
+@@ -348,6 +387,20 @@
+ 
+     @Override
+     public void setRaining(boolean flag) {
++        // CraftBukkit start
++        if (this.raining == flag) {
++            return;
++        }
++
++        org.bukkit.World world = Bukkit.getWorld(getLevelName());
++        if (world != null) {
++            WeatherChangeEvent weather = new WeatherChangeEvent(world, flag);
++            Bukkit.getServer().getPluginManager().callEvent(weather);
++            if (weather.isCancelled()) {
++                return;
++            }
++        }
++        // CraftBukkit end
+         this.raining = flag;
+     }
+ 
+@@ -414,6 +467,12 @@
+     @Override
+     public void setDifficulty(EnumDifficulty enumdifficulty) {
+         this.settings = this.settings.withDifficulty(enumdifficulty);
++        // CraftBukkit start
++        PacketPlayOutServerDifficulty packet = new PacketPlayOutServerDifficulty(this.getDifficulty(), this.isDifficultyLocked());
++        for (EntityPlayer player : (java.util.List<EntityPlayer>) (java.util.List) world.players()) {
++            player.connection.send(packet);
++        }
++        // CraftBukkit end
+     }
+ 
+     @Override
+@@ -534,4 +593,12 @@
+     public WorldSettings getLevelSettings() {
+         return this.settings.copy();
+     }
++
++    // CraftBukkit start - Check if the name stored in NBT is the correct one
++    public void checkName(String name) {
++        if (!this.settings.levelName.equals(name)) {
++            this.settings.levelName = name;
++        }
++    }
++    // CraftBukkit end
+ }

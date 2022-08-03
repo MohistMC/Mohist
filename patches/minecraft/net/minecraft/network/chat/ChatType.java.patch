@@ -1,0 +1,33 @@
+--- a/net/minecraft/network/chat/ChatType.java
++++ b/net/minecraft/network/chat/ChatType.java
+@@ -2,8 +_,10 @@
+ 
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
++import java.util.List;
+ import java.util.Optional;
+ import javax.annotation.Nullable;
++import net.md_5.bungee.api.ChatMessageType;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+@@ -26,6 +_,7 @@
+    public static final ResourceKey<ChatType> f_241694_ = m_237023_("team_msg_command_incoming");
+    public static final ResourceKey<ChatType> f_241626_ = m_237023_("team_msg_command_outgoing");
+    public static final ResourceKey<ChatType> f_237009_ = m_237023_("emote_command");
++   public static final ResourceKey<ChatType> RAW = m_237023_("raw"); // CraftBukkit
+ 
+    private static ResourceKey<ChatType> m_237023_(String p_237024_) {
+       return ResourceKey.m_135785_(Registry.f_235730_, new ResourceLocation(p_237024_));
+@@ -38,7 +_,10 @@
+       BuiltinRegistries.m_206384_(p_237022_, f_240668_, new ChatType(ChatTypeDecoration.m_240709_("commands.message.display.outgoing"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+       BuiltinRegistries.m_206384_(p_237022_, f_241694_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.text"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+       BuiltinRegistries.m_206384_(p_237022_, f_241626_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.sent"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+-      return BuiltinRegistries.m_206384_(p_237022_, f_237009_, new ChatType(ChatTypeDecoration.m_239222_("chat.type.emote"), ChatTypeDecoration.m_239222_("chat.type.emote")));
++      // CraftBukkit start
++      BuiltinRegistries.m_206384_(p_237022_, f_237009_, new ChatType(ChatTypeDecoration.m_239222_("chat.type.emote"), ChatTypeDecoration.m_239222_("chat.type.emote")));
++      return BuiltinRegistries.m_206384_(p_237022_, RAW, new ChatType(new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_), new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_)));
++      // CraftBukkit end
+    }
+ 
+    public static ChatType.Bound m_240980_(ResourceKey<ChatType> p_241279_, Entity p_241483_) {

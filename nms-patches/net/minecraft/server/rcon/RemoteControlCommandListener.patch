@@ -1,0 +1,20 @@
+--- a/net/minecraft/server/rcon/RemoteControlCommandListener.java
++++ b/net/minecraft/server/rcon/RemoteControlCommandListener.java
+@@ -34,6 +34,17 @@
+         return new CommandListenerWrapper(this, Vec3D.atLowerCornerOf(worldserver.getSharedSpawnPos()), Vec2F.ZERO, worldserver, 4, "Rcon", RemoteControlCommandListener.RCON_COMPONENT, this.server, (Entity) null);
+     }
+ 
++    // CraftBukkit start - Send a String
++    public void sendMessage(String message) {
++        this.buffer.append(message);
++    }
++
++    @Override
++    public org.bukkit.command.CommandSender getBukkitSender(CommandListenerWrapper wrapper) {
++        return server.remoteConsole;
++    }
++    // CraftBukkit end
++
+     @Override
+     public void sendSystemMessage(IChatBaseComponent ichatbasecomponent) {
+         this.buffer.append(ichatbasecomponent.getString());

@@ -1,0 +1,63 @@
+--- a/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -417,7 +417,7 @@
+         }
+     }
+ 
+-    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) {
++    public void addVanillaDecorations(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) { // CraftBukkit
+         ChunkCoordIntPair chunkcoordintpair = ichunkaccess.getPos();
+ 
+         if (!SharedConstants.debugVoidTerrain(chunkcoordintpair)) {
+@@ -439,7 +439,7 @@
+ 
+                 for (int k = 0; k < j; ++k) {
+                     ChunkSection chunksection = achunksection[k];
+-                    PalettedContainerRO palettedcontainerro = chunksection.getBiomes();
++                    PalettedContainerRO<Holder<BiomeBase>> palettedcontainerro = chunksection.getBiomes(); // CraftBukkit - decompile error
+ 
+                     Objects.requireNonNull(set);
+                     palettedcontainerro.getAll(set::add);
+@@ -465,7 +465,7 @@
+                             Structure structure = (Structure) iterator.next();
+ 
+                             seededrandom.setFeatureSeed(i, i1, l);
+-                            Supplier supplier = () -> {
++                            Supplier<String> supplier = () -> { // CraftBukkit - decompile error
+                                 Optional optional = iregistry.getResourceKey(structure).map(Object::toString);
+ 
+                                 Objects.requireNonNull(structure);
+@@ -550,6 +550,33 @@
+         }
+     }
+ 
++    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager) {
++        // CraftBukkit start
++        applyBiomeDecoration(generatoraccessseed, ichunkaccess, structuremanager, true);
++    }
++
++    public void applyBiomeDecoration(GeneratorAccessSeed generatoraccessseed, IChunkAccess ichunkaccess, StructureManager structuremanager, boolean vanilla) {
++        if (vanilla) {
++            addVanillaDecorations(generatoraccessseed, ichunkaccess, structuremanager);
++        }
++
++        org.bukkit.World world = generatoraccessseed.getMinecraftWorld().getWorld();
++        // only call when a populator is present (prevents unnecessary entity conversion)
++        if (!world.getPopulators().isEmpty()) {
++            org.bukkit.craftbukkit.generator.CraftLimitedRegion limitedRegion = new org.bukkit.craftbukkit.generator.CraftLimitedRegion(generatoraccessseed, ichunkaccess.getPos());
++            int x = ichunkaccess.getPos().x;
++            int z = ichunkaccess.getPos().z;
++            for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
++                SeededRandom seededrandom = new SeededRandom(new net.minecraft.world.level.levelgen.LegacyRandomSource(generatoraccessseed.getSeed()));
++                seededrandom.setDecorationSeed(generatoraccessseed.getSeed(), x, z);
++                populator.populate(world, new org.bukkit.craftbukkit.util.RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
++            }
++            limitedRegion.saveEntities();
++            limitedRegion.breakLink();
++        }
++        // CraftBukkit end
++    }
++
+     public boolean hasStructureChunkInRange(Holder<StructureSet> holder, RandomState randomstate, long i, int j, int k, int l) {
+         StructureSet structureset = (StructureSet) holder.value();
+ 

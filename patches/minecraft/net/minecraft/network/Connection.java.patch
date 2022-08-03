@@ -38,6 +38,15 @@
        }
  
        if (this.f_129468_.eventLoop().inEventLoop()) {
+@@ -273,7 +_,7 @@
+ 
+    public void m_129507_(Component p_129508_) {
+       if (this.f_129468_.isOpen()) {
+-         this.f_129468_.close().awaitUninterruptibly();
++         this.f_129468_.close(); // We can't wait as this may be called from an event loop.
+          this.f_129471_ = p_129508_;
+       }
+ 
 @@ -292,7 +_,9 @@
     }
  

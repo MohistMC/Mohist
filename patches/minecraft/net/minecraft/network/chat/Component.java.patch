@@ -20,7 +20,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.Util;
  import net.minecraft.network.chat.contents.BlockDataSource;
-@@ -40,7 +_,18 @@
+@@ -40,7 +_,19 @@
  import net.minecraft.util.GsonHelper;
  import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
  
@@ -37,6 +37,7 @@
 +      return this.stream().iterator();
 +   }
 +   // CraftBukkit end
++
     Style m_7383_();
  
     ComponentContents m_214077_();

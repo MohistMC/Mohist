@@ -1,8 +1,10 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -65,7 +_,7 @@
+@@ -64,8 +_,9 @@
+ import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
  
 -public class FriendlyByteBuf extends ByteBuf {
 +public class FriendlyByteBuf extends ByteBuf implements net.minecraftforge.common.extensions.IForgeFriendlyByteBuf {
@@ -36,12 +38,17 @@
           }
  
           this.m_130079_(compoundtag);
-@@ -542,7 +_,7 @@
+@@ -542,7 +_,12 @@
           Item item = this.m_236816_(Registry.f_122827_);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);
 -         itemstack.m_41751_(this.m_130260_());
 +         itemstack.readShareTag(this.m_130260_());
++         // CraftBukkit start
++         if (itemstack.m_41783_() != null) {
++            CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++         }
++         // CraftBukkit end
           return itemstack;
        }
     }

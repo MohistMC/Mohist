@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/BlockSnow.java
++++ b/net/minecraft/world/level/block/BlockSnow.java
+@@ -92,6 +92,11 @@
+     @Override
+     public void randomTick(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, RandomSource randomsource) {
+         if (worldserver.getBrightness(EnumSkyBlock.BLOCK, blockposition) > 11) {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(worldserver, blockposition, Blocks.AIR.defaultBlockState()).isCancelled()) {
++                return;
++            }
++            // CraftBukkit end
+             dropResources(iblockdata, worldserver, blockposition);
+             worldserver.removeBlock(blockposition, false);
+         }
