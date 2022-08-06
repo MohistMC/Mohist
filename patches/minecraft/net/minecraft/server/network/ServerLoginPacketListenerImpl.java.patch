@@ -22,6 +22,14 @@
  import org.slf4j.Logger;
  
  public class ServerLoginPacketListenerImpl implements TickablePacketListener, ServerLoginPacketListener {
+@@ -61,6 +_,7 @@
+    private ServerPlayer f_10024_;
+    @Nullable
+    private ProfilePublicKey.Data f_240234_;
++   public String hostname = ""; // CraftBukkit - add field
+ 
+    public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
+       this.f_10018_ = p_10027_;
 @@ -69,7 +_,13 @@
     }
  
@@ -37,10 +45,16 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -101,6 +_,31 @@
+@@ -101,10 +_,41 @@
  
     }
  
++   // CraftBukkit start
++   public void disconnect(String s) {
++      m_10053_(Component.m_237113_(s));
++   }
++   // CraftBukkit end
++
 +   // Spigot start
 +   public void initUUID()
 +   {
@@ -69,6 +83,11 @@
     public void m_10055_() {
        ProfilePublicKey profilepublickey = null;
        if (!this.f_10021_.isComplete()) {
+-         this.f_10021_ = this.m_10038_(this.f_10021_);
++         // this.gameProfile = this.createFakeProfile(this.gameProfile); // Spigot - Moved to initUUID
+       } else {
+          try {
+             SignatureValidator signaturevalidator = this.f_10018_.m_236739_();
 @@ -194,18 +_,43 @@
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {
@@ -89,7 +108,7 @@
 +                  this.initUUID();
 +                  new LoginHandler().fireEvents();
 +               } catch (Exception ex) {
-+                  this.m_10053_(Component.m_130674_("Failed to verify username!"));
++                  this.disconnect("Failed to verify username!");
 +                  f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + this.f_10021_.getName(), ex);
 +               }
 +            });
