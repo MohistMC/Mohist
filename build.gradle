@@ -24,10 +24,10 @@ Util.init() //Init all our extension methods!
 ext {
     JAR_SIGNER = null
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.19.1'
-    MC_VERSION = '1.19.1'
+    MAPPING_VERSION = '1.19.2'
+    MC_VERSION = '1.19.2'
     MC_NEXT_VERSION = '1.20'
-    MCP_VERSION = '20220727.212338'
+    MCP_VERSION = '20220805.130853'
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -54,8 +54,8 @@ ext {
     JARJAR_VERSION = '0.3.16'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.1-42.0.9'
-    FORGE_VERSION = '42.0.9'
+    VERSION = '1.19.2-43.0.0'
+    FORGE_VERSION = '43.0.0'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -73,32 +73,6 @@ println('Version: ' + VERSION +
         ' Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
-
-task downloadVersionManifest(type: Download) {
-    src 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
-    dest file('build/versions/version_manifest.json')
-    useETag 'all'
-    onlyIfModified true
-    quiet true
-}
-task downloadJson(type: Download, dependsOn: downloadVersionManifest) {
-    inputs.file downloadVersionManifest.dest
-    src { downloadVersionManifest.dest.json.versions.find{ it.id == MC_VERSION }.url }
-    dest file("build/versions/${MC_VERSION}/version.json")
-    useETag 'all'
-    onlyIfModified true
-    quiet true
-}
-['client', 'server'].each { id ->
-    task "download${id.capitalize()}Raw"(type: Download, dependsOn: downloadJson) {
-        inputs.file downloadJson.dest
-        src { downloadJson.dest.json.downloads.get(id).url }
-        dest file("build/versions/${MC_VERSION}/${id}.jar")
-        useETag 'all'
-        onlyIfModified true
-        quiet true
-    }
-}
 
 subprojects {
     apply plugin: 'maven-publish'
@@ -424,7 +398,7 @@ def sharedFmlonlyForge = { Project prj ->
             MODULES: 'ALL-MODULE-PATH'
     ]
 
-    prj.task([dependsOn: rootProject.downloadServerRaw], 'makeClasspathFiles') {
+    prj.task('makeClasspathFiles') {
         doLast {
             def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
             [
@@ -432,10 +406,40 @@ def sharedFmlonlyForge = { Project prj ->
                 "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             ]
             def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
-                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
-                    .findAll{ it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-            }
+            CLASS_PATH +=
+                    (
+                            [
+                                    "libraries/com/github/oshi/oshi-core/5.8.5/oshi-core-5.8.5.jar",
+                                    "libraries/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar",
+                                    "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
+                                    "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
+                                    "libraries/com/mojang/authlib/3.11.49/authlib-3.11.49.jar",
+                                    "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
+                                    "libraries/com/mojang/datafixerupper/5.0.28/datafixerupper-5.0.28.jar",
+                                    "libraries/com/mojang/javabridge/1.2.24/javabridge-1.2.24.jar",
+                                    "libraries/com/mojang/logging/1.0.0/logging-1.0.0.jar",
+                                    "libraries/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
+                                    "libraries/io/netty/netty-buffer/4.1.77.Final/netty-buffer-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-codec/4.1.77.Final/netty-codec-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-common/4.1.77.Final/netty-common-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-handler/4.1.77.Final/netty-handler-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-resolver/4.1.77.Final/netty-resolver-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-transport/4.1.77.Final/netty-transport-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-transport-classes-epoll/4.1.77.Final/netty-transport-classes-epoll-4.1.77.Final.jar",
+                                    "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-x86_64.jar",
+                                    "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-aarch_64.jar",
+                                    "libraries/io/netty/netty-transport-native-unix-common/4.1.77.Final/netty-transport-native-unix-common-4.1.77.Final.jar",
+                                    "libraries/it/unimi/dsi/fastutil/8.5.6/fastutil-8.5.6.jar",
+                                    "libraries/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar",
+                                    "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
+                                    "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
+                                    "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
+                                    "libraries/org/apache/logging/log4j/log4j-api/2.17.0/log4j-api-2.17.0.jar",
+                                    "libraries/org/apache/logging/log4j/log4j-core/2.17.0/log4j-core-2.17.0.jar",
+                                    "libraries/org/apache/logging/log4j/log4j-slf4j18-impl/2.17.0/log4j-slf4j18-impl-2.17.0.jar",
+                                    "libraries/org/slf4j/slf4j-api/1.8.0-beta4/slf4j-api-1.8.0-beta4.jar"
+                            ].findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+                    )
 
             configure(prj.installerJar) {
                 from(rootProject.file('server_files/args.txt')) {
@@ -929,13 +933,13 @@ project(':forge') {
                     'Specification-Vendor'  : 'MohistMC',
                     'Specification-Version':  MOHIST_VERSION,
                     'Implementation-Title'  : 'Mohist',
-                    'Implementation-Version': '1.19.1-' + MOHIST_VERSION,
+                    'Implementation-Version': '1.19.2-' + MOHIST_VERSION,
                     'Implementation-Vendor' : 'MohistMC'
             ] as LinkedHashMap,
             'org/bukkit/craftbukkit/v1_19_R1/': [
                     'Specification-Title'   : MCP_VERSION,
                     'Specification-Vendor'  : 'SpigotMC',
-                    'Specification-Version':  '1.19.1',
+                    'Specification-Version':  '1.19.2',
                     'Implementation-Title'  : 'Spigot',
                     'Implementation-Version': '7e29f765-296df566-9fb885e8',
                     'Implementation-Vendor' : 'SpigotMC'
@@ -1271,11 +1275,11 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [downloadServerRaw, genServerBinPatches, 'signUniversalJar']) {
+    task mohistJar(type: Jar, dependsOn: [genServerBinPatches]) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = '1.19.1-' + MOHIST_VERSION
+        archiveVersion = '1.19.2-' + MOHIST_VERSION
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +

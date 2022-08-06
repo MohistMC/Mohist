@@ -1,11 +1,11 @@
 <div align="center">
-  <h1>Mohist 1.19.1</h1>
+  <h1>Mohist 1.19.2</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.1)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.1)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.2)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.19.1--42.0.9-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.1.html)
+[![](https://img.shields.io/badge/Forge-1.19.2--43.0.0-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.2.html)
 [![](https://img.shields.io/badge/jdk-17.0.4+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.5-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -17,7 +17,7 @@
 
 | Version | Support |
 |---------|---------|
-| 1.19.1   | Wait    |
+| 1.19.2   | Wait    |
 | 1.16.5  | Active  |
 
 Progress
@@ -25,7 +25,7 @@ Progress
 
 - [ ] Rectify Forge([**c42b0847d**](https://github.com/MinecraftForge/MinecraftForge/commit/c42b0847d))  
 - [ ] Start patch
-  * Bukkit([**632aa120**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/632aa120))
+  * Bukkit([**bf60995c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/bf60995c))
   * CraftBukkit([**ef0946409**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/ef0946409))
 
 Getting Help
