@@ -24,7 +24,7 @@
        synchronized(this.f_9703_) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
-@@ -87,7 +_,7 @@
+@@ -87,14 +_,14 @@
                 } catch (ChannelException channelexception) {
                 }
  
@@ -33,6 +33,14 @@
                 int i = ServerConnectionListener.this.f_9702_.m_7032_();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
                 ServerConnectionListener.this.f_9704_.add(connection);
+                p_9729_.pipeline().addLast("packet_handler", connection);
+                connection.m_129505_(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.f_9702_, connection));
+             }
+-         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
++         }).group(lazyloadedvalue.m_13971_()).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
+       }
+    }
+ 
 @@ -204,4 +_,14 @@
           }
        }

@@ -27,12 +27,13 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -147,7 +_,14 @@
+@@ -147,7 +_,15 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import net.minecraftforge.common.util.LevelCapabilityData;
 +import net.minecraftforge.event.level.LevelEvent;
++import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R1.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -80,12 +81,14 @@
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
-@@ -227,6 +_,8 @@
+@@ -227,6 +_,10 @@
        }
  
        this.f_143245_ = new SleepStatus();
-+      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
 +      this.initCapabilities();
++      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
++      this.world = new CraftWorld(this, generator, biomeProvider, environment);
++      m_6857_().world = this;
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {

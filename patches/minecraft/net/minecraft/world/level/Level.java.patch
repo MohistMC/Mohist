@@ -62,7 +62,7 @@
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
 +   // CraftBukkit start Added the following
-+   private final CraftWorld world;
++   public CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
 +   public static org.bukkit.generator.ChunkGenerator generator;

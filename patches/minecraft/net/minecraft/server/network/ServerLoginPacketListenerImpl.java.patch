@@ -33,7 +33,7 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -97,10 +_,41 @@
+@@ -97,21 +_,43 @@
  
     }
  
@@ -74,8 +74,20 @@
 -         this.f_10021_ = this.m_10038_(this.f_10021_);
 +         // this.gameProfile = this.createFakeProfile(this.gameProfile); // Spigot - Moved to initUUID
        } else {
-          try {
-             SignatureValidator signaturevalidator = this.f_10018_.m_236739_();
+-         try {
+-            SignatureValidator signaturevalidator = this.f_10018_.m_236739_();
+-            profilepublickey = m_215256_(this.f_240234_, this.f_10021_.getId(), signaturevalidator, this.f_10018_.m_214005_());
+-         } catch (ProfilePublicKey.ValidationException profilepublickey$validationexception) {
+-            f_10015_.error("Failed to validate profile key: {}", (Object)profilepublickey$validationexception.getMessage());
+-            if (!this.f_10013_.m_129531_()) {
+-               this.m_10053_(profilepublickey$validationexception.m_237308_());
+-               return;
+-            }
+-         }
++
+       }
+ 
+       Component component1 = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
 @@ -178,18 +_,43 @@
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {

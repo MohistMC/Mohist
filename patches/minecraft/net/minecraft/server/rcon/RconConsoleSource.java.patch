@@ -17,14 +17,20 @@
     }
  
     public boolean m_6999_() {
-@@ -46,5 +_,10 @@
- 
+@@ -47,4 +_,16 @@
     public boolean m_6102_() {
        return this.f_11502_.m_6983_();
+    }
++
++
++   // CraftBukkit start - Send a String
++   public void sendMessage(String message) {
++      this.f_11501_.append(message);
 +   }
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return null;
-    }
++      return f_11502_.remoteConsole;
++   }
++   // CraftBukkit end
  }
