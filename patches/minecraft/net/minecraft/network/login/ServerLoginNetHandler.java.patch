@@ -159,7 +159,7 @@
     }
  
     public String func_147317_d() {
-@@ -130,7 +_,21 @@
+@@ -130,7 +_,20 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic().getEncoded(), this.field_147330_e));
        } else {
@@ -170,7 +170,6 @@
 +            @Override
 +            public void run() {
 +               try {
-+                  initUUID();
 +                  new LoginHandler().fireEvents();
 +               } catch (Exception ex) {
 +                  disconnect("Failed to verify username!");
