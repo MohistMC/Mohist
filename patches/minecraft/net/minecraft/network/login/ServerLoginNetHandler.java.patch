@@ -59,7 +59,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -72,29 +_,68 @@
+@@ -72,29 +_,66 @@
  
     }
  
@@ -126,8 +126,7 @@
 -      if (!this.field_147337_i.isComplete()) {
 -         this.field_147337_i = this.func_152506_a(this.field_147337_i);
 -      }
-+      initUUID();
- 
+-
 -      ITextComponent itextcomponent = this.field_147327_f.func_184103_al().func_206258_a(this.field_147333_a.func_74430_c(), this.field_147337_i);
 -      if (itextcomponent != null) {
 -         this.func_194026_b(itextcomponent);

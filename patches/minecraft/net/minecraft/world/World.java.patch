@@ -270,7 +270,7 @@
                    blockstate.func_241483_b_(this, p_241211_1_, i, p_241211_4_ - 1);
 +
 +                  // CraftBukkit start
-+                  CraftWorld world = ((ServerWorld) this).getWorld();
++                  CraftWorld world = this.getWorld();
 +                  if (world != null) {
 +                     BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_241211_1_.func_177958_n(), p_241211_1_.func_177956_o(), p_241211_1_.func_177952_p()), CraftBlockData.fromData(p_241211_2_));
 +                     this.getCBServer().getPluginManager().callEvent(event);
