@@ -1,10 +1,8 @@
 plugins {
     id 'com.github.ben-manes.versions'
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
 }
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
-apply plugin: 'org.javamodularity.moduleplugin'
 
 repositories {
     mavenCentral()
@@ -18,8 +16,6 @@ dependencies {
     implementation "com.mohistmc.yaml:yaml:0.2"
     implementation "cpw.mods:securejarhandler:1.0.3"
     implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'dev.vankka:dependencydownload-runtime:1.2.2-SNAPSHOT'
-    implementation 'dev.vankka:dependencydownload-common:1.2.1'
     implementation 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'

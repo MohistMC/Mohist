@@ -793,11 +793,13 @@
     }
  
     public void m_6845_(boolean p_20313_) {
-@@ -2181,7 +_,7 @@
+@@ -2180,8 +_,8 @@
+       return component != null ? m_20140_(component) : this.m_5677_();
     }
  
-    protected Component m_5677_() {
+-   protected Component m_5677_() {
 -      return this.f_19847_.m_20676_();
++   public Component m_5677_() {
 +      return this.m_6095_().m_20676_(); // Forge: Use getter to allow overriding by mods
     }
  

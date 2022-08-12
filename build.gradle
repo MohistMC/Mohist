@@ -6,7 +6,6 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,)'
-        classpath "dev.vankka:gradle-plugin:1.2.1"
     }
 }
 
@@ -51,8 +50,8 @@ ext {
     JARJAR_VERSION = '0.3.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.1.68'
-    FORGE_VERSION = '40.1.68'
+    VERSION = '1.18.2-40.1.73'
+    FORGE_VERSION = '40.1.73'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'

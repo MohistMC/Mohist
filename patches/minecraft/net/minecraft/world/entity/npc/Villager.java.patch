@@ -78,11 +78,13 @@
        this.m_35428_(MemoryModuleType.f_26359_);
        this.m_35428_(MemoryModuleType.f_26360_);
        this.m_35428_(MemoryModuleType.f_26361_);
-@@ -658,7 +_,8 @@
+@@ -657,8 +_,9 @@
+       this.m_7604_();
     }
  
-    protected Component m_5677_() {
+-   protected Component m_5677_() {
 -      return new TranslatableComponent(this.m_6095_().m_20675_() + "." + Registry.f_122869_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
++   public Component m_5677_() {
 +      net.minecraft.resources.ResourceLocation profName = this.m_7141_().m_35571_().getRegistryName();
 +      return new TranslatableComponent(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
     }
