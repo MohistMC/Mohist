@@ -19,7 +19,9 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.ChatMessageContent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
@@ -327,7 +329,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void chat(String msg) {
         if (getHandle().connection == null) return;
 
-        getHandle().connection.chat(msg, false);
+        getHandle().connection.chat(msg, PlayerChatMessage.system(new ChatMessageContent(msg)), false);
     }
 
     @Override

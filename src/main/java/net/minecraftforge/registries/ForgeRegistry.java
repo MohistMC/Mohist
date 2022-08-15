@@ -673,7 +673,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 int realId = add(id, entry.getKey(), entry.getValue());
                 if (id != realId && id != -1)
                 {
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                     errored = true;
                 }
             }
@@ -692,7 +692,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                     int realId = add(id, entry.getKey(), value, owner.owner);
                     if (id != realId && id != -1)
                     {
-                        LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                        LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                         errored = true;
                     }
                 }
@@ -875,12 +875,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
                 int realId = add(newId, itemName, value, owner.owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
 
             int realId = add(newId, itemName, obj, primaryName == null ? itemName.getNamespace() : primaryName);
             if (realId != newId)
-                LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             ovs.remove(itemName);
         }
 
@@ -903,7 +903,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, itemName, _new, owner);
                 if (newId != realId)
-                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
         }
     }
@@ -964,7 +964,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
         int realId = this.add(id, key, dummy);
         if (realId != id)
-            LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, key, id, realId);
+            LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, key, id, realId);
         this.dummies.add(key);
     }
 

@@ -167,6 +167,7 @@ import org.bukkit.craftbukkit.v1_19_R1.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionBrewer;
 import org.bukkit.craftbukkit.v1_19_R1.profile.CraftPlayerProfile;
 import org.bukkit.craftbukkit.v1_19_R1.scheduler.CraftScheduler;
+import org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftCriteria;
 import org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.v1_19_R1.structure.CraftStructureManager;
 import org.bukkit.craftbukkit.v1_19_R1.tag.CraftBlockTag;
@@ -214,6 +215,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitWorker;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
@@ -1003,7 +1005,7 @@ public final class CraftServer implements Server {
 
     @Override
     public World createWorld(WorldCreator creator) {
-        Preconditions.checkState(!console.levels.isEmpty(), "Cannot create additional worlds on STARTUP");
+        Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
         Validate.notNull(creator, "Creator may not be null");
 
         String name = creator.name();
@@ -1101,7 +1103,7 @@ public final class CraftServer implements Server {
         console.initWorld(internal, worlddata, worlddata, worlddata.worldGenSettings());
 
         internal.setSpawnSettings(true, true);
-        console.levels.put(internal.dimension(), internal);
+        console.addLevel(internal);
 
         getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
@@ -1123,7 +1125,7 @@ public final class CraftServer implements Server {
 
         ServerLevel handle = ((CraftWorld) world).getHandle();
 
-        if (!(console.levels.containsKey(handle.dimension()))) {
+        if (console.getLevel(handle.dimension()) == null) {
             return false;
         }
 
@@ -1155,7 +1157,7 @@ public final class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        console.levels.remove(handle.dimension());
+        console.removeLevel(handle);
         return true;
     }
 
@@ -1998,6 +2000,11 @@ public final class CraftServer implements Server {
     @Override
     public CraftScoreboardManager getScoreboardManager() {
         return scoreboardManager;
+    }
+
+    @Override
+    public Criteria getScoreboardCriteria(String name) {
+        return CraftCriteria.getFromBukkit(name);
     }
 
     public void checkSaveState() {

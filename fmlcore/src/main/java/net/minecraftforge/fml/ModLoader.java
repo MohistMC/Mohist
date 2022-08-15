@@ -88,7 +88,7 @@ public class ModLoader
     private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
-    private ModList modList;
+    private static ModList modList;
 
     private ModLoader()
     {
@@ -347,5 +347,9 @@ public class ModLoader
         public Object getMod() {
             return null;
         }
+    }
+
+    public static ModList getModList() {
+        return modList;
     }
 }

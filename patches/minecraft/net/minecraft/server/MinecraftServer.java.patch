@@ -33,20 +33,24 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -151,7 +_,12 @@
+@@ -151,7 +_,16 @@
  import net.minecraft.world.level.storage.loot.PredicateManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import net.minecraftforge.event.level.LevelEvent;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.Main;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_19_R1.util.LazyPlayerSet;
++import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 +import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-@@ -187,7 +_,7 @@
+@@ -187,14 +_,14 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
     private final ServerConnectionListener f_129755_;
@@ -55,6 +59,14 @@
     private final ServerStatus f_129757_ = new ServerStatus();
     private final RandomSource f_129758_ = RandomSource.m_216327_();
     private final DataFixer f_129759_;
+    private String f_129760_;
+    private int f_129761_ = -1;
+    public final RegistryAccess.Frozen f_129746_;
+-   public final Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
++   public Map<ResourceKey<Level>, ServerLevel> f_129762_ = Maps.newLinkedHashMap();
+    private PlayerList f_129763_;
+    private volatile boolean f_129764_ = true;
+    private boolean f_129765_;
 @@ -230,7 +_,7 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
@@ -402,6 +414,29 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
+@@ -903,6 +_,22 @@
+       return this.f_129762_.get(p_129881_);
+    }
+ 
++   // CraftBukkit start
++   public void addLevel(ServerLevel level) {
++      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
++      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
++      newLevels.put(level.m_46472_(), level);
++      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++   }
++
++   public void removeLevel(ServerLevel level) {
++      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
++      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
++      newLevels.remove(level.m_46472_());
++      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++   }
++    // CraftBukkit end
++
+    public Set<ResourceKey<Level>> m_129784_() {
+       return this.f_129762_.keySet();
+    }
 @@ -929,7 +_,7 @@
  
     @DontObfuscate
@@ -495,6 +530,33 @@
     public RegistryAccess.Frozen m_206579_() {
        return this.f_129746_;
     }
+@@ -1767,8 +_,25 @@
+ 
+    }
+ 
++   // CraftBukkit start
++   public final java.util.concurrent.ExecutorService chatExecutor = java.util.concurrent.Executors.newCachedThreadPool(
++           new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
++
+    public ChatDecorator m_236742_() {
+-      return ChatDecorator.f_236947_;
++      return (entityplayer, ichatbasecomponent) -> {
++         return CompletableFuture.supplyAsync(() -> {
++            AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, entityplayer.getBukkitEntity(), CraftChatMessage.fromComponent(ichatbasecomponent), new LazyPlayerSet(this));
++            String originalFormat = event.getFormat(), originalMessage = event.getMessage();
++            this.server.getPluginManager().callEvent(event);
++
++            if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
++               return ichatbasecomponent;
++            }
++
++            return CraftChatMessage.fromStringOrNull(String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage()));
++            }, chatExecutor);
++      };
++      // CraftBukkit end
+    }
+ 
+    public static record ReloadableResources(CloseableResourceManager f_206584_, ReloadableServerResources f_206585_) implements AutoCloseable {
 @@ -1821,4 +_,28 @@
           };
        }

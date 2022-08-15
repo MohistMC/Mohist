@@ -10,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -30,11 +31,21 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
     @Override
     public CraftObjective registerNewObjective(String name, String criteria, String displayName) throws IllegalArgumentException {
-        return registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
+        return registerNewObjective(name, CraftCriteria.getFromBukkit(criteria), displayName, RenderType.INTEGER);
     }
 
     @Override
     public CraftObjective registerNewObjective(String name, String criteria, String displayName, RenderType renderType) throws IllegalArgumentException {
+        return registerNewObjective(name, CraftCriteria.getFromBukkit(criteria), displayName, renderType);
+    }
+
+    @Override
+    public CraftObjective registerNewObjective(String name, Criteria criteria, String displayName) throws IllegalArgumentException {
+        return registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
+    }
+
+    @Override
+    public CraftObjective registerNewObjective(String name, Criteria criteria, String displayName, RenderType renderType) throws IllegalArgumentException {
         Validate.notNull(name, "Objective name cannot be null");
         Validate.notNull(criteria, "Criteria cannot be null");
         Validate.notNull(displayName, "Display name cannot be null");
@@ -43,8 +54,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.isTrue(displayName.length() <= 128, "The display name '" + displayName + "' is longer than the limit of 128 characters");
         Validate.isTrue(board.getObjective(name) == null, "An objective of name '" + name + "' already exists");
 
-        CraftCriteria craftCriteria = CraftCriteria.getFromBukkit(criteria);
-        net.minecraft.world.scores.Objective objective = board.addObjective(name, craftCriteria.criteria, CraftChatMessage.fromStringOrNull(displayName), CraftScoreboardTranslations.fromBukkitRender(renderType));
+        net.minecraft.world.scores.Objective objective = board.addObjective(name, ((CraftCriteria) criteria).criteria, CraftChatMessage.fromStringOrNull(displayName), CraftScoreboardTranslations.fromBukkitRender(renderType));
         return new CraftObjective(this, objective);
     }
 
@@ -66,6 +76,21 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
                 objectives.add(objective);
             }
         }
+        return objectives.build();
+    }
+
+    @Override
+    public ImmutableSet<Objective> getObjectivesByCriteria(Criteria criteria) throws IllegalArgumentException {
+        Validate.notNull(criteria, "Criteria cannot be null");
+
+        ImmutableSet.Builder<Objective> objectives = ImmutableSet.builder();
+        for (net.minecraft.world.scores.Objective netObjective : board.getObjectives()) {
+            CraftObjective objective = new CraftObjective(this, netObjective);
+            if (objective.getTrackedCriteria().equals(criteria)) {
+                objectives.add(objective);
+            }
+        }
+
         return objectives.build();
     }
 

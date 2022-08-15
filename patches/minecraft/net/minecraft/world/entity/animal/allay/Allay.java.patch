@@ -1,5 +1,49 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
+@@ -88,13 +_,14 @@
+    private final VibrationListener.VibrationListenerConfig f_238787_;
+    private final DynamicGameEventListener<Allay.JukeboxListener> f_238563_;
+    private final SimpleContainer f_218303_ = new SimpleContainer(1);
+-   private @Nullable BlockPos f_238682_;
+-   private long f_238791_;
++   public @Nullable BlockPos f_238682_;
++   public long f_238791_;
+    private float f_218304_;
+    private float f_218305_;
+    private float f_238687_;
+    private float f_238541_;
+    private float f_238552_;
++   public boolean forceDancing = false; // CraftBukkit
+ 
+    public Allay(EntityType<? extends Allay> p_218310_, Level p_218311_) {
+       super(p_218310_, p_218311_);
+@@ -106,6 +_,12 @@
+       this.f_238563_ = new DynamicGameEventListener<>(new Allay.JukeboxListener(positionsource, GameEvent.f_238690_.m_157827_()));
+    }
+ 
++   // CraftBukkit start
++   public void setCanDuplicate(boolean canDuplicate) {
++      this.f_19804_.m_135381_(Allay.f_238802_, canDuplicate);
++   }
++   // CraftBukkit end
++
+    protected Brain.Provider<Allay> m_5490_() {
+       return Brain.m_21923_(f_218301_, f_218297_);
+    }
+@@ -273,7 +_,12 @@
+       ItemStack itemstack = p_218361_.m_21120_(p_218362_);
+       ItemStack itemstack1 = this.m_21120_(InteractionHand.MAIN_HAND);
+       if (this.m_239559_() && this.m_239735_(itemstack) && this.m_218324_()) {
+-         this.m_218376_();
++         // CraftBukkit start - handle cancel duplication
++         Allay allay = this.duplicateAllay0();
++         if (allay == null) {
++            return InteractionResult.SUCCESS;
++         }
++         // CraftBukkit end
+          this.f_19853_.m_7605_(this, (byte)18);
+          this.f_19853_.m_6269_(p_218361_, this, SoundEvents.f_144243_, SoundSource.NEUTRAL, 2.0F, 1.0F);
+          this.m_239358_(p_218361_, itemstack);
 @@ -326,7 +_,7 @@
  
     public boolean m_7243_(ItemStack p_218387_) {
@@ -9,3 +53,41 @@
     }
  
     protected void m_7581_(ItemEntity p_218359_) {
+@@ -362,6 +_,7 @@
+    }
+ 
+    private boolean m_239812_() {
++      if (this.forceDancing) {return false;} // CraftBukkit
+       return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
+    }
+ 
+@@ -453,17 +_,23 @@
+          allay.m_21530_();
+          allay.m_239811_();
+          this.m_239811_();
+-         this.f_19853_.m_7967_(allay);
++         this.f_19853_.addFreshEntity(allay, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
+       }
+-
+-   }
+-
+-   private void m_239811_() {
++      allay0 = allay;
++   }
++
++   public Allay allay0;
++   public Allay duplicateAllay0() { // CraftBukkit - return allay and private -> public
++      m_218376_();
++      return allay0;
++   }
++
++   public void m_239811_() {
+       this.f_238791_ = 6000L;
+       this.f_19804_.m_135381_(f_238802_, false);
+    }
+ 
+-   private boolean m_218324_() {
++   public boolean m_218324_() {
+       return this.f_19804_.m_135370_(f_238802_);
+    }
+ 

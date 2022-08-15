@@ -4,6 +4,7 @@ import net.minecraft.world.scores.Scoreboard;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -51,6 +52,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         CraftScoreboard scoreboard = checkState();
 
         return criteria.bukkitName;
+    }
+
+    @Override
+    public Criteria getTrackedCriteria() throws IllegalStateException {
+        CraftScoreboard scoreboard = checkState();
+
+        return criteria;
     }
 
     @Override

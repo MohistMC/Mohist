@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.event.Listener;
@@ -14,15 +16,20 @@ import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 
-    public static Map<String, Integer> mods = new ConcurrentHashMap();
     public static Set<String> modlists = new ConcurrentSet();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
 
+    static {
+        for (IModInfo modInfo : ModLoader.getModList().getMods()) {
+            modlists.add(modInfo.getModId());
+        }
+    }
+
     // Don't count the default number of mods
     public static int getModSize() {
-        return mods.get("mods") == null ? 0 : mods.get("mods") - 2;
+        return ModLoader.getModList().size();
     }
 
     public static String getModList() {

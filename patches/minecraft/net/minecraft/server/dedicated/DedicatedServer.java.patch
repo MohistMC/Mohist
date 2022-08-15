@@ -20,7 +20,7 @@
  import net.minecraft.server.ConsoleInput;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerInterface;
-@@ -49,11 +_,18 @@
+@@ -49,11 +_,21 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.CreativeModeTab;
  import net.minecraft.world.item.Items;
@@ -30,6 +30,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
++import net.minecraftforge.fml.ModLoader;
++import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
++import net.minecraftforge.forgespi.language.IModInfo;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
@@ -104,7 +107,7 @@
              Thread thread1 = new Thread(new ServerWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
              thread1.setName("Server Watchdog");
-@@ -187,12 +_,13 @@
+@@ -187,12 +_,12 @@
           }
  
           Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
@@ -113,7 +116,7 @@
              MinecraftServerStatistics.m_18328_(this);
              f_139598_.info("JMX monitoring enabled");
           }
- 
+-
 -         return true;
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }

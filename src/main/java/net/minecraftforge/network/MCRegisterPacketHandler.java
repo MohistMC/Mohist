@@ -70,6 +70,7 @@ public class MCRegisterPacketHandler
                     String s = new String(all, last, cur - last, StandardCharsets.UTF_8);
                     try {
                         rl.add(new ResourceLocation(s));
+                        LOGGER.warn("DEBUG channel name: " + s);
                     } catch (ResourceLocationException ex) {
                         LOGGER.warn("Invalid channel name received: {}. Ignoring", s);
                     }
