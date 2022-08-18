@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -110,6 +_,26 @@
+@@ -110,12 +_,32 @@
        }
     }
  
@@ -27,3 +27,10 @@
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_91482_, SuggestionsBuilder p_91483_) {
        S s = p_91482_.getSource();
        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
+          StringReader stringreader = new StringReader(p_91483_.getInput());
+          stringreader.setCursor(p_91483_.getStart());
+-         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.m_6761_(2));
++         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
+ 
+          try {
+             entityselectorparser.m_121377_();

@@ -24,6 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.SoundActions;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -91,7 +92,7 @@ public class FluidUtil
         ItemStack heldItem = player.getItemInHand(hand);
         if (!heldItem.isEmpty())
         {
-            return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return player.getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .map(playerInventory -> {
 
                     FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
@@ -418,7 +419,7 @@ public class FluidUtil
      */
     public static LazyOptional<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
     {
-        return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+        return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
     }
 
     /**
@@ -445,14 +446,13 @@ public class FluidUtil
     public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
     {
         BlockState state = level.getBlockState(blockPos);
-        Block block = state.getBlock();
 
         if (state.hasBlockEntity())
         {
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity != null)
             {
-                return blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+                return blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, side);
             }
         }
         return LazyOptional.empty();

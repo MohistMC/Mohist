@@ -287,13 +287,15 @@ public abstract class ScreenEvent extends Event
     {
         private final int availableSpace;
         private boolean compact;
+        private int horizontalOffset;
 
         @ApiStatus.Internal
-        public RenderInventoryMobEffects(Screen screen, int availableSpace, boolean compact)
+        public RenderInventoryMobEffects(Screen screen, int availableSpace, boolean compact, int horizontalOffset)
         {
             super(screen);
             this.availableSpace = availableSpace;
             this.compact = compact;
+            this.horizontalOffset = horizontalOffset;
         }
 
         /**
@@ -310,6 +312,30 @@ public abstract class ScreenEvent extends Event
         public boolean isCompact()
         {
             return compact;
+        }
+
+        /**
+         * The distance from the left side of the screen that the effect stack is rendered. Positive values shift this more to the right.
+         */
+        public int getHorizontalOffset()
+        {
+            return horizontalOffset;
+        }
+
+        /**
+         * Replaces the horizontal offset of the effect stack
+         */
+        public void setHorizontalOffset(int offset)
+        {
+            horizontalOffset = offset;
+        }
+
+        /**
+         * Adds to the horizontal offset of the effect stack. Negative values are acceptable.
+         */
+        public void addHorizontalOffset(int offset)
+        {
+            horizontalOffset += offset;
         }
 
         /**

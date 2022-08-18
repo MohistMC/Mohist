@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -242,7 +243,7 @@ public class VanillaInventoryCodeHooks
             BlockEntity blockEntity = worldIn.getBlockEntity(blockpos);
             if (blockEntity != null)
             {
-                return blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
+                return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side)
                     .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, blockEntity));
             }
         }

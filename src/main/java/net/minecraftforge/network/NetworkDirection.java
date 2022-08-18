@@ -25,15 +25,16 @@ import java.util.stream.Stream;
 
 public enum NetworkDirection
 {
-    PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, ServerboundCustomPayloadPacket.class, 1),
-    PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, ClientboundCustomPayloadPacket.class, 0),
-    LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadLoginEvent::new, LogicalSide.CLIENT, ServerboundCustomQueryPacket.class, 3),
-    LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadLoginEvent::new, LogicalSide.SERVER, ClientboundCustomQueryPacket.class, 2);
+    PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, ServerboundCustomPayloadPacket.class, 1, (d, i, n) -> new ServerboundCustomPayloadPacket(n, d)),
+    PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, ClientboundCustomPayloadPacket.class, 0, (d, i, n) -> new ClientboundCustomPayloadPacket(n, d)),
+    LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadLoginEvent::new, LogicalSide.CLIENT, ServerboundCustomQueryPacket.class, 3, (d, i, n) -> new ServerboundCustomQueryPacket(i, d)),
+    LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadLoginEvent::new, LogicalSide.SERVER, ClientboundCustomQueryPacket.class, 2, (d, i, n) -> new ClientboundCustomQueryPacket(i, n, d));
 
     private final BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier;
     private final LogicalSide logicalSide;
     private final Class<? extends Packet> packetClass;
     private final int otherWay;
+    private final Factory factory;
 
     private static final Reference2ReferenceArrayMap<Class<? extends Packet>, NetworkDirection> packetLookup;
 
@@ -42,12 +43,13 @@ public enum NetworkDirection
                 collect(Collectors.toMap(NetworkDirection::getPacketClass, Function.identity(), (m1,m2)->m1, Reference2ReferenceArrayMap::new));
     }
 
-    NetworkDirection(BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide, Class<? extends Packet> clazz, int i)
+    private NetworkDirection(BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide, Class<? extends Packet> clazz, int i, Factory factory)
     {
         this.eventSupplier = eventSupplier;
         this.logicalSide = logicalSide;
         this.packetClass = clazz;
         this.otherWay = i;
+        this.factory = factory;
     }
 
     private Class<? extends Packet> getPacketClass() {
@@ -75,10 +77,10 @@ public enum NetworkDirection
     @SuppressWarnings("unchecked")
     public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<FriendlyByteBuf,Integer> packetData, ResourceLocation channelName)
     {
-        ICustomPacket<T> packet = (ICustomPacket<T>)UnsafeHacks.newInstance(getPacketClass());
-        packet.setName(channelName);
-        packet.setData(packetData.getLeft());
-        packet.setIndex(packetData.getRight());
-        return packet;
+        return this.factory.create(packetData.getLeft(), packetData.getRight(), channelName);
+    }
+
+    private interface Factory<T extends Packet<?>> {
+        ICustomPacket<T> create(FriendlyByteBuf data, Integer index, ResourceLocation channelName);
     }
 }

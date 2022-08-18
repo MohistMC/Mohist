@@ -8,6 +8,7 @@ package net.minecraftforge.common;
 import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.commands.Commands;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -74,6 +75,9 @@ import net.minecraftforge.registries.holdersets.NotHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
 import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -434,7 +438,6 @@ public class ForgeMod
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
@@ -462,17 +465,11 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
+        MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 
         //EventDispatcherRegistry.init();
-    }
-
-    public void registerCapabilities(RegisterCapabilitiesEvent event)
-    {
-        CapabilityItemHandler.register(event);
-        CapabilityFluidHandler.register(event);
-        CapabilityEnergy.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -604,5 +601,13 @@ public class ForgeMod
 
         event.register(Registry.LOOT_ITEM_REGISTRY, new ResourceLocation("forge:loot_table_id"), () -> LootTableIdCondition.LOOT_TABLE_ID);
         event.register(Registry.LOOT_ITEM_REGISTRY, new ResourceLocation("forge:can_tool_perform_action"), () -> CanToolPerformAction.LOOT_CONDITION_TYPE);
+    }
+
+    public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("forge", "use_entity_selectors",
+            PermissionTypes.BOOLEAN, (player, uuid, contexts) -> player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS));
+
+    public void registerPermissionNodes(PermissionGatherEvent.Nodes event)
+    {
+        event.addNodes(USE_SELECTORS_PERMISSION);
     }
 }

@@ -9,10 +9,10 @@ import net.minecraftforge.common.capabilities.*;
 
 public class CapabilityEnergy
 {
-    public static final Capability<IEnergyStorage> ENERGY = CapabilityManager.get(new CapabilityToken<>(){});;
-
-    public static void register(RegisterCapabilitiesEvent event)
-    {
-        event.register(IEnergyStorage.class);
-    }
+    /**
+     * @deprecated Create your own reference using {@link CapabilityManager#get(CapabilityToken)}, or use {@link ForgeCapabilities#ENERGY}.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static final Capability<IEnergyStorage> ENERGY = ForgeCapabilities.ENERGY;
+    public static void register(RegisterCapabilitiesEvent event){}
 }
