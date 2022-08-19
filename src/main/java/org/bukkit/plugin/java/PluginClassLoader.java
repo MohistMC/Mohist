@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.mohistmc.bukkit.nms.ClassLoaderContext;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import com.mohistmc.dynamicenumutil.MohistJDK17EnumHelper;
 import java.io.File;
 import java.io.IOException;
@@ -146,7 +147,7 @@ final class PluginClassLoader extends URLClassLoader {
                 return result;
             }
         }
-        return Thread.currentThread().getContextClassLoader().loadClass(name.equals("org.bukkit.craftbukkit.util.CraftLegacy") ? "org.bukkit.craftbukkit.v1_19_R1.util.CraftLegacy" : name);
+        return Thread.currentThread().getContextClassLoader().loadClass(name);
     }
 
     @Override
@@ -238,7 +239,7 @@ final class PluginClassLoader extends URLClassLoader {
 
                     bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
 
-                    //bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
+                    bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
 
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
