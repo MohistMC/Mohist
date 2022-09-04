@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/effect/MobEffect.java
 +++ b/net/minecraft/world/effect/MobEffect.java
-@@ -18,7 +_,7 @@
+@@ -17,8 +_,9 @@
+ import net.minecraft.world.entity.ai.attributes.AttributeMap;
  import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  import net.minecraft.world.entity.player.Player;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
  
 -public class MobEffect {
 +public class MobEffect implements net.minecraftforge.common.extensions.IForgeMobEffect {
@@ -17,6 +19,14 @@
     }
  
     public Optional<MobEffectInstance.FactorData> m_216881_() {
+@@ -53,6 +_,7 @@
+    public void m_6742_(LivingEntity p_19467_, int p_19468_) {
+       if (this == MobEffects.f_19605_) {
+          if (p_19467_.m_21223_() < p_19467_.m_21233_()) {
++            p_19467_.regainReason0 = RegainReason.MAGIC_REGEN;
+             p_19467_.m_5634_(1.0F);
+          }
+       } else if (this == MobEffects.f_19614_) {
 @@ -195,4 +_,29 @@
     public boolean m_19486_() {
        return this.f_19447_ == MobEffectCategory.BENEFICIAL;

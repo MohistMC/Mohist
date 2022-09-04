@@ -55,6 +55,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -107,6 +108,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
@@ -117,6 +119,8 @@ import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -140,7 +144,6 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -165,6 +168,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -260,9 +266,26 @@ public class ForgeHooks
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
+    // TODO: Remove in 1.20
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target)
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
+    }
+
+    // TODO: Remove in 1.20
+    @Deprecated(since = "1.19.2", forRemoval = true)
+    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, ILivingTargetType targetType)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, targetType));
+    }
+
+    public static LivingChangeTargetEvent onLivingChangeTarget(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType)
+    {
+        LivingChangeTargetEvent event = new LivingChangeTargetEvent(entity, originalTarget, targetType);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        return event;
     }
 
     public static boolean onLivingTick(LivingEntity entity)
@@ -1008,6 +1031,10 @@ public class ForgeHooks
         return null;
     }
 
+    /**
+     * @deprecated See {@link ForgeEventFactory#onAdvancementEarnedEvent} and {@link ForgeEventFactory#onAdvancementProgressedEvent}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static void onAdvancement(ServerPlayer player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
@@ -1316,12 +1343,28 @@ public class ForgeHooks
         levelTag.put("fml", fmlData);
     }
 
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag)
+    /**
+     * @deprecated To be removed in 1.20.
+     * Use {@link #readAdditionalLevelSaveData(CompoundTag, LevelStorageSource.LevelDirectory)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
+        readAdditionalLevelSaveData(rootTag, null);
+    }
+
+    /**
+     * @param rootTag Level data file contents.
+     * @param levelDirectory Level currently being loaded. TODO 1.20 - Remove nullable annotation
+     */
+    @ApiStatus.Internal
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag, @Nullable LevelStorageSource.LevelDirectory levelDirectory)
     {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList"))
         {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            Map<String, ArtifactVersion> mismatchedVersions = new HashMap<>(modList.size());
+            Map<String, ArtifactVersion> missingVersions = new HashMap<>(modList.size());
             for (int i = 0; i < modList.size(); i++)
             {
                 CompoundTag mod = modList.getCompound(i);
@@ -1331,16 +1374,68 @@ public class ForgeHooks
                     continue;
                 }
                 String modVersion = mod.getString("ModVersion");
-                Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
-                if (container.isEmpty())
+                final var previousVersion = new DefaultArtifactVersion(modVersion);
+                ModList.get().getModContainerById(modId).ifPresentOrElse(container ->
                 {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
-                    continue;
-                }
-                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
+                    final var loadingVersion = container.getModInfo().getVersion();
+                    if (!loadingVersion.equals(previousVersion))
+                    {
+                        // Enqueue mismatched versions for bulk event
+                        mismatchedVersions.put(modId, previousVersion);
+                    }
+                }, () -> missingVersions.put(modId, previousVersion));
+            }
+
+            final var mismatchEvent = new ModMismatchEvent(levelDirectory, mismatchedVersions, missingVersions);
+            ModLoader.get().postEvent(mismatchEvent);
+
+            StringBuilder resolved = new StringBuilder("The following mods have version differences that were marked resolved:");
+            StringBuilder unresolved = new StringBuilder("The following mods have version differences that were not resolved:");
+
+            // For mods that were marked resolved, log the version resolution and the mod that resolved the mismatch
+            mismatchEvent.getResolved().forEachOrdered((res) ->
+            {
+                final var modid = res.modid();
+                final var diff = res.versionDifference();
+                if (res.wasSelfResolved())
                 {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, self-resolved)".formatted(modid, diff.oldVersion())
+                                    : "%s (version %s -> %s, self-resolved)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                            );
+                } else {
+                    final var resolver = res.resolver().getModId();
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, resolved by %s)".formatted(modid, diff.oldVersion(), resolver)
+                                    : "%s (version %s -> %s, resolved by %s)".formatted(modid, diff.oldVersion(), diff.newVersion(), resolver)
+                            );
                 }
+            });
+
+            // For mods that did not specify handling, show a warning to users that errors may occur
+            mismatchEvent.getUnresolved().forEachOrdered((unres) ->
+            {
+                final var modid = unres.modid();
+                final var diff = unres.versionDifference();
+                unresolved.append(System.lineSeparator())
+                        .append(diff.isMissing()
+                                ? "%s (version %s -> MISSING)".formatted(modid, diff.oldVersion())
+                                : "%s (version %s -> %s)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                        );
+            });
+
+            if (mismatchEvent.anyResolved())
+            {
+                resolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.debug(WORLDPERSISTENCE, resolved.toString());
+            }
+
+            if (mismatchEvent.anyUnresolved())
+            {
+                unresolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.warn(WORLDPERSISTENCE, unresolved.toString());
             }
         }
 
@@ -1495,7 +1590,7 @@ public class ForgeHooks
 
     public static boolean canUseEntitySelectors(SharedSuggestionProvider provider)
     {
-        if (provider instanceof CommandSourceStack source && source.getEntity() instanceof ServerPlayer player)
+        if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
         {
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
         }

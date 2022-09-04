@@ -41,7 +41,7 @@
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
-@@ -210,7 +_,36 @@
+@@ -210,7 +_,40 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -55,7 +55,11 @@
 +            reason = m_5448_().m_6084_() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
 +         }
 +         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
-+            net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
++            net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
++            if(!changeTargetEvent.isCanceled()) {
++               this.f_21362_ = changeTargetEvent.getNewTarget();
++               net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_); // TODO: Remove in 1.20
++            }
 +         }
 +         CraftLivingEntity ctarget = null;
 +         if (p_21544_ != null) {

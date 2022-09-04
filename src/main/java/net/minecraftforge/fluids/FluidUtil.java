@@ -176,10 +176,15 @@ public class FluidUtil
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
 
-                    // We are acting on a COPY of the stack, so performing changes is acceptable even if we are simulating.
-                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, doDrain);
                     if (transfer.isEmpty())
                         return FluidActionResult.FAILURE;
+                    if (!doDrain)
+                    {
+                        // We are acting on a COPY of the stack, so performing changes on the source is acceptable even if we are simulating.
+                        // We need to perform the change otherwise the call to getContainer() will be incorrect.
+                        containerFluidHandler.drain(transfer, IFluidHandler.FluidAction.EXECUTE);
+                    }
 
                     if (doDrain && player != null)
                     {
