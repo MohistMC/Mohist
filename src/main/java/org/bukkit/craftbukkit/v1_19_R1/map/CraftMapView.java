@@ -156,7 +156,7 @@ public final class CraftMapView implements MapView {
 
             canvas.setBase(render.buffer);
             try {
-                renderer.render(this, canvas, (Player) player); //TODO
+                renderer.render(this, canvas, player);
             } catch (Throwable ex) {
                 Bukkit.getLogger().log(Level.SEVERE, "Could not render map using renderer " + renderer.getClass().getName(), ex);
             }

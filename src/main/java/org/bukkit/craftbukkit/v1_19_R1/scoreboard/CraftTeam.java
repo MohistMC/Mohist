@@ -114,7 +114,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public void setCanSeeFriendlyInvisibles(boolean enabled) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        team.setAllowFriendlyFire(enabled);
+        team.setSeeFriendlyInvisibles(enabled);
     }
 
     @Override
