@@ -53,9 +53,6 @@ public class CraftWorldBorder implements WorldBorder {
         Preconditions.checkArgument(unit != null, "TimeUnit cannot be null.");
         Preconditions.checkArgument(time >= 0, "time cannot be lower than 0");
         Preconditions.checkArgument(newSize >= 1.0D && newSize <= this.getMaxSize(), "newSize must be between 1.0D and %s", this.getMaxSize());
-        // PAIL: TODO: Magic Values
-        newSize = Math.min(6.0E7D, Math.max(1.0D, newSize));
-        time = Math.min(9223372036854775L, Math.max(0L, time));
 
         if (time > 0L) {
             this.handle.lerpSizeBetween(this.handle.getSize(), newSize, unit.toMillis(time));

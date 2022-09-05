@@ -10,6 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -254,7 +255,7 @@ public final class CraftServer implements Server {
     public boolean playerCommandState;
     private boolean printSaveWarning;
     private CraftIconCache icon;
-    private boolean overrideAllCommandCommandBlocks = false;
+    private boolean overrideAllCommandBlockCommands = false;
     public boolean ignoreVanillaPermissions = false;
     private final List<CraftPlayer> playerView;
     public int reloadCount;
@@ -279,7 +280,7 @@ public final class CraftServer implements Server {
         this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         Bukkit.setServer(this);
 
-        //ForgeInjectBukkit.init();
+        ForgeInjectBukkit.init();
 
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();
@@ -330,7 +331,7 @@ public final class CraftServer implements Server {
         }
 
         saveCommandsConfig();
-        overrideAllCommandCommandBlocks = commandsConfiguration.getStringList("command-block-overrides").contains("*");
+        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
         pluginManager.useTimings(configuration.getBoolean("settings.plugin-profiling"));
         overrideSpawnLimits();
@@ -347,7 +348,7 @@ public final class CraftServer implements Server {
     }
 
     public boolean getCommandBlockOverride(String command) {
-        return overrideAllCommandCommandBlocks || commandsConfiguration.getStringList("command-block-overrides").contains(command);
+        return overrideAllCommandBlockCommands || commandsConfiguration.getStringList("command-block-overrides").contains(command);
     }
 
     private File getConfigFile() {
@@ -872,6 +873,7 @@ public final class CraftServer implements Server {
         for (ServerLevel world : console.getAllLevels()) {
             world.worldDataServer.setDifficulty(config.difficulty);
             world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
+
             for (SpawnCategory spawnCategory : SpawnCategory.values()) {
                 if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
                     long ticksPerCategorySpawn = this.getTicksPerSpawns(spawnCategory);
@@ -889,7 +891,7 @@ public final class CraftServer implements Server {
         commandMap.clearCommands();
         reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        overrideAllCommandCommandBlocks = commandsConfiguration.getStringList("command-block-overrides").contains("*");
+        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
         ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
 
         int pollCount = 0;
@@ -1045,10 +1047,8 @@ public final class CraftServer implements Server {
                 throw new IllegalArgumentException("Illegal dimension");
         }
 
-        LevelStorageSource.LevelStorageAccess worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name,
-                actualDimension);
-
-        if(worldSession == null) return null;
+        LevelStorageSource.LevelStorageAccess worldSession;
+        worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
 
         boolean hardcore = creator.hardcore();
 

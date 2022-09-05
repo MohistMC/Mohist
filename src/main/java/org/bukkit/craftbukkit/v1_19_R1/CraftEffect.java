@@ -73,17 +73,17 @@ public class CraftEffect {
                 datavalue = -1;
             } else {
                 switch ((Axis) data) {
-                    case X:
-                        datavalue = 0;
-                        break;
-                    case Y:
-                        datavalue = 1;
-                        break;
-                    case Z:
-                        datavalue = 2;
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Bad electric spark axis!");
+                case X:
+                    datavalue = 0;
+                    break;
+                case Y:
+                    datavalue = 1;
+                    break;
+                case Z:
+                    datavalue = 2;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Bad electric spark axis!");
                 }
             }
             break;

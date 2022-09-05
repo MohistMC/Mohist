@@ -250,7 +250,6 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public void setBlockData(int x, int y, int z, BlockData blockData) {
-        CraftBlock.at(getHandle(), new BlockPos(x, y, z)).setTypeAndData(((CraftBlockData) blockData).getState(), true);
         WorldGenLevel world = getHandle();
         BlockPos pos = new BlockPos(x, y, z);
         net.minecraft.world.level.block.state.BlockState old = getHandle().getBlockState(pos);
@@ -282,6 +281,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         });
     }
 
+    // @Override
     public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<BlockState> predicate) {
         BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
@@ -788,7 +788,6 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 } else if (Tadpole.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.world.entity.EntityType.TADPOLE.create(world);
                 }
-            }
             } else if (Dolphin.class.isAssignableFrom(clazz)) {
                 entity = net.minecraft.world.entity.EntityType.DOLPHIN.create(world);
             } else if (Ocelot.class.isAssignableFrom(clazz)) {
@@ -826,7 +825,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
             if (entity != null) {
                 entity.absMoveTo(x, y, z, yaw, pitch);
                 entity.setYHeadRot(yaw); // SPIGOT-3587
-            } else if (Hanging.class.isAssignableFrom(clazz)) {
+            }
+        } else if (Hanging.class.isAssignableFrom(clazz)) {
             if (LeashHitch.class.isAssignableFrom(clazz)) {
                 // SPIGOT-5732: LeashHitch has no direction and is always centered at a block
                 entity = new LeashFenceKnotEntity(world, new BlockPos(x, y, z));
