@@ -458,11 +458,13 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 return CraftChatMessage.fromJSONComponent(ComponentSerializer.toString(components));
             }
         }
+
         @Override
         public BaseComponent[] getPage(final int page) {
             Validate.isTrue(isValidPage(page), "Invalid page number");
             return ComponentSerializer.parse(pageToJSON(pages.get(page - 1)));
         }
+
         @Override
         public void setPage(final int page, final BaseComponent... text) {
             if (!isValidPage(page)) {
@@ -471,19 +473,22 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
             CraftMetaBook.this.pages.set(page - 1, componentsToPage(newText));
         }
+
         @Override
         public void setPages(final BaseComponent[]... pages) {
             setPages(Arrays.asList(pages));
         }
+
         @Override
         public void addPage(final BaseComponent[]... pages) {
             for (BaseComponent[] page : pages) {
                 if (page == null) {
                     page = new BaseComponent[0];
                 }
-                CraftMetaBook.this.pages.add(componentsToPage(page));
+                CraftMetaBook.this.internalAddPage(componentsToPage(page));
             }
         }
+
         @Override
         public List<BaseComponent[]> getPages() {
             if (CraftMetaBook.this.pages == null) return ImmutableList.of();
