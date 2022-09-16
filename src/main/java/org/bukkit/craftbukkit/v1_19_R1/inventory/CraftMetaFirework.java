@@ -254,12 +254,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case FIREWORK_ROCKET:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.FIREWORK_ROCKET;
     }
 
     @Override
@@ -345,7 +340,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
     }
 
     @Override
-    public void addEffects(FireworkEffect...effects) {
+    public void addEffects(FireworkEffect... effects) {
         Validate.notNull(effects, "Effects cannot be null");
         if (effects.length == 0) {
             return;

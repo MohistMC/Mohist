@@ -82,6 +82,19 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
+@@ -337,6 +_,12 @@
+       return null;
+    }
+ 
++   // CraftBukkit start - Add delegate method
++   public SoundEvent getAmbientSound0() {
++      return m_7515_();
++   }
++   // CraftBukkit end
++
+    public void m_7380_(CompoundTag p_21484_) {
+       super.m_7380_(p_21484_);
+       p_21484_.m_128379_("CanPickUpLoot", this.m_21531_());
 @@ -499,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();

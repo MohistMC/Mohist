@@ -83,12 +83,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case KNOWLEDGE_BOOK:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.KNOWLEDGE_BOOK;
     }
 
     @Override

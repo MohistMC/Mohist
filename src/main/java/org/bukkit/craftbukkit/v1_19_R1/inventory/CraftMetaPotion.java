@@ -2,10 +2,12 @@ package org.bukkit.craftbukkit.v1_19_R1.inventory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import org.apache.commons.lang3.Validate;
@@ -23,6 +25,14 @@ import org.bukkit.potion.PotionType;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+
+    private static final Set<Material> POTION_MATERIALS = Sets.newHashSet(
+            Material.POTION,
+            Material.SPLASH_POTION,
+            Material.LINGERING_POTION,
+            Material.TIPPED_ARROW
+    );
+
     static final ItemMetaKey AMPLIFIER = new ItemMetaKey("Amplifier", "amplifier");
     static final ItemMetaKey AMBIENT = new ItemMetaKey("Ambient", "ambient");
     static final ItemMetaKey DURATION = new ItemMetaKey("Duration", "duration");
@@ -147,15 +157,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case POTION:
-            case SPLASH_POTION:
-            case LINGERING_POTION:
-            case TIPPED_ARROW:
-                return true;
-            default:
-                return false;
-        }
+        return POTION_MATERIALS.contains(type);
     }
 
     @Override

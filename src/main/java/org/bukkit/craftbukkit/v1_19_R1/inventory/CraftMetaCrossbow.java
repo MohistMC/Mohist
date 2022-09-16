@@ -97,12 +97,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case CROSSBOW:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.CROSSBOW;
     }
 
     @Override

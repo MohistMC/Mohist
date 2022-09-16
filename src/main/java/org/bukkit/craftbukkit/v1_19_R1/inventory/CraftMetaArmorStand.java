@@ -63,12 +63,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case ARMOR_STAND:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.ARMOR_STAND;
     }
 
     @Override

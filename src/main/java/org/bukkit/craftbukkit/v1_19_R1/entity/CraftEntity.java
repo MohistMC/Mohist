@@ -54,10 +54,12 @@ import net.minecraft.world.phys.AABB;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataContainer;
@@ -655,6 +657,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         if (type.getApplicable().isInstance(this)) {
             this.getHandle().level.broadcastEntityEvent(getHandle(), type.getData());
         }
+    }
+
+    @Override
+    public Sound getSwimSound() {
+        return CraftSound.getBukkit(getHandle().getSwimSound0());
+    }
+
+    @Override
+    public Sound getSwimSplashSound() {
+        return CraftSound.getBukkit(getHandle().getSwimSplashSound0());
+    }
+
+    @Override
+    public Sound getSwimHighSpeedSplashSound() {
+        return CraftSound.getBukkit(getHandle().getSwimHighSpeedSplashSound0());
     }
 
     public void setHandle(final Entity entity) {

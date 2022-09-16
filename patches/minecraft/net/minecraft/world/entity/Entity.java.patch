@@ -203,6 +203,27 @@
              Vec3 vec33 = m_198894_(this, new Vec3(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), aabb.m_82383_(vec32), this.f_19853_, list).m_82549_(vec32);
              if (vec33.m_165925_() > vec31.m_165925_()) {
                 vec31 = vec33;
+@@ -891,6 +_,20 @@
+       return SoundEvents.f_11917_;
+    }
+ 
++   // CraftBukkit start - Add delegate methods
++   public SoundEvent getSwimSound0() {
++      return m_5501_();
++   }
++
++   public SoundEvent getSwimSplashSound0() {
++      return m_5509_();
++   }
++
++   public SoundEvent getSwimHighSpeedSplashSound0() {
++      return m_5508_();
++   }
++   // CraftBukkit end
++
+    protected void m_20101_() {
+       AABB aabb = this.m_20191_();
+       BlockPos blockpos = new BlockPos(aabb.f_82288_ + 0.001D, aabb.f_82289_ + 0.001D, aabb.f_82290_ + 0.001D);
 @@ -934,7 +_,7 @@
     protected void m_7355_(BlockPos p_20135_, BlockState p_20136_) {
        if (!p_20136_.m_60767_().m_76332_()) {

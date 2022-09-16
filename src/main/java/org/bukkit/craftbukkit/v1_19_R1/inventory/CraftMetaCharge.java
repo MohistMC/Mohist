@@ -67,12 +67,7 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case FIREWORK_STAR:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.FIREWORK_STAR;
     }
 
     @Override

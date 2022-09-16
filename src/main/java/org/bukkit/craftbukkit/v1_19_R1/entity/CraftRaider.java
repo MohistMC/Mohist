@@ -2,8 +2,10 @@ package org.bukkit.craftbukkit.v1_19_R1.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.entity.Raider;
 
@@ -57,5 +59,10 @@ public abstract class CraftRaider extends CraftMonster implements Raider {
     @Override
     public void setCanJoinRaid(boolean join) {
         getHandle().setCanJoinRaid(join);
+    }
+
+    @Override
+    public Sound getCelebrationSound() {
+        return CraftSound.getBukkit(getHandle().getCelebrateSound());
     }
 }

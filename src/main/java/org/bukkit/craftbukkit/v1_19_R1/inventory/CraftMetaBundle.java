@@ -85,12 +85,7 @@ public class CraftMetaBundle extends CraftMetaItem implements BundleMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case BUNDLE:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.BUNDLE;
     }
 
     @Override

@@ -718,6 +718,35 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
+@@ -1403,6 +_,28 @@
+       return p_21202_.m_41616_();
+    }
+ 
++   // CraftBukkit start - Add delegate methods
++   public SoundEvent getHurtSound0(DamageSource damagesource) {
++      return m_7975_(damagesource);
++   }
++
++   public SoundEvent getDeathSound0() {
++      return m_5592_();
++   }
++
++   public SoundEvent getFallDamageSound0(int fallHeight) {
++      return m_5896_(fallHeight);
++   }
++
++   public SoundEvent getDrinkingSound0(ItemStack itemstack) {
++      return m_7838_(itemstack);
++   }
++
++   public SoundEvent getEatingSound0(ItemStack itemstack) {
++      return m_7866_(itemstack);
++   }
++   // CraftBukkit end
++
+    public void m_6853_(boolean p_21182_) {
+       super.m_6853_(p_21182_);
+       if (p_21182_) {
 @@ -1421,15 +_,9 @@
        } else {
           BlockPos blockpos = this.m_20183_();

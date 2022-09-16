@@ -2,7 +2,9 @@ package org.bukkit.craftbukkit.v1_19_R1.inventory;
 
 import static org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemFactory.*;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import org.bukkit.Color;
@@ -13,6 +15,15 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
+
+    private static final Set<Material> LEATHER_ARMOR_MATERIALS = Sets.newHashSet(
+            Material.LEATHER_HELMET,
+            Material.LEATHER_HORSE_ARMOR,
+            Material.LEATHER_CHESTPLATE,
+            Material.LEATHER_LEGGINGS,
+            Material.LEATHER_BOOTS
+    );
+
     static final ItemMetaKey COLOR = new ItemMetaKey("color");
 
     private Color color = DEFAULT_LEATHER_COLOR;
@@ -66,16 +77,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case LEATHER_HELMET:
-            case LEATHER_HORSE_ARMOR:
-            case LEATHER_CHESTPLATE:
-            case LEATHER_LEGGINGS:
-            case LEATHER_BOOTS:
-                return true;
-            default:
-                return false;
-        }
+        return LEATHER_ARMOR_MATERIALS.contains(type);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_19_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
@@ -9,6 +11,15 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaEntityTag extends CraftMetaItem {
+
+    private static final Set<Material> ENTITY_TAGGABLE_MATERIALS = Sets.newHashSet(
+            Material.COD_BUCKET,
+            Material.PUFFERFISH_BUCKET,
+            Material.SALMON_BUCKET,
+            Material.ITEM_FRAME,
+            Material.GLOW_ITEM_FRAME,
+            Material.PAINTING
+    );
 
     static final ItemMetaKey ENTITY_TAG = new ItemMetaKey("EntityTag", "entity-tag");
     CompoundTag entityTag;
@@ -63,17 +74,7 @@ public class CraftMetaEntityTag extends CraftMetaItem {
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case COD_BUCKET:
-            case PUFFERFISH_BUCKET:
-            case SALMON_BUCKET:
-            case ITEM_FRAME:
-            case GLOW_ITEM_FRAME:
-            case PAINTING:
-                return true;
-            default:
-                return false;
-        }
+        return ENTITY_TAGGABLE_MATERIALS.contains(type);
     }
 
     @Override
