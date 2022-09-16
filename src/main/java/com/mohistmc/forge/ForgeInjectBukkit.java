@@ -63,13 +63,12 @@ public class ForgeInjectBukkit {
 
 
     public static void addEnumMaterialInItems(){
-        for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
-            ResourceLocation resourceLocation = entry.getKey().registry();
-            MohistMC.LOGGER.error(resourceLocation.toString());
+        for (Item item : ForgeRegistries.ITEMS) {
+            ResourceLocation resourceLocation = ForgeRegistries.ITEMS.getKey(item);
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                MohistMC.LOGGER.error(resourceLocation.toString());
                 // inject item materials into Bukkit for FML
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
-                Item item = entry.getValue();
+                String materialName = normalizeName(resourceLocation.toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
                 int id = Item.getId(item);
                 Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);

@@ -12,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
@@ -24,6 +25,7 @@ public class Tags
     public static void init ()
     {
         Blocks.init();
+        EntityTypes.init();
         Items.init();
         Fluids.init();
         Biomes.init();
@@ -35,6 +37,7 @@ public class Tags
 
         public static final TagKey<Block> BARRELS = tag("barrels");
         public static final TagKey<Block> BARRELS_WOODEN = tag("barrels/wooden");
+        public static final TagKey<Block> BOOKSHELVES = tag("bookshelves");
         public static final TagKey<Block> CHESTS = tag("chests");
         public static final TagKey<Block> CHESTS_ENDER = tag("chests/ender");
         public static final TagKey<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -177,6 +180,18 @@ public class Tags
         private static TagKey<Block> tag(String name)
         {
             return BlockTags.create(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class EntityTypes
+    {
+        private static void init() {}
+
+        public static final TagKey<EntityType<?>> BOSSES = tag("bosses");
+
+        private static TagKey<EntityType<?>> tag(String name)
+        {
+            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 
@@ -584,6 +599,7 @@ public class Tags
 
         public static final TagKey<Biome> IS_WATER = tag("is_water");
 
+        public static final TagKey<Biome> IS_DESERT = tag("is_desert");
         public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
         public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
         public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
@@ -592,6 +608,7 @@ public class Tags
         public static final TagKey<Biome> IS_VOID = tag("is_void");
         public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
 
+        public static final TagKey<Biome> IS_CAVE = tag("is_cave");
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
         public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
