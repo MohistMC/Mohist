@@ -5,8 +5,8 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.2)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.19.2--43.1.25-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.2.html)
-[![](https://img.shields.io/badge/jdk-17.0.4+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
+[![](https://img.shields.io/badge/Forge-1.19.2--43.1.27-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.2.html)
+[![](https://img.shields.io/badge/jdk-17.0.4.1+1-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.5-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
@@ -23,10 +23,10 @@
 Progress
 ------
 
-- [ ] Rectify Forge([**b0caea8e2**](https://github.com/MinecraftForge/MinecraftForge/commit/b0caea8e2))  
+- [x] Rectify Forge([**98823a8f0**](https://github.com/MinecraftForge/MinecraftForge/commit/98823a8f0))  
 - [ ] Start patch
-  * Bukkit([**9ae3f10f**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/9ae3f10f))
-  * CraftBukkit([**5cc9c022a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/5cc9c022a))
+  * [x] Bukkit([**9ae3f10f**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/9ae3f10f))
+  * [ ] CraftBukkit([**5cc9c022a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/5cc9c022a))
 
 Getting Help
 ------
