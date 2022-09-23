@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
+@@ -13,6 +_,7 @@
+ import java.lang.reflect.Type;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
+ import net.minecraft.Util;
+@@ -28,6 +_,9 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import org.apache.commons.lang3.ArrayUtils;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
++import org.bukkit.event.world.LootGenerateEvent;
+ import org.slf4j.Logger;
+ 
+ public class LootTable {
 @@ -35,13 +_,13 @@
     public static final LootTable f_79105_ = new LootTable(LootContextParamSets.f_81410_, new LootPool[0], new LootItemFunction[0]);
     public static final LootContextParamSet f_79106_ = LootContextParamSets.f_81420_;
@@ -43,6 +61,29 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
+@@ -104,9 +_,22 @@
+ 
+    }
+ 
++   public AtomicBoolean isPlugin = new AtomicBoolean(false);
++   public void fillInventory(Container p_79124_, LootContext p_79125_, boolean plugin) {
++      isPlugin.set(plugin);
++      m_79123_(p_79124_, p_79125_);
++   }
++
+    public void m_79123_(Container p_79124_, LootContext p_79125_) {
+       ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(p_79125_);
+       RandomSource randomsource = p_79125_.m_230907_();
++      // CraftBukkit start
++      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_79124_, this, p_79125_, objectarraylist, isPlugin.get());
++      if (event.isCancelled()) {
++         return;
++      }
++      objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++      // CraftBukkit end
+       List<Integer> list = this.m_230919_(p_79124_, randomsource);
+       this.m_230924_(objectarraylist, list.size(), randomsource);
+ 
 @@ -177,6 +_,48 @@
        return new LootTable.Builder();
     }
