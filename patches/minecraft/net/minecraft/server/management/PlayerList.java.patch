@@ -326,7 +326,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,305 @@
+@@ -293,187 +_,301 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -674,20 +674,16 @@
 +       org.bukkit.World fromWorld = p_232644_1_.getBukkitEntity().getWorld();
 +       p_232644_1_.field_71136_j = false;
 +       // CraftBukkit end
-+       // Mohist TODO
-+       /*
-+       serverplayerentity.connection = p_232644_1_.connection;
-+       serverplayerentity.restoreFrom(p_232644_1_, p_232644_2_);
++       serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
++       serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
 +       p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
-+       serverplayerentity.setId(p_232644_1_.getId());
-+       serverplayerentity.abilities = p_232644_1_.abilities;
-+       serverplayerentity.setMainArm(p_232644_1_.getMainArm());
++       serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
++       serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
 +
 +
-+       for(String s : p_232644_1_.getTags()) {
-+           serverplayerentity.addTag(s);
++       for(String s : p_232644_1_.func_184216_O()) {
++           serverplayerentity.func_184211_a(s);
 +       }
-+       */
 +       boolean flag2 = false;
 +       //serverplayerentity.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayerEntity. - net/minecraft/entity/Entity.java:295.
 +       // CraftBukkit start - fire PlayerRespawnEvent
