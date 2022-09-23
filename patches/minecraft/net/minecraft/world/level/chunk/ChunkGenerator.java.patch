@@ -1,6 +1,24 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -86,10 +_,10 @@
+@@ -19,6 +_,7 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
++import java.util.Random;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+@@ -81,15 +_,20 @@
+ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
++import org.bukkit.craftbukkit.v1_19_R1.generator.CraftLimitedRegion;
++import org.bukkit.craftbukkit.v1_19_R1.util.RandomSourceWrapper;
++import org.bukkit.generator.BlockPopulator;
++import org.bukkit.generator.LimitedRegion;
++import org.bukkit.generator.WorldInfo;
+ import org.slf4j.Logger;
+ 
  public abstract class ChunkGenerator {
     private static final Logger f_211627_ = LogUtils.getLogger();
     public static final Codec<ChunkGenerator> f_62136_ = Registry.f_122890_.m_194605_().dispatchStable(ChunkGenerator::m_6909_, Function.identity());
@@ -13,3 +31,49 @@
     private final Function<Holder<Biome>, BiomeGenerationSettings> f_223021_;
     private final Map<Structure, List<StructurePlacement>> f_223022_ = new Object2ObjectOpenHashMap<>();
     private final Map<ConcentricRingsStructurePlacement, CompletableFuture<List<ChunkPos>>> f_204350_ = new Object2ObjectArrayMap<>();
+@@ -454,7 +_,44 @@
+             throw new ReportedException(crashreport);
+          }
+       }
+-   }
++      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
++      // only call when a populator is present (prevents unnecessary entity conversion)
++      if (!world.getPopulators().isEmpty()) {
++         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.m_7697_());
++         int x = p_223088_.m_7697_().f_45578_;
++         int z = p_223088_.m_7697_().f_45579_;
++         for (BlockPopulator populator : world.getPopulators()) {
++            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.m_7328_()));
++            seededrandom.m_64690_(p_223087_.m_7328_(), x, z);
++            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
++         }
++         limitedRegion.saveEntities();
++         limitedRegion.breakLink();
++      }
++      // CraftBukkit end
++   }
++
++   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_, final boolean vanilla) {
++      if (vanilla) {
++         this.m_213609_(p_223087_, p_223088_, p_223089_);
++      }
++      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
++      // only call when a populator is present (prevents unnecessary entity conversion)
++      if (!world.getPopulators().isEmpty()) {
++         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.m_7697_());
++         int x = p_223088_.m_7697_().f_45578_;
++         int z = p_223088_.m_7697_().f_45579_;
++         for (BlockPopulator populator : world.getPopulators()) {
++            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.m_7328_()));
++            seededrandom.m_64690_(p_223087_.m_7328_(), x, z);
++            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
++         }
++         limitedRegion.saveEntities();
++         limitedRegion.breakLink();
++      }
++      // CraftBukkit end
++   }
++
+ 
+    public boolean m_223141_(Holder<StructureSet> p_223142_, RandomState p_223143_, long p_223144_, int p_223145_, int p_223146_, int p_223147_) {
+       StructureSet structureset = p_223142_.m_203334_();

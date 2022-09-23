@@ -1,11 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -60,10 +_,16 @@
-    private boolean f_37093_ = true;
-    @Nullable
-    public Entity f_37094_;
--   public FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
-+   private FishingHook.FishHookState f_37095_ = FishingHook.FishHookState.FLYING;
+@@ -64,6 +_,12 @@
     private final int f_37096_;
     private final int f_37097_;
  
@@ -98,3 +93,12 @@
        Entity entity = this.m_37282_();
        if (entity != null) {
           Vec3 vec3 = (new Vec3(entity.m_20185_() - this.m_20185_(), entity.m_20186_() - this.m_20186_(), entity.m_20189_() - this.m_20189_())).m_82490_(0.1D);
+@@ -513,7 +_,7 @@
+ 
+    }
+ 
+-   static enum FishHookState {
++   public static enum FishHookState {
+       FLYING,
+       HOOKED_IN_ENTITY,
+       BOBBING;

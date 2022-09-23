@@ -114,6 +114,6 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
 
     @Override
     public HookState getState() {
-        return HookState.values()[0]; // Mohist TODO
+        return HookState.values()[getHandle().currentState.ordinal()];
     }
 }
