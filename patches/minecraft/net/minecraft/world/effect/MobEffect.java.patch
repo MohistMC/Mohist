@@ -23,7 +23,7 @@
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
        if (this == MobEffects.f_19605_) {
           if (p_19467_.m_21223_() < p_19467_.m_21233_()) {
-+            p_19467_.regainReason0 = RegainReason.MAGIC_REGEN;
++            p_19467_.regainReason0.set(RegainReason.MAGIC_REGEN);
              p_19467_.m_5634_(1.0F);
           }
        } else if (this == MobEffects.f_19614_) {

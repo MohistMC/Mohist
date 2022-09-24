@@ -1,14 +1,9 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -12,10 +_,26 @@
-    public int f_38696_ = 20;
-    public float f_38697_;
-    public float f_38698_;
--   private int f_38699_;
--   private int f_38700_ = 20;
-+   public int f_38699_;
-+   public int f_38700_ = 20;
-+
+@@ -15,7 +_,23 @@
+    public int f_38699_;
+    public int f_38700_ = 20;
+ 
 +   // CraftBukkit start
 +   private Player entityhuman;
 +   public int saturatedRegenRate = 10;
@@ -23,7 +18,7 @@
 +      this.f_38697_ = 5.0F;
 +   }
 +   // CraftBukkit end
- 
++
     public FoodData() {
 +      this.entityhuman = null;
        this.f_38697_ = 5.0F;

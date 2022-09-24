@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -9,12 +_,15 @@
+@@ -9,13 +_,17 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
@@ -14,8 +14,10 @@
  import java.util.Optional;
 +import java.util.Set;
  import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
+ import net.minecraft.BlockUtil;
 @@ -28,6 +_,8 @@
  import net.minecraft.core.particles.ItemParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
@@ -25,7 +27,7 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -116,14 +_,21 @@
+@@ -116,14 +_,22 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
@@ -34,6 +36,7 @@
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity {
@@ -48,27 +51,6 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -153,7 +_,7 @@
-    protected static final EntityDimensions f_20910_ = EntityDimensions.m_20398_(0.2F, 0.2F);
-    public static final float f_147165_ = 0.5F;
-    private final AttributeMap f_20943_;
--   private final CombatTracker f_20944_ = new CombatTracker(this);
-+   public CombatTracker f_20944_ = new CombatTracker(this);
-    public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
-    private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
-    private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
-@@ -205,9 +_,9 @@
-    protected double f_20908_;
-    protected double f_20933_;
-    protected int f_20934_;
--   private boolean f_20948_ = true;
-+   public boolean f_20948_ = true;
-    @Nullable
--   private LivingEntity f_20949_;
-+   public LivingEntity f_20949_;
-    private int f_20950_;
-    private LivingEntity f_20951_;
-    private int f_20952_;
 @@ -227,11 +_,27 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
@@ -508,18 +490,18 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -985,19 +_,57 @@
+@@ -985,19 +_,56 @@
  
     }
  
-+   public EntityRegainHealthEvent.RegainReason regainReason0 = EntityRegainHealthEvent.RegainReason.CUSTOM;
++   public AtomicReference<RegainReason> regainReason0 = new AtomicReference<>(RegainReason.CUSTOM);
     public void m_5634_(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
        float f = this.m_21223_();
        if (f > 0.0F) {
 -         this.m_21153_(f + p_21116_);
-+         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason0);
++         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason0.getAndSet(RegainReason.CUSTOM));
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
@@ -530,11 +512,10 @@
 +         }
 +         // CraftBukkit end
        }
-+      regainReason0 = EntityRegainHealthEvent.RegainReason.CUSTOM;
 +   }
  
 +   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason regainReason) {
-+      this.regainReason0 = regainReason;
++      this.regainReason0.set(regainReason);
 +      this.m_5634_(p_21116_);
     }
  

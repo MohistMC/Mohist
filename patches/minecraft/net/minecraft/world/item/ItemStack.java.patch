@@ -13,7 +13,7 @@
           return Optional.ofNullable(p_150939_.f_41590_);
        })).apply(p_41697_, ItemStack::new);
     });
-+   private final net.minecraft.core.Holder.Reference<Item> delegate;
++   private net.minecraft.core.Holder.Reference<Item> delegate;
 +   private CompoundTag capNBT;
 +
     private static final Logger f_41585_ = LogUtils.getLogger();
@@ -277,7 +277,7 @@
     public SoundEvent m_41615_() {
        return this.m_41720_().m_6023_();
     }
-@@ -978,6 +_,16 @@
+@@ -978,6 +_,17 @@
     public SoundEvent m_150920_() {
        return this.m_41720_().m_142602_();
     }
@@ -286,6 +286,7 @@
 +   @Deprecated
 +   public void setItem(Item item) {
 +      this.f_41589_ = item;
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item);
 +   }
 +
 +   public void convertStack(int version) {

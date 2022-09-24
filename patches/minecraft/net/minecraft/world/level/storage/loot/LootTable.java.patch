@@ -75,7 +75,7 @@
        ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(p_79125_);
        RandomSource randomsource = p_79125_.m_230907_();
 +      // CraftBukkit start
-+      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_79124_, this, p_79125_, objectarraylist, isPlugin.get());
++      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_79124_, this, p_79125_, objectarraylist, isPlugin.getAndSet(false));
 +      if (event.isCancelled()) {
 +         return;
 +      }
