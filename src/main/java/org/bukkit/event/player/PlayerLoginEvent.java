@@ -28,6 +28,7 @@ public class PlayerLoginEvent extends PlayerEvent {
      * @param hostname The hostname that was used to connect to the server
      * @param address The address the player used to connect, provided for
      *     timing issues
+     * @param realAddress the actual, unspoofed connecting address
      */
     public PlayerLoginEvent(@NotNull final Player player, @NotNull final String hostname, @NotNull final InetAddress address, final @NotNull InetAddress realAddress) { // Spigot
         super(player);

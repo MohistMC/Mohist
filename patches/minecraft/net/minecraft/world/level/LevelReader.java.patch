@@ -4,7 +4,7 @@
     }
  
     /** @deprecated */
-+   default boolean  isAreaLoaded(BlockPos center, int range) {
++   default boolean isAreaLoaded(BlockPos center, int range) {
 +      return this.m_46832_(center.m_7918_(-range, -range, -range), center.m_7918_(range, range, range));
 +   }
 +
