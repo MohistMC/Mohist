@@ -6,6 +6,8 @@ import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.shorts.ShortArraySet;
+import it.unimi.dsi.fastutil.shorts.ShortSet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -17,6 +19,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ChatMessageContent;
@@ -59,6 +62,7 @@ import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -68,6 +72,7 @@ import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import org.bukkit.craftbukkit.v1_19_R1.*;
 import org.bukkit.craftbukkit.v1_19_R1.advancement.CraftAdvancement;
 import org.bukkit.craftbukkit.v1_19_R1.advancement.CraftAdvancementProgress;
+import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftSign;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.conversations.ConversationTracker;
@@ -559,6 +564,44 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         ClientboundBlockUpdatePacket packet = new ClientboundBlockUpdatePacket(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), ((CraftBlockData) block).getState());
         getHandle().connection.send(packet);
+    }
+
+    @Override
+    public void sendBlockChanges(Collection<BlockState> blocks, boolean suppressLightUpdates) {
+        Preconditions.checkArgument(blocks != null, "blocks must not be null");
+
+        if (getHandle().connection == null || blocks.isEmpty()) {
+            return;
+        }
+
+        Map<SectionPos, ChunkSectionChanges> changes = new HashMap<>();
+        for (BlockState state : blocks) {
+            CraftBlockState cstate = (CraftBlockState) state;
+            BlockPos blockPosition = cstate.getPosition();
+
+            // The coordinates of the chunk section in which the block is located, aka chunk x, y, and z
+            SectionPos sectionPosition = SectionPos.of(blockPosition);
+
+            // Push the block change position and block data to the final change map
+            ChunkSectionChanges sectionChanges = changes.computeIfAbsent(sectionPosition, (ignore) -> new ChunkSectionChanges());
+
+            sectionChanges.positions().add(SectionPos.sectionRelativePos(blockPosition));
+            sectionChanges.blockData().add(cstate.getHandle());
+        }
+
+        // Construct the packets using the data allocated above and send then to the players
+        for (Map.Entry<SectionPos, ChunkSectionChanges> entry : changes.entrySet()) {
+            ChunkSectionChanges chunkChanges = entry.getValue();
+            ClientboundSectionBlocksUpdatePacket packet = new ClientboundSectionBlocksUpdatePacket(entry.getKey(), chunkChanges.positions(), chunkChanges.blockData().toArray(net.minecraft.world.level.block.state.BlockState[]::new), suppressLightUpdates);
+            getHandle().connection.send(packet);
+        }
+    }
+
+    private record ChunkSectionChanges(ShortSet positions, List<net.minecraft.world.level.block.state.BlockState> blockData) {
+
+        public ChunkSectionChanges() {
+            this(new ShortArraySet(), new ArrayList<>());
+        }
     }
 
     @Override

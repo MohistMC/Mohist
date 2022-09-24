@@ -7356,9 +7356,22 @@ public enum Material implements Keyed {
     }
 
     /**
-     * Check if the material is a block and completely blocks vision
+     * Check if the material is a block and occludes light in the lighting engine.
+     * <p>
+     * Generally speaking, most full blocks will occlude light. Non-full blocks are
+     * not occluding (e.g. anvils, chests, tall grass, stairs, etc.), nor are specific
+     * full blocks such as barriers or spawners which block light despite their texture.
+     * <p>
+     * An occluding block will have the following effects:
+     * <ul>
+     *   <li>Chests cannot be opened if an occluding block is above it.
+     *   <li>Mobs cannot spawn inside of occluding blocks.
+     *   <li>Only occluding blocks can be "powered" ({@link Block#isBlockPowered()}).
+     * </ul>
+     * This list may be inconclusive. For a full list of the side effects of an occluding
+     * block, see the <a href="https://minecraft.fandom.com/wiki/Opacity">Minecraft Wiki</a>.
      *
-     * @return True if this material is a block and completely blocks vision
+     * @return True if this material is a block and occludes light
      */
     public boolean isOccluding() {
         if (!isBlock()) {
