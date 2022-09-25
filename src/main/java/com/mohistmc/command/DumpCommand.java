@@ -50,7 +50,7 @@ public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -118,6 +118,9 @@ public class DumpCommand extends Command {
                     break;
                 case "material":
                     dumpMaterial(sender, mode);
+                    break;
+                case "channels":
+                    dumpChannels(sender, mode);
                     break;
                 default:
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -223,6 +226,14 @@ public class DumpCommand extends Command {
             sb.append(material).append("-").append(key).append("\n");
         }
         dump(sender, "material", sb, mode);
+    }
+
+    private void dumpChannels(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (String channel : ServerAPI.channels) {
+            sb.append(channel).append("\n");
+        }
+        dump(sender, "channels", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, File file, String type) {

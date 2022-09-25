@@ -1,10 +1,9 @@
 package com.mohistmc.api;
 
-import io.netty.util.internal.ConcurrentSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.ModLoader;
@@ -16,7 +15,8 @@ import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 
-    public static Set<String> modlists = new ConcurrentSet();
+    public static HashSet<String> modlists = new HashSet();
+    public static HashSet<String> channels = new HashSet<>();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();

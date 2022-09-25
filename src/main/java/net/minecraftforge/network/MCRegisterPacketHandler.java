@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.api.ServerAPI;
 import com.mojang.logging.LogUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.util.Attribute;
@@ -70,7 +71,7 @@ public class MCRegisterPacketHandler
                     String s = new String(all, last, cur - last, StandardCharsets.UTF_8);
                     try {
                         rl.add(new ResourceLocation(s));
-                        LOGGER.warn("DEBUG channel name: " + s);
+                        ServerAPI.channels.add(s);
                     } catch (ResourceLocationException ex) {
                         LOGGER.warn("Invalid channel name received: {}. Ignoring", s);
                     }

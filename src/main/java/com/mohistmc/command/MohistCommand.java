@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import net.minecraft.SharedConstants;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,7 +37,7 @@ import org.bukkit.entity.Player;
 
 public class MohistCommand extends Command {
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version");
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels");
 
     public MohistCommand(String name) {
         super(name);
@@ -109,12 +110,15 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
                 break;
             case "version":
-                sender.sendMessage("Mohist: 1.19");
+                sender.sendMessage("Mohist: " + SharedConstants.VERSION_STRING);
                 sender.sendMessage("Forge: " + ForgeVersion.getVersion());
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
                 sender.sendMessage("Bukkit: " + cbs[0]);
                 sender.sendMessage("CraftBukkit: " + cbs[1]);
                 sender.sendMessage("Spigot: " + cbs[2]);
+                break;
+            case "channels":
+                sender.sendMessage(ServerAPI.channels.toString());
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
