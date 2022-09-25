@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -64,12 +_,14 @@
+@@ -64,12 +_,25 @@
     }
  
     public void m_213898_(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
@@ -10,7 +10,18 @@
           if (i < this.m_7419_()) {
              float f = m_52272_(this, p_221051_, p_221052_);
 -            if (p_221053_.m_188503_((int)(25.0F / f) + 1) == 0) {
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188503_((int)(25.0F / f) + 1) == 0)) {
++            // Spigot start
++            int modifier;
++            if (this == Blocks.f_50444_) {
++               modifier = p_221051_.spigotConfig.beetrootModifier;
++            } else if (this == Blocks.f_50249_) {
++               modifier = p_221051_.spigotConfig.carrotModifier;
++            } else if (this == Blocks.f_50250_) {
++               modifier = p_221051_.spigotConfig.potatoModifier;
++            } else {
++               modifier = p_221051_.spigotConfig.wheatModifier;
++            }
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188503_((int)((100.0F / modifier) * (25.0F / f)) + 1) == 0)) {
                 p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }

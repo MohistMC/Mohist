@@ -194,6 +194,7 @@ public class SpigotWorldConfig
     public int raiderActivationRange = 48;
     public int miscActivationRange = 16;
     public boolean tickInactiveVillagers = true;
+    public boolean ignoreSpectatorActivation = false;
     private void activationRange()
     {
         animalActivationRange = getInt( "entity-activation-range.animals", animalActivationRange );
@@ -201,6 +202,7 @@ public class SpigotWorldConfig
         raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
+        ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
         log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
     }
 

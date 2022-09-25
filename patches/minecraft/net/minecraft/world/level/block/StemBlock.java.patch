@@ -8,7 +8,7 @@
        if (p_222539_.m_45524_(p_222540_, 0) >= 9) {
           float f = CropBlock.m_52272_(this, p_222539_, p_222540_);
 -         if (p_222541_.m_188503_((int)(25.0F / f) + 1) == 0) {
-+         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.m_188503_((int)(25.0F / f) + 1) == 0)) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.m_188503_((int)((100.0F / (this == Blocks.f_50189_ ? p_222539_.spigotConfig.pumpkinModifier : p_222539_.spigotConfig.melonModifier)) * (25.0F / f)) + 1) == 0)) {
              int i = p_222538_.m_61143_(f_57013_);
              if (i < 7) {
 -               p_222538_ = p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1));

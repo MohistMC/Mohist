@@ -21,8 +21,9 @@
  
           if (i < 3) {
              int j = p_220913_.m_61143_(f_51131_);
+-            if (j == 15) {
 +            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220914_, blockpos, p_220913_, true)) {
-             if (j == 15) {
++            if (j >= (byte) range(3, ((100.0F / p_220914_.spigotConfig.cactusModifier) * 15) + 0.5F, 15)) { // Spigot
                 p_220914_.m_46597_(blockpos, this.m_49966_());
 -               BlockState blockstate = p_220913_.m_61124_(f_51131_, Integer.valueOf(0));
 +               BlockState blockstate = p_220913_.m_61124_(f_51131_, 0);

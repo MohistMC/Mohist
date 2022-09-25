@@ -200,6 +200,20 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
+@@ -390,6 +_,13 @@
+ 
+       while(iterator.hasNext()) {
+          TickingBlockEntity tickingblockentity = iterator.next();
++         // Spigot start
++         if (tickingblockentity == null) {
++            getCraftServer().getLogger().severe("Spigot has detected a null entity and has removed it, preventing a crash");
++            iterator.remove();
++            continue;
++         }
++         // Spigot end
+          if (tickingblockentity.m_142220_()) {
+             iterator.remove();
+          } else if (this.m_220393_(tickingblockentity.m_142689_())) {
 @@ -403,12 +_,19 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {

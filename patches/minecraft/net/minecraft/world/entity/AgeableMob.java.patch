@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -18,6 +_,7 @@
+@@ -18,10 +_,36 @@
     protected int f_146733_;
     protected int f_146734_;
     protected int f_146735_;
@@ -8,3 +8,32 @@
  
     protected AgeableMob(EntityType<? extends AgeableMob> p_146738_, Level p_146739_) {
        super(p_146738_, p_146739_);
+    }
++
++   // Spigot start
++   @Override
++   public void inactiveTick()
++   {
++       super.inactiveTick();
++       if ( this.f_19853_.f_46443_ || this.ageLocked )
++       { // CraftBukkit
++          this.m_6210_();
++       } else
++       {
++          int i = this.m_146764_();
++
++          if ( i < 0 )
++          {
++             ++i;
++             this.m_146762_( i );
++          } else if ( i > 0 )
++          {
++             --i;
++             this.m_146762_( i );
++          }
++       }
++   }
++   // Spigot end
+ 
+    public SpawnGroupData m_6518_(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_, @Nullable CompoundTag p_146750_) {
+       if (p_146749_ == null) {

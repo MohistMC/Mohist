@@ -51,7 +51,7 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -227,11 +_,27 @@
+@@ -227,11 +_,34 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
     private boolean f_217034_;
@@ -69,6 +69,13 @@
 +      return m_6080_();
 +   }
 +   // CraftBukkit end
++   // Spigot start
++   public void inactiveTick()
++   {
++      super.inactiveTick();
++      ++this.f_20891_; // Above all the floats
++   }
++   // Spigot end
  
     protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
        super(p_20966_, p_20967_);

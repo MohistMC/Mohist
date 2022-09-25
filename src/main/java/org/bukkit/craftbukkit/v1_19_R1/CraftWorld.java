@@ -1845,15 +1845,17 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), new Location(this, found.getFirst().getX(), found.getFirst().getY(), found.getFirst().getZ()));
     }
 
+    // Spigot start
     @Override
     public int getViewDistance() {
-        return 0;
+        return world.spigotConfig.viewDistance;
     }
 
     @Override
     public int getSimulationDistance() {
-        return 0;
+        return world.spigotConfig.simulationDistance;
     }
+    // Spigot end
 
     // Spigot start
     private final Spigot spigot = new Spigot() {

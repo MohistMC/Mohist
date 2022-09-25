@@ -29,6 +29,7 @@ Progress
   * [ ] CraftBukkit([**c2c39089e**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/c2c39089e))
   * [ ] Spigot ([**4aa5ead2**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/4aa5ead2))
     * [x] Bukkit-Patches 
+    * [ ] CraftBukkit-Patches (32%)
 
 Getting Help
 ------

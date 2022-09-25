@@ -236,6 +236,20 @@
           return !component.equals(p_238202_) ? p_238202_ : null;
        });
        completablefuture.thenAcceptAsync((p_242747_) -> {
+@@ -1525,6 +_,13 @@
+       PacketUtils.m_131359_(p_9866_, this, this.f_9743_.m_9236_());
+       ServerLevel serverlevel = this.f_9743_.m_9236_();
+       final Entity entity = p_9866_.m_179603_(serverlevel);
++      // Spigot Start
++      if ( entity == f_9743_ && !f_9743_.m_5833_() )
++      {
++         disconnect( "Cannot interact with self!" );
++         return;
++      }
++      // Spigot End
+       this.f_9743_.m_9243_();
+       this.f_9743_.m_20260_(p_9866_.m_134061_());
+       if (entity != null) {
 @@ -1532,11 +_,13 @@
              return;
           }
@@ -282,7 +296,7 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
-@@ -1777,8 +_,138 @@
+@@ -1777,8 +_,139 @@
        return this.f_9743_;
     }
  
@@ -296,6 +310,7 @@
     }
 +
 +   private void handleCommand(String s) {
++      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
 +      this.f_9744_.info(this.f_9743_.m_6302_() + " issued server command: " + s);
 +
 +      CraftPlayer player = this.getCraftPlayer();

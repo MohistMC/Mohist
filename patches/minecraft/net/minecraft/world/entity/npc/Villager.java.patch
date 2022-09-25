@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -203,6 +_,17 @@
+       return this.f_35366_;
+    }
+ 
++   // Spigot Start
++   @Override
++   public void inactiveTick() {
++      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
++      if (f_19853_.spigotConfig.tickInactiveVillagers && this.m_6142_()) {
++         this.m_8024_();
++      }
++      super.inactiveTick();
++   }
++   // Spigot End
++
+    protected void m_8024_() {
+       this.f_19853_.m_46473_().m_6180_("villagerBrain");
+       this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
 @@ -254,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {

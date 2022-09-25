@@ -92,11 +92,10 @@
     }
  
     public boolean m_49967_() {
-@@ -489,6 +_,75 @@
-    protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
+@@ -490,6 +_,75 @@
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
-+
+ 
 +   /* ======================================== FORGE START =====================================*/
 +   private Object renderProperties;
 +
@@ -165,6 +164,24 @@
 +   }
 +
 +   /* ========================================= FORGE END ======================================*/
- 
++
     /** @deprecated */
     @Deprecated
+    public Holder.Reference<Block> m_204297_() {
+@@ -534,4 +_,16 @@
+          return 31 * i + this.f_49982_.hashCode();
+       }
+    }
++
++   // Spigot start
++   public static float range(float min, float value, float max) {
++      if (value < min) {
++         return min;
++      }
++      if (value > max) {
++         return max;
++      }
++      return value;
++   }
++   // Spigot end
+ }

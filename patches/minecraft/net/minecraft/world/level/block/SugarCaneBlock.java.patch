@@ -9,9 +9,12 @@
     public static final IntegerProperty f_57164_ = BlockStateProperties.f_61410_;
     protected static final float f_154735_ = 6.0F;
     protected static final VoxelShape f_57165_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-@@ -47,12 +_,15 @@
+@@ -45,14 +_,17 @@
+          for(i = 1; p_222549_.m_8055_(p_222550_.m_6625_(i)).m_60713_(this); ++i) {
+          }
  
-          if (i < 3) {
+-         if (i < 3) {
++         if (i >= (byte) range(3, ((100.0F / p_222549_.spigotConfig.caneModifier) * 15) + 0.5F, 15)) { // Spigot
              int j = p_222548_.m_61143_(f_57164_);
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
              if (j == 15) {

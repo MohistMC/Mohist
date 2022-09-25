@@ -81,6 +81,15 @@
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
+@@ -200,7 +_,7 @@
+       DataFixer datafixer = p_214999_.m_129933_();
+       EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
+       this.f_143244_ = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
+-      this.f_8547_ = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.m_236738_(), p_215000_, chunkgenerator, p_214999_.m_6846_().m_11312_(), p_214999_.m_6846_().m_184213_(), flag, p_215005_, this.f_143244_::m_157524_, () -> {
++      this.f_8547_ = new ServerChunkCache(this, p_215001_, datafixer, p_214999_.m_236738_(), p_215000_, chunkgenerator, this.spigotConfig.viewDistance, this.spigotConfig.simulationDistance, flag, p_215005_, this.f_143244_::m_157524_, () -> {
+          return p_214999_.m_129783_().m_8895_();
+       });
+       chunkgenerator.m_223100_(this.f_8547_.m_214994_());
 @@ -227,6 +_,10 @@
        }
  
@@ -112,6 +121,14 @@
        if (flag) {
           this.m_8886_();
        }
+@@ -298,6 +_,7 @@
+             profilerfiller.m_7238_();
+          }
+ 
++         org.spigotmc.ActivationRange.activateEntities(this); // Spigot
+          this.f_143243_.m_156910_((p_184065_) -> {
+             if (!p_184065_.m_213877_()) {
+                if (this.m_143342_(p_184065_)) {
 @@ -317,7 +_,9 @@
                       }
  
@@ -155,6 +172,20 @@
        }
  
     }
+@@ -639,6 +_,13 @@
+    }
+ 
+    public void m_8647_(Entity p_8648_) {
++      // Spigot start
++      if (!org.spigotmc.ActivationRange.checkIfActive(p_8648_)) {
++         p_8648_.f_19797_++;
++         p_8648_.inactiveTick();
++         return;
++      }
++      // Spigot end
+       p_8648_.m_146867_();
+       ProfilerFiller profilerfiller = this.m_46473_();
+       ++p_8648_.f_19797_;
 @@ -665,6 +_,7 @@
                 return Registry.f_122826_.m_7981_(p_8664_.m_6095_()).toString();
              });
@@ -243,6 +274,22 @@
        }
     }
  
+@@ -803,6 +_,15 @@
+    }
+ 
+    public void m_8712_(LevelChunk p_8713_) {
++      // Spigot Start
++      for (net.minecraft.world.level.block.entity.BlockEntity tileentity : p_8713_.m_62954_().values()) {
++         if (tileentity instanceof net.minecraft.world.Container) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((net.minecraft.world.Container) tileentity).getViewers())) {
++               h.closeInventory();
++            }
++         }
++      }
++      // Spigot End
+       p_8713_.m_187957_();
+       p_8713_.m_187979_(this);
+    }
 @@ -826,10 +_,22 @@
     }
  
@@ -344,6 +391,20 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
+@@ -1555,6 +_,13 @@
+       }
+ 
+       public void m_141981_(Entity p_143375_) {
++         // Spigot Start
++         if (p_143375_.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(p_143375_ instanceof ServerPlayer) || p_143375_.m_146911_() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) p_143375_.getBukkitEntity()).getInventory().getViewers())) {
++               h.closeInventory();
++            }
++         }
++         // Spigot End
+          ServerLevel.this.m_7726_().m_8443_(p_143375_);
+          if (p_143375_ instanceof ServerPlayer serverplayer) {
+             ServerLevel.this.f_8546_.remove(serverplayer);
 @@ -1570,17 +_,41 @@
              ServerLevel.this.f_143246_.remove(mob);
           }

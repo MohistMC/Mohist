@@ -33,7 +33,7 @@
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
        this.f_11204_ = p_203844_;
-@@ -160,6 +_,7 @@
+@@ -160,14 +_,16 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
@@ -41,7 +41,9 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -168,6 +_,7 @@
+-      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_11206_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), this.f_11207_, this.f_184208_, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
++      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_11206_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), serverlevel1.spigotConfig.viewDistance, serverlevel1.spigotConfig.simulationDistance, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
+       servergamepacketlistenerimpl.m_9829_(new ClientboundCustomPayloadPacket(ClientboundCustomPayloadPacket.f_132012_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(this.m_7873_().m_130001_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
@@ -97,6 +99,15 @@
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
        this.f_11196_.remove(p_11237_);
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
+@@ -451,6 +_,8 @@
+ 
+       LevelData leveldata = serverplayer.f_19853_.m_6106_();
+       serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), p_11238_, serverplayer.m_219759_()));
++      serverplayer.f_8906_.m_9829_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
++      serverplayer.f_8906_.m_9829_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
+       serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
+       serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
+       serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
 @@ -462,6 +_,7 @@
        this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
        serverplayer.m_143429_();

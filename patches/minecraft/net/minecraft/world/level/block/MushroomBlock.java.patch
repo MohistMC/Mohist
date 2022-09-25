@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
+@@ -30,7 +_,7 @@
+    }
+ 
+    public void m_213898_(BlockState p_221784_, ServerLevel p_221785_, BlockPos p_221786_, RandomSource p_221787_) {
+-      if (p_221787_.m_188503_(25) == 0) {
++      if (p_221787_.m_188503_(Math.max(1, (int) (100.0F / p_221785_.spigotConfig.mushroomModifier) * 25)) == 0) { // Spigot
+          int i = 5;
+          int j = 4;
+ 
 @@ -70,13 +_,15 @@
        if (blockstate.m_204336_(BlockTags.f_13057_)) {
           return true;

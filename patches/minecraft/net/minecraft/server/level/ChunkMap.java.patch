@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
+@@ -38,6 +_,7 @@
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.CompletionException;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Consumer;
 @@ -126,7 +_,7 @@
     private final ChunkTaskPriorityQueueSorter f_140141_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
@@ -56,7 +64,50 @@
           }
  
        }
-@@ -1105,7 +_,7 @@
+@@ -928,13 +_,25 @@
+       return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
+    }
+ 
++   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
++   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
++      reducedRange0.set(reducedRange);
++      return m_183879_(p_183880_);
++   }
++
+    boolean m_183879_(ChunkPos p_183880_) {
++      int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;
++      chunkRange = (chunkRange > 8) ? 8 : chunkRange;
++
++      double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++      // Spigot end
+       long i = p_183880_.m_45588_();
+       if (!this.f_140145_.m_140847_(i)) {
+          return false;
+       } else {
+          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-            if (this.m_183751_(serverplayer, p_183880_)) {
++            if (this.playerIsCloseEnoughForSpawning(serverplayer, p_183880_, blockRange)) {
+                return true;
+             }
+          }
+@@ -969,6 +_,15 @@
+       }
+    }
+ 
++   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot
++      if (p_183752_.m_5833_()) {
++         return false;
++      } else {
++         double d0 = m_140226_(p_183753_, p_183752_);
++         return d0 < range; // Spigot
++      }
++   }
++
+    private boolean m_140329_(ServerPlayer p_140330_) {
+       return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
+    }
+@@ -1105,9 +_,10 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -64,7 +115,10 @@
 +      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
++         i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_140200_, i); // Spigot
           if (i != 0) {
+             int j = entitytype.m_20682_();
+             if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
 @@ -1231,6 +_,7 @@
           }
        }

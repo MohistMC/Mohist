@@ -17,7 +17,7 @@
 +         if (p_220739_.m_46859_(p_220740_.m_7494_()) && p_220739_.m_45524_(p_220740_.m_7494_(), 0) >= 9) {
              int i = this.m_48932_(p_220739_, p_220740_) + 1;
 -            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220739_, p_220740_, p_220738_, p_220741_.m_188503_(3) == 0)) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220739_, p_220740_, p_220738_, p_220741_.m_188503_(Math.max(1, (int) (100.0F / p_220739_.spigotConfig.bambooModifier) * 3)) == 0)) {
                 this.m_220731_(p_220738_, p_220739_, p_220740_, p_220741_, i);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_220739_, p_220740_, p_220738_);
              }

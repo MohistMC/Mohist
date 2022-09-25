@@ -15,11 +15,13 @@
  
     public SaplingBlock(AbstractTreeGrower p_55978_, BlockBehaviour.Properties p_55979_) {
        super(p_55979_);
-@@ -31,6 +_,7 @@
+@@ -31,7 +_,8 @@
     }
  
     public void m_213898_(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {
+-      if (p_222012_.m_46803_(p_222013_.m_7494_()) >= 9 && p_222014_.m_188503_(7) == 0) {
 +      if (!p_222012_.isAreaLoaded(p_222013_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_222012_.m_46803_(p_222013_.m_7494_()) >= 9 && p_222014_.m_188503_(7) == 0) {
++      if (p_222012_.m_46803_(p_222013_.m_7494_()) >= 9 && p_222014_.m_188503_(Math.max(2, (int) (((100.0F / p_222012_.spigotConfig.saplingModifier) * 7) + 0.5F))) == 0) { // Spigot
           this.m_222000_(p_222012_, p_222013_, p_222011_, p_222014_);
        }
+ 

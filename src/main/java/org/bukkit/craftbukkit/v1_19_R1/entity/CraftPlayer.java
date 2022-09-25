@@ -1897,9 +1897,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private final Player.Spigot spigot = new Player.Spigot()
     {
         @Override
+        public boolean getCollidesWithEntities() {
+            return CraftPlayer.this.isCollidable();
+        }
+
+        @Override
+        public void setCollidesWithEntities(boolean collides) {
+            CraftPlayer.this.setCollidable(collides);
+        }
+
+        @Override
         public InetSocketAddress getRawAddress()
         {
             return (InetSocketAddress) getHandle().connection.connection.getRawAddress();
+        }
+
+        @Override
+        public void respawn()
+        {
+            if ( getHealth() <= 0 && isOnline() )
+            {
+                server.getServer().getPlayerList().respawn( getHandle(), false );
+            }
         }
     };
 

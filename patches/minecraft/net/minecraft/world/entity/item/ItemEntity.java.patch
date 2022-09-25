@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -43,6 +_,10 @@
+@@ -12,6 +_,7 @@
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
+@@ -43,6 +_,11 @@
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;
@@ -8,6 +16,7 @@
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
 +   public int lifespan = 6000;
++   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
@@ -19,7 +28,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -86,6 +_,7 @@
+@@ -86,19 +_,27 @@
     }
  
     public void m_8119_() {
@@ -27,7 +36,20 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-@@ -99,6 +_,9 @@
+          super.m_8119_();
+-         if (this.f_31986_ > 0 && this.f_31986_ != 32767) {
+-            --this.f_31986_;
+-         }
++         // CraftBukkit start - Use wall time for pickup and despawn timers
++         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++         if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
++         this.f_31986_ = Math.max(0, this.f_31986_); // Paper - don't go below 0
++         if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
++         this.lastTick = MinecraftServer.currentTick;
++         // CraftBukkit end
+ 
+          this.f_19854_ = this.m_20185_();
+          this.f_19855_ = this.m_20186_();
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
@@ -46,7 +68,7 @@
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
-@@ -150,7 +_,14 @@
+@@ -150,12 +_,41 @@
              }
           }
  
@@ -62,6 +84,53 @@
              this.m_146870_();
           }
  
+       }
+    }
++
++   // Spigot start - copied from above
++   @Override
++   public void inactiveTick() {
++      // CraftBukkit start - Use wall time for pickup and despawn timers
++      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
++      if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
++      this.lastTick = MinecraftServer.currentTick;
++      // CraftBukkit end
++
++      if (!this.f_19853_.f_46443_ && this.f_31985_ >= f_19853_.spigotConfig.itemDespawnRate) { // Spigot
++         // CraftBukkit start - fire ItemDespawnEvent
++         if (org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++            this.f_31985_ = 0;
++            return;
++         }
++         // CraftBukkit end
++         this.m_146870_();
++      }
++   }
++   // Spigot end
+ 
+    private void m_32067_() {
+       Vec3 vec3 = this.m_20184_();
+@@ -169,7 +_,9 @@
+ 
+    private void m_32069_() {
+       if (this.m_32070_()) {
+-         for(ItemEntity itementity : this.f_19853_.m_6443_(ItemEntity.class, this.m_20191_().m_82377_(0.5D, 0.0D, 0.5D), (p_186268_) -> {
++         // Spigot start
++         double radius = f_19853_.spigotConfig.itemMerge;
++         for(ItemEntity itementity : this.f_19853_.m_6443_(ItemEntity.class, this.m_20191_().m_82377_(radius, radius - 0.5D, radius), (p_186268_) -> {
+             return p_186268_ != this && p_186268_.m_32070_();
+          })) {
+             if (itementity.m_32070_()) {
+@@ -192,7 +_,7 @@
+       ItemStack itemstack = this.m_32055_();
+       ItemStack itemstack1 = p_32016_.m_32055_();
+       if (Objects.equals(this.m_32056_(), p_32016_.m_32056_()) && m_32026_(itemstack, itemstack1)) {
+-         if (itemstack1.m_41613_() < itemstack.m_41613_()) {
++         if (true || itemstack1.m_41613_() < itemstack.m_41613_()) { // Spigot
+             m_32017_(this, itemstack, p_32016_, itemstack1);
+          } else {
+             m_32017_(p_32016_, itemstack1, this, itemstack);
 @@ -208,6 +_,8 @@
           return false;
        } else if (p_32028_.m_41782_() ^ p_32027_.m_41782_()) {
