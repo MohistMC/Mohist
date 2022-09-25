@@ -38,13 +38,13 @@
        }, p_44834_);
        return mutablefloat.floatValue();
     }
-@@ -164,6 +_,7 @@
-       EnchantmentHelper.EnchantmentVisitor enchantmenthelper$enchantmentvisitor = (p_44902_, p_44903_) -> {
-          p_44902_.m_7675_(p_44824_, p_44825_, p_44903_);
-       };
-+      if(false) // Forge: Fix MC-248272
-       if (p_44824_ != null) {
+@@ -168,6 +_,7 @@
           m_44853_(enchantmenthelper$enchantmentvisitor, p_44824_.m_20158_());
+       }
+ 
++      if(false) // Forge: Fix MC-248272
+       if (p_44825_ instanceof Player) {
+          m_44850_(enchantmenthelper$enchantmentvisitor, p_44824_.m_21205_());
        }
 @@ -182,6 +_,7 @@
           m_44853_(enchantmenthelper$enchantmentvisitor, p_44897_.m_20158_());

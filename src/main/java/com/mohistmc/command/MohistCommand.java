@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
 
 public class MohistCommand extends Command {
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels");
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels", "speed");
 
     public MohistCommand(String name) {
         super(name);
@@ -127,13 +127,13 @@ public class MohistCommand extends Command {
                         if (this.isFloat(args[1])) {
                             if (p.isFlying()) {
                                 float speed = Float.parseFloat(args[1]);
-                                if (speed >= 0.0f && speed < 21.0f) {
+                                if (speed >= 0.0f && speed < 11.0f) {
                                     p.setFlySpeed(speed / 10.0f);
                                     p.sendMessage("飞行速度已设置为 §b" + speed);
                                 }
                             } else {
                                 float speed = Float.parseFloat(args[1]);
-                                if (speed >= 0.0f && speed < 21.0f) {
+                                if (speed >= 0.0f && speed < 11.0f) {
                                     p.setWalkSpeed(speed / 10.0f);
                                     p.sendMessage("行走速度已设置为 §b" + speed);
                                 }
