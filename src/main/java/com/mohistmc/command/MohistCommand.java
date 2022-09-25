@@ -120,6 +120,35 @@ public class MohistCommand extends Command {
             case "channels":
                 sender.sendMessage(ServerAPI.channels.toString());
                 break;
+            case "speed":
+                if (sender instanceof Player) {
+                    Player p = (Player) sender;
+                    if (args.length == 2 && p.isOp()) {
+                        if (this.isFloat(args[1])) {
+                            if (p.isFlying()) {
+                                float speed = Float.parseFloat(args[1]);
+                                if (speed >= 0.0f && speed < 21.0f) {
+                                    p.setFlySpeed(speed / 10.0f);
+                                    p.sendMessage("飞行速度已设置为 §b" + speed);
+                                }
+                            } else {
+                                float speed = Float.parseFloat(args[1]);
+                                if (speed >= 0.0f && speed < 21.0f) {
+                                    p.setWalkSpeed(speed / 10.0f);
+                                    p.sendMessage("行走速度已设置为 §b" + speed);
+                                }
+                            }
+                        }
+                        if (args[0].equalsIgnoreCase("reset")) {
+                            p.setFlySpeed(0.1f);
+                            p.setWalkSpeed(0.2f);
+                            p.sendMessage("行走和飞行速度已恢复默认.");
+                        }
+                    }
+                } else {
+                    sender.sendMessage("§c控制台无法超速行驶");
+                }
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
@@ -127,5 +156,14 @@ public class MohistCommand extends Command {
 
 
         return true;
+    }
+
+    private boolean isFloat(String input) {
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
