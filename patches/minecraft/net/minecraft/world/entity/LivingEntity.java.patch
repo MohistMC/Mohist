@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -9,13 +_,17 @@
+@@ -9,13 +_,19 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
  import com.mojang.serialization.Dynamic;
@@ -14,6 +14,8 @@
  import java.util.Optional;
 +import java.util.Set;
  import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
@@ -153,23 +155,32 @@
           if (!this.f_19853_.f_46443_ && this.f_146810_) {
              this.m_146873_();
           }
-@@ -638,6 +_,20 @@
+@@ -624,10 +_,12 @@
+       return true;
+    }
+ 
++   // Mohist start
++   public AtomicBoolean silent0 = new AtomicBoolean(false);
+    public void m_238392_(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_) {
+       boolean flag = p_238395_.m_41619_() && p_238394_.m_41619_();
+       if (!flag && !ItemStack.m_41758_(p_238394_, p_238395_) && !this.f_19803_) {
+-         if (p_238393_.m_20743_() == EquipmentSlot.Type.ARMOR) {
++         if (p_238393_.m_20743_() == EquipmentSlot.Type.ARMOR && !silent0.getAndSet(false)) {
+             this.m_217041_(p_238395_);
+          }
+ 
+@@ -638,6 +_,15 @@
        }
     }
  
++   // CraftBukkit start
++   // Mohist start
 +   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_, boolean silent) {
-+      boolean flag = p_238395_.m_41619_() && p_238394_.m_41619_();
-+      if (!flag && !ItemStack.m_41758_(p_238394_, p_238395_) && !this.f_19803_) {
-+         if (p_238393_.m_20743_() == EquipmentSlot.Type.ARMOR && !silent) {
-+            this.m_217041_(p_238395_);
-+         }
-+
-+         if (this.m_213772_(p_238393_)) {
-+            this.m_146850_(GameEvent.f_157811_);
-+         }
-+
-+      }
++      silent0.set(silent);
++      m_238392_(p_238393_, p_238394_, p_238395_);
 +   }
++   // CraftBukkit end
++   // Mohist end
 +
     protected void m_217041_(ItemStack p_217042_) {
        if (!p_217042_.m_41619_() && !this.m_5833_()) {
@@ -294,37 +305,24 @@
        return d0;
     }
  
-@@ -870,7 +_,37 @@
+@@ -862,6 +_,8 @@
+       this.f_19804_.m_135381_(f_20962_, 0);
+    }
+ 
++   //Mohist start
++   public AtomicReference<EntityPotionEffectEvent.Cause> removeAllEffectsCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
+    public boolean m_21219_() {
+       if (this.f_19853_.f_46443_) {
+          return false;
+@@ -870,7 +_,15 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
 -            this.m_7285_(iterator.next());
-+            MobEffectInstance effect = iterator.next();
-+            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
-+            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, EntityPotionEffectEvent.Cause.UNKNOWN, EntityPotionEffectEvent.Action.CLEARED);
-+            if (event.isCancelled()) {
-+               continue;
-+            }
-+            this.m_7285_(effect);
-+            iterator.remove();
-+         }
-+
-+         return flag;
-+      }
-+   }
-+
-+   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
-+      if (this.f_19853_.f_46443_) {
-+         return false;
-+      } else {
-+         Iterator<MobEffectInstance> iterator = this.f_20945_.values().iterator();
-+
-+         boolean flag;
-+         for(flag = false; iterator.hasNext(); flag = true) {
 +            // CraftBukkit start
 +            MobEffectInstance effect = iterator.next();
 +            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
-+            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause, EntityPotionEffectEvent.Action.CLEARED);
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, removeAllEffectsCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), EntityPotionEffectEvent.Action.CLEARED);
 +            if (event.isCancelled()) {
 +               continue;
 +            }
@@ -333,8 +331,21 @@
              iterator.remove();
           }
  
-@@ -895,29 +_,100 @@
-       return this.f_20945_.get(p_21125_);
+@@ -878,6 +_,12 @@
+       }
+    }
+ 
++   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
++      removeAllEffectsCause.set(cause);
++      return m_21219_();
++   }
++   // Mohist end
++
+    public Collection<MobEffectInstance> m_21220_() {
+       return this.f_20945_.values();
+    }
+@@ -899,25 +_,63 @@
+       return this.m_147207_(p_21165_, (Entity)null);
     }
  
 +   // CraftBukkit start
@@ -342,53 +353,11 @@
 +      return addEffect(p_147208_, (Entity) null, cause);
 +   }
 +
-+   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
-+      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_147208_, cause));
-+         return true;
-+      }
-+      // CraftBukkit end
-+      if (!this.m_7301_(p_147208_)) {
-+         return false;
-+      } else {
-+         MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
-+         // CraftBukkit start
-+         boolean override = false;
-+         if (mobeffectinstance != null) {
-+            override = new MobEffectInstance(mobeffectinstance).m_19558_(p_147208_);
-+         }
-+
-+         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, cause, override);
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // CraftBukkit end
-+         if (mobeffectinstance == null) {
-+            this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
-+            this.m_142540_(p_147208_, p_147209_);
-+            return true;
-+         } else if (mobeffectinstance.m_19558_(p_147208_)) {
-+            // CraftBukkit start
-+         } else if (event.isOverride()) {
-+            mobeffectinstance.m_19558_(p_147208_);
-+            this.m_141973_(mobeffectinstance, true, p_147209_);
-+            // CraftBukkit end
-+            return true;
-+         } else {
-+            return false;
-+         }
-+      }
-+      return false;
-+   }
-+
-    public final boolean m_7292_(MobEffectInstance p_21165_) {
-       return this.m_147207_(p_21165_, (Entity)null);
-    }
- 
++   // Mohist start
++   public AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_147208_, EntityPotionEffectEvent.Cause.UNKNOWN));
++         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
 +         return true;
 +      }
 +      // CraftBukkit end
@@ -403,12 +372,11 @@
 +            override = new MobEffectInstance(mobeffectinstance).m_19558_(p_147208_);
 +         }
 +
-+         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, EntityPotionEffectEvent.Cause.UNKNOWN, override);
++         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
 +         if (event.isCancelled()) {
 +            return false;
 +         }
 +         // CraftBukkit end
-+
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
@@ -424,8 +392,15 @@
              return false;
           }
        }
+-   }
 +      return false;
-    }
++   }
++
++   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
++      addEffectCause.set(cause);
++      return m_147207_(p_147208_, p_147209_);
++   }
++   // Mohist end
  
     public boolean m_7301_(MobEffectInstance p_21197_) {
 +      net.minecraftforge.event.entity.living.MobEffectEvent.Applicable event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);
@@ -434,12 +409,16 @@
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -946,10 +_,44 @@
+@@ -944,12 +_,35 @@
+       return this.m_6336_() == MobType.f_21641_;
+    }
  
++   // Mohist start
++   public AtomicReference<EntityPotionEffectEvent.Cause> removeEffectNoUpdateCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
     @Nullable
     public MobEffectInstance m_6234_(@Nullable MobEffect p_21164_) {
 +      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_21164_, EntityPotionEffectEvent.Cause.UNKNOWN));
++         effectsToProcess.add(new ProcessableEffect(p_21164_, removeEffectNoUpdateCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
 +         return null;
 +      }
 +
@@ -448,51 +427,33 @@
 +         return null;
 +      }
 +
-+      EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, EntityPotionEffectEvent.Cause.UNKNOWN);
-+      if (event.isCancelled()) {
-+         return null;
-+      }
-+      return this.f_20945_.remove(p_21164_);
-+   }
-+
-+   @Nullable
-+   public MobEffectInstance c(@Nullable MobEffect p_21164_, EntityPotionEffectEvent.Cause cause) {
-+      if (isTickingEffects) {
-+         effectsToProcess.add(new ProcessableEffect(p_21164_, cause));
-+         return null;
-+      }
-+
-+      MobEffectInstance effect = this.f_20945_.get(p_21164_);
-+      if (effect == null) {
-+         return null;
-+      }
-+
-+      EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, cause);
++      EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, removeEffectNoUpdateCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN));
 +      if (event.isCancelled()) {
 +         return null;
 +      }
        return this.f_20945_.remove(p_21164_);
     }
  
++   @Nullable
++   public MobEffectInstance c(@Nullable MobEffect p_21164_, EntityPotionEffectEvent.Cause cause) {
++      removeEffectNoUpdateCause.set(cause);
++      return m_6234_(p_21164_);
++   }
++
     public boolean m_21195_(MobEffect p_21196_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -959,6 +_,17 @@
+@@ -959,6 +_,12 @@
        }
     }
  
 +   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, p_21196_))) return false;
-+      MobEffectInstance mobeffectinstance = this.c(p_21196_, cause);
-+      if (mobeffectinstance != null) {
-+         this.m_7285_(mobeffectinstance);
-+         return true;
-+      } else {
-+         return false;
-+      }
++      removeEffectNoUpdateCause.set(cause);
++      return m_21195_(p_21196_);
 +   }
++   // Mohist end
 +
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
@@ -617,7 +578,7 @@
              }
           }
  
-@@ -1185,7 +_,7 @@
+@@ -1185,14 +_,18 @@
           if (itemstack != null) {
              if (this instanceof ServerPlayer) {
                 ServerPlayer serverplayer = (ServerPlayer)this;
@@ -626,6 +587,17 @@
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
              }
  
+             this.m_21153_(1.0F);
++            removeAllEffectsCause.set(EntityPotionEffectEvent.Cause.TOTEM);
+             this.m_21219_();
++            addEffectCause.set(EntityPotionEffectEvent.Cause.TOTEM);
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 900, 1));
++            addEffectCause.set(EntityPotionEffectEvent.Cause.TOTEM);
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19617_, 100, 1));
++            addEffectCause.set(EntityPotionEffectEvent.Cause.TOTEM);
+             this.m_7292_(new MobEffectInstance(MobEffects.f_19607_, 800, 0));
+             this.f_19853_.m_7605_(this, (byte)35);
+          }
 @@ -1254,6 +_,7 @@
     }
  
