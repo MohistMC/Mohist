@@ -1,0 +1,91 @@
+--- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
+@@ -7,8 +_,15 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.DispenserBlock;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftVector;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
++
++   // CraftBukkit start // Mohist TODO super();
++   private boolean dropper = true;
++
+    public final ItemStack m_6115_(BlockSource p_123391_, ItemStack p_123392_) {
+       ItemStack itemstack = this.m_7498_(p_123391_, p_123392_);
+       this.m_6823_(p_123391_);
+@@ -20,7 +_,11 @@
+       Direction direction = p_123385_.m_6414_().m_61143_(DispenserBlock.f_52659_);
+       Position position = DispenserBlock.m_52720_(p_123385_);
+       ItemStack itemstack = p_123386_.m_41620_(1);
+-      m_123378_(p_123385_.m_7727_(), itemstack, 6, direction, position);
++      // CraftBukkit start
++      if (!spawnItem(p_123385_.m_7727_(), itemstack, 6, direction, p_123385_, dropper)){
++         itemstack.m_41769_(1);
++      }
++      // CraftBukkit end
+       return p_123386_;
+    }
+ 
+@@ -39,6 +_,59 @@
+       itementity.m_20334_(p_123379_.f_46441_.m_216328_((double)p_123382_.m_122429_() * d3, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_(0.2D, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_((double)p_123382_.m_122431_() * d3, 0.0172275D * (double)p_123381_));
+       p_123379_.m_7967_(itementity);
+    }
++
++   // Mohist start TODO
++   // CraftBukkit start
++   public static boolean spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, BlockSource isourceblock, boolean dropper) {
++      if (p_123380_.m_41619_()) return true;
++      Position iposition = DispenserBlock.m_52720_(isourceblock);
++      // CraftBukkit end
++      double d0 = iposition.m_7096_();
++      double d1 = iposition.m_7098_();
++      double d2 = iposition.m_7094_();
++      if (p_123382_.m_122434_() == Direction.Axis.Y) {
++         d1 -= 0.125D;
++      } else {
++         d1 -= 0.15625D;
++      }
++
++      ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
++      double d3 = p_123379_.f_46441_.m_188500_() * 0.1D + 0.2D;
++      itementity.m_20334_(p_123379_.f_46441_.m_216328_((double)p_123382_.m_122429_() * d3, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_(0.2D, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_((double)p_123382_.m_122431_() * d3, 0.0172275D * (double)p_123381_));
++
++      // CraftBukkit start
++      org.bukkit.block.Block block = p_123379_.getWorld().getBlockAt(isourceblock.m_7961_().m_123341_(), isourceblock.m_7961_().m_123342_(), isourceblock.m_7961_().m_123343_());
++      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123380_);
++
++      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.m_20184_()));
++      if (!DispenserBlock.eventFired) {
++         p_123379_.getCraftServer().getPluginManager().callEvent(event);
++      }
++
++      if (event.isCancelled()) {
++         return false;
++      }
++
++      itementity.m_32045_(CraftItemStack.asNMSCopy(event.getItem()));
++      itementity.m_20256_(CraftVector.toNMS(event.getVelocity()));
++
++      if (!dropper && !event.getItem().getType().equals(craftItem.getType())) {
++         // Chain to handler for new item
++         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++         DispenseItemBehavior idispensebehavior = DispenserBlock.f_52661_.get(eventStack.m_41720_());
++         if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
++            idispensebehavior.m_6115_(isourceblock, eventStack);
++         } else {
++            p_123379_.m_7967_(itementity);
++         }
++         return false;
++      }
++
++      p_123379_.m_7967_(itementity);
++      return true;
++   }
++   // CraftBukkit end
++   // Mohist end
+ 
+    protected void m_6823_(BlockSource p_123384_) {
+       p_123384_.m_7727_().m_46796_(1000, p_123384_.m_7961_(), 0);
