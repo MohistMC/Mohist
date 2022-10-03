@@ -1,57 +1,33 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -245,6 +_,55 @@
+@@ -11,6 +_,7 @@
+ import java.util.List;
+ import java.util.UUID;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.BiConsumer;
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
+@@ -197,7 +_,7 @@
+    }
+ 
+    protected void m_121281_() throws CommandSyntaxException {
+-      this.f_121189_ = true;
++      this.f_121189_ = !overridePermissions.getAndSet(false);
+       this.f_121176_ = this::m_121322_;
+       if (!this.f_121201_.canRead()) {
+          throw f_121193_.createWithContext(this.f_121201_);
+@@ -245,6 +_,14 @@
        }
     }
  
++   // Mohist start
++   protected AtomicBoolean overridePermissions = new AtomicBoolean(false);
 +   protected void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
-+      this.f_121189_ = !overridePermissions;
-+      this.f_121176_ = this::m_121322_;
-+      if (!this.f_121201_.canRead()) {
-+         throw f_121193_.createWithContext(this.f_121201_);
-+      } else {
-+         int i = this.f_121201_.getCursor();
-+         char c0 = this.f_121201_.read();
-+         if (c0 == 'p') {
-+            this.f_121203_ = 1;
-+            this.f_121204_ = false;
-+            this.f_121171_ = f_121197_;
-+            this.m_121241_(EntityType.f_20532_);
-+         } else if (c0 == 'a') {
-+            this.f_121203_ = Integer.MAX_VALUE;
-+            this.f_121204_ = false;
-+            this.f_121171_ = f_121196_;
-+            this.m_121241_(EntityType.f_20532_);
-+         } else if (c0 == 'r') {
-+            this.f_121203_ = 1;
-+            this.f_121204_ = false;
-+            this.f_121171_ = f_121199_;
-+            this.m_121241_(EntityType.f_20532_);
-+         } else if (c0 == 's') {
-+            this.f_121203_ = 1;
-+            this.f_121204_ = true;
-+            this.f_121172_ = true;
-+         } else {
-+            if (c0 != 'e') {
-+               this.f_121201_.setCursor(i);
-+               throw f_121191_.createWithContext(this.f_121201_, "@" + String.valueOf(c0));
-+            }
-+
-+            this.f_121203_ = Integer.MAX_VALUE;
-+            this.f_121204_ = true;
-+            this.f_121171_ = f_121196_;
-+            this.f_121170_ = Entity::m_6084_;
-+         }
-+
-+         this.f_121176_ = this::m_121333_;
-+         if (this.f_121201_.canRead() && this.f_121201_.peek() == '[') {
-+            this.f_121201_.skip();
-+            this.f_121176_ = this::m_121341_;
-+            this.m_121317_();
-+         }
-+
-+      }
++      this.overridePermissions.set(overridePermissions);
++      m_121281_();
 +   }
++   // Mohist end
 +
     protected void m_121304_() throws CommandSyntaxException {
        if (this.f_121201_.canRead()) {
@@ -66,30 +42,16 @@
           this.m_121281_();
        } else {
           this.m_121304_();
-@@ -470,12 +_,34 @@
+@@ -470,12 +_,20 @@
        return this.m_121230_();
     }
  
++   // Mohist start
 +   public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
-+      this.f_121174_ = this.f_121201_.getCursor();
-+      this.f_121176_ = this::m_121286_;
-+      if (this.f_121201_.canRead() && this.f_121201_.peek() == '@') {
-+         if (!this.f_121202_) {
-+            throw f_121192_.createWithContext(this.f_121201_);
-+         }
-+
-+         this.f_121201_.skip();
-+         EntitySelector forgeSelector = net.minecraftforge.common.command.EntitySelectorManager.parseSelector(this);
-+         if (forgeSelector != null)
-+            return forgeSelector;
-+         this.parseSelector(overridePermissions); // CraftBukkit
-+      } else {
-+         this.m_121304_();
-+      }
-+
-+      this.m_121229_();
-+      return this.m_121230_();
++      this.overridePermissions.set(overridePermissions);
++      return this.m_121377_();
 +   }
++   // Mohist end
 +
     private static void m_121247_(SuggestionsBuilder p_121248_) {
        p_121248_.suggest("@p", Component.m_237115_("argument.entity.selector.nearestPlayer"));

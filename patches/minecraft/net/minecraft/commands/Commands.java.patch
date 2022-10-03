@@ -56,14 +56,13 @@
        });
     }
  
--   public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
 +   public Commands() {
 +      this.f_82090_.setConsumer((p_82104_, p_82105_, p_82106_) -> {
 +         p_82104_.getSource().m_81342_(p_82104_, p_82105_, p_82106_);
 +      });
 +   }
 +   
-+      public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
+    public static <S> ParseResults<S> m_242611_(ParseResults<S> p_242928_, UnaryOperator<S> p_242890_) {
        CommandContextBuilder<S> commandcontextbuilder = p_242928_.getContext();
        CommandContextBuilder<S> commandcontextbuilder1 = commandcontextbuilder.withSource(p_242890_.apply(commandcontextbuilder.getSource()));
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
@@ -170,8 +169,8 @@
 +      this.m_82112_(vanilla, vanillaRoot, p_82096_.m_20203_(), (Map) map);
 +
 +      // Now build the global commands in a second pass
-+
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
++
        map.put(this.f_82090_.getRoot(), rootcommandnode);
 -      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
