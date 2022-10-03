@@ -84,4 +84,8 @@ public class UpdateUtils {
                 .mapToLong(File::length)
                 .sum();
     }
+
+    public static long getAllSizeOfUrl(String url) {
+        return getConn(url).getContentLength();
+    }
 }

@@ -38,14 +38,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
+    public static String MAVENURL = DownloadSource.get().getUrl();
+
+    public static String libUrl(File lib) {
+        return MAVENURL + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
+    }
 
     public static void run() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
-        String url = DownloadSource.get().getUrl();
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
+        AtomicLong allSize = new AtomicLong(); // global
         for (File lib : getDefaultLibs().keySet()) {
+            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             v_1_19.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
                 continue;
@@ -59,25 +65,24 @@ public class DefaultLibraries {
         for (File lib : defaultLibs) {
             lib.getParentFile().mkdirs();
 
-            String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
+            String u = libUrl(lib);
+            System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / allSize.get()) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
                 currentSize.addAndGet(lib.length());
-                fail.remove(u.replace(url, ""));
+                fail.remove(u.replace(MAVENURL, ""));
             } catch (Exception e) {
                 if (e.getMessage() != null && !e.getMessage().equals("md5")) {
                     System.out.println(i18n.get("file.download.nook", u));
                     lib.delete();
                 }
-                fail.put(u.replace(url, ""), lib.getAbsolutePath());
+                fail.put(u.replace(MAVENURL, ""), lib.getAbsolutePath());
             }
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (!fail.isEmpty()) {
-            run();
-        } else System.out.println(i18n.get("libraries.check.end"));
+        if (!fail.isEmpty()) run();
+        else System.out.println(i18n.get("libraries.check.end"));
     }
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
