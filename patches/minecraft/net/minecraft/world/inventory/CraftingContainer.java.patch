@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/CraftingContainer.java
 +++ b/net/minecraft/world/inventory/CraftingContainer.java
-@@ -6,12 +_,86 @@
+@@ -6,12 +_,87 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.player.StackedContents;
  import net.minecraft.world.item.ItemStack;
@@ -49,10 +49,11 @@
 +      return (owner == null) ? null : owner.getBukkitEntity();
 +   }
 +
++   // Mohist start
 +   public void setOwner(Player owner) {
 +      this.owner = owner;
 +   }
-+
++   // Mohist end
 +
 +   @Override
 +   public int m_6893_() {

@@ -1,7 +1,26 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -34,6 +_,7 @@
+@@ -16,6 +_,9 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryGrindstone;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
+ 
+ public class GrindstoneMenu extends AbstractContainerMenu {
+    public static final int f_150565_ = 35;
+@@ -32,8 +_,16 @@
+          super.m_6596_();
+          GrindstoneMenu.this.m_6199_(this);
        }
++
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return GrindstoneMenu.this.f_39561_.getLocation();
++      }
++      // CraftBukkit end
     };
     private final ContainerLevelAccess f_39561_;
 +   private int xp = -1;
@@ -39,6 +58,15 @@
              int l = 0;
              l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(0));
              l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(1));
+@@ -106,7 +_,7 @@
+       for(int k = 0; k < 9; ++k) {
+          this.m_38897_(new Slot(p_39567_, k, 8 + k * 18, 142));
+       }
+-
++      player = (org.bukkit.entity.Player) p_39567_.f_35978_.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    public void m_6199_(Container p_39570_) {
 @@ -122,6 +_,8 @@
        ItemStack itemstack1 = this.f_39560_.m_8020_(1);
        boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
@@ -76,3 +104,32 @@
              itemstack.m_41663_(enchantment, entry.getValue());
           }
        }
+@@ -221,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39572_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return m_38889_(this.f_39561_, p_39572_, Blocks.f_50623_);
+    }
+ 
+@@ -269,4 +_,20 @@
+ 
+       return itemstack;
+    }
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.entity.Player player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.f_39560_, this.f_39559_);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++    // CraftBukkit end
+ }

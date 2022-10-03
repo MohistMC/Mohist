@@ -1,19 +1,22 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
-@@ -13,6 +_,8 @@
+@@ -11,8 +_,12 @@
+ import net.minecraft.world.item.crafting.CraftingRecipe;
+ import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.crafting.RecipeType;
++import net.minecraft.world.item.crafting.RepairItemRecipe;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryCrafting;
 +import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150539_ = 0;
-@@ -26,6 +_,20 @@
-    public final ResultContainer f_39349_ = new ResultContainer();
+@@ -27,6 +_,20 @@
     public final ContainerLevelAccess f_39350_;
     private final Player f_39351_;
-+
+ 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   @Override
@@ -27,6 +30,34 @@
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
- 
++
     public CraftingMenu(int p_39353_, Inventory p_39354_) {
        this(p_39353_, p_39354_, ContainerLevelAccess.f_39287_);
+    }
+@@ -35,6 +_,8 @@
+       super(MenuType.f_39968_, p_39356_);
+       this.f_39350_ = p_39358_;
+       this.f_39351_ = p_39357_.f_35978_;
++      this.f_39348_.setOwner(p_39357_.f_35978_); // CraftBukkit - pass player // Mohist
++      this.f_39348_.resultInventory = this.f_39349_;
+       this.m_38897_(new ResultSlot(p_39357_.f_35978_, this.f_39348_, this.f_39349_, 0, 124, 35));
+ 
+       for(int i = 0; i < 3; ++i) {
+@@ -67,6 +_,9 @@
+             }
+          }
+ 
++         itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof RepairItemRecipe); // CraftBukkit
++
++
+          p_150551_.m_6836_(0, itemstack);
+          p_150547_.m_150404_(0, itemstack);
+          serverplayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(p_150547_.f_38840_, p_150547_.m_182425_(), 0, itemstack));
+@@ -100,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39368_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return m_38889_(this.f_39350_, p_39368_, Blocks.f_50091_);
+    }
+ 

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
+@@ -15,6 +_,7 @@
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.BiConsumer;
+ import java.util.function.Predicate;
 @@ -31,6 +_,7 @@
  import net.minecraft.commands.arguments.EntityAnchorArgument;
  import net.minecraft.core.BlockPos;
@@ -8,13 +16,14 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.BlockParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -116,9 +_,12 @@
+@@ -116,9 +_,13 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Bukkit;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
++import org.bukkit.event.entity.EntityCombustEvent;
  import org.slf4j.Logger;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
@@ -49,7 +58,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -230,13 +_,67 @@
+@@ -230,13 +_,72 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -73,6 +82,11 @@
 +
 +   public float getBukkitYaw() {
 +      return this.f_19857_;
++   }
++
++   private static final int CURRENT_LEVEL = 2;
++   static boolean isLevelAtLeast(CompoundTag tag, int level) {
++      return tag.m_128441_("Bukkit.updateLevel") && tag.m_128451_("Bukkit.updateLevel") >= level;
 +   }
 +
 +   private CraftEntity bukkitEntity;
@@ -147,6 +161,39 @@
        }
  
        this.m_146871_();
+@@ -508,6 +_,17 @@
+    }
+ 
+    public void m_20254_(int p_20255_) {
++      if (this.callEvent.getAndSet(true)) {
++         EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), p_20255_);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return;
++         }
++
++         p_20255_ = event.getDuration();
++      }
++      // CraftBukkit end
+       int i = p_20255_ * 20;
+       if (this instanceof LivingEntity) {
+          i = ProtectionEnchantment.m_45138_((LivingEntity)this, i);
+@@ -519,6 +_,14 @@
+ 
+    }
+ 
++   // Mohist start
++   public AtomicBoolean callEvent = new AtomicBoolean(true);
++   public void setSecondsOnFire(int i, boolean callEvent) {
++      this.callEvent.set(callEvent);
++      m_20254_(i);
++   }
++   // Mohist end
++
+    public void m_7311_(int p_20269_) {
+       this.f_19831_ = p_20269_;
+    }
 @@ -623,7 +_,7 @@
                 double d1 = vec3.f_82479_;
                 double d2 = vec3.f_82480_;

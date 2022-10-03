@@ -23,8 +23,12 @@
     private static final Logger f_219722_ = LogUtils.getLogger();
     public static final int f_150082_ = 16;
     public static final int f_150083_ = 20;
-@@ -139,7 +_,7 @@
-    protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
+@@ -136,10 +_,10 @@
+    protected static final EntityDataAccessor<CompoundTag> f_36092_ = SynchedEntityData.m_135353_(Player.class, EntityDataSerializers.f_135042_);
+    private long f_36109_;
+    private final Inventory f_36093_ = new Inventory(this);
+-   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
++   protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
     public final InventoryMenu f_36095_;
     public AbstractContainerMenu f_36096_;
 -   protected FoodData f_36097_ = new FoodData();

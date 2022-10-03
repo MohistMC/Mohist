@@ -1,14 +1,36 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -71,6 +_,11 @@
+@@ -6,6 +_,8 @@
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.NonNullList;
+@@ -22,6 +_,7 @@
+ import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.Mth;
+@@ -71,6 +_,16 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.level.storage.loot.LootContext;
++import org.apache.logging.log4j.core.jmx.Server;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.EntityUnleashEvent;
++import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
  
  public abstract class Mob extends LivingEntity {
     private static final EntityDataAccessor<Byte> f_21340_ = SynchedEntityData.m_135353_(Mob.class, EntityDataSerializers.f_135027_);
@@ -41,42 +63,47 @@
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
-@@ -210,7 +_,40 @@
+@@ -210,7 +_,44 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
-+      setTarget(p_21544_, EntityTargetEvent.TargetReason.UNKNOWN, true);
+-      this.f_21362_ = p_21544_;
++      if (m_5448_() == p_21544_) return;
++      EntityTargetEvent.TargetReason reason = EntityTargetEvent.TargetReason.UNKNOWN;
++      if (reason == EntityTargetEvent.TargetReason.UNKNOWN && m_5448_() != null && p_21544_ == null) {
++         reason = m_5448_().m_6084_() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
++      }
++
++      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
++      EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (CraftLivingEntity) changeTargetEvent.getNewTarget().getBukkitEntity(), reason);
++      f_19853_.getCraftServer().getPluginManager().callEvent(event);
++      event.setCancelled(changeTargetEvent.isCanceled());
++      changeTargetEvent.setCanceled(event.isCancelled());
++      if(!changeTargetEvent.isCanceled()) {
++         this.f_21362_ = changeTargetEvent.getNewTarget();
++         net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_); // TODO: Remove in 1.20
++      }
++      // CraftBukkit end
 +   }
 +
++   // Mohist TODO
 +   public boolean setTarget(@Nullable LivingEntity p_21544_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
 +      if (m_5448_() == p_21544_) return false;
 +      if (fireEvent) {
 +         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && m_5448_() != null && p_21544_ == null) {
 +            reason = m_5448_().m_6084_() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
 +         }
-+         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
-+            net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
-+            if(!changeTargetEvent.isCanceled()) {
-+               this.f_21362_ = changeTargetEvent.getNewTarget();
-+               net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_); // TODO: Remove in 1.20
-+            }
-+         }
-+         CraftLivingEntity ctarget = null;
-+         if (p_21544_ != null) {
-+            ctarget = (CraftLivingEntity) p_21544_.getBukkitEntity();
-+         }
-+         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
++
++         net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
++         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), (CraftLivingEntity) changeTargetEvent.getNewTarget().getBukkitEntity(), reason);
 +         f_19853_.getCraftServer().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         if (event.getTarget() != null) {
-+            p_21544_ = ((CraftLivingEntity) event.getTarget()).getHandle();
-+         } else {
-+            p_21544_ = null;
++         event.setCancelled(changeTargetEvent.isCanceled());
++         changeTargetEvent.setCanceled(event.isCancelled());
++         if(!changeTargetEvent.isCanceled()) {
++            this.f_21362_ = changeTargetEvent.getNewTarget();
++            net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_); // TODO: Remove in 1.20
 +         }
 +      }
-       this.f_21362_ = p_21544_;
 +      return true;
 +      // CraftBukkit end
     }
@@ -95,6 +122,44 @@
     public void m_7380_(CompoundTag p_21484_) {
        super.m_7380_(p_21484_);
        p_21484_.m_128379_("CanPickUpLoot", this.m_21531_());
+@@ -408,15 +_,23 @@
+          p_21484_.m_128379_("NoAI", this.m_21525_());
+       }
+ 
++      p_21484_.m_128379_("Bukkit.Aware", this.aware); // CraftBukkit
+    }
+ 
+    public void m_7378_(CompoundTag p_21450_) {
+       super.m_7378_(p_21450_);
+       if (p_21450_.m_128425_("CanPickUpLoot", 1)) {
+-         this.m_21553_(p_21450_.m_128471_("CanPickUpLoot"));
++         boolean data = p_21450_.m_128471_("CanPickUpLoot");
++         if (isLevelAtLeast(p_21450_, 1) || data) {
++            this.m_21553_(data);
++         }
+       }
+ 
+-      this.f_21353_ = p_21450_.m_128471_("PersistenceRequired");
++      boolean data = p_21450_.m_128471_("PersistenceRequired");
++      if (isLevelAtLeast(p_21450_, 1) || data) {
++         this.f_21353_ = data;
++      }
++      // CraftBukkit end
+       if (p_21450_.m_128425_("ArmorItems", 9)) {
+          ListTag listtag = p_21450_.m_128437_("ArmorItems", 10);
+ 
+@@ -460,6 +_,11 @@
+       }
+ 
+       this.m_21557_(p_21450_.m_128471_("NoAI"));
++      // CraftBukkit start
++      if (p_21450_.m_128441_("Bukkit.Aware")) {
++         this.aware = p_21450_.m_128471_("Bukkit.Aware");
++      }
++      // CraftBukkit end
+    }
+ 
+    protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
 @@ -499,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
@@ -106,6 +171,49 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
+@@ -518,6 +_,7 @@
+ 
+    protected void m_7581_(ItemEntity p_21471_) {
+       ItemStack itemstack = p_21471_.m_32055_();
++      this.entityitem.set(p_21471_); // Mohist
+       if (this.m_21540_(itemstack)) {
+          this.m_21053_(p_21471_);
+          this.m_7938_(p_21471_, itemstack.m_41613_());
+@@ -530,10 +_,18 @@
+       EquipmentSlot equipmentslot = m_147233_(p_21541_);
+       ItemStack itemstack = this.m_6844_(equipmentslot);
+       boolean flag = this.m_7808_(p_21541_, itemstack);
+-      if (flag && this.m_7252_(p_21541_)) {
++      // CraftBukkit start
++      boolean canPickup = flag && this.m_7252_(itemstack);
++      if (entityitem.get() != null) {
++         canPickup = !CraftEventFactory.callEntityPickupItemEvent(this, entityitem.getAndSet(null), 0, !canPickup).isCancelled();
++      }
++      if (canPickup) {
++         // CraftBukkit end
+          double d0 = (double)this.m_21519_(equipmentslot);
+          if (!itemstack.m_41619_() && (double)Math.max(this.f_19796_.m_188501_() - 0.1F, 0.0F) < d0) {
++            this.forceDrops = true; // CraftBukkit
+             this.m_19983_(itemstack);
++            this.forceDrops = false; // CraftBukkit
+          }
+ 
+          this.m_21468_(equipmentslot, p_21541_);
+@@ -543,6 +_,14 @@
+       }
+    }
+ 
++   // Mohist start
++   public AtomicReference<ItemEntity> entityitem = new AtomicReference<>(null);
++   public boolean equipItemIfPossible(ItemStack itemstack, ItemEntity entityitem) {
++      this.entityitem.set(entityitem);
++      return m_21540_(itemstack);
++   }
++   // Mohist end
++
+    protected void m_21468_(EquipmentSlot p_21469_, ItemStack p_21470_) {
+       this.m_8061_(p_21469_, p_21470_);
+       this.m_21508_(p_21469_);
 @@ -657,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
@@ -121,27 +229,131 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1007,6 +_,10 @@
+@@ -681,6 +_,7 @@
+ 
+    protected final void m_6140_() {
+       ++this.f_20891_;
++      if (!this.aware) return; // CraftBukkit
+       this.f_19853_.m_46473_().m_6180_("sensing");
+       this.f_21349_.m_26789_();
+       this.f_19853_.m_46473_().m_7238_();
+@@ -1007,6 +_,12 @@
        this.f_21353_ = true;
     }
  
++   // CraftBukkit start
 +   public void setPersistenceRequired(boolean persistenceRequired) {
 +      this.f_21353_ = persistenceRequired;
 +   }
++   // CraftBukkit end
 +
     public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
        switch (p_21410_.m_20743_()) {
           case HAND:
-@@ -1130,6 +_,12 @@
+@@ -1039,6 +_,12 @@
+       if (!this.m_6084_()) {
+          return InteractionResult.PASS;
+       } else if (this.m_21524_() == p_21420_) {
++         // CraftBukkit start - fire PlayerUnleashEntityEvent
++         if (CraftEventFactory.callPlayerUnleashEntityEvent(this, p_21420_, p_21421_).isCancelled()) {
++            ((ServerPlayer) p_21420_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(this, this.m_21524_()));
++            return InteractionResult.PASS;
++         }
++         // CraftBukkit end
+          this.m_21455_(true, !p_21420_.m_150110_().f_35937_);
+          return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+       } else {
+@@ -1060,6 +_,12 @@
+    private InteractionResult m_21499_(Player p_21500_, InteractionHand p_21501_) {
+       ItemStack itemstack = p_21500_.m_21120_(p_21501_);
+       if (itemstack.m_150930_(Items.f_42655_) && this.m_6573_(p_21500_)) {
++         // CraftBukkit start - fire PlayerLeashEntityEvent
++         if (CraftEventFactory.callPlayerLeashEntityEvent(this, p_21500_, p_21500_, p_21501_).isCancelled()) {
++            ((ServerPlayer) p_21500_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(this, this.m_21524_()));
++            return InteractionResult.PASS;
++         }
++                    // CraftBukkit end
+          this.m_21463_(p_21500_, true);
+          itemstack.m_41774_(1);
+          return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+@@ -1160,7 +_,12 @@
+             }
+          }
  
-    @Nullable
-    public <T extends Mob> T m_21406_(EntityType<T> p_21407_, boolean p_21408_) {
-+      return this.convertTo(p_21407_, p_21408_, EntityTransformEvent.TransformReason.UNKNOWN, CreatureSpawnEvent.SpawnReason.DEFAULT);
+-         this.f_19853_.m_7967_(t);
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, t, this.transformReason.getAndSet(EntityTransformEvent.TransformReason.UNKNOWN)).isCancelled()) {
++            return null;
++         }
++         this.f_19853_.addFreshEntity(t, this.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT));
++         // CraftBukkit end
+          if (this.m_20159_()) {
+             Entity entity = this.m_20202_();
+             this.m_8127_();
+@@ -1172,6 +_,20 @@
+       }
+    }
+ 
++   // Mohist start
++   public AtomicReference<EntityTransformEvent.TransformReason> transformReason = new AtomicReference<>(EntityTransformEvent.TransformReason.UNKNOWN);
++   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
++   public void transformReasonAndspawnReason(EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
++      this.transformReason.set(transformReason);
++      this.spawnReason.set(spawnReason);
 +   }
-+
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      // CraftBukkit end
-       if (this.m_213877_()) {
-          return (T)null;
-       } else {
++      transformReasonAndspawnReason(transformReason, spawnReason);
++      return m_21406_(p_21407_, p_21408_);
++   }
++   // Mohist end
++
+    protected void m_6119_() {
+       if (this.f_21359_ != null) {
+          this.m_21528_();
+@@ -1238,6 +_,7 @@
+    public boolean m_7998_(Entity p_21396_, boolean p_21397_) {
+       boolean flag = super.m_7998_(p_21396_, p_21397_);
+       if (flag && this.m_21523_()) {
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), UnleashReason.UNKNOWN)); // CraftBukkit
+          this.m_21455_(true, true);
+       }
+ 
+@@ -1260,7 +_,9 @@
+          }
+ 
+          if (this.f_19797_ > 100) {
++            this.forceDrops = true; // CraftBukkit
+             this.m_19998_(Items.f_42655_);
++            this.forceDrops = false; // CraftBukkit
+             this.f_21359_ = null;
+          }
+       }
+@@ -1328,7 +_,14 @@
+ 
+       int i = EnchantmentHelper.m_44914_(this);
+       if (i > 0) {
+-         p_21372_.m_20254_(i * 4);
++         // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
++         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_21372_.getBukkitEntity(), i * 4);
++         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++
++         if (!combustEvent.isCancelled()) {
++            p_21372_.setSecondsOnFire(combustEvent.getDuration(), false);
++         }
++         // CraftBukkit end
+       }
+ 
+       boolean flag = p_21372_.m_6469_(DamageSource.m_19370_(this), f);
+@@ -1390,9 +_,10 @@
+ 
+    protected void m_6089_() {
+       super.m_6089_();
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), UnleashReason.UNKNOWN)); // CraftBukkit
+       this.m_21455_(true, false);
+       this.m_20158_().forEach((p_181125_) -> {
+-         p_181125_.m_41764_(0);
++         if (!p_181125_.m_41619_()) p_181125_.m_41764_(0); // CraftBukkit
+       });
+    }
+ 

@@ -1,0 +1,57 @@
+--- a/net/minecraft/world/inventory/SmithingMenu.java
++++ b/net/minecraft/world/inventory/SmithingMenu.java
+@@ -10,12 +_,19 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventorySmithing;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
+ 
+ public class SmithingMenu extends ItemCombinerMenu {
+    private final Level f_40241_;
+    @Nullable
+    private UpgradeRecipe f_40242_;
+    private final List<UpgradeRecipe> f_40243_;
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity;
++   // CraftBukkit end
+ 
+    public SmithingMenu(int p_40245_, Inventory p_40246_) {
+       this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);
+@@ -54,12 +_,15 @@
+    public void m_6640_() {
+       List<UpgradeRecipe> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
+       if (list.isEmpty()) {
+-         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
++         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+       } else {
+          this.f_40242_ = list.get(0);
+          ItemStack itemstack = this.f_40242_.m_5874_(this.f_39769_);
+          this.f_39768_.m_6029_(this.f_40242_);
+          this.f_39768_.m_6836_(0, itemstack);
++         // CraftBukkit start
++         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -73,4 +_,17 @@
+    public boolean m_5882_(ItemStack p_40257_, Slot p_40258_) {
+       return p_40258_.f_40218_ != this.f_39768_ && super.m_5882_(p_40257_, p_40258_);
+    }
++
++   // CraftBukkit start
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventory inventory = new CraftInventorySmithing(f_39770_.getLocation(), this.f_39769_, this.f_39768_);
++      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ }

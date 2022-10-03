@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/inventory/LoomMenu.java
++++ b/net/minecraft/world/inventory/LoomMenu.java
+@@ -23,6 +_,9 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.entity.BannerPattern;
+ import net.minecraft.world.level.block.entity.BlockEntityType;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryLoom;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftInventoryView;
+ 
+ public class LoomMenu extends AbstractContainerMenu {
+    private static final int f_219989_ = -1;
+@@ -46,12 +_,24 @@
+          LoomMenu.this.m_6199_(this);
+          LoomMenu.this.f_39847_.run();
+       }
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return LoomMenu.this.f_39845_.getLocation();
++      }
++      // CraftBukkit end
+    };
+    private final Container f_39854_ = new SimpleContainer(1) {
+       public void m_6596_() {
+          super.m_6596_();
+          LoomMenu.this.f_39847_.run();
+       }
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return LoomMenu.this.f_39845_.getLocation();
++      }
++      // CraftBukkit end
+    };
+ 
+    public LoomMenu(int p_39856_, Inventory p_39857_) {
+@@ -111,9 +_,11 @@
+       }
+ 
+       this.m_38895_(this.f_39846_);
++      player = (org.bukkit.entity.Player) p_39860_.f_35978_.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    public boolean m_6875_(Player p_39865_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return m_38889_(this.f_39845_, p_39865_, Blocks.f_50617_);
+    }
+ 
+@@ -314,4 +_,20 @@
+    public Slot m_39897_() {
+       return this.f_39851_;
+    }
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private org.bukkit.entity.Player player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryLoom inventory = new CraftInventoryLoom(this.f_39853_, this.f_39854_);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ }
