@@ -1,12 +1,10 @@
 --- a/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -1,13 +_,24 @@
+@@ -1,13 +_,19 @@
  package net.minecraft.server.network;
  
 +import com.mohistmc.api.event.MohistServerListPingEvent;
 +import com.mojang.authlib.GameProfile;
-+import java.net.InetSocketAddress;
-+import java.util.Iterator;
 +import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
@@ -19,9 +17,6 @@
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_19_R1.util.CraftIconCache;
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.server.ServerListPingEvent;
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
     private static final Component f_10081_ = Component.m_237115_("multiplayer.status.request_handled");
