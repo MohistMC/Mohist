@@ -28,7 +28,7 @@
 +   public int starvationRate = 80;
 +   // CraftBukkit end
 +
-+   // CraftBukkit start - added EntityHuman constructor
++   // CraftBukkit start - added Player constructor
 +   public FoodData(Player entityhuman) {
 +      org.apache.commons.lang3.Validate.notNull(entityhuman);
 +      this.entityhuman = entityhuman;

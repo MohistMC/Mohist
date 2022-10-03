@@ -23,6 +23,15 @@
     private static final Logger f_219722_ = LogUtils.getLogger();
     public static final int f_150082_ = 16;
     public static final int f_150083_ = 20;
+@@ -139,7 +_,7 @@
+    protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
+    public final InventoryMenu f_36095_;
+    public AbstractContainerMenu f_36096_;
+-   protected FoodData f_36097_ = new FoodData();
++   protected FoodData f_36097_ = new FoodData(this); // CraftBukkit - add "this" to constructor
+    protected WardenSpawnTracker f_219724_ = new WardenSpawnTracker(0, 0, 0);
+    protected int f_36098_;
+    public float f_36099_;
 @@ -169,6 +_,19 @@
     private Optional<GlobalPos> f_238176_ = Optional.empty();
     @Nullable
