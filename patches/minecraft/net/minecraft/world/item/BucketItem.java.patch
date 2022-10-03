@@ -1,11 +1,8 @@
 --- a/net/minecraft/world/item/BucketItem.java
 +++ b/net/minecraft/world/item/BucketItem.java
-@@ -30,16 +_,30 @@
- import net.minecraft.world.phys.HitResult;
- 
+@@ -32,14 +_,28 @@
  public class BucketItem extends Item implements DispensibleContainerItem {
--   private final Fluid f_40687_;
-+   public final Fluid f_40687_;
+    private final Fluid f_40687_;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated

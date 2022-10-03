@@ -317,7 +317,7 @@
 +            int z = blockpos.m_123343_();
 +            BlockState iblockdata = level.m_8055_(blockpos);
 +            Material material = iblockdata.m_60767_();
-+            if (level.m_46859_(blockpos) || !material.m_76333_() || material.m_76336_() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.m_60734_() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.m_60734_()).m_6044_(level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).f_40687_))) {
++            if (level.m_46859_(blockpos) || !material.m_76333_() || material.m_76336_() || (dispensiblecontaineritem instanceof BucketItem && iblockdata.m_60734_() instanceof LiquidBlockContainer && ((LiquidBlockContainer) iblockdata.m_60734_()).m_6044_(level, blockpos, iblockdata, ((BucketItem) dispensiblecontaineritem).getFluid()))) {
 +               org.bukkit.block.Block block = level.getWorld().getBlockAt(p_123561_.m_7961_().m_123341_(), p_123561_.m_7961_().m_123342_(), p_123561_.m_7961_().m_123343_());
 +               CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123562_);
 +
