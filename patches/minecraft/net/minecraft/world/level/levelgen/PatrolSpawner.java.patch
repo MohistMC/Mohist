@@ -1,10 +1,22 @@
 --- a/net/minecraft/world/level/levelgen/PatrolSpawner.java
 +++ b/net/minecraft/world/level/levelgen/PatrolSpawner.java
-@@ -104,6 +_,7 @@
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.level.NaturalSpawner;
+ import net.minecraft.world.level.biome.Biome;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class PatrolSpawner implements CustomSpawner {
+    private int f_64562_;
+@@ -104,8 +_,10 @@
              }
  
              patrollingmonster.m_6034_((double)p_224534_.m_123341_(), (double)p_224534_.m_123342_(), (double)p_224534_.m_123343_());
 +            if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollingmonster, p_224533_, p_224534_.m_123341_(), p_224534_.m_123342_(), p_224534_.m_123343_(), null, MobSpawnType.PATROL) == -1) return false;
              patrollingmonster.m_6518_(p_224533_, p_224533_.m_6436_(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
-             p_224533_.m_47205_(patrollingmonster);
+-            p_224533_.m_47205_(patrollingmonster);
++            p_224533_.addEntityspawnReason.set(CreatureSpawnEvent.SpawnReason.PATROL); // Mohist
++            p_224533_.m_47205_(patrollingmonster); // CraftBukkit ↑
              return true;
+          } else {
+             return false;

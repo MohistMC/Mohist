@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
++++ b/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
+@@ -26,6 +_,9 @@
+ import net.minecraft.world.level.gameevent.PositionSource;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey;
++import org.bukkit.event.block.BlockReceiveGameEvent;
+ 
+ public class VibrationListener implements GameEventListener {
+    protected final PositionSource f_157887_;
+@@ -100,7 +_,14 @@
+             } else {
+                Vec3 vec3 = p_223768_.m_223743_();
+                Vec3 vec31 = optional.get();
+-               if (!this.f_157889_.m_213641_(p_223767_, this, new BlockPos(vec3), gameevent, gameevent$context)) {
++               // CraftBukkit start
++               boolean defaultCancel = !this.f_157889_.m_213641_(p_223767_, this, new BlockPos(vec3), gameevent, gameevent$context);
++               Entity entity = gameevent$context.f_223711_();
++               BlockReceiveGameEvent event = new BlockReceiveGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(Registry.f_175412_.m_7981_(gameevent))), CraftBlock.at(p_223767_, new BlockPos(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++               event.setCancelled(defaultCancel);
++               p_223767_.getCraftServer().getPluginManager().callEvent(event);
++               if (event.isCancelled()) {
++                  // CraftBukkit end
+                   return false;
+                } else if (m_223775_(p_223767_, vec3, vec31)) {
+                   return false;

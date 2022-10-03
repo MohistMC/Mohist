@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
+@@ -23,6 +_,7 @@
+ import net.minecraft.nbt.IntTag;
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.NbtUtils;
++import net.minecraft.nbt.Tag;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.Clearable;
+ import net.minecraft.world.entity.Entity;
 @@ -50,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
@@ -132,3 +140,43 @@
                    ((Mob)p_205061_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
                 }
  
+@@ -406,11 +_,7 @@
+    }
+ 
+    private static Optional<Entity> m_74543_(ServerLevelAccessor p_74544_, CompoundTag p_74545_) {
+-      try {
+-         return EntityType.m_20642_(p_74545_, p_74544_.m_6018_());
+-      } catch (Exception exception) {
+-         return Optional.empty();
+-      }
++      return EntityType.m_20642_(p_74545_, p_74544_.m_6018_());
+    }
+ 
+    public Vec3i m_163808_(Rotation p_163809_) {
+@@ -602,6 +_,13 @@
+       p_74619_.m_128365_("entities", listtag);
+       p_74619_.m_128365_("size", this.m_74625_(this.f_74484_.m_123341_(), this.f_74484_.m_123342_(), this.f_74484_.m_123343_()));
+       p_74619_.m_128405_("DataVersion", SharedConstants.m_183709_().getWorldVersion());
++
++      // CraftBukkit Start - PDC
++      if (!this.persistentDataContainer.isEmpty()) {
++         p_74619_.m_128365_("BukkitValues", this.persistentDataContainer.toTagCompound());
++      }
++      // CraftBukkit end
++
+       return p_74619_;
+    }
+ 
+@@ -635,6 +_,12 @@
+          }
+       }
+ 
++      // CraftBukkit start - PDC
++      Tag base = p_74639_.m_128423_("BukkitValues");
++      if (base instanceof CompoundTag) {
++         this.persistentDataContainer.putAll((CompoundTag) base);
++      }
++      // CraftBukkit end
+    }
+ 
+    private void m_74620_(ListTag p_74621_, ListTag p_74622_) {

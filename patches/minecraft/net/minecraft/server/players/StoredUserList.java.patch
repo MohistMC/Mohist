@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/players/StoredUserList.java
++++ b/net/minecraft/server/players/StoredUserList.java
+@@ -165,4 +_,10 @@
+ 
+       }
+    }
++
++   // CraftBukkit start
++   public Collection<V> getValues() {
++      return this.f_11377_.values();
++   }
++   // CraftBukkit end
+ }

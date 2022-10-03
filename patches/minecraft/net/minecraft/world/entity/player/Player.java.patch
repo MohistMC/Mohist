@@ -1,10 +1,20 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -112,9 +_,11 @@
+@@ -12,6 +_,7 @@
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.OptionalInt;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.SharedConstants;
+@@ -112,9 +_,13 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityExhaustionEvent;
  import org.slf4j.Logger;
  
 -public abstract class Player extends LivingEntity {
@@ -407,6 +417,34 @@
        this.f_36078_ += p_36276_;
        if (this.f_36078_ < 0) {
           this.f_36078_ = 0;
+@@ -1626,11 +_,26 @@
+    public void m_36399_(float p_36400_) {
+       if (!this.f_36077_.f_35934_) {
+          if (!this.f_19853_.f_46443_) {
+-            this.f_36097_.m_38703_(p_36400_);
++            // CraftBukkit start
++            EntityExhaustionEvent event = CraftEventFactory.callPlayerExhaustionEvent(this, this.reason.getAndSet(EntityExhaustionEvent.ExhaustionReason.UNKNOWN), p_36400_);
++            if (!event.isCancelled()) {
++               this.f_36097_.m_38703_(event.getExhaustion());
++            }
++            // CraftBukkit end
+          }
+ 
+       }
+    }
++
++   // Mohist start
++   // CraftBukkit start
++   public AtomicReference<EntityExhaustionEvent.ExhaustionReason> reason = new AtomicReference<>(EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
++   public void causeFoodExhaustion(float f, EntityExhaustionEvent.ExhaustionReason reason) {
++      this.reason.set(reason);
++      m_36399_(f);
++   }
++   // CraftBukkit end
++   // Mohist end
+ 
+    public WardenSpawnTracker m_219758_() {
+       return this.f_219724_;
 @@ -1791,7 +_,11 @@
     }
  

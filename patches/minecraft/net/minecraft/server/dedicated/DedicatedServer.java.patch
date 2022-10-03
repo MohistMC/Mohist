@@ -98,8 +98,11 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -178,7 +_,7 @@
+@@ -176,9 +_,10 @@
+          if (dedicatedserverproperties.f_139747_) {
+             f_139598_.info("Starting remote control listener");
              this.f_139603_ = RconThread.m_11615_(this);
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_19_R1.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
           }
  
 -         if (this.m_139669_() > 0L) {
@@ -122,6 +125,14 @@
        }
     }
  
+@@ -282,6 +_,7 @@
+          this.f_139601_.m_7530_();
+       }
+ 
++      System.exit(0); // CraftBukkit
+    }
+ 
+    public void m_5703_(BooleanSupplier p_139661_) {
 @@ -300,7 +_,16 @@
     public void m_139665_() {
        while(!this.f_139600_.isEmpty()) {
@@ -195,10 +206,15 @@
        });
        return this.f_139602_.m_11513_();
     }
-@@ -546,5 +_,10 @@
+@@ -546,5 +_,15 @@
  
     public Optional<MinecraftServer.ServerResourcePackInfo> m_214042_() {
        return this.f_139604_.m_139777_().f_214802_;
++   }
++
++   // CraftBukkit start
++   public boolean isDebugging() {
++      return this.m_7913_().debug;
 +   }
 +
 +   @Override

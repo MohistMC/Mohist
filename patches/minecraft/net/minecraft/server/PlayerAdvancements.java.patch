@@ -1,5 +1,18 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
+@@ -154,7 +_,11 @@
+                for(Map.Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
+                   Advancement advancement = p_136007_.m_136041_(entry.getKey());
+                   if (advancement == null) {
+-                     f_135958_.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.f_135963_);
++                     // CraftBukkit start
++                     if (entry.getKey().m_135827_().equals("minecraft")) {
++                        f_135958_.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.f_135963_);
++                     }
++                     // CraftBukkit end
+                   } else {
+                      this.m_135985_(advancement, entry.getValue());
+                   }
 @@ -178,6 +_,10 @@
        }
  

@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/level/redstone/NeighborUpdater.java
++++ b/net/minecraft/world/level/redstone/NeighborUpdater.java
+@@ -8,10 +_,15 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.Registry;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
++import org.bukkit.event.block.BlockPhysicsEvent;
+ 
+ public interface NeighborUpdater {
+    Direction[] f_230761_ = new Direction[]{Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH};
+@@ -39,6 +_,17 @@
+ 
+    static void m_230763_(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
+       try {
++         // CraftBukkit start
++         CraftWorld cworld = p_230764_.getWorld();
++         if (cworld != null) {
++            BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(p_230764_, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(p_230764_, p_230768_));
++            p_230764_.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++               return;
++            }
++         }
++                    // CraftBukkit end
+          p_230765_.m_60690_(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception while updating neighbours");

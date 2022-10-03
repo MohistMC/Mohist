@@ -53,8 +53,8 @@ public class ForgeInjectBukkit {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
-        //addEnumEnchantment();
-        //addEnumPotion();
+        addEnumEnchantment();
+        addEnumPotion();
         //addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
@@ -105,7 +105,6 @@ public class ForgeInjectBukkit {
         for (Map.Entry<ResourceKey<Enchantment>, Enchantment> entry : ForgeRegistries.ENCHANTMENTS.getEntries()) {
             org.bukkit.enchantments.Enchantment.registerEnchantment(new CraftEnchantment(entry.getValue()));
         }
-        org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
     }
 
     public static void addEnumPotion() {
@@ -114,7 +113,6 @@ public class ForgeInjectBukkit {
             PotionEffectType pet = new CraftPotionEffectType(entry.getValue());
             PotionEffectType.registerPotionEffectType(pet);
         }
-        PotionEffectType.stopAcceptingRegistrations();
     }
 
     public static void addEnumBiome() {

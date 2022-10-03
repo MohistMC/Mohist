@@ -10,6 +10,15 @@
  
     public Explosion(Level p_151471_, @Nullable Entity p_151472_, double p_151473_, double p_151474_, double p_151475_, float p_151476_) {
        this(p_151471_, p_151472_, p_151473_, p_151474_, p_151475_, p_151476_, false, Explosion.BlockInteraction.DESTROY);
+@@ -77,7 +_,7 @@
+    public Explosion(Level p_46051_, @Nullable Entity p_46052_, @Nullable DamageSource p_46053_, @Nullable ExplosionDamageCalculator p_46054_, double p_46055_, double p_46056_, double p_46057_, float p_46058_, boolean p_46059_, Explosion.BlockInteraction p_46060_) {
+       this.f_46012_ = p_46051_;
+       this.f_46016_ = p_46052_;
+-      this.f_46017_ = p_46058_;
++      this.f_46017_ = (float) Math.max(p_46058_, 0.0); // CraftBukkit - clamp bad values
+       this.f_46013_ = p_46055_;
+       this.f_46014_ = p_46056_;
+       this.f_46015_ = p_46057_;
 @@ -85,6 +_,7 @@
        this.f_46010_ = p_46060_;
        this.f_46018_ = p_46053_ == null ? DamageSource.m_19358_(this) : p_46053_;
@@ -18,6 +27,18 @@
     }
  
     private ExplosionDamageCalculator m_46062_(@Nullable Entity p_46063_) {
+@@ -125,6 +_,11 @@
+    }
+ 
+    public void m_46061_() {
++      // CraftBukkit start
++      if (this.f_46017_ < 0.1F) {
++         return;
++      }
++      // CraftBukkit end
+       this.f_46012_.m_220400_(this.f_46016_, GameEvent.f_157812_, new Vec3(this.f_46013_, this.f_46014_, this.f_46015_));
+       Set<BlockPos> set = Sets.newHashSet();
+       int i = 16;
 @@ -180,6 +_,7 @@
        int j2 = Mth.m_14107_(this.f_46015_ - (double)f2 - 1.0D);
        int j1 = Mth.m_14107_(this.f_46015_ + (double)f2 + 1.0D);

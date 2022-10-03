@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/effect/MobEffectUtil.java
++++ b/net/minecraft/world/effect/MobEffectUtil.java
+@@ -52,4 +_,15 @@
+       });
+       return list;
+    }
++
++   public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
++      MobEffect mobeffect = p_216951_.m_19544_();
++      List<ServerPlayer> list = p_216947_.m_8795_((p_238228_) -> {
++         return p_238228_.f_8941_.m_9294_() && (p_216948_ == null || !p_216948_.m_7307_(p_238228_)) && p_216949_.m_82509_(p_238228_.m_20182_(), p_216950_) && (!p_238228_.m_21023_(mobeffect) || p_238228_.m_21124_(mobeffect).m_19564_() < p_216951_.m_19564_() || p_238228_.m_21124_(mobeffect).m_19557_() < p_216952_);
++      });
++      list.forEach((p_238232_) -> {
++         p_238232_.addEffect(new MobEffectInstance(p_216951_), p_216948_, cause);
++      });
++      return list;
++   }
+ }
