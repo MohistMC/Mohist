@@ -64,7 +64,7 @@ public class RemapUtils {
         jarMapping.classes.put("catserver/api/bukkit/ForgeEventV2", "com/mohistmc/api/event/BukkitHookForgeEvent");
         jarMapping.registerFieldMapping("catserver/api/bukkit/ForgeEventV2", "handlers", "com/mohistmc/api/event/BukkitHookForgeEvent", "handlers");
         jarMapping.registerFieldMapping("catserver/api/bukkit/ForgeEventV2", "forgeEvent", "com/mohistmc/api/event/BukkitHookForgeEvent", "event");
-        jarMapping.registerMethodMapping("catserver/api/bukkit/ForgeEventV2", "getForgeEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;", "com/mohistmc/api/event/BukkitHookForgeEvent", "getEvent", "()Lnet/minecraftforge/fml/common/eventhandler/Event;");
+        jarMapping.registerMethodMapping("catserver/api/bukkit/ForgeEventV2", "getForgeEvent", "()Lnet/minecraftforge/eventbus/api/Event;", "com/mohistmc/api/event/BukkitHookForgeEvent", "getEvent", "()Lnet/minecraftforge/eventbus/api/Event;");
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 

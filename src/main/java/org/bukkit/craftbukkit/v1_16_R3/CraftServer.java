@@ -12,6 +12,7 @@ import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.util.i18n.i18n;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
@@ -380,6 +381,7 @@ public final class CraftServer implements Server {
 
     public void loadPlugins() {
         RemapUtils.init();
+        ForgeEventHandler.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) MinecraftServer.options.valueOf("plugins");

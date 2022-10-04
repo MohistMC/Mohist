@@ -19,7 +19,6 @@
 
 package net.minecraftforge.eventbus;
 
-import com.mohistmc.api.event.BukkitHookForgeEvent;
 import net.jodah.typetools.TypeResolver;
 import net.minecraftforge.eventbus.api.*;
 import org.apache.logging.log4j.LogManager;
@@ -33,8 +32,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import org.bukkit.Bukkit;
-
 
 import static net.minecraftforge.eventbus.LogMarkers.EVENTBUS;
 
@@ -48,6 +45,7 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     private ConcurrentHashMap<Object, List<IEventListener>> listeners = new ConcurrentHashMap<>();
     private final int busID = maxID.getAndIncrement();
     private final IEventExceptionHandler exceptionHandler;
+    private static IEventBusInvokeDispatcher hookDisPatcher = null;
     private volatile boolean shutdown = false;
 
     private final Class<?> baseType;
@@ -290,12 +288,6 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     public boolean post(Event event, IEventBusInvokeDispatcher wrapper)
     {
         if (shutdown) return false;
-        if (Bukkit.getServer() != null) {
-            BukkitHookForgeEvent bukkitHookForgeEvent = new BukkitHookForgeEvent(event);
-            if (bukkitHookForgeEvent.getHandlers().getRegisteredListeners().length > 0) {
-                Bukkit.getPluginManager().callEvent(bukkitHookForgeEvent);
-            }
-        }
         if (EventBus.checkTypesOnDispatch && !baseType.isInstance(event))
         {
             throw new IllegalArgumentException("Cannot post event of type " + event.getClass().getSimpleName() + " to this event. Must match type: " + baseType.getSimpleName());
@@ -305,6 +297,7 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
         int index = 0;
         try
         {
+            if (hookDisPatcher != null) hookDisPatcher.invoke(null, event);
             for (; index < listeners.length; index++)
             {
                 if (!trackPhases && Objects.equals(listeners[index].getClass(), EventPriority.class)) continue;
