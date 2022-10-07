@@ -10,7 +10,7 @@ class JenkinsNumber {
             return 'dev'
         } else {
             try {
-                def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.2/api/json").openConnection()
+                def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.16.5/api/json").openConnection()
                 conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
                 conn.connect()
                 def root = conn.content.text
