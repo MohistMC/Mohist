@@ -16,7 +16,7 @@
              patrollingmonster.m_6518_(p_224533_, p_224533_.m_6436_(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
 -            p_224533_.m_47205_(patrollingmonster);
 +            p_224533_.addEntityspawnReason.set(CreatureSpawnEvent.SpawnReason.PATROL); // Mohist
-+            p_224533_.m_47205_(patrollingmonster); // CraftBukkit ↑
++            p_224533_.m_47205_(patrollingmonster); // CraftBukkit 鈫�
              return true;
           } else {
              return false;

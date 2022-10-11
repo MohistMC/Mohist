@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -33,7 +_,7 @@
+@@ -30,10 +_,16 @@
+    }
+ 
+    public InteractionResult m_6225_(UseOnContext p_40637_) {
++      // CraftBukkit start - extract bonemeal application logic to separate, static method
++      return bukkit_applyBonemeal(p_40637_);
++   }
++
++   public static InteractionResult bukkit_applyBonemeal(UseOnContext p_40637_) {
++      // CraftBukkit end
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
        BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
