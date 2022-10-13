@@ -8,6 +8,14 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.tags.BlockTags;
+@@ -69,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.LevelChunk;
+ import net.minecraft.world.level.dimension.DimensionType;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.entity.EntityTickList;
+ import net.minecraft.world.level.entity.LevelCallback;
+ import net.minecraft.world.level.entity.LevelEntityGetter;
 @@ -115,12 +_,15 @@
        p_194170_.put(BiomeColors.f_108791_, new BlockTintCache((p_194168_) -> {
           return this.m_104762_(p_194168_, BiomeColors.f_108791_);
@@ -24,6 +32,18 @@
  
     public void m_233651_(int p_233652_) {
        this.f_233599_.m_233856_(p_233652_, this);
+@@ -149,6 +_,11 @@
+       return this.f_233599_;
+    }
+ 
++   @Override
++   public ResourceKey<LevelStem> getTypeKey() {
++      return null;
++   }
++
+    public boolean m_6933_(BlockPos p_233643_, BlockState p_233644_, int p_233645_, int p_233646_) {
+       if (this.f_233599_.m_233872_()) {
+          BlockState blockstate = this.m_8055_(p_233643_);
 @@ -174,6 +_,8 @@
        this.f_194123_ = p_205510_;
        this.m_46465_();
