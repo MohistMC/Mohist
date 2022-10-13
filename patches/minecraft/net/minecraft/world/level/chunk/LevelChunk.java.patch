@@ -52,7 +52,22 @@
     }
  
     public TickContainerAccess<Block> m_183531_() {
-@@ -237,14 +_,14 @@
+@@ -209,8 +_,14 @@
+       }
+    }
+ 
++   // CraftBukkit start
+    @Nullable
+    public BlockState m_6978_(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
++      return this.setBlockState(p_62865_, p_62866_, p_62867_, true);
++   }
++
++   @Nullable
++   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
+       int i = p_62865_.m_123342_();
+       LevelChunkSection levelchunksection = this.m_183278_(this.m_151564_(i));
+       boolean flag = levelchunksection.m_188008_();
+@@ -237,14 +_,15 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {
                 blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
@@ -65,7 +80,8 @@
                 return null;
              } else {
 -               if (!this.f_62776_.f_46443_) {
-+            if (!this.f_62776_.f_46443_ && !this.f_62776_.captureBlockSnapshots) {
++             // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
++               if (!this.f_62776_.f_46443_ && doPlace && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
                    p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
                 }
  
