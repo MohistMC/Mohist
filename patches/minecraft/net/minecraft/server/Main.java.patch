@@ -12,12 +12,13 @@
  import java.util.function.BooleanSupplier;
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
-@@ -78,6 +_,41 @@
+@@ -78,6 +_,42 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
++
 +      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
 +      boolean gametestEnabled = Boolean.getBoolean("forge.gameTestServer");
 +      if (gametestEnabled) {
@@ -101,15 +102,40 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -133,6 +_,8 @@
+@@ -133,6 +_,25 @@
           }
  
           PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
++         // CraftBukkit start
++         File bukkitDataPackFolder = new File(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), "bukkit");
++         if (!bukkitDataPackFolder.exists()) {
++            bukkitDataPackFolder.mkdirs();
++         }
++         File mcMeta = new File(bukkitDataPackFolder, "pack.mcmeta");
++         try {
++            com.google.common.io.Files.write("{\n"
++                    + "    \"pack\": {\n"
++                    + "        \"description\": \"Data pack for resources provided by Bukkit plugins\",\n"
++                    + "        \"pack_format\": " + SharedConstants.m_183709_().getPackVersion() + "\n"
++                    + "    }\n"
++                    + "}\n", mcMeta, com.google.common.base.Charsets.UTF_8);
++         } catch (java.io.IOException ex) {
++            throw new RuntimeException("Could not initialize Bukkit datapack", ex);
++         }
 +         AtomicReference<DataPackConfig> config = new AtomicReference<>();
 +         AtomicReference<DynamicOps<Tag>> ops = new AtomicReference<>();
++         // CraftBukkit end
  
           WorldStem worldstem;
           try {
+@@ -143,6 +_,7 @@
+                return WorldStem.m_214415_(worldloader$initconfig, (p_236717_, p_236718_) -> {
+                   RegistryAccess.Writable registryaccess$writable = RegistryAccess.m_206197_();
+                   DynamicOps<Tag> dynamicops = RegistryOps.m_206813_(NbtOps.f_128958_, registryaccess$writable, p_236717_);
++
+                   WorldData worlddata1 = levelstoragesource$levelstorageaccess.m_211747_(dynamicops, p_236718_, registryaccess$writable.m_211816_());
+                   if (worlddata1 != null) {
+                      return Pair.of(worlddata1, registryaccess$writable.m_203557_());
 @@ -158,6 +_,8 @@
                          worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$writable).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$writable);
                       }
@@ -162,12 +188,14 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
-@@ -204,7 +_,7 @@
+@@ -204,8 +_,8 @@
  
     }
  
 -   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
+-      f_129670_.info("Forcing world upgrade!");
 +   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
-       f_129670_.info("Forcing world upgrade!");
++      f_129670_.info("Forcing world upgrade!", p_195489_.m_78277_()); // CraftBukkit
        WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_195493_, p_195491_);
        Component component = null;
+ 
