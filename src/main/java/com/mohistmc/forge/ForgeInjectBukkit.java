@@ -66,9 +66,8 @@ public class ForgeInjectBukkit {
         for (Item item : ForgeRegistries.ITEMS) {
             ResourceLocation resourceLocation = ForgeRegistries.ITEMS.getKey(item);
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                MohistMC.LOGGER.error(resourceLocation.toString());
                 // inject item materials into Bukkit for FML
-                String materialName = normalizeName(resourceLocation.toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
+                String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
                 Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
@@ -87,7 +86,7 @@ public class ForgeInjectBukkit {
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject block materials into Bukkit for FML
                 Block block = entry.getValue();
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
+                String materialName = normalizeName(entry.getKey().toString());
                 int id = Item.getId(block.asItem());
                 Material material = Material.addMaterial(materialName, id, true, resourceLocation.getNamespace());
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);

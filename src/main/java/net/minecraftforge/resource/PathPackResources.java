@@ -38,7 +38,7 @@ public class PathPackResources extends AbstractPackResources
     private final Path source;
     private final String packName;
 
-    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, ForgeConfig.COMMON.indexModPackCachesOnThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
+    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, "indexModPackCachesOnThread", (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
 
     /**
      * Constructs a java.nio.Path-based resource pack.
