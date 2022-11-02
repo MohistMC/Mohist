@@ -29,11 +29,12 @@
  
     public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
        this.f_9965_ = p_9969_;
-@@ -20,9 +_,44 @@
+@@ -20,9 +_,45 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
++      this.f_9966_.hostname = p_9975_.f_134721_ + ":" + p_9975_.f_134722_; // CraftBukkit  - set hostname
        switch (p_9975_.m_134735_()) {
           case LOGIN:
              this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);
@@ -74,7 +75,7 @@
              if (p_9975_.m_134738_() != SharedConstants.m_183709_().getProtocolVersion()) {
                 Component component;
                 if (p_9975_.m_134738_() < 754) {
-@@ -35,6 +_,31 @@
+@@ -35,6 +_,30 @@
                 this.f_9966_.m_129507_(component);
              } else {
                 this.f_9966_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9965_, this.f_9966_));
@@ -101,7 +102,6 @@
 +                  this.f_9966_.m_129507_(chatmessage);
 +                  return;
 +               }
-+               ((ServerLoginPacketListenerImpl) this.f_9966_.m_129538_()).hostname = p_9975_.f_134721_ + ":" + p_9975_.f_134722_; // CraftBukkit - set hostname
 +               // Spigot End
              }
              break;

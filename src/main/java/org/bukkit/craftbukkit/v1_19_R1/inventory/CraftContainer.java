@@ -181,10 +181,8 @@ public class CraftContainer extends AbstractContainerMenu {
                 delegate = new HopperMenu(windowId, bottom, top);
                 break;
             case ANVIL:
-                setupAnvil(top, bottom); // SPIGOT-6783 - manually set up slots so we can use the delegated inventory and not the automatically created one
-                break;
             case SMITHING:
-                delegate = new SmithingMenu(windowId, bottom);
+                setupAnvil(top, bottom); // SPIGOT-6783 - manually set up slots so we can use the delegated inventory and not the automatically created one
                 break;
             case BEACON:
                 delegate = new BeaconMenu(windowId, bottom);

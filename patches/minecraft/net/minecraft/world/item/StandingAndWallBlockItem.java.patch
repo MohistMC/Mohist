@@ -1,12 +1,49 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
-@@ -42,4 +_,9 @@
+@@ -4,11 +_,15 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+ import net.minecraft.world.level.LevelReader;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.shapes.CollisionContext;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
++import org.bukkit.event.block.BlockCanBuildEvent;
+ 
+ public class StandingAndWallBlockItem extends BlockItem {
+    protected final Block f_43246_;
+@@ -34,12 +_,28 @@
+             }
+          }
+       }
+-
+-      return blockstate1 != null && levelreader.m_45752_(blockstate1, blockpos, CollisionContext.m_82749_()) ? blockstate1 : null;
++      // CraftBukkit start
++      if (blockstate1 != null) {
++         boolean defaultReturn = levelreader.m_45752_(blockstate1, blockpos, CollisionContext.m_82749_());
++         org.bukkit.entity.Player player = (p_43255_.m_43723_() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_43255_.m_43723_().getBukkitEntity() : null;
++
++         BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_43255_.m_43725_(), blockpos), player, CraftBlockData.fromData(blockstate1), defaultReturn);
++         p_43255_.m_43725_().getCraftServer().getPluginManager().callEvent(event);
++
++         return (event.isBuildable()) ? blockstate1 : null;
++      } else {
++         return null;
++      }
++      // CraftBukkit end
+    }
+ 
+    public void m_6192_(Map<Block, Item> p_43252_, Item p_43253_) {
        super.m_6192_(p_43252_, p_43253_);
        p_43252_.put(this.f_43246_, p_43253_);
-    }
++   }
 +
 +   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
 +      super.removeFromBlockToItemMap(blockToItemMap, itemIn);
 +      blockToItemMap.remove(this.f_43246_);
-+   }
+    }
  }

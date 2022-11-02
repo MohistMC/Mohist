@@ -9,11 +9,12 @@
     private PacketListener f_129470_;
     private Component f_129471_;
     private boolean f_129472_;
-@@ -82,6 +_,11 @@
+@@ -82,6 +_,12 @@
     private float f_129477_;
     private int f_129478_;
     private boolean f_129479_;
 +   private java.util.function.Consumer<Connection> activationHandler;
++   public String hostname = ""; // CraftBukkit - add field
 +   // Spigot Start
 +   public java.util.UUID spoofedUUID;
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;

@@ -10,14 +10,6 @@
  import org.slf4j.Logger;
  
  public class ServerLoginPacketListenerImpl implements TickablePacketListener, ServerLoginPacketListener {
-@@ -57,6 +_,7 @@
-    private ServerPlayer f_10024_;
-    @Nullable
-    private ProfilePublicKey.Data f_240234_;
-+   public String hostname = ""; // CraftBukkit - add field
- 
-    public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
-       this.f_10018_ = p_10027_;
 @@ -65,7 +_,13 @@
     }
  
