@@ -1,5 +1,6 @@
 package org.bukkit.configuration.file;
 
+import com.mohistmc.bukkit.nms.utils.ReflectionUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -53,7 +54,9 @@ public class YamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881: Not ideal, but was default pre SnakeYAML 1.26
+            if (ReflectionUtils.findField(loaderOptions.getClass(), "setMaxAliasesForCollections") != null) {
+                loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881: Not ideal, but was default pre SnakeYAML 1.26
+            }
             input = (Map<?, ?>) yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);

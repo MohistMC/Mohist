@@ -18,6 +18,8 @@
 
 package com.mohistmc.bukkit.nms.utils;
 
+import java.lang.reflect.Field;
+
 public class ReflectionUtils {
     private static final SecurityManager securityManager = new SecurityManager();
 
@@ -33,5 +35,25 @@ public class ReflectionUtils {
         public Class<?> getCallerClass(int skip) {
             return getClassContext()[skip + 1];
         }
+    }
+
+
+    public static Field findField(Class<?> clazz, String name) {
+        return findField(clazz, name, null);
+    }
+
+
+    public static Field findField(Class<?> clazz, String name, Class<?> type) {
+        Class<?> searchType = clazz;
+        while (!Object.class.equals(searchType) && searchType != null) {
+            Field[] fields = searchType.getDeclaredFields();
+            for (Field field : fields) {
+                if ((name == null || name.equals(field.getName())) && (type == null || type.equals(field.getType()))) {
+                    return field;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
     }
 }
