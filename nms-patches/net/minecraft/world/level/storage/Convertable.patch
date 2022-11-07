@@ -26,9 +26,9 @@
  
 -                return WorldDataServer.parse(dynamic, datafixer, i, nbttagcompound2, worldsettings, levelversion, (GeneratorSettings) pair.getFirst(), lifecycle1);
 +                // CraftBukkit start - Add PDC to world
-+                WorldDataServer worldDataServer = WorldDataServer.parse(dynamic, datafixer, i, nbttagcompound2, worldsettings, levelversion, (GeneratorSettings) pair.getFirst(), lifecycle1);
-+                worldDataServer.pdc = nbttagcompound1.get("BukkitValues");
-+                return worldDataServer;
++                WorldDataServer serverLevelDataCB = WorldDataServer.parse(dynamic, datafixer, i, nbttagcompound2, worldsettings, levelversion, (GeneratorSettings) pair.getFirst(), lifecycle1);
++                serverLevelDataCB.pdc = nbttagcompound1.get("BukkitValues");
++                return serverLevelDataCB;
 +                // CraftBukkit end
              } catch (Exception exception) {
                  Convertable.LOGGER.error("Exception reading {}", path, exception);

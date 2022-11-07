@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
+@@ -6,6 +_,7 @@
+ import java.util.Optional;
+ import java.util.Spliterator;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Consumer;
+ import java.util.function.Function;
+ import java.util.stream.Stream;
+@@ -150,6 +_,7 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ import org.slf4j.Logger;
+ 
+ public class EntityType<T extends Entity> implements EntityTypeTest<Entity, T> {
 @@ -292,6 +_,11 @@
     private ResourceLocation f_20546_;
     private final EntityDimensions f_20547_;
@@ -22,7 +38,7 @@
        this.f_20535_ = p_20574_;
        this.f_20536_ = p_20575_;
        this.f_20541_ = p_20579_;
-@@ -315,6 +_,10 @@
+@@ -315,7 +_,14 @@
        this.f_20547_ = p_20581_;
        this.f_20542_ = p_20582_;
        this.f_20543_ = p_20583_;
@@ -31,16 +47,35 @@
 +      this.updateIntervalSupplier = updateIntervalSupplier;
 +      this.customClientFactory = customClientFactory;
     }
++
++   // Mohist start
++   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
  
     @Nullable
-@@ -326,6 +_,7 @@
+    public Entity m_20592_(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_) {
+@@ -326,13 +_,21 @@
     public T m_20600_(ServerLevel p_20601_, @Nullable CompoundTag p_20602_, @Nullable Component p_20603_, @Nullable Player p_20604_, BlockPos p_20605_, MobSpawnType p_20606_, boolean p_20607_, boolean p_20608_) {
        T t = this.m_20655_(p_20601_, p_20602_, p_20603_, p_20604_, p_20605_, p_20606_, p_20607_, p_20608_);
        if (t != null) {
+-         p_20601_.m_47205_(t);
 +         if (t instanceof net.minecraft.world.entity.Mob && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.world.entity.Mob) t, p_20601_, p_20605_.m_123341_(), p_20605_.m_123342_(), p_20605_.m_123343_(), null, p_20606_)) return null;
-          p_20601_.m_47205_(t);
++         p_20601_.addFreshEntityWithPassengers(t, this.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG));
        }
  
+       return t;
+    }
+ 
+    @Nullable
++   public T spawn(ServerLevel p_20601_, @Nullable CompoundTag p_20602_, @Nullable Component p_20603_, @Nullable Player p_20604_, BlockPos p_20605_, MobSpawnType p_20606_, boolean p_20607_, boolean p_20608_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      this.spawnReason.set(spawnReason);
++      return m_20600_(p_20601_, p_20602_, p_20603_, p_20604_, p_20605_, p_20606_, p_20607_, p_20608_);
++   }
++   // Mohist end
++
++   @Nullable
+    public T m_20655_(ServerLevel p_20656_, @Nullable CompoundTag p_20657_, @Nullable Component p_20658_, @Nullable Player p_20659_, BlockPos p_20660_, MobSpawnType p_20661_, boolean p_20662_, boolean p_20663_) {
+       T t = this.m_20615_(p_20656_);
+       if (t == null) {
 @@ -543,14 +_,23 @@
     }
  

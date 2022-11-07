@@ -73,7 +73,7 @@
 +   private LevelCapabilityData capabilityData;
 +
 +   // CraftBukkit start
-+   public PrimaryLevelData worldDataServer;
++   public PrimaryLevelData serverLevelDataCB;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
  
@@ -83,9 +83,9 @@
 +      convertable = p_215001_;
 +      uuid = WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
 +      if (p_215002_ instanceof PrimaryLevelData) {
-+         this.worldDataServer = (PrimaryLevelData) p_215002_;
++         this.serverLevelDataCB = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
-+         this.worldDataServer = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
++         this.serverLevelDataCB = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
 +      }
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
@@ -250,7 +250,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -781,17 +_,33 @@
+@@ -781,18 +_,36 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -276,7 +276,7 @@
 +         }
        }
     }
-+
+ 
 +   // Mohist start
 +   public AtomicReference<CreatureSpawnEvent.SpawnReason> addEntityspawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
@@ -284,12 +284,25 @@
 +      return m_8872_(entity);
 +   }
 +   // Mohist end
- 
++
++
++   // Mohist start
     public boolean m_8860_(Entity p_8861_) {
        if (p_8861_.m_20199_().map(Entity::m_20148_).anyMatch(this.f_143244_::m_157550_)) {
-@@ -803,6 +_,15 @@
+          return false;
+@@ -802,7 +_,25 @@
+       }
     }
  
++   public boolean tryAddFreshEntityWithPassengers(Entity p_8861_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      if (p_8861_.m_20199_().map(Entity::m_20148_).anyMatch(this.f_143244_::m_157550_)) {
++         return false;
++      } else {
++         this.addFreshEntityWithPassengers(p_8861_, reason);
++         return true;
++      }
++   }
++
     public void m_8712_(LevelChunk p_8713_) {
 +      // Spigot Start
 +      for (net.minecraft.world.level.block.entity.BlockEntity tileentity : p_8713_.m_62954_().values()) {
