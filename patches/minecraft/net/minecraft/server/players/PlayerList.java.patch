@@ -1,5 +1,24 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
+@@ -20,8 +_,10 @@
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++import net.md_5.bungee.api.ChatMessageType;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.FileUtil;
++import net.minecraft.Util;
+ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.RegistryAccess;
+@@ -54,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
++import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
 @@ -66,6 +_,7 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.PlayerAdvancements;
@@ -8,13 +27,16 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -96,6 +_,9 @@
+@@ -96,6 +_,12 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_19_R1.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
++import org.bukkit.event.player.PlayerJoinEvent;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
@@ -33,7 +55,24 @@
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
        this.f_11204_ = p_203844_;
-@@ -160,14 +_,16 @@
+@@ -140,6 +_,12 @@
+       String s = optional.map(GameProfile::getName).orElse(gameprofile.getName());
+       gameprofilecache.m_10991_(gameprofile);
+       CompoundTag compoundtag = this.m_11224_(p_11263_);
++      // CraftBukkit start - Better rename detection
++      if (compoundtag != null && compoundtag.m_128441_("bukkit")) {
++         CompoundTag bukkit = compoundtag.m_128469_("bukkit");
++         s = bukkit.m_128425_("lastKnownName", 8) ? bukkit.m_128461_("lastKnownName") : s;
++      }
++      // CraftBukkit end
+       ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
+       ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
+       ServerLevel serverlevel1;
+@@ -156,18 +_,19 @@
+          s1 = p_11262_.m_129523_().toString();
+       }
+ 
+-      f_11188_.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.m_7755_().getString(), s1, p_11263_.m_19879_(), p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_());
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
@@ -51,11 +90,99 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -240,9 +_,10 @@
+@@ -182,18 +_,68 @@
+          mutablecomponent = Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
+       }
+ 
+-      this.m_240416_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), false);
++      // CraftBukkit start
++      mutablecomponent.m_130940_(ChatFormatting.YELLOW);
++      String joinMessage = CraftChatMessage.fromComponent(mutablecomponent);
++
++      // this.broadcastSystemMessage(mutablecomponent.withStyle(ChatFormatting.YELLOW), false);
+       servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
+       this.f_11196_.add(p_11263_);
+       this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
+-      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
++      // this.broadcastAll(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
++
++      // CraftBukkit start
++      CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
++
++      // Ensure that player inventory is populated with its viewer
++      p_11263_.f_36096_.transferTo(p_11263_.f_36096_, bukkitPlayer);
++
++      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
++      cserver.getPluginManager().callEvent(playerJoinEvent);
++
++      if (!p_11263_.f_8906_.f_9742_.m_129536_()) {
++         return;
++      }
++
++      joinMessage = playerJoinEvent.getJoinMessage();
++
++      if (joinMessage != null && joinMessage.length() > 0) {
++         for (Component line : CraftChatMessage.fromString(joinMessage)) {
++            f_11195_.m_6846_().m_240416_(line, false);
++         }
++      }
++      // CraftBukkit end
++
++      // CraftBukkit start - sendAll above replaced with this loop
++      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_);
+ 
+       for(int i = 0; i < this.f_11196_.size(); ++i) {
+-         p_11263_.f_8906_.m_9829_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.f_11196_.get(i)));
+-      }
+-
+-      serverlevel1.m_8834_(p_11263_);
+-      this.f_11195_.m_129901_().m_136293_(p_11263_);
++         // p_11263_.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.players.get(i)));
++         ServerPlayer entityplayer1 = (ServerPlayer) this.f_11196_.get(i);
++
++         if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
++            entityplayer1.f_8906_.m_9829_(packet);
++         }
++
++         if (!bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) {
++            continue;
++         }
++
++         p_11263_.f_8906_.m_9829_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, new ServerPlayer[]{entityplayer1}));
++      }
++      p_11263_.sentListPacket = true;
++      // CraftBukkit end
++
++      // serverlevel1.addNewPlayer(p_11263_);
++      // this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
++      p_11263_.f_8906_.m_9829_(new ClientboundSetEntityDataPacket(p_11263_.m_19879_(), p_11263_.m_20088_(), true)); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
++      // CraftBukkit start - Only add if the player wasn't moved in the event
++      if (p_11263_.f_19853_ == serverlevel1 && !serverlevel1.m_6907_().contains(p_11263_)) {
++         serverlevel1.m_8834_(p_11263_);
++         this.f_11195_.m_129901_().m_136293_(p_11263_);
++      }
++      serverlevel1 = p_11263_.m_9236_(); // CraftBukkit - Update in case join event changed it
++      // CraftBukkit end
+       this.m_11229_(p_11263_, serverlevel1);
+       this.f_11195_.m_214042_().ifPresent((p_215606_) -> {
+          p_11263_.m_143408_(p_215606_.f_236743_(), p_215606_.f_236744_(), p_215606_.f_236745_(), p_215606_.f_236746_());
+@@ -206,8 +_,9 @@
+ 
+       if (compoundtag != null && compoundtag.m_128425_("RootVehicle", 10)) {
+          CompoundTag compoundtag1 = compoundtag.m_128469_("RootVehicle");
++         ServerLevel finalServerlevel = serverlevel1;
+          Entity entity1 = EntityType.m_20645_(compoundtag1.m_128469_("Entity"), serverlevel1, (p_215603_) -> {
+-            return !serverlevel1.m_8847_(p_215603_) ? null : p_215603_;
++            return !finalServerlevel.m_8847_(p_215603_) ? null : p_215603_;
+          });
+          if (entity1 != null) {
+             UUID uuid;
+@@ -240,9 +_,11 @@
        }
  
        p_11263_.m_143429_();
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
++      f_11188_.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.m_7755_().getString(), s1, p_11263_.m_19879_(), p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_());
     }
  
 -   protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
