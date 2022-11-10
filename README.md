@@ -16,9 +16,11 @@
 
 | Version  | Support |
 | ------------- | ------------- |
+| 1.19.2  | WIP |
+| 1.18.2  | Slow |
 | 1.16.5  | Active  |
-| 1.12.2  | Active  |
-| 1.7.10  | Slow  |
+| 1.12.2  | End Of Life  |
+| 1.7.10  | End Of Life |
 
 
 Getting Help
