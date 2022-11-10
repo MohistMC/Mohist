@@ -15,11 +15,13 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version | Support |
-|---------|---------|
-| 1.18.2  | Test    |
+| Version  | Support |
+| ------------- | ------------- |
+| 1.19.2  | WIP |
+| 1.18.2  | Slow |
 | 1.16.5  | Active  |
-| 1.12.2  | Active  |
+| 1.12.2  | End Of Life  |
+| 1.7.10  | End Of Life |
 
 Progress
 ------
