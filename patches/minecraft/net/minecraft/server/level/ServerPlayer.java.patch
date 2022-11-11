@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -140,8 +_,11 @@
+@@ -140,8 +_,12 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -33,6 +33,7 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_19_R1.util.BlockStateListPopulator;
  import org.slf4j.Logger;
  
  public class ServerPlayer extends Player {
@@ -127,6 +128,31 @@
           }
  
           return this;
+@@ -751,15 +_,23 @@
+ 
+    private void m_9006_(ServerLevel p_9007_, BlockPos p_9008_) {
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_9008_.m_122032_();
++      BlockStateListPopulator blockList = new BlockStateListPopulator(p_9007_); // CraftBukkit
+ 
+       for(int i = -2; i <= 2; ++i) {
+          for(int j = -2; j <= 2; ++j) {
+             for(int k = -1; k < 3; ++k) {
+                BlockState blockstate = k == -1 ? Blocks.f_50080_.m_49966_() : Blocks.f_50016_.m_49966_();
+-               p_9007_.m_46597_(blockpos$mutableblockpos.m_122190_(p_9008_).m_122184_(j, k, i), blockstate);
++               blockList.m_7731_(blockpos$mutableblockpos.m_122190_(p_9008_).m_122184_(j, k, i), blockstate, 3); // CraftBukkit
+             }
+          }
+       }
++      // CraftBukkit start - call portal event
++      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), p_9007_.getWorld(), this.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
++      p_9007_.getCraftServer().getPluginManager().callEvent(portalEvent);
++      if (!portalEvent.isCancelled()) {
++         blockList.updateList();
++      }
++      // CraftBukkit end
+ 
+    }
+ 
 @@ -806,6 +_,9 @@
     }
  
