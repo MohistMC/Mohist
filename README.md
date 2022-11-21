@@ -1,31 +1,29 @@
 <div align="center">
+<img width="300" src="https://mohistmc.com/mohist-min.png">
   <h1>Mohist 1.16.5</h1>
 
-### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
+### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.16.5)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.16.5)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/github/license/MohistMC/Mohist?)](https://github.com/MohistMC/Mohist/blob/1.16.5/LICENSE)
-[![](https://img.shields.io/badge/Forge-1.16.5--36.2.39-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](http://files.minecraftforge.net/net/minecraftforge/forge/index_1.16.5.html)
-[![](https://img.shields.io/badge/Spigot-1.16.5-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads)
-[![](https://img.shields.io/badge/AdoptOpenJDK-11.0.15+10-brightgreen.svg?colorB=469C00&logo=java)](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot)
+[![](https://img.shields.io/badge/Forge-1.16.5--36.2.39-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.16.5.html)
+[![](https://img.shields.io/badge/AdoptOpenJDK-11.0.15+10-brightgreen.svg?colorB=469C00&logo=java)](https://adoptopenjdk.net/?variant=openjdk11&)
 [![](https://img.shields.io/badge/Gradle-7.3.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.3.3/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
-[![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/ZgXjHGd)
+[![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
 [![](https://opencollective.com/mohist/tiers/badge.svg?logo=Patreon)](https://opencollective.com/mohist)
-
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version  | Support | Stability | Mod compatibility | Plugin compatibility
-| -------------|-------------|-------------|-------------|-------------|
-| 1.19.2  | WIP         |  Poor | Zero | Zero |
-| 1.18.2  | Slow        |  Poor | Most | Zero |
-| 1.16.5  | Active      |  Good | Better than plugins | Good |
-| 1.12.2  | End Of Life |  High | Very good | Very good |
-| 1.7.10  | End Of Life |  Poor | Poor | Poor |
+| Version                                                  |  Support                                                   | Mod compatibility   | Plugin compatibility|
+|----------------------------------------------------------|------------------------------------------------------------|---------------------|---------------------|
+| [1.19.2](https://github.com/MohistMC/Mohist/tree/1.19.2) | [WIP](https://mohistmc.com/download/)                      | Zero                | Zero                |
+| [1.16.5](https://github.com/MohistMC/Mohist/tree/1.16.5) | [Active](https://mohistmc.com/download/)                   | Better than plugins | Good                |
+| [1.12.2](https://github.com/MohistMC/Mohist/tree/1.12.2) | [Disabled](https://wiki.mohistmc.com/#/about/end-of-life)  | Very good           | Very good           |
+| [1.7.10](https://github.com/MohistMC/Mohist/tree/1.7.10) | [Disabled](https://wiki.mohistmc.com/#/about/end-of-life)  | Poor                | Poor                |
 
 Progress
 ------
@@ -45,11 +43,11 @@ Getting Help
 
 Upstream Projects
 ------
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 
 A Special Thanks To:
