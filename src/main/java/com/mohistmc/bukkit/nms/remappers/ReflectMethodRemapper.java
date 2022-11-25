@@ -23,7 +23,6 @@ import com.mohistmc.bukkit.nms.model.MethodRedirectRule;
 import com.mohistmc.bukkit.nms.proxy.ProxyClass;
 import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.ProxyYamlConfiguration;
-import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;

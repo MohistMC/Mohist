@@ -79,8 +79,8 @@ public class RAMGraph extends JComponent {
                 SwingUtilities.convertPointFromScreen(loc, this);
                 if (this.contains(loc)) {
                     ToolTipManager.sharedInstance().mouseMoved(
-                        new MouseEvent(this, -1, System.currentTimeMillis(), 0, loc.x, loc.y,
-                            point.x, point.y, 0, false, 0));
+                            new MouseEvent(this, -1, System.currentTimeMillis(), 0, loc.x, loc.y,
+                                    point.x, point.y, 0, false, 0));
                 }
             }
         }
@@ -128,8 +128,8 @@ public class RAMGraph extends JComponent {
             graphics.setColor(data.getLineColor());
             graphics.fillOval(m.x - 2, 100 - used - 2, 5, 5);
             setToolTipText(String.format("<html><body>Used: %s mb (%s%%)<br/>%s</body></html>",
-                Math.round(data.getUsedMem() / 1024F / 1024F),
-                used, getTime(m.x)));
+                    Math.round(data.getUsedMem() / 1024F / 1024F),
+                    used, getTime(m.x)));
         }
     }
 

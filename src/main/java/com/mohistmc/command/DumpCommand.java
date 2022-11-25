@@ -47,6 +47,7 @@ import org.bukkit.potion.PotionType;
 public class DumpCommand extends Command {
     private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
     private final List<String> tab_mode = Arrays.asList("file", "web");
+
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";

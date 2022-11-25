@@ -14,7 +14,7 @@ import net.minecraft.server.MinecraftServer;
 
 public class RAMDetails extends JList<String> {
     public static final DecimalFormat DECIMAL_FORMAT = Util.make(new DecimalFormat("########0.000"), (format)
-        -> format.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT)));
+            -> format.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT)));
 
     private final MinecraftServer server;
 
@@ -48,6 +48,10 @@ public class RAMDetails extends JList<String> {
         });
     }
 
+    private static String format(double tps) {
+        return ((tps > 21.0) ? "*" : "") + Math.min(Math.round(tps * 100.0) / 100.0, 20.0);
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(350, 100);
@@ -57,11 +61,11 @@ public class RAMDetails extends JList<String> {
         GraphData data = RAMGraph.DATA.peekLast();
         Vector<String> vector = new Vector<>();
 
-        double[] tps = new double[] {server.tps5s.getAverage(), server.tps1.getAverage(), server.tps5.getAverage(), server.tps15.getAverage()}; // Purpur
+        double[] tps = new double[]{server.tps5s.getAverage(), server.tps1.getAverage(), server.tps5.getAverage(), server.tps15.getAverage()}; // Purpur
         String[] tpsAvg = new String[tps.length];
 
-        for ( int g = 0; g < tps.length; g++) {
-            tpsAvg[g] = format( tps[g] );
+        for (int g = 0; g < tps.length; g++) {
+            tpsAvg[g] = format(tps[g]);
         }
         vector.add("Memory use: " + (data.getUsedMem() / 1024L / 1024L) + " mb (" + (data.getFree() * 100L / data.getMax()) + "% free)");
         vector.add("Heap: " + (data.getTotal() / 1024L / 1024L) + " / " + (data.getMax() / 1024L / 1024L) + " mb");
@@ -77,9 +81,5 @@ public class RAMDetails extends JList<String> {
             total += value;
         }
         return ((double) total / (double) tickTimes.length) * 1.0E-6D;
-    }
-
-    private static String format(double tps) {
-        return ( ( tps > 21.0 ) ? "*" : "" ) + Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 );
     }
 }

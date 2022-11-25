@@ -30,9 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class i18n {
     public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN", "zh_TW");
+    public static Map<String, String> CACHE = new ConcurrentHashMap<>();
     private static ResourceBundle rb;
     private static List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn", "zh_tw");
-    public static Map<String, String> CACHE = new ConcurrentHashMap();
 
     public static String get(String key) {
         rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());

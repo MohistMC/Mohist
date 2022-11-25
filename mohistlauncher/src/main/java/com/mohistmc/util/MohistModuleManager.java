@@ -138,7 +138,7 @@ public class MohistModuleManager {
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
 
-        args.parallelStream().parallel().forEach(arg -> {
+        args.parallelStream().forEach(arg -> {
             if (arg.startsWith("-p ")) {
                 MODULE_PATH = arg.substring(2).trim();
             } else if (arg.startsWith("--add-opens")) {

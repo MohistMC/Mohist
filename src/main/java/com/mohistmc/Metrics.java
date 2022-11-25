@@ -42,7 +42,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.thread.NamedThreadFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

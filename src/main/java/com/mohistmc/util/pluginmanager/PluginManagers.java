@@ -44,7 +44,7 @@ public class PluginManagers {
             jarName = split[1] + (split[1].endsWith(".jar") ? ".unloaded" : ".jar.unloaded");
             toLoad = new File("plugins" + File.separator + jarName);
             if (!toLoad.exists()) {
-               // sender.sendMessage(i18n.get("pluginscommand.nofile", objects));
+                // sender.sendMessage(i18n.get("pluginscommand.nofile", objects));
                 return true;
             } else {
                 String fileName = jarName.substring(0, jarName.length() - (".unloaded".length()));
@@ -63,16 +63,16 @@ public class PluginManagers {
         ArrayList<Plugin> plugins = new ArrayList<>(java.util.Arrays.asList(pl));
         for (Plugin p : plugins) {
             if (desc.getName().equals(p.getName())) {
-               // sender.sendMessage(i18n.get("pluginscommand.alreadyloaded", new Object[]{desc.getName()}));
+                // sender.sendMessage(i18n.get("pluginscommand.alreadyloaded", new Object[]{desc.getName()}));
                 return true;
             }
         }
         Plugin p = Control.loadPlugin(toLoad);
         if (p != null) {
             Bukkit.getServer().getPluginManager().enablePlugin(p);
-           // sender.sendMessage(i18n.get("pluginscommand.loaded", new Object[]{p.getDescription().getName(), p.getDescription().getVersion()}));
+            // sender.sendMessage(i18n.get("pluginscommand.loaded", new Object[]{p.getDescription().getName(), p.getDescription().getVersion()}));
         } else {
-           // sender.sendMessage(i18n.get("pluginscommand.notload", objects));
+            // sender.sendMessage(i18n.get("pluginscommand.notload", objects));
         }
 
         return true;
@@ -93,7 +93,7 @@ public class PluginManagers {
             if (Control.unloadPlugin(p)) {
                 //sender.sendMessage(i18n.get("pluginscommand.unloaded", new Object[]{p.getDescription().getName(), p.getDescription().getVersion()}));
             } else {
-               // sender.sendMessage(i18n.get("pluginscommand.notunload", objects));
+                // sender.sendMessage(i18n.get("pluginscommand.notunload", objects));
             }
         }
 

@@ -26,9 +26,42 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
         this.derivedWorldInfo = derivedWorldInfo;
     }
 
+    public static MohistDerivedWorldInfo create(DerivedLevelData worldInfo) {
+        return new MohistDerivedWorldInfo(worldInfo, worldSettings(worldInfo), generatorSettings(worldInfo), lifecycle(worldInfo));
+    }
+
+    private static LevelSettings worldSettings(ServerLevelData worldInfo) {
+        if (worldInfo instanceof PrimaryLevelData) {
+            return ((PrimaryLevelData) worldInfo).settings;
+        } else {
+            return worldSettings(((DerivedLevelData) worldInfo).wrapped);
+        }
+    }
+
+    private static WorldGenSettings generatorSettings(ServerLevelData worldInfo) {
+        if (worldInfo instanceof PrimaryLevelData) {
+            return ((PrimaryLevelData) worldInfo).worldGenSettings();
+        } else {
+            return generatorSettings(((DerivedLevelData) worldInfo).wrapped);
+        }
+    }
+
+    private static Lifecycle lifecycle(ServerLevelData worldInfo) {
+        if (worldInfo instanceof PrimaryLevelData) {
+            return ((PrimaryLevelData) worldInfo).worldGenSettingsLifecycle();
+        } else {
+            return lifecycle(((DerivedLevelData) worldInfo).wrapped);
+        }
+    }
+
     @Override
     public int getXSpawn() {
         return derivedWorldInfo.getXSpawn();
+    }
+
+    @Override
+    public void setXSpawn(int x) {
+        derivedWorldInfo.setXSpawn(x);
     }
 
     @Override
@@ -37,8 +70,18 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
+    public void setYSpawn(int y) {
+        derivedWorldInfo.setYSpawn(y);
+    }
+
+    @Override
     public int getZSpawn() {
         return derivedWorldInfo.getZSpawn();
+    }
+
+    @Override
+    public void setZSpawn(int z) {
+        derivedWorldInfo.setZSpawn(z);
     }
 
     @Override
@@ -47,13 +90,28 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
+    public void setSpawnAngle(float angle) {
+        derivedWorldInfo.setSpawnAngle(angle);
+    }
+
+    @Override
     public long getGameTime() {
         return derivedWorldInfo.getGameTime();
     }
 
     @Override
+    public void setGameTime(long time) {
+        derivedWorldInfo.setGameTime(time);
+    }
+
+    @Override
     public long getDayTime() {
         return derivedWorldInfo.getDayTime();
+    }
+
+    @Override
+    public void setDayTime(long time) {
+        derivedWorldInfo.setDayTime(time);
     }
 
     @Override
@@ -77,63 +135,13 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public int getThunderTime() {
-        return derivedWorldInfo.getThunderTime();
-    }
-
-    @Override
-    public boolean isRaining() {
-        return derivedWorldInfo.isRaining();
-    }
-
-    @Override
-    public int getRainTime() {
-        return derivedWorldInfo.getRainTime();
-    }
-
-    @Override
-    public GameType getGameType() {
-        return derivedWorldInfo.getGameType();
-    }
-
-    @Override
-    public void setXSpawn(int x) {
-        derivedWorldInfo.setXSpawn(x);
-    }
-
-    @Override
-    public void setYSpawn(int y) {
-        derivedWorldInfo.setYSpawn(y);
-    }
-
-    @Override
-    public void setZSpawn(int z) {
-        derivedWorldInfo.setZSpawn(z);
-    }
-
-    @Override
-    public void setSpawnAngle(float angle) {
-        derivedWorldInfo.setSpawnAngle(angle);
-    }
-
-    @Override
-    public void setGameTime(long time) {
-        derivedWorldInfo.setGameTime(time);
-    }
-
-    @Override
-    public void setDayTime(long time) {
-        derivedWorldInfo.setDayTime(time);
-    }
-
-    @Override
-    public void setSpawn(BlockPos spawnPoint, float angle) {
-        derivedWorldInfo.setSpawn(spawnPoint, angle);
-    }
-
-    @Override
     public void setThundering(boolean thunderingIn) {
         derivedWorldInfo.setThundering(thunderingIn);
+    }
+
+    @Override
+    public int getThunderTime() {
+        return derivedWorldInfo.getThunderTime();
     }
 
     @Override
@@ -142,8 +150,18 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
+    public boolean isRaining() {
+        return derivedWorldInfo.isRaining();
+    }
+
+    @Override
     public void setRaining(boolean isRaining) {
         derivedWorldInfo.setRaining(isRaining);
+    }
+
+    @Override
+    public int getRainTime() {
+        return derivedWorldInfo.getRainTime();
     }
 
     @Override
@@ -152,8 +170,18 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
+    public GameType getGameType() {
+        return derivedWorldInfo.getGameType();
+    }
+
+    @Override
     public void setGameType(GameType type) {
         derivedWorldInfo.setGameType(type);
+    }
+
+    @Override
+    public void setSpawn(BlockPos spawnPoint, float angle) {
+        derivedWorldInfo.setSpawn(spawnPoint, angle);
     }
 
     @Override
@@ -234,33 +262,5 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     @Override
     public void fillCrashReportCategory(CrashReportCategory p_164972_, LevelHeightAccessor p_164973_) {
         derivedWorldInfo.fillCrashReportCategory(p_164972_, p_164973_);
-    }
-
-    public static MohistDerivedWorldInfo create(DerivedLevelData worldInfo) {
-        return new MohistDerivedWorldInfo(worldInfo, worldSettings(worldInfo), generatorSettings(worldInfo), lifecycle(worldInfo));
-    }
-
-    private static LevelSettings worldSettings(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData) worldInfo).settings;
-        } else {
-            return worldSettings(((DerivedLevelData) worldInfo).wrapped);
-        }
-    }
-
-    private static WorldGenSettings generatorSettings(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData) worldInfo).worldGenSettings();
-        } else {
-            return generatorSettings(((DerivedLevelData) worldInfo).wrapped);
-        }
-    }
-
-    private static Lifecycle lifecycle(ServerLevelData worldInfo) {
-        if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData)worldInfo).worldGenSettingsLifecycle();
-        } else {
-            return lifecycle(((DerivedLevelData) worldInfo).wrapped);
-        }
     }
 }
