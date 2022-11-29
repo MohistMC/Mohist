@@ -11,21 +11,23 @@
  
  public interface IInventory extends IClearable {
     int func_70302_i_();
-@@ -59,4 +_,31 @@
+@@ -59,4 +_,33 @@
  
        return false;
     }
 +
 +   // CraftBukkit start
 +   default java.util.List<ItemStack> getContents() {
-+       return new NonNullList<ItemStack>(); // Mohist - Fix double-click Lootr crash (#982)
++       return new NonNullList<>(); // Mohist - Fix double-click Lootr crash (#982)
 +   }
 +
 +   void onOpen(CraftHumanEntity who);
 +
 +   void onClose(CraftHumanEntity who);
 +
-+   java.util.List<org.bukkit.entity.HumanEntity> getViewers();
++   default java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
++      return new NonNullList<>(); // Mohist - Fix double-click Lootr crash (#982)
++   }
 +
 +   org.bukkit.inventory.InventoryHolder getOwner();
 +

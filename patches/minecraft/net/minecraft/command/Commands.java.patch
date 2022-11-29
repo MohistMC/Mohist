@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -1,5 +_,26 @@
+@@ -1,5 +_,25 @@
  package net.minecraft.command;
  
 +import com.mohistmc.forge.ModsCommandDispatcher;
@@ -19,7 +19,6 @@
 +import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
-+import org.bukkit.Bukkit;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +
