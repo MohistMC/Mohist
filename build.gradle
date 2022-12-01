@@ -14,7 +14,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
-    id 'de.undercouch.download' version '4.1.2'
+    id 'de.undercouch.download' version '5.1.3'
     id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
     id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
 }
@@ -54,8 +54,8 @@ ext {
     JARJAR_VERSION = '0.3.16'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.2-43.1.58'
-    FORGE_VERSION = '43.1.58'
+    VERSION = '1.19.2-43.1.65'
+    FORGE_VERSION = '43.1.65'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -544,6 +544,8 @@ project(':fmlonly') {
 
     sharedFmlonlyForge.call(project)
 
+    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
+
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
         doFirst {
@@ -995,8 +997,6 @@ project(':forge') {
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
-
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
 
     task checkPatches(type: CheckPatches, dependsOn: genPatches) {
         patchDir = file("$rootDir/patches")
