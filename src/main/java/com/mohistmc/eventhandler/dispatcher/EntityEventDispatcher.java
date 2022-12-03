@@ -19,11 +19,18 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
@@ -97,5 +104,31 @@ public class EntityEventDispatcher {
             }
             // Spigot end
         }
+    }
+
+    @SubscribeEvent(receiveCanceled = true)
+    public void onEntityTargetLivingEntityEvent(LivingAttackEvent event) {
+        LivingEntity entity = event.getEntity();
+        LivingEntity entityliving = entity.getLastHurtMob();
+        // CraftBukkit start
+        EntityTargetEvent setTargetEvent = CraftEventFactory.callEntityTargetLivingEvent(entity, entityliving, (entityliving instanceof Player) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
+        if (setTargetEvent.isCancelled()) {
+            event.setCanceled(true);
+        }
+        entityliving = (setTargetEvent.getTarget() != null) ? ((CraftLivingEntity) setTargetEvent.getTarget()).getHandle() : null;
+        // CraftBukkit end
+        entity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, entityliving);
+
+        // CraftBukkit start
+        LivingEntity old = entity.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
+        EntityTargetEvent forgetTargetEvent = CraftEventFactory.callEntityTargetLivingEvent(entity, null, (old != null && !old.isAlive()) ? EntityTargetEvent.TargetReason.TARGET_DIED : EntityTargetEvent.TargetReason.FORGOT_TARGET);
+        if (forgetTargetEvent.isCancelled()) {
+            event.setCanceled(true);
+        }
+        if (forgetTargetEvent.getTarget() != null) {
+            entity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, ((CraftLivingEntity) forgetTargetEvent.getTarget()).getHandle());
+            event.setCanceled(true);
+        }
+        // CraftBukkit end
     }
 }
