@@ -49,6 +49,7 @@ import net.minecraft.util.text.StringTextComponent;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -287,6 +288,16 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     private int version = CraftMagicNumbers.INSTANCE.getDataVersion(); // Internal use only
 
+    private CompoundNBT forgeCaps;
+
+    public CompoundNBT getForgeCaps() {
+        return this.forgeCaps;
+    }
+
+    public void setForgeCaps(CompoundNBT nbt) {
+        this.forgeCaps = nbt;
+    }
+
     CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
             return;
@@ -322,10 +333,18 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             deserializeInternal(internalTag, meta);
         }
 
+        CompoundNBT forgeCaps = meta.getForgeCaps();
+        if (forgeCaps != null) {
+            this.forgeCaps = forgeCaps.copy();
+        }
+
         this.version = meta.version;
     }
 
     CraftMetaItem(CompoundNBT tag) {
+        if (tag == null) {
+            tag = new CompoundNBT();
+        }
         if (tag.contains(DISPLAY.NBT)) {
             CompoundNBT display = tag.getCompound(DISPLAY.NBT);
 
@@ -549,6 +568,15 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         if (nbtMap != null) {
             this.persistentDataContainer.putAll((CompoundNBT) CraftNBTTagConfigSerializer.deserialize(nbtMap));
         }
+        if (nbtMap.containsKey("forgeCaps")) {
+            Object forgeCaps = nbtMap.get("forgeCaps");
+            try {
+                ByteArrayInputStream buf = new ByteArrayInputStream(Base64.decodeBase64(forgeCaps.toString()));
+                this.forgeCaps = CompressedStreamTools.readCompressed(buf);
+            } catch (IOException e) {
+                LogManager.getLogger(getClass()).error("Reading forge caps", e);
+            }
+        }
     }
 
     void deserializeInternal(CompoundNBT tag, Object context) {
@@ -755,6 +783,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Overridden
     boolean isEmpty() {
+        if (this.forgeCaps != null && !this.forgeCaps.isEmpty()) {
+            return false;
+        }
         return !(hasDisplayName() || hasLocalizedName() || hasEnchants() || (lore != null) || hasCustomModelData() || hasBlockData() || hasRepairCost() || !unhandledTags.isEmpty() || !persistentDataContainer.isEmpty() || hideFlag != 0 || isUnbreakable() || hasDamage() || hasAttributeModifiers());
     }
 
@@ -1141,6 +1172,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
      */
     @Overridden
     boolean equalsCommon(CraftMetaItem that) {
+        CompoundNBT forgeCaps = that.getForgeCaps();
+        boolean ret;
+        if (this.forgeCaps == null) {
+            ret = forgeCaps != null && forgeCaps.size() != 0;
+        } else {
+            ret = forgeCaps == null ? this.forgeCaps.size() != 0 : !this.forgeCaps.equals(forgeCaps);
+        }
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasLocalizedName() ? that.hasLocalizedName() && this.locName.equals(that.locName) : !that.hasLocalizedName())
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
@@ -1154,7 +1192,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 && (this.hideFlag == that.hideFlag)
                 && (this.isUnbreakable() == that.isUnbreakable())
                 && (this.hasDamage() ? that.hasDamage() && this.damage == that.damage : !that.hasDamage())
-                && (this.version == that.version);
+                && (this.version == that.version)
+                && ret;
     }
 
     /**
@@ -1189,7 +1228,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         hash = 61 * hash + (hasDamage() ? this.damage : 0);
         hash = 61 * hash + (hasAttributeModifiers() ? this.attributeModifiers.hashCode() : 0);
         hash = 61 * hash + version;
-        return hash;
+        return 61 * hash + (this.forgeCaps != null ? this.forgeCaps.hashCode() : 0);
     }
 
     @Overridden
@@ -1213,6 +1252,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             clone.unbreakable = this.unbreakable;
             clone.damage = this.damage;
             clone.version = this.version;
+            if (this.forgeCaps != null) {
+                clone.setForgeCaps(this.forgeCaps.copy());
+            }
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
@@ -1288,6 +1330,15 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         if (!persistentDataContainer.isEmpty()) { // Store custom tags, wrapped in their compound
             builder.put(BUKKIT_CUSTOM_TAG.BUKKIT, persistentDataContainer.serialize());
+        }
+        if (this.forgeCaps != null) {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            try {
+                CompressedStreamTools.writeCompressed(this.forgeCaps, buf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            builder.put("forgeCaps", Base64.encodeBase64String(buf.toByteArray()));
         }
 
         return builder;

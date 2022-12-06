@@ -100,7 +100,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,33 +_,61 @@
+@@ -109,33 +_,66 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -137,6 +137,11 @@
        this.field_190928_g = this.func_190926_b();
     }
  
++   public CompoundNBT getForgeCaps() {
++      return this.serializeCaps();
++   }
++
++
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundNBT compound) {
 +      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
@@ -438,7 +443,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -952,6 +_,23 @@
+@@ -952,6 +_,30 @@
  
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();
@@ -449,6 +454,13 @@
 +      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
 +      getStack().func_77982_d(itemStack.func_77978_p());
 +      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++   }
++
++   public void setForgeCaps(CompoundNBT caps) {
++      this.capNBT = caps;
++      if (caps != null) {
++         this.deserializeCaps(caps);
++      }
 +   }
 +
 +   /**
