@@ -94,10 +94,10 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper(LookupName, "findSpecial", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper(LookupName, "findStatic", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper(LookupName, "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
-        registerMethodRemapper(LookupName, "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
-        registerMethodRemapper(LookupName, "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
-        registerMethodRemapper(LookupName, "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
-        registerMethodRemapper(LookupName, "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper(LookupName, "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper(LookupName, "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper(LookupName, "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper(LookupName, "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper(LookupName, "findVarHandle", VarHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
