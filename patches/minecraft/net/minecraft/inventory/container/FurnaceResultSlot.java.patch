@@ -1,11 +1,15 @@
 --- a/net/minecraft/inventory/container/FurnaceResultSlot.java
 +++ b/net/minecraft/inventory/container/FurnaceResultSlot.java
-@@ -40,9 +_,10 @@
+@@ -40,9 +_,15 @@
     protected void func_75208_c(ItemStack p_75208_1_) {
        p_75208_1_.func_77980_a(this.field_75229_a.field_70170_p, this.field_75229_a, this.field_75228_b);
        if (!this.field_75229_a.field_70170_p.field_72995_K && this.field_75224_c instanceof AbstractFurnaceTileEntity) {
--         ((AbstractFurnaceTileEntity)this.field_75224_c).func_235645_d_(this.field_75229_a);
-+         ((AbstractFurnaceTileEntity)this.field_75224_c).unlockRecipes(this.field_75229_a, p_75208_1_, this.field_75228_b); // CraftBukkit
++         // Mohist start
++         ((AbstractFurnaceTileEntity)this.field_75224_c).playerEntityCB.set(this.field_75229_a);
++         ((AbstractFurnaceTileEntity)this.field_75224_c).itemStackCB.set(p_75208_1_);
++         ((AbstractFurnaceTileEntity)this.field_75224_c).ammountCB.set(this.field_75228_b);
+          ((AbstractFurnaceTileEntity)this.field_75224_c).func_235645_d_(this.field_75229_a);
++         // Mohist end
        }
  
        this.field_75228_b = 0;
