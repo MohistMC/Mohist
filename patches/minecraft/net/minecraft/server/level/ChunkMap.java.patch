@@ -8,7 +8,7 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -126,7 +_,7 @@
+@@ -129,7 +_,7 @@
     private final ChunkTaskPriorityQueueSorter f_140141_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140143_;
@@ -17,7 +17,7 @@
     private final ChunkStatusUpdateListener f_143031_;
     public final ChunkMap.DistanceManager f_140145_;
     private final AtomicInteger f_140146_ = new AtomicInteger();
-@@ -385,6 +_,7 @@
+@@ -395,6 +_,7 @@
              this.f_140140_ = true;
           }
  
@@ -25,7 +25,7 @@
           return p_140179_;
        }
     }
-@@ -490,6 +_,7 @@
+@@ -500,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
                    ((LevelChunk)p_203002_).m_62913_(false);
@@ -33,7 +33,7 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -689,8 +_,14 @@
+@@ -699,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
                 levelchunk.m_62913_(true);
@@ -48,7 +48,7 @@
              }
  
              return levelchunk;
-@@ -793,6 +_,7 @@
+@@ -803,6 +_,7 @@
  
              this.f_140133_.m_46473_().m_6174_("chunkSave");
              CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
@@ -56,7 +56,7 @@
              this.m_63502_(chunkpos, compoundtag);
              this.m_140229_(chunkpos, chunkstatus.m_62494_());
              return true;
-@@ -863,6 +_,7 @@
+@@ -873,6 +_,7 @@
  
           if (!p_183759_ && p_183758_) {
              p_183755_.m_9088_(p_183756_);
@@ -64,7 +64,7 @@
           }
  
        }
-@@ -928,13 +_,25 @@
+@@ -938,13 +_,25 @@
        return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
  
@@ -91,7 +91,7 @@
                 return true;
              }
           }
-@@ -969,6 +_,15 @@
+@@ -979,6 +_,15 @@
        }
     }
  
@@ -107,7 +107,7 @@
     private boolean m_140329_(ServerPlayer p_140330_) {
        return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
     }
-@@ -1105,9 +_,10 @@
+@@ -1115,9 +_,10 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -119,7 +119,7 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
-@@ -1231,6 +_,7 @@
+@@ -1262,6 +_,7 @@
           }
        }
  
@@ -127,7 +127,7 @@
     }
  
     protected PoiManager m_140424_() {
-@@ -1265,12 +_,12 @@
+@@ -1296,12 +_,12 @@
        }
     }
  

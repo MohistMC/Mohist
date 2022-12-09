@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -19,6 +_,9 @@
+@@ -20,6 +_,9 @@
     public double f_36814_;
     public double f_36815_;
  
@@ -10,7 +10,7 @@
     protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
        super(p_36833_, p_36834_);
     }
-@@ -36,6 +_,15 @@
+@@ -37,6 +_,15 @@
  
     }
  
@@ -26,7 +26,7 @@
     public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36826_, LivingEntity p_36827_, double p_36828_, double p_36829_, double p_36830_, Level p_36831_) {
        this(p_36826_, p_36827_.m_20185_(), p_36827_.m_20186_(), p_36827_.m_20189_(), p_36828_, p_36829_, p_36830_, p_36831_);
        this.m_5602_(p_36827_);
-@@ -64,7 +_,7 @@
+@@ -65,7 +_,7 @@
           }
  
           HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);

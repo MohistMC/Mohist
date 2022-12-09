@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PressurePlateBlock.java
++++ b/net/minecraft/world/level/block/PressurePlateBlock.java
+@@ -22,7 +_,7 @@
+    private final SoundEvent f_244342_;
+    private final SoundEvent f_244061_;
+ 
+-   protected PressurePlateBlock(PressurePlateBlock.Sensitivity p_250675_, BlockBehaviour.Properties p_249590_, SoundEvent p_249532_, SoundEvent p_250629_) {
++   public PressurePlateBlock(PressurePlateBlock.Sensitivity p_250675_, BlockBehaviour.Properties p_249590_, SoundEvent p_249532_, SoundEvent p_250629_) {
+       super(p_249590_);
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_55249_, Boolean.valueOf(false)));
+       this.f_55250_ = p_250675_;

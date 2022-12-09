@@ -9,7 +9,7 @@
  import org.slf4j.Logger;
  
  public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, StructureAccess {
-@@ -67,14 +_,20 @@
+@@ -67,13 +_,17 @@
     protected final UpgradeData f_187606_;
     @Nullable
     protected BlendingData f_187607_;
@@ -22,24 +22,25 @@
 +   public final Map<BlockPos, BlockEntity> f_187610_ = Maps.newHashMap();
     protected final LevelHeightAccessor f_187611_;
     protected final LevelChunkSection[] f_187612_;
- 
-+   public final Registry<Biome> biomeRegistry;
 +   // CraftBukkit start - SPIGOT-6814: move to IChunkAccess to account for 1.17 to 1.18 chunk upgrading.
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 +   public DirtyCraftPersistentDataContainer persistentDataContainer = new DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +   // CraftBukkit end
-+
+ 
     public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
        this.f_187604_ = p_187621_;
-       this.f_187606_ = p_187622_;
-@@ -92,6 +_,7 @@
+@@ -92,7 +_,11 @@
        }
  
        m_187634_(p_187623_, p_187624_, this.f_187612_);
++      // CraftBukkit start
 +      this.biomeRegistry = p_187624_;
     }
++   public final Registry<Biome> biomeRegistry;
++   // CraftBukkit end
  
     private static void m_187634_(LevelHeightAccessor p_187635_, Registry<Biome> p_187636_, LevelChunkSection[] p_187637_) {
+       for(int i = 0; i < p_187637_.length; ++i) {
 @@ -407,4 +_,28 @@
  
     public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {

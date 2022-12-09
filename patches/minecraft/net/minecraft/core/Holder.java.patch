@@ -24,7 +24,25 @@
     T m_203334_();
  
     boolean m_203633_();
-@@ -192,6 +_,10 @@
+@@ -171,7 +_,7 @@
+          return this.f_205751_ != null && this.f_205752_ != null;
+       }
+ 
+-      void m_246870_(ResourceKey<T> p_251943_) {
++      public void m_246870_(ResourceKey<T> p_251943_) {
+          if (this.f_205751_ != null && p_251943_ != this.f_205751_) {
+             throw new IllegalStateException("Can't change holder key: existing=" + this.f_205751_ + ", new=" + p_251943_);
+          } else {
+@@ -179,7 +_,7 @@
+          }
+       }
+ 
+-      void m_247654_(T p_249418_) {
++      public void m_247654_(T p_249418_) {
+          if (this.f_205750_ == Holder.Reference.Type.INTRUSIVE && this.f_205752_ != p_249418_) {
+             throw new IllegalStateException("Can't change holder " + this.f_205751_ + " value: existing=" + this.f_205752_ + ", new=" + p_249418_);
+          } else {
+@@ -193,6 +_,10 @@
  
        public Stream<TagKey<T>> m_203616_() {
           return this.f_205749_.stream();

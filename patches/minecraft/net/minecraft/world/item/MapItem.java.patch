@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/item/MapItem.java
 +++ b/net/minecraft/world/item/MapItem.java
+@@ -23,6 +_,7 @@
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.context.UseOnContext;
++import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.biome.Biome;
+ import net.minecraft.world.level.block.Blocks;
 @@ -32,6 +_,8 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.MaterialColor;
@@ -9,7 +17,7 @@
  
  public class MapItem extends ComplexItem {
     public static final int f_151104_ = 128;
-@@ -56,20 +_,34 @@
+@@ -58,20 +_,34 @@
  
     @Nullable
     public static MapItemSavedData m_42853_(ItemStack p_42854_, Level p_42855_) {

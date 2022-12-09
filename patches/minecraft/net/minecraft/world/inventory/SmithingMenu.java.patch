@@ -20,24 +20,31 @@
  
     public SmithingMenu(int p_40245_, Inventory p_40246_) {
        this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);
-@@ -54,12 +_,15 @@
+@@ -54,15 +_,15 @@
     public void m_6640_() {
        List<UpgradeRecipe> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
        if (list.isEmpty()) {
 -         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
 +         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
-          this.f_40242_ = list.get(0);
-          ItemStack itemstack = this.f_40242_.m_5874_(this.f_39769_);
-          this.f_39768_.m_6029_(this.f_40242_);
-          this.f_39768_.m_6836_(0, itemstack);
+-         UpgradeRecipe upgraderecipe = list.get(0);
+-         ItemStack itemstack = upgraderecipe.m_5874_(this.f_39769_);
+-         if (itemstack.m_246617_(this.f_40241_.m_246046_())) {
+-            this.f_40242_ = upgraderecipe;
+-            this.f_39768_.m_6029_(upgraderecipe);
+-            this.f_39768_.m_6836_(0, itemstack);
+-         }
++         this.f_40242_ = list.get(0);
++         ItemStack itemstack = this.f_40242_.m_5874_(this.f_39769_);
++         this.f_39768_.m_6029_(this.f_40242_);
++         this.f_39768_.m_6836_(0, itemstack);
 +         // CraftBukkit start
 +         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
 +         // CraftBukkit end
        }
  
     }
-@@ -73,4 +_,17 @@
+@@ -76,4 +_,17 @@
     public boolean m_5882_(ItemStack p_40257_, Slot p_40258_) {
        return p_40258_.f_40218_ != this.f_39768_ && super.m_5882_(p_40257_, p_40258_);
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
-@@ -46,7 +_,7 @@
+@@ -49,7 +_,7 @@
     private static final String f_230342_ = "gameteststructures";
     private static final String f_230343_ = ".nbt";
     private static final String f_230344_ = ".snbt";
@@ -9,16 +9,16 @@
     private final DataFixer f_230346_;
     private ResourceManager f_230347_;
     private final Path f_230348_;
-@@ -106,7 +_,7 @@
+@@ -112,7 +_,7 @@
        this.f_230345_.clear();
     }
  
 -   private Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
 +   public Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
-       ResourceLocation resourcelocation = new ResourceLocation(p_230428_.m_135827_(), "structures/" + p_230428_.m_135815_() + ".nbt");
+       ResourceLocation resourcelocation = f_244413_.m_245698_(p_230428_);
        return this.m_230372_(() -> {
           return this.f_230347_.m_215595_(resourcelocation);
-@@ -131,7 +_,7 @@
+@@ -133,7 +_,7 @@
        return this.m_230394_(Paths.get("gameteststructures"), "minecraft", ".snbt");
     }
  
@@ -27,7 +27,7 @@
        if (!Files.isDirectory(this.f_230348_)) {
           return Optional.empty();
        } else {
-@@ -267,7 +_,7 @@
+@@ -237,7 +_,7 @@
        }
     }
  

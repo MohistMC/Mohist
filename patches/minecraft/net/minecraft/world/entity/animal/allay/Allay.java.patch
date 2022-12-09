@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
+@@ -64,6 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEventListener;
+ import net.minecraft.world.level.gameevent.PositionSource;
+ import net.minecraft.world.level.gameevent.vibrations.VibrationListener;
++import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import org.jetbrains.annotations.Nullable;
+ import org.slf4j.Logger;
 @@ -88,13 +_,14 @@
     private final VibrationListener.VibrationListenerConfig f_238787_;
     private final DynamicGameEventListener<Allay.JukeboxListener> f_238563_;
@@ -30,7 +38,7 @@
     protected Brain.Provider<Allay> m_5490_() {
        return Brain.m_21923_(f_218301_, f_218297_);
     }
-@@ -273,7 +_,12 @@
+@@ -276,7 +_,12 @@
        ItemStack itemstack = p_218361_.m_21120_(p_218362_);
        ItemStack itemstack1 = this.m_21120_(InteractionHand.MAIN_HAND);
        if (this.m_239559_() && this.m_239735_(itemstack) && this.m_218324_()) {
@@ -44,16 +52,16 @@
           this.f_19853_.m_7605_(this, (byte)18);
           this.f_19853_.m_6269_(p_218361_, this, SoundEvents.f_144243_, SoundSource.NEUTRAL, 2.0F, 1.0F);
           this.m_239358_(p_218361_, itemstack);
-@@ -326,7 +_,7 @@
+@@ -329,7 +_,7 @@
  
     public boolean m_7243_(ItemStack p_218387_) {
        ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);
--      return !itemstack.m_41619_() && itemstack.m_41726_(p_218387_) && this.f_218303_.m_19183_(p_218387_) && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_);
-+      return !itemstack.m_41619_() && itemstack.m_41726_(p_218387_) && this.f_218303_.m_19183_(p_218387_) && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this);
+-      return !itemstack.m_41619_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && this.f_218303_.m_19183_(p_218387_) && this.m_245613_(itemstack, p_218387_);
++      return !itemstack.m_41619_() && this.f_218303_.m_19183_(p_218387_) && this.m_245613_(itemstack, p_218387_) && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this);
     }
  
-    protected void m_7581_(ItemEntity p_218359_) {
-@@ -362,6 +_,7 @@
+    private boolean m_245613_(ItemStack p_252278_, ItemStack p_250405_) {
+@@ -391,6 +_,7 @@
     }
  
     private boolean m_239812_() {
@@ -61,7 +69,7 @@
        return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
     }
  
-@@ -453,17 +_,23 @@
+@@ -475,17 +_,23 @@
           allay.m_21530_();
           allay.m_239811_();
           this.m_239811_();

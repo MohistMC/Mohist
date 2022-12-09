@@ -1,17 +1,22 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -20,8 +_,10 @@
- import java.util.function.Function;
+@@ -9,7 +_,6 @@
+ import io.netty.buffer.Unpooled;
+ import java.io.File;
+ import java.net.SocketAddress;
+-import java.nio.file.Path;
+ import java.text.SimpleDateFormat;
+ import java.time.Instant;
+ import java.util.EnumSet;
+@@ -22,7 +_,6 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
-+import net.md_5.bungee.api.ChatMessageType;
  import net.minecraft.ChatFormatting;
- import net.minecraft.FileUtil;
-+import net.minecraft.Util;
+-import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.RegistryAccess;
-@@ -54,6 +_,7 @@
+ import net.minecraft.core.LayeredRegistryAccess;
+@@ -57,6 +_,7 @@
  import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
  import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
  import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
@@ -19,15 +24,15 @@
  import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
  import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
  import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
-@@ -66,6 +_,7 @@
- import net.minecraft.server.MinecraftServer;
+@@ -71,6 +_,7 @@
  import net.minecraft.server.PlayerAdvancements;
+ import net.minecraft.server.RegistryLayer;
  import net.minecraft.server.ServerScoreboard;
 +import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -96,6 +_,12 @@
+@@ -101,6 +_,12 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -40,7 +45,7 @@
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -125,9 +_,14 @@
+@@ -131,9 +_,14 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -48,14 +53,14 @@
 +
 +   private CraftServer cserver;
  
-    public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
+    public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
 +      p_203842_.console = ColouredConsoleSender.getInstance();
-       this.f_11206_ = p_203843_;
+       this.f_243858_ = p_251844_;
+       this.f_256838_ = (new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.m_257599_(p_251844_))).m_203557_();
        this.f_11193_ = p_203845_;
-       this.f_11204_ = p_203844_;
-@@ -140,6 +_,12 @@
+@@ -147,6 +_,12 @@
        String s = optional.map(GameProfile::getName).orElse(gameprofile.getName());
        gameprofilecache.m_10991_(gameprofile);
        CompoundTag compoundtag = this.m_11224_(p_11263_);
@@ -68,7 +73,7 @@
        ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
        ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
        ServerLevel serverlevel1;
-@@ -156,18 +_,19 @@
+@@ -163,19 +_,20 @@
           s1 = p_11262_.m_129523_().toString();
        }
  
@@ -80,17 +85,18 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
--      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_11206_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), this.f_11207_, this.f_184208_, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
-+      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_11206_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), serverlevel1.spigotConfig.viewDistance, serverlevel1.spigotConfig.simulationDistance, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
+-      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_256838_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), this.f_11207_, this.f_184208_, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
++      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_256838_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), serverlevel1.spigotConfig.viewDistance, serverlevel1.spigotConfig.simulationDistance, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
+       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.f_244280_.m_245829_(serverlevel1.m_246046_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundCustomPayloadPacket(ClientboundCustomPayloadPacket.f_132012_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(this.m_7873_().m_130001_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
+       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        this.m_11289_(p_11263_);
-@@ -182,18 +_,68 @@
+@@ -190,19 +_,75 @@
           mutablecomponent = Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
        }
  
@@ -101,9 +107,13 @@
 +
 +      // this.broadcastSystemMessage(mutablecomponent.withStyle(ChatFormatting.YELLOW), false);
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
+       p_11263_.m_215109_(this.f_11195_.m_129928_());
+       p_11263_.f_8906_.m_9829_(ClientboundPlayerInfoUpdatePacket.m_247122_(this.f_11196_));
        this.f_11196_.add(p_11263_);
        this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
--      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
+-      this.m_11268_(ClientboundPlayerInfoUpdatePacket.m_247122_(List.of(p_11263_)));
+-      serverlevel1.m_8834_(p_11263_);
+-      this.f_11195_.m_129901_().m_136293_(p_11263_);
 +      // this.broadcastAll(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
 +
 +      // CraftBukkit start
@@ -129,14 +139,9 @@
 +      // CraftBukkit end
 +
 +      // CraftBukkit start - sendAll above replaced with this loop
-+      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_);
- 
-       for(int i = 0; i < this.f_11196_.size(); ++i) {
--         p_11263_.f_8906_.m_9829_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.f_11196_.get(i)));
--      }
--
--      serverlevel1.m_8834_(p_11263_);
--      this.f_11195_.m_129901_().m_136293_(p_11263_);
++      ClientboundPlayerInfoUpdatePacket packet = ClientboundPlayerInfoUpdatePacket.m_247122_(List.of(p_11263_));
++
++      for(int i = 0; i < this.f_11196_.size(); ++i) {
 +         // p_11263_.connection.send(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.players.get(i)));
 +         ServerPlayer entityplayer1 = (ServerPlayer) this.f_11196_.get(i);
 +
@@ -148,14 +153,14 @@
 +            continue;
 +         }
 +
-+         p_11263_.f_8906_.m_9829_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, new ServerPlayer[]{entityplayer1}));
++         p_11263_.f_8906_.m_9829_(ClientboundPlayerInfoUpdatePacket.m_247122_(List.of(entityplayer1)));
 +      }
 +      p_11263_.sentListPacket = true;
 +      // CraftBukkit end
 +
 +      // serverlevel1.addNewPlayer(p_11263_);
 +      // this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
-+      p_11263_.f_8906_.m_9829_(new ClientboundSetEntityDataPacket(p_11263_.m_19879_(), p_11263_.m_20088_(), true)); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
++      p_11263_.m_20088_().refresh(p_11263_); // CraftBukkit - BungeeCord#2321, send complete data to self on spawn
 +      // CraftBukkit start - Only add if the player wasn't moved in the event
 +      if (p_11263_.f_19853_ == serverlevel1 && !serverlevel1.m_6907_().contains(p_11263_)) {
 +         serverlevel1.m_8834_(p_11263_);
@@ -166,7 +171,12 @@
        this.m_11229_(p_11263_, serverlevel1);
        this.f_11195_.m_214042_().ifPresent((p_215606_) -> {
           p_11263_.m_143408_(p_215606_.f_236743_(), p_215606_.f_236744_(), p_215606_.f_236745_(), p_215606_.f_236746_());
-@@ -206,8 +_,9 @@
+       });
++      p_11263_.m_215109_(this.f_11195_.m_129928_());
+ 
+       for(MobEffectInstance mobeffectinstance : p_11263_.m_21220_()) {
+          servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateMobEffectPacket(p_11263_.m_19879_(), mobeffectinstance));
+@@ -210,8 +_,9 @@
  
        if (compoundtag != null && compoundtag.m_128425_("RootVehicle", 10)) {
           CompoundTag compoundtag1 = compoundtag.m_128469_("RootVehicle");
@@ -177,7 +187,7 @@
           });
           if (entity1 != null) {
              UUID uuid;
-@@ -240,9 +_,11 @@
+@@ -244,9 +_,11 @@
        }
  
        p_11263_.m_143429_();
@@ -190,7 +200,7 @@
        Set<Objective> set = Sets.newHashSet();
  
        for(PlayerTeam playerteam : p_11274_.m_83491_()) {
-@@ -300,6 +_,7 @@
+@@ -304,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
           f_11188_.debug("loading single player");
@@ -198,7 +208,7 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -308,6 +_,7 @@
+@@ -312,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
@@ -206,7 +216,7 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
-@@ -322,6 +_,7 @@
+@@ -326,6 +_,7 @@
     }
  
     public void m_11286_(ServerPlayer p_11287_) {
@@ -214,8 +224,8 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -400,6 +_,11 @@
-       return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_, p_215626_);
+@@ -404,6 +_,11 @@
+       return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
 +   // Mohist TODO
@@ -226,16 +236,16 @@
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
        this.f_11196_.remove(p_11237_);
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
-@@ -451,6 +_,8 @@
- 
+@@ -456,6 +_,8 @@
+       byte b0 = (byte)(p_11238_ ? 1 : 0);
        LevelData leveldata = serverplayer.f_19853_.m_6106_();
-       serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), p_11238_, serverplayer.m_219759_()));
+       serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), b0, serverplayer.m_219759_()));
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
        serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
        serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
        serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-@@ -462,6 +_,7 @@
+@@ -467,6 +_,7 @@
        this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
@@ -243,7 +253,7 @@
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
-@@ -546,6 +_,7 @@
+@@ -551,6 +_,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
@@ -251,7 +261,7 @@
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
-@@ -555,6 +_,7 @@
+@@ -560,6 +_,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
@@ -259,7 +269,7 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -784,13 +_,6 @@
+@@ -774,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -273,7 +283,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
-@@ -799,6 +_,26 @@
+@@ -789,6 +_,26 @@
        return serverstatscounter;
     }
  
@@ -300,7 +310,7 @@
     public PlayerAdvancements m_11296_(ServerPlayer p_11297_) {
        UUID uuid = p_11297_.m_20148_();
        PlayerAdvancements playeradvancements = this.f_11203_.get(uuid);
-@@ -809,6 +_,8 @@
+@@ -799,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
        }
  
@@ -309,7 +319,7 @@
        playeradvancements.m_135979_(p_11297_);
        return playeradvancements;
     }
-@@ -838,7 +_,7 @@
+@@ -828,7 +_,7 @@
     }
  
     public List<ServerPlayer> m_11314_() {
@@ -318,15 +328,15 @@
     }
  
     @Nullable
-@@ -855,6 +_,7 @@
+@@ -845,6 +_,7 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
-       this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
+       this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  
-@@ -867,5 +_,13 @@
+@@ -857,5 +_,13 @@
  
     public boolean m_11316_() {
        return this.f_11209_;

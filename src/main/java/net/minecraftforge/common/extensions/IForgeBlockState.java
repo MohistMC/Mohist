@@ -6,8 +6,8 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-
 import java.util.function.BiConsumer;
+
 import net.minecraft.client.Camera;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;

@@ -151,4 +151,5 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
         }
 
     }
+
 }

@@ -6,6 +6,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -256,10 +257,21 @@ public class ModLoader
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
+            var modIds = modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList());
+            var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList());
+
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
-                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
-                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
+                    containers.size(), containerIds,
+                    modInfoMap.size(), modIds);
+
+            var missingClasses = new ArrayList<>(modIds);
+            missingClasses.removeAll(containerIds);
+            LOGGER.fatal(LOADING, "The following classes are missing, but are reported in the mods.toml: {}", missingClasses);
+
+            var missingMods = new ArrayList<>(containerIds);
+            missingMods.removeAll(modIds);
+            LOGGER.fatal(LOADING, "The following mods are missing, but have classes in the jar: {}", missingMods);
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
@@ -297,7 +309,14 @@ public class ModLoader
         }
         ModList.get().forEachModInOrder(mc -> mc.acceptEvent(generator.apply(mc)));
     }
-
+    public <T extends Event & IModBusEvent> T postEventWithReturn(T e) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            return e;
+        }
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(e));
+        return e;
+    }
     public <T extends Event & IModBusEvent> void postEvent(T e) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());

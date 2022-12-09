@@ -8,6 +8,7 @@ package net.minecraftforge.event.level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,7 +20,6 @@ import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeInternalHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -133,7 +133,7 @@ public class LevelEvent extends Event
      *
      * The event is called in {@link net.minecraft.world.level.NaturalSpawner#mobsAt(ServerLevel,
      * StructureManager, ChunkGenerator, MobCategory, RandomSource, BlockPos)}.</p>
-     *
+     * 
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * Canceling the event will result in an empty list, meaning no entity will be spawned.</p>
      */
@@ -145,7 +145,7 @@ public class LevelEvent extends Event
         private final List<MobSpawnSettings.SpawnerData> list;
         private final List<MobSpawnSettings.SpawnerData> view;
 
-        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<SpawnerData> oldList)
+        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
         {
             super(level);
             this.pos = pos;
@@ -177,7 +177,7 @@ public class LevelEvent extends Event
         /**
          * {@return the list of mobs that can potentially be spawned.}
          */
-        public List<SpawnerData> getSpawnerDataList()
+        public List<MobSpawnSettings.SpawnerData> getSpawnerDataList()
         {
             return view;
         }

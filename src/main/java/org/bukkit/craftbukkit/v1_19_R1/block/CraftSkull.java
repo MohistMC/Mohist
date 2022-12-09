@@ -146,6 +146,9 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
             case ZOMBIE_HEAD:
             case ZOMBIE_WALL_HEAD:
                 return SkullType.ZOMBIE;
+            case PIGLIN_HEAD:
+            case PIGLIN_WALL_HEAD:
+                return SkullType.PIGLIN;
             case PLAYER_HEAD:
             case PLAYER_WALL_HEAD:
                 return SkullType.PLAYER;

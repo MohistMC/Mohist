@@ -41,7 +41,7 @@
 +
 +      Boat boat = this.f_235889_ ? new ChestBoat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +      // CraftBukkit end
-+      boat.m_38332_(this.f_123369_);
++      boat.m_262362_(this.f_123369_);
 +      boat.m_146922_(direction.m_122435_());
        double d3;
 -      if (level.m_6425_(blockpos).m_205070_(FluidTags.f_13131_)) {
@@ -57,7 +57,7 @@
        }
  
 -      Boat boat = (Boat)(this.f_235889_ ? new ChestBoat(level, d0, d1 + d3, d2) : new Boat(level, d0, d1 + d3, d2));
--      boat.m_38332_(this.f_123369_);
+-      boat.m_262362_(this.f_123369_);
 -      boat.m_146922_(direction.m_122435_());
 -      level.m_7967_(boat);
 -      p_123376_.m_41774_(1);

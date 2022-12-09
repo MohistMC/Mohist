@@ -1,15 +1,25 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -64,6 +_,8 @@
+@@ -64,6 +_,7 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
  
  public class Zombie extends Monster {
     private static final UUID f_34259_ = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-@@ -191,7 +_,7 @@
+@@ -93,6 +_,10 @@
+       this(EntityType.f_20501_, p_34274_);
+    }
+ 
++   public static ZombieVillager zombifyVillager(ServerLevel minecraftWorld, Villager handle, BlockPos blockPosition, boolean silent, SpawnReason custom) {
++      return null;
++   }
++
+    protected void m_8099_() {
+       this.f_21345_.m_25352_(4, new Zombie.ZombieAttackTurtleEggGoal(this, 1.0D, 3));
+       this.f_21345_.m_25352_(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+@@ -192,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
           if (this.m_34329_()) {
              --this.f_34266_;
@@ -18,7 +28,7 @@
                 this.m_7595_();
              }
           } else if (this.m_7593_()) {
-@@ -235,7 +_,7 @@
+@@ -236,7 +_,7 @@
        super.m_8107_();
     }
  
@@ -27,7 +37,7 @@
        this.f_34266_ = p_34279_;
        this.m_20088_().m_135381_(f_34261_, true);
     }
-@@ -253,6 +_,7 @@
+@@ -254,6 +_,7 @@
        if (zombie != null) {
           zombie.m_34339_(zombie.f_19853_.m_6436_(zombie.m_20183_()).m_19057_());
           zombie.m_34336_(zombie.m_7586_() && this.m_34330_());
@@ -35,7 +45,7 @@
        }
  
     }
-@@ -273,11 +_,14 @@
+@@ -274,11 +_,14 @@
              livingentity = (LivingEntity)p_34288_.m_7639_();
           }
  
@@ -52,7 +62,7 @@
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.m_216271_(this.f_19796_, 7, 40) * Mth.m_216271_(this.f_19796_, -1, 1);
-@@ -289,6 +_,7 @@
+@@ -290,6 +_,7 @@
                 if (NaturalSpawner.m_47051_(spawnplacements$type, this.f_19853_, blockpos, entitytype) && SpawnPlacements.m_217074_(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.f_19853_.f_46441_)) {
                    zombie.m_6034_((double)i1, (double)j1, (double)k1);
                    if (!this.f_19853_.m_45914_((double)i1, (double)j1, (double)k1, 7.0D) && this.f_19853_.m_45784_(zombie) && this.f_19853_.m_45786_(zombie) && !this.f_19853_.m_46855_(zombie.m_20191_())) {
@@ -60,48 +70,40 @@
                       zombie.m_6710_(livingentity);
                       zombie.m_6518_(serverlevel, this.f_19853_.m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
                       serverlevel.m_47205_(zombie);
-@@ -374,7 +_,7 @@
+@@ -375,26 +_,28 @@
  
     public boolean m_214076_(ServerLevel p_219160_, LivingEntity p_219161_) {
        boolean flag = super.m_214076_(p_219160_, p_219161_);
--      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager) {
-+      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.f_20530_, (timer) -> {})) {
+-      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
++      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.f_20530_, (timer) -> {
++      })) {
           if (p_219160_.m_46791_() != Difficulty.HARD && this.f_19796_.m_188499_()) {
              return flag;
           }
-@@ -386,6 +_,7 @@
-          zombievillager.m_34391_(villager.m_35517_().m_26179_(NbtOps.f_128958_).getValue());
-          zombievillager.m_34411_(villager.m_6616_().m_45388_());
-          zombievillager.m_34373_(villager.m_7809_());
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
-          if (!this.m_20067_()) {
-             p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
+ 
+          ZombieVillager zombievillager = villager.m_21406_(EntityType.f_20530_, false);
+          if (zombievillager != null) {
+-            zombievillager.m_6518_(p_219160_, p_219160_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
++            zombievillager.m_6518_(p_219160_, p_219160_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag) null);
+             zombievillager.m_34375_(villager.m_7141_());
+             zombievillager.m_34391_(villager.m_35517_().m_262795_(NbtOps.f_128958_));
+             zombievillager.m_34411_(villager.m_6616_().m_45388_());
+             zombievillager.m_34373_(villager.m_7809_());
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
+             if (!this.m_20067_()) {
+-               p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
++               p_219160_.m_5898_((Player) null, 1026, this.m_20183_(), 0);
+             }
+ 
+             flag = false;
           }
-@@ -396,6 +_,23 @@
+-      }
+ 
++      }
        return flag;
     }
  
-+   public static ZombieVillager zombifyVillager(ServerLevel p_34281_, net.minecraft.world.entity.npc.Villager villager, net.minecraft.core.BlockPos blockPosition, boolean silent, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      ZombieVillager zombievillager = (ZombieVillager) villager.convertTo(EntityType.f_20530_, false, EntityTransformEvent.TransformReason.INFECTION, spawnReason);
-+      if (zombievillager != null) {
-+         // CraftBukkit end
-+         zombievillager.m_6518_(p_34281_, p_34281_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
-+         zombievillager.m_34375_(villager.m_7141_());
-+         zombievillager.m_34391_(villager.m_35517_().m_26179_(NbtOps.f_128958_).getValue());
-+         zombievillager.m_34411_(villager.m_6616_().m_45388_());
-+         zombievillager.m_34373_(villager.m_7809_());
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(villager, zombievillager);
-+         if (!silent) {
-+            p_34281_.m_5898_((Player)null, 1026, blockPosition, 0);
-+         }
-+      }
-+      return zombievillager; // CraftBukkit
-+   }
-+
-    protected float m_6431_(Pose p_34313_, EntityDimensions p_34314_) {
-       return this.m_6162_() ? 0.93F : 1.74F;
-    }
-@@ -460,7 +_,7 @@
+@@ -464,7 +_,7 @@
     }
  
     public static boolean m_219162_(RandomSource p_219163_) {
@@ -110,7 +112,7 @@
     }
  
     protected void m_34339_(float p_34340_) {
-@@ -480,7 +_,7 @@
+@@ -484,7 +_,7 @@
     }
  
     protected void m_7572_() {

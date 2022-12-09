@@ -21,14 +21,14 @@ public class CraftLlama extends CraftChestedHorse implements Llama {
 
     @Override
     public Color getColor() {
-        return Color.values()[getHandle().getVariant()];
+        return Color.values()[getHandle().getVariant().ordinal()];
     }
 
     @Override
     public void setColor(Color color) {
         Preconditions.checkArgument(color != null, "color");
 
-        getHandle().setVariant(color.ordinal());
+        getHandle().setVariant(net.minecraft.world.entity.animal.horse.Llama.Variant.byId(color.ordinal()));
     }
 
     @Override

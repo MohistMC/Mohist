@@ -42,9 +42,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         super.update();
 
         // mark dirty, so that the client gets updated with item and rotation
-        for (SynchedEntityData.DataItem<?> dataItem : getHandle().getEntityData().getAll()) {
-            getHandle().getEntityData().markDirty(dataItem.getAccessor());
-        }
+        getHandle().getEntityData().markDirty(net.minecraft.world.entity.decoration.ItemFrame.DATA_ITEM);
+        getHandle().getEntityData().markDirty(net.minecraft.world.entity.decoration.ItemFrame.DATA_ROTATION);
 
         // update redstone
         if (!getHandle().generation) {

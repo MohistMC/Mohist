@@ -275,6 +275,7 @@ public abstract class ScreenEvent extends Event
     /**
      * Fired ahead of rendering any active mob effects in the {@link EffectRenderingInventoryScreen inventory screen}.
      * Can be used to select the size of the effects display (full or compact) or even hide or replace vanilla's rendering entirely.
+     * This event can also be used to modify the horizontal position of the stack of effects being rendered.
      *
      * <p>This event is {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
      * Cancelling this event will prevent vanilla rendering.</p>

@@ -5,46 +5,29 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.Decoder;
-import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 public interface ICondition
 {
+    static boolean shouldRegisterEntry(JsonElement json)
+    {
+        if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
+            return true;
 
-    Decoder<Boolean> DECODER = new Decoder<>() {
-        @Override
-        public <T> DataResult<Pair<Boolean, T>> decode(DynamicOps<T> ops, T input)
-        {
-            if(input instanceof JsonObject obj && obj.has("forge:conditions"))
-            {
-                try
-                {
-                    boolean result = CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
-                    return DataResult.success(Pair.of(result, input));
-                }
-                catch(Exception ex)
-                {
-                    ex.printStackTrace();
-                    return DataResult.success(Pair.of(false, input)); // Print stacktrace and do not load errored conditions.
-                }
-            }
-            return DataResult.success(Pair.of(true, input));
-        }
-    };
+        return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
+    }
 
     ResourceLocation getID();
 

@@ -18,11 +18,13 @@ import org.bukkit.material.MaterialData;
 public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
 
     private static final Set<Material> SPAWN_EGG_MATERIALS = Sets.newHashSet(
+            Material.ALLAY_SPAWN_EGG,
             Material.AXOLOTL_SPAWN_EGG,
             Material.BAT_SPAWN_EGG,
             Material.BEE_SPAWN_EGG,
             Material.BLAZE_SPAWN_EGG,
             Material.CAT_SPAWN_EGG,
+            Material.CAMEL_SPAWN_EGG,
             Material.CAVE_SPIDER_SPAWN_EGG,
             Material.CHICKEN_SPAWN_EGG,
             Material.COD_SPAWN_EGG,
@@ -32,10 +34,12 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             Material.DONKEY_SPAWN_EGG,
             Material.DROWNED_SPAWN_EGG,
             Material.ELDER_GUARDIAN_SPAWN_EGG,
+            Material.ENDER_DRAGON_SPAWN_EGG,
             Material.ENDERMAN_SPAWN_EGG,
             Material.ENDERMITE_SPAWN_EGG,
             Material.EVOKER_SPAWN_EGG,
             Material.FOX_SPAWN_EGG,
+            Material.FROG_SPAWN_EGG,
             Material.GHAST_SPAWN_EGG,
             Material.GLOW_SQUID_SPAWN_EGG,
             Material.GOAT_SPAWN_EGG,
@@ -43,6 +47,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             Material.HOGLIN_SPAWN_EGG,
             Material.HORSE_SPAWN_EGG,
             Material.HUSK_SPAWN_EGG,
+            Material.IRON_GOLEM_SPAWN_EGG,
             Material.LLAMA_SPAWN_EGG,
             Material.MAGMA_CUBE_SPAWN_EGG,
             Material.MOOSHROOM_SPAWN_EGG,
@@ -66,18 +71,22 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             Material.SKELETON_HORSE_SPAWN_EGG,
             Material.SKELETON_SPAWN_EGG,
             Material.SLIME_SPAWN_EGG,
+            Material.SNOW_GOLEM_SPAWN_EGG,
             Material.SPIDER_SPAWN_EGG,
             Material.SQUID_SPAWN_EGG,
             Material.STRAY_SPAWN_EGG,
             Material.STRIDER_SPAWN_EGG,
+            Material.TADPOLE_SPAWN_EGG,
             Material.TRADER_LLAMA_SPAWN_EGG,
             Material.TROPICAL_FISH_SPAWN_EGG,
             Material.TURTLE_SPAWN_EGG,
             Material.VEX_SPAWN_EGG,
             Material.VILLAGER_SPAWN_EGG,
             Material.VINDICATOR_SPAWN_EGG,
+            Material.WARDEN_SPAWN_EGG,
             Material.WANDERING_TRADER_SPAWN_EGG,
             Material.WITCH_SPAWN_EGG,
+            Material.WITHER_SPAWN_EGG,
             Material.WITHER_SKELETON_SPAWN_EGG,
             Material.WOLF_SPAWN_EGG,
             Material.ZOGLIN_SPAWN_EGG,
@@ -97,11 +106,10 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     CraftMetaSpawnEgg(CraftMetaItem meta) {
         super(meta);
 
-        if (!(meta instanceof CraftMetaSpawnEgg)) {
+        if (!(meta instanceof CraftMetaSpawnEgg egg)) {
             return;
         }
 
-        CraftMetaSpawnEgg egg = (CraftMetaSpawnEgg) meta;
         this.spawnedType = egg.spawnedType;
 
         updateMaterial(null); // Trigger type population

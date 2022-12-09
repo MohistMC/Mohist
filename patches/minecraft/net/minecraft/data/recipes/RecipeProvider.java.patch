@@ -1,28 +1,101 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -100,6 +_,7 @@
+@@ -88,7 +_,9 @@
+             list.add(DataProvider.m_253162_(p_254020_, p_253413_.m_125966_(), this.f_236355_.m_245731_(p_253413_.m_6445_())));
+             JsonObject jsonobject = p_253413_.m_5860_();
+             if (jsonobject != null) {
+-               list.add(DataProvider.m_253162_(p_254020_, jsonobject, this.f_236356_.m_245731_(p_253413_.m_6448_())));
++               var saveAdvancementFuture = saveAdvancement(p_254020_, p_253413_, jsonobject);
++               if (saveAdvancementFuture != null)
++                  list.add(saveAdvancementFuture);
+             }
  
           }
-       });
-+      if (this.getClass() == RecipeProvider.class) //Forge: Subclasses don't need this.
-       m_236367_(p_236358_, Advancement.Builder.m_138353_().m_138386_("impossible", new ImpossibleTrigger.TriggerInstance()).m_138400_(), this.f_236356_.m_236048_(RecipeBuilder.f_236353_));
+@@ -98,13 +_,23 @@
+       }));
     }
  
-@@ -112,7 +_,7 @@
- 
++   /**
++    * Called every time a recipe is saved to also save the advancement JSON if it exists.
++    *
++    * @return A completable future that saves the advancement to disk, or null to cancel saving the advancement.
++    */
++   @org.jetbrains.annotations.Nullable
++   protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
++      return DataProvider.m_253162_(output, advancementJson, this.f_236356_.m_245731_(finishedRecipe.m_6448_()));
++   }
++
+    protected CompletableFuture<?> m_253240_(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_) {
+       return DataProvider.m_253162_(p_253674_, p_253712_.m_138400_(), this.f_236356_.m_245731_(p_254102_));
     }
  
--   protected static void m_236367_(CachedOutput p_236368_, JsonObject p_236369_, Path p_236370_) {
-+   protected void m_236367_(CachedOutput p_236368_, JsonObject p_236369_, Path p_236370_) {
-       try {
-          DataProvider.m_236072_(p_236368_, p_236369_, p_236370_);
-       } catch (IOException ioexception) {
-@@ -121,7 +_,7 @@
+    protected abstract void m_245200_(Consumer<FinishedRecipe> p_251297_);
  
+-   protected static void m_247051_(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
++   protected void m_247051_(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
+       BlockFamilies.m_175934_().filter((p_248034_) -> {
+          return p_248034_.m_245288_(p_251836_);
+       }).forEach((p_176624_) -> {
+@@ -128,7 +_,7 @@
+       m_245809_(p_248775_, RecipeSerializer.f_44092_, p_251504_, p_248846_, p_249735_, p_248783_, p_250303_, p_251984_, "_from_blasting");
     }
  
--   protected static void m_176531_(Consumer<FinishedRecipe> p_176532_) {
-+   protected void m_176531_(Consumer<FinishedRecipe> p_176532_) {
-       BlockFamilies.m_175934_().filter(BlockFamily::m_175956_).forEach((p_176624_) -> {
-          m_176580_(p_176532_, p_176624_);
-       });
+-   private static void m_245809_(Consumer<FinishedRecipe> p_250791_, RecipeSerializer<? extends AbstractCookingRecipe> p_251817_, List<ItemLike> p_249619_, RecipeCategory p_251154_, ItemLike p_250066_, float p_251871_, int p_251316_, String p_251450_, String p_249236_) {
++   protected static void m_245809_(Consumer<FinishedRecipe> p_250791_, RecipeSerializer<? extends AbstractCookingRecipe> p_251817_, List<ItemLike> p_249619_, RecipeCategory p_251154_, ItemLike p_250066_, float p_251871_, int p_251316_, String p_251450_, String p_249236_) {
+       for(ItemLike itemlike : p_249619_) {
+          SimpleCookingRecipeBuilder.m_247607_(Ingredient.m_43929_(itemlike), p_251154_, p_250066_, p_251871_, p_251316_, p_251817_).m_126145_(p_251450_).m_126132_(m_176602_(itemlike), m_125977_(itemlike)).m_176500_(p_250791_, m_176632_(p_250066_) + p_249236_ + "_" + m_176632_(itemlike));
+       }
+@@ -193,7 +_,7 @@
+       m_247347_(RecipeCategory.REDSTONE, p_176692_, Ingredient.m_43929_(p_176693_)).m_126132_(m_176602_(p_176693_), m_125977_(p_176693_)).m_176498_(p_176691_);
+    }
+ 
+-   private static RecipeBuilder m_247347_(RecipeCategory p_251447_, ItemLike p_251989_, Ingredient p_249211_) {
++   protected static RecipeBuilder m_247347_(RecipeCategory p_251447_, ItemLike p_251989_, Ingredient p_249211_) {
+       return ShapedRecipeBuilder.m_245327_(p_251447_, p_251989_).m_126124_('#', p_249211_).m_126130_("##");
+    }
+ 
+@@ -273,7 +_,7 @@
+       m_245864_(p_251148_, p_250499_, Ingredient.m_43929_(p_249970_)).m_126132_(m_176602_(p_249970_), m_125977_(p_249970_)).m_176498_(p_251034_);
+    }
+ 
+-   private static RecipeBuilder m_245864_(RecipeCategory p_249083_, ItemLike p_250754_, Ingredient p_250311_) {
++   protected static RecipeBuilder m_245864_(RecipeCategory p_249083_, ItemLike p_250754_, Ingredient p_250311_) {
+       return ShapedRecipeBuilder.m_246608_(p_249083_, p_250754_, 6).m_126124_('#', p_250311_).m_126130_("###").m_126130_("###");
+    }
+ 
+@@ -281,7 +_,7 @@
+       m_247174_(p_248719_, p_250032_, Ingredient.m_43929_(p_250021_)).m_126132_(m_176602_(p_250021_), m_125977_(p_250021_)).m_176498_(p_251348_);
+    }
+ 
+-   private static RecipeBuilder m_247174_(RecipeCategory p_249131_, ItemLike p_251242_, Ingredient p_251412_) {
++   protected static RecipeBuilder m_247174_(RecipeCategory p_249131_, ItemLike p_251242_, Ingredient p_251412_) {
+       return ShapedRecipeBuilder.m_246608_(p_249131_, p_251242_, 4).m_126124_('S', p_251412_).m_126130_("SS").m_126130_("SS");
+    }
+ 
+@@ -289,7 +_,7 @@
+       m_245792_(p_252306_, p_249686_, Ingredient.m_43929_(p_251100_)).m_126132_(m_176602_(p_251100_), m_125977_(p_251100_)).m_176498_(p_248712_);
+    }
+ 
+-   private static ShapedRecipeBuilder m_245792_(RecipeCategory p_250895_, ItemLike p_251147_, Ingredient p_251563_) {
++   protected static ShapedRecipeBuilder m_245792_(RecipeCategory p_250895_, ItemLike p_251147_, Ingredient p_251563_) {
+       return ShapedRecipeBuilder.m_246608_(p_250895_, p_251147_, 4).m_126124_('#', p_251563_).m_126130_("##").m_126130_("##");
+    }
+ 
+@@ -329,7 +_,7 @@
+       m_247368_(p_250320_, p_248979_, p_249101_, p_252036_, p_250886_, m_176644_(p_250886_), (String)null, p_248768_, p_250847_);
+    }
+ 
+-   private static void m_247368_(Consumer<FinishedRecipe> p_250423_, RecipeCategory p_250083_, ItemLike p_250042_, RecipeCategory p_248977_, ItemLike p_251911_, String p_250475_, @Nullable String p_248641_, String p_252237_, @Nullable String p_250414_) {
++   protected static void m_247368_(Consumer<FinishedRecipe> p_250423_, RecipeCategory p_250083_, ItemLike p_250042_, RecipeCategory p_248977_, ItemLike p_251911_, String p_250475_, @Nullable String p_248641_, String p_252237_, @Nullable String p_250414_) {
+       ShapelessRecipeBuilder.m_246517_(p_250083_, p_250042_, 9).m_126209_(p_251911_).m_126145_(p_250414_).m_126132_(m_176602_(p_251911_), m_125977_(p_251911_)).m_126140_(p_250423_, new ResourceLocation(p_252237_));
+       ShapedRecipeBuilder.m_245327_(p_248977_, p_251911_).m_126127_('#', p_250042_).m_126130_("###").m_126130_("###").m_126130_("###").m_126145_(p_248641_).m_126132_(m_176602_(p_250042_), m_125977_(p_250042_)).m_126140_(p_250423_, new ResourceLocation(p_250475_));
+    }
+@@ -346,7 +_,7 @@
+       m_247434_(p_126007_, p_126008_, p_250529_, p_126010_, Items.f_42697_, Items.f_42698_, 0.35F);
+    }
+ 
+-   private static void m_247434_(Consumer<FinishedRecipe> p_249398_, String p_249709_, RecipeSerializer<? extends AbstractCookingRecipe> p_251876_, int p_249258_, ItemLike p_250669_, ItemLike p_250224_, float p_252138_) {
++   protected static void m_247434_(Consumer<FinishedRecipe> p_249398_, String p_249709_, RecipeSerializer<? extends AbstractCookingRecipe> p_251876_, int p_249258_, ItemLike p_250669_, ItemLike p_250224_, float p_252138_) {
+       SimpleCookingRecipeBuilder.m_247607_(Ingredient.m_43929_(p_250669_), RecipeCategory.FOOD, p_250224_, p_252138_, p_249258_, p_251876_).m_126132_(m_176602_(p_250669_), m_125977_(p_250669_)).m_176500_(p_249398_, m_176632_(p_250224_) + "_from_" + p_249709_);
+    }
+ 

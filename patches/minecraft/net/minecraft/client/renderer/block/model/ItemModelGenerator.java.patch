@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
 +++ b/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
-@@ -39,6 +_,7 @@
+@@ -40,10 +_,11 @@
        map.put("particle", p_111672_.m_111477_("particle") ? Either.left(p_111672_.m_111480_("particle")) : map.get("layer0"));
        BlockModel blockmodel = new BlockModel((ResourceLocation)null, list, map, false, p_111672_.m_111479_(), p_111672_.m_111491_(), p_111672_.m_111484_());
        blockmodel.f_111416_ = p_111672_.f_111416_;
@@ -8,3 +8,8 @@
        return blockmodel;
     }
  
+-   private List<BlockElement> m_111638_(int p_111639_, String p_111640_, SpriteContents p_251768_) {
++   public List<BlockElement> m_111638_(int p_111639_, String p_111640_, SpriteContents p_251768_) {
+       Map<Direction, BlockElementFace> map = Maps.newHashMap();
+       map.put(Direction.SOUTH, new BlockElementFace((Direction)null, p_111639_, p_111640_, new BlockFaceUV(new float[]{0.0F, 0.0F, 16.0F, 16.0F}, 0)));
+       map.put(Direction.NORTH, new BlockElementFace((Direction)null, p_111639_, p_111640_, new BlockFaceUV(new float[]{16.0F, 0.0F, 0.0F, 16.0F}, 0)));

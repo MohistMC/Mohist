@@ -36,7 +36,7 @@ import org.jetbrains.annotations.ApiStatus;
  *  AND: checked third, these predicates must all pass along with the original predicate
  *
  * <p>
- * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+ * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain Event.HasResult have a result}.
  * <p>
  *
  *  Fired on the Mod bus {@link IModBusEvent}.<br>

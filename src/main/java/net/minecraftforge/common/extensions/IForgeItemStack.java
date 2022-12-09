@@ -6,8 +6,10 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -84,7 +86,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
        Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
-       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY);
+       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registries.BLOCK);
        if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(registry, blockworldstate)) {
           return InteractionResult.PASS;
        } else {
@@ -570,4 +572,5 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
     }
+
 }

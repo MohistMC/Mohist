@@ -8,7 +8,7 @@
  import java.util.function.BiConsumer;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-@@ -197,7 +_,7 @@
+@@ -195,7 +_,7 @@
     }
  
     protected void m_121281_() throws CommandSyntaxException {
@@ -17,7 +17,7 @@
        this.f_121176_ = this::m_121322_;
        if (!this.f_121201_.canRead()) {
           throw f_121193_.createWithContext(this.f_121201_);
-@@ -245,6 +_,14 @@
+@@ -243,6 +_,14 @@
        }
     }
  
@@ -32,7 +32,7 @@
     protected void m_121304_() throws CommandSyntaxException {
        if (this.f_121201_.canRead()) {
           this.f_121176_ = this::m_121309_;
-@@ -461,6 +_,9 @@
+@@ -459,6 +_,9 @@
           }
  
           this.f_121201_.skip();
@@ -42,7 +42,7 @@
           this.m_121281_();
        } else {
           this.m_121304_();
-@@ -470,12 +_,20 @@
+@@ -468,12 +_,20 @@
        return this.m_121230_();
     }
  

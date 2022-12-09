@@ -20,7 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  * @deprecated Use {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent} and {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent} instead
  */
-@Deprecated(since = "1.19.2")
+@Deprecated(since = "1.19.3")
 public class AdvancementEvent extends PlayerEvent
 {
     private final Advancement advancement;

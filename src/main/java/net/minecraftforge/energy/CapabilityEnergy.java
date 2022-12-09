@@ -7,12 +7,13 @@ package net.minecraftforge.energy;
 
 import net.minecraftforge.common.capabilities.*;
 
+@Deprecated(forRemoval = true, since = "1.19.3")
 public class CapabilityEnergy
 {
     /**
      * @deprecated Create your own reference using {@link CapabilityManager#get(CapabilityToken)}, or use {@link ForgeCapabilities#ENERGY}.
      */
-    @Deprecated(forRemoval = true, since = "1.19.2")
+    @Deprecated(forRemoval = true, since = "1.19.3")
     public static final Capability<IEnergyStorage> ENERGY = ForgeCapabilities.ENERGY;
     public static void register(RegisterCapabilitiesEvent event){}
 }

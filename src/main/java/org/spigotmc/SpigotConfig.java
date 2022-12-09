@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -245,7 +246,7 @@ public class SpigotConfig
                 try
                 {
                     ResourceLocation key = new ResourceLocation( name );
-                    if ( net.minecraft.core.Registry.CUSTOM_STAT.get( key ) == null )
+                    if ( BuiltInRegistries.CUSTOM_STAT.get( key ) == null )
                     {
                         Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
                         continue;

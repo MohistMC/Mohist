@@ -91,6 +91,8 @@ public final class CraftBlockStates {
                 Arrays.asList(
                         Material.ACACIA_SIGN,
                         Material.ACACIA_WALL_SIGN,
+                        Material.BAMBOO_SIGN,
+                        Material.BAMBOO_WALL_SIGN,
                         Material.BIRCH_SIGN,
                         Material.BIRCH_WALL_SIGN,
                         Material.CRIMSON_SIGN,
@@ -112,10 +114,37 @@ public final class CraftBlockStates {
 
         register(
                 Arrays.asList(
+                        Material.ACACIA_HANGING_SIGN,
+                        Material.ACACIA_WALL_HANGING_SIGN,
+                        Material.BAMBOO_HANGING_SIGN,
+                        Material.BAMBOO_WALL_HANGING_SIGN,
+                        Material.BIRCH_HANGING_SIGN,
+                        Material.BIRCH_WALL_HANGING_SIGN,
+                        Material.CRIMSON_HANGING_SIGN,
+                        Material.CRIMSON_WALL_HANGING_SIGN,
+                        Material.DARK_OAK_HANGING_SIGN,
+                        Material.DARK_OAK_WALL_HANGING_SIGN,
+                        Material.JUNGLE_HANGING_SIGN,
+                        Material.JUNGLE_WALL_HANGING_SIGN,
+                        Material.MANGROVE_HANGING_SIGN,
+                        Material.MANGROVE_WALL_HANGING_SIGN,
+                        Material.OAK_HANGING_SIGN,
+                        Material.OAK_WALL_HANGING_SIGN,
+                        Material.SPRUCE_HANGING_SIGN,
+                        Material.SPRUCE_WALL_HANGING_SIGN,
+                        Material.WARPED_HANGING_SIGN,
+                        Material.WARPED_WALL_HANGING_SIGN
+                ), CraftHangingSign.class, CraftHangingSign::new, HangingSignBlockEntity::new
+        );
+
+        register(
+                Arrays.asList(
                         Material.CREEPER_HEAD,
                         Material.CREEPER_WALL_HEAD,
                         Material.DRAGON_HEAD,
                         Material.DRAGON_WALL_HEAD,
+                        Material.PIGLIN_HEAD,
+                        Material.PIGLIN_WALL_HEAD,
                         Material.PLAYER_HEAD,
                         Material.PLAYER_WALL_HEAD,
                         Material.SKELETON_SKULL,
@@ -235,6 +264,7 @@ public final class CraftBlockStates {
         register(Material.BLAST_FURNACE, CraftBlastFurnace.class, CraftBlastFurnace::new, BlastFurnaceBlockEntity::new);
         register(Material.BREWING_STAND, CraftBrewingStand.class, CraftBrewingStand::new, BrewingStandBlockEntity::new);
         register(Material.CHEST, CraftChest.class, CraftChest::new, ChestBlockEntity::new);
+        register(Material.CHISELED_BOOKSHELF, CraftChiseledBookshelf.class, CraftChiseledBookshelf::new, ChiseledBookShelfBlockEntity::new);
         register(Material.COMPARATOR, CraftComparator.class, CraftComparator::new, ComparatorBlockEntity::new);
         register(Material.CONDUIT, CraftConduit.class, CraftConduit::new, ConduitBlockEntity::new);
         register(Material.DAYLIGHT_DETECTOR, CraftDaylightDetector.class, CraftDaylightDetector::new, DaylightDetectorBlockEntity::new);

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -357,7 +358,7 @@ public class CraftBlock implements Block {
             return null;
         }
 
-        return registry.getHolderOrThrow(ResourceKey.create(net.minecraft.core.Registry.BIOME_REGISTRY, CraftNamespacedKey.toMinecraft(bio.getKey())));
+        return registry.getHolderOrThrow(ResourceKey.create(Registries.BIOME, CraftNamespacedKey.toMinecraft(bio.getKey())));
     }
 
     @Override

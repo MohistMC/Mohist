@@ -1,9 +1,26 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -262,6 +_,13 @@
-       this.f_135346_.readLock().unlock();
-    }
+@@ -1,5 +_,6 @@
+ package net.minecraft.network.syncher;
  
++import com.google.common.collect.Lists;
+ import com.mojang.logging.LogUtils;
+ import io.netty.handler.codec.DecoderException;
+ import io.netty.handler.codec.EncoderException;
+@@ -18,6 +_,8 @@
+ import net.minecraft.CrashReportCategory;
+ import net.minecraft.ReportedException;
+ import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.entity.Entity;
+ import org.apache.commons.lang3.ObjectUtils;
+ import org.slf4j.Logger;
+@@ -200,6 +_,26 @@
+    public boolean m_135388_() {
+       return this.f_135345_.isEmpty();
+    }
++
 +   // CraftBukkit start - add method from above
 +   public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
 +      this.m_135379_(datawatcherobject).m_135401_(true);
@@ -11,6 +28,18 @@
 +   }
 +   // CraftBukkit end
 +
++
++   // CraftBukkit start
++   public void refresh(ServerPlayer to) {
++      if (!this.m_135388_()) {
++         List<SynchedEntityData.DataValue<?>> list = this.m_252804_();
++
++         if (list != null) {
++            to.f_8906_.m_9829_(new ClientboundSetEntityDataPacket(this.f_135344_.m_19879_(), list));
++         }
++      }
++   }
++    // CraftBukkit end
+ 
     public static class DataItem<T> {
        final EntityDataAccessor<T> f_135390_;
-       T f_135391_;

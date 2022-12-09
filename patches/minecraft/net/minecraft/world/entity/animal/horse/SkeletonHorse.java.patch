@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/animal/horse/SkeletonHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/SkeletonHorse.java
-@@ -24,7 +_,7 @@
+@@ -16,13 +_,15 @@
+ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+ import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ 
+ public class SkeletonHorse extends AbstractHorse {
     private final SkeletonTrapGoal f_30890_ = new SkeletonTrapGoal(this);
     private static final int f_149551_ = 18000;
     private boolean f_30891_;

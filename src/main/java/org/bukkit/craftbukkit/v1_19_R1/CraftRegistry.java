@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -19,10 +21,10 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
     public static <B extends Keyed> Registry<?> createRegistry(Class<B> bukkitClass, RegistryAccess registryHolder) {
         if (bukkitClass == Structure.class) {
-            return new CraftRegistry<>(registryHolder.registryOrThrow(net.minecraft.core.Registry.STRUCTURE_REGISTRY), CraftStructure::new);
+            return new CraftRegistry<>(registryHolder.registryOrThrow(Registries.STRUCTURE), CraftStructure::new);
         }
         if (bukkitClass == StructureType.class) {
-            return new CraftRegistry<>(net.minecraft.core.Registry.STRUCTURE_TYPES, CraftStructureType::new);
+            return new CraftRegistry<>(BuiltInRegistries.STRUCTURE_TYPE, CraftStructureType::new);
         }
 
         return null;

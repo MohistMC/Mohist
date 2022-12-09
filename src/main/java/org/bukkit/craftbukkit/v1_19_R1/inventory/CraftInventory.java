@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.DropperBlockEntity;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
@@ -487,6 +488,8 @@ public class CraftInventory implements Inventory {
             return InventoryType.BARREL;
         } else if (inventory instanceof LecternBlockEntity.LecternInventory) {
             return InventoryType.LECTERN;
+        } else if (inventory instanceof ChiseledBookShelfBlockEntity) {
+            return InventoryType.CHISELED_BOOKSHELF;
         } else if (this instanceof CraftInventoryLoom) {
             return InventoryType.LOOM;
         } else if (this instanceof CraftInventoryCartography) {

@@ -16,18 +16,18 @@
 +import java.util.Collection;
 +import java.util.LinkedHashSet;
  import java.util.Map;
+ import java.util.Optional;
  import java.util.Set;
- import java.util.function.Predicate;
-@@ -107,6 +_,8 @@
- import net.minecraft.server.commands.data.DataCommands;
+@@ -114,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -116,7 +_,7 @@
+@@ -123,7 +_,7 @@
     public static final int f_165684_ = 2;
     public static final int f_165685_ = 3;
     public static final int f_165686_ = 4;
@@ -36,7 +36,7 @@
  
     public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
        AdvancementCommands.m_136310_(this.f_82090_);
-@@ -178,7 +_,7 @@
+@@ -186,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -45,7 +45,7 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -202,24 +_,78 @@
+@@ -210,24 +_,78 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -126,7 +126,7 @@
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
           return "/" + p_242841_;
-@@ -227,7 +_,16 @@
+@@ -235,7 +_,16 @@
  
        try {
           try {
@@ -144,7 +144,7 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -236,7 +_,7 @@
+@@ -244,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
@@ -153,7 +153,7 @@
                 });
                 if (j > 10) {
                    mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -280,15 +_,45 @@
+@@ -288,15 +_,45 @@
     }
  
     public void m_82095_(ServerPlayer p_82096_) {

@@ -127,9 +127,9 @@
 +   }
 +
     private void m_143207_(String p_143208_) {
-       try {
-          FileOutputStream fileoutputstream = new FileOutputStream(new File(p_143208_));
-@@ -320,6 +_,26 @@
+       try (FileOutputStream fileoutputstream = new FileOutputStream(new File(p_143208_))) {
+          for(Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> entry : this.f_140761_.long2ObjectEntrySet()) {
+@@ -306,6 +_,26 @@
     TickingTracker m_183915_() {
        return this.f_183901_;
     }

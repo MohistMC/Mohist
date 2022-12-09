@@ -31,14 +31,14 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public Type getFoxType() {
-        return Type.values()[getHandle().getFoxType().ordinal()];
+        return Type.values()[getHandle().getVariant().ordinal()];
     }
 
     @Override
     public void setFoxType(Type type) {
         Preconditions.checkArgument(type != null, "type");
 
-        getHandle().setFoxType(net.minecraft.world.entity.animal.Fox.Type.values()[type.ordinal()]);
+        getHandle().setVariant(net.minecraft.world.entity.animal.Fox.Type.values()[type.ordinal()]);
     }
 
     @Override

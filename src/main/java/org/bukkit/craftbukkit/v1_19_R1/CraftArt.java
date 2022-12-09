@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import org.bukkit.Art;
@@ -14,8 +15,8 @@ public class CraftArt {
 
     static {
         ImmutableBiMap.Builder<Holder<PaintingVariant>, Art> artworkBuilder = ImmutableBiMap.builder();
-        for (ResourceKey<PaintingVariant> key : Registry.PAINTING_VARIANT.registryKeySet()) {
-            artworkBuilder.put(Registry.PAINTING_VARIANT.getHolderOrThrow(key), Art.getByName(key.location().getPath()));
+        for (ResourceKey<PaintingVariant> key : BuiltInRegistries.PAINTING_VARIANT.registryKeySet()) {
+            artworkBuilder.put(BuiltInRegistries.PAINTING_VARIANT.getHolderOrThrow(key), Art.getByName(key.location().getPath()));
         }
 
         artwork = artworkBuilder.build();

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -23,6 +_,7 @@
+@@ -24,6 +_,7 @@
  import net.minecraft.nbt.IntTag;
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtUtils;
@@ -8,7 +8,7 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.Clearable;
  import net.minecraft.world.entity.Entity;
-@@ -50,6 +_,8 @@
+@@ -51,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
  import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
@@ -17,7 +17,7 @@
  
  public class StructureTemplate {
     public static final String f_163789_ = "palette";
-@@ -64,8 +_,8 @@
+@@ -65,8 +_,8 @@
     public static final String f_163798_ = "nbt";
     public static final String f_163799_ = "size";
     static final int f_163800_ = 16;
@@ -28,7 +28,7 @@
     private Vec3i f_74484_ = Vec3i.f_123288_;
     private String f_74485_ = "?";
  
-@@ -81,6 +_,11 @@
+@@ -82,6 +_,11 @@
        return this.f_74485_;
     }
  
@@ -40,7 +40,7 @@
     public void m_163802_(Level p_163803_, BlockPos p_163804_, Vec3i p_163805_, boolean p_163806_, @Nullable Block p_163807_) {
        if (p_163805_.m_123341_() >= 1 && p_163805_.m_123342_() >= 1 && p_163805_.m_123343_() >= 1) {
           BlockPos blockpos = p_163804_.m_121955_(p_163805_).m_7918_(-1, -1, -1);
-@@ -201,6 +_,10 @@
+@@ -202,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }
  
@@ -51,7 +51,7 @@
     public boolean m_230328_(ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_) {
        if (this.f_74482_.isEmpty()) {
           return false;
-@@ -218,7 +_,7 @@
+@@ -219,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
  
@@ -60,7 +60,7 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.f_74675_;
                 if (boundingbox == null || boundingbox.m_71051_(blockpos)) {
                    FluidState fluidstate = p_230332_.m_74413_() ? p_230329_.m_6425_(blockpos) : null;
-@@ -330,7 +_,7 @@
+@@ -331,7 +_,7 @@
              }
  
              if (!p_230332_.m_74408_()) {
@@ -69,7 +69,7 @@
              }
  
              return true;
-@@ -359,14 +_,19 @@
+@@ -360,14 +_,19 @@
        });
     }
  
@@ -90,7 +90,7 @@
           }
  
           if (structuretemplate$structureblockinfo1 != null) {
-@@ -377,13 +_,29 @@
+@@ -378,13 +_,29 @@
        return list;
     }
  
@@ -126,7 +126,7 @@
              ListTag listtag = new ListTag();
              listtag.add(DoubleTag.m_128500_(vec31.f_82479_));
              listtag.add(DoubleTag.m_128500_(vec31.f_82480_));
-@@ -391,10 +_,10 @@
+@@ -392,10 +_,10 @@
              compoundtag.m_128365_("Pos", listtag);
              compoundtag.m_128473_("UUID");
              m_74543_(p_74524_, compoundtag).ifPresent((p_205061_) -> {
@@ -140,20 +140,7 @@
                    ((Mob)p_205061_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
                 }
  
-@@ -406,11 +_,7 @@
-    }
- 
-    private static Optional<Entity> m_74543_(ServerLevelAccessor p_74544_, CompoundTag p_74545_) {
--      try {
--         return EntityType.m_20642_(p_74545_, p_74544_.m_6018_());
--      } catch (Exception exception) {
--         return Optional.empty();
--      }
-+      return EntityType.m_20642_(p_74545_, p_74544_.m_6018_());
-    }
- 
-    public Vec3i m_163808_(Rotation p_163809_) {
-@@ -602,6 +_,13 @@
+@@ -603,6 +_,13 @@
        p_74619_.m_128365_("entities", listtag);
        p_74619_.m_128365_("size", this.m_74625_(this.f_74484_.m_123341_(), this.f_74484_.m_123342_(), this.f_74484_.m_123343_()));
        p_74619_.m_128405_("DataVersion", SharedConstants.m_183709_().getWorldVersion());
@@ -167,16 +154,16 @@
        return p_74619_;
     }
  
-@@ -635,6 +_,12 @@
+@@ -636,6 +_,12 @@
           }
        }
  
 +      // CraftBukkit start - PDC
-+      Tag base = p_74639_.m_128423_("BukkitValues");
++      Tag base = p_248574_.m_128423_("BukkitValues");
 +      if (base instanceof CompoundTag) {
 +         this.persistentDataContainer.putAll((CompoundTag) base);
 +      }
 +      // CraftBukkit end
     }
  
-    private void m_74620_(ListTag p_74621_, ListTag p_74622_) {
+    private void m_247272_(HolderGetter<Block> p_256546_, ListTag p_251056_, ListTag p_251493_) {

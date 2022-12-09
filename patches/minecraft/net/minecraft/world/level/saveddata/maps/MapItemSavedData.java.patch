@@ -21,6 +21,17 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
+@@ -35,8 +_,8 @@
+    private static final int f_164766_ = 64;
+    public static final int f_164764_ = 4;
+    public static final int f_181307_ = 256;
+-   public final int f_256718_;
+-   public final int f_256789_;
++   public int f_256718_;
++   public int f_256789_;
+    public ResourceKey<Level> f_77887_;
+    public boolean f_77888_;
+    public boolean f_77889_;
 @@ -50,6 +_,13 @@
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
@@ -34,7 +45,7 @@
 +
     private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
        this.f_77890_ = p_164770_;
-       this.f_77885_ = p_164768_;
+       this.f_256718_ = p_164768_;
 @@ -59,6 +_,11 @@
        this.f_77889_ = p_164772_;
        this.f_77892_ = p_164773_;
@@ -99,8 +110,8 @@
 +         }
 +      }
 +      // CraftBukkit end
-       p_77956_.m_128405_("xCenter", this.f_77885_);
-       p_77956_.m_128405_("zCenter", this.f_77886_);
+       p_77956_.m_128405_("xCenter", this.f_256718_);
+       p_77956_.m_128405_("zCenter", this.f_256789_);
        p_77956_.m_128344_("scale", this.f_77890_);
 @@ -308,7 +_,7 @@
        return mapitemsaveddata$holdingplayer == null ? null : mapitemsaveddata$holdingplayer.m_164815_(p_164797_);

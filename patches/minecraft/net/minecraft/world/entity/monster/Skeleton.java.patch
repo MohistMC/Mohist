@@ -1,11 +1,38 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -73,7 +_,7 @@
+@@ -43,17 +_,15 @@
+ 
+    public void m_8119_() {
+       if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
+-         if (this.f_146808_) {
+-            if (this.m_149839_()) {
+-               --this.f_149828_;
+-               if (this.f_149828_ < 0) {
+-                  this.m_149840_();
+-               }
+-            } else {
+-               ++this.f_149827_;
+-               if (this.f_149827_ >= 140) {
+-                  this.m_149830_(300);
+-               }
++         if (this.m_149839_()) {
++            --this.f_149828_;
++            if (this.f_149828_ < 0) {
++               this.m_149840_();
++            }
++         } else if (this.f_146808_) {
++            ++this.f_149827_;
++            if (this.f_149827_ >= 140) {
++               this.m_149830_(300);
+             }
+          } else {
+             this.f_149827_ = -1;
+@@ -77,7 +_,7 @@
  
     }
  
 -   private void m_149830_(int p_149831_) {
 +   public void m_149830_(int p_149831_) {
        this.f_149828_ = p_149831_;
-       this.f_19804_.m_135381_(f_149826_, true);
+       this.m_149842_(true);
     }

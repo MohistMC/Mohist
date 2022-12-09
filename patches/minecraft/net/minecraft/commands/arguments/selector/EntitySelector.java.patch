@@ -1,6 +1,15 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelector.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelector.java
-@@ -87,7 +_,7 @@
+@@ -49,7 +_,7 @@
+    private final String f_121120_;
+    @Nullable
+    private final UUID f_121121_;
+-   private final EntityTypeTest<Entity, ?> f_121122_;
++   private EntityTypeTest<Entity, ?> f_121122_;
+    private final boolean f_121123_;
+ 
+    public EntitySelector(int p_121125_, boolean p_121126_, boolean p_121127_, Predicate<Entity> p_121128_, MinMaxBounds.Doubles p_121129_, Function<Vec3, Vec3> p_121130_, @Nullable AABB p_121131_, BiConsumer<Vec3, List<? extends Entity>> p_121132_, boolean p_121133_, @Nullable String p_121134_, @Nullable UUID p_121135_, @Nullable EntityType<?> p_121136_, boolean p_121137_) {
+@@ -89,7 +_,7 @@
     }
  
     private void m_121168_(CommandSourceStack p_121169_) throws CommandSyntaxException {

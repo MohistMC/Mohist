@@ -6,8 +6,8 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-
 import java.util.function.BiConsumer;
+
 import net.minecraft.client.Camera;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -38,6 +38,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
@@ -204,7 +205,7 @@ public interface IForgeBlock
     {
         if (isBed(state, levelReader, pos, entity) && levelReader instanceof Level level && BedBlock.canSetSpawn(level))
         {
-            return BedBlock.findStandUpPosition(type, levelReader, pos, orientation);
+            return BedBlock.findStandUpPosition(type, levelReader, pos, state.getValue(BedBlock.FACING), orientation);
         }
         return Optional.empty();
     }

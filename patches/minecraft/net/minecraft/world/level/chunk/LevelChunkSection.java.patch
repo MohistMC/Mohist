@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
-@@ -24,9 +_,9 @@
+@@ -24,9 +_,10 @@
     private short f_62970_;
     private short f_62971_;
     private final PalettedContainer<BlockState> f_62972_;
 -   private PalettedContainerRO<Holder<Biome>> f_187995_;
++   // CraftBukkit start - read/write
 +   private PalettedContainer<Holder<Biome>> f_187995_;
  
 -   public LevelChunkSection(int p_238255_, PalettedContainer<BlockState> p_238256_, PalettedContainerRO<Holder<Biome>> p_238257_) {

@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IArmPoseTransformer;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,14 +63,14 @@ public interface IClientItemExtensions
     }
 
     /**
-     * This method returns an ArmPose that can be defined using the {@link net.minecraft.client.model.HumanoidModel.ArmPose#create(String, boolean, IArmPoseTransformer)} method.
-     * This allows for creating custom item use animations.
-     *
-     * @param entityLiving The entity holding the item
-     * @param hand         The hand the ArmPose will be applied to
-     * @param itemStack    The stack being held
-     * @return A custom ArmPose that can be used to define movement of the arm
-     */
+      * This method returns an ArmPose that can be defined using the {@link net.minecraft.client.model.HumanoidModel.ArmPose#create(String, boolean, IArmPoseTransformer)} method.
+      * This allows for creating custom item use animations.
+      *
+      * @param entityLiving The entity holding the item
+      * @param hand         The hand the ArmPose will be applied to
+      * @param itemStack    The stack being held
+      * @return A custom ArmPose that can be used to define movement of the arm
+      */
     @Nullable
     default HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
     {

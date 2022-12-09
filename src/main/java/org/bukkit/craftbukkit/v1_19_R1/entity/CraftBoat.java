@@ -16,24 +16,24 @@ public class CraftBoat extends CraftVehicle implements Boat {
 
     @Override
     public TreeSpecies getWoodType() {
-        return getTreeSpecies(getHandle().getBoatType());
+        return getTreeSpecies(getHandle().getVariant());
     }
 
     @Override
     public void setWoodType(TreeSpecies species) {
-        getHandle().setType(getBoatType(species));
+        getHandle().setVariant(getBoatType(species));
     }
 
     @Override
     public Type getBoatType() {
-        return boatTypeFromNms(getHandle().getBoatType());
+        return boatTypeFromNms(getHandle().getVariant());
     }
 
     @Override
     public void setBoatType(Type type) {
         Preconditions.checkArgument(type != null, "Boat.Type cannot be null");
 
-        getHandle().setType(boatTypeToNms(type));
+        getHandle().setVariant(boatTypeToNms(type));
     }
 
     @Override

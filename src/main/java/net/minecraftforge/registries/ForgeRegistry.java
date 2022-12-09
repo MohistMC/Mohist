@@ -233,7 +233,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @SuppressWarnings("unchecked")
     @Nullable
-    Registry<V> getWrapper()
+    NamespacedWrapper<V> getWrapper()
     {
         if (!this.hasWrapper)
             return null;
@@ -244,26 +244,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     }
 
     @NotNull
-    Registry<V> getWrapperOrThrow()
+    NamespacedWrapper<V> getWrapperOrThrow()
     {
-        Registry<V> wrapper = getWrapper();
+        NamespacedWrapper<V> wrapper = getWrapper();
 
         if (wrapper == null)
             throw new IllegalStateException("Cannot query wrapper for non-wrapped forge registry!");
 
         return wrapper;
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    Optional<NamespacedHolderHelper<V>> getHolderHelper()
-    {
-        Registry<V> wrapper = getWrapper();
-        if (!(wrapper instanceof IHolderHelperHolder))
-            return Optional.empty();
-
-        // Unsafe cast means we can't use pattern matching here
-        return Optional.of(((IHolderHelperHolder<V>) wrapper).getHolderHelper());
     }
 
     void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags, Set<TagKey<V>> defaultedTags)
@@ -276,21 +264,21 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @Override
     public Optional<Holder<V>> getHolder(ResourceKey<V> key)
     {
-        return getHolderHelper().flatMap(h -> h.getHolder(key));
+        return Optional.ofNullable(this.getWrapper()).flatMap(wrapper -> wrapper.getHolder(key));
     }
 
     @NotNull
     @Override
     public Optional<Holder<V>> getHolder(ResourceLocation location)
     {
-        return getHolderHelper().flatMap(h -> h.getHolder(location));
+        return Optional.ofNullable(this.getWrapper()).flatMap(wrapper -> wrapper.getHolder(location));
     }
 
     @NotNull
     @Override
     public Optional<Holder<V>> getHolder(V value)
     {
-        return getHolderHelper().flatMap(h -> h.getHolder(value));
+        return Optional.ofNullable(this.getWrapper()).flatMap(wrapper -> wrapper.getHolder(value));
     }
 
     @Nullable
@@ -552,8 +540,9 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     private Holder.Reference<V> bindDelegate(ResourceKey<V> rkey, V value)
     {
-        Holder.Reference<V> delegate = delegatesByName.computeIfAbsent(rkey.location(), k -> Holder.Reference.createStandAlone(this.getWrapperOrThrow(), rkey));
-        delegate.bind(rkey, value);
+        Holder.Reference<V> delegate = delegatesByName.computeIfAbsent(rkey.location(), k -> Holder.Reference.createStandAlone(this.getWrapperOrThrow().holderOwner(), rkey));
+        delegate.bindKey(rkey);
+        delegate.bindValue(value);
         delegatesByValue.put(value, delegate);
         return delegate;
     }
@@ -673,7 +662,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 int realId = add(id, entry.getKey(), entry.getValue());
                 if (id != realId && id != -1)
                 {
-                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                     errored = true;
                 }
             }
@@ -692,7 +681,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                     int realId = add(id, entry.getKey(), value, owner.owner);
                     if (id != realId && id != -1)
                     {
-                        LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
+                        LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), id, realId);
                         errored = true;
                     }
                 }
@@ -875,12 +864,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
                 int realId = add(newId, itemName, value, owner.owner);
                 if (newId != realId)
-                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
 
             int realId = add(newId, itemName, obj, primaryName == null ? itemName.getNamespace() : primaryName);
             if (realId != newId)
-                LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             ovs.remove(itemName);
         }
 
@@ -903,7 +892,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, itemName, _new, owner);
                 if (newId != realId)
-                    LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
+                    LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, entry.getKey(), newId, realId);
             }
         }
     }
@@ -914,18 +903,18 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             return false;
 
         ForgeRegistry<V> active = RegistryManager.ACTIVE.getRegistry(getRegistryKey());
-        Optional<NamespacedHolderHelper<V>> holders = active.getHolderHelper();
-        if (holders.isPresent() && holders.get().isIntrusive() && holders.get().isFrozen())
+        NamespacedWrapper<V> wrapper = active.getWrapper();
+        if (wrapper != null && wrapper.isIntrusive() && wrapper.isFrozen())
         {
             try
             {
                 // We have to unfreeze the ACTIVE registry because a lot of vanilla objects use intrusive handlers in object init.
-                holders.get().unfreeze();
+                wrapper.unfreeze();
                 createAndAddDummy(key, id);
             }
             finally
             {
-                holders.get().freeze();
+                wrapper.freeze();
             }
         }
         else
@@ -964,7 +953,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
         int realId = this.add(id, key, dummy);
         if (realId != id)
-            LOGGER.debug(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, key, id, realId);
+            LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.name, key, id, realId);
         this.dummies.add(key);
     }
 

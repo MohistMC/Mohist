@@ -1,18 +1,43 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -12,9 +_,11 @@
+@@ -12,8 +_,11 @@
  import java.net.Proxy;
  import java.nio.file.Path;
  import java.nio.file.Paths;
 +import java.util.Arrays;
- import java.util.Objects;
++import java.util.Objects;
  import java.util.Optional;
  import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
-@@ -78,6 +_,41 @@
+@@ -35,7 +_,10 @@
+ import net.minecraft.server.dedicated.DedicatedServerProperties;
+ import net.minecraft.server.dedicated.DedicatedServerSettings;
+ import net.minecraft.server.level.progress.LoggerChunkProgressListener;
++import net.minecraft.server.packs.PackType;
++import net.minecraft.server.packs.repository.FolderRepositorySource;
+ import net.minecraft.server.packs.repository.PackRepository;
++import net.minecraft.server.packs.repository.PackSource;
+ import net.minecraft.server.packs.repository.ServerPacksSource;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.datafix.DataFixers;
+@@ -43,11 +_,13 @@
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
+ import net.minecraft.util.worldupdate.WorldUpgrader;
+ import net.minecraft.world.flag.FeatureFlags;
++import net.minecraft.world.level.DataPackConfig;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.WorldDataConfiguration;
+ import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldDimensions;
++import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+ import net.minecraft.world.level.storage.LevelResource;
+@@ -79,6 +_,41 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -54,7 +79,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -85,6 +_,13 @@
+@@ -86,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -68,7 +93,7 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -94,26 +_,25 @@
+@@ -95,26 +_,25 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
@@ -101,27 +126,18 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -133,6 +_,8 @@
-          }
- 
-          PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_).toFile(), PackSource.f_10529_));
-+         AtomicReference<DataPackConfig> config = new AtomicReference<>();
-+         AtomicReference<DynamicOps<Tag>> ops = new AtomicReference<>();
- 
-          WorldStem worldstem;
-          try {
-@@ -158,6 +_,8 @@
-                         worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$writable).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$writable);
+@@ -160,6 +_,8 @@
+                         worlddimensions = dedicatedserverproperties.m_246483_(p_248079_.f_244104_());
                       }
  
-+                  // Forge: Deserialize the WorldGenSettings to ensure modded dims are loaded on first server load. Vanilla behavior only loads from the server.properties and deserializes only after the 2nd server load.
-+                  worldgensettings = WorldGenSettings.f_64600_.encodeStart(dynamicops, worldgensettings).flatMap(nbt -> WorldGenSettings.f_64600_.parse(dynamicops, nbt)).getOrThrow(false, errorMsg -> {});
-                      PrimaryLevelData primaryleveldata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
-                      return Pair.of(primaryleveldata, registryaccess$writable.m_203557_());
-                   }
-@@ -178,22 +_,38 @@
-          }
++                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
++                     worlddimensions = WorldDimensions.f_243810_.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.f_243810_.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(f_129670_::error).orElse(worlddimensions);
+                      WorldDimensions.Complete worlddimensions$complete = worlddimensions.m_245300_(registry);
+                      Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_248079_.f_244104_().m_211816_());
+                      return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.f_244634_(), lifecycle), worlddimensions$complete.m_245593_());
+@@ -180,22 +_,37 @@
  
+          WorldData worlddata = worldstem.f_206895_();
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
 -         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_236710_) -> {
 -            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
@@ -136,8 +152,7 @@
 +               // Mohist start - fix mixin
 +               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +               MinecraftServer.options = optionset;
-+               MinecraftServer.datapackconfiguration = config.get();
-+               MinecraftServer.registryreadops = ops.get();
++              // MinecraftServer.worldLoader = config.get();
 +               // Mohist end
 +            }
              dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
@@ -162,12 +177,12 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
-@@ -204,7 +_,7 @@
- 
+@@ -222,7 +_,7 @@
+       return new WorldLoader.InitConfig(worldloader$packconfig, Commands.CommandSelection.DEDICATED, p_248563_.f_139711_);
     }
  
--   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
-+   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, WorldGenSettings p_195493_) {
+-   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
++   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
        f_129670_.info("Forcing world upgrade!");
-       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_195493_, p_195491_);
+       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_250443_, p_195491_);
        Component component = null;

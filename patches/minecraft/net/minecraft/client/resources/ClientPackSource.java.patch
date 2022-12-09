@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/resources/ClientPackSource.java
++++ b/net/minecraft/client/resources/ClientPackSource.java
+@@ -49,7 +_,7 @@
+       return null;
+    }
+ 
+-   private static VanillaPackResources m_246691_(Path p_250749_) {
++   public static VanillaPackResources m_246691_(Path p_250749_) {
+       return (new VanillaPackResourcesBuilder()).m_245913_(f_244333_).m_245371_("minecraft", "realms").m_246678_().m_246373_().m_246275_(PackType.CLIENT_RESOURCES, p_250749_).m_245772_();
+    }
+ 

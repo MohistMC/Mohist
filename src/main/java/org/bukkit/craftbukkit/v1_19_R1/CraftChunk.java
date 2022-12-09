@@ -14,6 +14,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
@@ -294,7 +295,7 @@ public class CraftChunk implements Chunk {
         boolean[] sectionEmpty = new boolean[cs.length];
         PalettedContainerRO<Holder<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
 
-        net.minecraft.core.Registry<Biome> iregistry = worldServer.registryAccess().registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY);
+        net.minecraft.core.Registry<Biome> iregistry = worldServer.registryAccess().registryOrThrow(Registries.BIOME);
         Codec<PalettedContainerRO<Holder<Biome>>> biomeCodec = PalettedContainer.codecRO(iregistry.asHolderIdMap(), iregistry.holderByNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, iregistry.getHolderOrThrow(Biomes.PLAINS));
 
         for (int i = 0; i < cs.length; i++) {
@@ -350,7 +351,7 @@ public class CraftChunk implements Chunk {
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];
-        net.minecraft.core.Registry<Biome> iregistry = world.getHandle().registryAccess().registryOrThrow(net.minecraft.core.Registry.BIOME_REGISTRY);
+        net.minecraft.core.Registry<Biome> iregistry = world.getHandle().registryAccess().registryOrThrow(Registries.BIOME);
         PalettedContainer<Holder<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
         Codec<PalettedContainerRO<Holder<Biome>>> biomeCodec = PalettedContainer.codecRO(iregistry.asHolderIdMap(), iregistry.holderByNameCodec(), PalettedContainer.Strategy.SECTION_BIOMES, iregistry.getHolderOrThrow(Biomes.PLAINS));
 

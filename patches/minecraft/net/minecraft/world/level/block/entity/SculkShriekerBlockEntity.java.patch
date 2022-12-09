@@ -6,6 +6,6 @@
     private static final int f_222830_ = 90;
 -   private int f_222831_;
 +   public int f_222831_;
-    private VibrationListener f_222832_ = new VibrationListener(new BlockPositionSource(this.f_58858_), 8, this, (VibrationListener.ReceivingEvent)null, 0.0F, 0);
+    private VibrationListener f_222832_ = new VibrationListener(new BlockPositionSource(this.f_58858_), 8, this);
  
     public SculkShriekerBlockEntity(BlockPos p_222835_, BlockState p_222836_) {

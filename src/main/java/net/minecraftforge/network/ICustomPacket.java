@@ -5,8 +5,10 @@
 
 package net.minecraftforge.network;
 
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.network.protocol.Packet;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 

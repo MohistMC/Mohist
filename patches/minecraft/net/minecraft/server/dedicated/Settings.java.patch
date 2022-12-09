@@ -1,30 +1,11 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -4,7 +_,9 @@
- import com.mojang.logging.LogUtils;
- import java.io.IOException;
- import java.io.InputStream;
-+import java.io.InputStreamReader;
- import java.io.OutputStream;
-+import java.nio.charset.StandardCharsets;
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.util.Objects;
-@@ -32,7 +_,7 @@
-          InputStream inputstream = Files.newInputStream(p_139840_);
+@@ -39,7 +_,7 @@
  
-          try {
--            properties.load(inputstream);
-+            properties.load(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
-          } catch (Throwable throwable1) {
-             if (inputstream != null) {
-                try {
-@@ -60,7 +_,7 @@
-          OutputStream outputstream = Files.newOutputStream(p_139877_);
- 
-          try {
--            this.f_139798_.store(outputstream, "Minecraft server properties");
-+            net.minecraftforge.common.util.SortedProperties.store(f_139798_, outputstream, "Minecraft server properties");
-          } catch (Throwable throwable1) {
-             if (outputstream != null) {
-                try {
+    public void m_139876_(Path p_139877_) {
+       try (OutputStream outputstream = Files.newOutputStream(p_139877_)) {
+-         this.f_139798_.store(outputstream, "Minecraft server properties");
++         net.minecraftforge.common.util.SortedProperties.store(this.f_139798_, outputstream, "Minecraft server properties");
+       } catch (IOException ioexception) {
+          f_139797_.error("Failed to store properties to file: {}", (Object)p_139877_);
+       }

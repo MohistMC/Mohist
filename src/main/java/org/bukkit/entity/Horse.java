@@ -38,6 +38,10 @@ public interface Horse extends AbstractHorse {
          */
         LLAMA,
         /**
+         * Also not really a horse :)
+         */
+        CAMEL,
+        /**
          * FORGE_MOD_CHEST_HORSE
          */
         FORGE_MOD_CHEST_HORSE,

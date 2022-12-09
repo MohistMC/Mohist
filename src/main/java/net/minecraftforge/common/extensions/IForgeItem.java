@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -254,7 +255,7 @@ public interface IForgeItem
      */
     default int getEntityLifespan(ItemStack itemStack, Level level)
     {
-        return level.spigotConfig.itemDespawnRate;
+        return 6000;
     }
 
     /**
@@ -300,18 +301,6 @@ public interface IForgeItem
     default boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity)
     {
         return false;
-    }
-
-    /**
-     * Gets a list of tabs that items belonging to this class can display on,
-     * combined properly with getSubItems allows for a single item to span many
-     * sub-items across many tabs.
-     *
-     * @return A list of all tabs that this item could possibly be one.
-     */
-    default java.util.Collection<CreativeModeTab> getCreativeTabs()
-    {
-        return java.util.Collections.singletonList(self().getItemCategory());
     }
 
     /**
@@ -615,7 +604,7 @@ public interface IForgeItem
      */
     default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
     {
-        return ItemStack.isSameIgnoreDurability(oldStack, newStack);
+        return ItemStack.isSame(oldStack, newStack);
     }
 
     /**

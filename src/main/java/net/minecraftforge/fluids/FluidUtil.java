@@ -26,13 +26,11 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -175,7 +173,6 @@ public class FluidUtil
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
-
                     FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, doDrain);
                     if (transfer.isEmpty())
                         return FluidActionResult.FAILURE;
@@ -451,7 +448,6 @@ public class FluidUtil
     public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
     {
         BlockState state = level.getBlockState(blockPos);
-
         if (state.hasBlockEntity())
         {
             BlockEntity blockEntity = level.getBlockEntity(blockPos);

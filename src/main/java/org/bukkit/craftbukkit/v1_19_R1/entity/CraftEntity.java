@@ -150,6 +150,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         } else if (entity instanceof net.minecraft.world.entity.animal.horse.Horse) { return new CraftHorse(server, (net.minecraft.world.entity.animal.horse.Horse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.SkeletonHorse) { return new CraftSkeletonHorse(server, (net.minecraft.world.entity.animal.horse.SkeletonHorse) entity); }
                         else if (entity instanceof net.minecraft.world.entity.animal.horse.ZombieHorse) { return new CraftZombieHorse(server, (net.minecraft.world.entity.animal.horse.ZombieHorse) entity); }
+                        else if (entity instanceof net.minecraft.world.entity.animal.camel.Camel) { return new CraftCamel(server, (net.minecraft.world.entity.animal.camel.Camel) entity); }
                         else { return new MohistModsAbstractHorse( server, ( AbstractHorse ) entity); }
                     }
                     else if (entity instanceof net.minecraft.world.entity.animal.Rabbit) { return new CraftRabbit(server, (net.minecraft.world.entity.animal.Rabbit) entity); }

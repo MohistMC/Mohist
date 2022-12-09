@@ -14,7 +14,6 @@ import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.unsafe.UnsafeHacks;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.BiFunction;

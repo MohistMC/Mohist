@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/item/PrimedTnt.java
 +++ b/net/minecraft/world/entity/item/PrimedTnt.java
-@@ -22,6 +_,8 @@
+@@ -12,6 +_,7 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.MoverType;
+ import net.minecraft.world.entity.Pose;
++import net.minecraft.world.level.Explosion;
+ import net.minecraft.world.level.Level;
+ 
+ public class PrimedTnt extends Entity {
+@@ -19,6 +_,8 @@
     private static final int f_149679_ = 80;
     @Nullable
     public LivingEntity f_32072_;

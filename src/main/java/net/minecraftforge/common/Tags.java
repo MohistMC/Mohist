@@ -6,6 +6,7 @@
 package net.minecraftforge.common;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
@@ -191,7 +192,7 @@ public class Tags
 
         private static TagKey<EntityType<?>> tag(String name)
         {
-            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("forge", name));
+            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", name));
         }
     }
 
@@ -598,7 +599,6 @@ public class Tags
         public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
 
         public static final TagKey<Biome> IS_WATER = tag("is_water");
-
         public static final TagKey<Biome> IS_DESERT = tag("is_desert");
         public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
         public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
@@ -615,7 +615,7 @@ public class Tags
 
         private static TagKey<Biome> tag(String name)
         {
-            return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+            return TagKey.create(Registries.BIOME, new ResourceLocation("forge", name));
         }
     }
 }

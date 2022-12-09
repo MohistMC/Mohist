@@ -20,7 +20,7 @@
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
     private static final Component f_10081_ = Component.m_237115_("multiplayer.status.request_handled");
-@@ -31,8 +_,38 @@
+@@ -31,8 +_,37 @@
        if (this.f_10084_) {
           this.f_10083_.m_129507_(f_10081_);
        } else {
@@ -49,7 +49,6 @@
 +          }
 +
 +          ServerStatus ping = new ServerStatus();
-+          ping.m_238078_(event.shouldSendChatPreviews());
 +          ping.m_134906_(event.icon.value);
 +          ping.m_134908_(CraftChatMessage.fromString(event.getMotd(), true)[0]);
 +          ping.m_134910_(playerSample);

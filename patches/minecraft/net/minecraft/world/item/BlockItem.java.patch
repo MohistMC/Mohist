@@ -1,6 +1,23 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -80,9 +_,9 @@
+@@ -5,6 +_,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.NonNullList;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.network.chat.Component;
+@@ -31,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ 
+ public class BlockItem extends Item {
+-   public static final String f_150696_ = "BlockEntityTag";
++   private static final String f_150696_ = "BlockEntityTag";
+    public static final String f_150697_ = "BlockStateTag";
+    /** @deprecated */
+    @Deprecated
+@@ -82,9 +_,9 @@
                    }
                 }
  
@@ -12,7 +29,7 @@
                 if (player == null || !player.m_150110_().f_35937_) {
                    itemstack.m_41774_(1);
                 }
-@@ -93,10 +_,16 @@
+@@ -95,10 +_,16 @@
        }
     }
  
@@ -29,7 +46,7 @@
     @Nullable
     public BlockPlaceContext m_7732_(BlockPlaceContext p_40609_) {
        return p_40609_;
-@@ -200,6 +_,10 @@
+@@ -195,6 +_,10 @@
     }
  
     public Block m_40614_() {
@@ -40,7 +57,7 @@
        return this.f_40563_;
     }
  
-@@ -207,6 +_,10 @@
+@@ -202,6 +_,10 @@
        p_40607_.put(this.m_40614_(), p_40608_);
     }
  
@@ -51,9 +68,9 @@
     public boolean m_142095_() {
        return !(this.f_40563_ instanceof ShulkerBoxBlock);
     }
-@@ -237,4 +_,22 @@
-       }
- 
+@@ -236,4 +_,22 @@
+    public FeatureFlagSet m_245183_() {
+       return this.m_40614_().m_245183_();
     }
 +
 +   public static BlockState getBlockState(BlockState iblockdata, CompoundTag compoundtag1) {

@@ -83,11 +83,11 @@ public class ForgeConfig {
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
     public static class Common {
-        @Deprecated(since = "1.19.2", forRemoval = true)
+        @Deprecated(since = "1.19.3", forRemoval = true)
         public final BooleanValue cachePackAccess;
-        @Deprecated(since = "1.19.2", forRemoval = true)
+        @Deprecated(since = "1.19.3", forRemoval = true)
         public final BooleanValue indexVanillaPackCachesOnThread;
-        @Deprecated(since = "1.19.2", forRemoval = true)
+        @Deprecated(since = "1.19.3", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
 
         Common(ForgeConfigSpec.Builder builder) {

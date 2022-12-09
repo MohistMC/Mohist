@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.Tag;
@@ -33,7 +34,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,7 +52,6 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_19_R1.attribute.CraftAttributeInstance;
 import org.bukkit.craftbukkit.v1_19_R1.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftCreativeCategory;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R1.legacy.CraftLegacy;
 import org.bukkit.inventory.CreativeCategory;
@@ -101,16 +100,16 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Material, net.minecraft.world.level.material.Fluid> MATERIAL_FLUID = new HashMap<>();
 
     static {
-        for (Block block : net.minecraft.core.Registry.BLOCK) {
-            BLOCK_MATERIAL.put(block, Material.getMaterial(net.minecraft.core.Registry.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
+        for (Block block : BuiltInRegistries.BLOCK) {
+            BLOCK_MATERIAL.put(block, Material.getMaterial(BuiltInRegistries.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
         }
 
-        for (Item item : net.minecraft.core.Registry.ITEM) {
-            ITEM_MATERIAL.put(item, Material.getMaterial(net.minecraft.core.Registry.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
+        for (Item item : BuiltInRegistries.ITEM) {
+            ITEM_MATERIAL.put(item, Material.getMaterial(BuiltInRegistries.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
         }
 
-        for (net.minecraft.world.level.material.Fluid fluid : net.minecraft.core.Registry.FLUID) {
-            FLUID_MATERIAL.put(fluid, Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(net.minecraft.core.Registry.FLUID.getKey(fluid))));
+        for (net.minecraft.world.level.material.Fluid fluid : BuiltInRegistries.FLUID) {
+            FLUID_MATERIAL.put(fluid, Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluid))));
         }
 
         for (Material material : Material.values()) {
@@ -119,13 +118,13 @@ public final class CraftMagicNumbers implements UnsafeValues {
             }
 
             ResourceLocation key = key(material);
-            net.minecraft.core.Registry.ITEM.getOptional(key).ifPresent((item) -> {
+            BuiltInRegistries.ITEM.getOptional(key).ifPresent((item) -> {
                 MATERIAL_ITEM.put(material, item);
             });
-            net.minecraft.core.Registry.BLOCK.getOptional(key).ifPresent((block) -> {
+            BuiltInRegistries.BLOCK.getOptional(key).ifPresent((block) -> {
                 MATERIAL_BLOCK.put(material, block);
             });
-            net.minecraft.core.Registry.FLUID.getOptional(key).ifPresent((fluid) -> {
+            BuiltInRegistries.FLUID.getOptional(key).ifPresent((fluid) -> {
                 MATERIAL_FLUID.put(material, fluid);
             });
         }
@@ -233,7 +232,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
      * @return string
      */
     public String getMappingsVersion() {
-        return "69c84c88aeb92ce9fa9525438b93f4fe";
+        return "1afe2ffe8a9d7fc510442a168b3d4338";
     }
 
     @Override
@@ -347,7 +346,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> nmsDefaultAttributes = getItem(material).getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(slot));
         for (Map.Entry<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> mapEntry : nmsDefaultAttributes.entries()) {
-            Attribute attribute = CraftAttributeMap.fromMinecraft(net.minecraft.core.Registry.ATTRIBUTE.getKey(mapEntry.getKey()).toString());
+            Attribute attribute = CraftAttributeMap.fromMinecraft(BuiltInRegistries.ATTRIBUTE.getKey(mapEntry.getKey()).toString());
             defaultAttributes.put(attribute, CraftAttributeInstance.convert(mapEntry.getValue(), slot));
         }
 
@@ -356,8 +355,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public CreativeCategory getCreativeCategory(Material material) {
-        CreativeModeTab category = getItem(material).getItemCategory();
-        return CraftCreativeCategory.fromNMS(category);
+        return CreativeCategory.BUILDING_BLOCKS; // TODO: Figure out what to do with this
     }
 
     /**

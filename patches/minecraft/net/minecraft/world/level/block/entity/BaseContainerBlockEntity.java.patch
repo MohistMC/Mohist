@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-@@ -80,4 +_,35 @@
+@@ -81,4 +_,35 @@
     }
  
     protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
@@ -11,7 +11,7 @@
 +   }
 +
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER )
++      if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
 +         return itemHandler.cast();
 +      return super.getCapability(cap, side);
 +   }

@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_19_R1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
@@ -121,9 +122,9 @@ public enum CraftStatistic {
 
     public static org.bukkit.Statistic getBukkitStatistic(net.minecraft.stats.Stat<?> statistic) {
         net.minecraft.core.Registry statRegistry = statistic.getType().getRegistry();
-        ResourceLocation nmsKey = net.minecraft.core.Registry.STAT_TYPE.getKey(statistic.getType());
+        ResourceLocation nmsKey = BuiltInRegistries.STAT_TYPE.getKey(statistic.getType());
 
-        if (statRegistry == net.minecraft.core.Registry.CUSTOM_STAT) {
+        if (statRegistry == BuiltInRegistries.CUSTOM_STAT) {
             nmsKey = (ResourceLocation) statistic.getValue();
         }
 
@@ -167,7 +168,7 @@ public enum CraftStatistic {
 
     public static net.minecraft.stats.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         if (entity.getName() != null) {
-            net.minecraft.world.entity.EntityType<?> nmsEntity = net.minecraft.core.Registry.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
+            net.minecraft.world.entity.EntityType<?> nmsEntity = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
 
             if (stat == org.bukkit.Statistic.KILL_ENTITY) {
                 return net.minecraft.stats.Stats.ENTITY_KILLED.get(nmsEntity);

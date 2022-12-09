@@ -12,18 +12,21 @@
  import java.io.BufferedReader;
  import java.io.IOException;
  import java.io.InputStreamReader;
-@@ -27,6 +_,7 @@
+@@ -26,6 +_,8 @@
+ import net.minecraft.Util;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.NonNullList;
++import net.minecraft.core.NonNullList;
 +import net.minecraft.nbt.Tag;
  import net.minecraft.server.ConsoleInput;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.ServerInterface;
-@@ -49,11 +_,21 @@
+@@ -46,11 +_,23 @@
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.monitoring.jmx.MinecraftServerStatistics;
  import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.CreativeModeTab;
- import net.minecraft.world.item.Items;
++import net.minecraft.world.item.CreativeModeTab;
++import net.minecraft.world.item.Items;
 +import net.minecraft.world.level.DataPackConfig;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
@@ -42,7 +45,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -82,8 +_,8 @@
+@@ -79,8 +_,8 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -52,7 +55,7 @@
              String s1;
              try {
                 while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
-@@ -95,6 +_,19 @@
+@@ -92,6 +_,19 @@
  
           }
        };
@@ -72,10 +75,10 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -156,14 +_,25 @@
+@@ -153,14 +_,25 @@
           return false;
        } else {
-          this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
+          this.m_129823_(new DedicatedPlayerList(this, this.m_247573_(), this.f_129745_));
 +         // CraftBukkit start
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
@@ -98,7 +101,7 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -176,9 +_,10 @@
+@@ -173,9 +_,10 @@
           if (dedicatedserverproperties.f_139747_) {
              f_139598_.info("Starting remote control listener");
              this.f_139603_ = RconThread.m_11615_(this);
@@ -110,22 +113,22 @@
              Thread thread1 = new Thread(new ServerWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
              thread1.setName("Server Watchdog");
-@@ -187,12 +_,12 @@
+@@ -183,12 +_,13 @@
+             thread1.start();
           }
  
-          Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
 +         // <3 you Grum for this, saves us ~30 patch files! --^
           if (dedicatedserverproperties.f_139721_) {
              MinecraftServerStatistics.m_18328_(this);
              f_139598_.info("JMX monitoring enabled");
           }
--
+ 
 -         return true;
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -300,7 +_,16 @@
+@@ -281,7 +_,16 @@
     public void m_139665_() {
        while(!this.f_139600_.isEmpty()) {
           ConsoleInput consoleinput = this.f_139600_.remove(0);
@@ -143,16 +146,7 @@
        }
  
     }
-@@ -318,7 +_,7 @@
-    }
- 
-    public boolean m_214000_() {
--      return this.m_7913_().f_214803_;
-+      return super.m_214000_() || this.m_7913_().f_214803_;
-    }
- 
-    public DedicatedPlayerList m_6846_() {
-@@ -496,13 +_,43 @@
+@@ -473,13 +_,43 @@
     }
  
     public String m_7138_() {
@@ -198,7 +192,7 @@
        });
        return this.f_139602_.m_11513_();
     }
-@@ -546,5 +_,15 @@
+@@ -523,5 +_,15 @@
  
     public Optional<MinecraftServer.ServerResourcePackInfo> m_214042_() {
        return this.f_139604_.m_139777_().f_214802_;

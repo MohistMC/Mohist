@@ -5,16 +5,15 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.Comparator;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.IdentityHashMap;
-import java.util.List;
 import org.objectweb.asm.Type;
 
+import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.List;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
@@ -38,7 +37,6 @@ public enum CapabilityManager
         {
             realName = realName.intern();
             cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
-
         }
 
 
@@ -67,18 +65,19 @@ public enum CapabilityManager
     public void injectCapabilities(List<ModFileScanData> data)
     {
         var autos = data.stream()
-                .flatMap(e -> e.getAnnotations().stream())
-                .filter(a -> AUTO_REGISTER.equals(a.annotationType()))
-                .map(a -> a.clazz())
-                .distinct()
-                .sorted(Comparator.comparing(Type::toString))
-                .toList();
+            .flatMap(e -> e.getAnnotations().stream())
+            .filter(a -> AUTO_REGISTER.equals(a.annotationType()))
+            .map(a -> a.clazz())
+            .distinct()
+            .sorted(Comparator.comparing(Type::toString))
+            .toList();
 
         for (var auto : autos)
         {
             LOGGER.debug(CAPABILITIES, "Attempting to automatically register: " + auto);
             get(auto.getInternalName(), true);
         }
+
         var event = new RegisterCapabilitiesEvent();
         ModLoader.get().postEvent(event);
     }

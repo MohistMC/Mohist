@@ -1,11 +1,11 @@
 <div align="center">
-  <h1>Mohist 1.19.2</h1>
+  <h1>Mohist 1.19.3</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.2)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.3)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.3)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.19.2--43.1.65-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.2.html)
+[![](https://img.shields.io/badge/Forge-1.19.3--43.1.65-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.3.html)
 [![](https://img.shields.io/badge/jdk-17.0.5+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.5-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -17,7 +17,7 @@
 
 | Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
 |---------|-------------|-----------|---------------------|----------------------|
-| 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
+| 1.19.3  | WIP         | Poor      | Zero                | Zero                 |
 | 1.16.5  | Active      | Good      | Better than plugins | Good                 |
 | 1.12.2  | End Of Life | High      | Very good           | Very good            |
 | 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
@@ -27,8 +27,8 @@ Progress
 
 - [x] Rectify Forge([**dd8239c25**](https://github.com/MinecraftForge/MinecraftForge/commit/dd8239c25))  
 - [ ] Start patch
-  * [x] Bukkit([**9a4de097**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/9a4de097))
-  * [ ] CraftBukkit([**300e7448f**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/300e7448f))
+  * [x] Bukkit([**dea9ce0a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/dea9ce0a))
+  * [ ] CraftBukkit([**eecb4c0dc**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/eecb4c0dc))
   * [ ] Spigot ([**4aa5ead2**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/4aa5ead2))
     * [x] Bukkit-Patches 
     * [ ] CraftBukkit-Patches (32%)

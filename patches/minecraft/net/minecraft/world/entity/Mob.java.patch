@@ -1,14 +1,19 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -6,6 +_,8 @@
+@@ -1,10 +_,13 @@
+ package net.minecraft.world.entity;
+ 
++import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Maps;
+ import java.util.Arrays;
  import java.util.Map;
  import java.util.Optional;
  import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.NonNullList;
 @@ -22,6 +_,7 @@
  import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.resources.ResourceLocation;
@@ -17,7 +22,7 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.Mth;
-@@ -71,6 +_,16 @@
+@@ -71,6 +_,18 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.level.storage.loot.LootContext;
@@ -25,10 +30,12 @@
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.EntityTransformEvent.TransformReason;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
  
@@ -171,50 +178,7 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
-@@ -518,6 +_,7 @@
- 
-    protected void m_7581_(ItemEntity p_21471_) {
-       ItemStack itemstack = p_21471_.m_32055_();
-+      this.entityitem.set(p_21471_); // Mohist
-       if (this.m_21540_(itemstack)) {
-          this.m_21053_(p_21471_);
-          this.m_7938_(p_21471_, itemstack.m_41613_());
-@@ -530,10 +_,18 @@
-       EquipmentSlot equipmentslot = m_147233_(p_21541_);
-       ItemStack itemstack = this.m_6844_(equipmentslot);
-       boolean flag = this.m_7808_(p_21541_, itemstack);
--      if (flag && this.m_7252_(p_21541_)) {
-+      // CraftBukkit start
-+      boolean canPickup = flag && this.m_7252_(itemstack);
-+      if (entityitem.get() != null) {
-+         canPickup = !CraftEventFactory.callEntityPickupItemEvent(this, entityitem.getAndSet(null), 0, !canPickup).isCancelled();
-+      }
-+      if (canPickup) {
-+         // CraftBukkit end
-          double d0 = (double)this.m_21519_(equipmentslot);
-          if (!itemstack.m_41619_() && (double)Math.max(this.f_19796_.m_188501_() - 0.1F, 0.0F) < d0) {
-+            this.forceDrops = true; // CraftBukkit
-             this.m_19983_(itemstack);
-+            this.forceDrops = false; // CraftBukkit
-          }
- 
-          this.m_21468_(equipmentslot, p_21541_);
-@@ -543,6 +_,14 @@
-       }
-    }
- 
-+   // Mohist start
-+   public AtomicReference<ItemEntity> entityitem = new AtomicReference<>(null);
-+   public boolean equipItemIfPossible(ItemStack itemstack, ItemEntity entityitem) {
-+      this.entityitem.set(entityitem);
-+      return m_21540_(itemstack);
-+   }
-+   // Mohist end
-+
-    protected void m_21468_(EquipmentSlot p_21469_, ItemStack p_21470_) {
-       this.m_8061_(p_21469_, p_21470_);
-       this.m_21508_(p_21469_);
-@@ -657,6 +_,14 @@
+@@ -673,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
           Entity entity = this.f_19853_.m_45930_(this, -1.0D);
@@ -229,7 +193,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -681,6 +_,7 @@
+@@ -697,6 +_,7 @@
  
     protected final void m_6140_() {
        ++this.f_20891_;
@@ -237,7 +201,7 @@
        this.f_19853_.m_46473_().m_6180_("sensing");
        this.f_21349_.m_26789_();
        this.f_19853_.m_46473_().m_7238_();
-@@ -1007,6 +_,12 @@
+@@ -1023,6 +_,12 @@
        this.f_21353_ = true;
     }
  
@@ -250,7 +214,7 @@
     public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
        switch (p_21410_.m_20743_()) {
           case HAND:
-@@ -1039,6 +_,12 @@
+@@ -1055,6 +_,12 @@
        if (!this.m_6084_()) {
           return InteractionResult.PASS;
        } else if (this.m_21524_() == p_21420_) {
@@ -263,7 +227,7 @@
           this.m_21455_(true, !p_21420_.m_150110_().f_35937_);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
        } else {
-@@ -1060,6 +_,12 @@
+@@ -1076,6 +_,12 @@
     private InteractionResult m_21499_(Player p_21500_, InteractionHand p_21501_) {
        ItemStack itemstack = p_21500_.m_21120_(p_21501_);
        if (itemstack.m_150930_(Items.f_42655_) && this.m_6573_(p_21500_)) {
@@ -276,21 +240,44 @@
           this.m_21463_(p_21500_, true);
           itemstack.m_41774_(1);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-@@ -1160,7 +_,12 @@
-             }
-          }
+@@ -1147,11 +_,11 @@
+    @Nullable
+    public <T extends Mob> T m_21406_(EntityType<T> p_21407_, boolean p_21408_) {
+       if (this.m_213877_()) {
+-         return (T)null;
++         return (T) null;
+       } else {
+          T t = p_21407_.m_20615_(this.f_19853_);
+          if (t == null) {
+-            return (T)null;
++            return (T) null;
+          } else {
+             t.m_20359_(this);
+             t.m_6863_(this.m_6162_());
+@@ -1169,7 +_,7 @@
+             if (p_21408_) {
+                t.m_21553_(this.m_21531_());
  
--         this.f_19853_.m_7967_(t);
-+         // CraftBukkit start
-+         if (CraftEventFactory.callEntityTransformEvent(this, t, this.transformReason.getAndSet(EntityTransformEvent.TransformReason.UNKNOWN)).isCancelled()) {
-+            return null;
-+         }
-+         this.f_19853_.addFreshEntity(t, this.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT));
-+         // CraftBukkit end
-          if (this.m_20159_()) {
-             Entity entity = this.m_20202_();
-             this.m_8127_();
-@@ -1172,6 +_,20 @@
+-               for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
++               for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+                   ItemStack itemstack = this.m_6844_(equipmentslot);
+                   if (!itemstack.m_41619_()) {
+                      t.m_8061_(equipmentslot, itemstack.m_41777_());
+@@ -1179,7 +_,12 @@
+                }
+             }
+ 
+-            this.f_19853_.m_7967_(t);
++            // CraftBukkit start
++            if (CraftEventFactory.callEntityTransformEvent(this, t, this.transformReason.getAndSet(EntityTransformEvent.TransformReason.UNKNOWN)).isCancelled()) {
++               return null;
++            }
++            this.f_19853_.addFreshEntity(t, this.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT));
++            // CraftBukkit end
+             if (this.m_20159_()) {
+                Entity entity = this.m_20202_();
+                this.m_8127_();
+@@ -1192,6 +_,20 @@
        }
     }
  
@@ -311,7 +298,7 @@
     protected void m_6119_() {
        if (this.f_21359_ != null) {
           this.m_21528_();
-@@ -1238,6 +_,7 @@
+@@ -1258,6 +_,7 @@
     public boolean m_7998_(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.m_7998_(p_21396_, p_21397_);
        if (flag && this.m_21523_()) {
@@ -319,7 +306,7 @@
           this.m_21455_(true, true);
        }
  
-@@ -1260,7 +_,9 @@
+@@ -1280,7 +_,9 @@
           }
  
           if (this.f_19797_ > 100) {
@@ -329,7 +316,7 @@
              this.f_21359_ = null;
           }
        }
-@@ -1328,7 +_,14 @@
+@@ -1352,7 +_,14 @@
  
        int i = EnchantmentHelper.m_44914_(this);
        if (i > 0) {
@@ -345,7 +332,34 @@
        }
  
        boolean flag = p_21372_.m_6469_(DamageSource.m_19370_(this), f);
-@@ -1390,9 +_,10 @@
+@@ -1398,15 +_,25 @@
+       return false;
+    }
+ 
++   @Deprecated // FORGE: use jumpInFluid instead
+    protected void m_203347_(TagKey<Fluid> p_204045_) {
++      this.jumpInLiquidInternal(() -> super.m_203347_(p_204045_));
++   }
++
++   private void jumpInLiquidInternal(Runnable onSuper) {
+       if (this.m_21573_().m_26576_()) {
+-         super.m_203347_(p_204045_);
++         onSuper.run();
+       } else {
+          this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.3D, 0.0D));
+       }
+ 
+    }
+ 
++   @Override
++   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
++   }
++
+    public void m_147272_() {
+       this.m_262441_((p_262562_) -> {
+          return true;
+@@ -1420,9 +_,10 @@
  
     protected void m_6089_() {
        super.m_6089_();

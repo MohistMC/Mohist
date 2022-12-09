@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R1.potion;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Color;
 import org.bukkit.potion.PotionEffectType;
@@ -8,7 +9,7 @@ public class CraftPotionEffectType extends PotionEffectType {
     private final MobEffect handle;
 
     public CraftPotionEffectType(MobEffect handle) {
-        super(MobEffect.getId(handle), org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey.fromMinecraft(net.minecraft.core.Registry.MOB_EFFECT.getKey(handle)));
+        super(MobEffect.getId(handle), org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.MOB_EFFECT.getKey(handle)));
         this.handle = handle;
     }
 

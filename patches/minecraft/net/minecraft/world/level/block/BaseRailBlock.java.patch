@@ -47,22 +47,19 @@
     public abstract Property<RailShape> m_7978_();
  
     public BlockState m_7417_(BlockState p_152151_, Direction p_152152_, BlockState p_152153_, LevelAccessor p_152154_, BlockPos p_152155_, BlockPos p_152156_) {
-@@ -152,4 +_,18 @@
+@@ -151,5 +_,15 @@
+ 
     public FluidState m_5888_(BlockState p_152158_) {
        return p_152158_.m_61143_(f_152149_) ? Fluids.f_76193_.m_76068_(false) : super.m_5888_(p_152158_);
-    }
-+
-+   /* ======================================== FORGE START =====================================*/
++   }
 +
 +   @Override
-+   public boolean isFlexibleRail(BlockState state, BlockGetter world, BlockPos pos)
-+   {
-+      return  !this.f_49357_;
++   public boolean isFlexibleRail(BlockState state, BlockGetter world, BlockPos pos) {
++       return  !this.f_49357_;
 +   }
 +
 +   @Override
 +   public RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.vehicle.AbstractMinecart cart) {
-+      return state.m_61143_(m_7978_());
-+   }
-+   /* ========================================= FORGE END ======================================*/
++       return state.m_61143_(m_7978_());
+    }
  }

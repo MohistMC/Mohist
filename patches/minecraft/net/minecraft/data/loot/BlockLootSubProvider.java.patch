@@ -1,0 +1,42 @@
+--- a/net/minecraft/data/loot/BlockLootSubProvider.java
++++ b/net/minecraft/data/loot/BlockLootSubProvider.java
+@@ -99,7 +_,7 @@
+       return LootTable.m_79147_().m_79161_(this.m_247733_(p_251912_, LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(p_251912_))));
+    }
+ 
+-   private static LootTable.Builder m_246900_(Block p_252253_, LootItemCondition.Builder p_248764_, LootPoolEntryContainer.Builder<?> p_249146_) {
++   protected static LootTable.Builder m_246900_(Block p_252253_, LootItemCondition.Builder p_248764_, LootPoolEntryContainer.Builder<?> p_249146_) {
+       return LootTable.m_79147_().m_79161_(LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(p_252253_).m_79080_(p_248764_).m_7170_(p_249146_)));
+    }
+ 
+@@ -127,11 +_,11 @@
+       return m_247502_(p_251449_, this.m_246108_(p_251449_, LootItem.m_79579_(p_248558_).m_79078_(SetItemCountFunction.m_165412_(p_250047_))));
+    }
+ 
+-   private static LootTable.Builder m_245335_(ItemLike p_252216_) {
++   protected static LootTable.Builder m_245335_(ItemLike p_252216_) {
+       return LootTable.m_79147_().m_79161_(LootPool.m_79043_().m_79080_(f_243678_).m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(p_252216_)));
+    }
+ 
+-   private LootTable.Builder m_245602_(ItemLike p_249395_) {
++   protected LootTable.Builder m_245602_(ItemLike p_249395_) {
+       return LootTable.m_79147_().m_79161_(this.m_247733_(Blocks.f_50276_, LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(Blocks.f_50276_)))).m_79161_(this.m_247733_(p_249395_, LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(p_249395_))));
+    }
+ 
+@@ -252,11 +_,15 @@
+ 
+    protected abstract void m_245660_();
+ 
++   protected Iterable<Block> getKnownBlocks() {
++      return BuiltInRegistries.f_256975_;
++   }
++
+    public void m_245126_(BiConsumer<ResourceLocation, LootTable.Builder> p_249322_) {
+       this.m_245660_();
+       Set<ResourceLocation> set = new HashSet<>();
+ 
+-      for(Block block : BuiltInRegistries.f_256975_) {
++      for(Block block : getKnownBlocks()) {
+          if (block.m_245993_(this.f_243739_)) {
+             ResourceLocation resourcelocation = block.m_60589_();
+             if (resourcelocation != BuiltInLootTables.f_78712_ && set.add(resourcelocation)) {

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/placement/PlacedFeature.java
++++ b/net/minecraft/world/level/levelgen/placement/PlacedFeature.java
+@@ -64,4 +_,7 @@
+    public String toString() {
+       return "Placed " + this.f_191775_;
+    }
++
++   static record test(int a) {
++   }
+ }

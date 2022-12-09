@@ -18,9 +18,11 @@
  import net.minecraft.world.level.block.ShulkerBoxBlock;
  import net.minecraft.world.level.block.SkullBlock;
  import net.minecraft.world.level.block.TntBlock;
-@@ -72,8 +_,18 @@
+@@ -71,10 +_,19 @@
+ import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+-import net.minecraft.world.level.block.state.properties.RotationSegment;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.AABB;
@@ -37,7 +39,7 @@
  import org.slf4j.Logger;
  
  public interface DispenseItemBehavior {
-@@ -179,6 +_,33 @@
+@@ -180,6 +_,33 @@
              Direction direction = p_123523_.m_6414_().m_61143_(DispenserBlock.f_52659_);
              EntityType<?> entitytype = ((SpawnEggItem)p_123524_.m_41720_()).m_43228_(p_123524_.m_41783_());
  
@@ -71,7 +73,7 @@
              try {
                 entitytype.m_20592_(p_123523_.m_7727_(), p_123524_, (Player)null, p_123523_.m_7961_().m_121945_(direction), MobSpawnType.DISPENSER, direction != Direction.UP, false);
              } catch (Exception exception) {
-@@ -186,7 +_,6 @@
+@@ -187,7 +_,6 @@
                 return ItemStack.f_41583_;
              }
  
@@ -79,7 +81,7 @@
              p_123523_.m_7727_().m_142346_((Entity)null, GameEvent.f_157810_, p_123523_.m_7961_());
              return p_123524_;
           }
-@@ -201,11 +_,36 @@
+@@ -202,11 +_,36 @@
              Direction direction = p_123461_.m_6414_().m_61143_(DispenserBlock.f_52659_);
              BlockPos blockpos = p_123461_.m_7961_().m_121945_(direction);
              Level level = p_123461_.m_7727_();
@@ -117,7 +119,7 @@
              return p_123462_;
           }
        });
-@@ -220,8 +_,34 @@
+@@ -221,8 +_,34 @@
                 }
              });
              if (!list.isEmpty()) {
@@ -153,7 +155,14 @@
                 this.m_123573_(true);
                 return p_123530_;
              } else {
-@@ -238,6 +_,34 @@
+@@ -234,11 +_,39 @@
+          protected ItemStack m_7498_(BlockSource p_123535_, ItemStack p_123536_) {
+             BlockPos blockpos = p_123535_.m_7961_().m_121945_(p_123535_.m_6414_().m_61143_(DispenserBlock.f_52659_));
+ 
+-            for(AbstractHorse abstracthorse : p_123535_.m_7727_().m_6443_(AbstractHorse.class, new AABB(blockpos), (p_253365_) -> {
+-               return p_253365_.m_6084_() && p_253365_.m_7482_();
++            for(AbstractHorse abstracthorse : p_123535_.m_7727_().m_6443_(AbstractHorse.class, new AABB(blockpos), (p_123533_) -> {
++               return p_123533_.m_6084_() && p_123533_.m_7482_();
              })) {
                 if (abstracthorse.m_6010_(p_123536_) && !abstracthorse.m_7481_() && abstracthorse.m_30614_()) {
                    abstracthorse.m_141942_(401).m_142104_(p_123536_.m_41620_(1));
@@ -188,9 +197,14 @@
                    this.m_123573_(true);
                    return p_123536_;
                 }
-@@ -273,8 +_,31 @@
-             for(AbstractChestedHorse abstractchestedhorse : p_123541_.m_7727_().m_6443_(AbstractChestedHorse.class, new AABB(blockpos), (p_123539_) -> {
-                return p_123539_.m_6084_() && !p_123539_.m_30502_();
+@@ -271,11 +_,34 @@
+          public ItemStack m_7498_(BlockSource p_123541_, ItemStack p_123542_) {
+             BlockPos blockpos = p_123541_.m_7961_().m_121945_(p_123541_.m_6414_().m_61143_(DispenserBlock.f_52659_));
+ 
+-            for(AbstractChestedHorse abstractchestedhorse : p_123541_.m_7727_().m_6443_(AbstractChestedHorse.class, new AABB(blockpos), (p_253366_) -> {
+-               return p_253366_.m_6084_() && !p_253366_.m_30502_();
++            for(AbstractChestedHorse abstractchestedhorse : p_123541_.m_7727_().m_6443_(AbstractChestedHorse.class, new AABB(blockpos), (p_123539_) -> {
++               return p_123539_.m_6084_() && !p_123539_.m_30502_();
              })) {
 -               if (abstractchestedhorse.m_30614_() && abstractchestedhorse.m_141942_(499).m_142104_(p_123542_)) {
 -                  p_123542_.m_41774_(1);
@@ -222,7 +236,7 @@
                    this.m_123573_(true);
                    return p_123542_;
                 }
-@@ -286,11 +_,38 @@
+@@ -287,11 +_,38 @@
        DispenserBlock.m_52672_(Items.f_42688_, new DefaultDispenseItemBehavior() {
           public ItemStack m_7498_(BlockSource p_123547_, ItemStack p_123548_) {
              Direction direction = p_123547_.m_6414_().m_61143_(DispenserBlock.f_52659_);
@@ -262,7 +276,7 @@
              return p_123548_;
           }
  
-@@ -310,11 +_,38 @@
+@@ -311,11 +_,38 @@
              double d3 = randomsource.m_216328_((double)direction.m_122429_(), 0.11485000000000001D);
              double d4 = randomsource.m_216328_((double)direction.m_122430_(), 0.11485000000000001D);
              double d5 = randomsource.m_216328_((double)direction.m_122431_(), 0.11485000000000001D);
@@ -306,7 +320,23 @@
              return p_123557_;
           }
  
-@@ -343,9 +_,53 @@
+@@ -330,7 +_,6 @@
+       DispenserBlock.m_52672_(Items.f_42746_, new BoatDispenseItemBehavior(Boat.Type.DARK_OAK));
+       DispenserBlock.m_52672_(Items.f_42745_, new BoatDispenseItemBehavior(Boat.Type.ACACIA));
+       DispenserBlock.m_52672_(Items.f_220204_, new BoatDispenseItemBehavior(Boat.Type.MANGROVE));
+-      DispenserBlock.m_52672_(Items.f_244624_, new BoatDispenseItemBehavior(Boat.Type.BAMBOO));
+       DispenserBlock.m_52672_(Items.f_220207_, new BoatDispenseItemBehavior(Boat.Type.OAK, true));
+       DispenserBlock.m_52672_(Items.f_220208_, new BoatDispenseItemBehavior(Boat.Type.SPRUCE, true));
+       DispenserBlock.m_52672_(Items.f_220200_, new BoatDispenseItemBehavior(Boat.Type.BIRCH, true));
+@@ -338,7 +_,6 @@
+       DispenserBlock.m_52672_(Items.f_220203_, new BoatDispenseItemBehavior(Boat.Type.DARK_OAK, true));
+       DispenserBlock.m_52672_(Items.f_220202_, new BoatDispenseItemBehavior(Boat.Type.ACACIA, true));
+       DispenserBlock.m_52672_(Items.f_220205_, new BoatDispenseItemBehavior(Boat.Type.MANGROVE, true));
+-      DispenserBlock.m_52672_(Items.f_244260_, new BoatDispenseItemBehavior(Boat.Type.BAMBOO, true));
+       DispenseItemBehavior dispenseitembehavior1 = new DefaultDispenseItemBehavior() {
+          private final DefaultDispenseItemBehavior f_123558_ = new DefaultDispenseItemBehavior();
+ 
+@@ -346,9 +_,53 @@
              DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_123562_.m_41720_();
              BlockPos blockpos = p_123561_.m_7961_().m_121945_(p_123561_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              Level level = p_123561_.m_7727_();
@@ -361,7 +391,7 @@
              } else {
                 return this.f_123558_.m_6115_(p_123561_, p_123562_);
              }
-@@ -369,12 +_,39 @@
+@@ -372,12 +_,39 @@
              BlockState blockstate = levelaccessor.m_8055_(blockpos);
              Block block = blockstate.m_60734_();
              if (block instanceof BucketPickup) {
@@ -402,7 +432,7 @@
                    p_123567_.m_41774_(1);
                    if (p_123567_.m_41619_()) {
                       return new ItemStack(item);
-@@ -394,17 +_,47 @@
+@@ -397,17 +_,47 @@
        DispenserBlock.m_52672_(Items.f_42409_, new OptionalDispenseItemBehavior() {
           protected ItemStack m_7498_(BlockSource p_123412_, ItemStack p_123413_) {
              Level level = p_123412_.m_7727_();
@@ -455,7 +485,7 @@
                 } else {
                    this.m_123573_(false);
                 }
-@@ -425,11 +_,63 @@
+@@ -428,11 +_,63 @@
              this.m_123573_(true);
              Level level = p_123416_.m_7727_();
              BlockPos blockpos = p_123416_.m_7961_().m_121945_(p_123416_.m_6414_().m_61143_(DispenserBlock.f_52659_));
@@ -519,7 +549,7 @@
  
              return p_123417_;
           }
-@@ -438,11 +_,39 @@
+@@ -441,11 +_,39 @@
           protected ItemStack m_7498_(BlockSource p_123425_, ItemStack p_123426_) {
              Level level = p_123425_.m_7727_();
              BlockPos blockpos = p_123425_.m_7961_().m_121945_(p_123425_.m_6414_().m_61143_(DispenserBlock.f_52659_));
@@ -561,7 +591,14 @@
              return p_123426_;
           }
        });
-@@ -462,6 +_,31 @@
+@@ -459,15 +_,39 @@
+       DispenserBlock.m_52672_(Items.f_42681_, dispenseitembehavior);
+       DispenserBlock.m_52672_(Items.f_42683_, dispenseitembehavior);
+       DispenserBlock.m_52672_(Items.f_42678_, dispenseitembehavior);
+-      DispenserBlock.m_52672_(Items.f_260451_, dispenseitembehavior);
+       DispenserBlock.m_52672_(Items.f_42680_, dispenseitembehavior);
+       DispenserBlock.m_52672_(Items.f_42679_, new OptionalDispenseItemBehavior() {
+          protected ItemStack m_7498_(BlockSource p_123433_, ItemStack p_123434_) {
              Level level = p_123433_.m_7727_();
              Direction direction = p_123433_.m_6414_().m_61143_(DispenserBlock.f_52659_);
              BlockPos blockpos = p_123433_.m_7961_().m_121945_(direction);
@@ -591,9 +628,12 @@
 +            // CraftBukkit end
 +
              if (level.m_46859_(blockpos) && WitherSkullBlock.m_58267_(level, blockpos, p_123434_)) {
-                level.m_7731_(blockpos, Blocks.f_50312_.m_49966_().m_61124_(SkullBlock.f_56314_, Integer.valueOf(direction.m_122434_() == Direction.Axis.Y ? 0 : direction.m_122424_().m_122416_() * 4)), 3);
+-               level.m_7731_(blockpos, Blocks.f_50312_.m_49966_().m_61124_(SkullBlock.f_56314_, Integer.valueOf(RotationSegment.m_245225_(direction))), 3);
++               level.m_7731_(blockpos, Blocks.f_50312_.m_49966_().m_61124_(SkullBlock.f_56314_, Integer.valueOf(direction.m_122434_() == Direction.Axis.Y ? 0 : direction.m_122424_().m_122416_() * 4)), 3);
                 level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
-@@ -484,6 +_,31 @@
+                BlockEntity blockentity = level.m_7702_(blockpos);
+                if (blockentity instanceof SkullBlockEntity) {
+@@ -488,6 +_,31 @@
              Level level = p_123437_.m_7727_();
              BlockPos blockpos = p_123437_.m_7961_().m_121945_(p_123437_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              CarvedPumpkinBlock carvedpumpkinblock = (CarvedPumpkinBlock)Blocks.f_50143_;
@@ -625,7 +665,7 @@
              if (level.m_46859_(blockpos) && carvedpumpkinblock.m_51381_(level, blockpos)) {
                 if (!level.f_46443_) {
                    level.m_7731_(blockpos, carvedpumpkinblock.m_49966_(), 3);
-@@ -527,6 +_,31 @@
+@@ -531,6 +_,31 @@
              ServerLevel serverlevel = p_123444_.m_7727_();
              BlockPos blockpos = p_123444_.m_7961_().m_121945_(p_123444_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              BlockState blockstate = serverlevel.m_8055_(blockpos);

@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.mojang.logging.LogUtils;
++import java.util.List;
+ import java.util.Objects;
+ import java.util.function.Predicate;
+ import net.minecraft.core.BlockPos;
+@@ -14,13 +_,16 @@
+ import net.minecraft.world.level.block.ChiseledBookShelfBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ import org.slf4j.Logger;
+ 
+ public class ChiseledBookShelfBlockEntity extends BlockEntity implements Container {
+    public static final int f_244647_ = 6;
+    private static final Logger f_254661_ = LogUtils.getLogger();
+    private final NonNullList<ItemStack> f_260576_ = NonNullList.m_122780_(6, ItemStack.f_41583_);
+-   private int f_262317_ = -1;
++   public int f_262317_ = -1;
+ 
+    public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
+       super(BlockEntityType.f_244310_, p_249541_, p_251752_);
+@@ -112,6 +_,36 @@
+ 
+    public boolean m_7013_(int p_256567_, ItemStack p_255922_) {
+       return p_255922_.m_204117_(ItemTags.f_244646_) && this.m_8020_(p_256567_).m_41619_();
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
+    }
+ 
+    public int m_262444_() {

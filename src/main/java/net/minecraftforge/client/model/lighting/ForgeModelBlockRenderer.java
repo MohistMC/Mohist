@@ -68,7 +68,7 @@ public class ForgeModelBlockRenderer extends ModelBlockRenderer
 
     public static boolean render(VertexConsumer vertexConsumer, QuadLighter lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, RandomSource rand, long seed, int packedOverlay, ModelData modelData, RenderType renderType)
     {
-        ForgeModelBlockRenderer renderer = (ForgeModelBlockRenderer) Minecraft.getInstance().getBlockRenderer().getModelRenderer();
+        ForgeModelBlockRenderer renderer = (ForgeModelBlockRenderer)Minecraft.getInstance().getBlockRenderer().getModelRenderer();
         var pose = poseStack.last();
         var empty = true;
         var smoothLighter = lighter instanceof SmoothQuadLighter;

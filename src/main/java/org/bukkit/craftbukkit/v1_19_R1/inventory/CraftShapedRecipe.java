@@ -29,6 +29,7 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
         }
         CraftShapedRecipe ret = new CraftShapedRecipe(recipe.getKey(), recipe.getResult());
         ret.setGroup(recipe.getGroup());
+        ret.setCategory(recipe.getCategory());
         String[] shape = recipe.getShape();
         ret.shape(shape);
         Map<Character, RecipeChoice> ingredientMap = recipe.getChoiceMap();
@@ -55,6 +56,6 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             }
         }
 
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftRecipe.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
     }
 }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/ItemStackLinkedSet.java
++++ b/net/minecraft/world/item/ItemStackLinkedSet.java
+@@ -7,7 +_,7 @@
+ import net.minecraft.nbt.CompoundTag;
+ 
+ public class ItemStackLinkedSet {
+-   private static final Hash.Strategy<? super ItemStack> f_260558_ = new Hash.Strategy<ItemStack>() {
++   public static final Hash.Strategy<? super ItemStack> f_260558_ = new Hash.Strategy<ItemStack>() {
+       public int hashCode(@Nullable ItemStack p_251266_) {
+          return ItemStackLinkedSet.m_260929_(p_251266_);
+       }

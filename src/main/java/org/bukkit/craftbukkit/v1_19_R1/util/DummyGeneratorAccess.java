@@ -16,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
@@ -125,11 +126,6 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public RegistryAccess registryAccess() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public List<Entity> getEntities(Entity entity, AABB aabb, Predicate<? super Entity> prdct) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -181,6 +177,16 @@ public class DummyGeneratorAccess implements WorldGenLevel {
 
     @Override
     public DimensionType dimensionType() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RegistryAccess registryAccess() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public FeatureFlagSet enabledFeatures() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

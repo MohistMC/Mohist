@@ -20,11 +20,11 @@
 +   }
 +
 +   public String getPotionType() {
-+      return Registry.f_122828_.m_7981_(this.f_36855_).toString();
++      return BuiltInRegistries.f_256980_.m_7981_(this.f_36855_).toString();
 +   }
 +
 +   public void setPotionType(String string) {
-+      this.f_36855_ = Registry.f_122828_.m_7745_(new net.minecraft.resources.ResourceLocation(string));
++      this.f_36855_ = BuiltInRegistries.f_256980_.m_7745_(new net.minecraft.resources.ResourceLocation(string));
 +      this.m_20088_().m_135381_(f_36854_, PotionUtils.m_43564_((Collection) PotionUtils.m_43561_(this.f_36855_, (Collection) this.f_36852_)));
 +   }
 +

@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/levelgen/structure/SinglePieceStructure.java
++++ b/net/minecraft/world/level/levelgen/structure/SinglePieceStructure.java
+@@ -8,8 +_,8 @@
+ 
+ public abstract class SinglePieceStructure extends Structure {
+    private final SinglePieceStructure.PieceConstructor f_226533_;
+-   private final int f_226534_;
+-   private final int f_226535_;
++   private int f_226534_;
++   private int f_226535_;
+ 
+    protected SinglePieceStructure(SinglePieceStructure.PieceConstructor p_226537_, int p_226538_, int p_226539_, Structure.StructureSettings p_226540_) {
+       super(p_226540_);

@@ -12,6 +12,7 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -21,13 +22,13 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
 
     private final DerivedLevelData derivedWorldInfo;
 
-    public MohistDerivedWorldInfo(DerivedLevelData derivedWorldInfo, LevelSettings p_78470_, WorldGenSettings p_78471_, Lifecycle p_78472_) {
-        super(p_78470_, p_78471_, p_78472_);
+    public MohistDerivedWorldInfo(DerivedLevelData derivedWorldInfo, LevelSettings p_78470_, WorldOptions p_78471_, PrimaryLevelData.SpecialWorldProperty p_252268_, Lifecycle p_78472_) {
+        super(p_78470_, p_78471_, p_252268_, p_78472_);
         this.derivedWorldInfo = derivedWorldInfo;
     }
 
     public static MohistDerivedWorldInfo create(DerivedLevelData worldInfo) {
-        return new MohistDerivedWorldInfo(worldInfo, worldSettings(worldInfo), generatorSettings(worldInfo), lifecycle(worldInfo));
+        return new MohistDerivedWorldInfo(worldInfo, worldSettings(worldInfo), generatorSettings(worldInfo), null, lifecycle(worldInfo));
     }
 
     private static LevelSettings worldSettings(ServerLevelData worldInfo) {
@@ -38,9 +39,9 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
         }
     }
 
-    private static WorldGenSettings generatorSettings(ServerLevelData worldInfo) {
+    private static WorldOptions generatorSettings(ServerLevelData worldInfo) {
         if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData) worldInfo).worldGenSettings();
+            return ((PrimaryLevelData) worldInfo).worldGenOptions();
         } else {
             return generatorSettings(((DerivedLevelData) worldInfo).wrapped);
         }

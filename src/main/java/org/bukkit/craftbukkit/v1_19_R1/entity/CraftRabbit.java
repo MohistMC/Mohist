@@ -30,8 +30,7 @@ public class CraftRabbit extends CraftAnimals implements Rabbit {
 
     @Override
     public Type getRabbitType() {
-        int type = getHandle().getRabbitType();
-        return CraftMagicMapping.fromMagic(type);
+        return Type.values()[getHandle().getVariant().ordinal()];
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CraftRabbit extends CraftAnimals implements Rabbit {
             entity.setSpeedModifier(0.0D);
         }
 
-        entity.setRabbitType(CraftMagicMapping.toMagic(type));
+        entity.setVariant(net.minecraft.world.entity.animal.Rabbit.Variant.values()[type.ordinal()]);
     }
 
     private static class CraftMagicMapping {

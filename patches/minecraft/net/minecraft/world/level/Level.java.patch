@@ -11,8 +11,15 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -20,10 +_,12 @@
+@@ -15,16 +_,19 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.Holder;
++import net.minecraft.core.Registry;
+ import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.ParticleOptions;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
 +import net.minecraft.network.protocol.game.*;
@@ -23,8 +30,8 @@
 +import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
- import net.minecraft.util.Mth;
-@@ -34,6 +_,7 @@
+ import net.minecraft.util.AbortableIterationConsumer;
+@@ -36,6 +_,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -32,7 +39,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.RecipeManager;
-@@ -45,11 +_,13 @@
+@@ -47,11 +_,13 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.TickingBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
@@ -46,9 +53,9 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -64,8 +_,16 @@
- import net.minecraft.world.level.storage.WritableLevelData;
+@@ -67,8 +_,16 @@
  import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
@@ -61,10 +68,10 @@
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
-    public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
-    public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
-    public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,15 +_,65 @@
+    public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
+    public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
+    public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
+@@ -100,15 +_,65 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -131,7 +138,7 @@
        this.f_46446_ = p_220355_;
        this.f_46442_ = p_220352_;
        this.f_204147_ = p_220354_;
-@@ -133,6 +_,43 @@
+@@ -136,6 +_,43 @@
        this.f_46420_ = new BiomeManager(this, p_220358_);
        this.f_46424_ = p_220357_;
        this.f_220350_ = new CollectingNeighborUpdater(this, p_220359_);
@@ -175,7 +182,7 @@
     }
  
     public boolean m_5776_() {
-@@ -183,6 +_,17 @@
+@@ -186,6 +_,17 @@
     }
  
     public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -193,7 +200,7 @@
        if (this.m_151570_(p_46605_)) {
           return false;
        } else if (!this.f_46443_ && this.m_46659_()) {
-@@ -190,17 +_,60 @@
+@@ -193,17 +_,60 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
@@ -256,7 +263,7 @@
              if (blockstate1 == p_46606_) {
                 if (blockstate != blockstate1) {
                    this.m_6550_(p_46605_, blockstate, blockstate1);
-@@ -225,9 +_,8 @@
+@@ -228,9 +_,8 @@
                 }
  
                 this.m_6559_(p_46605_, blockstate, blockstate1);
@@ -267,7 +274,7 @@
           }
        }
     }
-@@ -277,6 +_,7 @@
+@@ -280,6 +_,7 @@
     }
  
     public void m_46672_(BlockPos p_46673_, Block p_46674_) {
@@ -275,7 +282,7 @@
     }
  
     public void m_46590_(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
-@@ -312,6 +_,14 @@
+@@ -315,6 +_,14 @@
     }
  
     public BlockState m_8055_(BlockPos p_46732_) {
@@ -290,7 +297,7 @@
        if (this.m_151570_(p_46732_)) {
           return Blocks.f_50626_.m_49966_();
        } else {
-@@ -377,10 +_,26 @@
+@@ -399,10 +_,26 @@
        (this.f_151504_ ? this.f_151503_ : this.f_151512_).add(p_151526_);
     }
  
@@ -317,7 +324,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -390,6 +_,13 @@
+@@ -412,6 +_,13 @@
  
        while(iterator.hasNext()) {
           TickingBlockEntity tickingblockentity = iterator.next();
@@ -331,7 +338,7 @@
           if (tickingblockentity.m_142220_()) {
              iterator.remove();
           } else if (this.m_220393_(tickingblockentity.m_142689_())) {
-@@ -403,12 +_,19 @@
+@@ -425,12 +_,19 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {
@@ -351,15 +358,24 @@
        }
     }
  
-@@ -434,6 +_,7 @@
+@@ -472,7 +_,7 @@
+             explosion$blockinteraction1 = this.m_255157_(GameRules.f_254629_);
+             break;
+          case MOB:
+-            explosion$blockinteraction1 = this.m_46469_().m_46207_(GameRules.f_46132_) ? this.m_255157_(GameRules.f_254692_) : Explosion.BlockInteraction.KEEP;
++            explosion$blockinteraction1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_256233_) ? this.m_255157_(GameRules.f_254692_) : Explosion.BlockInteraction.KEEP;
+             break;
+          case TNT:
+             explosion$blockinteraction1 = this.m_255157_(GameRules.f_254705_);
+@@ -483,6 +_,7 @@
  
-    public Explosion m_7703_(@Nullable Entity p_46526_, @Nullable DamageSource p_46527_, @Nullable ExplosionDamageCalculator p_46528_, double p_46529_, double p_46530_, double p_46531_, float p_46532_, boolean p_46533_, Explosion.BlockInteraction p_46534_) {
-       Explosion explosion = new Explosion(this, p_46526_, p_46527_, p_46528_, p_46529_, p_46530_, p_46531_, p_46532_, p_46533_, p_46534_);
+       Explosion.BlockInteraction explosion$blockinteraction = explosion$blockinteraction1;
+       Explosion explosion = new Explosion(this, p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, explosion$blockinteraction);
 +      if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
        explosion.m_46061_();
-       explosion.m_46075_(true);
+       explosion.m_46075_(p_256377_);
        return explosion;
-@@ -443,6 +_,16 @@
+@@ -496,6 +_,16 @@
  
     @Nullable
     public BlockEntity m_7702_(BlockPos p_46716_) {
@@ -376,7 +392,7 @@
        if (this.m_151570_(p_46716_)) {
           return null;
        } else {
-@@ -453,6 +_,12 @@
+@@ -506,6 +_,12 @@
     public void m_151523_(BlockEntity p_151524_) {
        BlockPos blockpos = p_151524_.m_58899_();
        if (!this.m_151570_(blockpos)) {
@@ -389,7 +405,7 @@
           this.m_46745_(blockpos).m_142170_(p_151524_);
        }
     }
-@@ -461,6 +_,7 @@
+@@ -514,6 +_,7 @@
        if (!this.m_151570_(p_46748_)) {
           this.m_46745_(p_46748_).m_8114_(p_46748_);
        }
@@ -397,7 +413,7 @@
     }
  
     public boolean m_46749_(BlockPos p_46750_) {
-@@ -531,6 +_,7 @@
+@@ -584,6 +_,7 @@
              list.add(p_151522_);
           }
  
@@ -405,7 +421,7 @@
           if (p_151522_ instanceof EnderDragon) {
              for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).m_31156_()) {
                 if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
-@@ -540,6 +_,11 @@
+@@ -593,6 +_,11 @@
           }
  
        });
@@ -417,29 +433,32 @@
        return list;
     }
  
-@@ -551,6 +_,8 @@
-             list.add(p_151539_);
+@@ -616,6 +_,8 @@
+             }
           }
  
 +
 +         if (false)
-          if (p_151539_ instanceof EnderDragon enderdragon) {
+          if (p_261454_ instanceof EnderDragon enderdragon) {
              for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
-                T t = p_151528_.m_141992_(enderdragonpart);
-@@ -561,6 +_,12 @@
-          }
+                T t = p_261885_.m_141992_(enderdragonpart);
+@@ -630,6 +_,15 @@
  
+          return AbortableIterationConsumer.Continuation.CONTINUE;
        });
 +      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
-+         T t = p_151528_.m_141992_(p);
-+         if (t != null && t.m_20191_().m_82381_(p_151529_) && p_151530_.test(t)) {
-+            list.add(t);
++         T t = p_261885_.m_141992_(p);
++         if (t != null && t.m_20191_().m_82381_(p_262086_) && p_261688_.test(t)) {
++            p_262071_.add(t);
++            if (p_262071_.size() >= p_261858_) {
++               break;
++            }
 +         }
 +      }
-       return list;
     }
  
-@@ -572,6 +_,7 @@
+    @Nullable
+@@ -640,6 +_,7 @@
           this.m_46745_(p_151544_).m_8092_(true);
        }
  
@@ -447,7 +466,7 @@
     }
  
     public int m_5736_() {
-@@ -616,7 +_,7 @@
+@@ -684,7 +_,7 @@
     public int m_46681_(BlockPos p_46682_, Direction p_46683_) {
        BlockState blockstate = this.m_8055_(p_46682_);
        int i = blockstate.m_60746_(this, p_46682_, p_46683_);
@@ -456,7 +475,7 @@
     }
  
     public boolean m_46753_(BlockPos p_46754_) {
-@@ -769,16 +_,15 @@
+@@ -837,16 +_,15 @@
     public abstract Scoreboard m_6188_();
  
     public void m_46717_(BlockPos p_46718_, Block p_46719_) {
@@ -477,7 +496,7 @@
                    this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -865,6 +_,18 @@
+@@ -933,6 +_,18 @@
        return this.f_46420_;
     }
  
@@ -496,9 +515,17 @@
     public final boolean m_46659_() {
        return this.f_46424_;
     }
-@@ -874,4 +_,54 @@
+@@ -942,11 +_,61 @@
     public long m_183596_() {
        return (long)(this.f_186455_++);
+    }
+-
++   
+    public static enum ExplosionInteraction {
+       NONE,
+       BLOCK,
+       MOB,
+       TNT;
     }
 +
 +   // CraftBukkit start - Split off from above in order to directly send client and physic updates
