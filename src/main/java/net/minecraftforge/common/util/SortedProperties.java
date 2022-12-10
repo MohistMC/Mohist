@@ -7,6 +7,8 @@ package net.minecraftforge.common.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
@@ -48,6 +50,6 @@ public class SortedProperties extends Properties
     {
         SortedProperties sorted = new SortedProperties();
         sorted.putAll(props);
-        sorted.store(stream, comment);
+        sorted.store(new OutputStreamWriter(stream, StandardCharsets.UTF_8), comment);
     }
 }
