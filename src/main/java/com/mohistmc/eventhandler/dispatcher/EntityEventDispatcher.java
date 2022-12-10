@@ -19,11 +19,17 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
@@ -96,6 +102,33 @@ public class EntityEventDispatcher {
                 event.setCanceled(true);
             }
             // Spigot end
+        }
+    }
+
+    @SubscribeEvent(receiveCanceled = true)
+    public void changeTargetEvent(LivingChangeTargetEvent event) {
+        EntityTargetEvent.TargetReason reason = event.getReason();
+        LivingEntity entityliving = event.getOriginalTarget();
+
+        if (entityliving instanceof Mob mob) {
+            if (event.isFireCBEvent()) {
+                if (reason == EntityTargetEvent.TargetReason.UNKNOWN && mob.getTarget() != null && entityliving == null) {
+                    reason = mob.getTarget().isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
+                }
+                CraftLivingEntity ctarget = null;
+                if (entityliving != null) {
+                    ctarget = (CraftLivingEntity) entityliving.getBukkitEntity();
+                }
+                EntityTargetLivingEntityEvent CBevent = new EntityTargetLivingEntityEvent(event.getEntity().getBukkitEntity(), ctarget, reason);
+                Bukkit.getPluginManager().callEvent(CBevent);
+                if (CBevent.isCancelled()) {
+                    event.setCanceled(true);
+                } else {
+                    if (CBevent.getTarget() != null) {
+                        event.setNewTarget(((CraftLivingEntity) CBevent.getTarget()).getHandle());
+                    }
+                }
+            }
         }
     }
 }
