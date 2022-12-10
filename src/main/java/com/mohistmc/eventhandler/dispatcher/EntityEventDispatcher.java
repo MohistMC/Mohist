@@ -108,7 +108,7 @@ public class EntityEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void changeTargetEvent(LivingChangeTargetEvent event) {
         EntityTargetEvent.TargetReason reason = event.getReason();
-        LivingEntity entityliving = event.getOriginalTarget();
+        LivingEntity entityliving = event.getNewTarget();
 
         if (entityliving instanceof Mob mob) {
             if (event.isFireCBEvent()) {
