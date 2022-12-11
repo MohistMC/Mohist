@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
+@@ -12,6 +_,9 @@
+ import net.minecraft.world.inventory.CraftingContainer;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftShapelessRecipe;
+ 
+ public class ShapelessRecipe implements CraftingRecipe {
+    private final ResourceLocation f_44241_;
 @@ -19,6 +_,7 @@
     final CraftingBookCategory f_244076_;
     final ItemStack f_44243_;
@@ -8,14 +18,31 @@
  
     public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
        this.f_44241_ = p_251840_;
-@@ -26,6 +_,7 @@
+@@ -26,7 +_,23 @@
        this.f_244076_ = p_249390_;
        this.f_44243_ = p_252071_;
        this.f_44244_ = p_250689_;
+-   }
 +      this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
-    }
++   }
++
++   // CraftBukkit start
++   @SuppressWarnings("unchecked")
++   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_44243_);
++      CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
++      recipe.setGroup(this.f_44242_);
++      recipe.setCategory(CraftRecipe.getCategory(this.m_245232_()));
++
++      for (Ingredient list : this.f_44244_) {
++         recipe.addIngredient(CraftRecipe.toBukkit(list));
++      }
++      return recipe;
++   }
++   // CraftBukkit end
  
     public ResourceLocation m_6423_() {
+       return this.f_44241_;
 @@ -54,17 +_,20 @@
  
     public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {

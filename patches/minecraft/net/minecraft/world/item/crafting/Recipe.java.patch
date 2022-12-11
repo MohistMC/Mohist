@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
+@@ -3,7 +_,6 @@
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.Container;
+-import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
 @@ -21,9 +_,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.m_122780_(p_44004_.m_6643_(), ItemStack.f_41583_);
  
@@ -13,7 +21,7 @@
           }
        }
  
-@@ -55,7 +_,16 @@
+@@ -55,7 +_,11 @@
     default boolean m_142505_() {
        NonNullList<Ingredient> nonnulllist = this.m_7527_();
        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {
@@ -23,11 +31,6 @@
 +   }
 +
 +   default org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      return new org.bukkit.inventory.Recipe() {
-+         @Override
-+         public org.bukkit.inventory.ItemStack getResult() {
-+            return new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
-+         }
-+      };
++      return () -> new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
     }
  }

@@ -6,7 +6,6 @@
  public class Ingredient implements Predicate<ItemStack> {
 +   //Because Mojang caches things... we need to invalidate them.. so... here we go..
 +   private static final java.util.concurrent.atomic.AtomicInteger INVALIDATION_COUNTER = new java.util.concurrent.atomic.AtomicInteger();
-+   public boolean exact; // Bukkit
 +   public static void invalidateAll() {
 +      INVALIDATION_COUNTER.incrementAndGet();
 +   }
@@ -18,6 +17,7 @@
     @Nullable
     private IntList f_43904_;
 +   private int invalidationCounter;
++   public boolean exact; // Bukkit
  
 -   protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
 +   public Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
