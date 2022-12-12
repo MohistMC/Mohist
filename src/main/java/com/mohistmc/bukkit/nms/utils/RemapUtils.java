@@ -51,7 +51,7 @@ public class RemapUtils {
     private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
-    public static Map<String, String> relocations = new HashMap<>();
+    public static final Map<String, String> relocations = new HashMap<>();
 
     public static void init() {
         jarMapping = new MohistJarMapping();

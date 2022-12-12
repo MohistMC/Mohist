@@ -26,8 +26,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R2.command.BukkitCommandWrapper;
 import org.bukkit.help.GenericCommandHelpTopic;
 
 public class ModsCommandDispatcher extends CommandDispatcher<CommandSourceStack> {

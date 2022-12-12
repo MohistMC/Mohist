@@ -2,8 +2,8 @@ package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftMinecart;
+import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftMinecart;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 

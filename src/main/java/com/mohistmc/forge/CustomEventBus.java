@@ -21,7 +21,6 @@ package com.mohistmc.forge;
 import com.mohistmc.api.event.BukkitHookForgeEvent;
 import net.minecraftforge.eventbus.BusBuilderImpl;
 import net.minecraftforge.eventbus.EventBus;
-import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import org.bukkit.Bukkit;
 

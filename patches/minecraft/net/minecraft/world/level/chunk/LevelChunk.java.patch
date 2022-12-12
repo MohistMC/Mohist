@@ -4,8 +4,8 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
  import net.minecraft.world.ticks.TickContainerAccess;
-+import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_19_R2.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_19_R2.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
@@ -26,7 +26,7 @@
 +
 +   public boolean mustNotSave;
 +   public boolean needsDecoration;
-+   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_19_R1.persistence.CraftPersistentDataTypeRegistry();
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_19_R2.persistence.CraftPersistentDataTypeRegistry();
 +   public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer( DATA_TYPE_REGISTRY );
 +   // CraftBukkit end
 +
@@ -38,7 +38,7 @@
        this.f_62784_ = p_196857_;
        this.f_187943_ = p_196858_;
 +      this.capProvider.initInternal();
-+      this.bukkitChunk = new org.bukkit.craftbukkit.v1_19_R1.CraftChunk( this );
++      this.bukkitChunk = new org.bukkit.craftbukkit.v1_19_R2.CraftChunk( this );
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {

@@ -99,7 +99,7 @@
 +
 +      if (!this.f_19853_.f_46443_ && this.f_31985_ >= f_19853_.spigotConfig.itemDespawnRate) { // Spigot
 +         // CraftBukkit start - fire ItemDespawnEvent
-+         if (org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +            this.f_31985_ = 0;
 +            return;
 +         }

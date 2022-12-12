@@ -42,9 +42,9 @@
  import net.minecraft.world.ticks.LevelTicks;
 +import net.minecraftforge.common.util.LevelCapabilityData;
 +import net.minecraftforge.event.level.LevelEvent;
-+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_19_R1.util.WorldUUID;
++import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R2.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
  import org.slf4j.Logger;

@@ -58,7 +58,7 @@ public class DelegateClassLoder extends ClassLoader {
     }
 
     private Class<?> remappedFindClass(String name, byte[] stream, ProtectionDomain protectionDomain) throws ClassFormatError {
-        Class<?> result = null;
+        Class<?> result;
         try {
             byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
             bytecode = RemapUtils.remapFindClass(bytecode);

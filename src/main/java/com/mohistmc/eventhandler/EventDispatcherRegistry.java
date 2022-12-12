@@ -26,7 +26,6 @@ import com.mohistmc.eventhandler.dispatcher.ItemEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.PlayerEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.WorldEventDispatcher;
 import net.minecraftforge.common.MinecraftForge;
-import org.bukkit.Bukkit;
 
 public class EventDispatcherRegistry {
 

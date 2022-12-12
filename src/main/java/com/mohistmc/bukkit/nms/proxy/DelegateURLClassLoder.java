@@ -131,7 +131,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
         int dot = name.lastIndexOf('.');
         if (dot != -1) {
             String pkgName = name.substring(0, dot);
-            Package pkg = getPackage(pkgName);
+            Package pkg = getDefinedPackage(pkgName);
             if (pkg == null) {
                 try {
                     if (manifest != null) {

@@ -42,16 +42,16 @@ import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 public class MohistJarRemapper extends CustomRemapper {
 
     public final MohistJarMapping jarMapping;
-    private final int writerFlags = COMPUTE_MAXS;
     private RemapperProcessor preProcessor;
     private RemapperProcessor postProcessor;
     private int readerFlags = 0;
-    private boolean copyResources = true;
+    private boolean copyResources;
 
     public MohistJarRemapper(RemapperProcessor preProcessor, MohistJarMapping jarMapping, RemapperProcessor postProcessor) {
         this.preProcessor = preProcessor;
         this.jarMapping = jarMapping;
         this.postProcessor = postProcessor;
+        this.copyResources = true;
     }
 
     public MohistJarRemapper(RemapperProcessor remapperPreprocessor, MohistJarMapping jarMapping) {
@@ -192,7 +192,7 @@ public class MohistJarRemapper extends CustomRemapper {
         RemappingClassAdapter mapper = new RemappingClassAdapter(node, this, repo);
         reader.accept(mapper, readerFlags);
 
-        ClassWriter wr = new ClassWriter(writerFlags);
+        ClassWriter wr = new ClassWriter(COMPUTE_MAXS);
         node.accept(wr);
         if (SpecialSource.identifier != null) {
             wr.newUTF8(SpecialSource.identifier);

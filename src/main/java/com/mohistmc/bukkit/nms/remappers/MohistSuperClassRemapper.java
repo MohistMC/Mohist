@@ -24,7 +24,6 @@ import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ListIterator;
 import java.util.Map;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -35,7 +34,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
 public class MohistSuperClassRemapper {
-    public static Map<String, Class<?>> defineClass = Maps.newHashMap();
+    public static final Map<String, Class<?>> defineClass = Maps.newHashMap();
 
     public static void init(ClassNode node) {
 

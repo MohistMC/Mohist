@@ -89,9 +89,7 @@ public class ClassMapping {
     }
 
     public void setMcpSrcName(String mcpSrcName) {
-        mcpSrcName = mcpSrcName.intern();
-        this.mcpSrcName = mcpSrcName;
-        this.mcpSrcName = mcpSrcName;
+        this.mcpSrcName = mcpSrcName.intern();
         int dot = this.mcpSrcName.lastIndexOf('$');
         if (dot > 0) {
             this.mcpSimpleName = this.mcpSrcName.substring(dot + 1).intern();

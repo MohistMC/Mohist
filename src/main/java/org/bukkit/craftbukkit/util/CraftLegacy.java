@@ -19,11 +19,11 @@ public final class CraftLegacy {
             return material;
         }
 
-        return org.bukkit.craftbukkit.v1_19_R1.legacy.CraftLegacy.fromLegacy(material);
+        return org.bukkit.craftbukkit.v1_19_R2.legacy.CraftLegacy.fromLegacy(material);
     }
 
     public static Material fromLegacy(MaterialData materialData) {
-        return org.bukkit.craftbukkit.v1_19_R1.legacy.CraftLegacy.fromLegacy(materialData);
+        return org.bukkit.craftbukkit.v1_19_R2.legacy.CraftLegacy.fromLegacy(materialData);
     }
 
     public static Material[] modern_values() {

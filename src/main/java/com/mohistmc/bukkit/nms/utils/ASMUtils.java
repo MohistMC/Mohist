@@ -178,7 +178,7 @@ public class ASMUtils {
         for (Class<?> aClass : classes) {
             sj.add(toDescriptor(aClass));
         }
-        return sj.toString() + toDescriptor(returnType);
+        return sj + toDescriptor(returnType);
     }
 
     public static void dump(Path dir, byte[] bs) throws IOException {
