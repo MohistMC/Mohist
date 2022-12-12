@@ -102,9 +102,7 @@ public class ModCustomCommand extends BukkitCommand {
         ParseResults<CommandSourceStack> parsed = dispatcher.getDispatcher().parse(toDispatcher(args, getName()), icommandlistener);
 
         List<String> results = new ArrayList<>();
-        dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept((suggestions) -> {
-            suggestions.getList().forEach((s) -> results.add(s.getText()));
-        });
+        dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept((suggestions) -> suggestions.getList().forEach((s) -> results.add(s.getText())));
 
         return results;
     }

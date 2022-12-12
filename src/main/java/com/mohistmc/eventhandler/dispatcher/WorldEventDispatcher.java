@@ -33,8 +33,7 @@ public class WorldEventDispatcher {
     //For WorldLoadEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldLoadEvent(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel) {
-            ServerLevel handle = (ServerLevel) event.getLevel();
+        if (event.getLevel() instanceof ServerLevel handle) {
             CraftWorld craftWorld = handle.getWorld();
             Bukkit.getPluginManager().callEvent(new WorldLoadEvent(craftWorld));
             Bukkit.getPluginManager().callEvent(new WorldInitEvent(craftWorld));
@@ -44,8 +43,7 @@ public class WorldEventDispatcher {
     //For WorldSaveEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onWorldSaveEvent(LevelEvent.Save event) {
-        if (event.getLevel() instanceof ServerLevel) {
-            ServerLevel handle = (ServerLevel) event.getLevel();
+        if (event.getLevel() instanceof ServerLevel handle) {
             WorldSaveEvent save = new WorldSaveEvent(handle.getWorld());
             Bukkit.getPluginManager().callEvent(save);
         }

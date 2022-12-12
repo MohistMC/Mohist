@@ -30,8 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EulaUtil {
-    private static File eula = new File("eula.txt");
-    private static File globalEula = new File(System.getProperty("user.home"), "eula.txt");
+    private static final File eula = new File("eula.txt");
+    private static final File globalEula = new File(System.getProperty("user.home"), "eula.txt");
 
     public static void writeInfos() throws IOException {
         eula.createNewFile();

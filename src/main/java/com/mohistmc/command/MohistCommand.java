@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
 
 public class MohistCommand extends Command {
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels", "speed");
 
     public MohistCommand(String name) {
         super(name);
@@ -74,11 +74,10 @@ public class MohistCommand extends Command {
         }
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "mods":
+            case "mods" ->
                 // Not recommended for use in games, only test output
-                sender.sendMessage(ChatColor.GREEN + "" + ServerAPI.getModSize() + " " + ServerAPI.getModList());
-                break;
-            case "playermods":
+                    sender.sendMessage(ChatColor.GREEN + "" + ServerAPI.getModSize() + " " + ServerAPI.getModList());
+            case "playermods" -> {
                 // Not recommended for use in games, only test output
                 if (args.length == 1) {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist playermods <playername>");
@@ -90,8 +89,8 @@ public class MohistCommand extends Command {
                 } else {
                     sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
                 }
-                break;
-            case "item":
+            }
+            case "item" -> {
                 if (args.length == 1) {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                     return false;
@@ -101,28 +100,25 @@ public class MohistCommand extends Command {
                 } else {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                 }
-                break;
-            case "reload":
+            }
+            case "reload" -> {
                 if (MohistConfig.instance != null)
                     MohistConfig.instance.load();
                 TickConfig.ENTITIES.reloadConfig();
                 TickConfig.TILES.reloadConfig();
                 sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
-                break;
-            case "version":
+            }
+            case "version" -> {
                 sender.sendMessage("Mohist: " + SharedConstants.VERSION_STRING);
                 sender.sendMessage("Forge: " + ForgeVersion.getVersion());
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
                 sender.sendMessage("Bukkit: " + cbs[0]);
                 sender.sendMessage("CraftBukkit: " + cbs[1]);
                 sender.sendMessage("Spigot: " + cbs[2]);
-                break;
-            case "channels":
-                sender.sendMessage(ServerAPI.channels.toString());
-                break;
-            case "speed":
-                if (sender instanceof Player) {
-                    Player p = (Player) sender;
+            }
+            case "channels" -> sender.sendMessage(ServerAPI.channels.toString());
+            case "speed" -> {
+                if (sender instanceof Player p) {
                     if (args.length == 2 && p.isOp()) {
                         if (this.isFloat(args[1])) {
                             if (p.isFlying()) {
@@ -148,10 +144,11 @@ public class MohistCommand extends Command {
                 } else {
                     sender.sendMessage("§c控制台无法超速行驶");
                 }
-                break;
-            default:
+            }
+            default -> {
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
+            }
         }
 
 

@@ -59,18 +59,13 @@ public class PluginCommand extends Command {
         }
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "load":
-                PluginManagers.loadPluginCommand(sender, commandLabel, args);
-                break;
-            case "unload":
-                PluginManagers.unloadPluginCommand(sender, commandLabel, args);
-                break;
-            case "reload":
-                PluginManagers.reloadPluginCommand(sender, commandLabel, args);
-                break;
-            default:
+            case "load" -> PluginManagers.loadPluginCommand(sender, commandLabel, args);
+            case "unload" -> PluginManagers.unloadPluginCommand(sender, commandLabel, args);
+            case "reload" -> PluginManagers.reloadPluginCommand(sender, commandLabel, args);
+            default -> {
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
+            }
         }
         return false;
     }

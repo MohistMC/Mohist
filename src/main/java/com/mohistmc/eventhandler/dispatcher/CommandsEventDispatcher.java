@@ -31,8 +31,7 @@ public class CommandsEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
     public void onRegisterCommandsEvent(RegisterCommandsEvent event) {
-        if (Bukkit.getServer() instanceof CraftServer) {
-            CraftServer craftServer = (CraftServer) Bukkit.getServer();
+        if (Bukkit.getServer() instanceof CraftServer craftServer) {
             Commands dispatcher = craftServer.getServer().getCommands();
             ModCustomCommand wrapper = new ModCustomCommand(dispatcher, event.getDispatcher().getRoot());
             craftServer.getCommandMap().register("forge", wrapper);

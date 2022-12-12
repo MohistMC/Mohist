@@ -28,7 +28,7 @@ public class MohistConfigUtil {
 
     public static File mohistyml = new File("mohist-config/mohist.yml");
 
-    private static HashMap<String, String> argsConfig = new HashMap<>();
+    private static final HashMap<String, String> argsConfig = new HashMap<>();
 
     public static String getString(File f, String key, String defaultReturn) {
         String _key = key.replace(":", "");
@@ -65,6 +65,6 @@ public class MohistConfigUtil {
     }
 
     public static boolean INSTALLATIONFINISHED() {
-        return bMohist("installationfinished", String.valueOf(false));
+        return bMohist("installation-finished", String.valueOf(false));
     }
 }

@@ -38,6 +38,5 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
         MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
-        MohistMC.LOGGER.info(Bukkit.getServer().getClass().getPackage().getName().split("\\.").toString());
     }
 }

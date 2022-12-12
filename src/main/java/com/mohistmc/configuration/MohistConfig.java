@@ -47,9 +47,11 @@ public class MohistConfig extends ConfigBase {
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
     public final BoolSetting networkmanager_enable = new BoolSetting(this, "mohist.networkmanager.enable", false);
-    private final String HEADER = "This is the main configuration file for Mohist.\n"
-            + "\n"
-            + "Home: https://mohistmc.com/\n";
+    private final String HEADER = """
+            This is the main configuration file for Mohist.
+
+            Home: https://mohistmc.com/
+            """;
 
     /* ======================================================================== */
 

@@ -56,10 +56,8 @@ public class PluginFixManager {
 
         for (MethodNode method : classNode.methods) {
             for (AbstractInsnNode next : method.instructions) {
-                if (next instanceof LdcInsnNode) {
-                    LdcInsnNode ldcInsnNode = (LdcInsnNode) next;
-                    if (ldcInsnNode.cst instanceof String) {
-                        String str = (String) ldcInsnNode.cst;
+                if (next instanceof LdcInsnNode ldcInsnNode) {
+                    if (ldcInsnNode.cst instanceof String str) {
                         if (a.equals(str)) {
                             ldcInsnNode.cst = b;
                         }

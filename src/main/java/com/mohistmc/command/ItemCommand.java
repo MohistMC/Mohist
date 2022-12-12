@@ -26,8 +26,7 @@ import org.bukkit.inventory.ItemStack;
 public class ItemCommand {
 
     public static void info(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             // item name and i18n name
             player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType());

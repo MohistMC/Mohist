@@ -141,14 +141,13 @@ public class ReflectMethodRemapper extends MethodRemapper {
         if (byName == null) {
             return null;
         }
-        MethodRedirectRule rule = byName.get(desc);
-        return rule;
+        return byName.get(desc);
     }
 
     private void redirectSpecial(int opcode, String owner, String name, String desc, boolean itf) {
         MethodRedirectRule rule = findRule(opcode, owner, name, desc, itf);
         if (rule != null) {
-            owner = rule.getRemapOwner();
+            owner = rule.remapOwner();
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
@@ -162,7 +161,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
             Type[] newArgs = new Type[args.length + 1];
             newArgs[0] = Type.getObjectType(owner);
 
-            owner = rule.getRemapOwner();
+            owner = rule.remapOwner();
             System.arraycopy(args, 0, newArgs, 1, args.length);
             desc = Type.getMethodDescriptor(r, newArgs);
         }
@@ -172,7 +171,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
     private void redirectStatic(int opcode, String owner, String name, String desc, boolean itf) {
         MethodRedirectRule rule = findRule(opcode, owner, name, desc, itf);
         if (rule != null) {
-            owner = rule.getRemapOwner();
+            owner = rule.remapOwner();
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
     }

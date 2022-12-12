@@ -15,9 +15,9 @@ import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 
-    public static HashSet<String> modlists = new HashSet();
+    public static HashSet<String> modlists = new HashSet<>();
     public static HashSet<String> channels = new HashSet<>();
-    public static Map<String, String> forgecmdper = new ConcurrentHashMap();
+    public static Map<String, String> forgecmdper = new ConcurrentHashMap<>();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
 

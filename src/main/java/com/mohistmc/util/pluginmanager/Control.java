@@ -100,8 +100,7 @@ public class Control {
             Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Command> entry = (Map.Entry) it.next();
-                if (!(entry.getValue() instanceof PluginCommand)) continue;
-                PluginCommand command = (PluginCommand) entry.getValue();
+                if (!(entry.getValue() instanceof PluginCommand command)) continue;
                 if (command.getPlugin() == plugin) {
                     command.unregister(commandMap);
                     it.remove();

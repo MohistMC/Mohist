@@ -419,12 +419,12 @@ public class MohistJarMapping implements ClassRemapperSupplier {
      * Parse a standard 'srg' mapping format line and populate the data
      * structures
      */
-    private void parseSrgLine(String line, MappingTransformer inputTransformer, MappingTransformer outputTransformer) throws IOException {
+    private void parseSrgLine(String line, MappingTransformer inputTransformer, MappingTransformer outputTransformer) {
         String[] tokens = line.split(" ");
         String kind = tokens[0];
 
         switch (kind) {
-            case "CL:": {
+            case "CL:" -> {
                 String oldClassName = inputTransformer.transformClassName(tokens[1]);
                 String newClassName = outputTransformer.transformClassName(tokens[2]);
 
@@ -444,9 +444,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
                     registerClassMapping(oldClassName, newClassName);
                     currentClass = tokens[1];
                 }
-                break;
             }
-            case "PK:":
+            case "PK:" -> {
                 String oldPackageName = inputTransformer.transformClassName(tokens[1]);
                 String newPackageName = outputTransformer.transformClassName(tokens[2]);
 
@@ -454,19 +453,16 @@ public class MohistJarMapping implements ClassRemapperSupplier {
                 if (!newPackageName.equals(".") && !newPackageName.endsWith("/")) {
                     newPackageName += "/";
                 }
-
                 if (!oldPackageName.equals(".") && !oldPackageName.endsWith("/")) {
                     oldPackageName += "/";
                 }
-
                 if (packages.containsKey(oldPackageName) && !newPackageName.equals(packages.get(oldPackageName))) {
                     throw new IllegalArgumentException("Duplicate package mapping: " + oldPackageName + " ->" + newPackageName
                             + " but already mapped to " + packages.get(oldPackageName) + " in line=" + line);
                 }
-
                 packages.put(oldPackageName, newPackageName);
-                break;
-            case "FD:": {
+            }
+            case "FD:" -> {
                 String oldFull = tokens[1];
                 String newFull = tokens[2];
 
@@ -485,9 +481,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
                 String newFieldName = outputTransformer.transformFieldName(oldFull.substring(0, splitOld), newFull.substring(splitNew + 1));
 
                 registerFieldMapping(oldClassName, oldFieldName, newClassName, newFieldName);
-                break;
             }
-            case "MD:": {
+            case "MD:" -> {
                 String oldFull = tokens[1];
                 String newFull = tokens[3];
 
@@ -510,10 +505,9 @@ public class MohistJarMapping implements ClassRemapperSupplier {
                 // TODO: support isClassIgnored() on reversed method descriptors
 
                 registerMethodMapping(oldClassName, oldMethodName, oldMethodDescriptor, newClassName, newMethodName, newMethodDescriptor);
-                break;
             }
-            default:
-                throw new IllegalArgumentException("Unable to parse srg file, unrecognized mapping type in line=" + line);
+            default ->
+                    throw new IllegalArgumentException("Unable to parse srg file, unrecognized mapping type in line=" + line);
         }
     }
 

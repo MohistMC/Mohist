@@ -60,20 +60,20 @@ public class DumpCommand extends Command {
         List<String> list = new ArrayList<>();
         if ((sender.isOp() || testPermission(sender))) {
             switch (args.length) {
-                case 2:
+                case 2 -> {
                     for (String param : tab_cmd) {
                         if (param.toLowerCase().startsWith(args[1].toLowerCase())) {
                             list.add(param);
                         }
                     }
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     for (String param : tab_mode) {
                         if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
                             list.add(param);
                         }
                     }
-                    break;
+                }
             }
         }
 
@@ -90,42 +90,24 @@ public class DumpCommand extends Command {
         if (args.length == 2) {
             String mode = args[0];
             switch (args[1].toLowerCase(Locale.ENGLISH)) {
-                case "potions":
-                    dumpPotions(sender, mode);
-                    break;
-                case "enchants":
-                    dumpEnchant(sender, mode);
-                    break;
-                case "cbcmds":
-                    dumpCBCommands(sender, mode);
-                    break;
-                case "modscmds":
-                    dumpModsCommands(sender, mode);
-                    break;
-                case "entitytypes":
-                    dumpEntityTypes(sender, mode);
-                    break;
-                case "biomes":
-                    dumpBiomes(sender, mode);
-                    break;
-                case "pattern":
-                    dumpPattern(sender, mode);
-                    break;
+                case "potions" -> dumpPotions(sender, mode);
+                case "enchants" -> dumpEnchant(sender, mode);
+                case "cbcmds" -> dumpCBCommands(sender, mode);
+                case "modscmds" -> dumpModsCommands(sender, mode);
+                case "entitytypes" -> dumpEntityTypes(sender, mode);
+                case "biomes" -> dumpBiomes(sender, mode);
+                case "pattern" -> dumpPattern(sender, mode);
+
                 /*case "worldgen":
                     dumpWorldGen(sender, mode);
                     break;*/
-                case "worldtype":
-                    dumpWorldType(sender, mode);
-                    break;
-                case "material":
-                    dumpMaterial(sender, mode);
-                    break;
-                case "channels":
-                    dumpChannels(sender, mode);
-                    break;
-                default:
+                case "worldtype" -> dumpWorldType(sender, mode);
+                case "material" -> dumpMaterial(sender, mode);
+                case "channels" -> dumpChannels(sender, mode);
+                default -> {
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
+                }
             }
         }
         return false;
@@ -247,14 +229,11 @@ public class DumpCommand extends Command {
 
     private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
         switch (mode) {
-            case "file":
-                saveToF("dump", type, sb, sender);
-                break;
-            case "web":
+            case "file" -> saveToF("dump", type, sb, sender);
+            case "web" -> {
                 try {
                     String url = HasteUtils.pasteMohist(sb.toString());
-                    if (sender instanceof Player) {
-                        Player p = (Player) sender;
+                    if (sender instanceof Player p) {
                         ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
                     } else {
                         dumpmsg(sender, url, type);
@@ -263,7 +242,7 @@ public class DumpCommand extends Command {
                     sender.sendMessage("Failed to upload to hastebin.");
                     saveToF("dump", type, sb, sender);
                 }
-                break;
+            }
         }
     }
 

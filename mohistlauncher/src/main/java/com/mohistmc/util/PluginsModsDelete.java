@@ -45,7 +45,7 @@ public class PluginsModsDelete {
         for (File pom : plugins.listFiles((dir, name) -> name.endsWith(".jar"))) {
             ArrayList<String> entries = jarEntries(pom);
             if (entries == null) continue;
-            String allLines = "";
+            StringBuilder allLines = new StringBuilder();
 
             if (plugins.equals(PLUGIN)) {
                 if (!entries.contains("plugin.yml")) {
@@ -57,7 +57,7 @@ public class PluginsModsDelete {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(pluginJar.getInputStream(pluginJar.getJarEntry("plugin.yml"))))) {
                         String line;
                         while ((line = reader.readLine()) != null)
-                            allLines += line + "\n";
+                            allLines.append(line).append("\n");
                     }
                 }
             }
@@ -67,14 +67,14 @@ public class PluginsModsDelete {
 
                 if (plugins.equals(PLUGIN)) {
                     if (fix.type.equals(FIX)) {
-                        if (!allLines.contains("version: " + fix.version) && allLines.contains("main: " + fix.main)) {
+                        if (!allLines.toString().contains("version: " + fix.version) && allLines.toString().contains("main: " + fix.main)) {
                             System.out.println(i18n.get("update.pluginversion", pom.getName(), fix.version, fix.repo, fix.aim));
                             System.out.println(i18n.get("update.downloadpluginversion", pom.getName()));
                             if (new Scanner(System.in).next().equals("yes"))
                                 downloadFile(fix.url, pom, fix.md5);
                         }
                     } else if (fix.type.equals(NOT_COMPATIBLE))
-                        if (allLines.contains("main: " + fix.main))
+                        if (allLines.toString().contains("main: " + fix.main))
                             delete("plugins", pom);
 
                 } else delete("mods", pom);

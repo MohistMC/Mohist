@@ -45,7 +45,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
     public static final String KEEP_FORMATTING_PROPERTY = "terminal.keepMinecraftFormatting";
     private static final String ANSI_RESET = "\u001B[m";
     private static final boolean KEEP_FORMATTING = PropertiesUtil.getProperties().getBooleanProperty(KEEP_FORMATTING_PROPERTY);
-    private static final char COLOR_CHAR = '\u00A7'; // 
+    private static final char COLOR_CHAR = '§'; //
     private static final String LOOKUP = "0123456789abcdefklmnor";
     private static final String[] ansiCodes = new String[]{
             "\u001B[0;30m", // Black 0

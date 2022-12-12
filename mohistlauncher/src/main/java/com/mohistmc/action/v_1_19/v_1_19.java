@@ -193,7 +193,7 @@ public class v_1_19 implements Version {
             fw.close();
 
             System.out.println(i18n.get("installation.finished"));
-            yml.set("mohist.installationfinished", true);
+            yml.set("mohist.installation-finished", true);
             yml.save(MohistConfigUtil.mohistyml);
             restartServer(launchArgs, true);
         }

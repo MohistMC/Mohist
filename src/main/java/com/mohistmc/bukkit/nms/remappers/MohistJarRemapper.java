@@ -180,7 +180,6 @@ public class MohistJarRemapper extends CustomRemapper {
         return remapClassFile(new ClassReader(in), repo);
     }
 
-    @SuppressWarnings("unchecked")
     private byte[] remapClassFile(ClassReader reader, final ClassRepo repo) {
         if (preProcessor != null) {
             byte[] pre = preProcessor.process(reader);

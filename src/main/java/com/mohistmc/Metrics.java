@@ -251,7 +251,7 @@ public class Metrics {
 
     public static class MohistMetrics {
         public static void startMetrics() {
-            File configFile = new File(new File((File) MinecraftServer.getServer().options.valueOf("plugins"), "bStats"), "config.yml");
+            File configFile = new File(new File((File) MinecraftServer.options.valueOf("plugins"), "bStats"), "config.yml");
             YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
             if (!config.isSet("serverUuid")) {
@@ -260,10 +260,11 @@ public class Metrics {
                 config.addDefault("logFailedRequests", false);
 
                 config.options().header(
-                        "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                                "To honor their work, you should not disable it.\n" +
-                                "This has nearly no effect on the server performance!\n" +
-                                "Check out https://bStats.org/ to learn more :)"
+                        """
+                                bStats collects some data for plugin authors like how many servers are using their plugins.
+                                To honor their work, you should not disable it.
+                                This has nearly no effect on the server performance!
+                                Check out https://bStats.org/ to learn more :)"""
                 ).copyDefaults(true);
                 try {
                     config.save(configFile);

@@ -22,13 +22,10 @@ public class NBT {
     }
 
     public static Map<String, Object> read(InputStream in, boolean compressed) throws IOException {
-        DataInputStream data = compressed
+        try (DataInputStream data = compressed
                 ? new DataInputStream(new GZIPInputStream(in))
-                : new DataInputStream(new BufferedInputStream(in));
-        try {
+                : new DataInputStream(new BufferedInputStream(in))) {
             return read((DataInput) data);
-        } finally {
-            data.close();
         }
     }
 
@@ -37,13 +34,10 @@ public class NBT {
     }
 
     public static void write(OutputStream out, Map<String, Object> map, boolean compressed) throws IOException {
-        DataOutputStream data = compressed
+        try (DataOutputStream data = compressed
                 ? new DataOutputStream(new GZIPOutputStream(out))
-                : new DataOutputStream(new BufferedOutputStream(out));
-        try {
+                : new DataOutputStream(new BufferedOutputStream(out))) {
             write((OutputStream) data, map);
-        } finally {
-            data.close();
         }
     }
 
@@ -62,33 +56,20 @@ public class NBT {
     }
 
     private static Object readTag(DataInput in, byte type) throws IOException {
-        switch (type) {
-            case 1:
-                return in.readByte();
-            case 2:
-                return in.readShort();
-            case 3:
-                return in.readInt();
-            case 4:
-                return in.readLong();
-            case 5:
-                return in.readFloat();
-            case 6:
-                return in.readDouble();
-
-            case 7:
-                return readByteArray(in);
-            case 8:
-                return readString(in);
-            case 9:
-                return readList(in);
-            case 10:
-                return readCompound(in);
-            case 11:
-                return readIntArray(in);
-            default:
-                throw new IOException("Invalid NBT tag type (1-10): " + type);
-        }
+        return switch (type) {
+            case 1 -> in.readByte();
+            case 2 -> in.readShort();
+            case 3 -> in.readInt();
+            case 4 -> in.readLong();
+            case 5 -> in.readFloat();
+            case 6 -> in.readDouble();
+            case 7 -> readByteArray(in);
+            case 8 -> readString(in);
+            case 9 -> readList(in);
+            case 10 -> readCompound(in);
+            case 11 -> readIntArray(in);
+            default -> throw new IOException("Invalid NBT tag type (1-10): " + type);
+        };
     }
 
     private static int[] readIntArray(DataInput in) throws IOException {
@@ -111,7 +92,7 @@ public class NBT {
     private static List<Object> readList(DataInput in) throws IOException {
         byte type = in.readByte();
         int length = in.readInt();
-        List<Object> list = new ArrayList<Object>(length);
+        List<Object> list = new ArrayList<>(length);
         for (int i = 0; i < length; ++i) {
             Object tag = readTag(in, type);
             list.add(tag);
@@ -120,7 +101,7 @@ public class NBT {
     }
 
     private static Map<String, Object> readCompound(DataInput in) throws IOException {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         for (byte type; (type = in.readByte()) != 0; ) {
             String name = readString(in);
             Object tag = readTag(in, type);
@@ -149,42 +130,18 @@ public class NBT {
     @SuppressWarnings("unchecked")
     private static void writeTag(DataOutput out, byte type, Object tag) throws IOException {
         switch (type) {
-            case 1:
-                out.writeByte((Byte) tag);
-                break;
-            case 2:
-                out.writeShort((Short) tag);
-                break;
-            case 3:
-                out.writeInt((Integer) tag);
-                break;
-            case 4:
-                out.writeLong((Long) tag);
-                break;
-            case 5:
-                out.writeFloat((Float) tag);
-                break;
-            case 6:
-                out.writeDouble((Double) tag);
-                break;
-
-            case 7:
-                writeByteArray(out, (byte[]) tag);
-                break;
-            case 8:
-                writeString(out, (String) tag);
-                break;
-            case 9:
-                writeList(out, (List<Object>) tag);
-                break;
-            case 10:
-                writeCompound(out, (Map<String, Object>) tag);
-                break;
-            case 11:
-                writeIntArray(out, (int[]) tag);
-                break;
-            default:
-                throw new IOException("Invalid NBT tag type (1-11): " + type);
+            case 1 -> out.writeByte((Byte) tag);
+            case 2 -> out.writeShort((Short) tag);
+            case 3 -> out.writeInt((Integer) tag);
+            case 4 -> out.writeLong((Long) tag);
+            case 5 -> out.writeFloat((Float) tag);
+            case 6 -> out.writeDouble((Double) tag);
+            case 7 -> writeByteArray(out, (byte[]) tag);
+            case 8 -> writeString(out, (String) tag);
+            case 9 -> writeList(out, (List<Object>) tag);
+            case 10 -> writeCompound(out, (Map<String, Object>) tag);
+            case 11 -> writeIntArray(out, (int[]) tag);
+            default -> throw new IOException("Invalid NBT tag type (1-11): " + type);
         }
     }
 
@@ -195,8 +152,7 @@ public class NBT {
 
     private static void writeIntArray(DataOutput out, int[] array) throws IOException {
         out.writeInt(array.length);
-        for (int i = 0; i < array.length; i++)
-            out.writeInt(array[i]);
+        for (int j : array) out.writeInt(j);
     }
 
     private static void writeString(DataOutput out, String str) throws IOException {
