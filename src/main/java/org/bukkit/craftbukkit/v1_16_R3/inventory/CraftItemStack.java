@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import java.util.Objects;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
@@ -541,11 +540,6 @@ public final class CraftItemStack extends ItemStack {
             case COMPASS:
                 return new CraftMetaCompass(item.getTag());
             default:
-                if (item.getTag() == null) {
-                    ItemMeta meta = CraftItemFactory.instance().getItemMeta(getType(item));
-                    ((CraftMetaItem)meta).setForgeCaps(item.getForgeCaps());
-                    return meta;
-                }
                 return new CraftMetaItem(item.getTag());
         }
     }
@@ -581,15 +575,7 @@ public final class CraftItemStack extends ItemStack {
         }
 
         CompoundNBT tag = new CompoundNBT();
-        if (!tag.isEmpty()) {
-            item.setTag(tag);
-        } else {
-            item.setTag(null);
-        }
-        CompoundNBT forgeCaps = ((CraftMetaItem) itemMeta).getForgeCaps();
-        if (forgeCaps != null) {
-            item.setForgeCaps(forgeCaps.copy());
-        }
+        item.setTag(tag);
 
         ((CraftMetaItem) itemMeta).applyToItem(tag);
         item.convertStack(((CraftMetaItem) itemMeta).getVersion());
@@ -624,7 +610,7 @@ public final class CraftItemStack extends ItemStack {
         if (!(comparisonType == getType() && getDurability() == that.getDurability())) {
             return false;
         }
-        return hasItemMeta() ? (that.hasItemMeta() && Objects.equals(handle.getTag(), that.handle.getTag()) && Objects.equals(handle.getForgeCaps(), that.handle.getForgeCaps())) : !that.hasItemMeta();
+        return hasItemMeta() ? that.hasItemMeta() && handle.getTag().equals(that.handle.getTag()) : !that.hasItemMeta();
     }
 
     @Override
@@ -633,10 +619,6 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
-        if (item != null) {
-            CompoundNBT forgeCaps = item.getForgeCaps();
-            return forgeCaps != null && !forgeCaps.isEmpty();
-        }
         return !(item == null || item.getTag() == null || item.getTag().isEmpty());
     }
 }
