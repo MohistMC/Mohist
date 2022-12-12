@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3.block;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.api.BlockAPI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -515,7 +516,7 @@ public class CraftBlock implements Block {
         }
 
         Biome biome = org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
-        return (biome == null) ? Biome.CUSTOM : biome;
+        return (biome == null && BlockAPI.biome.containsKey(base)) ? BlockAPI.biome.get(base) : biome;
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {

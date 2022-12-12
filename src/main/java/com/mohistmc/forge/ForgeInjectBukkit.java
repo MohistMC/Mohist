@@ -22,6 +22,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
@@ -150,6 +151,7 @@ public class ForgeInjectBukkit {
             if (!biomeName.equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
                 org.bukkit.block.Biome biome = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                BlockAPI.biome.put(entry.getValue(), biome);
                 MohistMC.LOGGER.debug("Save-BIOME:" + biome.name() + " - " + biomeName);
             }
         }
