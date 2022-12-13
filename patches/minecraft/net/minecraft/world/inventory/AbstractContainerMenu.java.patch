@@ -15,16 +15,13 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -29,6 +_,13 @@
+@@ -29,6 +_,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import org.bukkit.craftbukkit.v1_19_R2.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryView;
-+import org.bukkit.event.Event;
-+import org.bukkit.event.inventory.InventoryDragEvent;
-+import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.inventory.InventoryView;
  import org.slf4j.Logger;
  

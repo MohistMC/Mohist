@@ -1,22 +1,20 @@
 --- a/net/minecraft/world/level/block/entity/LecternBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/LecternBlockEntity.java
-@@ -1,5 +_,8 @@
+@@ -1,5 +_,7 @@
  package net.minecraft.world.level.block.entity;
  
 +import java.util.ArrayList;
 +import java.util.Arrays;
-+import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.commands.CommandSource;
  import net.minecraft.commands.CommandSourceStack;
-@@ -24,12 +_,43 @@
+@@ -24,12 +_,42 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
 -public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
 +import java.util.List;
 +import org.bukkit.Location;
-+import org.bukkit.block.data.type.Lectern;
 +import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_19_R2.command.CraftBlockCommandSender;
 +import org.bukkit.craftbukkit.v1_19_R2.entity.CraftHumanEntity;

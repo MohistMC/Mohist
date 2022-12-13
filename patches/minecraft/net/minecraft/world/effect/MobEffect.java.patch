@@ -1,10 +1,7 @@
 --- a/net/minecraft/world/effect/MobEffect.java
 +++ b/net/minecraft/world/effect/MobEffect.java
-@@ -7,8 +_,11 @@
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
+@@ -9,6 +_,8 @@
  import net.minecraft.Util;
-+import net.minecraft.core.Registry;
  import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.network.chat.Component;
 +import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;

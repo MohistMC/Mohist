@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 public abstract class GlobalLootModifierProvider implements DataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final DataGenerator gen;
+    private final PackOutput output;
     private final String modid;
     private final Map<String, JsonElement> toSerialize = new HashMap<>();
     private boolean replace = false;
 
-    public GlobalLootModifierProvider(DataGenerator gen, String modid)
+    public GlobalLootModifierProvider(PackOutput output, String modid)
     {
-        this.gen = gen;
+        this.output = output;
         this.modid = modid;
     }
 
@@ -66,8 +66,8 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     {
         start();
 
-        Path forgePath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
-        Path modifierFolderPath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
+        Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
+        Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
         List<ResourceLocation> entries = new ArrayList<>();
 
         ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();

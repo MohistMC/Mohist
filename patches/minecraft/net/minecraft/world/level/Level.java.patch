@@ -11,14 +11,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -15,16 +_,19 @@
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.Holder;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.SectionPos;
- import net.minecraft.core.particles.ParticleOptions;
- import net.minecraft.core.registries.BuiltInRegistries;
+@@ -21,10 +_,12 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;

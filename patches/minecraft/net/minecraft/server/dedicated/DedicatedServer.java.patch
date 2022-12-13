@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,9 +_,11 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.server.dedicated;
  
  import com.google.common.collect.Lists;
@@ -8,34 +8,10 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.DynamicOps;
- import java.io.BufferedReader;
- import java.io.IOException;
- import java.io.InputStreamReader;
-@@ -26,6 +_,8 @@
- import net.minecraft.Util;
- import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.NonNullList;
-+import net.minecraft.nbt.Tag;
- import net.minecraft.server.ConsoleInput;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.ServerInterface;
-@@ -46,11 +_,23 @@
- import net.minecraft.util.Mth;
- import net.minecraft.util.monitoring.jmx.MinecraftServerStatistics;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.item.CreativeModeTab;
-+import net.minecraft.world.item.Items;
-+import net.minecraft.world.level.DataPackConfig;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.GameType;
+@@ -51,6 +_,12 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.storage.LevelStorageSource;
-+import net.minecraftforge.fml.ModLoader;
-+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-+import net.minecraftforge.forgespi.language.IModInfo;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;

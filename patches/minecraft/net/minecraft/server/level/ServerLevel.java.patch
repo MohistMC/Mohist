@@ -8,23 +8,22 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -19,6 +_,7 @@
- import java.nio.file.Files;
- import java.nio.file.Path;
- import java.util.ArrayList;
-+import java.util.Collections;
- import java.util.Comparator;
- import java.util.List;
- import java.util.Locale;
-@@ -27,6 +_,8 @@
+@@ -27,6 +_,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
-+import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
  import java.util.function.Predicate;
+@@ -89,7 +_,6 @@
+ import net.minecraft.world.entity.animal.Animal;
+ import net.minecraft.world.entity.animal.WaterAnimal;
+ import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.entity.npc.Npc;
+ import net.minecraft.world.entity.player.Player;
 @@ -141,8 +_,10 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
@@ -36,12 +35,10 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -150,7 +_,15 @@
+@@ -150,7 +_,13 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
-+import net.minecraftforge.common.util.LevelCapabilityData;
-+import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R2.util.WorldUUID;

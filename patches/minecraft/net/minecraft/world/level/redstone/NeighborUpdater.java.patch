@@ -1,13 +1,6 @@
 --- a/net/minecraft/world/level/redstone/NeighborUpdater.java
 +++ b/net/minecraft/world/level/redstone/NeighborUpdater.java
-@@ -7,11 +_,17 @@
- import net.minecraft.ReportedException;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
-+import net.minecraft.core.Registry;
- import net.minecraft.core.registries.BuiltInRegistries;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.world.level.Level;
+@@ -12,6 +_,10 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;

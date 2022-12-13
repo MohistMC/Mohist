@@ -16,14 +16,6 @@
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.LayeredRegistryAccess;
-@@ -57,6 +_,7 @@
- import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
- import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
- import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
- import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
- import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
- import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
 @@ -71,6 +_,7 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;

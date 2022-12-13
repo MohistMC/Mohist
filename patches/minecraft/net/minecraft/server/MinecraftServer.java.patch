@@ -1,38 +1,13 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -10,6 +_,7 @@
- import com.mojang.authlib.minecraft.MinecraftSessionService;
- import com.mojang.datafixers.DataFixer;
- import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.DynamicOps;
- import it.unimi.dsi.fastutil.longs.LongIterator;
- import java.awt.image.BufferedImage;
- import java.io.ByteArrayOutputStream;
-@@ -46,6 +_,8 @@
+@@ -46,6 +_,7 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
-+import jline.console.ConsoleReader;
 +import joptsimple.OptionSet;
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -62,6 +_,7 @@
- import net.minecraft.core.registries.Registries;
- import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
- import net.minecraft.gametest.framework.GameTestTicker;
-+import net.minecraft.nbt.Tag;
- import net.minecraft.network.chat.ChatDecorator;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
-@@ -142,6 +_,7 @@
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.level.levelgen.PatrolSpawner;
- import net.minecraft.world.level.levelgen.PhantomSpawner;
-+import net.minecraft.world.level.levelgen.WorldGenSettings;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
- import net.minecraft.world.level.storage.CommandStorage;
 @@ -151,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
@@ -41,15 +16,11 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.level.storage.WorldData;
  import net.minecraft.world.level.storage.loot.ItemModifierManager;
-@@ -158,7 +_,16 @@
- import net.minecraft.world.level.storage.loot.PredicateManager;
+@@ -159,6 +_,12 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import net.minecraftforge.event.level.LevelEvent;
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.Bukkit;
-+import org.bukkit.World;
-+import org.bukkit.craftbukkit.Main;
 +import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_19_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_19_R2.util.LazyPlayerSet;
