@@ -22,13 +22,19 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.util.*;
+import com.mohistmc.util.AutoDeleteMods;
+import com.mohistmc.util.AutoDeletePlugins;
+import com.mohistmc.util.CustomFlagsHandler;
+import com.mohistmc.util.InstallUtils;
+import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.LoggingPrintStream;
+import com.mohistmc.util.PluginsModsDelete;
 import com.mohistmc.util.i18n.i18n;
+import java.net.URLClassLoader;
+import java.util.Scanner;
 import net.minecraftforge.server.ServerMain;
 import org.apache.logging.log4j.Level;
 
-import java.net.URLClassLoader;
-import java.util.Scanner;
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;

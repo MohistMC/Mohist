@@ -20,8 +20,6 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.i18n;
-import net.minecraftforge.server.ServerMain;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,6 +34,8 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import net.minecraftforge.server.ServerMain;
+
 
 import static com.mohistmc.config.MohistConfigUtil.bMohist;
 import static com.mohistmc.util.CustomFlagsHandler.getCustomFlags;

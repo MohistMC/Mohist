@@ -146,13 +146,14 @@ public class ForgeInjectBukkit {
 
     public static void addEnumBiome() {
         List<String> map = new ArrayList<>();
-        for (Map.Entry<RegistryKey<Biome>, Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
-            String biomeName = entry.getValue().getRegistryName().getNamespace();
-            if (!biomeName.equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
+        for (net.minecraft.world.biome.Biome biome : ForgeRegistries.BIOMES) {
+            ResourceLocation resourceLocation = biome.getRegistryName();
+            String biomeName = normalizeName(resourceLocation.toString());
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
-                org.bukkit.block.Biome biome = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
-                BlockAPI.biome.put(entry.getValue(), biome);
-                MohistMC.LOGGER.debug("Save-BIOME:" + biome.name() + " - " + biomeName);
+                org.bukkit.block.Biome biomeCB = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                BlockAPI.biome.put(biome, biomeName);
+                MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }
         map.clear();

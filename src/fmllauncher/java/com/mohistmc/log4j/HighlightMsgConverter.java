@@ -26,7 +26,6 @@ package com.mohistmc.log4j;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;

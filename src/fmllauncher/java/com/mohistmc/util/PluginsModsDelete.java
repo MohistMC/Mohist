@@ -19,7 +19,6 @@
 package com.mohistmc.util;
 
 import com.mohistmc.util.i18n.i18n;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -29,6 +28,7 @@ import java.util.Scanner;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+
 
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;

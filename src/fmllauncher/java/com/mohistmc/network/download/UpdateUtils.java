@@ -25,7 +25,6 @@ import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,7 +36,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 import static com.mohistmc.config.MohistConfigUtil.bMohist;
 import static com.mohistmc.network.download.NetworkUtil.getConn;

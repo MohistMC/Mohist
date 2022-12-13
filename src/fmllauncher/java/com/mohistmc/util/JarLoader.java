@@ -18,14 +18,13 @@
 
 package com.mohistmc.util;
 
+import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.JarFile;
-
-import com.mohistmc.util.i18n.i18n;
 
 public class JarLoader {
 

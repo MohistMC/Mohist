@@ -21,12 +21,11 @@ package com.mohistmc.util;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.i18n.i18n;
-import net.minecraftforge.server.ServerMain;
-
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import net.minecraftforge.server.ServerMain;
 
 public class CustomFlagsHandler {
 

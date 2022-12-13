@@ -19,10 +19,12 @@
 package com.mohistmc.util.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.util.NumberUtils;
-import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class i18n {
     private static ResourceBundle rb;

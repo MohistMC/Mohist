@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_16_R3.block;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.BlockAPI;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +55,9 @@ import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+
+
+import static com.mohistmc.forge.ForgeInjectBukkit.normalizeName;
 
 public class CraftBlock implements Block {
 
@@ -512,11 +516,13 @@ public class CraftBlock implements Block {
 
     public static Biome biomeBaseToBiome(Registry<net.minecraft.world.biome.Biome> registry, net.minecraft.world.biome.Biome base) {
         if (base == null) {
+            MohistMC.LOGGER.error("biomeBaseToBiome base null");
             return null;
         }
 
         Biome biome = org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
-        return (biome == null && BlockAPI.biome.containsKey(base)) ? BlockAPI.biome.get(base) : biome;
+        Biome biome1 =Biome.valueOf(normalizeName(base.getRegistryName().toString()));
+        return (biome == null) ? biome1 : biome;
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {

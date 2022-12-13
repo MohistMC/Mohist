@@ -2,6 +2,7 @@ package org.bukkit.command;
 
 import co.aikar.timings.TimingsCommand;
 import com.mohistmc.command.BackupWorldCommand;
+import com.mohistmc.command.BiomeCommand;
 import com.mohistmc.command.DownloadFileCommand;
 import com.mohistmc.command.DumpCommand;
 import com.mohistmc.command.GetPluginListCommand;
@@ -49,6 +50,7 @@ public class SimpleCommandMap implements CommandMap {
 		register("mohist", new BackupWorldCommand("backupworld"));
         register("mohist", new WhitelistModsCommand("whitelistmods"));
         register("mohist", new WorldCommand("world"));
+        register("mohist", new BiomeCommand("biome"));
     }
 
     public void setFallbackCommands() {

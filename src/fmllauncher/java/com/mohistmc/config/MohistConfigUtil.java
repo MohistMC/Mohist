@@ -19,12 +19,11 @@
 package com.mohistmc.config;
 
 import com.mohistmc.MohistMCStart;
-import net.minecraftforge.server.ServerMain;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import net.minecraftforge.server.ServerMain;
 
 public class MohistConfigUtil {
 
