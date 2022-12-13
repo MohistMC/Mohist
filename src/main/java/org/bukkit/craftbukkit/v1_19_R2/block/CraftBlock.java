@@ -66,6 +66,9 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+
+import static com.mohistmc.forge.ForgeInjectBukkit.normalizeName;
+
 public class CraftBlock implements Block {
     private final net.minecraft.world.level.LevelAccessor world;
     private final BlockPos position;
@@ -350,7 +353,8 @@ public class CraftBlock implements Block {
         }
 
         Biome biome = Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
-        return (biome == null) ? Biome.CUSTOM : biome;
+        Biome biome1 = Biome.valueOf(normalizeName(registry.getKey(base).toString()));
+        return (biome == null) ? biome1 : biome;
     }
 
     public static Holder<net.minecraft.world.level.biome.Biome> biomeToBiomeBase(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, Biome bio) {
