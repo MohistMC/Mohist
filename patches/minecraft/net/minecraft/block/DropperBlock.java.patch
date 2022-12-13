@@ -18,15 +18,6 @@
  
  public class DropperBlock extends DispenserBlock {
     private static final IDispenseItemBehavior field_149947_P = new DefaultDispenseItemBehavior();
-@@ -29,7 +_,7 @@
-       return new DropperTileEntity();
-    }
- 
--   protected void func_176439_d(ServerWorld p_176439_1_, BlockPos p_176439_2_) {
-+   public void func_176439_d(ServerWorld p_176439_1_, BlockPos p_176439_2_) { // protected->public CraftBukkit
-       ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
-       DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
-       int i = dispensertileentity.func_146017_i();
 @@ -37,15 +_,30 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {

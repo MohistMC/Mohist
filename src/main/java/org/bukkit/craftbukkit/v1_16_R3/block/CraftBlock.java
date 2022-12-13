@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_16_R3.block;
 
 import com.google.common.base.Preconditions;
 import com.mohistmc.MohistMC;
-import com.mohistmc.api.BlockAPI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -516,7 +515,6 @@ public class CraftBlock implements Block {
 
     public static Biome biomeBaseToBiome(Registry<net.minecraft.world.biome.Biome> registry, net.minecraft.world.biome.Biome base) {
         if (base == null) {
-            MohistMC.LOGGER.error("biomeBaseToBiome base null");
             return null;
         }
 

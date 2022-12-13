@@ -22,7 +22,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.mohistmc.MohistMC;
-import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
@@ -43,7 +42,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
@@ -152,7 +150,6 @@ public class ForgeInjectBukkit {
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
                 org.bukkit.block.Biome biomeCB = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
-                BlockAPI.biome.put(biome, biomeName);
                 MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }

@@ -9,7 +9,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.AbstractFurnaceBlock;
  import net.minecraft.block.BlockState;
-@@ -36,16 +_,24 @@
+@@ -36,6 +_,14 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
@@ -24,19 +24,6 @@
  
  public abstract class AbstractFurnaceTileEntity extends LockableTileEntity implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity {
     private static final int[] field_214015_g = new int[]{0};
-    private static final int[] field_214016_h = new int[]{2, 1};
-    private static final int[] field_214017_i = new int[]{1};
-    protected NonNullList<ItemStack> field_214012_a = NonNullList.func_191197_a(3, ItemStack.field_190927_a);
--   private int field_214018_j;
-+   public int field_214018_j;
-    private int field_214019_k;
--   private int field_214020_l;
--   private int field_214021_m;
-+   public int field_214020_l;
-+   public int field_214021_m;
-    protected final IIntArray field_214013_b = new IIntArray() {
-       public int func_221476_a(int p_221476_1_) {
-          switch(p_221476_1_) {
 @@ -86,11 +_,43 @@
     private final Object2IntOpenHashMap<ResourceLocation> field_214022_n = new Object2IntOpenHashMap<>();
     protected final IRecipeType<? extends AbstractCookingRecipe> field_214014_c;

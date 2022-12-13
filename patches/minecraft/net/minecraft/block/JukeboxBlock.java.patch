@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/JukeboxBlock.java
 +++ b/net/minecraft/block/JukeboxBlock.java
-@@ -55,12 +_,18 @@
+@@ -55,7 +_,13 @@
     public void func_176431_a(IWorld p_176431_1_, BlockPos p_176431_2_, BlockState p_176431_3_, ItemStack p_176431_4_) {
        TileEntity tileentity = p_176431_1_.func_175625_s(p_176431_2_);
        if (tileentity instanceof JukeboxTileEntity) {
@@ -15,9 +15,3 @@
           p_176431_1_.func_180501_a(p_176431_2_, p_176431_3_.func_206870_a(field_176432_a, Boolean.valueOf(true)), 2);
        }
     }
- 
--   private void func_203419_a(World p_203419_1_, BlockPos p_203419_2_) {
-+   public void func_203419_a(World p_203419_1_, BlockPos p_203419_2_) {
-       if (!p_203419_1_.field_72995_K) {
-          TileEntity tileentity = p_203419_1_.func_175625_s(p_203419_2_);
-          if (tileentity instanceof JukeboxTileEntity) {
