@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -16,6 +_,9 @@
+@@ -16,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryGrindstone;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryView;
  
@@ -67,16 +68,32 @@
     }
  
     public void m_6199_(Container p_39570_) {
-@@ -122,6 +_,8 @@
+@@ -122,12 +_,14 @@
        ItemStack itemstack1 = this.f_39560_.m_8020_(1);
        boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
        boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
 +      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, this.f_39559_, -1);
 +      if (this.xp == Integer.MIN_VALUE)
        if (!flag) {
-          this.f_39559_.m_6836_(0, ItemStack.f_41583_);
+-         this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
-@@ -143,12 +_,13 @@
+-         boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_(Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
++         boolean flag2 = !itemstack.m_41619_() && !itemstack.m_150930_( Items.f_42690_) && !itemstack.m_41793_() || !itemstack1.m_41619_() && !itemstack1.m_150930_(Items.f_42690_) && !itemstack1.m_41793_();
+          if (itemstack.m_41613_() > 1 || itemstack1.m_41613_() > 1 || !flag1 && flag2) {
+-            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++            CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+             this.m_38946_();
+             return;
+          }
+@@ -137,20 +_,21 @@
+          ItemStack itemstack2;
+          if (flag1) {
+             if (!itemstack.m_150930_(itemstack1.m_41720_())) {
+-               this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++               CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
+                this.m_38946_();
+                return;
              }
  
              Item item = itemstack.m_41720_();
@@ -93,8 +110,23 @@
 +            if (!itemstack2.isRepairable()) i = itemstack.m_41773_();
 +            if (!itemstack2.m_41763_() || !itemstack2.isRepairable()) {
                 if (!ItemStack.m_41728_(itemstack, itemstack1)) {
-                   this.f_39559_.m_6836_(0, ItemStack.f_41583_);
+-                  this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++                  CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
                    this.m_38946_();
+                   return;
+                }
+@@ -163,9 +_,10 @@
+             itemstack2 = flag3 ? itemstack : itemstack1;
+          }
+ 
+-         this.f_39559_.m_6836_(0, this.m_39579_(itemstack2, i, j));
++         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.m_39579_(itemstack2, i, j)); // CraftBukkit
+       }
+ 
++      m_150429_(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
+       this.m_38946_();
+    }
+ 
 @@ -175,7 +_,7 @@
  
        for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
