@@ -162,6 +162,43 @@
        }
     }
  
+@@ -456,26 +_,32 @@
+    public void m_8015_(Player p_58396_) {
+    }
+ 
+-   public void m_155003_(ServerPlayer p_155004_) {
+-      List<Recipe<?>> list = this.m_154995_(p_155004_.m_9236_(), p_155004_.m_20182_());
++   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
++      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_9236_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, itemstack, amount); // CraftBukkit
+       p_155004_.m_7281_(list);
+       this.f_58320_.clear();
+    }
+ 
+    public List<Recipe<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
++      // CraftBukkit start
++      return this.getRecipesToAwardAndPopExperience(p_154996_, p_154997_, this.f_58858_, null, null, 0);
++   }
++
++   public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_, BlockPos blockposition, ServerPlayer entityplayer, ItemStack itemstack, int amount) {
++      // CraftBukkit end
+       List<Recipe<?>> list = Lists.newArrayList();
+ 
+       for(Object2IntMap.Entry<ResourceLocation> entry : this.f_58320_.object2IntEntrySet()) {
+          p_154996_.m_7465_().m_44043_(entry.getKey()).ifPresent((p_155023_) -> {
+             list.add(p_155023_);
+-            m_154998_(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).m_43750_());
++            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).m_43750_(), blockposition, entityplayer, itemstack, amount); // CraftBukkit
+          });
+       }
+ 
+       return list;
+    }
+ 
+-   private static void m_154998_(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
++   private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_, BlockPos blockposition, Player entityhuman, ItemStack itemstack, int amount) { // CraftBukkit
+       int i = Mth.m_14143_((float)p_155001_ * p_155002_);
+       float f = Mth.m_14187_((float)p_155001_ * p_155002_);
+       if (f != 0.0F && Math.random() < (double)f) {
 @@ -491,4 +_,67 @@
        }
  

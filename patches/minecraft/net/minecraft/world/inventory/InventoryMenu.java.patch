@@ -9,12 +9,15 @@
  
  public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150579_ = 0;
-@@ -37,10 +_,28 @@
+@@ -34,13 +_,30 @@
+    private static final EquipmentSlot[] f_39700_ = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private final CraftingContainer f_39701_ = new CraftingContainer(this, 2, 2);
+    private final ResultContainer f_39702_ = new ResultContainer();
++   // CraftBukkit start
     public final boolean f_39698_;
     private final Player f_39703_;
- 
+-
 -   public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
-+   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   @Override

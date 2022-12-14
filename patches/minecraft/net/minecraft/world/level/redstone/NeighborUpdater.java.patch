@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/redstone/NeighborUpdater.java
 +++ b/net/minecraft/world/level/redstone/NeighborUpdater.java
-@@ -12,6 +_,10 @@
+@@ -12,6 +_,11 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
@@ -19,13 +20,13 @@
 +         CraftWorld cworld = p_230764_.getWorld();
 +         if (cworld != null) {
 +            BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(p_230764_, p_230766_), CraftBlockData.fromData(p_230765_), CraftBlock.at(p_230764_, p_230768_));
-+            p_230764_.getCraftServer().getPluginManager().callEvent(event);
++            Bukkit.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
 +               return;
 +            }
 +         }
-+                    // CraftBukkit end
++         // CraftBukkit end
           p_230765_.m_60690_(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception while updating neighbours");

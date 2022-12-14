@@ -1,5 +1,42 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -11,6 +_,9 @@
+ import net.minecraft.world.item.alchemy.Potion;
+ import net.minecraft.world.item.alchemy.PotionBrewing;
+ import net.minecraft.world.item.alchemy.PotionUtils;
++import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryView;
++import org.bukkit.inventory.PlayerInventory;
+ 
+ public class BrewingStandMenu extends AbstractContainerMenu {
+    private static final int f_150488_ = 0;
+@@ -27,12 +_,18 @@
+    private final ContainerData f_39087_;
+    private final Slot f_39088_;
+ 
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Inventory player;
++   // CraftBukkit end
++
+    public BrewingStandMenu(int p_39090_, Inventory p_39091_) {
+       this(p_39090_, p_39091_, new SimpleContainer(5), new SimpleContainerData(2));
+    }
+ 
+    public BrewingStandMenu(int p_39093_, Inventory p_39094_, Container p_39095_, ContainerData p_39096_) {
+       super(MenuType.f_39967_, p_39093_);
++      player = p_39094_; // CraftBukkit
+       m_38869_(p_39095_, 5);
+       m_38886_(p_39096_, 2);
+       this.f_39086_ = p_39095_;
+@@ -57,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_39098_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.f_39086_.m_6542_(p_39098_);
+    }
+ 
 @@ -75,7 +_,7 @@
                 if (!this.m_38903_(itemstack1, 3, 4, false)) {
                    return ItemStack.f_41583_;
@@ -9,7 +46,7 @@
                 if (!this.m_38903_(itemstack1, 0, 3, false)) {
                    return ItemStack.f_41583_;
                 }
-@@ -146,7 +_,7 @@
+@@ -146,13 +_,26 @@
        }
  
        public boolean m_5857_(ItemStack p_39121_) {
@@ -18,6 +55,25 @@
        }
  
        public int m_6641_() {
+          return 64;
+       }
+    }
++
++   // CraftBukkit start
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryBrewer inventory = new CraftInventoryBrewer(this.f_39086_);
++      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ 
+    static class PotionSlot extends Slot {
+       public PotionSlot(Container p_39123_, int p_39124_, int p_39125_, int p_39126_) {
 @@ -170,6 +_,7 @@
        public void m_142406_(Player p_150499_, ItemStack p_150500_) {
           Potion potion = PotionUtils.m_43579_(p_150500_);

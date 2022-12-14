@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/entity/vehicle/MinecartTNT.java
++++ b/net/minecraft/world/entity/vehicle/MinecartTNT.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.material.FluidState;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ 
+ public class MinecartTNT extends AbstractMinecart {
+    private static final byte f_150345_ = 10;
+@@ -100,7 +_,15 @@
+             d0 = 5.0D;
+          }
+ 
+-         this.f_19853_.m_254877_(this, p_259539_, (ExplosionDamageCalculator)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)(4.0D + this.f_19796_.m_188500_() * 1.5D * d0), false, Level.ExplosionInteraction.TNT);
++         // CraftBukkit start
++         ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), (float) (4.0D + this.f_19796_.m_188500_() * 1.5D * d0), false);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            f_38647_ = -1;
++            return;
++         }
++         this.f_19853_.m_254877_(this, p_259539_, (ExplosionDamageCalculator) null, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
++         // CraftBukkit end
+          this.m_146870_();
+       }
+ 

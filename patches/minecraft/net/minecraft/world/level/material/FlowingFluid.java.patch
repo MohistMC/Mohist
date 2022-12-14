@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -27,6 +_,12 @@
+@@ -27,6 +_,13 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.Bukkit;
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
@@ -20,7 +21,7 @@
 +            // CraftBukkit start
 +            org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
 +            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-+            p_255851_.getMinecraftWorld().getCraftServer().getPluginManager().callEvent(event);
++            Bukkit.getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
 +               return;
@@ -36,7 +37,7 @@
 +               // CraftBukkit start
 +               org.bukkit.block.Block source = CraftBlock.at(p_256644_, p_76016_);
 +               BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
-+               p_256644_.getMinecraftWorld().getCraftServer().getPluginManager().callEvent(event);
++               Bukkit.getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
 +                  continue;
