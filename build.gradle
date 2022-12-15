@@ -186,7 +186,7 @@ def sharedDeps = {
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
     installer 'org.xerial:sqlite-jdbc:3.36.0.3'
     installer 'mysql:mysql-connector-java:8.0.29'
-    installer 'org.apache.logging.log4j:log4j-iostreams:2.17.1'
+    installer 'org.apache.logging.log4j:log4j-iostreams:2.19.0'
     installer 'net.md-5:SpecialSource:1.11.0'
 
     // spigot
@@ -335,7 +335,7 @@ def sharedFmlonlyForge = { Project prj ->
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
-        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar'
+        run.property 'mergeModules', 'jna-5.12.1.jar,jna-platform-5.12.1.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -430,11 +430,12 @@ def sharedFmlonlyForge = { Project prj ->
                                     "libraries/io/netty/netty-transport-native-unix-common/4.1.82.Final/netty-transport-native-unix-common-4.1.82.Final.jar",
                                     "libraries/it/unimi/dsi/fastutil/8.5.9/fastutil-8.5.9.jar",
                                     "libraries/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar",
-                                    "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
+                                    "libraries/net/java/dev/jna/jna-platform/5.12.1/jna-platform-5.12.1.jar",
                                     "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                                     "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
                                     "libraries/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar",
                                     "libraries/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar",
+                                    "libraries/org/apache/logging/log4j/log4j-iostreams/2.19.0/log4j-iostreams-2.19.0.jar",
                                     "libraries/org/apache/logging/log4j/log4j-slf4j2-impl/2.19.0/log4j-slf4j2-impl-2.19.0.jar",
                                     "libraries/org/slf4j/slf4j-api/2.0.1/slf4j-api-2.0.1.jar",
                                     "libraries/commons-lang/commons-lang/2.6-mohist/commons-lang-2.6-mohist.jar",
@@ -1316,11 +1317,12 @@ project(':forge') {
                                 "libraries/io/netty/netty-transport-native-unix-common/4.1.82.Final/netty-transport-native-unix-common-4.1.82.Final.jar",
                                 "libraries/it/unimi/dsi/fastutil/8.5.9/fastutil-8.5.9.jar",
                                 "libraries/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar",
-                                "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
+                                "libraries/net/java/dev/jna/jna-platform/5.12.1/jna-platform-5.12.1.jar",
                                 "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                                 "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
                                 "libraries/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar",
                                 "libraries/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar",
+                                "libraries/org/apache/logging/log4j/log4j-iostreams/2.19.0/log4j-iostreams-2.19.0.jar",
                                 "libraries/org/apache/logging/log4j/log4j-slf4j2-impl/2.19.0/log4j-slf4j2-impl-2.19.0.jar",
                                 "libraries/org/slf4j/slf4j-api/2.0.1/slf4j-api-2.0.1.jar",
                                 "libraries/commons-lang/commons-lang/2.6-mohist/commons-lang-2.6-mohist.jar",

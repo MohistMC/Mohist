@@ -55,7 +55,7 @@ public class MohistModuleManager {
 
     public MohistModuleManager(List<String> args) throws Exception {
         this.applyLaunchArgs(args);
-        yml.set("mohist.installationfinished", false);
+        yml.set("mohist.installation-finished", false);
         yml.save(MohistConfigUtil.mohistyml);
     }
 
