@@ -96,7 +96,7 @@
        });
     }
  
--   protected static class TagAppender<T> {
+-   public static class TagAppender<T> {
 +   public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
        private final TagBuilder f_126568_;
 +      private final String modId;
