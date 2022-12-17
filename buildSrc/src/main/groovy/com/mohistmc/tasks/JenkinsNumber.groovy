@@ -7,7 +7,7 @@ class JenkinsNumber {
     static String info() {
         Locale locale = Locale.getDefault()
         if (locale.getCountry() == "CN") {
-            return 'dev'
+            return '1.19.3'
         } else {
             try {
                 def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.3/api/json").openConnection()
@@ -20,7 +20,7 @@ class JenkinsNumber {
                 def number = data.substring(data.indexOf("number")).split(",")
                 return Integer.valueOf(number[0].replace("number=", "")).intValue()
             } catch (Exception e1) {
-                return 'dev'
+                return '1.19.3'
             }
         }
     }

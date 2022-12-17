@@ -1,3 +1,6 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+import com.mohistmc.tasks.JenkinsNumber
+
 plugins {
     id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
@@ -7,7 +10,9 @@ apply plugin: 'jacoco'
 apply plugin: 'org.javamodularity.moduleplugin'
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
-configurations.forEach{ it.transitive = false }
+configurations.forEach{
+    it.transitive = false
+}
 
 dependencies {
     compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
@@ -46,6 +51,13 @@ dependencies {
 task sourcesJar(type: Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
+}
+
+jar {
+    from(rootProject.file('server_files/mods.txt')) {
+        filter(ReplaceTokens, tokens: [VERSION: JenkinsNumber.info()])
+        rename { 'mods.txt' }
+    }
 }
 
 ext {
