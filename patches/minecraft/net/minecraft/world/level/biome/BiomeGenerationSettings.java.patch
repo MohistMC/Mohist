@@ -8,7 +8,7 @@
     private final List<HolderSet<PlacedFeature>> f_47781_;
     private final Supplier<List<ConfiguredFeature<?, ?>>> f_47783_;
     private final Supplier<Set<PlacedFeature>> f_186648_;
-@@ -54,12 +_,17 @@
+@@ -54,10 +_,15 @@
        this.f_186648_ = Suppliers.memoize(() -> {
           return p_186651_.stream().flatMap(HolderSet::m_203614_).map(Holder::m_203334_).collect(Collectors.toSet());
        });
@@ -17,32 +17,10 @@
  
     public Iterable<Holder<ConfiguredWorldCarver<?>>> m_204187_(GenerationStep.Carving p_204188_) {
        return Objects.requireNonNullElseGet(this.f_47780_.get(p_204188_), List::of);
-    }
- 
-+   public java.util.Set<GenerationStep.Carving> getCarvingStages() {
-+       return this.carversView;
 +   }
 +
++   public java.util.Set<GenerationStep.Carving> getCarvingStages() {
++       return this.carversView;
+    }
+ 
     public List<ConfiguredFeature<?, ?>> m_47815_() {
-       return this.f_47783_.get();
-    }
-@@ -93,8 +_,8 @@
-    }
- 
-    public static class PlainBuilder {
--      private final Map<GenerationStep.Carving, List<Holder<ConfiguredWorldCarver<?>>>> f_254678_ = Maps.newLinkedHashMap();
--      private final List<List<Holder<PlacedFeature>>> f_254648_ = Lists.newArrayList();
-+      protected final Map<GenerationStep.Carving, List<Holder<ConfiguredWorldCarver<?>>>> f_254678_ = Maps.newLinkedHashMap();
-+      protected final List<List<Holder<PlacedFeature>>> f_254648_ = Lists.newArrayList();
- 
-       public BiomeGenerationSettings.PlainBuilder m_255419_(GenerationStep.Decoration p_256360_, Holder<PlacedFeature> p_256577_) {
-          return this.m_254982_(p_256360_.ordinal(), p_256577_);
-@@ -113,7 +_,7 @@
-          return this;
-       }
- 
--      private void m_255276_(int p_256411_) {
-+      protected void m_255276_(int p_256411_) {
-          while(this.f_254648_.size() <= p_256411_) {
-             this.f_254648_.add(Lists.newArrayList());
-          }

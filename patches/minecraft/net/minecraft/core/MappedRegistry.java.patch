@@ -1,14 +1,5 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -47,7 +_,7 @@
-    private volatile Map<TagKey<T>, HolderSet.Named<T>> f_205844_ = new IdentityHashMap<>();
-    private boolean f_205845_;
-    @Nullable
--   private Map<T, Holder.Reference<T>> f_244282_;
-+   protected Map<T, Holder.Reference<T>> f_244282_;
-    @Nullable
-    private List<Holder.Reference<T>> f_211051_;
-    private int f_122678_;
 @@ -121,7 +_,16 @@
        }
     }

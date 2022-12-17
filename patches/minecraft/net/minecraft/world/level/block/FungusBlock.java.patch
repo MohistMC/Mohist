@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/FungusBlock.java
 +++ b/net/minecraft/world/level/block/FungusBlock.java
-@@ -23,7 +_,7 @@
-    private final Block f_256997_;
-    private final ResourceKey<ConfiguredFeature<?, ?>> f_53597_;
- 
--   protected FungusBlock(BlockBehaviour.Properties p_259749_, ResourceKey<ConfiguredFeature<?, ?>> p_259087_, Block p_260223_) {
-+   public FungusBlock(BlockBehaviour.Properties p_259749_, ResourceKey<ConfiguredFeature<?, ?>> p_259087_, Block p_260223_) {
-       super(p_259749_);
-       this.f_53597_ = p_259087_;
-       this.f_256997_ = p_260223_;
 @@ -52,6 +_,8 @@
  
     public void m_214148_(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {

@@ -2,6 +2,7 @@ import java.nio.file.Files
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
@@ -9,6 +10,11 @@ import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import com.mohistmc.tasks.JenkinsNumber
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
@@ -54,8 +60,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.3-44.0.23'
-    FORGE_VERSION = '44.0.23'
+    VERSION = '1.19.3-44.0.30'
+    FORGE_VERSION = '44.0.30'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -546,8 +552,6 @@ project(':fmlonly') {
 
     sharedFmlonlyForge.call(project)
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
-
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
         doFirst {
@@ -969,45 +973,86 @@ project(':forge') {
         jar = createJoinedSRG.output
         output = rootProject.file('src/main/resources/coremods/field_to_instanceof.json')
         fields {
-            /* 1.17 changed most things to use Tags. So this isn't nessasary anymore so just make an empty list
-            bows {
-                cls = 'net/minecraft/world/item/Items'
-                name = 'f_42411_'
-                replacement = 'net/minecraft/world/item/BowItem'
-            }
-            crossbows {
-                cls = 'net/minecraft/world/item/Items'
-                name = 'f_42717_'
-                replacement = 'net/minecraft/world/item/CrossbowItem'
-            }
-            */
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+        group = 'checks'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
+    }
+
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
         mappings = createSrg2Mcp.output
     }
 
-    task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
-        inheritance = extractInheritance.output
+    CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
+        dependsOn extractInheritance
         sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
-    task checkExcs(type: CheckExcs, dependsOn: jar) {
+    CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
+        dependsOn jar
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
 
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        dependsOn genPatches
         patchDir = file("$rootDir/patches")
-        autoFix = false
+        patchesWithS2SArtifact = [
+                'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
+                'minecraft/net/minecraft/data/models/blockstates/Variant.java.patch',
+        ]
     }
 
     genPatches {
         autoHeader true
         lineEnding = '\n'
+    }
+
+    def baseForgeVersionProperty = project.objects.property(String)
+    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.finalizeValueOnRead()
+    def jarCompatibilityTaskSetup = { task ->
+        task.group = 'jar compatibility'
+        task.onlyIf {
+            baseForgeVersionProperty.getOrNull() != null
+        }
+    }
+
+    tasks.register('setupCheckJarCompatibility', SetupCheckJarCompatibility) {
+        inputVersion = baseForgeVersionProperty
+    }
+
+    tasks.register('applyBaseCompatibilityJarBinPatches', ApplyBinPatches) {
+        jarCompatibilityTaskSetup(it)
+
+        clean = project.tasks.createJoinedSRG.output
+        patch = project.tasks.named('setupCheckJarCompatibility').flatMap { it.baseBinPatchesOutput }
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    tasks.register('checkJarCompatibility', CheckJarCompatibility) {
+        jarCompatibilityTaskSetup(it)
+        dependsOn 'setupCheckJarCompatibility'
+
+        baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
+
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+        concreteLibraries.from(project.PACKED_DEPS.collect { project.rootProject.tasks.getByPath(it).archiveFile })
+
+        commonLibraries.from(project.configurations.minecraftImplementation)
+        commonLibraries.from(project.configurations.installer)
+        commonLibraries.from(project.configurations.moduleonly)
     }
 
     task launcherJson(type: LauncherJson) {

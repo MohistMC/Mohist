@@ -168,21 +168,3 @@
              return creativemodetab;
           }
        }
-@@ -238,7 +_,7 @@
-       }
-    }
- 
--   protected interface Output {
-+   public interface Output {
-       void m_246267_(ItemStack p_251806_, CreativeModeTab.TabVisibility p_249603_);
- 
-       default void m_246342_(ItemStack p_249977_) {
-@@ -269,7 +_,7 @@
-       BOTTOM;
-    }
- 
--   protected static enum TabVisibility {
-+   public static enum TabVisibility {
-       PARENT_AND_SEARCH_TABS,
-       PARENT_TAB_ONLY,
-       SEARCH_TAB_ONLY;

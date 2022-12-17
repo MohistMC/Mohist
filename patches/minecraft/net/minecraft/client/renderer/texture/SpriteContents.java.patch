@@ -1,15 +1,9 @@
 --- a/net/minecraft/client/renderer/texture/SpriteContents.java
 +++ b/net/minecraft/client/renderer/texture/SpriteContents.java
-@@ -29,17 +_,32 @@
-    final int f_244302_;
-    final int f_244600_;
-    private final NativeImage f_243904_;
--   NativeImage[] f_243731_;
--   @Nullable
--   private final SpriteContents.AnimatedTexture f_244575_;
-+   public NativeImage[] f_243731_;
-+   @Nullable
-+   final SpriteContents.AnimatedTexture f_244575_;
+@@ -32,14 +_,29 @@
+    public NativeImage[] f_243731_;
+    @Nullable
+    final SpriteContents.AnimatedTexture f_244575_;
 +   @Nullable
 +   public final net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta;
  
@@ -36,6 +30,15 @@
     }
  
     public void m_246368_(int p_248864_) {
+@@ -70,7 +_,7 @@
+       }
+    }
+ 
+-   int m_245088_() {
++   private int m_245088_() {
+       return this.f_244575_ != null ? this.f_244575_.f_243714_.size() : 1;
+    }
+ 
 @@ -124,6 +_,9 @@
  
     void m_247381_(int p_248895_, int p_250245_, int p_250458_, int p_251337_, NativeImage[] p_248825_) {

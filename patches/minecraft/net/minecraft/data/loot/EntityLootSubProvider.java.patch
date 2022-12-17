@@ -20,7 +20,7 @@
        }
     }
  
--   private static boolean m_245552_(EntityType<?> p_249029_) {
+-   protected static boolean m_245552_(EntityType<?> p_249029_) {
 +   protected boolean m_245552_(EntityType<?> p_249029_) {
        return f_244591_.contains(p_249029_) || p_249029_.m_20674_() != MobCategory.MISC;
     }

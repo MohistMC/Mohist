@@ -23,7 +23,7 @@
 +      return new IntrinsicHolderTagsProvider.IntrinsicTagAppender<>(tagbuilder, this.f_254687_, this.modId);
     }
  
--   protected static class IntrinsicTagAppender<T> extends TagsProvider.TagAppender<T> {
+-   public static class IntrinsicTagAppender<T> extends TagsProvider.TagAppender<T> {
 +   public static class IntrinsicTagAppender<T> extends TagsProvider.TagAppender<T> implements net.minecraftforge.common.extensions.IForgeIntrinsicHolderTagAppender<T> {
        private final Function<T, ResourceKey<T>> f_254707_;
  

@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -43,7 +_,7 @@
-    private final SoundEvent f_243947_;
-    private final SoundEvent f_243729_;
- 
--   protected TrapDoorBlock(BlockBehaviour.Properties p_249948_, SoundEvent p_250139_, SoundEvent p_248559_) {
-+   public TrapDoorBlock(BlockBehaviour.Properties p_249948_, SoundEvent p_250139_, SoundEvent p_248559_) {
-       super(p_249948_);
-       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_54117_, Direction.NORTH).m_61124_(f_57514_, Boolean.valueOf(false)).m_61124_(f_57515_, Half.BOTTOM).m_61124_(f_57516_, Boolean.valueOf(false)).m_61124_(f_57517_, Boolean.valueOf(false)));
-       this.f_243947_ = p_250139_;
 @@ -151,4 +_,17 @@
  
        return super.m_7417_(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);

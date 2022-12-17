@@ -1,14 +1,5 @@
 --- a/net/minecraft/server/packs/repository/ServerPacksSource.java
 +++ b/net/minecraft/server/packs/repository/ServerPacksSource.java
-@@ -27,7 +_,7 @@
-       super(PackType.SERVER_DATA, m_246173_(), f_244487_);
-    }
- 
--   private static VanillaPackResources m_246173_() {
-+   public static VanillaPackResources m_246173_() {
-       return (new VanillaPackResourcesBuilder()).m_245913_(f_143904_).m_245371_("minecraft").m_246678_().m_246373_().m_245772_();
-    }
- 
 @@ -48,7 +_,9 @@
     }
  

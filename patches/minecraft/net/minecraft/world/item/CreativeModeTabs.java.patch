@@ -1,61 +1,6 @@
 --- a/net/minecraft/world/item/CreativeModeTabs.java
 +++ b/net/minecraft/world/item/CreativeModeTabs.java
-@@ -26,7 +_,7 @@
- import net.minecraft.world.level.block.SuspiciousEffectHolder;
- 
- public class CreativeModeTabs {
--   private static final CreativeModeTab f_256788_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 0).m_257941_(Component.m_237115_("itemGroup.buildingBlocks")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256788_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 0).m_257941_(Component.m_237115_("itemGroup.buildingBlocks")).m_257737_(() -> {
-       return new ItemStack(Blocks.f_50076_);
-    }).m_257501_((p_259897_, p_259444_, p_259072_) -> {
-       p_259444_.m_246326_(Items.f_41837_);
-@@ -365,7 +_,7 @@
-       p_259444_.m_246326_(Items.f_150988_);
-       p_259444_.m_246326_(Items.f_150992_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256725_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 1).m_257941_(Component.m_237115_("itemGroup.coloredBlocks")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256725_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 1).m_257941_(Component.m_237115_("itemGroup.coloredBlocks")).m_257737_(() -> {
-       return new ItemStack(Blocks.f_50103_);
-    }).m_257501_((p_259916_, p_259709_, p_259922_) -> {
-       p_259709_.m_246326_(Items.f_41870_);
-@@ -567,7 +_,7 @@
-       p_259709_.m_246326_(Items.f_42662_);
-       p_259709_.m_246326_(Items.f_42666_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256776_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 2).m_257941_(Component.m_237115_("itemGroup.natural")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256776_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 2).m_257941_(Component.m_237115_("itemGroup.natural")).m_257737_(() -> {
-       return new ItemStack(Blocks.f_50440_);
-    }).m_257501_((p_260103_, p_260000_, p_259526_) -> {
-       p_260000_.m_246326_(Items.f_42276_);
-@@ -788,7 +_,7 @@
-       p_260000_.m_246326_(Items.f_41863_);
-       p_260000_.m_246326_(Items.f_41829_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256791_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 3).m_257941_(Component.m_237115_("itemGroup.functional")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256791_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 3).m_257941_(Component.m_237115_("itemGroup.functional")).m_257737_(() -> {
-       return new ItemStack(Items.f_42438_);
-    }).m_257501_((p_261443_, p_261444_, p_261445_) -> {
-       p_261444_.m_246326_(Items.f_42000_);
-@@ -957,7 +_,7 @@
-       p_261444_.m_246326_(Items.f_42017_);
-       p_261444_.m_246326_(Items.f_151027_);
-    }).m_257652_();
--   private static final CreativeModeTab f_257028_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 4).m_257941_(Component.m_237115_("itemGroup.redstone")).m_257737_(() -> {
-+   public static final CreativeModeTab f_257028_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 4).m_257941_(Component.m_237115_("itemGroup.redstone")).m_257737_(() -> {
-       return new ItemStack(Items.f_42451_);
-    }).m_257501_((p_261446_, p_261447_, p_261448_) -> {
-       p_261447_.m_246326_(Items.f_42451_);
-@@ -1019,15 +_,15 @@
-       p_261447_.m_246326_(Items.f_42650_);
-       p_261447_.m_246326_(Items.f_41977_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256917_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 5).m_257941_(Component.m_237115_("itemGroup.hotbar")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256917_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 5).m_257941_(Component.m_237115_("itemGroup.hotbar")).m_257737_(() -> {
-       return new ItemStack(Blocks.f_50078_);
-    }).m_257826_().m_257623_(CreativeModeTab.Type.HOTBAR).m_257652_();
--   private static final CreativeModeTab f_256750_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 6).m_257941_(Component.m_237115_("itemGroup.search")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256750_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.TOP, 6).m_257941_(Component.m_237115_("itemGroup.search")).m_257737_(() -> {
-       return new ItemStack(Items.f_42522_);
+@@ -1027,7 +_,7 @@
     }).m_257501_((p_261440_, p_261441_, p_261442_) -> {
        Set<ItemStack> set = ItemStackLinkedSet.m_261170_();
  
@@ -64,66 +9,7 @@
           if (creativemodetab.m_257962_() != CreativeModeTab.Type.SEARCH) {
              set.addAll(creativemodetab.m_261235_());
           }
-@@ -1035,7 +_,7 @@
- 
-       p_261441_.m_246601_(set);
-    }).m_257609_("item_search.png").m_257826_().m_257623_(CreativeModeTab.Type.SEARCH).m_257652_();
--   private static final CreativeModeTab f_256869_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 0).m_257941_(Component.m_237115_("itemGroup.tools")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256869_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 0).m_257941_(Component.m_237115_("itemGroup.tools")).m_257737_(() -> {
-       return new ItemStack(Items.f_42390_);
-    }).m_257501_((p_260132_, p_259554_, p_259053_) -> {
-       p_259554_.m_246326_(Items.f_42421_);
-@@ -1139,7 +_,7 @@
-       p_259554_.m_246326_(Items.f_220217_);
-       p_259554_.m_246326_(Items.f_42712_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256797_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 1).m_257941_(Component.m_237115_("itemGroup.combat")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256797_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 1).m_257941_(Component.m_237115_("itemGroup.combat")).m_257737_(() -> {
-       return new ItemStack(Items.f_42393_);
-    }).m_257501_((p_259978_, p_259465_, p_260044_) -> {
-       p_259465_.m_246326_(Items.f_42420_);
-@@ -1197,7 +_,7 @@
-       p_259465_.m_246326_(Items.f_42737_);
-       m_247461_(p_259465_, Items.f_42738_, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-    }).m_257652_();
--   private static final CreativeModeTab f_256839_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 2).m_257941_(Component.m_237115_("itemGroup.foodAndDrink")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256839_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 2).m_257941_(Component.m_237115_("itemGroup.foodAndDrink")).m_257737_(() -> {
-       return new ItemStack(Items.f_42436_);
-    }).m_257501_((p_259913_, p_260188_, p_259779_) -> {
-       p_260188_.m_246326_(Items.f_42410_);
-@@ -1246,7 +_,7 @@
-       m_247461_(p_260188_, Items.f_42736_, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-       m_247461_(p_260188_, Items.f_42739_, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-    }).m_257652_();
--   private static final CreativeModeTab f_256968_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 3).m_257941_(Component.m_237115_("itemGroup.ingredients")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256968_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 3).m_257941_(Component.m_237115_("itemGroup.ingredients")).m_257737_(() -> {
-       return new ItemStack(Items.f_42416_);
-    }).m_257501_((p_260072_, p_259069_, p_259064_) -> {
-       p_259069_.m_246326_(Items.f_42413_);
-@@ -1347,7 +_,7 @@
-       m_247563_(p_259069_, set, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
-       m_245641_(p_259069_, set, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-    }).m_257652_();
--   private static final CreativeModeTab f_256731_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 4).m_257941_(Component.m_237115_("itemGroup.spawnEggs")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256731_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 4).m_257941_(Component.m_237115_("itemGroup.spawnEggs")).m_257737_(() -> {
-       return new ItemStack(Items.f_42630_);
-    }).m_257501_((p_260203_, p_260158_, p_259735_) -> {
-       p_260158_.m_246326_(Items.f_42007_);
-@@ -1426,7 +_,7 @@
-       p_260158_.m_246326_(Items.f_42610_);
-       p_260158_.m_246326_(Items.f_42611_);
-    }).m_257652_();
--   private static final CreativeModeTab f_256837_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 5).m_257941_(Component.m_237115_("itemGroup.op")).m_257737_(() -> {
-+   public static final CreativeModeTab f_256837_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 5).m_257941_(Component.m_237115_("itemGroup.op")).m_257737_(() -> {
-       return new ItemStack(Items.f_42116_);
-    }).m_257826_().m_257501_((p_259636_, p_259930_, p_259506_) -> {
-       if (p_259506_) {
-@@ -1446,15 +_,19 @@
-       }
- 
-    }).m_257652_();
--   private static final CreativeModeTab f_257039_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 6).m_257941_(Component.m_237115_("itemGroup.inventory")).m_257737_(() -> {
-+   public static final CreativeModeTab f_257039_ = CreativeModeTab.m_257815_(CreativeModeTab.Row.BOTTOM, 6).m_257941_(Component.m_237115_("itemGroup.inventory")).m_257737_(() -> {
+@@ -1450,11 +_,15 @@
        return new ItemStack(Blocks.f_50087_);
     }).m_257609_("inventory.png").m_257809_().m_257826_().m_257623_(CreativeModeTab.Type.INVENTORY).m_257794_().m_257652_();
     private static final List<CreativeModeTab> f_243931_ = m_257615_(f_256788_, f_256725_, f_256776_, f_256791_, f_257028_, f_256917_, f_256750_, f_256869_, f_256797_, f_256839_, f_256968_, f_256731_, f_256837_, f_257039_);
