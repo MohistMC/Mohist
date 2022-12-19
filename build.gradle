@@ -1322,7 +1322,7 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [genServerBinPatches]) {
+    task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlauncher').tasks.jar]) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -1425,7 +1425,9 @@ project(':forge') {
             rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
-        from(project(':mohistlauncher').project.sourceSets.main.output)
+        from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
+            into ""
+        }
 
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])

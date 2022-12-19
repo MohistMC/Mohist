@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-version '0.1'
+version '1.19.3-44.0.30'
 
 repositories {
     mavenCentral()
@@ -22,5 +23,14 @@ dependencies {
     implementation 'com.mohistmc.yaml:yaml:0.2'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
-    implementation "cpw.mods:securejarhandler:2.1.4"
+    implementation 'cpw.mods:securejarhandler:2.1.4'
 }
+
+shadowJar {
+    dependencies {
+        include(dependency('com.mohistmc.yaml:yaml:0.2'))
+    }
+}
+
+jar.dependsOn(shadowJar)
+
