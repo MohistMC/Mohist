@@ -18,6 +18,7 @@
 
 package com.mohistmc.configuration;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -26,6 +27,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MohistConfig extends ConfigBase {
+
+    public static File mohistyml = new File("mohist-config/mohist.yml");
+    public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
 
     public static MohistConfig instance;
     /* ======================================================================== */
@@ -62,34 +66,30 @@ public class MohistConfig extends ConfigBase {
     }
 
     public static void setValueMohist(String key, String value) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         yml.set(key, value);
-        try {
-            yml.save(MohistConfigUtil.mohistyml);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        save0();
     }
 
     public static void setValueMohist(String key, boolean value) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         yml.set(key, value);
-        try {
-            yml.save(MohistConfigUtil.mohistyml);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        save0();
     }
 
     public static List<String> getStringList0(String path, List<String> defValue) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         yml.addDefault(path, defValue);
         return yml.getStringList(path);
     }
 
     public static boolean getBoolean0(String path, boolean defValue) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         return yml.getBoolean(path, defValue);
+    }
+
+    public static void save0() {
+        try {
+            yml.save(mohistyml);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void init() {

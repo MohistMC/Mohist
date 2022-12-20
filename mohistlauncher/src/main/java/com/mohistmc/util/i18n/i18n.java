@@ -29,10 +29,10 @@ import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class i18n {
+    private static final List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn", "zh_tw");
     public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN", "zh_TW");
     public static Map<String, String> CACHE = new ConcurrentHashMap<>();
     private static ResourceBundle rb;
-    private static final List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn", "zh_tw");
 
     public static String get(String key) {
         rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
@@ -50,7 +50,7 @@ public class i18n {
     }
 
     public static String getLocale(int key) {
-        String locale = MohistConfigUtil.sMohist("lang", "xx_XX");
+        String locale = MohistConfigUtil.yml.getString("mohist.lang", "xx_XX");
         if (locale.length() == 5) {
             if (key == 1) return locale.substring(0, 2);
             if (key == 2) return locale.substring(3, 5);
@@ -59,7 +59,7 @@ public class i18n {
     }
 
     public static String getVanillaLanguage() {
-        String locale = MohistConfigUtil.sMohist("lang", "en_us");
+        String locale = MohistConfigUtil.yml.getString("mohist.lang", "en_us");
         if (locale.length() == 5) {
             if (a.contains(locale.toLowerCase())) {
                 return locale.toLowerCase();

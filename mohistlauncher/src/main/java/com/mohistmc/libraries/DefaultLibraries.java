@@ -53,7 +53,7 @@ public class DefaultLibraries {
         for (File lib : getDefaultLibs().keySet()) {
             allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             v_1_19.loadedLibsPaths.add(lib.getAbsolutePath());
-            if (lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+            if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
             }
             if (lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))) {

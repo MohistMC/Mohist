@@ -48,10 +48,10 @@ import org.objectweb.asm.tree.ClassNode;
  */
 public class RemapUtils {
 
+    public static final Map<String, String> relocations = new HashMap<>();
     private static final List<Remapper> remappers = new ArrayList<>();
     public static MohistJarMapping jarMapping;
     public static MohistJarRemapper jarRemapper;
-    public static final Map<String, String> relocations = new HashMap<>();
 
     public static void init() {
         jarMapping = new MohistJarMapping();

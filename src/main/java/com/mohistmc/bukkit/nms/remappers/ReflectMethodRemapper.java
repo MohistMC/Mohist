@@ -51,11 +51,11 @@ public class ReflectMethodRemapper extends MethodRemapper {
     public static final String className = "java/lang/Class";
     public static final String LookupName = "java/lang/invoke/MethodHandles$Lookup";
     public static final String reflectName = "java/lang/reflect/";
-    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
-    private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
     public static final Set<String> proxyClass = new HashSet<>(Arrays.asList(className + ";getField", className + ";getDeclaredField", className + ";getMethod", className + ";getDeclaredMethod", className + ";getSimpleName"));
     public static final Set<String> Lookup = new HashSet<>(Arrays.asList(className + ";unreflect", className + ";findSpecial", className + ";findStatic", className + ";findVirtual", className + ";findGetter", className + ";findSetter", className + ";findStaticGetter", className + ";findStaticSetter", className + ";findVarHandle"));
     public static final Set<String> reflect = new HashSet<>(Arrays.asList(reflectName + "Method;getName", reflectName + "Field;getName"));
+    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
+    private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
 
 
     public ReflectMethodRemapper(MethodVisitor mv, Remapper remapper) {

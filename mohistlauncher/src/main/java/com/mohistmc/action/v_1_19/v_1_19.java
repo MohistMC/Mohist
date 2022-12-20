@@ -8,7 +8,6 @@ import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
-import com.mohistmc.yaml.file.YamlConfiguration;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -42,7 +41,6 @@ public class v_1_19 implements Version {
     public static class Install_1_19 extends Action {
 
         public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
-        public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         public File fmlloader;
         public File fmlcore;
         public File javafmllanguage;
@@ -193,8 +191,8 @@ public class v_1_19 implements Version {
             fw.close();
 
             System.out.println(i18n.get("installation.finished"));
-            yml.set("mohist.installation-finished", true);
-            yml.save(MohistConfigUtil.mohistyml);
+            MohistConfigUtil.yml.set("mohist.installation-finished", true);
+            MohistConfigUtil.save();
             restartServer(launchArgs, true);
         }
     }
