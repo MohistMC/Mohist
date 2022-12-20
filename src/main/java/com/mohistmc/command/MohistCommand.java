@@ -74,9 +74,12 @@ public class MohistCommand extends Command {
         }
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "mods" ->
+            case "mods" -> {
                 // Not recommended for use in games, only test output
-                    sender.sendMessage(ChatColor.GREEN + "" + ServerAPI.getModSize() + " " + ServerAPI.getModList());
+                sender.sendMessage(ChatColor.GREEN + "Inside mods: (" + ServerAPI.modlists_Inside.size() + ") -> " + ServerAPI.modlists_Inside);
+                sender.sendMessage(ChatColor.GREEN + "Only Client mods: (" + ServerAPI.modlists_Client.size() + ") -> " + ServerAPI.modlists_Client);
+                sender.sendMessage(ChatColor.GREEN + "Only Server mods: (" + ServerAPI.modlists_Server.size() + ") -> " + ServerAPI.modlists_Server);
+                sender.sendMessage(ChatColor.GREEN + "All mods: (" + ServerAPI.modlists_All.size() + ") -> " + ServerAPI.modlists_All);}
             case "playermods" -> {
                 // Not recommended for use in games, only test output
                 if (args.length == 1) {

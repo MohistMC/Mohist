@@ -316,7 +316,7 @@ public class Metrics {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
 
                     Map<String, Integer> modslist = new HashMap<>();
-                    String[] mods = ServerAPI.getModList().replace("[", "").replace("]", "").split(", ");
+                    String[] mods = ServerAPI.modlists_All.toString().replace("[", "").replace("]", "").split(", ");
                     for (String x : mods) {
                         if (x.equals("minecraft") || x.equals("forge") || x.equals("mohist")) {
                             continue;
