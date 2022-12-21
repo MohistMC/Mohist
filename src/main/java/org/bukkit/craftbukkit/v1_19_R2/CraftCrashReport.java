@@ -18,6 +18,9 @@ public class CraftCrashReport implements Supplier<String> {
 
     @Override
     public String get() {
+        if (Bukkit.getServer() == null) {
+            return "CraftServer is not running yet";
+        }
         StringWriter value = new StringWriter();
         try {
             value.append("\n   Running: ").append(Bukkit.getName()).append(" version ").append(Bukkit.getVersion()).append(" (Implementing API version ").append(Bukkit.getBukkitVersion()).append(") ").append(String.valueOf(MinecraftServer.getServer().usesAuthentication()));
