@@ -1,11 +1,18 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -110,12 +_,32 @@
+@@ -91,7 +_,6 @@
+    }
+ 
+    public EntitySelector parse(StringReader p_91451_) throws CommandSyntaxException {
+-      int i = 0;
+       EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_91451_);
+       EntitySelector entityselector = entityselectorparser.m_121377_();
+       if (entityselector.m_121138_() > 1 && this.f_91443_) {
+@@ -110,12 +_,31 @@
        }
     }
  
 +   public EntitySelector parse(StringReader p_91451_, boolean overridePermissions) throws CommandSyntaxException {
-+      int i = 0;
 +      EntitySelectorParser entityselectorparser = new EntitySelectorParser(p_91451_);
 +      EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
 +      if (entityselector.m_121138_() > 1 && this.f_91443_) {
