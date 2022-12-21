@@ -1,12 +1,5 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -1,5 +_,6 @@
- package net.minecraft.network.syncher;
- 
-+import com.google.common.collect.Lists;
- import com.mojang.logging.LogUtils;
- import io.netty.handler.codec.DecoderException;
- import io.netty.handler.codec.EncoderException;
 @@ -18,6 +_,8 @@
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
