@@ -1,5 +1,19 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
+@@ -3,10 +_,13 @@
+ import java.util.Optional;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
++
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
++import org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class StartAttacking {
+    public static <E extends Mob> BehaviorControl<E> m_257710_(Function<E, Optional<? extends LivingEntity>> p_259868_) {
 @@ -30,8 +_,13 @@
                       if (!p_258774_.m_6779_(livingentity)) {
                          return false;
