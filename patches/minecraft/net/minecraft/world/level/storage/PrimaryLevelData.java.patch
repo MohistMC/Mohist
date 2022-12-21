@@ -1,10 +1,49 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -79,6 +_,7 @@
+@@ -16,6 +_,7 @@
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.Registry;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.core.UUIDUtil;
+ import net.minecraft.nbt.CompoundTag;
+@@ -26,6 +_,7 @@
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.resources.RegistryOps;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.level.GameRules;
+@@ -34,6 +_,7 @@
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.WorldDataConfiguration;
+ import net.minecraft.world.level.border.WorldBorder;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+ import net.minecraft.world.level.timers.TimerCallbacks;
+@@ -79,6 +_,22 @@
     private final Set<String> f_78439_;
     private boolean f_78440_;
     private final TimerQueue<MinecraftServer> f_78441_;
 +   private boolean confirmedExperimentalWarning = false;
++
++   // CraftBukkit start - Add world and pdc
++   public Registry<LevelStem> customDimensions;
++   private ServerLevel world;
++   protected Tag pdc;
++
++   public void setWorld(ServerLevel world) {
++      if (this.world != null) {
++         return;
++      }
++      this.world = world;
++      world.getWorld().readBukkitValues(pdc);
++      pdc = null;
++   }
++   // CraftBukkit end
  
     private PrimaryLevelData(@Nullable DataFixer p_249266_, int p_249857_, @Nullable CompoundTag p_249309_, boolean p_251525_, int p_249614_, int p_252310_, int p_250544_, float p_250495_, long p_250393_, long p_252085_, int p_250455_, int p_248981_, int p_249051_, boolean p_249672_, int p_249807_, boolean p_252350_, boolean p_250231_, boolean p_249788_, WorldBorder.Settings p_251494_, int p_249519_, int p_250649_, @Nullable UUID p_248892_, Set<String> p_251898_, TimerQueue<MinecraftServer> p_251119_, @Nullable CompoundTag p_248915_, CompoundTag p_252274_, LevelSettings p_248619_, WorldOptions p_251512_, PrimaryLevelData.SpecialWorldProperty p_251396_, Lifecycle p_252247_) {
        this.f_78452_ = p_249266_;

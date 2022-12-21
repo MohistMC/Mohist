@@ -56,12 +56,11 @@
     @Nullable
     private String f_129739_;
     public MinecraftServer.ReloadableResources f_129740_;
-@@ -245,9 +_,29 @@
+@@ -245,9 +_,28 @@
     protected final WorldData f_129749_;
     private volatile boolean f_195494_;
  
 +   // CraftBukkit start
-+   public static WorldLoader.InitConfig datapackconfiguration;
 +   public static WorldLoader.DataLoadContext worldLoader;
 +   public CraftServer server;
 +   public static OptionSet options;
