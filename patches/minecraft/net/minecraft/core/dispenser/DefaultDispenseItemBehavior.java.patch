@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -7,8 +_,15 @@
+@@ -7,9 +_,24 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -9,13 +9,23 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
+-   public final ItemStack m_6115_(BlockSource p_123391_, ItemStack p_123392_) {
 +
 +   // CraftBukkit start // Mohist TODO super();
 +   private boolean dropper = true;
 +
-    public final ItemStack m_6115_(BlockSource p_123391_, ItemStack p_123392_) {
++   public DefaultDispenseItemBehavior() {
++      this(true);
++   }
++
++   public DefaultDispenseItemBehavior(boolean dropper) {
++      this.dropper = dropper;
++   }
++
++  public final ItemStack m_6115_(BlockSource p_123391_, ItemStack p_123392_) {
        ItemStack itemstack = this.m_7498_(p_123391_, p_123392_);
        this.m_6823_(p_123391_);
+       this.m_123387_(p_123391_, p_123391_.m_6414_().m_61143_(DispenserBlock.f_52659_));
 @@ -20,7 +_,11 @@
        Direction direction = p_123385_.m_6414_().m_61143_(DispenserBlock.f_52659_);
        Position position = DispenserBlock.m_52720_(p_123385_);
