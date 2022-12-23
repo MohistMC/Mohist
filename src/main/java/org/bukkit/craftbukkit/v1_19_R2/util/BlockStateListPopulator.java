@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_19_R2.util;
 import java.util.*;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.EntityBlock;
@@ -120,7 +121,17 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
     }
 
     @Override
+    public boolean isFluidAtPosition(BlockPos bp, Predicate<FluidState> prdct) {
+        return world.isFluidAtPosition(bp, prdct);
+    }
+
+    @Override
     public DimensionType dimensionType() {
         return world.dimensionType();
+    }
+
+    @Override
+    public RegistryAccess registryAccess() {
+        return world.registryAccess();
     }
 }

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_19_R2.block;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.bukkit.*;
@@ -12,7 +13,9 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R2.profile.CraftPlayerProfile;
+import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
 import org.bukkit.profile.PlayerProfile;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implements Skull {
 
@@ -115,6 +118,21 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
         } else {
             this.profile = CraftPlayerProfile.validateSkullProfile(((CraftPlayerProfile) profile).buildGameProfile());
         }
+    }
+
+    @Override
+    public NamespacedKey getNoteBlockSound() {
+        ResourceLocation key = getSnapshot().getNoteBlockSound();
+        return (key != null) ? CraftNamespacedKey.fromMinecraft(key) : null;
+    }
+
+    @Override
+    public void setNoteBlockSound(@Nullable NamespacedKey namespacedKey) {
+        if (namespacedKey == null) {
+            this.getSnapshot().noteBlockSound = null;
+            return;
+        }
+        this.getSnapshot().noteBlockSound = CraftNamespacedKey.toMinecraft(namespacedKey);
     }
 
     @Override
