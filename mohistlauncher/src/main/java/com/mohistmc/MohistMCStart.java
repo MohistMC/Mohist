@@ -67,7 +67,7 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
         CustomLibraries.loadCustomLibs();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
             new v_1_19().run();
         }

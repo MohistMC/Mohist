@@ -46,6 +46,14 @@ public class MohistConfigUtil {
         return yml.getBoolean("mohist.installation-finished", false);
     }
 
+    public static boolean CHECK_LIBRARIES() {
+        if (yml.get("mohist.check_libraries") == null) {
+            yml.set("mohist.check_libraries", true);
+            save();
+        }
+        return yml.getBoolean("mohist.check_libraries", true);
+    }
+
     public static boolean aBoolean(String key, boolean defaultReturn) {
         return yml.getBoolean(key, defaultReturn);
     }
