@@ -361,7 +361,7 @@
 +   }
 +
 +   // Mohist start
-+   public AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   public static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
