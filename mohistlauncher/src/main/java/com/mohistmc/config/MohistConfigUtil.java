@@ -35,7 +35,7 @@ public class MohistConfigUtil {
         try {
             if (!mohistyml.exists()) {
                 mohistyml.mkdirs();
-                Files.copy(Objects.requireNonNull(MohistMCStart.class.getClassLoader().getResourceAsStream("configs/mohist.yml")), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream("configs/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             System.out.println("File copy exception!");
