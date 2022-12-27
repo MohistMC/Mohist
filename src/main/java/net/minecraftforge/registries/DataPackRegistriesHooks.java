@@ -8,6 +8,7 @@ package net.minecraftforge.registries;
 import com.google.common.collect.ImmutableMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.core.RegistrySynchronization.NetworkedRegistryData;
@@ -62,6 +63,10 @@ public final class DataPackRegistriesHooks
     public static List<RegistryDataLoader.RegistryData<?>> getDataPackRegistries()
     {
         return DATA_PACK_REGISTRIES_VIEW;
+    }
+
+    public static Stream<RegistryDataLoader.RegistryData<?>> getDataPackRegistriesWithDimensions() {
+        return Stream.concat(DATA_PACK_REGISTRIES_VIEW.stream(), RegistryDataLoader.DIMENSION_REGISTRIES.stream());
     }
 
     /**

@@ -24,6 +24,14 @@
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
        this.m_21441_(BlockPathTypes.DANGER_FIRE, 16.0F);
+@@ -116,6 +_,7 @@
+          CriteriaTriggers.f_10585_.m_70959_((ServerPlayer)this.f_35263_, this, p_35274_.m_45368_());
+       }
+ 
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.f_35263_, p_35274_, this));
+    }
+ 
+    protected abstract void m_8058_(MerchantOffer p_35299_);
 @@ -164,9 +_,9 @@
     }
  
