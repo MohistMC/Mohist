@@ -9,7 +9,7 @@
     }));
     private static final Map<String, TextColor> f_131256_ = f_131255_.values().stream().collect(ImmutableMap.toImmutableMap((p_237297_) -> {
        return p_237297_.f_131258_;
-@@ -27,14 +_,26 @@
+@@ -27,15 +_,28 @@
     @Nullable
     private final String f_131258_;
  
@@ -34,5 +34,7 @@
        this.f_131258_ = null;
 +      this.format = null;
     }
++   // CraftBukkit end
  
     public int m_131265_() {
+       return this.f_131257_;

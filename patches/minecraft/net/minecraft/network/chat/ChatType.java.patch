@@ -16,14 +16,11 @@
  
     private static ResourceKey<ChatType> m_237023_(String p_237024_) {
        return ResourceKey.m_135785_(Registries.f_256873_, new ResourceLocation(p_237024_));
-@@ -38,7 +_,10 @@
-       p_256390_.m_255272_(f_240668_, new ChatType(ChatTypeDecoration.m_240709_("commands.message.display.outgoing"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+@@ -39,6 +_,7 @@
        p_256390_.m_255272_(f_241694_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.text"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
        p_256390_.m_255272_(f_241626_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.sent"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
-+      // CraftBukkit start
        p_256390_.m_255272_(f_237009_, new ChatType(ChatTypeDecoration.m_239222_("chat.type.emote"), ChatTypeDecoration.m_239222_("chat.type.emote")));
-+      p_256390_.m_255272_(RAW, new ChatType(new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_), new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_)));
-+      // CraftBukkit end
++      p_256390_.m_255272_(RAW, new ChatType(new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_), new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_))); // CraftBukkit
     }
  
     public static ChatType.Bound m_240980_(ResourceKey<ChatType> p_241279_, Entity p_241483_) {

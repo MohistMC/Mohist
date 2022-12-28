@@ -1,9 +1,16 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
-@@ -33,6 +_,15 @@
+@@ -27,11 +_,20 @@
+ 
+       for(short short1 : p_132987_) {
+          this.f_132981_[j] = short1;
+-         this.f_132982_[j] = p_132988_.m_62982_(SectionPos.m_123204_(short1), SectionPos.m_123220_(short1), SectionPos.m_123227_(short1));
++         this.f_132982_[j] = (p_132988_ != null) ? p_132988_.m_62982_(SectionPos.m_123204_(short1), SectionPos.m_123220_(short1), SectionPos.m_123227_(short1)) : net.minecraft.world.level.block.Blocks.f_50016_.m_49966_(); // CraftBukkit - SPIGOT-6076, Mojang bug when empty chunk section notified
+          ++j;
+       }
  
     }
- 
++
 +   // CraftBukkit start - Add constructor
 +   public ClientboundSectionBlocksUpdatePacket(SectionPos sectionposition, ShortSet shortset, net.minecraft.world.level.block.state.BlockState[] states, boolean flag) {
 +      this.f_132980_ = sectionposition;
@@ -12,7 +19,6 @@
 +      this.f_132982_ = states;
 +   }
 +   // CraftBukkit end
-+
+ 
     public ClientboundSectionBlocksUpdatePacket(FriendlyByteBuf p_179196_) {
        this.f_132980_ = SectionPos.m_123184_(p_179196_.readLong());
-       this.f_132983_ = p_179196_.readBoolean();
