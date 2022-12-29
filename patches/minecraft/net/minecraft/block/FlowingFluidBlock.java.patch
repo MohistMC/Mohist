@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowingFluidBlock.java
 +++ b/net/minecraft/block/FlowingFluidBlock.java
-@@ -26,6 +_,7 @@
+@@ -26,13 +_,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,7 +8,8 @@
  
  public class FlowingFluidBlock extends Block implements IBucketPickupHandler {
     public static final IntegerProperty field_176367_b = BlockStateProperties.field_208132_ag;
-@@ -33,6 +_,7 @@
+-   protected final FlowingFluid field_204517_c;
++   private final FlowingFluid field_204517_c;
     private final List<FluidState> field_212565_c;
     public static final VoxelShape field_235510_c_ = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
  
