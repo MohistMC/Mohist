@@ -30,8 +30,8 @@
     }
  
 +   // CraftBukkit start - add method to get all entities in chunk
-+   public List<Entity> getEntities(ChunkPos chunkCoordIntPair) {
-+      return f_157495_.m_156888_(chunkCoordIntPair.m_45588_()).flatMap(EntitySection::m_156845_).map(entity -> (Entity) entity).collect(Collectors.toList());
++   public List<Entity> getEntities(ChunkPos chunkPos) {
++      return f_157495_.m_156888_(chunkPos.m_45588_()).flatMap(EntitySection::m_156845_).map(entity -> (Entity) entity).collect(Collectors.toList());
 +   }
 +
 +   public boolean isPending(long pair) {

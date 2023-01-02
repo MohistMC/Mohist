@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/gameevent/GameEventDispatcher.java
++++ b/net/minecraft/world/level/gameevent/GameEventDispatcher.java
+@@ -5,10 +_,15 @@
+ import java.util.List;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.SectionPos;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.network.protocol.game.DebugPackets;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.chunk.ChunkAccess;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
++import org.bukkit.event.world.GenericGameEvent;
+ 
+ public class GameEventDispatcher {
+    private final ServerLevel f_243917_;
+@@ -20,6 +_,14 @@
+    public void m_245905_(GameEvent p_251754_, Vec3 p_250613_, GameEvent.Context p_251777_) {
+       int i = p_251754_.m_157827_();
+       BlockPos blockpos = new BlockPos(p_250613_);
++      // CraftBukkit start
++      GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_251754_))), new Location(f_243917_.getWorld(), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()), (p_251777_.f_223711_() == null) ? null : p_251777_.f_223711_().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
++      f_243917_.getCraftServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return;
++      }
++      i = event.getRadius();
++      // CraftBukkit end
+       int j = SectionPos.m_123171_(blockpos.m_123341_() - i);
+       int k = SectionPos.m_123171_(blockpos.m_123342_() - i);
+       int l = SectionPos.m_123171_(blockpos.m_123343_() - i);

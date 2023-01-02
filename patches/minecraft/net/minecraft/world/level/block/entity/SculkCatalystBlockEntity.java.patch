@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEventListener;
+ import net.minecraft.world.level.gameevent.PositionSource;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory;
+ 
+ public class SculkCatalystBlockEntity extends BlockEntity implements GameEventListener {
+    private final BlockPositionSource f_222771_ = new BlockPositionSource(this.f_58858_);
+@@ -73,7 +_,9 @@
+    }
+ 
+    public static void m_222779_(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
++      CraftEventFactory.sourceBlockOverride = p_222783_.m_58899_(); // CraftBukkit - SPIGOT-7068: Add source block override, not the most elegant way but better than passing down a BlockPosition up to five methods deep.
+       p_222783_.f_222772_.m_222255_(p_222780_, p_222781_, p_222780_.m_213780_(), true);
++      CraftEventFactory.sourceBlockOverride = null; // CraftBukkit
+    }
+ 
+    public void m_142466_(CompoundTag p_222787_) {

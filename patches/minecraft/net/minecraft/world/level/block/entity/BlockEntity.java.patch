@@ -34,12 +34,19 @@
     }
  
     public static BlockPos m_187472_(CompoundTag p_187473_) {
-@@ -48,9 +_,13 @@
+@@ -48,9 +_,20 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
 +      if (p_155245_.m_128441_("ForgeData")) this.customPersistentData = p_155245_.m_128469_("ForgeData");
 +      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
++
++      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++
++      net.minecraft.nbt.Tag persistentDataTag = p_155245_.m_128423_("PublicBukkitValues");
++      if (persistentDataTag instanceof CompoundTag) {
++         this.persistentDataContainer.putAll((CompoundTag) persistentDataTag);
++      }
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
@@ -48,6 +55,18 @@
     }
  
     public final CompoundTag m_187480_() {
+@@ -68,6 +_,11 @@
+    public final CompoundTag m_187482_() {
+       CompoundTag compoundtag = new CompoundTag();
+       this.m_183515_(compoundtag);
++      // CraftBukkit start - store container
++      if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
++         compoundtag.m_128365_("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
++      }
++      // CraftBukkit end
+       return compoundtag;
+    }
+ 
 @@ -163,6 +_,13 @@
  
     public void m_7651_() {

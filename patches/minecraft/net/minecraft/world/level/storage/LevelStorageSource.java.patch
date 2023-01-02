@@ -1,11 +1,19 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -225,6 +_,7 @@
+          WorldDimensions.Complete worlddimensions$complete = worldgensettings.f_64605_().m_245300_(p_249363_);
+          Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_251214_);
+          PrimaryLevelData primaryleveldata = PrimaryLevelData.m_78530_(dynamic, p_248498_, i, compoundtag2, levelsettings, levelversion, worlddimensions$complete.f_244634_(), worldgensettings.f_243992_(), lifecycle);
++         primaryleveldata.pdc = compoundtag1.m_128423_("BukkitValues"); // CraftBukkit - Add PDC to world
+          return Pair.of(primaryleveldata, worlddimensions$complete);
+       };
+    }
 @@ -302,6 +_,11 @@
        return new LevelStorageSource.LevelStorageAccess(p_78261_);
     }
  
 +   // Mohist TODO
-+   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> actualDimension) {
++   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> dimensionType) {
 +      return null;
 +   }
 +

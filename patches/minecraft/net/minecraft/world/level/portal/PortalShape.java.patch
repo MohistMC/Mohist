@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R2.util.BlockStateListPopulator;
+ 
+ public class PortalShape {
+    private static final int f_164752_ = 2;
 @@ -28,7 +_,7 @@
     private static final int f_164753_ = 3;
     public static final int f_164751_ = 21;
@@ -9,3 +17,54 @@
     };
     private static final float f_256985_ = 4.0F;
     private static final double f_256802_ = 1.0D;
+@@ -40,6 +_,7 @@
+    private BlockPos f_77690_;
+    private int f_77691_;
+    private final int f_77692_;
++   BlockStateListPopulator blocks; // CraftBukkit - add field
+ 
+    public static Optional<PortalShape> m_77708_(LevelAccessor p_77709_, BlockPos p_77710_, Direction.Axis p_77711_) {
+       return m_77712_(p_77709_, p_77710_, (p_77727_) -> {
+@@ -58,6 +_,7 @@
+    }
+ 
+    public PortalShape(LevelAccessor p_77695_, BlockPos p_77696_, Direction.Axis p_77697_) {
++      blocks = new BlockStateListPopulator(p_77695_.getMinecraftWorld()); // CraftBukkit
+       this.f_77686_ = p_77695_;
+       this.f_77687_ = p_77697_;
+       this.f_77688_ = p_77697_ == Direction.Axis.X ? Direction.WEST : Direction.SOUTH;
+@@ -98,6 +_,7 @@
+          BlockState blockstate = this.f_77686_.m_8055_(blockpos$mutableblockpos);
+          if (!m_77717_(blockstate)) {
+             if (f_77685_.m_61035_(blockstate, this.f_77686_, blockpos$mutableblockpos)) {
++               blocks.m_7731_(blockpos$mutableblockpos, blockstate, 18); // CraftBukkit - lower left / right
+                return i;
+             }
+             break;
+@@ -107,6 +_,7 @@
+          if (!f_77685_.m_61035_(blockstate1, this.f_77686_, blockpos$mutableblockpos)) {
+             break;
+          }
++         blocks.m_7731_(blockpos$mutableblockpos, blockstate1, 18); // CraftBukkit - bottom row
+       }
+ 
+       return 0;
+@@ -124,6 +_,7 @@
+          if (!f_77685_.m_61035_(this.f_77686_.m_8055_(blockpos$mutableblockpos), this.f_77686_, blockpos$mutableblockpos)) {
+             return false;
+          }
++         blocks.m_7731_(blockpos$mutableblockpos, this.f_77686_.m_8055_(blockpos$mutableblockpos), 18); // CraftBukkit - upper row
+       }
+ 
+       return true;
+@@ -152,6 +_,10 @@
+                ++this.f_77689_;
+             }
+          }
++         // CraftBukkit start - left and right
++         blocks.m_7731_(p_77729_.m_122190_(this.f_77690_).m_122175_(Direction.UP, i).m_122175_(this.f_77688_, -1), this.f_77686_.m_8055_(p_77729_), 18);
++         blocks.m_7731_(p_77729_.m_122190_(this.f_77690_).m_122175_(Direction.UP, i).m_122175_(this.f_77688_, this.f_77692_), this.f_77686_.m_8055_(p_77729_), 18);
++         // CraftBukkit end
+       }
+ 
+       return 21;

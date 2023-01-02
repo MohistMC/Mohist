@@ -8,7 +8,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.commands.CommandSource;
  import net.minecraft.commands.CommandSourceStack;
-@@ -24,12 +_,42 @@
+@@ -24,12 +_,22 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
@@ -29,30 +29,31 @@
 -   private final Container f_59525_ = new Container() {
 +   public final Container f_59525_ = new LecternInventory();
 +
-+   @Override
-+   public void m_213846_(Component p_230797_) {
-+
-+   }
-+
-+   @Override
-+   public boolean m_6999_() {
-+      return false;
-+   }
-+
-+   @Override
-+   public boolean m_7028_() {
-+      return false;
-+   }
-+
-+   @Override
-+   public boolean m_6102_() {
-+      return false;
-+   }
-+
 +   public class LecternInventory implements Container {
        public int m_6643_() {
           return 1;
        }
+@@ -66,11 +_,19 @@
+          }
+       }
+ 
++      // CraftBukkit start
+       public void m_6836_(int p_59585_, ItemStack p_59586_) {
++         if (p_59585_ == 0) {
++            LecternBlockEntity.this.m_59536_(p_59586_);
++            if (LecternBlockEntity.this.m_58904_() != null) {
++               LecternBlock.m_54497_(LecternBlockEntity.this.m_58904_(), LecternBlockEntity.this.m_58899_(), LecternBlockEntity.this.m_58900_(), LecternBlockEntity.this.m_59567_());
++            }
++         }
+       }
++      // CraftBukkit end
+ 
+       public int m_6893_() {
+-         return 1;
++         return maxStack; // CraftBukkit
+       }
+ 
+       public void m_6596_() {
 @@ -89,8 +_,50 @@
           return false;
        }
@@ -104,7 +105,7 @@
     };
     private final ContainerData f_59526_ = new ContainerData() {
        public int m_6413_(int p_59600_) {
-@@ -141,7 +_,7 @@
+@@ -141,12 +_,12 @@
        this.m_6596_();
     }
  
@@ -113,20 +114,56 @@
        int i = Mth.m_14045_(p_59533_, 0, this.f_59529_ - 1);
        if (i != this.f_59528_) {
           this.f_59528_ = i;
-@@ -213,10 +_,15 @@
+          this.m_6596_();
+-         LecternBlock.m_54488_(this.m_58904_(), this.m_58899_(), this.m_58900_());
++         if (this.f_58857_ != null) LecternBlock.m_54488_(this.m_58904_(), this.m_58899_(), this.m_58900_()); // CraftBukkit
+       }
+ 
+    }
+@@ -180,7 +_,7 @@
+       }
+ 
+       Vec3 vec3 = Vec3.m_82512_(this.f_58858_);
+-      return new CommandSourceStack(CommandSource.f_80164_, vec3, Vec2.f_82462_, (ServerLevel)this.f_58857_, 2, s, component, this.f_58857_.m_7654_(), p_59535_);
++      return new CommandSourceStack(this, vec3, Vec2.f_82462_, (ServerLevel)this.f_58857_, 2, s, component, this.f_58857_.m_7654_(), p_59535_);
+    }
+ 
+    public boolean m_6326_() {
+@@ -213,10 +_,36 @@
     }
  
     public AbstractContainerMenu m_7208_(int p_59562_, Inventory p_59563_, Player p_59564_) {
 -      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_);
-+      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_, p_59563_);
++      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_, p_59563_); // CraftBukkit
     }
  
     public Component m_5446_() {
        return Component.m_237115_("container.lectern");
+    }
++
++   // CraftBukkit start
++   @Override
++   public void m_213846_(Component ichatbasecomponent) {
 +   }
 +
 +   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new CraftBlockCommandSender(wrapper, this);
-    }
++   }
++
++   @Override
++   public boolean m_6999_() {
++      return false;
++   }
++
++   @Override
++   public boolean m_7028_() {
++      return false;
++   }
++
++   @Override
++   public boolean m_6102_() {
++      return false;
++   }
++   // CraftBukkit end
  }

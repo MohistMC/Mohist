@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
++++ b/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.VibrationParticleOption;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.BlockTags;
+@@ -28,6 +_,9 @@
+ import net.minecraft.world.level.gameevent.PositionSource;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
++import org.bukkit.event.block.BlockReceiveGameEvent;
+ 
+ public class VibrationListener implements GameEventListener {
+    @VisibleForTesting
+@@ -161,7 +_,15 @@
+             return false;
+          } else {
+             Vec3 vec3 = optional.get();
+-            if (!this.f_157889_.m_213641_(p_251930_, this, new BlockPos(p_250045_), p_250161_, p_251443_)) {
++            //if (!this.config.shouldListen(p_251930_, this, new BlockPos(p_250045_), p_250161_, p_251443_)) {
++            // CraftBukkit start
++            boolean defaultCancel = !this.f_157889_.m_213641_(p_251930_, this, new BlockPos(p_250045_), p_250161_, p_251443_);
++            Entity entity = p_251443_.f_223711_();
++            BlockReceiveGameEvent event = new BlockReceiveGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_250161_))), CraftBlock.at(p_251930_, new BlockPos(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++            event.setCancelled(defaultCancel);
++            p_251930_.getCraftServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               // CraftBukkit end
+                return false;
+             } else if (m_223775_(p_251930_, p_250045_, vec3)) {
+                return false;
