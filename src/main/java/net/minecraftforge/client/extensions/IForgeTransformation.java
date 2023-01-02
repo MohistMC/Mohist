@@ -45,7 +45,7 @@ public interface IForgeTransformation
      * @param stack the pose stack to modify
      */
     @OnlyIn(Dist.CLIENT) // TODO - 1.20: Remove in favour of client-only PoseStack extension
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     default void push(PoseStack stack)
     {
         stack.pushTransformation(self());

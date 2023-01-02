@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/resources/TextureAtlasHolder.java
++++ b/net/minecraft/client/resources/TextureAtlasHolder.java
+@@ -15,7 +_,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public abstract class TextureAtlasHolder implements PreparableReloadListener, AutoCloseable {
+-   protected final TextureAtlas f_118884_;
++   private final TextureAtlas f_118884_;
+    private final ResourceLocation f_260648_;
+ 
+    public TextureAtlasHolder(TextureManager p_262057_, ResourceLocation p_261554_, ResourceLocation p_262147_) {
