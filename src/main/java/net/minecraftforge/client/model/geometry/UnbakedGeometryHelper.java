@@ -145,7 +145,10 @@ public class UnbakedGeometryHelper
     public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents, @Nullable ForgeFaceData faceData)
     {
         var elements = ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
-        elements.forEach(element -> element.faceData = faceData);
+        if(faceData != null)
+        {
+            elements.forEach(element -> element.setFaceData(faceData));
+        }
         return elements;
     }
 

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -86,6 +_,8 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.Bukkit;
++import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+ import org.slf4j.Logger;
+ 
+ public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
 @@ -203,6 +_,17 @@
        return this.f_35366_;
     }
@@ -18,6 +27,15 @@
     protected void m_8024_() {
        this.f_19853_.m_46473_().m_6180_("villagerBrain");
        this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
+@@ -219,7 +_,7 @@
+                this.f_35374_ = false;
+             }
+ 
+-            this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 200, 0));
++            this.addEffect(new MobEffectInstance(MobEffects.f_19605_, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
+          }
+       }
+ 
 @@ -254,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
@@ -36,6 +54,36 @@
        this.m_35319_(40);
        if (!this.f_19853_.m_5776_()) {
           this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
+@@ -330,7 +_,13 @@
+       this.m_35523_();
+ 
+       for(MerchantOffer merchantoffer : this.m_6616_()) {
+-         merchantoffer.m_45372_();
++         // CraftBukkit start
++         VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
++         Bukkit.getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            merchantoffer.m_45372_();
++         }
++         // CraftBukkit end
+       }
+ 
+       this.f_35363_ = this.f_19853_.m_46467_();
+@@ -375,7 +_,13 @@
+       int i = 2 - this.f_35364_;
+       if (i > 0) {
+          for(MerchantOffer merchantoffer : this.m_6616_()) {
+-            merchantoffer.m_45372_();
++            // CraftBukkit start
++            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
++            Bukkit.getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               merchantoffer.m_45372_();
++            }
++            // CraftBukkit end
+          }
+       }
+ 
 @@ -558,7 +_,7 @@
        super.m_6667_(p_35419_);
     }
