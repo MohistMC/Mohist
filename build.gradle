@@ -888,22 +888,68 @@ project(':forge') {
 
     ext {
         MANIFESTS = [
-            'com/mohistmc/': [
-                    'Specification-Title'   : 'Mohist',
-                    'Specification-Vendor'  : 'MohistMC',
-                    'Specification-Version':  MOHIST_VERSION,
-                    'Implementation-Title'  : 'Mohist',
-                    'Implementation-Version': '1.19.3-' + MOHIST_VERSION,
-                    'Implementation-Vendor' : 'MohistMC'
-            ] as LinkedHashMap,
-            'org/bukkit/craftbukkit/v1_19_R2/': [
-                    'Specification-Title'   : MCP_VERSION,
-                    'Specification-Vendor'  : 'SpigotMC',
-                    'Specification-Version':  '1.19.3',
-                    'Implementation-Title'  : 'Spigot',
-                    'Implementation-Version': '7e29f765-296df566-9fb885e8',
-                    'Implementation-Vendor' : 'SpigotMC'
-            ] as LinkedHashMap
+                '/': [
+                        'Timestamp'      : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                        'GitCommit'      : gradleutils.gitInfo.abbreviatedId,
+                        'Git-Branch'     : '1.19.3',
+                        'FML-System-Mods': 'forge'
+                ] as LinkedHashMap,
+                'net/minecraftforge/versions/forge/'        : [
+                        'Specification-Title'   : 'Forge',
+                        'Specification-Vendor'  : 'Forge Development LLC',
+                        'Specification-Version' : SPEC_VERSION,
+                        'Implementation-Title'  : project.group,
+                        'Implementation-Version': project.version.substring(MC_VERSION.length() + 1),
+                        'Implementation-Vendor' : 'Forge Development LLC'
+                ] as LinkedHashMap,
+                'net/minecraftforge/versions/mcp/'          : [
+                        'Specification-Title'   : 'Minecraft',
+                        'Specification-Vendor'  : 'Mojang',
+                        'Specification-Version' : MC_VERSION,
+                        'Implementation-Title'  : 'MCP',
+                        'Implementation-Version': MCP_VERSION,
+                        'Implementation-Vendor' : 'Forge'
+                ] as LinkedHashMap,
+                'net/minecraftforge/fml/javafmlmod/'        : [
+                        'Specification-Title'   : 'Mod Language Provider',
+                        'Specification-Vendor'  : 'Forge Development LLC',
+                        'Specification-Version' : '1',
+                        'Implementation-Title'  : 'FML Java Mod',
+                        'Implementation-Version': SPEC_VERSION,
+                        'Implementation-Vendor' : 'Forge'
+                ] as LinkedHashMap,
+                'net/minecraftforge/fml/mclanguageprovider/': [
+                        'Specification-Title'   : 'Mod Language Provider',
+                        'Specification-Vendor'  : 'Forge Development LLC',
+                        'Specification-Version' : '1',
+                        'Implementation-Title'  : 'Minecraft Language Mod Provider',
+                        'Implementation-Version': '1',
+                        'Implementation-Vendor' : 'Forge'
+                ] as LinkedHashMap,
+                'net/minecraftforge/fml/loading/'           : [
+                        'Specification-Title'   : 'Launcher',
+                        'Specification-Vendor'  : 'Forge Development LLC',
+                        'Specification-Version' : '1',
+                        'Implementation-Title'  : 'FML Launcher',
+                        'Implementation-Version': SPEC_VERSION,
+                        'Implementation-Vendor' : 'Forge'
+                ] as LinkedHashMap,
+                'com/mohistmc/'                             : [
+                        'Specification-Title'   : 'Mohist',
+                        'Specification-Vendor'  : 'MohistMC',
+                        'Specification-Version' : MOHIST_VERSION,
+                        'Implementation-Title'  : 'Mohist',
+                        'Implementation-Version': '1.19.3-' + MOHIST_VERSION,
+                        'Implementation-Vendor' : 'MohistMC'
+                ] as LinkedHashMap,
+                'org/bukkit/craftbukkit/v1_19_R2/'          : [
+                        'Specification-Title'   : MCP_VERSION,
+                        'Specification-Vendor'  : 'SpigotMC',
+                        'Specification-Version' : '1.19.3',
+                        'Implementation-Title'  : 'Spigot',
+                        'Implementation-Version': '7e29f765-296df566-9fb885e8',
+                        'Implementation-Vendor' : 'SpigotMC'
+                ] as LinkedHashMap
         ]
     }
 
