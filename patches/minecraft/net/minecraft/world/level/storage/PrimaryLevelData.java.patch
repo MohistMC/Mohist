@@ -75,15 +75,17 @@
        p_78547_.m_128405_("GameType", this.f_78443_.m_46929_().m_46392_());
        p_78547_.m_128405_("SpawnX", this.f_78446_);
        p_78547_.m_128405_("SpawnY", this.f_78447_);
-@@ -198,6 +_,11 @@
+@@ -198,6 +_,13 @@
           p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
        }
  
 +      p_78547_.m_128359_("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.f_78443_.getLifecycle()));
 +      p_78547_.m_128379_("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
 +
-+      if (Bukkit.getServer() != null) p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
-+      world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
++      if (Bukkit.getServer() != null) {
++         p_78547_.m_128359_("Bukkit.Version", Bukkit.getName() + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion()); // CraftBukkit
++         world.getWorld().storeBukkitValues(p_78547_); // CraftBukkit - add pdc
++      }
     }
  
     public int m_6789_() {
