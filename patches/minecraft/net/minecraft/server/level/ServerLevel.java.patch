@@ -58,7 +58,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -187,13 +_,27 @@
+@@ -187,23 +_,38 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -87,7 +87,10 @@
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
-@@ -203,7 +_,7 @@
+       this.f_8549_ = p_215002_;
+       ChunkGenerator chunkgenerator = p_215004_.f_63976_();
++      serverLevelDataCB.setWorld(this);
+       boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
        this.f_143244_ = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
