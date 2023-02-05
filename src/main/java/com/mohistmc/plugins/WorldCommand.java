@@ -56,7 +56,7 @@ public class WorldCommand extends Command {
         }
         Inventory inv = Bukkit.createInventory(null, groesse, name);
         for (World w : Bukkit.getWorlds()) {
-            ArrayList<String> infoLore = new ArrayList<String>();
+            ArrayList<String> infoLore = new ArrayList<>();
 
             infoLore.add("§bWorldBorder §8》 §7" + w.getWorldBorder().getSize());
             infoLore.add("§bWorldType §8》 §7" + w.getEnvironment().name()); // TODO

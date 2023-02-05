@@ -8,14 +8,6 @@
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import java.util.Arrays;
-@@ -16,6 +_,7 @@
- import net.minecraft.util.Util;
- import net.minecraft.util.registry.Registry;
- import net.minecraft.util.registry.RegistryLookupCodec;
-+import net.minecraft.util.registry.WorldGenRegistries;
- import net.minecraft.world.biome.Biome;
- import net.minecraft.world.biome.BiomeGenerationSettings;
- import net.minecraft.world.biome.Biomes;
 @@ -86,7 +_,7 @@
        this.field_82655_a.addAll(p_i242012_3_);
        this.func_82645_d();

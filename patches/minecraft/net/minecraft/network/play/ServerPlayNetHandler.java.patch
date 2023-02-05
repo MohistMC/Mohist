@@ -30,7 +30,7 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
  import net.minecraft.block.CommandBlockBlock;
-@@ -31,20 +_,24 @@
+@@ -31,10 +_,12 @@
  import net.minecraft.crash.ReportedException;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.IJumpingMount;
@@ -43,11 +43,7 @@
  import net.minecraft.entity.passive.horse.AbstractHorseEntity;
  import net.minecraft.entity.player.ChatVisibility;
  import net.minecraft.entity.player.PlayerInventory;
- import net.minecraft.entity.player.ServerPlayerEntity;
- import net.minecraft.entity.projectile.AbstractArrowEntity;
-+import net.minecraft.inventory.EquipmentSlotType;
- import net.minecraft.inventory.container.BeaconContainer;
- import net.minecraft.inventory.container.Container;
+@@ -45,6 +_,7 @@
  import net.minecraft.inventory.container.MerchantContainer;
  import net.minecraft.inventory.container.RecipeBookContainer;
  import net.minecraft.inventory.container.RepairContainer;
@@ -55,14 +51,6 @@
  import net.minecraft.item.BlockItem;
  import net.minecraft.item.BucketItem;
  import net.minecraft.item.Item;
-@@ -52,6 +_,7 @@
- import net.minecraft.item.Items;
- import net.minecraft.item.WritableBookItem;
- import net.minecraft.nbt.CompoundNBT;
-+import net.minecraft.nbt.INBT;
- import net.minecraft.nbt.ListNBT;
- import net.minecraft.nbt.StringNBT;
- import net.minecraft.network.IPacket;
 @@ -106,13 +_,17 @@
  import net.minecraft.network.play.server.SChatPacket;
  import net.minecraft.network.play.server.SConfirmTransactionPacket;
@@ -94,7 +82,7 @@
  import net.minecraft.util.math.shapes.IBooleanFunction;
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.util.math.shapes.VoxelShapes;
-@@ -150,6 +_,43 @@
+@@ -150,6 +_,41 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -114,7 +102,6 @@
 +import org.bukkit.event.inventory.*;
 +import org.bukkit.event.inventory.InventoryType.SlotType;
 +import org.bukkit.event.player.AsyncPlayerChatEvent;
-+import org.bukkit.event.player.PlayerAnimationEvent;
 +import org.bukkit.event.player.PlayerChatEvent;
 +import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 +import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -134,7 +121,6 @@
 +import org.bukkit.inventory.EquipmentSlot;
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.inventory.SmithingInventory;
-+import org.bukkit.util.NumberConversions;
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler {
     private static final Logger field_147370_c = LogManager.getLogger();

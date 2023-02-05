@@ -29,12 +29,11 @@
  import net.minecraft.client.util.ITooltipFlag;
  import net.minecraft.command.arguments.BlockPredicateArgument;
  import net.minecraft.command.arguments.BlockStateParser;
-@@ -44,18 +_,18 @@
+@@ -44,18 +_,14 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.INBT;
  import net.minecraft.nbt.ListNBT;
 +import net.minecraft.nbt.NBTDynamicOps;
-+import net.minecraft.network.play.server.SChangeBlockPacket;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.BlockTags;
@@ -48,33 +47,18 @@
 -import net.minecraft.util.ResourceLocation;
 -import net.minecraft.util.SoundEvent;
 -import net.minecraft.util.Util;
-+import net.minecraft.tileentity.SignTileEntity;
-+import net.minecraft.tileentity.SkullTileEntity;
-+import net.minecraft.tileentity.TileEntity;
 +import net.minecraft.util.*;
 +import net.minecraft.util.datafix.TypeReferences;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.text.IFormattableTextComponent;
-@@ -67,12 +_,23 @@
- import net.minecraft.util.text.TranslationTextComponent;
- import net.minecraft.util.text.event.HoverEvent;
- import net.minecraft.world.World;
-+import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -71,8 +_,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.Location;
-+import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
-+import org.bukkit.entity.Player;
-+import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.player.PlayerItemDamageEvent;
-+import org.bukkit.event.world.StructureGrowEvent;
  
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
@@ -100,7 +84,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,33 +_,61 @@
+@@ -109,33 +_,66 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -137,6 +121,11 @@
        this.field_190928_g = this.func_190926_b();
     }
  
++   public CompoundNBT getForgeCaps() {
++      return this.serializeCaps();
++   }
++
++
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundNBT compound) {
 +      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
@@ -438,7 +427,7 @@
     public ITextComponent func_151000_E() {
        IFormattableTextComponent iformattabletextcomponent = (new StringTextComponent("")).func_230529_a_(this.func_200301_q());
        if (this.func_82837_s()) {
-@@ -952,6 +_,23 @@
+@@ -952,6 +_,30 @@
  
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();
@@ -449,6 +438,13 @@
 +      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
 +      getStack().func_77982_d(itemStack.func_77978_p());
 +      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++   }
++
++   public void setForgeCaps(CompoundNBT caps) {
++      this.capNBT = caps;
++      if (caps != null) {
++         this.deserializeCaps(caps);
++      }
 +   }
 +
 +   /**

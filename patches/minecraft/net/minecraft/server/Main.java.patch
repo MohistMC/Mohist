@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,24 +_,29 @@
+@@ -1,19 +_,23 @@
  package net.minecraft.server;
  
 +import com.destroystokyo.paper.config.PaperConfig;
@@ -25,12 +25,6 @@
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
  import joptsimple.OptionSpec;
- import net.minecraft.command.Commands;
- import net.minecraft.crash.CrashReport;
-+import net.minecraft.entity.merchant.villager.VillagerTrades;
- import net.minecraft.nbt.INBT;
- import net.minecraft.nbt.NBTDynamicOps;
- import net.minecraft.resources.DataPackRegistries;
 @@ -31,6 +_,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;

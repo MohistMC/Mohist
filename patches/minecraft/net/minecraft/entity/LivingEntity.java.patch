@@ -84,13 +84,12 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-@@ -113,11 +_,16 @@
+@@ -113,11 +_,15 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.event.player.PlayerTeleportEvent;
-+import org.spigotmc.AsyncCatcher;
  
  public abstract class LivingEntity extends Entity {
     private static final UUID field_110156_b = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");

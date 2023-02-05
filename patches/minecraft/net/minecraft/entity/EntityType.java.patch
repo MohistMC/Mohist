@@ -10,11 +10,8 @@
  import java.util.UUID;
  import java.util.function.Function;
  import java.util.stream.Stream;
-@@ -140,12 +_,14 @@
- import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -142,10 +_,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.apache.commons.lang3.NotImplementedException;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.CreatureSpawnEvent;

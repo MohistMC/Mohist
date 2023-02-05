@@ -1,12 +1,5 @@
 --- a/net/minecraft/network/rcon/ClientThread.java
 +++ b/net/minecraft/network/rcon/ClientThread.java
-@@ -1,5 +_,6 @@
- package net.minecraft.network.rcon;
- 
-+import com.mohistmc.util.i18n.i18n;
- import java.io.BufferedInputStream;
- import java.io.ByteArrayOutputStream;
- import java.io.DataOutputStream;
 @@ -116,13 +_,14 @@
     }
  

@@ -96,7 +96,7 @@ public class CraftCustomInventory implements InventoryHolder {
         try {
             return inventory.getViewers();
         } catch (AbstractMethodError e) {
-            return new java.util.ArrayList<HumanEntity>();
+            return new java.util.ArrayList<>();
         }
     }
 }

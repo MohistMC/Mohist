@@ -81,7 +81,7 @@
  import net.minecraft.world.DimensionType;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
-@@ -85,6 +_,26 @@
+@@ -85,6 +_,23 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -90,7 +90,6 @@
 +import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_16_R3.command.ColouredConsoleSender;
-+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.*;
@@ -98,8 +97,6 @@
 +
 +import javax.annotation.Nullable;
 +import java.io.File;
-+import java.lang.reflect.Field;
-+import java.lang.reflect.Modifier;
 +import java.net.InetAddress;
 +import java.net.InetSocketAddress;
 +import java.net.SocketAddress;

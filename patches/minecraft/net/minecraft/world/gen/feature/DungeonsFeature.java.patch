@@ -7,6 +7,14 @@
  import com.mojang.serialization.Codec;
  import java.util.Random;
  import net.minecraft.block.BlockState;
+@@ -11,7 +_,6 @@
+ import net.minecraft.tileentity.MobSpawnerTileEntity;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.Direction;
+-import net.minecraft.util.Util;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.ISeedReader;
+ import net.minecraft.world.gen.ChunkGenerator;
 @@ -113,7 +_,7 @@
           if (tileentity instanceof MobSpawnerTileEntity) {
              ((MobSpawnerTileEntity)tileentity).func_145881_a().func_200876_a(this.func_201043_a(p_241855_3_));

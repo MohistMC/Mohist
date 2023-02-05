@@ -59,32 +59,12 @@
     }
  
     public void func_237241_a_(int p_237241_1_, int p_237241_2_, int p_237241_3_, boolean p_237241_4_, boolean p_237241_5_, RegistryKey<World> p_237241_6_) {
-@@ -66,8 +_,45 @@
+@@ -66,8 +_,25 @@
     }
  
     public void func_76184_a(CompoundNBT p_76184_1_) {
 -      this.field_76200_c = DimensionType.func_236025_a_(new Dynamic<>(NBTDynamicOps.field_210820_a, p_76184_1_.func_74781_a("dimension"))).resultOrPartial(field_237240_k_::error).orElseThrow(() -> {
 -         return new IllegalArgumentException("Invalid map dimension: " + p_76184_1_.func_74781_a("dimension"));
-+      // Paper start - fix "Not a string" spam
-+      INBT dimension = p_76184_1_.func_74781_a("dimension");
-+      if (dimension instanceof NumberNBT && ((NumberNBT)dimension).func_150287_d() >= 10) {
-+         final long least = p_76184_1_.func_74763_f("UUIDLeast");
-+         final long most = p_76184_1_.func_74763_f("UUIDMost");
-+         if (least != 0L && most != 0L) {
-+            this.uniqueId = new UUID(most, least);
-+            final CraftWorld world = (CraftWorld)this.server.getWorld(this.uniqueId);
-+            if (world != null) {
-+               dimension = StringNBT.func_229705_a_("minecaft:" + world.getName().toLowerCase(Locale.ENGLISH));
-+            }
-+            else {
-+               dimension = StringNBT.func_229705_a_("bukkit:_invalidworld_");
-+            }
-+         }
-+         else {
-+            dimension = StringNBT.func_229705_a_("bukkit:_invalidworld_");
-+         }
-+      }
-+      // Paper end - fix "Not a string" spam
 +      // CraftBukkit start
 +      DataResult<RegistryKey<World>> dataresult = DimensionType.func_236025_a_(new Dynamic(NBTDynamicOps.field_210820_a, p_76184_1_.func_74781_a("dimension")));
 +      this.field_76200_c = (RegistryKey) dataresult.resultOrPartial(field_237240_k_::error).orElseGet(() -> {
@@ -151,29 +131,6 @@
     public void func_76191_a(PlayerEntity p_76191_1_, ItemStack p_76191_2_) {
        if (!this.field_76202_j.containsKey(p_76191_1_)) {
           MapData.MapInfo mapdata$mapinfo = new MapData.MapInfo(p_76191_1_);
-@@ -348,6 +_,22 @@
-    }
- 
-    public class MapInfo {
-+
-+      // Paper start
-+      private void addSeenPlayers(java.util.Collection<MapDecoration> icons) {
-+         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.field_76211_a.getBukkitEntity();
-+         MapData.this.field_76203_h.forEach((name, mapIcon) -> {
-+            // If this cursor is for a player check visibility with vanish system
-+            org.bukkit.entity.Player other = org.bukkit.Bukkit.getPlayerExact(name); // Spigot
-+            if (other == null || player.canSee(other)) {
-+               icons.add(mapIcon);
-+            }
-+         });
-+      }
-+      private boolean shouldUseVanillaMap() {
-+         return mapView.getRenderers().size() == 1 && mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.v1_16_R3.map.CraftMapRenderer.class;
-+      }
-+      // Paper end
-       public final PlayerEntity field_76211_a;
-       private boolean field_176105_d = true;
-       private int field_176106_e;
 @@ -363,12 +_,23 @@
  
        @Nullable

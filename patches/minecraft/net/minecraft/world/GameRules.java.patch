@@ -104,19 +104,11 @@
              }
           }
  
-@@ -405,19 +_,27 @@
- 
-       protected abstract void func_223555_a(CommandContext<CommandSource> p_223555_1_, String p_223555_2_);
- 
-+      // Paper start
-       public void func_223554_b(CommandContext<CommandSource> p_223554_1_, String p_223554_2_) {
-          this.func_223555_a(p_223554_1_, p_223554_2_);
+@@ -410,14 +_,20 @@
           this.func_223556_a(p_223554_1_.getSource().func_197028_i());
        }
--
+ 
 -      protected void func_223556_a(@Nullable MinecraftServer p_223556_1_) {
-+      // Paper end
-+
 +      // Mohist start
 +      public void setPaperRuleKey(GameRules.RuleKey<T> paperRuleKey) {
 +         ruleKey = paperRuleKey;

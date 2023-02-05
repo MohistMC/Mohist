@@ -52,10 +52,7 @@ public class MohistSuperClassRemapper {
         }
         // https://github.com/Maxqia/ReflectionRemapper/blob/a75046eb0a864ad1f20b8f723ed467db614fff98/src/main/java/com/maxqia/ReflectionRemapper/Transformer.java#L68
         for (MethodNode method : node.methods) { // Taken from SpecialSource
-            ListIterator<AbstractInsnNode> insnIterator = method.instructions.iterator();
-            while (insnIterator.hasNext()) {
-                AbstractInsnNode next = insnIterator.next();
-
+            for (AbstractInsnNode next : method.instructions) {
                 if (next instanceof TypeInsnNode && next.getOpcode() == Opcodes.NEW) { // remap new URLClassLoader
                     TypeInsnNode insn = (TypeInsnNode) next;
                     switch (insn.desc) {

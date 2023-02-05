@@ -72,7 +72,7 @@ public class MohistJDK8EnumHelper {
     private static <T extends Enum<?>> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception {
         Object[] parms = new Object[additionalValues.length + 2];
         parms[0] = value;
-        parms[1] = Integer.valueOf(ordinal);
+        parms[1] = ordinal;
         System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
         return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[]{parms}));
     }
@@ -130,7 +130,7 @@ public class MohistJDK8EnumHelper {
 
         try {
             T[] previousValues = (T[]) valuesField.get(enumType);
-            List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
+            List<T> values = new ArrayList<>(Arrays.asList(previousValues));
             T newValue = (T) makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
             values.add(newValue);
             setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));

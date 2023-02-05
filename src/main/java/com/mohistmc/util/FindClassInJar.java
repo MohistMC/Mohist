@@ -72,8 +72,7 @@ public class FindClassInJar {
             } else {
                 File[] files = file.listFiles(new JarZipFileFilter());
 
-                for (int i = 0; i < files.length; i++) {
-                    File f = files[i];
+                for (File f : files) {
                     if (f.isDirectory()) {
                         checkDirectory(f.getAbsolutePath());
                     } else {
