@@ -280,6 +280,20 @@ public class CraftChunk implements Chunk {
     }
 
     @Override
+    public boolean contains(org.bukkit.block.Biome biome) {
+        Preconditions.checkArgument(biome != null, "Biome cannot be null");
+
+        Predicate<Holder<net.minecraft.world.level.biome.Biome>> nms = Predicates.equalTo(CraftBlock.biomeToBiomeBase(getHandle().biomeRegistry, biome));
+        for (LevelChunkSection section : getHandle().getSections()) {
+            if (section != null && section.getBiomes().maybeHas(nms)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public ChunkSnapshot getChunkSnapshot() {
         return getChunkSnapshot(true, false, false);
     }

@@ -4,7 +4,7 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 
-public class CraftGhast extends CraftFlying implements Ghast {
+public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
 
     public CraftGhast(CraftServer server, net.minecraft.world.entity.monster.Ghast entity) {
         super(server, entity);

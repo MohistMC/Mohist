@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hoglin;
 
-public class CraftHoglin extends CraftAnimals implements Hoglin {
+public class CraftHoglin extends CraftAnimals implements Hoglin, CraftEnemy {
 
     public CraftHoglin(CraftServer server, net.minecraft.world.entity.monster.hoglin.Hoglin entity) {
         super(server, entity);

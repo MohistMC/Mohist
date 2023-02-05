@@ -5,6 +5,9 @@ import groovy.json.JsonSlurper
 class JenkinsNumber {
 
     static String info() {
+
+
+
         Locale locale = Locale.getDefault()
         if (locale.getCountry() == "CN") {
             return '1.19.3'

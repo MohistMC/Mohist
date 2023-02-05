@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Shulker;
 
-public class CraftShulker extends CraftGolem implements Shulker {
+public class CraftShulker extends CraftGolem implements Shulker, CraftEnemy {
 
     public CraftShulker(CraftServer server, net.minecraft.world.entity.monster.Shulker entity) {
         super(server, entity);

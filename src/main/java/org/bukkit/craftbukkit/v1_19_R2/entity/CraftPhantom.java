@@ -4,7 +4,7 @@ import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Phantom;
 
-public class CraftPhantom extends CraftFlying implements Phantom {
+public class CraftPhantom extends CraftFlying implements Phantom, CraftEnemy {
 
     public CraftPhantom(CraftServer server, net.minecraft.world.entity.monster.Phantom entity) {
         super(server, entity);

@@ -51,8 +51,6 @@
  
 -                        entity.hurt(this.getDamageSource(), (float) ((int) ((d13 * d13 + d13) / 2.0D * 7.0D * (double) f2 + 1.0D)));
 +                        // CraftBukkit start
-+                        CraftEventFactory.entityDamage = source;
-+                        entity.lastDamageCancelled = false;
 +
 +                        // Special case ender dragon only give knockback if no damage is cancelled
 +                        // Thinks to note:
@@ -63,6 +61,9 @@
 +                        if (entity instanceof EntityComplexPart) {
 +                            continue;
 +                        }
++
++                        CraftEventFactory.entityDamage = source;
++                        entity.lastDamageCancelled = false;
 +
 +                        if (entity instanceof EntityEnderDragon) {
 +                            for (EntityComplexPart entityComplexPart : ((EntityEnderDragon) entity).subEntities) {

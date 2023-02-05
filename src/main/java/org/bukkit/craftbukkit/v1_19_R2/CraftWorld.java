@@ -1559,10 +1559,26 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     @Override
+    public void playSound(Entity entity, String sound, float volume, float pitch) {
+        playSound(entity, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
+    }
+
+    @Override
     public void playSound(Entity entity, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
         if (!(entity instanceof CraftEntity craftEntity) || entity.getWorld() != this || sound == null || category == null) return;
 
         ClientboundSoundEntityPacket packet = new ClientboundSoundEntityPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(CraftSound.getSoundEffect(sound)), net.minecraft.sounds.SoundSource.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, getHandle().getRandom().nextLong());
+        ChunkMap.TrackedEntity entityTracker = getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
+        if (entityTracker != null) {
+            entityTracker.broadcastAndSend(packet);
+        }
+    }
+
+    @Override
+    public void playSound(Entity entity, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (!(entity instanceof CraftEntity craftEntity) || entity.getWorld() != this || sound == null || category == null) return;
+
+        ClientboundSoundEntityPacket packet = new ClientboundSoundEntityPacket(Holder.direct(SoundEvent.createVariableRangeEvent(new ResourceLocation(sound))), net.minecraft.sounds.SoundSource.valueOf(category.name()), craftEntity.getHandle(), volume, pitch, getHandle().getRandom().nextLong());
         ChunkMap.TrackedEntity entityTracker = getHandle().getChunkSource().chunkMap.entityMap.get(entity.getEntityId());
         if (entityTracker != null) {
             entityTracker.broadcastAndSend(packet);
@@ -1867,7 +1883,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
             lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
             lightning.isSilent = isSilent;
-            world.strikeLightning(lightning);
+            world.strikeLightning(lightning, LightningStrikeEvent.Cause.CUSTOM );
             return (LightningStrike) lightning.getBukkitEntity();
         }
 
@@ -1877,6 +1893,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
             lightning.visualOnly = true;
             lightning.isSilent = isSilent;
+            world.strikeLightning( lightning, LightningStrikeEvent.Cause.CUSTOM );
             return (LightningStrike) lightning.getBukkitEntity();
         }
 

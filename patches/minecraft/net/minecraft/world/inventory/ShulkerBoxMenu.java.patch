@@ -35,3 +35,11 @@
        p_40193_.m_5856_(p_40192_.f_35978_);
        int i = 3;
        int j = 9;
+@@ -41,6 +_,7 @@
+    }
+ 
+    public boolean m_6875_(Player p_40195_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.f_40186_.m_6542_(p_40195_);
+    }
+ 

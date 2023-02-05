@@ -16,7 +16,7 @@
  import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.Containers;
  import net.minecraft.world.WorldlyContainer;
-@@ -22,6 +_,13 @@
+@@ -22,6 +_,14 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BrewingStandBlock;
  import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +24,7 @@
 +import org.bukkit.craftbukkit.v1_19_R2.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.block.BrewingStartEvent;
 +import org.bukkit.event.inventory.BrewEvent;
 +import org.bukkit.event.inventory.BrewingStandFuelEvent;
 +import org.bukkit.inventory.InventoryHolder;
@@ -110,6 +111,19 @@
              m_155232_(p_155286_, p_155287_, p_155288_);
           } else if (!flag || !itemstack1.m_150930_(p_155289_.f_58978_)) {
              p_155289_.f_58976_ = 0;
+@@ -111,7 +_,11 @@
+          }
+       } else if (flag && p_155289_.f_58979_ > 0) {
+          --p_155289_.f_58979_;
+-         p_155289_.f_58976_ = 400;
++         // CraftBukkit start
++         BrewingStartEvent event = new BrewingStartEvent(CraftBlock.at(p_155286_, p_155287_), CraftItemStack.asCraftMirror(itemstack1), 400);
++         p_155286_.getCraftServer().getPluginManager().callEvent(event);
++         p_155289_.f_58976_ = event.getTotalBrewTime(); // 400 -> event.getTotalBrewTime()
++         // CraftBukkit end
+          p_155289_.f_58978_ = itemstack1.m_41720_();
+          m_155232_(p_155286_, p_155287_, p_155288_);
+       }
 @@ -147,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
