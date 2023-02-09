@@ -519,8 +519,12 @@ public class CraftBlock implements Block {
         }
 
         Biome biome = org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
-        Biome biome1 =Biome.valueOf(normalizeName(base.getRegistryName().toString()));
-        return (biome == null) ? biome1 : biome;
+
+        if (biome != null){
+            return biome;
+        }
+
+        return Biome.valueOf(normalizeName(base.getRegistryName().toString()));
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
