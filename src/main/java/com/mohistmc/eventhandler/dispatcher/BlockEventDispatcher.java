@@ -19,8 +19,6 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import com.mohistmc.block.CraftCustomSnapshot;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
@@ -38,6 +36,9 @@ import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockEventDispatcher {
 
@@ -113,4 +114,5 @@ public class BlockEventDispatcher {
             }
         }
     }
+
 }

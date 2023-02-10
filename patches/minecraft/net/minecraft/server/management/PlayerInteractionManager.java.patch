@@ -1,9 +1,11 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -1,19 +_,28 @@
+@@ -1,19 +_,30 @@
  package net.minecraft.server.management;
  
  import java.util.Objects;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
 +
 +import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
  import net.minecraft.advancements.CriteriaTriggers;
@@ -238,7 +240,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -288,10 +_,49 @@
+@@ -288,11 +_,51 @@
        }
     }
  
@@ -248,28 +250,29 @@
 +   public BlockPos interactPosition;
 +   public Hand interactHand;
 +   public ItemStack interactItemStack;
++   // Mohist start
++   public AtomicReference<ActionResultType> enuminteractionresult = new AtomicReference<>(ActionResultType.PASS);
++   public AtomicReference<PlayerInteractEvent> eventCB = new AtomicReference<>();
++   public AtomicBoolean cancelledBlock = new AtomicBoolean(false);
++   // Mohist end
     public ActionResultType func_219441_a(ServerPlayerEntity p_219441_1_, World p_219441_2_, ItemStack p_219441_3_, Hand p_219441_4_, BlockRayTraceResult p_219441_5_) {
        BlockPos blockpos = p_219441_5_.func_216350_a();
        BlockState blockstate = p_219441_2_.func_180495_p(blockpos);
-+	  ActionResultType enuminteractionresult = ActionResultType.PASS;
-+      boolean cancelledBlock = false;
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_);
-+      if (event.isCanceled()) return event.getCancellationResult();
        if (this.field_73091_c == GameType.SPECTATOR) {
-+         INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
-+         cancelledBlock = !(inamedcontainerprovider instanceof INamedContainerProvider);
+          INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
++         cancelledBlock.set(!(inamedcontainerprovider instanceof INamedContainerProvider));
 +      }
 +      if (p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
-+         cancelledBlock = true;
++         cancelledBlock.set(true);
 +      }
-+      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_219441_1_, Action.RIGHT_CLICK_BLOCK, blockpos, p_219441_5_.func_216354_b(), p_219441_3_, cancelledBlock, p_219441_4_);
++      eventCB.set(CraftEventFactory.callPlayerInteractEvent(p_219441_1_, Action.RIGHT_CLICK_BLOCK, blockpos, p_219441_5_.func_216354_b(), p_219441_3_, cancelledBlock.get(), p_219441_4_));
 +      firedInteract = true;
-+      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
++      interactResult = eventCB.get().useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.func_185334_h();
 +      interactHand = p_219441_4_;
 +      interactItemStack = p_219441_3_.func_77946_l();
 +
-+      if (eventCB.useInteractedBlock() == Event.Result.DENY) {
++      if (eventCB.get().useInteractedBlock() == Event.Result.DENY) {
 +         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
 +         if (blockstate.func_177230_c() instanceof DoorBlock) {
 +            boolean bottom = blockstate.func_177229_b(DoorBlock.field_176523_O) == DoubleBlockHalf.LOWER;
@@ -283,15 +286,18 @@
 +            p_219441_1_.field_71135_a.func_147359_a(new SChangeBlockPacket(field_73092_a, blockpos.func_177984_a()));
 +         }
 +         p_219441_1_.getBukkitEntity().updateInventory(); // SPIGOT-2867
-+         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? ActionResultType.SUCCESS : ActionResultType.PASS;
++         enuminteractionresult.set((eventCB.getAndSet(null).useItemInHand() != Event.Result.ALLOW) ? ActionResultType.SUCCESS : ActionResultType.PASS);
 +      } else if (this.field_73091_c == GameType.SPECTATOR) {
-          INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
++         INamedContainerProvider inamedcontainerprovider = blockstate.func_215699_b(p_219441_2_, blockpos);
           if (inamedcontainerprovider != null) {
              p_219441_1_.func_213829_a(inamedcontainerprovider);
-@@ -300,10 +_,15 @@
+             return ActionResultType.SUCCESS;
+@@ -300,10 +_,17 @@
              return ActionResultType.PASS;
           }
        } else {
++         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_219441_1_, p_219441_4_, blockpos, p_219441_5_);
++         if (event.isCanceled()) return event.getCancellationResult();
 +         ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
 +         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            ActionResultType result = p_219441_3_.onItemUseFirst(itemusecontext);
@@ -321,7 +327,7 @@
              return ActionResultType.PASS;
           }
        }
-+      return enuminteractionresult;
++      return enuminteractionresult.getAndSet(ActionResultType.PASS);
 +      // CraftBukkit end
     }
  
