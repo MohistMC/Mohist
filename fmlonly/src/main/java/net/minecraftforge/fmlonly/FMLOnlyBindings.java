@@ -25,7 +25,7 @@ public class FMLOnlyBindings implements IBindingsProvider {
         return ()->DUMMYFORGEBUS;
     }
 
-    @Override
+    @Overrideblic static class Loading extends ModConfigEvent {
     public Supplier<I18NParser> getMessageParser() {
         return ()->new I18NParser() {
             @Override
@@ -42,6 +42,6 @@ public class FMLOnlyBindings implements IBindingsProvider {
 
     @Override
     public Supplier<IConfigEvent.ConfigConfig> getConfigConfiguration() {
-        return ()->new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new);
+        return ()->new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new, ModConfigEvent.Unloading::new);
     }
 }
