@@ -19,6 +19,7 @@
 
 package com.mohistmc.bukkit.nms.utils.srgutils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,16 +27,15 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
-import javax.annotation.Nullable;
 
 public interface IMappingFile {
-    public static IMappingFile load(File path) throws IOException {
+    static IMappingFile load(File path) throws IOException {
         try (InputStream in = new FileInputStream(path)) {
             return load(in);
         }
     }
 
-    public static IMappingFile load(InputStream in) throws IOException {
+    static IMappingFile load(InputStream in) throws IOException {
         return InternalUtils.load(in);
     }
 
@@ -61,7 +61,7 @@ public interface IMappingFile {
 
     IMappingFile chain(IMappingFile other);
 
-    public enum Format {
+    enum Format {
         SRG(false),
         XSRG(false),
         CSRG(false),
@@ -70,7 +70,7 @@ public interface IMappingFile {
 
         private boolean ordered = true;
 
-        private Format(boolean ordered) {
+        Format(boolean ordered) {
             this.ordered = ordered;
         }
 
@@ -87,7 +87,7 @@ public interface IMappingFile {
         }
     }
 
-    public interface INode {
+    interface INode {
         String getOriginal();
 
         String getMapped();
@@ -95,10 +95,10 @@ public interface IMappingFile {
         String write(Format format, boolean reversed);
     }
 
-    public interface IPackage extends INode {
+    interface IPackage extends INode {
     }
 
-    public interface IClass extends INode {
+    interface IClass extends INode {
         Collection<? extends IField> getFields();
 
         Collection<? extends IMethod> getMethods();
@@ -108,11 +108,11 @@ public interface IMappingFile {
         String remapMethod(String name, String desc);
     }
 
-    public interface IOwnedNode<T> extends INode {
+    interface IOwnedNode<T> extends INode {
         T getParent();
     }
 
-    public interface IField extends IOwnedNode<IClass> {
+    interface IField extends IOwnedNode<IClass> {
         @Nullable
         String getDescriptor();
 
@@ -120,7 +120,7 @@ public interface IMappingFile {
         String getMappedDescriptor();
     }
 
-    public interface IMethod extends IOwnedNode<IClass> {
+    interface IMethod extends IOwnedNode<IClass> {
         String getDescriptor();
 
         String getMappedDescriptor();

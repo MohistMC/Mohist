@@ -19,14 +19,14 @@ import java.util.Random;
 //Voronoi
 
 public class Voronoi {
-    static final int order3D[][] = {
+    static final int[][] order3D = {
             {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
             {1, 1, 0}, {1, 0, 1}, {0, 1, 1}, {-1, 1, 0}, {-1, 0, 1}, {0, -1, 1},
             {1, -1, 0}, {1, 0, -1}, {0, 1, -1}, {-1, -1, 0}, {-1, 0, -1}, {0, -1, -1},
             {1, 1, 1}, {-1, 1, 1}, {1, -1, 1}, {1, 1, -1}, {-1, -1, 1}, {-1, 1, -1},
             {1, -1, -1}, {-1, -1, -1}
     };
-    static final int order2D[][] = {
+    static final int[][] order2D = {
             {0, 0}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
     };
     private final float[][][][][] grid;
@@ -105,22 +105,22 @@ public class Voronoi {
 
         final float[] distances = new float[level];
         for (int i = 0; i < level; i++) distances[i] = Float.MAX_VALUE;
-        for (int i = 0; i < order3D.length; i++) {
+        for (int[] ints : order3D) {
             boolean possible = true;
             final float farDist = distances[level - 1];
             if (farDist < Float.MAX_VALUE)
                 for (int j = 0; j < 3; j++)
-                    if (order3D[i][j] < 0 && farDist < pos[j] ||
-                            order3D[i][j] > 0 && farDist < 1 - pos[j]) {
+                    if (ints[j] < 0 && farDist < pos[j] ||
+                            ints[j] > 0 && farDist < 1 - pos[j]) {
                         possible = false;
                         break;
                     }
             if (!possible) continue;
-            final int cx = (order3D[i][0] + cell[0]) % size;
-            final int cy = (order3D[i][1] + cell[1]) % size;
-            final int cz = (order3D[i][2] + cell[2]) % size;
+            final int cx = (ints[0] + cell[0]) % size;
+            final int cy = (ints[1] + cell[1]) % size;
+            final int cz = (ints[2] + cell[2]) % size;
             for (int j = 0; j < density; j++) {
-                final float d = distance(grid[cx][cy][cz][j], order3D[i], pos);
+                final float d = distance(grid[cx][cy][cz][j], ints, pos);
                 for (int k = 0; k < level; k++) {
                     if (d < distances[k]) {
                         for (int l = level - 1; l > k; l--)
@@ -145,21 +145,21 @@ public class Voronoi {
 
         final float[] distances = new float[level];
         for (int i = 0; i < level; i++) distances[i] = Float.MAX_VALUE;
-        for (int i = 0; i < order2D.length; i++) {
+        for (int[] ints : order2D) {
             boolean possible = true;
             final float farDist = distances[level - 1];
             if (farDist < Float.MAX_VALUE)
                 for (int j = 0; j < dimensions; j++)
-                    if (order2D[i][j] < 0 && farDist < pos[j] ||
-                            order2D[i][j] > 0 && farDist < 1 - pos[j]) {
+                    if (ints[j] < 0 && farDist < pos[j] ||
+                            ints[j] > 0 && farDist < 1 - pos[j]) {
                         possible = false;
                         break;
                     }
             if (!possible) continue;
-            final int cx = (order2D[i][0] + cell[0] + size) % size;
-            final int cy = (order2D[i][1] + cell[1] + size) % size;
+            final int cx = (ints[0] + cell[0] + size) % size;
+            final int cy = (ints[1] + cell[1] + size) % size;
             for (int j = 0; j < density; j++) {
-                final float d = distance(grid[cx][cy][0][j], order2D[i], pos);
+                final float d = distance(grid[cx][cy][0][j], ints, pos);
                 for (int k = 0; k < level; k++) {
                     if (d < distances[k]) {
                         for (int l = level - 1; l > k; l--)

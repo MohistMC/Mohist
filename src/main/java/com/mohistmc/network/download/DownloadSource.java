@@ -10,23 +10,23 @@ public enum DownloadSource {
     CHINA("http://s1.devicloud.cn:25119/"),
     GITHUB("https://mavenmirror.mohistmc.com/");
 
-    String url;
     public static final DownloadSource defaultSource = Message.isCN() ? CHINA : MOHIST;
+    final String url;
 
     DownloadSource(String url) {
         this.url = url;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public static DownloadSource get(){
+    public static DownloadSource get() {
         String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds))
                 return me;
         }
         return defaultSource;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

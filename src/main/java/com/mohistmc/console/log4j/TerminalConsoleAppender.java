@@ -1,14 +1,6 @@
 package com.mohistmc.console.log4j;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Serializable;
-import javax.annotation.Nullable;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Core;
-import org.apache.logging.log4j.core.Filter;
-import org.apache.logging.log4j.core.Layout;
-import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
@@ -20,6 +12,11 @@ import org.apache.logging.log4j.util.PropertiesUtil;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Serializable;
 
 /**
  * An {@link Appender} that uses the JLine 3.x {@link Terminal} to print messages

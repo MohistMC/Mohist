@@ -5,17 +5,14 @@ import com.mohistmc.bukkit.nms.proxy.DelegateClassLoder;
 import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import com.mohistmc.bukkit.pluginfix.JavaScriptRemaper;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.Map;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
 
 public class MohistSuperClassRemapper {
 

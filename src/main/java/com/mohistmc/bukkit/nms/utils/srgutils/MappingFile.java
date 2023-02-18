@@ -19,20 +19,14 @@
 
 package com.mohistmc.bukkit.nms.utils.srgutils;
 
+import javax.annotation.Nullable;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 
 class MappingFile implements IMappingFile {
     private static final Pattern DESC = Pattern.compile("L(?<cls>[^;]+);");
@@ -117,7 +111,7 @@ class MappingFile implements IMappingFile {
     @Override
     public void write(Path path, Format format, boolean reversed) throws IOException {
         List<String> lines = new ArrayList<>();
-        Comparator<INode> sort = reversed ? (a, b) -> a.getMapped().compareTo(b.getMapped()) : (a, b) -> a.getOriginal().compareTo(b.getOriginal());
+        Comparator<INode> sort = reversed ? Comparator.comparing(INode::getMapped) : Comparator.comparing(INode::getOriginal);
         getPackages().stream().sorted(sort).map(e -> e.write(format, reversed)).forEachOrdered(lines::add);
         getClasses().stream().sorted(sort).forEachOrdered(cls -> {
             lines.add(cls.write(format, reversed));
@@ -125,8 +119,8 @@ class MappingFile implements IMappingFile {
             cls.getMethods().stream().sorted(sort).map(e -> e.write(format, reversed)).forEachOrdered(lines::add);
         });
         if (!format.isOrdered()) {
-            Comparator<String> linesort = (format == Format.SRG || format == Format.XSRG) ? InternalUtils::compareLines : (o1, o2) -> o1.compareTo(o2);
-            Collections.sort(lines, linesort);
+            Comparator<String> linesort = (format == Format.SRG || format == Format.XSRG) ? InternalUtils::compareLines : String::compareTo;
+            lines.sort(linesort);
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
@@ -184,7 +178,7 @@ class MappingFile implements IMappingFile {
         });
     }
 
-    abstract class Node implements INode {
+    abstract static class Node implements INode {
         protected String original;
         protected String mapped;
 

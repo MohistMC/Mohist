@@ -5,10 +5,6 @@ import com.mohistmc.api.BlockAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.i18n.Message;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -37,6 +33,11 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.permissions.DefaultPermissions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ForgeInjectBukkit {
 

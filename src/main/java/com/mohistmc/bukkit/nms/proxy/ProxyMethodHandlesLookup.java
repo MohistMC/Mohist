@@ -2,6 +2,7 @@ package com.mohistmc.bukkit.nms.proxy;
 
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -65,8 +66,8 @@ public class ProxyMethodHandlesLookup {
     public static MethodType fromMethodDescriptorString(String descriptor, ClassLoader classLoader) throws IllegalArgumentException, TypeNotPresentException {
         return MethodType.fromMethodDescriptorString(RemapUtils.remapMethodDesc(descriptor), classLoader);
     }
-	
-	    public static MethodHandle findGetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
+
+    public static MethodHandle findGetter(MethodHandles.Lookup lookup, Class<?> clazz, String name, Class<?> type) throws NoSuchFieldException, IllegalAccessException {
         if (clazz.getName().startsWith("net.minecraft.")) {
             name = RemapUtils.mapFieldName(clazz, name);
         }

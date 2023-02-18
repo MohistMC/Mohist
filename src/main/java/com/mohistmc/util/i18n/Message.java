@@ -1,6 +1,7 @@
 package com.mohistmc.util.i18n;
 
 import com.mohistmc.configuration.MohistConfigUtil;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Locale;

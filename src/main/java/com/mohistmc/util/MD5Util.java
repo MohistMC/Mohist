@@ -22,7 +22,7 @@ public class MD5Util {
      * @throws IOException
      */
     public static String getMD5(InputStream is) throws NoSuchAlgorithmException, IOException {
-        StringBuffer md5 = new StringBuffer();
+        StringBuilder md5 = new StringBuilder();
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] dataBytes = new byte[1024];
 
@@ -30,12 +30,11 @@ public class MD5Util {
         while ((nread = is.read(dataBytes)) != -1) {
             md.update(dataBytes, 0, nread);
         }
-        ;
         byte[] mdbytes = md.digest();
 
         // convert the byte to hex format
-        for (int i = 0; i < mdbytes.length; i++) {
-            md5.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+        for (byte mdbyte : mdbytes) {
+            md5.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
         }
         return md5.toString();
     }

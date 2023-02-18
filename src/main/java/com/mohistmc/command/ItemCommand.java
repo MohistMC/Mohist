@@ -24,7 +24,7 @@ public class ItemCommand {
                 player.sendMessage(ChatColor.GRAY + "Block ID - " + ChatColor.GREEN + Block.getIdFromBlock(Block.getBlockFromItem(item)));
             }
             player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + (itemStack.getType().isForgeBlock() ? Boolean.valueOf(true) : Boolean.valueOf(false)));
-            player.sendMessage(ChatColor.GRAY + "String - " + (itemStack.toString()));
+            player.sendMessage(ChatColor.GRAY + "String - " + (itemStack));
         } else {
             sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
         }

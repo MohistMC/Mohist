@@ -7,6 +7,13 @@ import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.ProxyYamlConfiguration;
 import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.MethodRemapper;
+import org.objectweb.asm.commons.Remapper;
+
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -14,12 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.MethodRemapper;
-import org.objectweb.asm.commons.Remapper;
 
 /**
  * @author pyz
@@ -54,11 +55,11 @@ public class ReflectMethodRemapper extends MethodRemapper {
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSpecial", ProxyMethodHandlesLookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStatic", ProxyMethodHandlesLookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVirtual", ProxyMethodHandlesLookup.class);
-		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findGetter", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findGetter", ProxyMethodHandlesLookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSetter", ProxyMethodHandlesLookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticGetter", ProxyMethodHandlesLookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStaticSetter", ProxyMethodHandlesLookup.class);
-		virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVarHandle", ProxyMethodHandlesLookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVarHandle", ProxyMethodHandlesLookup.class);
         virtualMethod.put(ASMUtils.classLoaderdesc + ";loadClass", ProxyClass.class);
 
         registerMethodRemapper("java/lang/Class", "getField", Field.class, new Class[]{String.class}, ProxyClass.class);
@@ -76,7 +77,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSpecial", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStatic", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandlesLookup.class);
-		registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
+        registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findGetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticGetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStaticSetter", MethodHandle.class, new Class[]{Class.class, String.class, Class.class}, ProxyMethodHandlesLookup.class);
@@ -122,8 +123,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         if (byName == null) {
             return null;
         }
-        MethodRedirectRule rule = byName.get(desc);
-        return rule;
+        return byName.get(desc);
     }
 
     private void redirectSpecial(int opcode, String owner, String name, String desc, boolean itf) {

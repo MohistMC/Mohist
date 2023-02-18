@@ -3,14 +3,15 @@ package com.mohistmc.configuration;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.util.i18n.Message;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.spigotmc.SpigotConfig;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.spigotmc.SpigotConfig;
 
 public class MohistConfig extends ConfigBase {
 
@@ -40,7 +41,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting keepLevel = new BoolSetting(this, "eventCanceled.keepLevel", false);
 
     public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false);
-	public final BoolSetting forge_can_call_bukkit = new BoolSetting(this, "mohist.forge_can_call_bukkit", false);
+    public final BoolSetting forge_can_call_bukkit = new BoolSetting(this, "mohist.forge_can_call_bukkit", false);
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true);
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false);
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true);
@@ -106,15 +107,13 @@ public class MohistConfig extends ConfigBase {
 
     public final BoolSetting allowBlockLoadChunk = new BoolSetting(this, "allowBlockLoadChunk", true);
     public final BoolSetting forceUnloadChunks = new BoolSetting(this, "forceUnloadChunks", false);
-
+    public final IntSetting connectionTimeout = new IntSetting(this, "mohist.connectionTimeout", 15000);
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
             + "Home: https://mohistmc.com/\n";
     public List<String> autounloadworld_whitelist = new ArrayList();
     /* ======================================================================== */
     public List<Integer> dimensionsNotLoaded = new ArrayList();
-
-    public final IntSetting connectionTimeout = new IntSetting(this, "mohist.connectionTimeout", 15000);
 
     public MohistConfig() {
         super("mohist.yml");
@@ -124,8 +123,7 @@ public class MohistConfig extends ConfigBase {
 
     public static String getHighlight(String key, String def) {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        String color = yml.getString(key, def);
-        return color;
+        return yml.getString(key, def);
     }
 
     public static void setValueMohist(String oldValue, String value) {
@@ -154,6 +152,22 @@ public class MohistConfig extends ConfigBase {
 
     public static boolean isProxyOnlineMode() {
         return Bukkit.getOnlineMode() || (SpigotConfig.bungee && bungeeOnlineMode);
+    }
+
+    public static List<String> getStringList0(String path, List<String> defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        yml.addDefault(path, defValue);
+        return yml.getStringList(path);
+    }
+
+    public static boolean getBoolean0(String path, boolean defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        return yml.getBoolean(path, defValue);
+    }
+
+    public static String getString0(String path, String defValue) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        return yml.getString(path, defValue);
     }
 
     public void init() {
@@ -203,21 +217,5 @@ public class MohistConfig extends ConfigBase {
 
     public boolean RealTimeTicking() {
         return RealTimeTicking.getValue();
-    }
-
-    public static List<String> getStringList0(String path, List<String> defValue) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        yml.addDefault(path, defValue);
-        return yml.getStringList(path);
-    }
-
-    public static boolean getBoolean0(String path, boolean defValue) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        return yml.getBoolean(path, defValue);
-    }
-
-    public static String getString0(String path, String defValue) {
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
-        return yml.getString(path, defValue);
     }
 }

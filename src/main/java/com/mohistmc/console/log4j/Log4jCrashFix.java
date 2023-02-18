@@ -1,6 +1,7 @@
 package com.mohistmc.console.log4j;
 
 import com.mojang.util.QueueLogAppender;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;

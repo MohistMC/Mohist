@@ -1,10 +1,12 @@
 package com.mohistmc.command;
 
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
-import static com.mohistmc.network.download.UpdateUtils.downloadFile;
-import java.io.File;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.io.File;
+
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
+import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 
 public class DownloadFileCommand extends Command {
 
@@ -38,7 +40,8 @@ public class DownloadFileCommand extends Command {
                     return false;
                 }
             }
-        } else sender.sendMessage("[Mohist] To use this command, you need to set downloadfile_command_enabled to true in mohist-config/mohist.yml.");
+        } else
+            sender.sendMessage("[Mohist] To use this command, you need to set downloadfile_command_enabled to true in mohist-config/mohist.yml.");
         return true;
     }
 }

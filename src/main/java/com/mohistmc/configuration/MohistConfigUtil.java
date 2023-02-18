@@ -2,6 +2,7 @@ package com.mohistmc.configuration;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.util.NumberUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,8 +20,8 @@ public class MohistConfigUtil {
     private static HashMap<String, String> argsConfig = new HashMap<>();
 
     public static String getString(String s, String key, String defaultreturn) {
-    	String _key = key.replace(":", "");
-    	if(argsConfig.containsKey(_key)) return argsConfig.get(_key);
+        String _key = key.replace(":", "");
+        if (argsConfig.containsKey(_key)) return argsConfig.get(_key);
         if (s.contains(key)) {
             String string = s.substring(s.indexOf(key));
             String s1 = (string.substring(string.indexOf(": ") + 2));
@@ -67,11 +68,11 @@ public class MohistConfigUtil {
             System.out.println("Failed to copy Mohist config file !");
         }
 
-        for(String arg : MohistMC.mainArgs)
-        	if(arg.contains("=")) {
-        		String[] spl = arg.split("=");
-				argsConfig.put(spl[0], spl[1]);
-			}
+        for (String arg : MohistMC.mainArgs)
+            if (arg.contains("=")) {
+                String[] spl = arg.split("=");
+                argsConfig.put(spl[0], spl[1]);
+            }
     }
 
     public static boolean bMohist(String key) {

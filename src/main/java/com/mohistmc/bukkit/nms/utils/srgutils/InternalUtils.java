@@ -100,7 +100,7 @@ class InternalUtils {
                     String name = line.substring(line.indexOf(' ') + 1, line.indexOf('('));
                     String[] args = line.substring(line.indexOf('(') + 1, line.indexOf(')')).split(",");
 
-                    StringBuffer desc = new StringBuffer();
+                    StringBuilder desc = new StringBuilder();
                     desc.append('(');
                     for (String arg : args) {
                         if (arg.isEmpty()) break;
@@ -252,7 +252,7 @@ class InternalUtils {
         }
         pts.add(str);
         Collections.reverse(pts);
-        return pts.toArray(new String[pts.size()]);
+        return pts.toArray(new String[0]);
     }
 
     public static int compareLines(String o1, String o2) {

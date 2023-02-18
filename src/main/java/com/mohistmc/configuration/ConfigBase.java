@@ -1,13 +1,14 @@
 package com.mohistmc.configuration;
 
 import com.mohistmc.api.ServerAPI;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public abstract class ConfigBase {
     private static boolean metricsStarted;

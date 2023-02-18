@@ -1,6 +1,7 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.configuration.MohistConfig;
+
 import java.util.Arrays;
 import java.util.Map;
 

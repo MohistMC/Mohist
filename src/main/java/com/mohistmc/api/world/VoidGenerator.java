@@ -1,8 +1,9 @@
 package com.mohistmc.api.world;
 
-import java.util.Random;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
+
+import java.util.Random;
 
 public class VoidGenerator extends ChunkGenerator {
 

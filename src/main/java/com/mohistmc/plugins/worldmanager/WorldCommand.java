@@ -1,7 +1,6 @@
 package com.mohistmc.plugins.worldmanager;
 
 import com.mohistmc.api.ItemAPI;
-import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -11,23 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.ArrayList;
+
 public class WorldCommand extends Command {
 
     public WorldCommand(String name) {
         super(name);
         this.usageMessage = "/world [list]";
         this.setPermission("mohist.command.world");
-    }
-
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-            if (args.length == 1 && args[0].equalsIgnoreCase("list") && sender.isOp()) {
-                openWorldGui(p, "§8》 §6Worlds");
-            }
-        }
-        return false;
     }
 
     public static void openWorldGui(Player p, String name) {
@@ -38,7 +28,7 @@ public class WorldCommand extends Command {
         }
         Inventory inv = Bukkit.createInventory(null, groesse, name);
         for (World w : Bukkit.getWorlds()) {
-            ArrayList<String> infoLore = new ArrayList<String>();
+            ArrayList<String> infoLore = new ArrayList<>();
 
             infoLore.add("§bWorldBorder §8》 §7" + w.getWorldBorder().getSize());
             infoLore.add("§bWorldType §8》 §7" + w.getWorldType());
@@ -55,7 +45,7 @@ public class WorldCommand extends Command {
 
     public static void onWorldManager(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
-            Player p = (Player)event.getWhoClicked();
+            Player p = (Player) event.getWhoClicked();
             if (event.getView().getTitle().equals("§8》 §6Worlds")) {
                 event.setCancelled(true);
                 if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR || !event.getCurrentItem().hasItemMeta()) {
@@ -73,5 +63,16 @@ public class WorldCommand extends Command {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
+            if (args.length == 1 && args[0].equalsIgnoreCase("list") && sender.isOp()) {
+                openWorldGui(p, "§8》 §6Worlds");
+            }
+        }
+        return false;
     }
 }

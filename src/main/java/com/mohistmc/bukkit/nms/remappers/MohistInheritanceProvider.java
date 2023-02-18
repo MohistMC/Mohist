@@ -1,11 +1,12 @@
 package com.mohistmc.bukkit.nms.remappers;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import net.md_5.specialsource.provider.InheritanceProvider;
+import org.objectweb.asm.tree.ClassNode;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import net.md_5.specialsource.provider.InheritanceProvider;
-import org.objectweb.asm.tree.ClassNode;
 
 public class MohistInheritanceProvider implements InheritanceProvider {
     @Override

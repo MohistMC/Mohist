@@ -3,12 +3,13 @@ package com.mohistmc.forge.addon;
 import com.google.common.eventbus.EventBus;
 import com.mohistmc.MohistMC;
 import com.mohistmc.forge.CustomMod;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.MetadataCollection;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 
 public class MohistMod extends DummyModContainer implements CustomMod {
 
@@ -26,7 +27,7 @@ public class MohistMod extends DummyModContainer implements CustomMod {
                 "  \"version\": \"" + MohistMC.getVersion() + "\",\n" +
                 "  \"mcversion\": \"1.12.2\",\n" +
                 "  \"logoFile\": \"/mohist_logo.png\",\n" +
-                "  \"url\": \"http://mohistmc.com/\",\n" +
+                "  \"url\": \"https://mohistmc.com/\",\n" +
                 "  \"updateUrl\": \"\",\n" +
                 "  \"authors\": [\"Mgazul\", \"CraftDream\", \"azbh111\", \"lliioollcn\", \"terrainwax\", \"lvyitian\", \"ChenHauShen\", \"Technetium\", \"Shawiiz_z\", \"Others\"],\n" +
                 "  \"credits\": \"Made by MohistMC\",\n" +

@@ -1,6 +1,13 @@
 package com.mohistmc.bukkit.nms.proxy;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -15,12 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
  * @author pyz
@@ -30,12 +31,12 @@ public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
     private static LaunchClassLoader launchClassLoader;
-    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     static {
         launchClassLoader = (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
     }
 
+    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Map<String, Class<?>> classeCache = new HashMap<>();
 
     public DelegateURLClassLoder(final URL[] urls, final ClassLoader parent) {

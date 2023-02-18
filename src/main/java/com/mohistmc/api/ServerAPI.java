@@ -1,14 +1,15 @@
 package com.mohistmc.api;
 
 import io.netty.util.internal.ConcurrentSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerAPI {
 
@@ -42,7 +43,7 @@ public class ServerAPI {
         return MinecraftServer.getServerInst();
     }
 
-    public static World getMainWorld(){
+    public static World getMainWorld() {
         return getNMSServer().getEntityWorld();
     }
 }

@@ -1,10 +1,9 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMC;
-import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
-
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.i18n.Message;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,6 +19,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
+
 public class DownloadJava {
     public static File java = new File("CustomJAVA/");
     public static File javabin = new File("CustomJAVA/bin/");
@@ -29,15 +30,15 @@ public class DownloadJava {
     public static void run() throws Exception {
         if (!MohistMC.mainArgs.contains("launchedWithCustomJava8")) {
             if (!javabin.exists() && !bMohist("use_custom_java8")) {
-                    System.out.println(Message.getString("unsupported.java.version"));
-                    Scanner scan = new Scanner(System.in);
-                    System.out.println(Message.getString("customjava.ask"));
-                    String input = scan.nextLine();
-                    if (input.equalsIgnoreCase("Yes")) searchJava();
-                    else {
-                        System.out.println(Message.getString("customjava.no"));
-                        System.exit(0);
-                    }
+                System.out.println(Message.getString("unsupported.java.version"));
+                Scanner scan = new Scanner(System.in);
+                System.out.println(Message.getString("customjava.ask"));
+                String input = scan.nextLine();
+                if (input.equalsIgnoreCase("Yes")) searchJava();
+                else {
+                    System.out.println(Message.getString("customjava.no"));
+                    System.exit(0);
+                }
             } else searchJava();
         }
     }
@@ -76,7 +77,7 @@ public class DownloadJava {
         launchArgs.addAll(MohistMC.mainArgs);
         launchArgs.add("launchedWithCustomJava8");
         command.addAll(launchArgs);
-		command.removeIf(s -> s.toLowerCase().contains("-xms"));
+        command.removeIf(s -> s.toLowerCase().contains("-xms"));
         System.out.println(Message.getFormatString("customjava.run", new Object[]{os(), command}));
         UpdateUtils.restartServer(command);
     }

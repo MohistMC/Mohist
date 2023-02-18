@@ -20,7 +20,7 @@ public class GiveCommand {
                     String j = args2.contains(":") ? s[1] : String.valueOf(0);
                     // mohist give Mgazul 4096 64
                     if (NumberUtils.isInteger(args2)) {
-                        int id = Integer.valueOf(args2).intValue();
+                        int id = Integer.parseInt(args2);
                         if (Material.byId[id] != null) {
                             int i = args.length == 4 ? Integer.parseInt(args[3]) : 1;
                             ItemStack itemStack = new ItemStack(Material.getMaterial(id), i, Short.parseShort(j));
@@ -31,7 +31,7 @@ public class GiveCommand {
                     }
                     // mohist give Mgazul 4096:1 64
                     else if (args2.contains(":") && NumberUtils.isInteger(s[0]) && NumberUtils.isInteger(s[1])) {
-                        int id = Integer.valueOf(s[0]).intValue();
+                        int id = Integer.parseInt(s[0]);
                         int i = args.length == 4 ? Integer.parseInt(args[3]) : 1;
                         ItemStack itemStack = new ItemStack(Material.getMaterial(id), i, Short.parseShort(s[1]));
                         if (itemStack != null) {

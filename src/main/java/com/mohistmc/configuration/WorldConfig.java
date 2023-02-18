@@ -1,6 +1,7 @@
 package com.mohistmc.configuration;
 
 import com.mohistmc.api.ServerAPI;
+
 import java.util.List;
 
 public class WorldConfig {

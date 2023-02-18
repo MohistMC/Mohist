@@ -1,12 +1,13 @@
 package com.mohistmc.api;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerAPI {
 

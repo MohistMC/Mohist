@@ -30,6 +30,7 @@ public class MinecraftVersion implements Comparable<MinecraftVersion> {
     private final int year;
     private final int pre;
     private final String revision;
+
     private MinecraftVersion(String version) {
         this.full = version;
         String lower = version.toLowerCase(Locale.ENGLISH);
@@ -216,7 +217,7 @@ public class MinecraftVersion implements Comparable<MinecraftVersion> {
         return this.pre - o.pre;
     }
 
-    private static enum Type {
+    private enum Type {
         RELEASE,
         SNAPSHOT,
         BETA,

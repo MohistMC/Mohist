@@ -5,19 +5,9 @@ import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
-import com.mojang.authlib.GameProfile;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -33,9 +23,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 public class DumpCommand extends Command {
     private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "bukkit_material", "vanilla_material", "fakeplayer");
     private final List<String> tab_mode = Arrays.asList("file", "web");
+
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
@@ -124,12 +120,12 @@ public class DumpCommand extends Command {
         StringBuilder sb = new StringBuilder();
         for (PotionEffectType pet : PotionEffectType.values()) {
             if (pet != null) {
-                sb.append(pet.toString()).append("\n");
+                sb.append(pet).append("\n");
             }
         }
         for (PotionType pet : PotionType.values()) {
             if (pet != null) {
-                sb.append(pet.toString()).append("\n");
+                sb.append(pet).append("\n");
             }
         }
         dump(sender, "potions", sb, mode);

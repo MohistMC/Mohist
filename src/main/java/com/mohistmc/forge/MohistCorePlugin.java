@@ -1,10 +1,11 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.bukkit.pluginfix.MyPetTransformer;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MohistCorePlugin implements IFMLLoadingPlugin {

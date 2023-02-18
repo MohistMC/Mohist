@@ -1,10 +1,12 @@
 package com.mohistmc.forge;
 
-import static com.mohistmc.util.PluginsModsDelete.check;
 import com.mohistmc.util.i18n.Message;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.mohistmc.util.PluginsModsDelete.check;
 
 /**
  * Why is there such a class?

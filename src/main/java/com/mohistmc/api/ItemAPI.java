@@ -1,18 +1,5 @@
 package com.mohistmc.api;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +11,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class ItemAPI {
 
@@ -51,11 +46,8 @@ public class ItemAPI {
      */
     public static ItemStack Base64ToBukkit(String base64) throws IOException {
         try {
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new ByteArrayInputStream(Base64Coder.decodeLines(base64)));
-            try {
+            try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new ByteArrayInputStream(Base64Coder.decodeLines(base64)))) {
                 return (ItemStack) dataInput.readObject();
-            } finally {
-                dataInput.close();
             }
         } catch (ClassNotFoundException | IOException e) {
             throw new IOException("Unable to decode class type.", e);
@@ -133,11 +125,8 @@ public class ItemAPI {
             NBTTagCompound itemCompound = new NBTTagCompound();
             itemCompound = is.writeToNBT(itemCompound);
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-            DataOutputStream dataOut = new DataOutputStream(new GZIPOutputStream(byteOut));
-            try {
-                net.minecraft.nbt.CompressedStreamTools.writeCompressed(itemCompound, dataOut);
-            } finally {
-                dataOut.close();
+            try (DataOutputStream dataOut = new DataOutputStream(new GZIPOutputStream(byteOut))) {
+                CompressedStreamTools.writeCompressed(itemCompound, dataOut);
             }
             return byteOut.toByteArray();
         } catch (Exception e) {
@@ -189,7 +178,7 @@ public class ItemAPI {
     }
 
     public static ItemStack doItem(Material material, int menge, int sid, String name, ArrayList<String> lore) {
-        ItemStack item = new ItemStack(material, menge, (short)sid);
+        ItemStack item = new ItemStack(material, menge, (short) sid);
         ItemMeta meta = item.getItemMeta();
         meta.setLore(lore);
         meta.setDisplayName(name);

@@ -63,14 +63,14 @@ public class RandomUtil {
         int height = perlinNoise[0].length;
         float[][] format = new float[width][height];
         int ta = 0, tr = 0, tb = 0, tg = 0;
-        for (int i = 0; i < width; i++) {
+        for (float[] floats : perlinNoise) {
             for (int j = 0; j < height; j++) {
                 ta = 255;
-                int u = (int) (perlinNoise[i][j] * (float) 80.0);
+                int u = (int) (floats[j] * (float) 80.0);
                 tr = u + 100;
                 tg = u + 100;
                 tb = u + 100;
-                ta = (int) (255.0f * perlinNoise[i][j]);
+                ta = (int) (255.0f * floats[j]);
 
             }
         }

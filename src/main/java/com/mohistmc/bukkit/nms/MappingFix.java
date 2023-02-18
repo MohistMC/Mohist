@@ -4,6 +4,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.nms.utils.Decoder;
 import com.mohistmc.bukkit.nms.utils.Downloader;
 import com.mohistmc.util.i18n.Message;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;

@@ -10,10 +10,11 @@ import com.mohistmc.network.download.DownloadJava;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.Message;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import org.apache.logging.log4j.Logger;
 
 public class MohistMC {
     public static final String NAME = "Mohist";
@@ -49,14 +50,14 @@ public class MohistMC {
 
         if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
 
-        if(mainArgs.contains("-noserver"))
-			System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
+        if (mainArgs.contains("-noserver"))
+            System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
 
         Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
-            while (!"true".equals(new Scanner(System.in).next()));
+            while (!"true".equals(new Scanner(System.in).next())) ;
             EulaUtil.writeInfos();
         }
 

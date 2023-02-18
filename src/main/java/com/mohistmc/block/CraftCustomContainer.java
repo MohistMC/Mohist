@@ -20,7 +20,6 @@ public class CraftCustomContainer extends CraftBlockState implements InventoryHo
 
     @Override
     public Inventory getInventory() {
-        CraftInventory inventory = new CraftInventory(container);
-        return inventory;
+        return new CraftInventory(container);
     }
 }

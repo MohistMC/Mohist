@@ -1,14 +1,6 @@
 package com.mohistmc.api.filestream;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +14,10 @@ public class NBT {
     }
 
     public static Map<String, Object> read(InputStream in, boolean compressed) throws IOException {
-        DataInputStream data = compressed
+        try (DataInputStream data = compressed
                 ? new DataInputStream(new GZIPInputStream(in))
-                : new DataInputStream(new BufferedInputStream(in));
-        try {
+                : new DataInputStream(new BufferedInputStream(in))) {
             return read((DataInput) data);
-        } finally {
-            data.close();
         }
     }
 
@@ -37,13 +26,10 @@ public class NBT {
     }
 
     public static void write(OutputStream out, Map<String, Object> map, boolean compressed) throws IOException {
-        DataOutputStream data = compressed
+        try (DataOutputStream data = compressed
                 ? new DataOutputStream(new GZIPOutputStream(out))
-                : new DataOutputStream(new BufferedOutputStream(out));
-        try {
+                : new DataOutputStream(new BufferedOutputStream(out))) {
             write((OutputStream) data, map);
-        } finally {
-            data.close();
         }
     }
 
@@ -111,7 +97,7 @@ public class NBT {
     private static List<Object> readList(DataInput in) throws IOException {
         byte type = in.readByte();
         int length = in.readInt();
-        List<Object> list = new ArrayList<Object>(length);
+        List<Object> list = new ArrayList<>(length);
         for (int i = 0; i < length; ++i) {
             Object tag = readTag(in, type);
             list.add(tag);
@@ -120,7 +106,7 @@ public class NBT {
     }
 
     private static Map<String, Object> readCompound(DataInput in) throws IOException {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         for (byte type; (type = in.readByte()) != 0; ) {
             String name = readString(in);
             Object tag = readTag(in, type);
@@ -195,8 +181,7 @@ public class NBT {
 
     private static void writeIntArray(DataOutput out, int[] array) throws IOException {
         out.writeInt(array.length);
-        for (int i = 0; i < array.length; i++)
-            out.writeInt(array[i]);
+        for (int j : array) out.writeInt(j);
     }
 
     private static void writeString(DataOutput out, String str) throws IOException {
