@@ -2,9 +2,7 @@ package org.bukkit.craftbukkit.v1_19_R2.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -54,6 +52,7 @@ import org.bukkit.craftbukkit.v1_19_R2.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R2.legacy.CraftLegacy;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -94,10 +93,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
     // ========================================================================
     public static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
     public static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
-    private static final Map<net.minecraft.world.level.material.Fluid, Fluid> FLUID_MATERIAL = new HashMap<>();
+    private static final BiMap<net.minecraft.world.level.material.Fluid, Fluid> FLUIDTYPE_FLUID = HashBiMap.create();
     public static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
     public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
-    private static final Map<Material, net.minecraft.world.level.material.Fluid> MATERIAL_FLUID = new HashMap<>();
 
     static {
         for (Block block : BuiltInRegistries.BLOCK) {
@@ -108,8 +106,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
             ITEM_MATERIAL.put(item, Material.getMaterial(BuiltInRegistries.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
         }
 
-        for (net.minecraft.world.level.material.Fluid fluid : BuiltInRegistries.FLUID) {
-            FLUID_MATERIAL.put(fluid, Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluid))));
+        for (net.minecraft.world.level.material.Fluid fluidType : BuiltInRegistries.FLUID) {
+            Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
+            FLUIDTYPE_FLUID.put(fluidType, fluid);
         }
 
         for (Material material : Material.values()) {
@@ -124,9 +123,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
             BuiltInRegistries.BLOCK.getOptional(key).ifPresent((block) -> {
                 MATERIAL_BLOCK.put(material, block);
             });
-            BuiltInRegistries.FLUID.getOptional(key).ifPresent((fluid) -> {
-                MATERIAL_FLUID.put(material, fluid);
-            });
         }
     }
 
@@ -139,7 +135,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static Fluid getFluid(net.minecraft.world.level.material.Fluid fluid) {
-        return FLUID_MATERIAL.get(fluid);
+        return FLUIDTYPE_FLUID.get(fluid);
     }
 
     public static Item getItem(Material material) {
@@ -159,7 +155,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static net.minecraft.world.level.material.Fluid getFluid(Fluid fluid) {
-        return MATERIAL_FLUID.get(fluid);
+        return FLUIDTYPE_FLUID.inverse().get(fluid);
     }
 
     public static ResourceLocation key(Material mat) {
@@ -356,6 +352,29 @@ public final class CraftMagicNumbers implements UnsafeValues {
     @Override
     public CreativeCategory getCreativeCategory(Material material) {
         return CreativeCategory.BUILDING_BLOCKS; // TODO: Figure out what to do with this
+    }
+
+    @Override
+    public String getBlockTranslationKey(Material material) {
+        Block block = getBlock(material);
+        return (block != null) ? block.getDescriptionId() : null;
+    }
+
+    @Override
+    public String getItemTranslationKey(Material material) {
+        Item item = getItem(material);
+        return (item != null) ? item.getDescriptionId() : null;
+    }
+
+    @Override
+    public String getTranslationKey(EntityType entityType) {
+        return net.minecraft.world.entity.EntityType.byString(entityType.name()).map(net.minecraft.world.entity.EntityType::getDescriptionId).orElseThrow();
+    }
+
+    @Override
+    public String getTranslationKey(ItemStack itemStack) {
+        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        return nmsItemStack.getItem().getDescriptionId(nmsItemStack);
     }
 
     /**

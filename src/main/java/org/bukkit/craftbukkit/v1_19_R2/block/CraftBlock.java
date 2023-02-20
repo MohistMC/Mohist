@@ -542,7 +542,7 @@ public class CraftBlock implements Block {
         net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off net.minecraft.world.entity.player.Player#hasBlock
-        if (item == null || isPreferredTool(iblockdata, nms)) {
+        if (item == null || CraftBlockData.isPreferredTool(iblockdata, nms)) {
             return net.minecraft.world.level.block.Block.getDrops(iblockdata, (ServerLevel) world.getMinecraftWorld(), position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
@@ -554,17 +554,13 @@ public class CraftBlock implements Block {
     public boolean isPreferredTool(ItemStack item) {
         net.minecraft.world.level.block.state.BlockState iblockdata = getNMS();
         net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
-        return isPreferredTool(iblockdata, nms);
+        return CraftBlockData.isPreferredTool(iblockdata, nms);
     }
 
     @Override
     public float getBreakSpeed(Player player) {
         Preconditions.checkArgument(player != null, "player cannot be null");
         return getNMS().getDestroyProgress(((CraftPlayer) player).getHandle(), world, position);
-    }
-
-    private boolean isPreferredTool(net.minecraft.world.level.block.state.BlockState iblockdata, net.minecraft.world.item.ItemStack nmsItem) {
-        return !iblockdata.requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(iblockdata);
     }
 
     @Override
@@ -640,5 +636,10 @@ public class CraftBlock implements Block {
         net.minecraft.world.level.Level world = this.world.getMinecraftWorld();
 
         return iblockdata.canSurvive(world, this.position);
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return getNMS().getBlock().getDescriptionId();
     }
 }

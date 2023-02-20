@@ -10,10 +10,8 @@ import com.mohistmc.entity.MohistModsProjectileEntity;
 import com.mohistmc.entity.MohistModsTameableEntity;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Keyed;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -27,7 +25,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public enum EntityType implements Keyed {
+public enum EntityType implements Keyed, Translatable {
 
     // These strings MUST match the strings in nms.EntityTypes and are case sensitive.
     /**
@@ -438,5 +436,11 @@ public enum EntityType implements Keyed {
 
     public boolean isAlive() {
         return living;
+    }
+
+    @Override
+    @NotNull
+    public String getTranslationKey() {
+        return Bukkit.getUnsafe().getTranslationKey(this);
     }
 }

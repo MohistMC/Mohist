@@ -3,6 +3,8 @@ package org.bukkit.util;
 import static org.bukkit.util.NumberConversions.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import com.google.common.base.Preconditions;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -53,6 +55,11 @@ public class BlockIterator implements Iterator<Block> {
      *
      */
     public BlockIterator(@NotNull World world, @NotNull Vector start, @NotNull Vector direction, double yOffset, int maxDistance) {
+        Preconditions.checkArgument(world != null, "world must not be null");
+        Preconditions.checkArgument(start != null, "start must not be null");
+        Preconditions.checkArgument(direction != null, "direction must not be null");
+        Preconditions.checkArgument(!direction.isZero(), "direction must have at least one non-zero component");
+
         this.world = world;
         this.maxDistance = maxDistance;
 

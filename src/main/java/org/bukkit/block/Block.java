@@ -1,11 +1,8 @@
 package org.bukkit.block;
 
 import java.util.Collection;
-import org.bukkit.Chunk;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -31,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * (i.e. lighting and power) may not be able to be safely accessed during world
  * generation when used in cases like BlockPhysicsEvent!!!!
  */
-public interface Block extends Metadatable {
+public interface Block extends Metadatable, Translatable {
 
     /**
      * Gets the metadata for this block
