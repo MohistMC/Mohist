@@ -70,16 +70,16 @@ public class ActivationRange
     /**
      * These entities are excluded from Activation range checks.
      *
-     * @param entity Entity to initialize
-     * @param config Spigot config to determine ranges
+     * @param entity
+     * @param config
      * @return boolean If it should always tick.
      */
     public static boolean initializeEntityActivationState(Entity entity, SpigotWorldConfig config)
     {
-        if ( ( entity.activationType == ActivationType.MISC && config.miscActivationRange <= 0 )
-                || ( entity.activationType == ActivationType.RAIDER && config.raiderActivationRange <= 0 )
-                || ( entity.activationType == ActivationType.ANIMAL && config.animalActivationRange <= 0 )
-                || ( entity.activationType == ActivationType.MONSTER && config.monsterActivationRange <= 0 )
+        if ( ( entity.activationType == ActivationType.MISC && config.miscActivationRange == 0 )
+                || ( entity.activationType == ActivationType.RAIDER && config.raiderActivationRange == 0 )
+                || ( entity.activationType == ActivationType.ANIMAL && config.animalActivationRange == 0 )
+                || ( entity.activationType == ActivationType.MONSTER && config.monsterActivationRange == 0 )
                 || entity instanceof Player
                 || entity instanceof ThrowableProjectile
                 || entity instanceof EnderDragon
@@ -129,13 +129,14 @@ public class ActivationRange
             ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate( raiderActivationRange, 256, raiderActivationRange );
             ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, 256, animalActivationRange );
             ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, 256, monsterActivationRange );
+			world.getEntities().get(maxBB, ActivationRange::activateEntity);
         }
     }
 
     /**
      * Checks for the activation state of all entities in this chunk.
      *
-     * @param entity
+     * @param chunk
      */
     private static void activateEntity(Entity entity)
     {

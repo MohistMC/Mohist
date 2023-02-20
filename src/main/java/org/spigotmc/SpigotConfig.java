@@ -39,9 +39,9 @@ public class SpigotConfig
             + "http://www.spigotmc.org/wiki/spigot-configuration/\n"
             + "\n"
             + "If you need help with the configuration or have any questions related to Spigot,\n"
-            + "join us at the IRC or drop by our forums and leave a post.\n"
+            + "join us at the Discord or drop by our forums and leave a post.\n"
             + "\n"
-            + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
+            + "Discord: https://www.spigotmc.org/go/discord\n"
             + "Forums: http://www.spigotmc.org/\n";
     /*========================================================================*/
     public static YamlConfiguration config;
@@ -382,5 +382,10 @@ public class SpigotConfig
     public static boolean disablePlayerDataSaving;
     private static void disablePlayerDataSaving() {
         disablePlayerDataSaving = getBoolean("players.disable-saving", false);
+    }
+
+    public static boolean belowZeroGenerationInExistingChunks;
+    private static void belowZeroGenerationInExistingChunks() {
+        belowZeroGenerationInExistingChunks = getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
     }
 }

@@ -97,6 +97,9 @@ public class SpigotWorldConfig
     public int bambooModifier;
     public int sweetBerryModifier;
     public int kelpModifier;
+    public int twistingVinesModifier;
+    public int weepingVinesModifier;
+    public int caveVinesModifier;
     private int getAndValidateGrowth(String crop)
     {
         int modifier = getInt( "growth." + crop.toLowerCase(java.util.Locale.ENGLISH) + "-modifier", 100 );
@@ -127,6 +130,9 @@ public class SpigotWorldConfig
         bambooModifier = getAndValidateGrowth( "Bamboo" );
         sweetBerryModifier = getAndValidateGrowth( "SweetBerry" );
         kelpModifier = getAndValidateGrowth( "Kelp" );
+        twistingVinesModifier = getAndValidateGrowth( "TwistingVines" );
+        weepingVinesModifier = getAndValidateGrowth( "WeepingVines" );
+        caveVinesModifier = getAndValidateGrowth( "CaveVines" );
     }
 
     public double itemMerge;
@@ -203,7 +209,7 @@ public class SpigotWorldConfig
         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
         ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
-        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
+        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
     }
 
     public int playerTrackingRange = 48;
@@ -224,6 +230,7 @@ public class SpigotWorldConfig
     public int hopperTransfer;
     public int hopperCheck;
     public int hopperAmount;
+    public boolean hopperCanLoadChunks;
     private void hoppers()
     {
         // Set the tick delay between hopper item movements
@@ -234,7 +241,8 @@ public class SpigotWorldConfig
         }
         hopperCheck = getInt( "ticks-per.hopper-check", 1 );
         hopperAmount = getInt( "hopper-amount", 1 );
-        log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount );
+        hopperCanLoadChunks = getBoolean( "hopper-can-load-chunks", false );
+        log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount + " Hopper Can Load Chunks: " + hopperCanLoadChunks );
     }
 
     public int arrowDespawnRate;
@@ -296,8 +304,7 @@ public class SpigotWorldConfig
     public int shipwreckSeed;
     public int slimeSeed;
     public int endCitySeed;
-    public int bastionSeed;
-    public int fortressSeed;
+    public int netherSeed;
     public int mansionSeed;
     public int fossilSeed;
     public int portalSeed;
@@ -314,13 +321,12 @@ public class SpigotWorldConfig
         outpostSeed = getInt( "seed-outpost", 165745296 );
         endCitySeed = getInt( "seed-endcity", 10387313 );
         slimeSeed = getInt( "seed-slime", 987234911 );
-        bastionSeed = getInt( "seed-bastion", 30084232 );
-        fortressSeed = getInt( "seed-fortress", 30084232 );
+        netherSeed = getInt( "seed-nether", 30084232 );
         mansionSeed = getInt( "seed-mansion", 10387319 );
         fossilSeed = getInt( "seed-fossil", 14357921 );
         portalSeed = getInt( "seed-portal", 34222645 );
         log( "Custom Map Seeds:  Village: " + villageSeed + " Desert: " + desertSeed + " Igloo: " + iglooSeed + " Jungle: " + jungleSeed + " Swamp: " + swampSeed + " Monument: " + monumentSeed
-                + " Ocean: " + oceanSeed + " Shipwreck: " + shipwreckSeed + " End City: " + endCitySeed + " Slime: " + slimeSeed + " Bastion: " + bastionSeed + " Fortress: " + fortressSeed + " Mansion: " + mansionSeed + " Fossil: " + fossilSeed + " Portal: " + portalSeed );
+                + " Ocean: " + oceanSeed + " Shipwreck: " + shipwreckSeed + " End City: " + endCitySeed + " Slime: " + slimeSeed + " Nether: " + netherSeed + " Mansion: " + mansionSeed + " Fossil: " + fossilSeed + " Portal: " + portalSeed );
     }
 
     public float jumpWalkExhaustion;
@@ -379,5 +385,10 @@ public class SpigotWorldConfig
     private void thunderChance()
     {
         thunderChance = getInt("thunder-chance", 100000);
+    }
+
+    public boolean belowZeroGenerationInExistingChunks;
+    private void belowZeroGenerationInExistingChunks() {
+        belowZeroGenerationInExistingChunks = getBoolean("below-zero-generation-in-existing-chunks", true);
     }
 }
