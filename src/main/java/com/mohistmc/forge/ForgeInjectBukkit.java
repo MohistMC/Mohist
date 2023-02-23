@@ -70,9 +70,10 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
                 Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
-                CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
-                CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
+
                 if (material != null) {
+                    CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
+                    CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
                     MohistMC.LOGGER.debug("Save-ITEM: " + material.name() + " - " + materialName);
                 }
             }
@@ -89,9 +90,10 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(block.asItem());
                 Material material = Material.addMaterial(materialName, id, true, resourceLocation.getNamespace());
-                CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
-                CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
+
                 if (material != null) {
+                    CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
+                    CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
                     MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + materialName);
                 }
             }
