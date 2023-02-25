@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.spigotmc.WatchdogThread;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,4 +129,13 @@ public class MohistConfig {
         config.addDefault(path, def);
         return config.getDouble(path, config.getDouble(path));
     }
+
+    public static boolean show_logo;
+    public static String mohist_lang;
+    private static void mohist()
+    {
+        show_logo = getBoolean( "mohist.show_logo", true );
+        mohist_lang = getString( "mohist.lang", "xx_XX" );
+    }
+
 }
