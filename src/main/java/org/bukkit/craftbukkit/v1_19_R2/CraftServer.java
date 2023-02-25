@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
@@ -40,14 +39,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
-import net.minecraft.Util;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
@@ -57,7 +55,6 @@ import net.minecraft.server.ConsoleInput;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.WorldLoader;
-import net.minecraft.server.WorldStem;
 import net.minecraft.server.commands.ReloadCommand;
 import net.minecraft.server.players.*;
 import net.minecraft.tags.*;
@@ -78,9 +75,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.PatrolSpawner;
-import net.minecraft.world.level.levelgen.PhantomSpawner;
 import net.minecraft.world.level.levelgen.WorldDimensions;
-import net.minecraft.world.level.levelgen.WorldDimensions.Complete;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -391,7 +386,6 @@ public final class CraftServer implements Server {
 
     public void loadPlugins() {
         pluginManager.registerInterface(JavaPluginLoader.class);
-        RemapUtils.init();
 
         File pluginFolder = (File) console.options.valueOf("plugins");
 

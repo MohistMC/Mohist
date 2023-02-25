@@ -47,7 +47,8 @@ Upstream Projects
 * [**Paper**](https://github.com/PaperMC/Paper.git) - plugin support.
 * [**Purpur**](https://github.com/PurpurMC/Purpur.git) - plugin support.
 * [**Pufferfish**](https://github.com/pufferfish-gg/Pufferfish.git) - plugin support.
-* [**Mirai**](https://github.com/etil2jz/Mirai.git.git) - plugin support.
+* [**Mirai**](https://github.com/etil2jz/Mirai.git) - plugin support.
+* [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Remapper support.
 
 A Special Thanks To:
 -------------
