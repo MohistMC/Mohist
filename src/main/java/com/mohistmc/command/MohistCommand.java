@@ -20,9 +20,8 @@ package com.mohistmc.command;
 
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.configuration.MohistConfig;
-import com.mohistmc.configuration.TickConfig;
-import net.minecraft.SharedConstants;
+import net.minecraft.DetectedVersion;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,6 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,15 +109,16 @@ public class MohistCommand extends Command {
                 }
             }
             case "reload" -> {
-                if (MohistConfig.instance != null) {
-                    MohistConfig.instance.load();
-                }
-                TickConfig.ENTITIES.reloadConfig();
-                TickConfig.TILES.reloadConfig();
-                sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
+                Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues.");
+                Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+
+                com.mohistmc.MohistConfig.init((File) MinecraftServer.options.valueOf("mohist-settings"));
+
+                MinecraftServer.getServer().server.reloadCount++;
+                sender.sendMessage(ChatColor.GREEN + "mohist-config/mohist.yml directory reload complete.");
             }
             case "version" -> {
-                sender.sendMessage("Mohist: " + SharedConstants.VERSION_STRING);
+                sender.sendMessage("Mohist: " + DetectedVersion.BUILT_IN.getName());
                 sender.sendMessage("Forge: " + ForgeVersion.getVersion());
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
                 sender.sendMessage("Bukkit: " + cbs[0]);

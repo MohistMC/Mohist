@@ -526,12 +526,11 @@
     }
  
     public static record ReloadableResources(CloseableResourceManager f_206584_, ReloadableServerResources f_206585_) implements AutoCloseable {
-@@ -1756,4 +_,28 @@
+@@ -1756,4 +_,27 @@
           };
        }
     }
 +
-+   @Deprecated
 +   public static MinecraftServer getServer() {
 +      return ( Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
 +   }

@@ -1,20 +1,15 @@
-import java.nio.file.Files
+import com.mohistmc.tasks.JenkinsNumber
 import net.minecraftforge.forge.tasks.*
-import static net.minecraftforge.forge.tasks.Util.*
-import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
-import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
-import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
-import net.minecraftforge.gradle.common.tasks.ExtractInheritance
-import net.minecraftforge.gradle.common.tasks.SignJar
+import net.minecraftforge.forge.tasks.checks.*
+import net.minecraftforge.gradle.common.tasks.*
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
-import com.mohistmc.tasks.JenkinsNumber
-import net.minecraftforge.forge.tasks.checks.CheckATs
-import net.minecraftforge.forge.tasks.checks.CheckExcs
-import net.minecraftforge.forge.tasks.checks.CheckPatches
-import net.minecraftforge.forge.tasks.checks.CheckSAS
-import net.minecraftforge.forge.tasks.checks.CheckTask
+
+import java.nio.file.Files
+import java.util.stream.Collectors
+
+import static net.minecraftforge.forge.tasks.Util.*
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
@@ -25,7 +20,7 @@ plugins {
     id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
 }
 
-Util.init() //Init all our extension methods!
+init() //Init all our extension methods!
 
 ext {
     JAR_SIGNER = null
@@ -282,7 +277,7 @@ def sharedFmlonlyForge = { Project prj ->
             modules.add(lib.name)
         }
         for (child in prj.ext.PACKED_DEPS) {
-            libraries.add(Util.getMavenDep(rootProject.tasks.findByPath(child)))
+            libraries.add(getMavenDep(rootProject.tasks.findByPath(child)))
         }
         //libraries.add("${project.group}:${project.name}:${project.version}:launcher")
         inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
@@ -391,7 +386,7 @@ def sharedFmlonlyForge = { Project prj ->
         }
     }
 
-    def MODULE_PATH = Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
+    def MODULE_PATH = getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
     def tokens = [
             TASK:          prj.name.equals('forge') ? 'forgeserver' : 'fmlserver',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
@@ -399,15 +394,15 @@ def sharedFmlonlyForge = { Project prj ->
             MC_VERSION:    MC_VERSION,
             MCP_VERSION:   MCP_VERSION,
             FORGE_GROUP:   prj.group,
-            IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
+            IGNORE_LIST: getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
 
     prj.task('makeClasspathFiles') {
         doLast {
-            def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+            def CLASS_PATH = getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
             [
-                'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                'libraries/' + getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                 "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             ]
             def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
@@ -574,7 +569,7 @@ project(':fmlonly') {
                     jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
-                          '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
+                          '-p', getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
                           // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
@@ -949,7 +944,7 @@ project(':forge') {
                         'Specification-Vendor'  : 'SpigotMC',
                         'Specification-Version' : '1.19.3',
                         'Implementation-Title'  : 'Spigot',
-                        'Implementation-Version': '7e29f765-296df566-9fb885e8',
+                        'Implementation-Version': '37262de8-4a929b5d6-19641c75',
                         'Implementation-Vendor' : 'SpigotMC'
                 ] as LinkedHashMap
         ]
@@ -966,7 +961,7 @@ project(':forge') {
         tool = INSTALLER_TOOLS + ':fatjar'
         args.add '--annotations'
         input = genJoinedBinPatches.cleanJar
-        libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) }
+        libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(Collectors.toList()) }
     }
 
     task findFieldInstanceChecks(type: FieldCompareFinder, dependsOn: ['createJoinedSRG']) {
@@ -1078,7 +1073,7 @@ project(':forge') {
                           "-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
-                          '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
+                          '-p', getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
                           // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
@@ -1329,9 +1324,9 @@ project(':forge') {
         archiveVersion = '1.19.3-' + MOHIST_VERSION
         destinationDirectory = file('build/libs')
 
-        def CLASS_PATH = Util.getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
+        def CLASS_PATH = getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
                 [
-                        'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                        'libraries/' + getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                         "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar",
                         "libraries/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
                         "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
@@ -1374,7 +1369,7 @@ project(':forge') {
                                 "libraries/org/joml/joml/1.10.5/joml-1.10.5.jar"
                         ].findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
                 )
-        def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+        def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
                 TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
                 MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
@@ -1382,7 +1377,7 @@ project(':forge') {
                 MC_VERSION   : MC_VERSION,
                 MCP_VERSION  : MCP_VERSION,
                 FORGE_GROUP  : project.group,
-                IGNORE_LIST  : Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
+                IGNORE_LIST  : getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
                 MODULES      : 'ALL-MODULE-PATH'
         ]
 
@@ -1459,7 +1454,7 @@ project(':forge') {
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
         archiveBaseName = 'mohist'
-        version = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
+        archiveVersion = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge/forge_installer_logo.png')) {
             rename { 'big_logo.png' }

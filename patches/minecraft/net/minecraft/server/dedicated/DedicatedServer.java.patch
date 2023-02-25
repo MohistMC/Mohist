@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.server.dedicated;
  
  import com.google.common.collect.Lists;
 +import com.mohistmc.Metrics;
++import com.mohistmc.MohistConfig;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
@@ -51,7 +52,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -153,14 +_,25 @@
+@@ -153,14 +_,29 @@
           return false;
        } else {
           this.m_129823_(new DedicatedPlayerList(this, this.m_247573_(), this.f_129745_));
@@ -63,6 +64,10 @@
 +         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +         org.spigotmc.SpigotConfig.registerCommands();
 +         // Spigot end
++         // Mohsit start
++         MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
++         MohistConfig.registerCommands();
++         // Mohist end
           long i = Util.m_137569_();
           SkullBlockEntity.m_222885_(this.f_236721_, this);
           GameProfileCache.m_11004_(this.m_129797_());

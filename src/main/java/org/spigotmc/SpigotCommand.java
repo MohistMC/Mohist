@@ -30,7 +30,7 @@ public class SpigotCommand extends Command {
             Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
 
             MinecraftServer console = MinecraftServer.getServer();
-            SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
+            SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings"));
             for (ServerLevel world : console.getAllLevels()) {
                 world.spigotConfig.init();
             }

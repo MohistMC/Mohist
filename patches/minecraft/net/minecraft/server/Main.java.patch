@@ -37,7 +37,7 @@
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
  import net.minecraft.world.level.storage.LevelResource;
-@@ -79,6 +_,41 @@
+@@ -79,6 +_,48 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -76,6 +76,13 @@
 +              .defaultsTo(new File("spigot.yml"))
 +              .describedAs("Yml file");
 +      // Spigot End
++      // Mohist Start
++      optionparser.acceptsAll(Arrays.asList("M", "mohist-settings"), "File for mohist settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("mohist-config","mohist.yml"))
++              .describedAs("Yml file");
++      // Mohist End
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);

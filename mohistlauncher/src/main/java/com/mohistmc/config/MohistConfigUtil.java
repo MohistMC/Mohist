@@ -28,17 +28,16 @@ import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
 
-    public static File mohistyml = new File("mohist-config/mohist.yml");
+    public static File mohistyml = new File("mohist-config", "mohist.yml");
     public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
 
     public static void copyMohistConfig() {
         try {
             if (!mohistyml.exists()) {
-                mohistyml.mkdirs();
-                Files.copy(MohistMCStart.class.getClassLoader().getResourceAsStream("configs/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                mohistyml.createNewFile();
             }
         } catch (Exception e) {
-            System.out.println("File copy exception!");
+            System.out.println("File init exception!");
         }
     }
 

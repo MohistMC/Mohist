@@ -1,11 +1,6 @@
 package org.bukkit.command;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.command.BackupWorldCommand;
-import com.mohistmc.command.DumpCommand;
-import com.mohistmc.command.GetPluginListCommand;
-import com.mohistmc.command.MohistCommand;
-import com.mohistmc.command.PluginCommand;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,13 +36,6 @@ public class SimpleCommandMap implements CommandMap {
         register("bukkit", new ReloadCommand("reload"));
         register("bukkit", new PluginsCommand("plugins"));
         register("bukkit", new TimingsCommand("timings"));
-
-        // Mohist
-        register("mohist", new MohistCommand("mohist"));
-        register("mohist", new GetPluginListCommand("getpluginlist"));
-        register("mohist", new DumpCommand("dump"));
-        register("mohist", new PluginCommand("plugin"));
-        register("mohist", new BackupWorldCommand("backupworld"));
     }
 
     public void setFallbackCommands() {
