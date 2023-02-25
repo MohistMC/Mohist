@@ -100,6 +100,11 @@ subprojects {
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+        options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-removal"// Mohist ignore compile warnings
+    }
 }
 
 project(':mcp') {
@@ -1476,11 +1481,6 @@ project(':forge') {
 
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-        options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-removal"// Mohist ignore compile warnings
-    }
 }
 
 //evaluationDependsOnChildren()
