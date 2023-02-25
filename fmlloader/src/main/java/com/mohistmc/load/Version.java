@@ -7,11 +7,12 @@ public class Version {
 
     public static String get(String key) {
         try {
-            for (String line : Files.readAllLines(new File("mods.txt").toPath()))
+            for (String line : Files.readAllLines(new File("mods.txt").toPath())) {
                 if (line.contains(key + ":")) {
                     String[] spl = line.split(":");
                     return spl[1];
                 }
+            }
         } catch (Throwable ignored) {
         }
         return "1.19.3";

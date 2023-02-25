@@ -37,13 +37,15 @@ public class NBT {
         try (DataOutputStream data = compressed
                 ? new DataOutputStream(new GZIPOutputStream(out))
                 : new DataOutputStream(new BufferedOutputStream(out))) {
-            write((OutputStream) data, map);
+            write(data, map);
         }
     }
 
     private static Map<String, Object> read(DataInput in) throws IOException {
         if (in.readByte() != 10)    // assume TypeID of NBT::TAG_Compound
+        {
             throw new IOException("Root tag must be a named compound tag");
+        }
 
         String name = readString(in);
 
@@ -74,8 +76,9 @@ public class NBT {
 
     private static int[] readIntArray(DataInput in) throws IOException {
         int[] data = new int[in.readInt()];
-        for (int i = 0; i < data.length; i++)
+        for (int i = 0; i < data.length; i++) {
             data[i] = in.readInt();
+        }
         return data;
     }
 
@@ -111,18 +114,40 @@ public class NBT {
     }
 
     private static byte whichType(Object tag) {
-        if (tag instanceof Byte) return 1;
-        if (tag instanceof Short) return 2;
-        if (tag instanceof Integer) return 3;
-        if (tag instanceof Long) return 4;
-        if (tag instanceof Float) return 5;
-        if (tag instanceof Double) return 6;
+        if (tag instanceof Byte) {
+            return 1;
+        }
+        if (tag instanceof Short) {
+            return 2;
+        }
+        if (tag instanceof Integer) {
+            return 3;
+        }
+        if (tag instanceof Long) {
+            return 4;
+        }
+        if (tag instanceof Float) {
+            return 5;
+        }
+        if (tag instanceof Double) {
+            return 6;
+        }
 
-        if (tag instanceof byte[]) return 7;
-        if (tag instanceof String) return 8;
-        if (tag instanceof List<?>) return 9;
-        if (tag instanceof Map<?, ?>) return 10;
-        if (tag instanceof int[]) return 11;
+        if (tag instanceof byte[]) {
+            return 7;
+        }
+        if (tag instanceof String) {
+            return 8;
+        }
+        if (tag instanceof List<?>) {
+            return 9;
+        }
+        if (tag instanceof Map<?, ?>) {
+            return 10;
+        }
+        if (tag instanceof int[]) {
+            return 11;
+        }
 
         throw new RuntimeException("Cannot serialize unknown type " + tag.getClass());
     }
@@ -152,7 +177,9 @@ public class NBT {
 
     private static void writeIntArray(DataOutput out, int[] array) throws IOException {
         out.writeInt(array.length);
-        for (int j : array) out.writeInt(j);
+        for (int j : array) {
+            out.writeInt(j);
+        }
     }
 
     private static void writeString(DataOutput out, String str) throws IOException {

@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
  * GlobalClassRepo
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName GlobalClassRepo
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/GlobalClassRepo.java">Click here to get to github</a>
- *
+ * @originalClassName GlobalClassRepo
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/GlobalClassRepo.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class GlobalClassRepo implements ClassRepo {
@@ -28,14 +28,25 @@ public class GlobalClassRepo implements ClassRepo {
     public static final GlobalClassRepo INSTANCE = new GlobalClassRepo();
     private static final PluginInheritanceProvider PROVIDER = new PluginInheritanceProvider(INSTANCE);
     private static final PluginInheritanceProvider REMAPPING = new PluginInheritanceProvider.Remapping(INSTANCE, PROVIDER);
-
-    private final LoadingCache<String, ClassNode> cache = CacheBuilder.newBuilder().maximumSize(256)
-        .expireAfterAccess(1, TimeUnit.MINUTES).build(CacheLoader.from(this::findParallel));
     private final Set<ClassRepo> repos = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final LoadingCache<String, ClassNode> cache = CacheBuilder.newBuilder().maximumSize(256)
+            .expireAfterAccess(1, TimeUnit.MINUTES).build(CacheLoader.from(this::findParallel));
     private final RuntimeRepo runtimeRepo = new RuntimeRepo();
 
     private GlobalClassRepo() {
         repos.add(this.runtimeRepo);
+    }
+
+    public static PluginInheritanceProvider inheritanceProvider() {
+        return PROVIDER;
+    }
+
+    public static PluginInheritanceProvider remappingProvider() {
+        return REMAPPING;
+    }
+
+    public static RuntimeRepo runtimeRepo() {
+        return INSTANCE.runtimeRepo;
     }
 
     @Override
@@ -56,10 +67,10 @@ public class GlobalClassRepo implements ClassRepo {
 
     private ClassNode findParallel(String internalName) {
         return this.repos.parallelStream()
-            .map(it -> it.findClass(internalName))
-            .filter(Objects::nonNull)
-            .findAny()
-            .orElseGet(() -> this.findMinecraft(internalName));
+                .map(it -> it.findClass(internalName))
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElseGet(() -> this.findMinecraft(internalName));
     }
 
     private ClassNode findMinecraft(String internalName) {
@@ -76,17 +87,5 @@ public class GlobalClassRepo implements ClassRepo {
 
     public void removeRepo(ClassRepo repo) {
         this.repos.remove(repo);
-    }
-
-    public static PluginInheritanceProvider inheritanceProvider() {
-        return PROVIDER;
-    }
-
-    public static PluginInheritanceProvider remappingProvider() {
-        return REMAPPING;
-    }
-
-    public static RuntimeRepo runtimeRepo() {
-        return INSTANCE.runtimeRepo;
     }
 }

@@ -23,7 +23,6 @@
 
 package com.mohistmc.log4j;
 
-import java.util.List;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
@@ -37,6 +36,8 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Plugin(name = "highlightLevel", category = PatternConverter.CATEGORY)
 @ConverterKeys({"highlightLevel"})

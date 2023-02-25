@@ -19,6 +19,7 @@
 package com.mohistmc.util.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -52,8 +53,12 @@ public class i18n {
     public static String getLocale(int key) {
         String locale = MohistConfigUtil.yml.getString("mohist.lang", "xx_XX");
         if (locale.length() == 5) {
-            if (key == 1) return locale.substring(0, 2);
-            if (key == 2) return locale.substring(3, 5);
+            if (key == 1) {
+                return locale.substring(0, 2);
+            }
+            if (key == 2) {
+                return locale.substring(3, 5);
+            }
         }
         return "xx";
     }
@@ -82,6 +87,6 @@ public class i18n {
 
     public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
+        return "Asia/Shanghai".equals(timeZone.getID()) || "CN".equals(rb.getLocale().getCountry());
     }
 }

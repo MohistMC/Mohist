@@ -21,9 +21,9 @@ import java.util.List;
  * MagmaRemapper
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ArclightRemapper
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightRemapper.java">Click here to get to github</a>
- *
+ * @originalClassName ArclightRemapper
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightRemapper.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 @SuppressWarnings("unchecked")
@@ -31,6 +31,7 @@ public class MohistRemapper {
 
     public static final MohistRemapper INSTANCE;
     public static final File DUMP;
+    private static long pkgOffset, clOffset, mdOffset, fdOffset, mapOffset;
 
     static {
         try {
@@ -41,9 +42,21 @@ public class MohistRemapper {
         }
     }
 
+    static {
+        try {
+            pkgOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("packages"));
+            clOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("classes"));
+            mdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("methods"));
+            fdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("fields"));
+            mapOffset = Unsafe.objectFieldOffset(JarMapping.class.getDeclaredField("inheritanceMap"));
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public final InheritanceMap inheritanceMap;
     private final JarMapping toNmsMapping;
     private final JarMapping toBukkitMapping;
-    public final InheritanceMap inheritanceMap;
     private final List<PluginTransformer> transformerList = new ArrayList<>();
     private final JarRemapper toBukkitRemapper;
     private final JarRemapper toNmsRemapper;
@@ -53,8 +66,8 @@ public class MohistRemapper {
         this.toBukkitMapping = new JarMapping();
         this.inheritanceMap = new InheritanceMap();
         this.toNmsMapping.loadMappings(
-            new BufferedReader(new InputStreamReader(MohistRemapper.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))),
-            null, null, false
+                new BufferedReader(new InputStreamReader(MohistRemapper.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))),
+                null, null, false
         );
         // TODO workaround for https://github.com/md-5/SpecialSource/pull/81
         //  remove on update
@@ -63,12 +76,12 @@ public class MohistRemapper {
         var nextSection = content.substring(i).lines().skip(1).dropWhile(it -> it.startsWith("\t")).findFirst().orElseThrow();
         var nextIndex = content.indexOf(nextSection);
         this.toBukkitMapping.loadMappings(
-            new BufferedReader(new StringReader(content.substring(0, i) + content.substring(nextIndex))),
-            null, null, true
+                new BufferedReader(new StringReader(content.substring(0, i) + content.substring(nextIndex))),
+                null, null, true
         );
         this.toBukkitMapping.loadMappings(
-            new BufferedReader(new StringReader(content.substring(i, nextIndex))),
-            null, null, true
+                new BufferedReader(new StringReader(content.substring(i, nextIndex))),
+                null, null, true
         );
         BiMap<String, String> inverseClassMap = HashBiMap.create(toNmsMapping.classes).inverse();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(MohistRemapper.class.getClassLoader().getResourceAsStream("mappings/inheritanceMap.txt")))) {
@@ -103,20 +116,6 @@ public class MohistRemapper {
 
     public List<PluginTransformer> getTransformerList() {
         return transformerList;
-    }
-
-    private static long pkgOffset, clOffset, mdOffset, fdOffset, mapOffset;
-
-    static {
-        try {
-            pkgOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("packages"));
-            clOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("classes"));
-            mdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("methods"));
-            fdOffset = Unsafe.objectFieldOffset(JarMapping.class.getField("fields"));
-            mapOffset = Unsafe.objectFieldOffset(JarMapping.class.getDeclaredField("inheritanceMap"));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
     }
 
     private JarMapping copyOf(JarMapping mapping) {

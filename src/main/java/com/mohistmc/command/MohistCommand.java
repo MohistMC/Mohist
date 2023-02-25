@@ -22,10 +22,6 @@ import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.configuration.MohistConfig;
 import com.mohistmc.configuration.TickConfig;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.SharedConstants;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
@@ -34,6 +30,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class MohistCommand extends Command {
 
@@ -66,7 +67,9 @@ public class MohistCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!testPermission(sender)) {
+            return true;
+        }
 
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -106,8 +109,9 @@ public class MohistCommand extends Command {
                 }
             }
             case "reload" -> {
-                if (MohistConfig.instance != null)
+                if (MohistConfig.instance != null) {
                     MohistConfig.instance.load();
+                }
                 TickConfig.ENTITIES.reloadConfig();
                 TickConfig.TILES.reloadConfig();
                 sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");

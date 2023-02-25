@@ -19,6 +19,7 @@
 package com.mohistmc.util;
 
 import com.mohistmc.config.MohistConfigUtil;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -57,7 +58,9 @@ public class MohistModuleManager {
     }
 
     public static void addExports(String module, String pkg, String target) {
-        if (target == null) target = "ALL-UNNAMED";
+        if (target == null) {
+            target = "ALL-UNNAMED";
+        }
 
         try {
             addExports(List.of(module + "/" + pkg + "=" + target));
@@ -74,7 +77,9 @@ public class MohistModuleManager {
     }
 
     public static void addOpens(String module, String pkg, String target) {
-        if (target == null) target = "ALL-UNNAMED";
+        if (target == null) {
+            target = "ALL-UNNAMED";
+        }
 
         try {
             addOpens(List.of(module + "/" + pkg + "=" + target));
@@ -235,8 +240,12 @@ public class MohistModuleManager {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
+            if (obj == this) {
+                return true;
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
+                return false;
+            }
             var that = (ParserData) obj;
             return Objects.equals(this.module, that.module) &&
                     Objects.equals(this.packages, that.packages) &&

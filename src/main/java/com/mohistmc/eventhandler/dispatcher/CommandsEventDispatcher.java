@@ -37,7 +37,7 @@ public class CommandsEventDispatcher {
             craftServer.getCommandMap().register("forge", wrapper);
             ServerAPI.forgecmdper.put(wrapper.getName(), wrapper.getPermission());
             craftServer.helpMap.addTopic(new GenericCommandHelpTopic(wrapper));
-            Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper.toString());
+            Bukkit.getLogger().info("ModsCommandDispatcher register " + wrapper);
         }
     }
 }

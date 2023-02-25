@@ -6,7 +6,11 @@ import net.md_5.specialsource.provider.InheritanceProvider;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -16,20 +20,15 @@ import java.util.Set;
  * MagmaInterfaceInvokerGen
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ArclightInterfaceInvokerGen
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightInterfaceInvokerGen.java">Click here to get to github</a>
- *
+ * @originalClassName ArclightInterfaceInvokerGen
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightInterfaceInvokerGen.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class MohistInterfaceInvokerGen implements PluginTransformer {
 
     public static final MohistInterfaceInvokerGen INSTANCE = new MohistInterfaceInvokerGen();
     private static final String PREFIX = "net/minecraft/";
-
-    @Override
-    public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
-        generate(node, remapper, GlobalClassRepo.inheritanceProvider());
-    }
 
     private static void generate(ClassNode classNode, ClassLoaderRemapper remapper, InheritanceProvider inheritanceProvider) {
         if (shouldGenerate(classNode.name, inheritanceProvider)) {
@@ -75,18 +74,28 @@ public class MohistInterfaceInvokerGen implements PluginTransformer {
     }
 
     private static boolean shouldGenerate(String internalName, InheritanceProvider provider) {
-        if (internalName == null) return false;
-        if (internalName.startsWith(PREFIX)) return true;
+        if (internalName == null) {
+            return false;
+        }
+        if (internalName.startsWith(PREFIX)) {
+            return true;
+        }
         for (String parent : provider.getParents(internalName)) {
-            if (shouldGenerate(parent, provider)) return true;
+            if (shouldGenerate(parent, provider)) {
+                return true;
+            }
         }
         return false;
     }
 
     private static void interfaceMethods(String internalName, Set<Map.Entry<String, String>> set, ClassRepo classRepo) {
-        if (internalName == null || internalName.equals("java/lang/Object") || internalName.startsWith(PREFIX)) return;
+        if (internalName == null || internalName.equals("java/lang/Object") || internalName.startsWith(PREFIX)) {
+            return;
+        }
         ClassNode classNode = classRepo.findClass(internalName);
-        if (classNode == null) return;
+        if (classNode == null) {
+            return;
+        }
         interfaceMethods(classNode.superName, set, classRepo);
         if (classNode.interfaces != null && classNode.interfaces.size() > 0) {
             for (String intf : classNode.interfaces) {
@@ -96,5 +105,10 @@ public class MohistInterfaceInvokerGen implements PluginTransformer {
         for (MethodNode methodNode : classNode.methods) {
             set.add(Maps.immutableEntry(methodNode.name, methodNode.desc));
         }
+    }
+
+    @Override
+    public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
+        generate(node, remapper, GlobalClassRepo.inheritanceProvider());
     }
 }

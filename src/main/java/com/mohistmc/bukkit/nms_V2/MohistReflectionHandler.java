@@ -13,7 +13,11 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.VarHandle;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.WildcardType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -22,15 +26,16 @@ import java.security.Permissions;
 import java.security.ProtectionDomain;
 import java.security.SecureClassLoader;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
  * MagmaReflectionHandler
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ArclightReflectionHandler
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/generated/ArclightReflectionHandler.java">Click here to get to github</a>
- *
+ * @originalClassName ArclightReflectionHandler
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/generated/ArclightReflectionHandler.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 @SuppressWarnings("unused")
@@ -47,7 +52,9 @@ public class MohistReflectionHandler extends ClassLoader {
             if (e.getCause() instanceof ClassNotFoundException) {
                 remapper.tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return redirectGetDeclaredMethods(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             remapper.tryDefineClass(error.getMessage());
             return redirectGetDeclaredMethods(cl);
@@ -61,7 +68,9 @@ public class MohistReflectionHandler extends ClassLoader {
             if (e.getCause() instanceof ClassNotFoundException) {
                 remapper.tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return redirectGetMethods(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             remapper.tryDefineClass(error.getMessage());
             return redirectGetMethods(cl);
@@ -75,7 +84,9 @@ public class MohistReflectionHandler extends ClassLoader {
             if (e.getCause() instanceof ClassNotFoundException) {
                 remapper.tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return redirectGetDeclaredFields(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             remapper.tryDefineClass(error.getMessage());
             return redirectGetDeclaredFields(cl);
@@ -89,7 +100,9 @@ public class MohistReflectionHandler extends ClassLoader {
             if (e.getCause() instanceof ClassNotFoundException) {
                 remapper.tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return redirectGetFields(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             remapper.tryDefineClass(error.getMessage());
             return redirectGetFields(cl);
@@ -110,7 +123,9 @@ public class MohistReflectionHandler extends ClassLoader {
     public static String redirectClassGetCanonicalName(Class<?> cl) {
         if (cl.isArray()) {
             String name = redirectClassGetCanonicalName(cl.getComponentType());
-            if (name == null) return null;
+            if (name == null) {
+                return null;
+            }
             return name + "[]";
         }
         if (cl.isLocalClass() || cl.isAnonymousClass()) {
@@ -125,7 +140,9 @@ public class MohistReflectionHandler extends ClassLoader {
             return redirectClassGetName(cl);
         } else {
             String name = redirectClassGetCanonicalName(enclosingClass);
-            if (name == null) return null;
+            if (name == null) {
+                return null;
+            }
             return name + "." + redirectClassGetSimpleName(cl);
         }
     }
@@ -240,7 +257,7 @@ public class MohistReflectionHandler extends ClassLoader {
                 String replace = cl.substring(0, i).replace('.', '/') + "$" + cl.substring(i + 1);
                 replace = remapper.mapType(replace).replace('/', '.').replace('$', '.');
                 return Class.forName(ASMUtils.toClassName(replace), initialize, classLoader);
-            };
+            }
         }
         throw new ClassNotFoundException(cl);
     }
@@ -440,7 +457,9 @@ public class MohistReflectionHandler extends ClassLoader {
     }
 
     public static String findMappedResource(Class<?> cl, String name) {
-        if (name.isEmpty() || !name.endsWith(".class")) return null;
+        if (!name.endsWith(".class")) {
+            return null;
+        }
         name = name.substring(0, name.length() - 6);
         String className;
         if (cl != null) {
@@ -448,7 +467,9 @@ public class MohistReflectionHandler extends ClassLoader {
                 className = name.substring(1);
             } else {
                 Class<?> c = cl;
-                while (c.isArray()) c = c.getComponentType();
+                while (c.isArray()) {
+                    c = c.getComponentType();
+                }
                 String mapped = remapper.toBukkitRemapper().mapType(c.getName().replace('.', '/'));
                 int index = mapped.lastIndexOf('/');
                 if (index == -1) {
@@ -463,8 +484,11 @@ public class MohistReflectionHandler extends ClassLoader {
         className = remapper.mapType(className);
         if (className.startsWith("java/") || className.startsWith("jdk/") || className.startsWith("javax/")) {
             return null;
-        } else if (cl != null) return "/" + className + ".class";
-        else return className + ".class";
+        } else if (cl != null) {
+            return "/" + className + ".class";
+        } else {
+            return className + ".class";
+        }
     }
 
     public static URL redirectClassGetResource(Class<?> cl, String name) throws MalformedURLException {
@@ -489,7 +513,9 @@ public class MohistReflectionHandler extends ClassLoader {
             return cl.getResourceAsStream(name);
         } else {
             URL resource = cl.getResource(mappedResource);
-            if (resource == null) return null;
+            if (resource == null) {
+                return null;
+            }
             return new URL("remap:" + resource).openStream();
         }
     }
@@ -529,13 +555,9 @@ public class MohistReflectionHandler extends ClassLoader {
         }
     }
 
-    public static Object[] handleMethodInvoke(Method method, Object src, Object[] param) throws Throwable {
+    public static Object[] handleMethodInvoke(Method method, Object src, Object[] param) {
         Object[] ret = MohistRedirectAdapter.runHandle(remapper, method, src, param);
-        if (ret != null) {
-            return ret;
-        } else {
-            return new Object[]{method, src, param};
-        }
+        return Objects.requireNonNullElseGet(ret, () -> new Object[]{method, src, param});
     }
 
     public static Object redirectMethodInvoke(Method method, Object src, Object[] param) throws Throwable {

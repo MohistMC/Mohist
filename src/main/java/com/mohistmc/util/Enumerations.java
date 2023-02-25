@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class Enumerations {
 
     public static <A, B> Enumeration<B> transform(Enumeration<A> enumeration, Function<A, B> mapper) {
-        return new Enumeration<B>() {
+        return new Enumeration<>() {
             @Override
             public boolean hasMoreElements() {
                 return enumeration.hasMoreElements();

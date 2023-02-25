@@ -21,6 +21,7 @@ package com.mohistmc.util;
 import cpw.mods.cl.JarModuleFinder;
 import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.jarhandling.SecureJar;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -87,10 +88,14 @@ public class BootstrapLauncher {
                 System.out.println("bsl: encountered path '" + legacy + "'");
             }
 
-            if (Files.notExists(path)) continue;
+            if (Files.notExists(path)) {
+                continue;
+            }
             // This computes the name of the artifact for detecting collisions
             var jar = SecureJar.from(path);
-            if ("".equals(jar.name())) continue;
+            if ("".equals(jar.name())) {
+                continue;
+            }
             var jarname = pathLookup.computeIfAbsent(path, k -> filenameMap.getOrDefault(filename, jar.name()));
             order.add(jarname);
             mergeMap.computeIfAbsent(jarname, k -> new ArrayList<>()).add(path);
@@ -102,7 +107,9 @@ public class BootstrapLauncher {
             // skip empty paths
             var name = e.getKey();
             var paths = e.getValue();
-            if (paths.size() == 1 && Files.notExists(paths.get(0))) return;
+            if (paths.size() == 1 && Files.notExists(paths.get(0))) {
+                return;
+            }
             var pathsArray = paths.toArray(Path[]::new);
             var jar = SecureJar.from(new PackageTracker(Set.copyOf(previousPackages), pathsArray), pathsArray);
             var packages = jar.getPackages();
@@ -151,8 +158,9 @@ public class BootstrapLauncher {
 
     private static Map<String, String> getMergeFilenameMap() {
         var mergeModules = System.getProperty("mergeModules");
-        if (mergeModules == null)
+        if (mergeModules == null) {
             return Map.of();
+        }
         // `mergeModules` is a semicolon-separated set of comma-separated set of paths, where each (comma) set of paths is
         // combined into a single modules
         // example: filename1.jar,filename2.jar;filename2.jar,filename3.jar
@@ -200,7 +208,9 @@ public class BootstrapLauncher {
 
             if (packages.isEmpty() || // This is the first jar, nothing is claimed yet, so allow everything
                     path.startsWith("META-INF/")) // Every module can have their own META-INF
+            {
                 return true;
+            }
 
             int idx = path.lastIndexOf('/');
             return idx < 0 || // Resources at the root are allowed to co-exist

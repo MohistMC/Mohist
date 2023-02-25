@@ -22,13 +22,25 @@ import java.util.Hashtable;
  * RemapSourceHandler
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName RemapSourceHandler
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/resource/RemapSourceHandler.java">Click here to get to github</a>
- *
+ * @originalClassName RemapSourceHandler
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/resource/RemapSourceHandler.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 
 public class RemapSourceHandler extends URLStreamHandler {
+
+    @SuppressWarnings("unchecked")
+    public static void register() {
+        try {
+            Unsafe.ensureClassInitialized(URL.class);
+            MethodHandle getter = Unsafe.lookup().findStaticGetter(URL.class, "handlers", Hashtable.class);
+            Hashtable<String, URLStreamHandler> handlers = (Hashtable<String, URLStreamHandler>) getter.invokeExact();
+            handlers.put("remap", new RemapSourceHandler());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
@@ -80,18 +92,6 @@ public class RemapSourceHandler extends URLStreamHandler {
             } else {
                 return new ByteArrayInputStream(this.array);
             }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void register() {
-        try {
-            Unsafe.ensureClassInitialized(URL.class);
-            MethodHandle getter = Unsafe.lookup().findStaticGetter(URL.class, "handlers", Hashtable.class);
-            Hashtable<String, URLStreamHandler> handlers = (Hashtable<String, URLStreamHandler>) getter.invokeExact();
-            handlers.put("remap", new RemapSourceHandler());
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
         }
     }
 }

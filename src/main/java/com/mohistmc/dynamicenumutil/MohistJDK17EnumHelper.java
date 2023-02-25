@@ -1,5 +1,7 @@
 package com.mohistmc.dynamicenumutil;
 
+import sun.misc.Unsafe;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -9,7 +11,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import sun.misc.Unsafe;
 
 public class MohistJDK17EnumHelper {
     private static MethodHandles.Lookup implLookup = null;
@@ -40,7 +41,7 @@ public class MohistJDK17EnumHelper {
             unsafe = (Unsafe) unsafeField.get(null);
             Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             implLookup = (MethodHandles.Lookup) unsafe.getObject(unsafe.staticFieldBase(implLookupField), unsafe.staticFieldOffset(implLookupField));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         isSetup = true;
@@ -120,7 +121,7 @@ public class MohistJDK17EnumHelper {
 
             for (Field field : fields) {
                 if ((field.getModifiers() & flags) == flags &&
-                        field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+                        field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't.
                 {
                     valuesField = field;
                     break;
@@ -146,7 +147,7 @@ public class MohistJDK17EnumHelper {
         try {
             T[] previousValues = (T[]) valuesField.get(enumType);
             List<T> values = new ArrayList<>(Arrays.asList(previousValues));
-            T newValue = (T) makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
+            T newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
             values.add(newValue);
             setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
             cleanEnumCache(enumType);

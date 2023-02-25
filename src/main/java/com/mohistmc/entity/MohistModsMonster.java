@@ -10,7 +10,7 @@ import org.bukkit.entity.EntityType;
  * Mohist
  *
  * @author Malcolm - m1lc0lm
- * @Created at 20.02.2022 - 21:02 GMT+1
+ * @Created  at 20.02.2022 - 21:02 GMT+1
  * © Copyright 2021 / 2022 - M1lcolm
  */
 public class MohistModsMonster extends CraftMonster {

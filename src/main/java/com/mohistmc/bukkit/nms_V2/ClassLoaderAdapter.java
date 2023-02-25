@@ -6,7 +6,18 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import java.net.URLClassLoader;
 import java.util.Collection;
@@ -16,9 +27,9 @@ import java.util.Map;
  * ClassLoaderAdapter
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ClassLoaderAdapter
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ClassLoaderAdapter.java">Click here to get to github</a>
- *
+ * @originalClassName ClassLoaderAdapter
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ClassLoaderAdapter.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 
@@ -29,8 +40,8 @@ public class ClassLoaderAdapter implements PluginTransformer {
     private static final String CLASSLOADER = "java/lang/ClassLoader";
 
     private final Map<String, String> classLoaderTypes = ImmutableMap.<String, String>builder()
-        .put(Type.getInternalName(URLClassLoader.class), Type.getInternalName(RemappingURLClassLoader.class))
-        .build();
+            .put(Type.getInternalName(URLClassLoader.class), Type.getInternalName(RemappingURLClassLoader.class))
+            .build();
 
     @Override
     public void handleClass(ClassNode node, ClassLoaderRemapper remapper) {
@@ -44,7 +55,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
                         while (next != null && (next.getOpcode() != Opcodes.INVOKESPECIAL || !((MethodInsnNode) next).name.equals("<init>") || !((MethodInsnNode) next).owner.equals(typeInsnNode.desc))) {
                             next = next.getNext();
                         }
-                        if (next == null) continue;
+                        if (next == null) {
+                            continue;
+                        }
                         MohistMC.LOGGER.debug(MARKER, "Found new {}/{} call in {} {}", typeInsnNode.desc, ((MethodInsnNode) next).name + ((MethodInsnNode) next).desc, node.name, methodNode.name + methodNode.desc);
                         ((MethodInsnNode) next).owner = replace;
                         typeInsnNode.desc = replace;
@@ -53,7 +66,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
             }
         }
         ClassInfo info = classInfo(node);
-        if (info == null) return;
+        if (info == null) {
+            return;
+        }
         MohistMC.LOGGER.debug(MARKER, "Transforming classloader class {}", node.name);
         if (!info.remapping) {
             implementIntf(node);
@@ -96,7 +111,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
     private ClassInfo classInfo(ClassNode node) {
         ClassInfo info = new ClassInfo();
         Collection<String> parents = GlobalClassRepo.inheritanceProvider().getAll(node.superName);
-        if (!parents.contains(CLASSLOADER)) return null;
+        if (!parents.contains(CLASSLOADER)) {
+            return null;
+        }
         for (String s : classLoaderTypes.keySet()) {
             if (parents.contains(s)) {
                 info.remapping = true;

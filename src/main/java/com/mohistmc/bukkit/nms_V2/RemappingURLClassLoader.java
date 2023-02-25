@@ -18,9 +18,9 @@ import java.util.jar.Manifest;
  * MagmaReflectionHandler
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ArclightReflectionHandler
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/generated/RemappingURLClassLoader.java">Click here to get to github</a>
- *
+ * @originalClassName ArclightReflectionHandler
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/generated/RemappingURLClassLoader.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class RemappingURLClassLoader extends URLClassLoader implements RemappingClassLoader {
@@ -29,24 +29,26 @@ public class RemappingURLClassLoader extends URLClassLoader implements Remapping
         ClassLoader.registerAsParallelCapable();
     }
 
+    private ClassLoaderRemapper remapper;
+
     public RemappingURLClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, asTransforming(parent));
+        super(urls, RemappingClassLoader.asTransforming(parent));
     }
 
     public RemappingURLClassLoader(URL[] urls) {
-        super(urls, asTransforming(null));
+        super(urls, RemappingClassLoader.asTransforming(null));
     }
 
     public RemappingURLClassLoader(URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
-        super(urls, asTransforming(parent), factory);
+        super(urls, RemappingClassLoader.asTransforming(parent), factory);
     }
 
     public RemappingURLClassLoader(String name, URL[] urls, ClassLoader parent) {
-        super(name, urls, asTransforming(parent));
+        super(name, urls, RemappingClassLoader.asTransforming(parent));
     }
 
     public RemappingURLClassLoader(String name, URL[] urls, ClassLoader parent, URLStreamHandlerFactory factory) {
-        super(name, urls, asTransforming(parent), factory);
+        super(name, urls, RemappingClassLoader.asTransforming(parent), factory);
     }
 
     @Override
@@ -95,8 +97,6 @@ public class RemappingURLClassLoader extends URLClassLoader implements Remapping
         }
         return result;
     }
-
-    private ClassLoaderRemapper remapper;
 
     @Override
     public ClassLoaderRemapper getRemapper() {

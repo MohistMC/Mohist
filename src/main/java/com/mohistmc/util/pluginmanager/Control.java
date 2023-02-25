@@ -18,14 +18,6 @@
 
 package com.mohistmc.util.pluginmanager;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -36,6 +28,15 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 public class Control {
 
@@ -91,7 +92,9 @@ public class Control {
         Map<String, Command> knownCommands = ObfuscationReflectionHelper.getPrivateValue(SimpleCommandMap.class, commandMap, "knownCommands");
 
         for (Plugin plugin1 : manager.getPlugins()) {
-            if (!plugin1.equals(plugin)) continue;
+            if (!plugin1.equals(plugin)) {
+                continue;
+            }
 
             manager.disablePlugin(plugin);
             plugins.remove(plugin);
@@ -99,8 +102,10 @@ public class Control {
 
             Iterator<Map.Entry<String, Command>> it = knownCommands.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String, Command> entry = (Map.Entry) it.next();
-                if (!(entry.getValue() instanceof PluginCommand command)) continue;
+                Map.Entry<String, Command> entry = it.next();
+                if (!(entry.getValue() instanceof PluginCommand command)) {
+                    continue;
+                }
                 if (command.getPlugin() == plugin) {
                     command.unregister(commandMap);
                     it.remove();

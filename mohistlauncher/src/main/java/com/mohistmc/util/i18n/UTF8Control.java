@@ -40,7 +40,7 @@ public class UTF8Control extends ResourceBundle.Control {
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException, IOException {
         String bundleName = toBundleName(baseName, locale);
         ResourceBundle bundle = null;
-        if (format.equals("java.class")) {
+        if ("java.class".equals(format)) {
             try {
                 Class<? extends ResourceBundle> bundleClass
                         = (Class<? extends ResourceBundle>) loader.loadClass(bundleName);
@@ -54,7 +54,7 @@ public class UTF8Control extends ResourceBundle.Control {
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException ignored) {
             }
-        } else if (format.equals("java.properties")) {
+        } else if ("java.properties".equals(format)) {
             final String resourceName = toResourceName0(bundleName);
             if (resourceName == null) {
                 return null;

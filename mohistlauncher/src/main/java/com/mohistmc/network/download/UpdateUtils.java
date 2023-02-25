@@ -20,6 +20,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
@@ -31,7 +32,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.mohistmc.network.download.NetworkUtil.getConn;
 
@@ -49,17 +53,17 @@ public class UpdateUtils {
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         int fS = conn.getContentLength();
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (rbc.isOpen()) {
-                    if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100)
-                        System.out.println(i18n.get("file.download.percentage", f.getName(), percentage));
-                    percentage = Math.round((float) f.length() / fS * 100);
-                } else t.cancel();
-            }
-        }, 3000, 1000);
+
+        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(2);
+        scheduledExecutorService.scheduleAtFixedRate(
+                () -> {
+                    if (rbc.isOpen()) {
+                        if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100) {
+                            System.out.println(i18n.get("file.download.percentage", f.getName(), percentage));
+                        }
+                        percentage = Math.round((float) f.length() / fS * 100);
+                    }
+                }, 3000, 1000, TimeUnit.SECONDS);
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();

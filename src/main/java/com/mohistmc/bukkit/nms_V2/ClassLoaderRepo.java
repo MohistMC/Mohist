@@ -14,9 +14,9 @@ import java.net.URLConnection;
  * ClassLoaderRepo
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ClassLoaderRepo
- * &#064;classFrom https://github.com/IzzelAliz/Arclight/tree/1.18/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper
- *
+ * @originalClassName ClassLoaderRepo
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/tree/1.18/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper">...</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class ClassLoaderRepo implements ClassRepo {
@@ -34,9 +34,11 @@ public class ClassLoaderRepo implements ClassRepo {
 
     public ClassNode findClass(String internalName, int parsingOptions) {
         URL url = classLoader instanceof URLClassLoader
-            ? ((URLClassLoader) classLoader).findResource(internalName + ".class") // search local
-            : classLoader.getResource(internalName + ".class");
-        if (url == null) return null;
+                ? ((URLClassLoader) classLoader).findResource(internalName + ".class") // search local
+                : classLoader.getResource(internalName + ".class");
+        if (url == null) {
+            return null;
+        }
         try {
             URLConnection connection = url.openConnection();
             try (InputStream inputStream = connection.getInputStream()) {

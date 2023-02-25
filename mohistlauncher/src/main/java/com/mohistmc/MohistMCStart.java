@@ -26,11 +26,11 @@ import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
-
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
@@ -81,7 +81,9 @@ public class MohistMCStart {
 
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
-            while (!"true".equals(new Scanner(System.in).next())) ;
+            while (!"true".equals(new Scanner(System.in).next())) {
+                ;
+            }
             writeInfos();
         }
 

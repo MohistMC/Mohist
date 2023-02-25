@@ -13,7 +13,11 @@ import net.md_5.specialsource.RemappingClassAdapter;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.*;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
@@ -31,7 +35,11 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.security.CodeSigner;
 import java.security.CodeSource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,9 +48,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * ClassLoaderAdapter
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ClassLoaderAdapter
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ClassLoaderRepo.java">Click here to get to github</a>
- *
+ * @originalClassName ClassLoaderAdapter
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ClassLoaderRepo.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class ClassLoaderRemapper extends LenientJarRemapper {
@@ -50,14 +58,17 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private static final Logger LOGGER = LogManager.getLogger("Magma");
     private static final String PREFIX = "net/minecraft/";
     private static final String REPLACED_NAME = Type.getInternalName(MohistReflectionHandler.class);
-
+    private static final AtomicInteger COUNTER = new AtomicInteger();
     private final JarMapping toBukkitMapping;
     private final JarRemapper toBukkitRemapper;
     private final ClassLoader classLoader;
     private final String generatedHandler;
     private final Class<?> generatedHandlerClass;
     private final GeneratedHandlerAdapter generatedHandlerAdapter;
-    private final Map<String, Boolean> secureJarInfo = new ConcurrentHashMap<>();
+    // BiMap: srg -> bukkit
+    private final Map<String, BiMap<Field, String>> cacheFields = new ConcurrentHashMap<>();
+    private final Map<String, Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>>> cacheMethods = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> cacheRemap = new ConcurrentHashMap<>();
 
     public ClassLoaderRemapper(JarMapping jarMapping, JarMapping toBukkitMapping, ClassLoader classLoader) {
         super(jarMapping);
@@ -71,6 +82,24 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         this.generatedHandler = Type.getInternalName(generatedHandlerClass);
         this.generatedHandlerAdapter = new GeneratedHandlerAdapter(REPLACED_NAME, generatedHandler);
         GlobalClassRepo.INSTANCE.addRepo(new ClassLoaderRepo(this.classLoader));
+    }
+
+    private static byte[] dump(byte[] bytes) {
+        try {
+            if (MohistRemapper.DUMP != null) {
+                String className = new ClassReader(bytes).getClassName() + ".class";
+                int index = className.lastIndexOf('/');
+                if (index != -1) {
+                    File file = new File(MohistRemapper.DUMP, className.substring(0, index));
+                    file.mkdirs();
+                    Files.write(file.toPath().resolve(className.substring(index + 1)), bytes);
+                } else {
+                    Files.write(MohistRemapper.DUMP.toPath().resolve(className), bytes);
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return bytes;
     }
 
     public ClassLoader getClassLoader() {
@@ -96,11 +125,6 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     public Class<?> getGeneratedHandlerClass() {
         return generatedHandlerClass;
     }
-
-    // BiMap: srg -> bukkit
-    private final Map<String, BiMap<Field, String>> cacheFields = new ConcurrentHashMap<>();
-    private final Map<String, Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>>> cacheMethods = new ConcurrentHashMap<>();
-    private final Map<String, Boolean> cacheRemap = new ConcurrentHashMap<>();
 
     private Map.Entry<Map<Method, String>, Map<WrappedMethod, Method>> getMethods(Class<?> cl, String internalName) {
         return cacheMethods.computeIfAbsent(internalName, k -> this.tryGetMethods(cl));
@@ -129,7 +153,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             if (e.getCause() instanceof ClassNotFoundException) {
                 tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return tryGetMethods(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             tryDefineClass(error.getMessage());
             return tryGetMethods(cl);
@@ -156,7 +182,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             if (e.getCause() instanceof ClassNotFoundException) {
                 tryDefineClass(e.getCause().getMessage().replace('.', '/'));
                 return tryGetFields(cl);
-            } else throw e;
+            } else {
+                throw e;
+            }
         } catch (NoClassDefFoundError error) {
             tryDefineClass(error.getMessage());
             return tryGetFields(cl);
@@ -205,7 +233,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         if (internalName.startsWith(PREFIX)) {
             Field field = getFields(cl, internalName).inverse().get(bukkitName);
             return field == null ? bukkitName : field.getName();
-        } else return bukkitName;
+        } else {
+            return bukkitName;
+        }
     }
 
     public String tryMapFieldToSrg(Class<?> cl, String bukkitName) {
@@ -213,7 +243,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         if (shouldRemap(internalName)) {
             Field field = getFields(cl, internalName).inverse().get(bukkitName);
             return field == null ? bukkitName : field.getName();
-        } else return bukkitName;
+        } else {
+            return bukkitName;
+        }
     }
 
     public String tryMapFieldToBukkit(Class<?> cl, String srgName, Field field) {
@@ -221,26 +253,34 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         if (internalName.startsWith(PREFIX)) {
             BiMap<Field, String> fields = getFields(cl, internalName);
             return fields.getOrDefault(field, srgName);
-        } else return srgName;
+        } else {
+            return srgName;
+        }
     }
 
     public Method tryMapMethodToSrg(Class<?> cl, String bukkitName, Class<?>[] pTypes) {
         String internalName = Type.getInternalName(cl);
         if (shouldRemap(internalName)) {
             return getMethods(cl, internalName).getValue().get(new WrappedMethod(bukkitName, pTypes));
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     public String tryMapMethodToBukkit(Class<?> cl, Method method) {
         String internalName = Type.getInternalName(cl);
         if (shouldRemap(internalName)) {
             return getMethods(cl, internalName).getKey().getOrDefault(method, method.getName());
-        } else return method.getName();
+        } else {
+            return method.getName();
+        }
     }
 
     private boolean shouldRemap(String internalName) {
         Boolean b = cacheRemap.get(internalName);
-        if (b != null) return b;
+        if (b != null) {
+            return b;
+        }
         for (String s : GlobalClassRepo.inheritanceProvider().getAll(internalName)) {
             if (s.startsWith(PREFIX)) {
                 cacheRemap.put(internalName, true);
@@ -253,7 +293,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
     public MethodInsnNode mapMethod(String owner, String name, String desc) {
         Map.Entry<String, String> entry = tryClimb(jarMapping.methods, owner, name + " " + desc, -1);
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
         return new MethodInsnNode(Opcodes.INVOKEVIRTUAL, mapType(entry.getKey()), entry.getValue(), mapMethodDesc(desc), false);
     }
 
@@ -281,23 +323,25 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 }
             }
         }
-        if (mapped == null) return null;
+        if (mapped == null) {
+            return null;
+        }
         return Maps.immutableEntry(owner, mapped);
     }
 
     public Product2<byte[], CodeSource> remapClass(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
         try {
-                byte[] bytes = remapClassFile(byteSource.call(), GlobalClassRepo.INSTANCE);
-                URL url;
-                CodeSigner[] signers;
-                if (connection instanceof JarURLConnection) {
-                    url = ((JarURLConnection) connection).getJarFileURL();
-                    signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
-                } else {
-                    url = connection.getURL();
-                    signers = null;
-                }
-                return Product.of(bytes, new CodeSource(url, signers));
+            byte[] bytes = remapClassFile(byteSource.call(), GlobalClassRepo.INSTANCE);
+            URL url;
+            CodeSigner[] signers;
+            if (connection instanceof JarURLConnection) {
+                url = ((JarURLConnection) connection).getJarFileURL();
+                signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+            } else {
+                url = connection.getURL();
+                signers = null;
+            }
+            return Product.of(bytes, new CodeSource(url, signers));
         } catch (Exception e) {
             throw new ClassNotFoundException(className, e);
         }
@@ -309,7 +353,9 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     }
 
     public byte[] remapClassFile(byte[] in, ClassRepo repo, boolean runtime) {
-        if (runtime) GlobalClassRepo.runtimeRepo().put(in);
+        if (runtime) {
+            GlobalClassRepo.runtimeRepo().put(in);
+        }
         return remapClassFile(new ClassReader(in), repo);
     }
 
@@ -327,8 +373,6 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
         return dump(wr.toByteArray());
     }
-
-    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     private Class<?> generateReflectionHandler() {
         try {
@@ -431,11 +475,15 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WrappedMethod that = (WrappedMethod) o;
             return Objects.equals(name, that.name) &&
-                Arrays.equals(pTypes, that.pTypes);
+                    Arrays.equals(pTypes, that.pTypes);
         }
 
         @Override
@@ -444,23 +492,5 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             result = 31 * result + Arrays.hashCode(pTypes);
             return result;
         }
-    }
-
-    private static byte[] dump(byte[] bytes) {
-        try {
-            if (MohistRemapper.DUMP != null) {
-                String className = new ClassReader(bytes).getClassName() + ".class";
-                int index = className.lastIndexOf('/');
-                if (index != -1) {
-                    File file = new File(MohistRemapper.DUMP, className.substring(0, index));
-                    file.mkdirs();
-                    Files.write(file.toPath().resolve(className.substring(index + 1)), bytes);
-                } else {
-                    Files.write(MohistRemapper.DUMP.toPath().resolve(className), bytes);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return bytes;
     }
 }

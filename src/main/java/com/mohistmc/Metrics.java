@@ -19,6 +19,16 @@
 package com.mohistmc;
 
 import com.mohistmc.api.ServerAPI;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.thread.NamedThreadFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.spigotmc.SpigotConfig;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -37,20 +47,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.thread.NamedThreadFactory;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.spigotmc.SpigotConfig;
 
 /**
  * bStats collects some data for plugin authors.
  * <p>
- * Check out https://bStats.org/ to learn more about bStats!
+ * Check out <a href="https://bStats.org/">...</a> to learn more about bStats!
  */
 public class Metrics {
 
@@ -67,7 +68,9 @@ public class Metrics {
     }
 
     private static void sendData(JSONObject data) throws Exception {
-        if (data == null) throw new IllegalArgumentException("Data cannot be null!");
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null!");
+        }
 
         HttpsURLConnection connection = (HttpsURLConnection) new URL("https://bStats.org/submitData/server-implementation").openConnection();
         byte[] compressedData = compress(data.toString());
@@ -91,7 +94,9 @@ public class Metrics {
     }
 
     private static byte[] compress(final String str) throws IOException {
-        if (str == null) return null;
+        if (str == null) {
+            return null;
+        }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
@@ -101,7 +106,9 @@ public class Metrics {
     }
 
     public void addCustomChart(CustomChart chart) {
-        if (chart == null) throw new IllegalArgumentException("Chart cannot be null!");
+        if (chart == null) {
+            throw new IllegalArgumentException("Chart cannot be null!");
+        }
         charts.add(chart);
     }
 
@@ -121,7 +128,9 @@ public class Metrics {
         JSONArray customCharts = new JSONArray();
         for (CustomChart customChart : charts) {
             JSONObject chart = customChart.getRequestJsonObject();
-            if (chart == null) continue;
+            if (chart == null) {
+                continue;
+            }
             customCharts.add(chart);
         }
         data.put("customCharts", customCharts);
@@ -154,8 +163,9 @@ public class Metrics {
         final String chartId;
 
         CustomChart(String chartId) {
-            if (chartId == null || chartId.isEmpty())
+            if (chartId == null || chartId.isEmpty()) {
                 throw new IllegalArgumentException("ChartId cannot be null or empty!");
+            }
             this.chartId = chartId;
         }
 
@@ -164,7 +174,9 @@ public class Metrics {
             chart.put("chartId", chartId);
             try {
                 JSONObject data = getChartData();
-                if (data == null) return null;
+                if (data == null) {
+                    return null;
+                }
                 chart.put("data", data);
             } catch (Throwable t) {
                 return null;
@@ -189,7 +201,9 @@ public class Metrics {
         protected JSONObject getChartData() throws Exception {
             JSONObject data = new JSONObject();
             String value = callable.call();
-            if (value == null || value.isEmpty()) return null;
+            if (value == null || value.isEmpty()) {
+                return null;
+            }
             data.put("value", value);
             return data;
         }
@@ -209,7 +223,9 @@ public class Metrics {
             JSONObject data = new JSONObject();
             JSONObject values = new JSONObject();
             Map<String, Map<String, Integer>> map = callable.call();
-            if (map == null || map.isEmpty()) return null;
+            if (map == null || map.isEmpty()) {
+                return null;
+            }
             boolean reallyAllSkipped = true;
             for (Map.Entry<String, Map<String, Integer>> entryValues : map.entrySet()) {
                 JSONObject value = new JSONObject();
@@ -223,7 +239,9 @@ public class Metrics {
                     values.put(entryValues.getKey(), value);
                 }
             }
-            if (reallyAllSkipped) return null;
+            if (reallyAllSkipped) {
+                return null;
+            }
             data.put("values", values);
             return data;
         }
@@ -242,7 +260,9 @@ public class Metrics {
         protected JSONObject getChartData() throws Exception {
             JSONObject data = new JSONObject();
             int value = callable.call();
-            if (value == 0) return null;
+            if (value == 0) {
+                return null;
+            }
             data.put("value", value);
             return data;
         }
@@ -299,8 +319,9 @@ public class Metrics {
 
                     int indexOf = javaVersion.lastIndexOf('.');
 
-                    if (majorVersion.equals("1")) release = "Java " + javaVersion.substring(0, indexOf);
-                    else {
+                    if (majorVersion.equals("1")) {
+                        release = "Java " + javaVersion.substring(0, indexOf);
+                    } else {
                         Matcher versionMatcher = Pattern.compile("\\d+").matcher(majorVersion);
                         if (versionMatcher.find()) {
                             majorVersion = versionMatcher.group(0);

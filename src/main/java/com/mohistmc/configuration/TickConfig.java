@@ -18,10 +18,11 @@
 
 package com.mohistmc.configuration;
 
-import java.io.File;
-import java.util.HashMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.util.HashMap;
 
 public class TickConfig {
 
@@ -80,7 +81,9 @@ public class TickConfig {
     public boolean canTick(Class<?> clazz, long gametime) {
         TickParams params = paramsMap.get(clazz);
         if (params == null) {
-            if (cfg == null) reloadConfig();
+            if (cfg == null) {
+                reloadConfig();
+            }
             params = new TickParams();
             params.skipEvery = defaultLoadedParams.skipEvery;
             paramsMap.put(clazz, params);
@@ -98,7 +101,9 @@ public class TickConfig {
             if (defaultsSec == null) {
                 defaultLoadedParams = new TickParams();
                 defaultLoadedParams.skipEvery = DEFAULT_TICK_PARAMS.skipEvery;
-            } else defaultLoadedParams = parseTickParams(defaultsSec);
+            } else {
+                defaultLoadedParams = parseTickParams(defaultsSec);
+            }
             ConfigurationSection overridesSec = cfg.getConfigurationSection(OVERRIDES_SEC);
             if (overridesSec != null) {
                 for (String override : overridesSec.getKeys(false)) {
@@ -108,7 +113,7 @@ public class TickConfig {
                             Class<?> overrideCls = Class.forName(unformatClazz(override));
                             TickParams params = parseTickParams(overrideSec);
                             paramsMap.put(overrideCls, params);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }
@@ -140,14 +145,19 @@ public class TickConfig {
         TickParams params = new TickParams();
         if (sec.isInt(SKIP_EVERY_KEY)) {
             int skipEvery = sec.getInt(SKIP_EVERY_KEY);
-            if (skipEvery > 1000) skipEvery = 1000;
-            if (skipEvery < 0) skipEvery = 0;
+            if (skipEvery > 1000) {
+                skipEvery = 1000;
+            }
+            if (skipEvery < 0) {
+                skipEvery = 0;
+            }
             params.skipEvery = skipEvery;
         } else {
-            if (sec.getParent().getName().equals(OVERRIDES_SEC))
+            if (sec.getParent().getName().equals(OVERRIDES_SEC)) {
                 params.skipEvery = defaultLoadedParams.skipEvery;
-            else
+            } else {
                 params.skipEvery = DEFAULT_TICK_PARAMS.skipEvery;
+            }
         }
         return params;
     }

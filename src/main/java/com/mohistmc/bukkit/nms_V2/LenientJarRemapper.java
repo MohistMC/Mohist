@@ -7,9 +7,9 @@ import net.md_5.specialsource.JarRemapper;
  * LenientJarRemapper
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName LenientJarRemapper
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/LenientJarRemapper.java">Click here to get to github</a>
- *
+ * @originalClassName LenientJarRemapper
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/LenientJarRemapper.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class LenientJarRemapper extends JarRemapper {

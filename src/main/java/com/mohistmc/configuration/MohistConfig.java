@@ -18,13 +18,14 @@
 
 package com.mohistmc.configuration;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MohistConfig extends ConfigBase {
 
@@ -51,11 +52,6 @@ public class MohistConfig extends ConfigBase {
     // MohistProxySelector
     public final BoolSetting debug_msg = new BoolSetting(this, "mohist.networkmanager.debug", false);
     public final BoolSetting networkmanager_enable = new BoolSetting(this, "mohist.networkmanager.enable", false);
-    private final String HEADER = """
-            This is the main configuration file for Mohist.
-
-            Home: https://mohistmc.com/
-            """;
 
     /* ======================================================================== */
 
@@ -116,7 +112,12 @@ public class MohistConfig extends ConfigBase {
     public void load() {
         try {
             config = YamlConfiguration.loadConfiguration(configFile);
-            StringBuilder header = new StringBuilder(HEADER + "\n");
+            String HEADER = """
+                    This is the main configuration file for Mohist.
+
+                    Home: https://mohistmc.com/
+                    """;
+            String header = HEADER + "\n";
             for (Setting toggle : settings.values()) {
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
@@ -124,7 +125,7 @@ public class MohistConfig extends ConfigBase {
 
             version = getInt("config-version", 1);
             set("config-version", 1);
-            config.options().header(header.toString());
+            config.options().header(header);
             config.options().copyDefaults(true);
             this.save();
         } catch (Exception ex) {

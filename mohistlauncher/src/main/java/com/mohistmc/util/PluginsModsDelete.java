@@ -19,6 +19,7 @@
 package com.mohistmc.util;
 
 import com.mohistmc.util.i18n.i18n;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -28,7 +29,6 @@ import java.util.Scanner;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-
 
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -40,11 +40,15 @@ public class PluginsModsDelete {
     public static final File MOD = new File("mods");
 
     public static void checkPlugins(ArrayList<Fix> fixes, File plugins) throws Exception {
-        if (!plugins.exists() || fixes.size() == 0) return;
+        if (!plugins.exists() || fixes.size() == 0) {
+            return;
+        }
 
         for (File pom : plugins.listFiles((dir, name) -> name.endsWith(".jar"))) {
             ArrayList<String> entries = jarEntries(pom);
-            if (entries == null) continue;
+            if (entries == null) {
+                continue;
+            }
             StringBuilder allLines = new StringBuilder();
 
             if (plugins.equals(PLUGIN)) {
@@ -56,28 +60,36 @@ public class PluginsModsDelete {
                 try (JarFile pluginJar = new JarFile(pom)) {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(pluginJar.getInputStream(pluginJar.getJarEntry("plugin.yml"))))) {
                         String line;
-                        while ((line = reader.readLine()) != null)
+                        while ((line = reader.readLine()) != null) {
                             allLines.append(line).append("\n");
+                        }
                     }
                 }
             }
 
             for (Fix fix : fixes) {
-                if (!entries.contains(fix.main.replaceAll("\\.", "/") + ".class")) continue;
+                if (!entries.contains(fix.main.replaceAll("\\.", "/") + ".class")) {
+                    continue;
+                }
 
                 if (plugins.equals(PLUGIN)) {
                     if (fix.type.equals(FIX)) {
                         if (!allLines.toString().contains("version: " + fix.version) && allLines.toString().contains("main: " + fix.main)) {
                             System.out.println(i18n.get("update.pluginversion", pom.getName(), fix.version, fix.repo, fix.aim));
                             System.out.println(i18n.get("update.downloadpluginversion", pom.getName()));
-                            if (new Scanner(System.in).next().equals("yes"))
+                            if ("yes".equals(new Scanner(System.in).next())) {
                                 downloadFile(fix.url, pom, fix.md5);
+                            }
                         }
-                    } else if (fix.type.equals(NOT_COMPATIBLE))
-                        if (allLines.toString().contains("main: " + fix.main))
+                    } else if (fix.type.equals(NOT_COMPATIBLE)) {
+                        if (allLines.toString().contains("main: " + fix.main)) {
                             delete("plugins", pom);
+                        }
+                    }
 
-                } else delete("mods", pom);
+                } else {
+                    delete("mods", pom);
+                }
             }
         }
     }

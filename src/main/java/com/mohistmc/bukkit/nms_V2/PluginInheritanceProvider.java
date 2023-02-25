@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
  * PluginInheritanceProvider
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName PluginInheritanceProvider
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/PluginInheritanceProvider.java">Click here to get to github</a>
- *
+ * @originalClassName PluginInheritanceProvider
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/PluginInheritanceProvider.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 public class PluginInheritanceProvider implements InheritanceProvider {
@@ -34,7 +34,9 @@ public class PluginInheritanceProvider implements InheritanceProvider {
     @Override
     public Collection<String> getParents(String className) {
         ClassNode node = classRepo.findClass(className);
-        if (node == null) return Collections.emptyList();
+        if (node == null) {
+            return Collections.emptyList();
+        }
 
         Collection<String> parents = new HashSet<>(node.interfaces);
         if (node.superName != null) {
@@ -46,10 +48,14 @@ public class PluginInheritanceProvider implements InheritanceProvider {
 
     public Collection<String> getAll(String className) {
         Collection<String> collection = SHARED_INHERITANCE_MAP.get(className);
-        if (collection != null) return collection;
+        if (collection != null) {
+            return collection;
+        }
 
         ClassNode node = classRepo.findClass(className);
-        if (node == null) return ImmutableSet.of("java/lang/Object");
+        if (node == null) {
+            return ImmutableSet.of("java/lang/Object");
+        }
         Collection<String> parents = new HashSet<>(node.interfaces);
         parents.add(node.name);
         if (node.superName != null) {

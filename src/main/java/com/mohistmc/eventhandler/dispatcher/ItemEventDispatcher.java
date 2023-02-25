@@ -34,7 +34,6 @@ public class ItemEventDispatcher {
             ItemEntity entity = event.getEntity();
             if (CraftEventFactory.callItemDespawnEvent(entity).isCancelled()) {
                 entity.age = 0;
-                return;
             }
             // CraftBukkit end
         }

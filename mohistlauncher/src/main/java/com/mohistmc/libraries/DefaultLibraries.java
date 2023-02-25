@@ -26,6 +26,7 @@ import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -73,7 +74,7 @@ public class DefaultLibraries {
                 currentSize.addAndGet(lib.length());
                 fail.remove(u.replace(MAVENURL, ""));
             } catch (Exception e) {
-                if (e.getMessage() != null && !e.getMessage().equals("md5")) {
+                if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
                     System.out.println(i18n.get("file.download.nook", u));
                     lib.delete();
                 }
@@ -81,8 +82,11 @@ public class DefaultLibraries {
             }
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
-        if (!fail.isEmpty()) run();
-        else System.out.println(i18n.get("libraries.check.end"));
+        if (!fail.isEmpty()) {
+            run();
+        } else {
+            System.out.println(i18n.get("libraries.check.end"));
+        }
     }
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {

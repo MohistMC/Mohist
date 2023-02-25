@@ -30,9 +30,9 @@ import static com.mohistmc.bukkit.nms_v2.MohistRedirectAdapter.loadInt;
  * MagmaEnumExtender
  *
  * @author Mainly by IzzelAliz and modified Mgazul
- * &#064;originalClassName ArclightEnumExtender
- * &#064;classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightEnumExtender.java">Click here to get to github</a>
- *
+ * @originalClassName ArclightEnumExtender
+ * @classFrom <a href="https://github.com/IzzelAliz/Arclight/blob/1.19/arclight-common/src/main/java/io/izzel/arclight/common/mod/util/remapper/ArclightEnumExtender.java">Click here to get to github</a>
+ * <p>
  * These classes are modified by MohistMC to support the Mohist software.
  */
 @SuppressWarnings("unused")
@@ -56,7 +56,9 @@ public class MohistEnumExtender {
                     if (name.startsWith(NamespacedKey.MINECRAFT + ":")) {
                         if (!set.contains(standardize(name.substring(NamespacedKey.MINECRAFT.length() + 1)))) {
                             LOGGER.warn("Expect {} found in {}, but not", name, node.name);
-                        } else found = true;
+                        } else {
+                            found = true;
+                        }
                     }
                     if (!found) {
                         name = standardize(name);
@@ -120,10 +122,10 @@ public class MohistEnumExtender {
 
     private static String standardize(String str) {
         return str
-            .replace(':', '_')
-            .replaceAll("\\s+", "_")
-            .replaceAll("\\W", "")
-            .toUpperCase(Locale.ENGLISH);
+                .replace(':', '_')
+                .replaceAll("\\s+", "_")
+                .replaceAll("\\W", "")
+                .toUpperCase(Locale.ENGLISH);
     }
 
     private static Set<String> countEnum(ClassNode node) {

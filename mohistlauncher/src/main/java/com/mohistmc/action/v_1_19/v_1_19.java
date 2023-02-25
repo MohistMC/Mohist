@@ -8,6 +8,7 @@ import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -20,13 +21,16 @@ public class v_1_19 implements Version {
     public static List<String> loadedLibsPaths = new ArrayList<>();
 
     public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
-        if (cmd.stream().anyMatch(s -> s.contains("-Xms")))
+        if (cmd.stream().anyMatch(s -> s.contains("-Xms"))) {
             System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
+        }
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(JarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
-        if (shutdown) System.exit(0);
+        if (shutdown) {
+            System.exit(0);
+        }
     }
 
     @Override
@@ -115,9 +119,15 @@ public class v_1_19 implements Version {
                 System.exit(0);
             }
 
-            if (isCorrupted(extra)) extra.delete();
-            if (isCorrupted(slim)) slim.delete();
-            if (isCorrupted(srg)) srg.delete();
+            if (isCorrupted(extra)) {
+                extra.delete();
+            }
+            if (isCorrupted(slim)) {
+                slim.delete();
+            }
+            if (isCorrupted(srg)) {
+                srg.delete();
+            }
 
             if (!mergedMapping.exists()) {
                 mute();
@@ -153,10 +163,12 @@ public class v_1_19 implements Version {
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
-                if (infoLines.size() > 0)
+                if (infoLines.size() > 0) {
                     storedServerMD5 = infoLines.get(0);
-                if (infoLines.size() > 1)
+                }
+                if (infoLines.size() > 1) {
                     storedMohistMD5 = infoLines.get(1);
+                }
             }
 
             if (!serverJar.exists()
