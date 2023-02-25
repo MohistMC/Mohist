@@ -477,7 +477,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 }
 
-def symlink = file("$rootDir/fmlonly/src/fmlcommon")
+def symlink = file("$rootDir/forge/fmlonly/src/fmlcommon")
 def symlinkValid = symlink.exists() && symlink.directory
 
 if (symlinkValid)
@@ -495,10 +495,10 @@ project(':fmlonly') {
     sourceSets {
         main {
             java {
-                srcDirs = ["$rootDir/fmlonly/src/fmlcommon/java", "$rootDir/fmlonly/src/main/java"]
+                srcDirs = ["$rootDir/forge/fmlonly/src/fmlcommon/java", "$rootDir/forge/fmlonly/src/main/java"]
             }
             resources {
-                srcDirs = ["$rootDir/fmlonly/src/fmlcommon/resources", "$rootDir/fmlonly/src/main/resources"]
+                srcDirs = ["$rootDir/forge/fmlonly/src/fmlcommon/resources", "$rootDir/forge/fmlonly/src/main/resources"]
             }
         }
     }
