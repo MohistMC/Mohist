@@ -1479,6 +1479,7 @@ project(':forge') {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+        options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-removal"// Mohist ignore compile warnings
     }
 }
 
