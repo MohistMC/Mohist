@@ -1,16 +1,17 @@
 package com.destroystokyo.paper.gui;
 
+import net.minecraft.Util;
+import net.minecraft.server.MinecraftServer;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JList;
+import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Vector;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JList;
-import javax.swing.border.EmptyBorder;
-import net.minecraft.Util;
-import net.minecraft.server.MinecraftServer;
 
 public class RAMDetails extends JList<String> {
     public static final DecimalFormat DECIMAL_FORMAT = Util.make(new DecimalFormat("########0.000"), (format)

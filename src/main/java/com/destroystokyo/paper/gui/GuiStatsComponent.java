@@ -1,10 +1,11 @@
 package com.destroystokyo.paper.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import net.minecraft.server.MinecraftServer;
+
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import net.minecraft.server.MinecraftServer;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class GuiStatsComponent extends JPanel {
     private final Timer timer;
