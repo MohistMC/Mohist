@@ -1095,22 +1095,22 @@ project(':forge') {
             rename { 'data/server.lzma' }
         }
         from(universalJar) {
-            rename { 'data/forge-' + MC_VERSION + '-universal.jar' }
+            rename { 'data/forge-' + MC_VERSION + '-' + FORGE_VERSION + '-universal.jar' }
         }
         from(project(':fmlloader').tasks.jar.outputs) {
-            rename { 'data/fmlloader-' + MC_VERSION + '.jar' }
+            rename { 'data/fmlloader-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
         from(project(':fmlcore').tasks.jar.outputs) {
-            rename { 'data/fmlcore-' + MC_VERSION + '.jar' }
+            rename { 'data/fmlcore-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
         from(project(':javafmllanguage').tasks.jar.outputs) {
-            rename { 'data/javafmllanguage-' + MC_VERSION + '.jar' }
+            rename { 'data/javafmllanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
         from(project(':mclanguage').tasks.jar.outputs) {
-            rename { 'data/mclanguage-' + MC_VERSION + '.jar' }
+            rename { 'data/mclanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
         from(project(':lowcodelanguage').tasks.jar.outputs) {
-            rename { 'data/lowcodelanguage-' + MC_VERSION + '.jar' }
+            rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
         from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
@@ -1147,7 +1147,7 @@ project(':forge') {
 
     task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
         archiveBaseName = 'mohist'
-        archiveVersion = MC_VERSION + "-" + MOHIST_VERSION
+        archiveVersion = MC_VERSION + "-" + FORGE_VERSION + "-" + MOHIST_VERSION
         packedDependencies = PACKED_DEPS
         from(rootProject.file('/forge/forge_installer_logo.png')) {
             rename { 'big_logo.png' }

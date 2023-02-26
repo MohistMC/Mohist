@@ -71,7 +71,7 @@ public abstract class Action {
         this.mcpVer = DataParser.versionMap.get("mcp");
         this.mcVer = DataParser.versionMap.get("minecraft");
 
-        this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "/forge-" + mcVer;
+        this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
         this.universalJar = new File(forgeStart + "-universal.jar");
         this.serverJar = new File(forgeStart + "-server.jar");
 
