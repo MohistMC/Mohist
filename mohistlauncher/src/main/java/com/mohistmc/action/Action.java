@@ -71,7 +71,7 @@ public abstract class Action {
         this.mcpVer = DataParser.versionMap.get("mcp");
         this.mcVer = DataParser.versionMap.get("minecraft");
 
-        this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
+        this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "/forge-" + mcVer;
         this.universalJar = new File(forgeStart + "-universal.jar");
         this.serverJar = new File(forgeStart + "-server.jar");
 
@@ -118,7 +118,7 @@ public abstract class Action {
     THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
      */
     protected void mute() throws Exception {
-        File out = new File(libPath + "com/mohistmc/installation/installationLogs.txt");
+        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
         if (!out.exists()) {
             out.getParentFile().mkdirs();
             out.createNewFile();

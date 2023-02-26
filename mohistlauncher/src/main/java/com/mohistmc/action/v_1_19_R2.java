@@ -1,8 +1,6 @@
-package com.mohistmc.action.v_1_19;
+package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.action.Action;
-import com.mohistmc.action.Version;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
@@ -16,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_19 implements Version {
+public class v_1_19_R2 {
 
     public static List<String> loadedLibsPaths = new ArrayList<>();
 
@@ -33,8 +31,7 @@ public class v_1_19 implements Version {
         }
     }
 
-    @Override
-    public void run() {
+    public static void run() {
         try {
             new Install_1_19();
         } catch (Exception e) {
@@ -56,11 +53,11 @@ public class v_1_19 implements Version {
 
         protected Install_1_19() throws Exception {
             super();
-            this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
-            this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
-            this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "/fmlloader-" + mcVer + ".jar");
+            this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "/fmlcore-" + mcVer + ".jar");
+            this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "/javafmllanguage-" + mcVer + ".jar");
+            this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "/mclanguage-" + mcVer + ".jar");
+            this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "/lowcodelanguage-" + mcVer + ".jar");
             this.mojmap = new File(otherStart + "-mappings.txt");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
@@ -73,12 +70,12 @@ public class v_1_19 implements Version {
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
-            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
-            copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-universal.jar");
+            copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + ".jar");
+            copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + ".jar");
+            copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + ".jar");
+            copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + ".jar");
+            copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + ".jar");
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
