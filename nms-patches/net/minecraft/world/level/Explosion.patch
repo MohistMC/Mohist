@@ -67,8 +67,11 @@
 +
 +                        if (entity instanceof EntityEnderDragon) {
 +                            for (EntityComplexPart entityComplexPart : ((EntityEnderDragon) entity).subEntities) {
-+                                if (list.contains(entityComplexPart)) {
-+                                    entityComplexPart.hurt(this.getDamageSource(), (float) ((int) ((d13 * d13 + d13) / 2.0D * 7.0D * (double) f2 + 1.0D)));
++                                 // Calculate damage separately for each EntityComplexPart
++                                double d7part;
++                                if (list.contains(entityComplexPart) && (d7part = Math.sqrt(entityComplexPart.distanceToSqr(vec3d)) / f2) <= 1.0D) {
++                                    double d13part = (1.0D - d7part) * getSeenPercent(vec3d, entityComplexPart);
++                                    entityComplexPart.hurt(this.getDamageSource(), (float) ((int) ((d13part * d13part + d13part) / 2.0D * 7.0D * (double) f2 + 1.0D)));
 +                                }
 +                            }
 +                        } else {

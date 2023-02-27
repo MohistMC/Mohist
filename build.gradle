@@ -638,7 +638,7 @@ project(':forge') {
                         'Specification-Vendor'  : 'SpigotMC',
                         'Specification-Version' : '1.19.3',
                         'Implementation-Title'  : 'Spigot',
-                        'Implementation-Version': '37262de8-4a929b5d6-19641c75',
+                        'Implementation-Version': bukkit_version + '-' +  craftbukkit_version + '-' +  spigot_version,
                         'Implementation-Vendor' : 'SpigotMC'
                 ] as LinkedHashMap
         ]
