@@ -2,9 +2,10 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
-import com.mohistmc.bukkit.nms_v2.ClassLoaderRemapper;
-import com.mohistmc.bukkit.nms_v2.MohistRemapper;
-import com.mohistmc.bukkit.nms_v2.RemappingClassLoader;
+import com.mohistmc.remapper.McVersion;
+import com.mohistmc.remapper.v2.ClassLoaderRemapper;
+import com.mohistmc.remapper.v2.MohistRemapper;
+import com.mohistmc.remapper.v2.RemappingClassLoader;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 
 import java.io.File;
@@ -247,6 +248,7 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
     @Override
     public ClassLoaderRemapper getRemapper() {
         if (remapper == null) {
+            MohistRemapper.init(McVersion.v1_19_3);
             remapper = MohistRemapper.createClassLoaderRemapper(this);
         }
         return remapper;
