@@ -261,6 +261,15 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
+@@ -765,7 +_,7 @@
+    }
+ 
+    private boolean m_247528_(PlayerChatMessage p_251384_) {
+-      return p_251384_.m_245272_() && !p_251384_.m_240431_(Instant.now());
++      return true;
+    }
+ 
+    public ServerStatsCounter m_11239_(Player p_11240_) {
 @@ -774,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
