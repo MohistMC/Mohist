@@ -7,6 +7,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.entity.MohistModsEntity;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,13 +20,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.v1_19_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_19_R2.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
@@ -55,6 +59,7 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         addEnumEnchantment();
         addEnumPotion();
+        addFluid();
         //addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
@@ -193,9 +198,22 @@ public class ForgeInjectBukkit {
             ResourceLocation resourceLocation = registry.getKey(attribute);
             String name = normalizeName(resourceLocation.getPath());
             if (!isMINECRAFT(resourceLocation)) {
-                org.bukkit.attribute.Attribute ab = MohistDynamEnum.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
+                org.bukkit.attribute.Attribute ab = MohistDynamEnum.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class});
                 attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
+            }
+        }
+    }
+
+    public static void addFluid() {
+        var registry = ForgeRegistries.FLUIDS;
+        for (net.minecraft.world.level.material.Fluid fluidType : registry) {
+            ResourceLocation resourceLocation = registry.getKey(fluidType);
+            String name = normalizeName(resourceLocation.getPath());
+            if (!isMINECRAFT(resourceLocation)) {
+                Fluid fluid = MohistDynamEnum.addEnum0(Fluid.class, name, new Class[0]);
+                CraftMagicNumbers.FLUIDTYPE_FLUID.put(fluidType, fluid);
+                MohistMC.LOGGER.debug("Registered forge Fluid as Fluid(Bukkit) {}", fluid.name());
             }
         }
     }

@@ -6,6 +6,7 @@ import com.google.common.collect.*;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 import java.io.File;
@@ -93,7 +94,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     // ========================================================================
     public static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
     public static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
-    private static final BiMap<net.minecraft.world.level.material.Fluid, Fluid> FLUIDTYPE_FLUID = HashBiMap.create();
+    public static final BiMap<net.minecraft.world.level.material.Fluid, Fluid> FLUIDTYPE_FLUID = HashBiMap.create();
     public static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
     public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
 
@@ -107,8 +108,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         for (net.minecraft.world.level.material.Fluid fluidType : BuiltInRegistries.FLUID) {
-            Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
-            FLUIDTYPE_FLUID.put(fluidType, fluid);
+            if (BuiltInRegistries.FLUID.getKey(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
+                FLUIDTYPE_FLUID.put(fluidType, fluid);
+            }
         }
 
         for (Material material : Material.values()) {
