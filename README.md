@@ -15,11 +15,13 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version | Support |
-|---------|---------|
-| 1.18.2  | Test    |
-| 1.16.5  | Active  |
-| 1.12.2  | Active  |
+| Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
+|---------|-------------|-----------|---------------------|----------------------|
+| 1.19.3  | WIP         | Poor      | Zero                | Zero                 |
+| 1.18.2  | Active      | Good      | Better than plugins | Good                 |
+| 1.16.5  | Active      | Good      | Better than plugins | Good                 |
+| 1.12.2  | End Of Life | High      | Very good           | Very good            |
+| 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
 
 Progress
 ------
@@ -40,6 +42,7 @@ Upstream Projects
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
 * [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
+* [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Remapper support.
 
 A Special Thanks To:
 -------------
