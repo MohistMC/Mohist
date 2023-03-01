@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_18_2.v_1_18_2;
+import com.mohistmc.action.v_1_18_2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
@@ -30,7 +29,6 @@ import com.mohistmc.util.i18n.i18n;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -40,20 +38,20 @@ import static com.mohistmc.util.EulaUtil.writeInfos;
 public class MohistMCStart {
 
     public static List<String> mainArgs = new ArrayList<>();
+    public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
 
-    public static String getFullVersion() {
+    public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
     }
 
     public static void main(String[] args) throws Exception {
         mainArgs.addAll(List.of(args));
-
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
 
         MohistConfigUtil.copyMohistConfig();
 
-        if (MohistConfigUtil.bMohist("show_logo", "true"))
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
                     "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
@@ -61,26 +59,27 @@ public class MohistMCStart {
                     " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
                     "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                     "                                                    \n" + "\n" +
-                    "                                      " + i18n.get("mohist.launch.welcomemessage"));
+                    "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+        }
 
         CustomLibraries.loadCustomLibs();
-        if (!MohistConfigUtil.bMohist("installationfinished", String.valueOf(false)) && MohistConfigUtil.bMohist("check_libraries", "true")) {
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
-            new v_1_18_2().run();
+            v_1_18_2.run();
         }
 
         List<String> forgeArgs = new ArrayList<>();
-        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).collect(Collectors.toList())) {
+        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
         }
         new MohistModuleManager(DataParser.launchArgs);
 
-        if (MohistConfigUtil.bMohist("check_update", "true")) UpdateUtils.versionCheck();
-
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
-            while (!"true".equals(new Scanner(System.in).next())) ;
+            while (!"true".equals(new Scanner(System.in).next())) {
+                ;
+            }
             writeInfos();
         }
 

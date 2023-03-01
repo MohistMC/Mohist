@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import com.mohistmc.util.DataParser;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -90,24 +91,17 @@ public abstract class Action {
         this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
     }
 
-    protected void run(String mainClass, List<String> args, List<URL> classPath) throws Exception {
-        System.out.println("EXECUTING CLASS " + mainClass);
-        System.out.println(getParentClassloader() == null);
+    protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
         try {
             Class.forName(mainClass);
-            System.out.println("found class 2");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("Class not found: " + e.getMessage());
+            return;
         }
-        Class.forName(mainClass, true, new URLClassLoader(classPath.toArray(new URL[0]), getParentClassloader())).getDeclaredMethod("main", String[].class).invoke(null, (Object) args.toArray(new String[0]));
-    }
-
-    private ClassLoader getParentClassloader() {
-        try {
-            return (ClassLoader) ClassLoader.class.getDeclaredMethod("getPlatformClassLoader").invoke(null);
-        } catch (Exception e) {
-            return null;
-        }
+        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
+        Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
+        loader.clearAssertionStatus();
+        loader.close();
     }
 
     protected List<URL> stringToUrl(List<String> strs) throws Exception {
@@ -124,7 +118,7 @@ public abstract class Action {
     THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
      */
     protected void mute() throws Exception {
-        File out = new File(libPath + "com/mohistmc/installation/installationLogs.txt");
+        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
         if (!out.exists()) {
             out.getParentFile().mkdirs();
             out.createNewFile();
@@ -144,7 +138,7 @@ public abstract class Action {
                 try {
                     file.createNewFile();
                     Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             } else {
                 System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");

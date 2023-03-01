@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.action.v_1_18_2;
+package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.action.Action;
-import com.mohistmc.action.Version;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
@@ -34,23 +32,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_18_2 implements Version {
+public class v_1_18_2 {
 
     public static List<String> loadedLibsPaths = new ArrayList<>();
 
     public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
-        if (cmd.stream().anyMatch(s -> s.contains("-Xms")))
+        if (cmd.stream().anyMatch(s -> s.contains("-Xms"))) {
             System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
+        }
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(JarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
-        if (shutdown) System.exit(0);
+        if (shutdown) {
+            System.exit(0);
+        }
     }
 
-
-    @Override
-    public void run() {
+    public static void run() {
         try {
             new Install_1_18_2();
         } catch (Exception e) {
@@ -61,16 +60,13 @@ public class v_1_18_2 implements Version {
     public static class Install_1_18_2 extends Action {
 
         public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
-        public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         public File fmlloader;
         public File fmlcore;
         public File javafmllanguage;
         public File mclanguage;
         public File lowcodelanguage;
-
         public File mojmap;
         public File mc_unpacked;
-
         public File mergedMapping;
 
         protected Install_1_18_2() throws Exception {
@@ -107,14 +103,13 @@ public class v_1_18_2 implements Version {
             if (minecraft_server.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries")),
+                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
                 if (!mc_unpacked.exists()) {
-                    System.out.println(i18n.get("installation.bundler"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new ArrayList<>(Arrays.asList("--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only")),
+                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -130,7 +125,7 @@ public class v_1_18_2 implements Version {
                     System.out.println(i18n.get("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new ArrayList<>(Arrays.asList("--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings")),
+                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -139,36 +134,39 @@ public class v_1_18_2 implements Version {
                 System.exit(0);
             }
 
-            if (isCorrupted(extra)) extra.delete();
-            if (isCorrupted(slim)) slim.delete();
-            if (isCorrupted(srg)) srg.delete();
+            if (isCorrupted(extra)) {
+                extra.delete();
+            }
+            if (isCorrupted(slim)) {
+                slim.delete();
+            }
+            if (isCorrupted(srg)) {
+                srg.delete();
+            }
 
             if (!mergedMapping.exists()) {
-                System.out.println(i18n.get("installation.mergedmapping"));
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right")),
+                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
 
             if (!slim.exists() || !extra.exists()) {
-                System.out.println(i18n.get("installation.jars"));
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
+                        new String[]{"--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath())),
+                        new String[]{"--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
 
             if (!srg.exists()) {
-                System.out.println(i18n.get("installation.srgjar"));
                 mute();
                 run("net.minecraftforge.fart.Main",
-                        new ArrayList<>(Arrays.asList("--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix")),
+                        new String[]{"--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -180,10 +178,12 @@ public class v_1_18_2 implements Version {
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
-                if (infoLines.size() > 0)
+                if (infoLines.size() > 0) {
                     storedServerMD5 = infoLines.get(0);
-                if (infoLines.size() > 1)
+                }
+                if (infoLines.size() > 1) {
                     storedMohistMD5 = infoLines.get(1);
+                }
             }
 
             if (!serverJar.exists()
@@ -191,21 +191,20 @@ public class v_1_18_2 implements Version {
                     || storedMohistMD5 == null
                     || !storedServerMD5.equals(serverMD5)
                     || !storedMohistMD5.equals(mohistMD5)) {
-                System.out.println(i18n.get("installation.forgejar"));
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new ArrayList<>(Arrays.asList("--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath())),
+                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
                         stringToUrl(new ArrayList<>(Arrays.asList(
                                 libPath + "net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                libPath + "com/google/guava/guava/25.1-jre/guava-25.1-jre.jar",
+                                libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
                                 libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                                 libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
                                 libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
                                 libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                                libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar",
-                                libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar",
-                                libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
+                                libPath + "org/checkerframework/checker-qual/3.12.0/checker-qual-3.12.0.jar",
+                                libPath + "com/google/errorprone/error_prone_annotations/2.7.1/error_prone_annotations-2.7.1.jar",
+                                libPath + "com/google/j2objc/j2objc-annotations/1.3/j2objc-annotations-1.3.jar",
                                 libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
                                 libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
                         ))));
@@ -219,11 +218,9 @@ public class v_1_18_2 implements Version {
             fw.close();
 
             System.out.println(i18n.get("installation.finished"));
-            yml.set("mohist.installationfinished", true);
-            yml.save(MohistConfigUtil.mohistyml);
+            MohistConfigUtil.yml.set("mohist.installation-finished", true);
+            MohistConfigUtil.save();
             restartServer(launchArgs, true);
         }
-
     }
-
 }

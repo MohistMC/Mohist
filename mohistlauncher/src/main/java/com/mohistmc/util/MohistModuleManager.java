@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package com.mohistmc.util;
 
 import com.mohistmc.config.MohistConfigUtil;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -40,9 +41,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
-import static com.mohistmc.action.v_1_18_2.v_1_18_2.Install_1_18_2.yml;
-
 /**
  * @author Shawiiz_z
  * @version 0.1
@@ -53,14 +51,16 @@ public class MohistModuleManager {
     private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
     private static String MODULE_PATH = null;
 
-    public MohistModuleManager(List<String> args) throws Exception {
+    public MohistModuleManager(List<String> args) {
         this.applyLaunchArgs(args);
-        yml.set("mohist.installationfinished", false);
-        yml.save(MohistConfigUtil.mohistyml);
+        MohistConfigUtil.yml.set("mohist.installation-finished", false);
+        MohistConfigUtil.save();
     }
 
     public static void addExports(String module, String pkg, String target) {
-        if (target == null) target = "ALL-UNNAMED";
+        if (target == null) {
+            target = "ALL-UNNAMED";
+        }
 
         try {
             addExports(List.of(module + "/" + pkg + "=" + target));
@@ -77,7 +77,9 @@ public class MohistModuleManager {
     }
 
     public static void addOpens(String module, String pkg, String target) {
-        if (target == null) target = "ALL-UNNAMED";
+        if (target == null) {
+            target = "ALL-UNNAMED";
+        }
 
         try {
             addOpens(List.of(module + "/" + pkg + "=" + target));
@@ -138,7 +140,7 @@ public class MohistModuleManager {
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
 
-        args.parallelStream().parallel().forEach(arg -> {
+        args.parallelStream().forEach(arg -> {
             if (arg.startsWith("-p ")) {
                 MODULE_PATH = arg.substring(2).trim();
             } else if (arg.startsWith("--add-opens")) {
@@ -157,7 +159,7 @@ public class MohistModuleManager {
             addOpens(opens);
             addExports(exports);
             Thread.sleep(500);
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
 
     }
@@ -238,8 +240,12 @@ public class MohistModuleManager {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
+            if (obj == this) {
+                return true;
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
+                return false;
+            }
             var that = (ParserData) obj;
             return Objects.equals(this.module, that.module) &&
                     Objects.equals(this.packages, that.packages) &&
@@ -253,8 +259,6 @@ public class MohistModuleManager {
                     "packages=" + packages + ", " +
                     "target=" + target + ']';
         }
-
-
     }
 }
 

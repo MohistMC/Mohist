@@ -1,6 +1,6 @@
 /*
- * MohistMC
- * Copyright (C) 2018-2022.
+ * Mohist - MohistMC
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +19,31 @@
 package com.mohistmc.util.i18n;
 
 import com.mohistmc.config.MohistConfigUtil;
+
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class i18n {
-    public static ResourceBundle rb;
-
-    static {
-        try {
-            rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
-        } catch (UnsupportedOperationException e) {
-            // ResourceBundle.Control is not supported in named modules.
-            // See https://docs.oracle.com/javase/9/docs/api/java/util/ResourceBundle.html#bundleprovider for more details
-            rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()));
-        }
-    }
+    private static final List<String> a = Arrays.asList("en_us", "es_es", "fr_fr", "ru_ru", "zh_cn", "zh_tw");
+    public static List<String> b = Arrays.asList("fr_FR", "ru_RU", "zh_CN", "zh_TW");
+    public static Map<String, String> CACHE = new ConcurrentHashMap<>();
+    private static ResourceBundle rb;
 
     public static String get(String key) {
-        return rb.getString(key);
+        rb = ResourceBundle.getBundle("lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+        String string = rb.getString(key);
+        if (!CACHE.containsKey(key)) {
+            CACHE.put(key, string);
+        } else {
+            return CACHE.get(key);
+        }
+        return string;
     }
 
     public static String get(String key, Object... f) {
@@ -46,12 +51,26 @@ public class i18n {
     }
 
     public static String getLocale(int key) {
-        String locale = MohistConfigUtil.sMohist("lang", "xx_XX");
+        String locale = MohistConfigUtil.yml.getString("mohist.lang", "xx_XX");
         if (locale.length() == 5) {
-            if (key == 1) return locale.substring(0, 2);
-            if (key == 2) return locale.substring(3, 5);
+            if (key == 1) {
+                return locale.substring(0, 2);
+            }
+            if (key == 2) {
+                return locale.substring(3, 5);
+            }
         }
-        return "xx_XX";
+        return "xx";
+    }
+
+    public static String getVanillaLanguage() {
+        String locale = MohistConfigUtil.yml.getString("mohist.lang", "en_us");
+        if (locale.length() == 5) {
+            if (a.contains(locale.toLowerCase())) {
+                return locale.toLowerCase();
+            }
+        }
+        return "en_us";
     }
 
     public static String getLanguage() {
@@ -63,11 +82,11 @@ public class i18n {
     }
 
     public static String getLocale() {
-        return rb.getLocale().toString();
+        return getLanguage() + "_" + getCountry();
     }
 
     public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
+        return "Asia/Shanghai".equals(timeZone.getID()) || "CN".equals(rb.getLocale().getCountry());
     }
 }

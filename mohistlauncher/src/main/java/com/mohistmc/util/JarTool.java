@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ public class JarTool {
         File file = new File(targetFilePath);
         try {
             OutputStream os = new FileOutputStream(file);
-            int bytesRead = 0;
+            int bytesRead;
             byte[] buffer = new byte[8192];
             while ((bytesRead = inputStream.read(buffer, 0, 8192)) != -1) {
                 os.write(buffer, 0, bytesRead);

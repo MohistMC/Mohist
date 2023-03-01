@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -40,13 +37,11 @@ import java.util.ResourceBundle;
  **/
 public class UTF8Control extends ResourceBundle.Control {
     @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-            throws IllegalAccessException, InstantiationException, IOException {
+    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException, IOException {
         String bundleName = toBundleName(baseName, locale);
         ResourceBundle bundle = null;
-        if (format.equals("java.class")) {
+        if ("java.class".equals(format)) {
             try {
-                @SuppressWarnings("unchecked")
                 Class<? extends ResourceBundle> bundleClass
                         = (Class<? extends ResourceBundle>) loader.loadClass(bundleName);
 
@@ -59,36 +54,25 @@ public class UTF8Control extends ResourceBundle.Control {
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException ignored) {
             }
-        } else if (format.equals("java.properties")) {
+        } else if ("java.properties".equals(format)) {
             final String resourceName = toResourceName0(bundleName);
             if (resourceName == null) {
                 return null;
             }
-            final ClassLoader classLoader = loader;
-            final boolean reloadFlag = reload;
-            InputStream stream;
-            try {
-                stream = AccessController.doPrivileged(
-                        (PrivilegedExceptionAction<InputStream>) () -> {
-                            InputStream is = null;
-                            if (reloadFlag) {
-                                URL url = classLoader.getResource(resourceName);
-                                if (url != null) {
-                                    URLConnection connection = url.openConnection();
-                                    if (connection != null) {
-                                        // Disable caches to get fresh data for
-                                        // reloading.
-                                        connection.setUseCaches(false);
-                                        is = connection.getInputStream();
-                                    }
-                                }
-                            } else {
-                                is = classLoader.getResourceAsStream(resourceName);
-                            }
-                            return is;
-                        });
-            } catch (PrivilegedActionException e) {
-                throw (IOException) e.getException();
+            InputStream stream = null;
+            if (reload) {
+                URL url = loader.getResource(resourceName);
+                if (url != null) {
+                    URLConnection connection = url.openConnection();
+                    if (connection != null) {
+                        // Disable caches to get fresh data for
+                        // reloading.
+                        connection.setUseCaches(false);
+                        stream = connection.getInputStream();
+                    }
+                }
+            } else {
+                stream = loader.getResourceAsStream(resourceName);
             }
             if (stream != null) {
                 try {
@@ -111,5 +95,4 @@ public class UTF8Control extends ResourceBundle.Control {
             return toResourceName(bundleName, "properties");
         }
     }
-
 }

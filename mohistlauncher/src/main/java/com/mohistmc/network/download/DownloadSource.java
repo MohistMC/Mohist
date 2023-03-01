@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,15 @@ public enum DownloadSource {
 
     public static final DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
     @Getter
+    final
     String url;
 
     public static DownloadSource get() {
-        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
+        String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
-            if (me.name().equalsIgnoreCase(ds))
+            if (me.name().equalsIgnoreCase(ds)) {
                 return me;
+            }
         }
         return defaultSource;
     }

@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,9 @@ public class FileUtil {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(MohistMCStart.class.getClassLoader().getResourceAsStream(path))))) {
             List<String> lines = new ArrayList<>();
             String line;
-            while ((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null) {
                 lines.add(line);
+            }
             return lines;
         } catch (Exception e) {
             return Collections.emptyList();
