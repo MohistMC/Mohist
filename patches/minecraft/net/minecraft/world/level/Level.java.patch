@@ -46,7 +46,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -91,15 +_,82 @@
+@@ -91,15 +_,87 @@
     public final Random f_46441_ = new Random();
     final DimensionType f_46445_;
     private final Holder<DimensionType> f_204147_;
@@ -88,6 +88,11 @@
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++
++   public static BlockPos lastPhysicsProblem; // Spigot
++   private org.spigotmc.TickLimiter entityLimiter;
++   private org.spigotmc.TickLimiter tileLimiter;
++   private int tileTickPosition;
 +
 +   public CraftWorld getWorld() {
 +      return this.world;
@@ -364,7 +369,7 @@
                    blockstate.m_60690_(this, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -870,6 +_,18 @@
+@@ -870,11 +_,23 @@
        return this.f_46420_;
     }
  
@@ -383,6 +388,12 @@
     public final boolean m_46659_() {
        return this.f_46424_;
     }
+ 
+-   protected abstract LevelEntityGetter<Entity> m_142646_();
++   public abstract LevelEntityGetter<Entity> m_142646_();
+ 
+    protected void m_151513_(@Nullable Entity p_151514_, GameEvent p_151515_, BlockPos p_151516_, int p_151517_) {
+       int i = SectionPos.m_123171_(p_151516_.m_123341_() - p_151517_);
 @@ -900,4 +_,11 @@
     public long m_183596_() {
        return (long)(this.f_186455_++);

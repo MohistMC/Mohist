@@ -24,7 +24,6 @@ import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeInternalHandler;
@@ -146,7 +145,7 @@ public class WorldEvent extends Event
         private final List<MobSpawnSettings.SpawnerData> list;
         private final List<MobSpawnSettings.SpawnerData> view;
 
-        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<SpawnerData> oldList)
+        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
         {
             super(level);
             this.pos = pos;
@@ -178,7 +177,7 @@ public class WorldEvent extends Event
         /**
          * {@return the list of mobs that can potentially be spawned.}
          */
-        public List<SpawnerData> getSpawnerDataList()
+        public List<MobSpawnSettings.SpawnerData> getSpawnerDataList()
         {
             return view;
         }

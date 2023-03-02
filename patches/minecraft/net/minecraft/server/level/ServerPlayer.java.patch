@@ -76,12 +76,13 @@
  
  public class ServerPlayer extends Player {
     private static final Logger f_8907_ = LogUtils.getLogger();
-@@ -227,16 +_,80 @@
+@@ -227,22 +_,87 @@
     public int f_8943_;
     public boolean f_8944_;
  
 +   // CraftBukkit start
 +   public String displayName;
++   public Component listName;
 +   public org.bukkit.Location compassTarget;
 +   public int newExp = 0;
 +   public int newLevel = 0;
@@ -159,6 +160,15 @@
  
     private void m_9201_(ServerLevel p_9202_) {
        BlockPos blockpos = p_9202_.m_8900_();
+-      if (p_9202_.m_6042_().m_63935_() && p_9202_.m_142572_().m_129910_().m_5464_() != GameType.ADVENTURE) {
+-         int i = Math.max(0, this.f_8924_.m_129803_(p_9202_));
+-         int j = Mth.m_14107_(p_9202_.m_6857_().m_61941_((double)blockpos.m_123341_(), (double)blockpos.m_123343_()));
++      if (p_9202_.m_6042_().m_63935_() && p_9202_.f_8549_.m_5464_() != GameType.ADVENTURE) {
++         int i = Math.max( 0, this.f_8924_.m_129803_( p_9202_ ) );
++         int j = Mth.m_14107_( p_9202_.m_6857_().m_61941_( (double) blockpos.m_123341_(), (double) blockpos.m_123343_() ) );
+          if (j < i) {
+             i = j;
+          }
 @@ -294,11 +_,20 @@
        if (p_9131_.m_128425_("recipeBook", 10)) {
           this.f_8929_.m_12794_(p_9131_.m_128469_("recipeBook"), this.f_8924_.m_129894_());
@@ -180,7 +190,7 @@
        if (p_9131_.m_128425_("SpawnX", 99) && p_9131_.m_128425_("SpawnY", 99) && p_9131_.m_128425_("SpawnZ", 99)) {
           this.f_8936_ = new BlockPos(p_9131_.m_128451_("SpawnX"), p_9131_.m_128451_("SpawnY"), p_9131_.m_128451_("SpawnZ"));
           this.f_8937_ = p_9131_.m_128471_("SpawnForced");
-@@ -324,7 +_,18 @@
+@@ -324,7 +_,20 @@
  
        Entity entity1 = this.m_20201_();
        Entity entity = this.m_20202_();
@@ -196,7 +206,9 @@
 +            }
 +         }
 +      }
-+      if (persistVehicle && entity != null && entity1 != this && entity1.m_146898_()) {
++
++      if (persistVehicle && entity1 != null && entity != null && entity != this && entity.m_146898_()) {
++         // CraftBukkit end
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.m_20223_(compoundtag2);

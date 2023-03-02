@@ -64,6 +64,15 @@
           this.f_8327_.m_140792_(TicketType.f_9449_, chunkpos, j, chunkpos);
           if (this.m_8416_(chunkholder, j)) {
              ProfilerFiller profilerfiller = this.f_8329_.m_46473_();
+@@ -224,7 +_,7 @@
+    }
+ 
+    private boolean m_8416_(@Nullable ChunkHolder p_8417_, int p_8418_) {
+-      return p_8417_ == null || p_8417_.m_140093_() > p_8418_;
++      return p_8417_ == null || p_8417_.f_140006_ > p_8418_; // CraftBukkit using oldTicketLevel for isLoaded checks
+    }
+ 
+    public boolean m_5563_(int p_8429_, int p_8430_) {
 @@ -294,11 +_,31 @@
     }
  
@@ -106,7 +115,7 @@
           profilerfiller.m_6180_("naturalSpawnCount");
           int l = this.f_8327_.m_140816_();
           NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.m_186524_(l, this.f_8329_.m_8583_(), this::m_8370_, new LocalMobCapCalculator(this.f_8325_));
-@@ -342,13 +_,13 @@
+@@ -342,15 +_,15 @@
           }
  
           profilerfiller.m_6182_("spawnAndTick");
@@ -120,8 +129,11 @@
 -            if (this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) {
 +            if ((this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
                 levelchunk1.m_187632_(j);
-                if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
+-               if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
++               if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos) && this.f_8325_.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
                    NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
+                }
+ 
 @@ -421,12 +_,31 @@
     }
  

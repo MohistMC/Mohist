@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.StartAttacking;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**

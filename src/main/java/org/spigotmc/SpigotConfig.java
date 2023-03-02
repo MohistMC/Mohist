@@ -1,7 +1,6 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
-import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -39,9 +40,9 @@ public class SpigotConfig
             + "http://www.spigotmc.org/wiki/spigot-configuration/\n"
             + "\n"
             + "If you need help with the configuration or have any questions related to Spigot,\n"
-            + "join us at the IRC or drop by our forums and leave a post.\n"
+            + "join us at the Discord or drop by our forums and leave a post.\n"
             + "\n"
-            + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
+            + "Discord: https://www.spigotmc.org/go/discord\n"
             + "Forums: http://www.spigotmc.org/\n";
     /*========================================================================*/
     public static YamlConfiguration config;
@@ -77,8 +78,9 @@ public class SpigotConfig
 
     public static void registerCommands()
     {
-        for ( Map.Entry<String, Command> entry : commands.entrySet() ) {
-            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "Spigot", entry.getValue());
+        for ( Map.Entry<String, Command> entry : commands.entrySet() )
+        {
+            MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
         }
     }
 
@@ -208,6 +210,7 @@ public class SpigotConfig
         restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
+        WatchdogThread.doStart( timeoutTime, restartOnCrash );
     }
 
     public static boolean bungee;
@@ -245,7 +248,7 @@ public class SpigotConfig
                 try
                 {
                     ResourceLocation key = new ResourceLocation( name );
-                    if ( net.minecraft.core.Registry.CUSTOM_STAT.get( key ) == null )
+                    if ( Registry.CUSTOM_STAT.get( key ) == null )
                     {
                         Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
                         continue;
@@ -381,5 +384,10 @@ public class SpigotConfig
     public static boolean disablePlayerDataSaving;
     private static void disablePlayerDataSaving() {
         disablePlayerDataSaving = getBoolean("players.disable-saving", false);
+    }
+
+    public static boolean belowZeroGenerationInExistingChunks;
+    private static void belowZeroGenerationInExistingChunks() {
+        belowZeroGenerationInExistingChunks = getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
     }
 }

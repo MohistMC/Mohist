@@ -25,7 +25,16 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -50,6 +_,13 @@
+@@ -43,13 +_,20 @@
+    public byte f_77890_;
+    public byte[] f_77891_ = new byte[16384];
+    public boolean f_77892_;
+-   private final List<MapItemSavedData.HoldingPlayer> f_77893_ = Lists.newArrayList();
+-   private final Map<Player, MapItemSavedData.HoldingPlayer> f_77896_ = Maps.newHashMap();
++   public final List<MapItemSavedData.HoldingPlayer> f_77893_ = Lists.newArrayList();
++   public final Map<Player, MapItemSavedData.HoldingPlayer> f_77896_ = Maps.newHashMap();
+    private final Map<String, MapBanner> f_77897_ = Maps.newHashMap();
+    public final Map<String, MapDecoration> f_77894_ = Maps.newLinkedHashMap();
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
  
@@ -95,12 +104,12 @@
 +                  break;
 +               }
 +            }
-+             /* Perform a second check to see if a matching world was found, this is a necessary
-+                  change incase Maps are forcefully unlinked from a World and lack a UID.*/
-+            if (this.uniqueId != null) {
-+               p_77956_.m_128356_("UUIDLeast", this.uniqueId.getLeastSignificantBits());
-+               p_77956_.m_128356_("UUIDMost", this.uniqueId.getMostSignificantBits());
-+            }
++         }
++       /* Perform a second check to see if a matching world was found, this is a necessary
++          change incase Maps are forcefully unlinked from a World and lack a UID.*/
++         if (this.uniqueId != null) {
++            p_77956_.m_128356_("UUIDLeast", this.uniqueId.getLeastSignificantBits());
++            p_77956_.m_128356_("UUIDMost", this.uniqueId.getMostSignificantBits());
 +         }
 +      }
 +      // CraftBukkit end

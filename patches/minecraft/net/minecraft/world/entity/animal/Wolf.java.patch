@@ -9,6 +9,15 @@
  
  public class Wolf extends TamableAnimal implements NeutralMob {
     private static final EntityDataAccessor<Boolean> f_30358_ = SynchedEntityData.m_135353_(Wolf.class, EntityDataSerializers.f_135035_);
+@@ -284,7 +_,7 @@
+       } else {
+          Entity entity = p_30386_.m_7639_();
+          if (!this.f_19853_.f_46443_) {
+-            this.m_21839_(false);
++            // this.setOrderedToSit(false); // CraftBukkit - moved into LivingEntity.damageEntity(DamageSource, float)
+          }
+ 
+          if (entity != null && !(entity instanceof Player) && !(entity instanceof AbstractArrow)) {
 @@ -308,7 +_,7 @@
        super.m_7105_(p_30443_);
        if (p_30443_) {

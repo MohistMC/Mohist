@@ -8,23 +8,24 @@
  
  public class RconConsoleSource implements CommandSource {
     private static final String f_144022_ = "Rcon";
-@@ -35,7 +_,7 @@
+@@ -34,8 +_,19 @@
+       return new CommandSourceStack(this, Vec3.m_82528_(serverlevel.m_8900_()), Vec2.f_82462_, serverlevel, 4, "Rcon", f_11500_, this.f_11502_, (Entity)null);
     }
  
++   // CraftBukkit start - Send a String
++   public void sendMessage(String message) {
++      this.f_11501_.append(message);
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return f_11502_.remoteConsole;
++   }
++   // CraftBukkit end
++
     public void m_6352_(Component p_11509_, UUID p_11510_) {
 -      this.f_11501_.append(p_11509_.getString());
 +      this.f_11501_.append(p_11509_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
     }
  
     public boolean m_6999_() {
-@@ -48,5 +_,10 @@
- 
-    public boolean m_6102_() {
-       return this.f_11502_.m_6983_();
-+   }
-+
-+   @Override
-+   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return null;
-    }
- }

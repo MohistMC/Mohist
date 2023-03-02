@@ -5,20 +5,20 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.base.Suppliers;
-import com.mojang.serialization.Codec;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-
-import com.google.common.collect.Lists;
-
 import java.util.function.Supplier;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Lists;
+import com.mojang.serialization.Codec;
+
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryAccess.RegistryData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
@@ -45,7 +45,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    private Supplier<RegistryData<T>> dataPackRegistryData = () -> null; // If present, implies this is a datapack registry.
+    private Supplier<RegistryAccess.RegistryData<T>> dataPackRegistryData = () -> null; // If present, implies this is a datapack registry.
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();

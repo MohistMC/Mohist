@@ -9,6 +9,32 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
+@@ -119,10 +_,22 @@
+       }
+ 
+       if (!this.f_140765_.isEmpty()) {
+-         this.f_140765_.forEach((p_183908_) -> {
++         // CraftBukkit start
++         // Iterate pending chunk updates with protection against concurrent modification exceptions
++         java.util.Iterator<ChunkHolder> iter = this.f_140765_.iterator();
++         int expectedSize = this.f_140765_.size();
++         do {
++            ChunkHolder p_183908_ = iter.next();
++            iter.remove();
++            expectedSize--;
+             p_183908_.m_143003_(p_140806_, this.f_140770_);
+-         });
+-         this.f_140765_.clear();
++            // Reset iterator if set was modified using add()
++            if (this.f_140765_.size() != expectedSize) {
++               expectedSize = this.f_140765_.size();
++               iter = this.f_140765_.iterator();
++            }
++         } while (iter.hasNext());
++            // CraftBukkit end
+          return true;
+       } else {
+          if (!this.f_140769_.isEmpty()) {
 @@ -164,6 +_,25 @@
           this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
        }

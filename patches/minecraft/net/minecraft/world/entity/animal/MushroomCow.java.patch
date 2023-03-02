@@ -1,10 +1,13 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -41,8 +_,9 @@
+@@ -41,8 +_,12 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import org.apache.commons.lang3.tuple.Pair;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDropItemEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
  
 -public class MushroomCow extends Cow implements Shearable {
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
@@ -44,13 +47,28 @@
        this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
        if (!this.f_19853_.m_5776_()) {
           ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
-@@ -166,10 +_,13 @@
+@@ -164,12 +_,28 @@
+          }
+ 
           cow.m_20331_(this.m_20147_());
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, cow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++            return java.util.Collections.emptyList();
++         }
           this.f_19853_.m_7967_(cow);
++         this.m_146870_(); // CraftBukkit - from above
++         // CraftBukkit end
  
 +         java.util.List<ItemStack> items = new java.util.ArrayList<>();
           for(int i = 0; i < 5; ++i) {
 -            this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28955_().f_28961_.m_60734_())));
++            // CraftBukkit start
++            ItemEntity entityitem = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28955_().f_28961_.m_60734_()));
++            EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
++            Bukkit.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               continue;
++            }
 +            items.add(new ItemStack(this.m_28955_().f_28961_.m_60734_()));
           }
 +         return items;

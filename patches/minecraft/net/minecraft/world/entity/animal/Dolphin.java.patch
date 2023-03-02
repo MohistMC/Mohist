@@ -19,7 +19,7 @@
  
     public int m_6062_() {
 -      return 4800;
-+      return maxAirTicks;
++      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
     }
  
     protected int m_7305_(int p_28389_) {

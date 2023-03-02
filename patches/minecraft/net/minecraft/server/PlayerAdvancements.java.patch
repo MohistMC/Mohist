@@ -1,6 +1,19 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -181,6 +_,10 @@
+@@ -157,7 +_,11 @@
+                for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
+                   Advancement advancement = p_136007_.m_136041_(entry.getKey());
+                   if (advancement == null) {
+-                     f_135958_.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.f_135963_);
++                     // CraftBukkit start
++                     if (entry.getKey().m_135827_().equals("minecraft")) {
++                        PlayerAdvancements.f_135958_.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.f_135963_);
++                     }
++                     // CraftBukkit end
+                   } else {
+                      this.m_135985_(advancement, entry.getValue());
+                   }
+@@ -181,11 +_,16 @@
        }
  
        this.m_136002_(p_136007_);
@@ -11,6 +24,12 @@
        this.m_136001_();
        this.m_135994_(p_136007_);
     }
+ 
+    public void m_135991_() {
++      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
+       Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
+ 
+       for(Entry<Advancement, AdvancementProgress> entry : this.f_135964_.entrySet()) {
 @@ -239,6 +_,8 @@
     }
  

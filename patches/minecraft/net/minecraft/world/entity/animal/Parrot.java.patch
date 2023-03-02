@@ -27,3 +27,12 @@
     }
  
     protected void m_7324_(Entity p_29367_) {
+@@ -365,7 +_,7 @@
+          return false;
+       } else {
+          if (!this.f_19853_.f_46443_) {
+-            this.m_21839_(false);
++            // this.setOrderedToSit(false);  // CraftBukkit - moved into LivingEntity.damageEntity(DamageSource, float)
+          }
+ 
+          return super.m_6469_(p_29378_, p_29379_);

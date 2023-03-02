@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -148,7 +_,7 @@
+@@ -148,12 +_,12 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
  
@@ -9,6 +9,12 @@
     private static final Logger f_20534_ = LogUtils.getLogger();
     public static final String f_147037_ = "EntityTag";
     private final Holder.Reference<EntityType<?>> f_204038_ = Registry.f_122826_.m_203693_(this);
+    private static final float f_147038_ = 1.3964844F;
+-   public static final EntityType<AreaEffectCloud> f_20476_ = m_20634_("area_effect_cloud", EntityType.Builder.<AreaEffectCloud>m_20704_(AreaEffectCloud::new, MobCategory.MISC).m_20719_().m_20699_(6.0F, 0.5F).m_20702_(10).m_20717_(Integer.MAX_VALUE));
++   public static final EntityType<AreaEffectCloud> f_20476_ = m_20634_("area_effect_cloud", EntityType.Builder.<AreaEffectCloud>m_20704_(AreaEffectCloud::new, MobCategory.MISC).m_20719_().m_20699_(6.0F, 0.5F).m_20702_(10).m_20717_(10)); // CraftBukkit - SPIGOT-3729: track area effect clouds
+    public static final EntityType<ArmorStand> f_20529_ = m_20634_("armor_stand", EntityType.Builder.<ArmorStand>m_20704_(ArmorStand::new, MobCategory.MISC).m_20699_(0.5F, 1.975F).m_20702_(10));
+    public static final EntityType<Arrow> f_20548_ = m_20634_("arrow", EntityType.Builder.<Arrow>m_20704_(Arrow::new, MobCategory.MISC).m_20699_(0.5F, 0.5F).m_20702_(4).m_20717_(20));
+    public static final EntityType<Axolotl> f_147039_ = m_20634_("axolotl", EntityType.Builder.<Axolotl>m_20704_(Axolotl::new, MobCategory.AXOLOTLS).m_20699_(0.75F, 0.42F).m_20702_(10));
 @@ -283,6 +_,11 @@
     private ResourceLocation f_20546_;
     private final EntityDimensions f_20547_;

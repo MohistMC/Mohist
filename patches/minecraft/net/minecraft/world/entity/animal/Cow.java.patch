@@ -19,7 +19,7 @@
 +         if (event.isCancelled()) {
 +            return InteractionResult.PASS;
 +         }
-+                    // CraftBukkit end
++         // CraftBukkit end
           p_28298_.m_5496_(SoundEvents.f_11833_, 1.0F, 1.0F);
 -         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_28298_, Items.f_42455_.m_7968_());
 +         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_28298_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit

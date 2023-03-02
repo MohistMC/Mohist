@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/storage/DerivedLevelData.java
++++ b/net/minecraft/world/level/storage/DerivedLevelData.java
+@@ -20,6 +_,10 @@
+       this.f_78077_ = p_78080_;
+    }
+ 
++   public ServerLevelData getWrapped() {
++      return f_78077_;
++   }
++
+    public int m_6789_() {
+       return this.f_78077_.m_6789_();
+    }

@@ -13,7 +13,6 @@
           String s = LanServerPinger.m_120111_(p_120097_);
           String s1 = LanServerPinger.m_120116_(p_120097_);
           if (s1 != null) {
--            s1 = p_120098_.getHostAddress() + ":" + s1;
 +            if (net.minecraftforge.network.DualStackUtils.checkIPv6(p_120098_)) {
 +               final String ip;
 +
@@ -25,7 +24,7 @@
 +
 +               s1 = "[" + ip + "]:" + s1;
 +            } else {
-+               s1 = p_120098_.getHostAddress() + ":" + s1;
+             s1 = p_120098_.getHostAddress() + ":" + s1;
 +            }
              boolean flag = false;
  

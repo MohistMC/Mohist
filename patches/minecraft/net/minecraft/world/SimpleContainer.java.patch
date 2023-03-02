@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/SimpleContainer.java
 +++ b/net/minecraft/world/SimpleContainer.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import java.util.stream.Collectors;
++import java.util.stream.IntStream;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.nbt.CompoundTag;
 @@ -12,6 +_,10 @@
  import net.minecraft.world.inventory.StackedContentsCompatible;
  import net.minecraft.world.item.Item;
@@ -11,7 +19,7 @@
  
  public class SimpleContainer implements Container, StackedContentsCompatible {
     private final int f_19146_;
-@@ -19,9 +_,62 @@
+@@ -19,7 +_,58 @@
     @Nullable
     private List<ContainerListener> f_19148_;
  
@@ -54,23 +62,19 @@
 +      return null;
 +   }
 +
++
 +   public SimpleContainer(SimpleContainer original) {
 +      this(original.f_19146_);
-+      for (int slot = 0; slot < original.f_19146_; slot++) {
-+         this.f_19147_.set(slot, original.f_19147_.get(slot).m_41777_());
-+      }
++      IntStream.range(0, original.f_19146_).forEach(i -> this.f_19147_.set(i, original.f_19147_.get(i).m_41777_()));
 +   }
 +
     public SimpleContainer(int p_19150_) {
-+      this.bukkitOwner = null;
-       this.f_19146_ = p_19150_;
-       this.f_19147_ = NonNullList.m_122780_(p_19150_, ItemStack.f_41583_);
++      this(p_19150_, null);
 +   }
 +
-+   public SimpleContainer(int i, org.bukkit.inventory.InventoryHolder owner) {
++   public SimpleContainer(int p_19150_, InventoryHolder owner) {
 +      this.bukkitOwner = owner;
-+      this.f_19146_ = i;
-+      this.f_19147_ = NonNullList.m_122780_(i, ItemStack.f_41583_);
++      // CraftBukkit end
+       this.f_19146_ = p_19150_;
+       this.f_19147_ = NonNullList.m_122780_(p_19150_, ItemStack.f_41583_);
     }
- 
-    public SimpleContainer(ItemStack... p_19152_) {

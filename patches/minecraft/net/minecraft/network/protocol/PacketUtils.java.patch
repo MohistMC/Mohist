@@ -11,12 +11,10 @@
  import net.minecraft.util.thread.BlockableEventLoop;
  import org.slf4j.Logger;
  
-@@ -16,23 +_,20 @@
- 
+@@ -17,22 +_,19 @@
     public static <T extends PacketListener> void m_131363_(Packet<T> p_131364_, T p_131365_, BlockableEventLoop<?> p_131366_) throws RunningOnDifferentThreadException {
        if (!p_131366_.m_18695_()) {
--         p_131366_.m_201446_(() -> {
-+         p_131366_.execute(() -> {
+          p_131366_.m_201446_(() -> {
 +            if (MinecraftServer.getServer().hasStopped() || (p_131365_ instanceof ServerGamePacketListenerImpl && ((ServerGamePacketListenerImpl) p_131365_).processedDisconnect)) return; // CraftBukkit, MC-142590
              if (p_131365_.m_6198_().m_129536_()) {
 -               try {

@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.minecraftforge.common.ForgeConfig;
 
 /**
  * Defines a resource pack from an arbitrary Path.

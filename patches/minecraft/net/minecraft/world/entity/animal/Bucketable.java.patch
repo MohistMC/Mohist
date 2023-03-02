@@ -35,7 +35,7 @@
 +            ((ServerPlayer) p_148829_).f_8906_.m_141995_(new ClientboundSetEntityDataPacket(p_148831_.m_142049_(), p_148831_.m_20088_(), true)); // Need to send data such as the display name to client
 +            return Optional.of(InteractionResult.FAIL);
 +         }
-+         p_148831_.m_5496_(p_148831_.m_142623_(), 1.0F, 1.0F);
++         p_148831_.m_5496_(((Bucketable) p_148831_).m_142623_(), 1.0F, 1.0F);
 +         // CraftBukkit end
 +
           ItemStack itemstack2 = ItemUtils.m_41817_(itemstack, p_148829_, itemstack1, false);

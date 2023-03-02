@@ -84,28 +84,74 @@
           this.f_19812_ |= this.m_20073_();
           if (!this.f_19853_.f_46443_) {
              double d0 = this.m_20184_().m_82546_(vec3).m_82556_();
-@@ -146,7 +_,20 @@
+@@ -146,12 +_,46 @@
              }
           }
  
 -         if (!this.f_19853_.f_46443_ && this.f_31985_ >= 6000) {
 +         ItemStack item = this.m_32055_();
-+         if (!this.f_19853_.f_46443_ && this.f_31985_ >= lifespan) {
-+            // CraftBukkit start - fire ItemDespawnEvent
-+            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+               this.f_31985_ = 0;
-+               return;
-+            }
-+            // CraftBukkit end
++         if (!this.f_19853_.f_46443_ && this.f_31985_ >= f_19853_.spigotConfig.itemDespawnRate) { // Spigot
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) this.m_146870_();
 +             else          this.lifespan += hook;
 +         }
 +
 +         if (item.m_41619_()) {
++            // CraftBukkit start - fire ItemDespawnEvent
++            if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++               this.f_31985_ = 0;
++               return;
++            }
++            // CraftBukkit end
              this.m_146870_();
           }
  
+       }
+    }
++
++   // Spigot start - copied from above
++   @Override
++   public void inactiveTick() {
++      // CraftBukkit start - Use wall time for pickup and despawn timers
++      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
++      if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
++      this.lastTick = MinecraftServer.currentTick;
++      // CraftBukkit end
++      if (!this.f_19853_.f_46443_ && this.f_31985_ >= f_19853_.spigotConfig.itemDespawnRate) { // Spigot
++         // CraftBukkit start - fire ItemDespawnEvent
++         if (org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++            this.f_31985_ = 0;
++            return;
++         }
++         // CraftBukkit end
++         this.m_146870_();
++      }
++   }
++   // Spigot end
+ 
+    private void m_32067_() {
+       Vec3 vec3 = this.m_20184_();
+@@ -165,7 +_,9 @@
+ 
+    private void m_32069_() {
+       if (this.m_32070_()) {
+-         for(ItemEntity itementity : this.f_19853_.m_6443_(ItemEntity.class, this.m_142469_().m_82377_(0.5D, 0.0D, 0.5D), (p_186268_) -> {
++         // Spigot start
++         double radius = f_19853_.spigotConfig.itemMerge;
++         for(ItemEntity itementity : this.f_19853_.m_6443_(ItemEntity.class, this.m_142469_().m_82377_(radius, radius - 0.5D, radius), (p_186268_) -> {
+             return p_186268_ != this && p_186268_.m_32070_();
+          })) {
+             if (itementity.m_32070_()) {
+@@ -188,7 +_,7 @@
+       ItemStack itemstack = this.m_32055_();
+       ItemStack itemstack1 = p_32016_.m_32055_();
+       if (Objects.equals(this.m_32056_(), p_32016_.m_32056_()) && m_32026_(itemstack, itemstack1)) {
+-         if (itemstack1.m_41613_() < itemstack.m_41613_()) {
++         if (true || itemstack1.m_41613_() < itemstack.m_41613_()) { // Spigot
+             m_32017_(this, itemstack, p_32016_, itemstack1);
+          } else {
+             m_32017_(p_32016_, itemstack1, this, itemstack);
 @@ -204,6 +_,8 @@
           return false;
        } else if (p_32028_.m_41782_() ^ p_32027_.m_41782_()) {
@@ -256,7 +302,7 @@
     public void m_32065_() {
        this.m_32062_();
 -      this.f_31985_ = 5999;
-+      this.f_31985_ = m_32055_().getEntityLifespan(f_19853_) - 1;
++      this.f_31985_ = f_19853_.spigotConfig.itemDespawnRate - 1; // Spigot
     }
  
     public float m_32008_(float p_32009_) {

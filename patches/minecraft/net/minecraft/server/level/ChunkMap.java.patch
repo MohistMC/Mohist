@@ -101,16 +101,115 @@
           if (p_183759_ && !p_183758_) {
              ChunkHolder chunkholder = this.m_140327_(p_183756_.m_45588_());
              if (chunkholder != null) {
-@@ -890,7 +_,7 @@
+@@ -890,49 +_,64 @@
     @Nullable
     private CompoundTag m_140427_(ChunkPos p_140428_) throws IOException {
        CompoundTag compoundtag = this.m_63512_(p_140428_);
 -      return compoundtag == null ? null : this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, compoundtag, this.f_140136_.m_187743_());
+-   }
+-
+-   boolean m_183879_(ChunkPos p_183880_) {
+-      long i = p_183880_.m_45588_();
+-      if (!this.f_140145_.m_140847_(i)) {
+-         return false;
+-      } else {
+-         for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-            if (this.m_183751_(serverplayer, p_183880_)) {
+-               return true;
+-            }
+-         }
+-
+-         return false;
+-      }
+-   }
+-
+-   public List<ServerPlayer> m_183888_(ChunkPos p_183889_) {
+-      long i = p_183889_.m_45588_();
+-      if (!this.f_140145_.m_140847_(i)) {
+-         return List.of();
+-      } else {
+-         Builder<ServerPlayer> builder = ImmutableList.builder();
+-
+-         for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+-            if (this.m_183751_(serverplayer, p_183889_)) {
+-               builder.add(serverplayer);
+-            }
+-         }
+-
+-         return builder.build();
+-      }
+-   }
+-
+-   private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
+-      if (p_183752_.m_5833_()) {
+-         return false;
+-      } else {
+-         double d0 = m_140226_(p_183753_, p_183752_);
+-         return d0 < 16384.0D;
+-      }
+-   }
 +      return compoundtag == null ? null : this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, compoundtag, this.f_140136_.m_187743_(), p_140428_, f_140133_);
-    }
++   }
++
++    boolean m_183879_(ChunkPos p_183880_) {
++        // Spigot start
++        return anyPlayerCloseEnoughForSpawning( p_183880_, false );
++    }
++
++    boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
++        int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
++        chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;
++        chunkRange = (chunkRange > 8) ? 8 : chunkRange;
++
++        double blockRange = (reducedRange) ? Math.pow( chunkRange << 4, 2 ) : 16384.0D;
++        // Spigot end
++        long i = p_183880_.m_45588_();
++        if (!this.f_140145_.m_140847_( i )) {
++            return false;
++        } else {
++            for (ServerPlayer serverplayer : this.f_140149_.m_183926_( i )) {
++                if (this.playerIsCloseEnoughForSpawning( serverplayer, p_183880_, blockRange )) { // Spigot
++                    return true;
++                }
++            }
++
++            return false;
++        }
++    }
++
++    public List<ServerPlayer> m_183888_(ChunkPos p_183889_) {
++        long i = p_183889_.m_45588_();
++        if (!this.f_140145_.m_140847_( i )) {
++            return List.of();
++        } else {
++            Builder<ServerPlayer> builder = ImmutableList.builder();
++
++            for (ServerPlayer serverplayer : this.f_140149_.m_183926_( i )) {
++                if (this.playerIsCloseEnoughForSpawning( serverplayer, p_183889_, 16384.0D )) { // Spigot
++                    builder.add( serverplayer );
++                }
++            }
++
++            return builder.build();
++        }
++    }
++
++    private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
++        return this.playerIsCloseEnoughForSpawning( p_183752_, p_183753_, 0D );
++    }
++
++    private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot
++        if (p_183752_.m_5833_()) {
++            return false;
++        } else {
++            double d0 = m_140226_( p_183753_, p_183752_ );
++            return d0 < range; // Spigot
++        }
++    }
  
-    boolean m_183879_(ChunkPos p_183880_) {
-@@ -1070,7 +_,7 @@
+    private boolean m_140329_(ServerPlayer p_140330_) {
+       return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
+@@ -1070,9 +_,10 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -118,7 +217,10 @@
 +      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
++		 i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_140200_, i); // Spigot
           if (i != 0) {
+             int j = entitytype.m_20682_();
+             if (this.f_140150_.containsKey(p_140200_.m_142049_())) {
 @@ -1231,15 +_,15 @@
        }
     }

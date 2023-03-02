@@ -83,7 +83,7 @@
              d8 = 1.0D;
           } else {
              d6 = 1.0D;
-@@ -80,11 +_,13 @@
+@@ -80,20 +_,40 @@
           d6 /= 32.0D;
           d7 /= 32.0D;
           d8 /= 32.0D;
@@ -101,8 +101,11 @@
        return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
-@@ -94,6 +_,24 @@
-          if (this.f_31700_++ == 100) {
+    public void m_8119_() {
+       if (!this.f_19853_.f_46443_) {
+          this.m_146871_();
+-         if (this.f_31700_++ == 100) {
++         if (this.f_31700_++ == this.f_19853_.spigotConfig.hangingTickFrequency) { // Spigot
              this.f_31700_ = 0;
              if (!this.m_146910_() && !this.m_7088_()) {
 +               // CraftBukkit start - fire break events
@@ -172,6 +175,15 @@
 +            return;
 +         }
 +         // CraftBukkit end
+          this.m_6074_();
+          this.m_5553_((Entity)null);
+       }
+@@ -168,7 +_,7 @@
+    }
+ 
+    public void m_5997_(double p_31744_, double p_31745_, double p_31746_) {
+-      if (!this.f_19853_.f_46443_ && !this.m_146910_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
++      if (false && !this.f_19853_.f_46443_ && !this.m_146910_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {  // CraftBukkit - not needed
           this.m_6074_();
           this.m_5553_((Entity)null);
        }

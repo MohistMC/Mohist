@@ -80,6 +80,15 @@
     protected Map<String, MapItemSavedData> m_171684_() {
        return ImmutableMap.copyOf(this.f_104556_);
     }
+@@ -740,7 +_,7 @@
+       this.f_104556_.putAll(p_171673_);
+    }
+ 
+-   protected LevelEntityGetter<Entity> m_142646_() {
++   public LevelEntityGetter<Entity> m_142646_() {
+       return this.f_171631_.m_157645_();
+    }
+ 
 @@ -870,6 +_,7 @@
        }
  

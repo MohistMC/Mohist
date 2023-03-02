@@ -45,7 +45,7 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -175,6 +_,7 @@
+@@ -175,12 +_,13 @@
     public double f_19790_;
     public double f_19791_;
     public double f_19792_;
@@ -53,7 +53,14 @@
     public float f_19793_;
     public boolean f_19794_;
     protected final Random f_19796_ = new Random();
-@@ -228,7 +_,52 @@
+    public int f_19797_;
+    public int f_19831_ = -this.m_6101_();
+-   protected boolean f_19798_;
++   public boolean f_19798_;
+    protected Object2DoubleMap<TagKey<Fluid>> f_19799_ = new Object2DoubleArrayMap<>(2);
+    protected boolean f_19800_;
+    private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
+@@ -228,7 +_,58 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -66,6 +73,12 @@
 +   public boolean lastDamageCancelled; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
 +   public boolean persistentInvisibility = false;
 +   public BlockPos lastLavaContact;
++   // Spigot start
++   public final org.spigotmc.ActivationRange.ActivationType activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
++   public final boolean defaultActivationState;
++   public long activatedTick = Integer.MIN_VALUE;
++   public void inactiveTick() { }
++   // Spigot end
 +   // CraftBukkit end
 +   private static final int CURRENT_LEVEL = 2;
 +
@@ -106,6 +119,20 @@
        this.f_19847_ = p_19870_;
        this.f_19853_ = p_19871_;
        this.f_19815_ = p_19870_.m_20680_();
+@@ -236,6 +_,13 @@
+       this.f_19826_ = BlockPos.f_121853_;
+       this.f_185933_ = ChunkPos.f_186419_;
+       this.f_19838_ = Vec3.f_82478_;
++      // Spigot start
++      if (f_19853_ != null) {
++         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, f_19853_.spigotConfig);
++      } else {
++         this.defaultActivationState = false;
++      }
++      // Spigot end
+       this.f_19804_ = new SynchedEntityData(this);
+       this.f_19804_.m_135372_(f_19805_, (byte)0);
+       this.f_19804_.m_135372_(f_19832_, this.m_6062_());
 @@ -247,7 +_,11 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();

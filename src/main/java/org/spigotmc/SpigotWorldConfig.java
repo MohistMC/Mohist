@@ -194,6 +194,7 @@ public class SpigotWorldConfig
     public int raiderActivationRange = 48;
     public int miscActivationRange = 16;
     public boolean tickInactiveVillagers = true;
+    public boolean ignoreSpectatorActivation = false;
     private void activationRange()
     {
         animalActivationRange = getInt( "entity-activation-range.animals", animalActivationRange );
@@ -201,7 +202,8 @@ public class SpigotWorldConfig
         raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
         miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
         tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
-        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
+        ignoreSpectatorActivation = getBoolean( "entity-activation-range.ignore-spectators", ignoreSpectatorActivation );
+        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers + " / Isa " + ignoreSpectatorActivation );
     }
 
     public int playerTrackingRange = 48;
@@ -294,8 +296,7 @@ public class SpigotWorldConfig
     public int shipwreckSeed;
     public int slimeSeed;
     public int endCitySeed;
-    public int bastionSeed;
-    public int fortressSeed;
+    public int netherSeed;
     public int mansionSeed;
     public int fossilSeed;
     public int portalSeed;
@@ -312,13 +313,12 @@ public class SpigotWorldConfig
         outpostSeed = getInt( "seed-outpost", 165745296 );
         endCitySeed = getInt( "seed-endcity", 10387313 );
         slimeSeed = getInt( "seed-slime", 987234911 );
-        bastionSeed = getInt( "seed-bastion", 30084232 );
-        fortressSeed = getInt( "seed-fortress", 30084232 );
+        netherSeed = getInt( "seed-nether", 30084232 );
         mansionSeed = getInt( "seed-mansion", 10387319 );
         fossilSeed = getInt( "seed-fossil", 14357921 );
         portalSeed = getInt( "seed-portal", 34222645 );
         log( "Custom Map Seeds:  Village: " + villageSeed + " Desert: " + desertSeed + " Igloo: " + iglooSeed + " Jungle: " + jungleSeed + " Swamp: " + swampSeed + " Monument: " + monumentSeed
-                + " Ocean: " + oceanSeed + " Shipwreck: " + shipwreckSeed + " End City: " + endCitySeed + " Slime: " + slimeSeed + " Bastion: " + bastionSeed + " Fortress: " + fortressSeed + " Mansion: " + mansionSeed + " Fossil: " + fossilSeed + " Portal: " + portalSeed );
+                + " Ocean: " + oceanSeed + " Shipwreck: " + shipwreckSeed + " End City: " + endCitySeed + " Slime: " + slimeSeed + " Nether: " + netherSeed + " Mansion: " + mansionSeed + " Fossil: " + fossilSeed + " Portal: " + portalSeed );
     }
 
     public float jumpWalkExhaustion;
@@ -377,5 +377,10 @@ public class SpigotWorldConfig
     private void thunderChance()
     {
         thunderChance = getInt("thunder-chance", 100000);
+    }
+
+    public boolean belowZeroGenerationInExistingChunks;
+    private void belowZeroGenerationInExistingChunks() {
+        belowZeroGenerationInExistingChunks = getBoolean("below-zero-generation-in-existing-chunks", true);
     }
 }

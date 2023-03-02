@@ -21,7 +21,7 @@
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
     private static final Component f_10081_ = new TranslatableComponent("multiplayer.status.request_handled");
-@@ -33,7 +_,38 @@
+@@ -33,7 +_,45 @@
           this.f_10083_.m_129507_(f_10081_);
        } else {
           this.f_10084_ = true;
@@ -46,6 +46,13 @@
 +
 +         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size());
 +         if (!this.f_10082_.m_183306_()) {
++            // Spigot Start
++            if ( !profiles.isEmpty() )
++            {
++               java.util.Collections.shuffle( profiles ); // This sucks, its inefficient but we have no simple way of doing it differently
++               profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
++            }
++            // Spigot End
 +            playerSample.m_134924_(profiles.toArray(new GameProfile[profiles.size()]));
 +         }
 +

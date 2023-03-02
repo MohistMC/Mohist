@@ -9,15 +9,55 @@
           return false;
        } else if (p_23175_.m_7141_().m_35571_() != VillagerProfession.f_35590_) {
           return false;
-@@ -118,6 +_,11 @@
-                      } else if (itemstack.m_150930_(Items.f_42733_)) {
-                         p_23196_.m_7731_(this.f_23159_, Blocks.f_50444_.m_49966_(), 3);
+@@ -96,7 +_,11 @@
+             Block block = blockstate.m_60734_();
+             Block block1 = p_23196_.m_8055_(this.f_23159_.m_7495_()).m_60734_();
+             if (block instanceof CropBlock && ((CropBlock)block).m_52307_(blockstate)) {
+-               p_23196_.m_46953_(this.f_23159_, true, p_23197_);
++               // CraftBukkit start
++               if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                  p_23196_.m_46953_(this.f_23159_, true, p_23197_);
++               }
++               // CraftBukkit end
+             }
+ 
+             if (blockstate.m_60795_() && block1 instanceof FarmBlock && p_23197_.m_35516_()) {
+@@ -106,19 +_,33 @@
+                   ItemStack itemstack = simplecontainer.m_8020_(i);
+                   boolean flag = false;
+                   if (!itemstack.m_41619_()) {
++                     // CraftBukkit start
++                     Block planted = null;
+                      if (itemstack.m_150930_(Items.f_42404_)) {
+-                        p_23196_.m_7731_(this.f_23159_, Blocks.f_50092_.m_49966_(), 3);
++                        planted = Blocks.f_50092_;
                          flag = true;
+                      } else if (itemstack.m_150930_(Items.f_42620_)) {
+-                        p_23196_.m_7731_(this.f_23159_, Blocks.f_50250_.m_49966_(), 3);
++                        planted = Blocks.f_50250_;
+                         flag = true;
+                      } else if (itemstack.m_150930_(Items.f_42619_)) {
+-                        p_23196_.m_7731_(this.f_23159_, Blocks.f_50249_.m_49966_(), 3);
++                        planted = Blocks.f_50249_;
+                         flag = true;
+                      } else if (itemstack.m_150930_(Items.f_42733_)) {
+-                        p_23196_.m_7731_(this.f_23159_, Blocks.f_50444_.m_49966_(), 3);
++                        planted = Blocks.f_50444_;
+                         flag = true;
+-                     }
 +                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
 +                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP) {
 +                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
 +                           flag = true;
 +                        }
-                      }
++                     }
++
++                     if (planted != null && !org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, planted.m_49966_()).isCancelled()) {
++                        p_23196_.m_7731_(this.f_23159_, planted.m_49966_(), 3);
++                     } else {
++                        flag = false;
++                     }
++                     // CraftBukkit end
                    }
  
+                   if (flag) {
