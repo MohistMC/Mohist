@@ -46,9 +46,10 @@ ext {
     ]
 }
 
-println(' Java: ' + System.getProperty('java.version') +
-        ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
-        ' Arch: ' + System.getProperty('os.arch'))
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.compilerArgs.addAll([ '--release' , '8' ])
+}
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
