@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url 'https://maven.minecraftforge.net/' }
         mavenCentral()
     }
     dependencies {
@@ -41,7 +41,7 @@ ext {
     MCP_VERSION = '20200226.224830'
     POST_PROCESSOR = [
             tool: 'net.minecraftforge:mcpcleanup:2.3.2:fatjar',
-            repo: 'https://files.minecraftforge.net/maven/',
+            repo: 'https://maven.minecraftforge.net/',
             args: ['--input', '{input}', '--output', '{output}']
     ]
 }
@@ -550,7 +550,7 @@ project(':mohist') {
     }
 
     universalJar {
-        classifier = 'server'
+        archiveClassifier = 'server'
         dependsOn(deobfDataLzma)
         from(deobfDataLzma.output){
             rename{"deobfuscation_data-${MC_VERSION}.lzma"}
@@ -568,7 +568,7 @@ project(':mohist') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
-                            'Manifest-Version': '1.9',
+                            'Manifest-Version': '2.0',
                             'Main-Class': 'com.mohistmc.MohistMC',
                             'Class-Path': classpath.toString(),
                             'Tweak-Class': 'net.minecraftforge.fml.common.launcher.FMLTweaker'
@@ -586,9 +586,9 @@ project(':mohist') {
     }
 
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar']) {
-        classifier = 'installer'
-        extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
-        destinationDir = file('build/libs')
+        archiveClassifier = 'installer'
+        archiveExtension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
+        destinationDirectory = file('build/libs')
 
         from(rootProject.file('/src/main/resources/mohist_logo.png')) {
             rename{'big_logo.png'}
