@@ -116,7 +116,7 @@
                 InteractionResult interactionresult = p_105264_.m_8055_(blockpos).m_60664_(p_105264_, p_105263_, p_105265_, p_105266_);
                 if (interactionresult.m_19077_()) {
                    this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
-@@ -281,8 +_,8 @@
+@@ -281,15 +_,15 @@
              }
  
              this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
@@ -127,6 +127,15 @@
                 InteractionResult interactionresult1;
                 if (this.f_105197_.m_46408_()) {
                    int i = itemstack.m_41613_();
+-                  interactionresult1 = itemstack.m_41661_(useoncontext);
++                  interactionresult1 = itemstack.useOn(useoncontext, p_105265_);
+                   itemstack.m_41764_(i);
+                } else {
+-                  interactionresult1 = itemstack.m_41661_(useoncontext);
++                  interactionresult1 = itemstack.useOn(useoncontext, p_105265_);
+                }
+ 
+                return interactionresult1;
 @@ -311,10 +_,13 @@
           if (p_105236_.m_36335_().m_41519_(itemstack.m_41720_())) {
              return InteractionResult.PASS;

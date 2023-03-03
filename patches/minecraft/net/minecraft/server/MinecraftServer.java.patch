@@ -61,7 +61,7 @@
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
     private static final Logger f_129750_ = LogUtils.getLogger();
-@@ -198,7 +_,7 @@
+@@ -198,10 +_,10 @@
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
     private final ServerConnectionListener f_129755_;
@@ -69,7 +69,11 @@
 +   public final ChunkProgressListenerFactory f_129756_;
     private final ServerStatus f_129757_ = new ServerStatus();
     private final Random f_129758_ = new Random();
-    private final DataFixer f_129759_;
+-   private final DataFixer f_129759_;
++   public final DataFixer f_129759_;
+    private String f_129760_;
+    private int f_129761_ = -1;
+    public final RegistryAccess.Frozen f_129746_;
 @@ -247,7 +_,7 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
