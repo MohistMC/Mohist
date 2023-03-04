@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChat.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChat.java
-@@ -13,11 +13,18 @@
+@@ -13,11 +13,11 @@
  {
      private ITextComponent field_148919_a;
      private ChatType field_179842_b;
@@ -9,17 +9,11 @@
      public SPacketChat()
      {
      }
- 
-+    public SPacketChat(ITextComponent message, byte type)
-+    {
-+        this.field_148919_a = message;
-+        this.field_179842_b = ChatType.func_192582_a(type);
-+    }
-+
+-
      public SPacketChat(ITextComponent p_i46960_1_)
      {
          this(p_i46960_1_, ChatType.SYSTEM);
-@@ -37,7 +44,20 @@
+@@ -37,7 +37,20 @@
  
      public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
      {
