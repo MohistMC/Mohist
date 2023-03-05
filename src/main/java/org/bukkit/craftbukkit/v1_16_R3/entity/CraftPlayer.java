@@ -553,7 +553,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public void stopSound(Sound sound, org.bukkit.SoundCategory category) {
-        stopSound(sound, category);
+        stopSound(sound.getKey().getKey(), category);
     }
 
     @Override
