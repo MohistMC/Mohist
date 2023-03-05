@@ -36,6 +36,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
@@ -52,9 +53,11 @@ import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_16_R3.CraftParticle;
 import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
@@ -90,6 +93,7 @@ public class ForgeInjectBukkit {
         addEnumVillagerProfession();
         addEnumAttribute();
         addEnumArt();
+        addEnumParticle();
     }
 
 
@@ -154,6 +158,20 @@ public class ForgeInjectBukkit {
                 PotionType potionType = MohistEnumHelper.addEnum0(PotionType.class, name, new Class[]{PotionEffectType.class, Boolean.TYPE, Boolean.TYPE}, effectInstance == null ? null : PotionEffectType.getById(Effect.getId(effectInstance.getEffect())), false, false);
                 if (potionType != null) {
                     MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
+                }
+            }
+        }
+    }
+
+    public static void addEnumParticle() {
+        for (ParticleType particleType : ForgeRegistries.PARTICLE_TYPES) {
+            ResourceLocation resourceLocation = particleType.getRegistryName();
+            String name = normalizeName(particleType.getRegistryName().toString());
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                Particle particle = MohistEnumHelper.addEnum0(Particle.class, name, new Class[0]);
+                if (particle != null) {
+                    CraftParticle.putParticles(particle, resourceLocation);
+                    MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
                 }
             }
         }

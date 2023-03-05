@@ -25,6 +25,7 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.banner.PatternType;
@@ -47,7 +48,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
     private final List<String> tab_mode = Arrays.asList("file", "web");
     public DumpCommand(String name) {
         super(name);
@@ -96,6 +97,9 @@ public class DumpCommand extends Command {
                     break;
                 case "effect":
                     dumpEffect(sender, mode);
+                    break;
+                case "particle":
+                        dumpParticle(sender, mode);
                     break;
                 case "enchants":
                     dumpEnchant(sender, mode);
@@ -148,6 +152,16 @@ public class DumpCommand extends Command {
             }
         }
         dump(sender, "potions", sb, mode);
+    }
+
+    private void dumpParticle(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (Particle pet : Particle.values()) {
+            if (pet != null) {
+                sb.append(pet).append("\n");
+            }
+        }
+        dump(sender, "particle", sb, mode);
     }
 
     private void dumpEnchant(CommandSender sender, String mode) {
