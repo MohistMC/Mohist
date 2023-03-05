@@ -26,6 +26,7 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.Potions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.RegistryKey;
@@ -53,11 +57,13 @@ import org.bukkit.WorldType;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 public class ForgeInjectBukkit {
@@ -78,7 +84,7 @@ public class ForgeInjectBukkit {
         addEnumMaterialsInBlocks();
         addEnumBiome();
         addEnumEnchantment();
-        addEnumPotion();
+        addEnumEffectAndPotion();
         addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
@@ -133,13 +139,24 @@ public class ForgeInjectBukkit {
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
     }
 
-    public static void addEnumPotion() {
+    public static void addEnumEffectAndPotion() {
         // Points
-        for (Map.Entry<RegistryKey<Effect>, Effect> entry : ForgeRegistries.POTIONS.getEntries()) {
-            PotionEffectType pet = new CraftPotionEffectType(entry.getValue());
+        for (Effect effect : ForgeRegistries.POTIONS) {
+            PotionEffectType pet = new CraftPotionEffectType(effect);
             PotionEffectType.registerPotionEffectType(pet);
         }
         PotionEffectType.stopAcceptingRegistrations();
+
+        for (Potion potion : ForgeRegistries.POTION_TYPES) {
+            if (CraftPotionUtil.toBukkit(potion.getRegistryName().toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
+                String name = normalizeName(potion.getRegistryName().toString());
+                EffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
+                PotionType potionType = MohistEnumHelper.addEnum0(PotionType.class, name, new Class[]{PotionEffectType.class, Boolean.TYPE, Boolean.TYPE}, effectInstance == null ? null : PotionEffectType.getById(Effect.getId(effectInstance.getEffect())), false, false);
+                if (potionType != null) {
+                    MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
+                }
+            }
+        }
     }
 
     public static void addEnumBiome() {
