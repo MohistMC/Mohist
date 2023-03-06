@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/DeOpCommands.java
++++ b/net/minecraft/server/commands/DeOpCommands.java
+@@ -33,7 +_,7 @@
+          if (playerlist.m_11303_(gameprofile)) {
+             playerlist.m_5750_(gameprofile);
+             ++i;
+-            p_136898_.m_81354_(Component.m_237110_("commands.deop.success", p_136899_.iterator().next().getName()), true);
++            p_136898_.m_81354_(Component.m_237110_("commands.deop.success", gameprofile.getName()), true); // Mohist - fixes MC-253721
+          }
+       }
+ 

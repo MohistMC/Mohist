@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/OpCommand.java
++++ b/net/minecraft/server/commands/OpCommand.java
+@@ -38,7 +_,7 @@
+          if (!playerlist.m_11303_(gameprofile)) {
+             playerlist.m_5749_(gameprofile);
+             ++i;
+-            p_138089_.m_81354_(Component.m_237110_("commands.op.success", p_138090_.iterator().next().getName()), true);
++            p_138089_.m_81354_(Component.m_237110_("commands.op.success", gameprofile.getName()), true); // Mohist - fixes MC-253721
+          }
+       }
+ 

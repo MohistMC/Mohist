@@ -18,14 +18,11 @@
 
 package com.mohistmc.config;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
 
