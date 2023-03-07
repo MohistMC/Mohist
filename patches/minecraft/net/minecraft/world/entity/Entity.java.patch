@@ -81,12 +81,13 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -230,13 +_,71 @@
+@@ -230,13 +_,72 @@
     @Nullable
     private BlockState f_185934_ = null;
  
 +   // CraftBukkit start
 +   public boolean persist = true;
++   public boolean visibleByDefault = true;
 +   public boolean valid;
 +   public boolean generation;
 +   public int maxAirTicks = getDefaultMaxAirSupply(); // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
@@ -583,7 +584,7 @@
           p_20241_.m_128365_("Rotation", this.m_20065_(this.m_146908_(), this.m_146909_()));
           p_20241_.m_128350_("FallDistance", this.f_19789_);
           p_20241_.m_128376_("Fire", (short)this.f_19831_);
-@@ -1470,6 +_,22 @@
+@@ -1470,6 +_,25 @@
           p_20241_.m_128379_("Invulnerable", this.f_19840_);
           p_20241_.m_128405_("PortalCooldown", this.f_19839_);
           p_20241_.m_128362_("UUID", this.m_20148_());
@@ -594,6 +595,9 @@
 +         p_20241_.m_128405_("Bukkit.updateLevel", CURRENT_LEVEL);
 +         if (!this.persist) {
 +            p_20241_.m_128379_("Bukkit.persist", this.persist);
++         }
++         if (!this.visibleByDefault) {
++            p_20241_.m_128379_("Bukkit.visibleByDefault", this.visibleByDefault);
 +         }
 +         if (this.persistentInvisibility) {
 +            p_20241_.m_128379_("Bukkit.invisible", this.persistentInvisibility);
@@ -649,12 +653,13 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1606,6 +_,42 @@
+@@ -1606,6 +_,43 @@
           } else {
              throw new IllegalStateException("Entity has invalid position");
           }
 +         // CraftBukkit start
 +         this.persist = !p_20259_.m_128441_("Bukkit.persist") || p_20259_.m_128471_("Bukkit.persist");
++         this.visibleByDefault = !p_20259_.m_128441_("Bukkit.visibleByDefault") || p_20259_.m_128471_("Bukkit.visibleByDefault");
 +         // SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
 +         if (p_20259_.m_128441_("Bukkit.MaxAirSupply")) {
 +            maxAirTicks = p_20259_.m_128451_("Bukkit.MaxAirSupply");

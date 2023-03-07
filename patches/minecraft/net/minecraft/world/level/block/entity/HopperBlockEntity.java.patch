@@ -16,15 +16,18 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.HopperMenu;
  import net.minecraft.world.item.ItemStack;
-@@ -30,6 +_,13 @@
+@@ -30,6 +_,16 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
 +import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_19_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryDoubleChest;
 +import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.inventory.HopperInventorySearchEvent;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
  
@@ -87,7 +90,7 @@
        Container container = m_155592_(p_155563_, p_155564_, p_155565_);
        if (container == null) {
           return false;
-@@ -142,7 +_,29 @@
+@@ -142,7 +_,31 @@
              for(int i = 0; i < p_155566_.m_6643_(); ++i) {
                 if (!p_155566_.m_8020_(i).m_41619_()) {
                    ItemStack itemstack = p_155566_.m_8020_(i).m_41777_();
@@ -102,8 +105,10 @@
 +                  // Have to special case large chests as they work oddly
 +                  if (container instanceof CompoundContainer) {
 +                     destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) container);
-+                  } else {
++                  } else if (container.getOwner() != null) {
 +                     destinationInventory = container.getOwner().getInventory();
++                  } else {
++                     destinationInventory = new CraftInventory(p_155566_);
 +                  }
 +
 +                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(p_155566_.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
@@ -127,7 +132,7 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
-@@ -196,7 +_,34 @@
+@@ -196,7 +_,36 @@
        ItemStack itemstack = p_59356_.m_8020_(p_59357_);
        if (!itemstack.m_41619_() && m_59380_(p_59356_, itemstack, p_59357_, p_59358_)) {
           ItemStack itemstack1 = itemstack.m_41777_();
@@ -140,8 +145,10 @@
 +         // Have to special case large chests as they work oddly
 +         if (p_59356_ instanceof CompoundContainer) {
 +            sourceInventory = new CraftInventoryDoubleChest((CompoundContainer) p_59356_);
-+         } else {
++         } else if (p_59356_.getOwner() != null) {
 +            sourceInventory = p_59356_.getOwner().getInventory();
++         } else {
++            sourceInventory = new CraftInventory(p_59356_);
 +         }
 +
 +         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), p_59355_.getOwner().getInventory(), false);
@@ -177,6 +184,48 @@
        ItemStack itemstack = p_59333_.m_32055_().m_41777_();
        ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
        if (itemstack1.m_41619_()) {
+@@ -292,15 +_,39 @@
+       return p_59323_;
+    }
+ 
++   // CraftBukkit start
++   @Nullable
++   private static Container runHopperInventorySearchEvent(Container inventory, CraftBlock hopper, CraftBlock searchLocation, HopperInventorySearchEvent.ContainerType containerType) {
++      HopperInventorySearchEvent event = new HopperInventorySearchEvent((inventory != null) ? new CraftInventory(inventory) : null, containerType, hopper, searchLocation);
++      Bukkit.getServer().getPluginManager().callEvent(event);
++      CraftInventory craftInventory = (CraftInventory) event.getInventory();
++      return (craftInventory != null) ? craftInventory.getInventory() : null;
++   }
++   // CraftBukkit end
++
+    @Nullable
+    private static Container m_155592_(Level p_155593_, BlockPos p_155594_, BlockState p_155595_) {
+       Direction direction = p_155595_.m_61143_(HopperBlock.f_54021_);
+-      return m_59390_(p_155593_, p_155594_.m_121945_(direction));
++      // CraftBukkit start
++      BlockPos searchPosition = p_155594_.m_121945_(direction);
++      Container inventory = m_59390_(p_155593_, p_155594_.m_121945_(direction));
++
++      CraftBlock hopper = CraftBlock.at(p_155593_, p_155594_);
++      CraftBlock searchBlock = CraftBlock.at(p_155593_, searchPosition);
++      return runHopperInventorySearchEvent(inventory, hopper, searchBlock, HopperInventorySearchEvent.ContainerType.DESTINATION);
++      // CraftBukkit end
+    }
+ 
+    @Nullable
+    private static Container m_155596_(Level p_155597_, Hopper p_155598_) {
+-      return m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
++      // CraftBukkit start
++      Container inventory = m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
++
++      BlockPos blockPosition = new BlockPos(p_155598_.m_6343_(), p_155598_.m_6358_(), p_155598_.m_6446_());
++      CraftBlock hopper = CraftBlock.at(p_155597_, blockPosition);
++      CraftBlock container = CraftBlock.at(p_155597_, blockPosition.m_7494_());
++      return runHopperInventorySearchEvent(inventory, hopper, container, HopperInventorySearchEvent.ContainerType.SOURCE);
++      // CraftBukkit end
+    }
+ 
+    public static List<ItemEntity> m_155589_(Level p_155590_, Hopper p_155591_) {
 @@ -397,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {

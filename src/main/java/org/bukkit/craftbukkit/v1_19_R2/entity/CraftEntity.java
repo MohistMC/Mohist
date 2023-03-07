@@ -66,6 +66,7 @@ import org.bukkit.craftbukkit.v1_19_R2.persistence.CraftPersistentDataTypeRegist
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftVector;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -775,6 +776,30 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public boolean isCustomNameVisible() {
         return getHandle().isCustomNameVisible();
+    }
+
+    @Override
+    public void setVisibleByDefault(boolean visible) {
+        if (getHandle().visibleByDefault != visible) {
+            if (visible) {
+                // Making visible by default, reset and show to all players
+                for (Player player : server.getOnlinePlayers()) {
+                    ((CraftPlayer) player).resetAndShowEntity(this);
+                }
+            } else {
+                // Hiding by default, reset and hide from all players
+                for (Player player : server.getOnlinePlayers()) {
+                    ((CraftPlayer) player).resetAndHideEntity(this);
+                }
+            }
+
+            getHandle().visibleByDefault = visible;
+        }
+    }
+
+    @Override
+    public boolean isVisibleByDefault() {
+        return getHandle().visibleByDefault;
     }
 
     @Override

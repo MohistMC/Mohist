@@ -11,7 +11,7 @@
  
  public class SimpleContainer implements Container, StackedContentsCompatible {
     private final int f_19146_;
-@@ -19,7 +_,61 @@
+@@ -19,7 +_,60 @@
     @Nullable
     private List<ContainerListener> f_19148_;
  
@@ -60,7 +60,6 @@
 +         this.f_19147_.set(slot, original.f_19147_.get(slot).m_41777_());
 +      }
 +   }
-+
     public SimpleContainer(int p_19150_) {
 +      this.f_19146_ = p_19150_;
 +      this.f_19147_ = NonNullList.m_122780_(p_19150_, ItemStack.f_41583_);
