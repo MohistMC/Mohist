@@ -154,6 +154,11 @@ public enum CraftParticle {
         }
     }
 
+
+    public static void putParticles(Particle p, ResourceLocation r) {
+        particles.put(p, r);
+    }
+
     private CraftParticle(String minecraftKey) {
         this.minecraftKey = new ResourceLocation(minecraftKey);
 

@@ -25,6 +25,7 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.banner.PatternType;
@@ -46,7 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
@@ -94,6 +95,8 @@ public class DumpCommand extends Command {
             String mode = args[0];
             switch (args[1].toLowerCase(Locale.ENGLISH)) {
                 case "potions" -> dumpPotions(sender, mode);
+                case "effect" ->  dumpEffect(sender, mode);
+                case "particle" -> dumpParticle(sender, mode);
                 case "enchants" -> dumpEnchant(sender, mode);
                 case "cbcmds" -> dumpCBCommands(sender, mode);
                 case "modscmds" -> dumpModsCommands(sender, mode);
@@ -116,19 +119,32 @@ public class DumpCommand extends Command {
         return false;
     }
 
-    private void dumpPotions(CommandSender sender, String mode) {
+    private void dumpEffect(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (PotionEffectType pet : PotionEffectType.values()) {
-            if (pet != null) {
-                sb.append(pet).append("\n");
-            }
+            sb.append(pet).append("\n");
         }
+        dump(sender, "effect", sb, mode);
+    }
+
+    private void dumpPotions(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
         for (PotionType pet : PotionType.values()) {
             if (pet != null) {
                 sb.append(pet).append("\n");
             }
         }
         dump(sender, "potions", sb, mode);
+    }
+
+    private void dumpParticle(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (Particle pet : Particle.values()) {
+            if (pet != null) {
+                sb.append(pet).append("\n");
+            }
+        }
+        dump(sender, "particle", sb, mode);
     }
 
     private void dumpEnchant(CommandSender sender, String mode) {
@@ -232,7 +248,7 @@ public class DumpCommand extends Command {
 
     private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
         switch (mode) {
-            case "file" -> saveToF("dump", type, sb, sender);
+            case "file" -> saveToF(type, sb, sender);
             case "web" -> {
                 try {
                     String url = HasteUtils.pasteMohist(sb.toString());
@@ -243,14 +259,14 @@ public class DumpCommand extends Command {
                     }
                 } catch (IOException e) {
                     sender.sendMessage("Failed to upload to hastebin.");
-                    saveToF("dump", type, sb, sender);
+                    saveToF(type, sb, sender);
                 }
             }
         }
     }
 
-    private void saveToF(String parent, String type, StringBuilder sb, CommandSender sender) {
-        File file = new File(parent, type + ".txt");
+    private void saveToF(String type, StringBuilder sb, CommandSender sender) {
+        File file = new File("dump", type + ".txt");
         writeByteArrayToFile(file, sb);
         dumpmsg(sender, file, type);
     }

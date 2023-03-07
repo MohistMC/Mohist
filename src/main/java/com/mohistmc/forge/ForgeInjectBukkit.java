@@ -7,14 +7,17 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.entity.MohistModsEntity;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -23,16 +26,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.v1_19_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_19_R2.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_19_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,12 +62,13 @@ public class ForgeInjectBukkit {
         addEnumMaterialsInBlocks();
         addEnumBiome();
         addEnumEnchantment();
-        addEnumPotion();
+        addEnumEffectAndPotion();
         addFluid();
         //addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
         //addEnumArt();
+        addEnumParticle();
     }
 
 
@@ -115,13 +120,40 @@ public class ForgeInjectBukkit {
         org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
     }
 
-    public static void addEnumPotion() {
+    public static void addEnumEffectAndPotion() {
         // Points
-        for (MobEffect mobEffect : ForgeRegistries.MOB_EFFECTS) {
-            PotionEffectType pet = new CraftPotionEffectType(mobEffect);
+        for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
+            PotionEffectType pet = new CraftPotionEffectType(effect);
             PotionEffectType.registerPotionEffectType(pet);
         }
         PotionEffectType.stopAcceptingRegistrations();
+        var registry = ForgeRegistries.POTIONS;
+        for (Potion potion : ForgeRegistries.POTIONS) {
+            ResourceLocation resourceLocation = registry.getKey(potion);
+            if (CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
+                String name = normalizeName(resourceLocation.toString());
+                MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
+                PotionType potionType = MohistDynamEnum.addEnum0(PotionType.class, name, new Class[]{PotionEffectType.class, Boolean.TYPE, Boolean.TYPE}, effectInstance == null ? null : PotionEffectType.getById(MobEffect.getId(effectInstance.getEffect())), false, false);
+                if (potionType != null) {
+                    MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
+                }
+            }
+        }
+    }
+
+    public static void addEnumParticle() {
+        var registry = ForgeRegistries.PARTICLE_TYPES;
+        for (ParticleType particleType : ForgeRegistries.PARTICLE_TYPES) {
+            ResourceLocation resourceLocation = registry.getKey(particleType);
+            String name = normalizeName(resourceLocation.toString());
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                Particle particle = MohistDynamEnum.addEnum0(Particle.class, name, new Class[0]);
+                if (particle != null) {
+                    org.bukkit.craftbukkit.v1_19_R2.CraftParticle.putParticles(particle, resourceLocation);
+                    MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
+                }
+            }
+        }
     }
 
     public static void addEnumBiome() {
