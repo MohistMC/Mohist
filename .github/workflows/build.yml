@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Mohist-1.12.2-*-server
-        path: projects\mohist\build\libs
+        path: projects/mohist/build/libs/*-server.jar
