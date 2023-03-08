@@ -1,5 +1,4 @@
 <div align="center">
-<img width="300" src="https://mohistmc.com/mohist-min.png">
   <h1>Mohist 1.12.2</h1>
   <h3>This version is end of life. <a href="https://wiki.mohistmc.com/#/about/end-of-life">See more</a></h3>
 
