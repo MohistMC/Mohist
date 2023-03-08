@@ -1,0 +1,30 @@
+name: Test and build mohist 1.12.2
+
+on:
+  push:
+    branches: [ 1.12.2 ]
+  pull_request:
+    branches: [ 1.12.2 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: 8
+    - name: Setup mohist 1.12.2
+      run: |
+        chmod +x ./gradlew
+        ./gradlew setup
+    - name: Build mohist 1.12.2
+      run: |
+        chmod +x ./gradlew
+        ./gradlew installerJar
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Mohist-1.12.2-*-server
+        path: projects\mohist\build\libs
