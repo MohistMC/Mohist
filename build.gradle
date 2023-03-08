@@ -815,7 +815,9 @@ task setup() {
     dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
-def JenkinsNumber() {
+static def JenkinsNumber() {
+    return 340
+    /*
     try {
         def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.12.2/api/json").openConnection()
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0")
@@ -829,4 +831,5 @@ def JenkinsNumber() {
     } catch (Exception e1) {
         return 'dev'
     }
+     */
 }
