@@ -110,7 +110,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
         for (net.minecraft.world.level.material.Fluid fluidType : BuiltInRegistries.FLUID) {
             if (BuiltInRegistries.FLUID.getKey(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
-                FLUIDTYPE_FLUID.put(fluidType, fluid);
+                if (fluid != null) {
+                    FLUIDTYPE_FLUID.put(fluidType, fluid);
+                }
             }
         }
 
