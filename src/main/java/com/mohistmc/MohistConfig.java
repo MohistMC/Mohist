@@ -61,10 +61,10 @@ public class MohistConfig {
 
         commands = new HashMap<>();
         commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("mohist", new GetPluginListCommand("getpluginlist"));
-        commands.put("mohist", new DumpCommand("dump"));
-        commands.put("mohist", new PluginCommand("plugin"));
-        commands.put("mohist", new BackupWorldCommand("backupworld"));
+        commands.put("getpluginlist", new GetPluginListCommand("getpluginlist"));
+        commands.put("dump", new DumpCommand("dump"));
+        commands.put("plugin", new PluginCommand("plugin"));
+        commands.put("backupworld", new BackupWorldCommand("backupworld"));
 
         version = getInt("config-version", 1);
         set("config-version", 1);

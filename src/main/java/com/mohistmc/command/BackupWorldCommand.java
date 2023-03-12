@@ -47,7 +47,7 @@ public class BackupWorldCommand extends Command {
 
             World world = Bukkit.getWorld(args[0]);
             if (!new File(args[0]).exists() || world == null) {
-                sender.sendMessage("This world doesn't exists.");
+                sender.sendMessage("This world doesn't exists.  " + Bukkit.getWorlds());
                 return true;
             }
             world.save();
