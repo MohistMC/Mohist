@@ -18,11 +18,18 @@
 
 package com.mohistmc.eventhandler.dispatcher;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.*;
+
+import java.util.Objects;
 
 public class PlayerEventDispatcher {
 
@@ -31,6 +38,18 @@ public class PlayerEventDispatcher {
     public void onAdvancementDone(AdvancementEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Bukkit.getPluginManager().callEvent(new PlayerAdvancementDoneEvent(player.getBukkitEntity(), event.getAdvancement().bukkit));
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        Player player = event.getEntity();
+        ResourceKey<Level> fromLevel = event.getFrom();
+        if (player instanceof final ServerPlayer serverPlayer) {
+            PlayerChangedWorldEvent bukkitEvent =
+                    new PlayerChangedWorldEvent(serverPlayer.getBukkitEntity(),
+                            Objects.requireNonNull(MinecraftServer.getServer().getLevel(fromLevel)).getWorld());
+            Bukkit.getServer().getPluginManager().callEvent(bukkitEvent);
         }
     }
 }
