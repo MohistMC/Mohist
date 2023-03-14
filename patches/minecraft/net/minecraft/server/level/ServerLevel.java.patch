@@ -41,7 +41,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,21 @@
+@@ -181,13 +_,22 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -61,6 +61,7 @@
 +      convertable = p_203764_;
 +      this.pvpMode = p_203762_.m_129799_();
 +      uuid = WorldUUID.getUUID(p_203764_.f_78271_.toFile());
++      this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
        this.f_8561_ = p_203773_;
        this.f_8548_ = p_203762_;
        this.f_8558_ = p_203772_;
@@ -73,12 +74,11 @@
           return p_203762_.m_129783_().m_8895_();
        });
        this.f_8552_ = new PortalForcer(this);
-@@ -223,6 +_,11 @@
+@@ -223,6 +_,10 @@
        }
  
        this.f_143245_ = new SleepStatus();
 +      this.initCapabilities();
-+      this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      m_6857_().world = this;
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
