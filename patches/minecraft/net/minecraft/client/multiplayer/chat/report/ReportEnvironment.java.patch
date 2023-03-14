@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/multiplayer/chat/report/ReportEnvironment.java
++++ b/net/minecraft/client/multiplayer/chat/report/ReportEnvironment.java
+@@ -26,7 +_,7 @@
+    }
+ 
+    public AbuseReportRequest.ClientInfo m_239120_() {
+-      return new AbuseReportRequest.ClientInfo(this.f_238774_);
++      return new AbuseReportRequest.ClientInfo(this.f_238774_, null); // TODO Mohist - 1.19.4
+    }
+ 
+    @Nullable

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -43,6 +_,17 @@
+@@ -43,6 +_,16 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;

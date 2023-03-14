@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/ChestMenu.java
 +++ b/net/minecraft/world/inventory/ChestMenu.java
-@@ -1,15 +_,44 @@
+@@ -1,15 +_,43 @@
  package net.minecraft.world.inventory;
  
 +import net.minecraft.world.CompoundContainer;
@@ -13,7 +13,6 @@
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryDoubleChest;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
-+import org.bukkit.inventory.PlayerInventory;
  
  public class ChestMenu extends AbstractContainerMenu {
     private static final int f_150511_ = 9;

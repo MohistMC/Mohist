@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -6,10 +_,15 @@
+@@ -6,10 +_,14 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.effect.MobEffect;
@@ -12,7 +12,6 @@
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryBeacon;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
-+import org.bukkit.inventory.PlayerInventory;
  
  public class BeaconMenu extends AbstractContainerMenu {
     private static final int f_150481_ = 0;

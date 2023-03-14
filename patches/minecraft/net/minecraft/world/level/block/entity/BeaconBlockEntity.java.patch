@@ -8,11 +8,16 @@
  import java.util.List;
  import java.util.Set;
  import java.util.stream.Collectors;
-@@ -36,6 +_,9 @@
+@@ -30,12 +_,13 @@
+ import net.minecraft.world.inventory.ContainerData;
+ import net.minecraft.world.inventory.ContainerLevelAccess;
+ import net.minecraft.world.level.Level;
+-import net.minecraft.world.level.block.BeaconBeamBlock;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.levelgen.Heightmap;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
 +import org.bukkit.potion.PotionEffect;
  

@@ -8,14 +8,13 @@
  import javax.annotation.Nullable;
  import net.minecraft.commands.CommandSource;
  import net.minecraft.commands.CommandSourceStack;
-@@ -24,12 +_,22 @@
+@@ -24,12 +_,21 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
 -public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
 +import java.util.List;
 +import org.bukkit.Location;
-+import org.bukkit.command.CommandSender;
 +import org.bukkit.craftbukkit.v1_19_R3.command.CraftBlockCommandSender;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
