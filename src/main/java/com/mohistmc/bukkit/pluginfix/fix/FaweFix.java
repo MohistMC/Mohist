@@ -39,7 +39,7 @@ public class FaweFix {
         for (MethodNode method : classNode.methods) {
             if (method.name.equals("getPackageVersion")) {
                 InsnList insnList = new InsnList();
-                insnList.add(new LdcInsnNode("v1_19_R2"));
+                insnList.add(new LdcInsnNode("v1_19_R3"));
                 insnList.add(new InsnNode(ARETURN));
                 method.instructions = insnList;
                 method.tryCatchBlocks.clear(); // fix java.lang.ClassFormatError: Illegal exception table range in class file

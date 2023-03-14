@@ -33,11 +33,11 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R2.command.CraftBlockCommandSender;
-import org.bukkit.craftbukkit.v1_19_R2.command.ProxiedNativeCommandSender;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftMinecartCommand;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.command.CraftBlockCommandSender;
+import org.bukkit.craftbukkit.v1_19_R3.command.ProxiedNativeCommandSender;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMinecartCommand;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 

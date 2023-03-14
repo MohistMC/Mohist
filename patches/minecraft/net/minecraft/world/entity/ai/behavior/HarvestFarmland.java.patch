@@ -15,7 +15,7 @@
              if (block instanceof CropBlock && ((CropBlock)block).m_52307_(blockstate)) {
 -               p_23196_.m_46953_(this.f_23159_, true, p_23197_);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_()).isCancelled()) {
 +                  p_23196_.m_46953_(this.f_23159_, true, p_23197_);
 +               }
 +               // CraftBukkit end
@@ -33,7 +33,7 @@
 -                        p_23196_.m_46597_(this.f_23159_, blockstate1);
 -                        p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate1));
 -                        flag = true;
-+                        if (!org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate1).isCancelled()) {
++                        if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate1).isCancelled()) {
 +                           p_23196_.m_46597_(this.f_23159_, blockstate1);
 +                           p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate1));
 +                           flag = true;
@@ -43,7 +43,7 @@
 -                        p_23196_.m_46597_(this.f_23159_, blockstate2);
 -                        p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate2));
 -                        flag = true;
-+                        if (!org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate2).isCancelled()) {
++                        if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate2).isCancelled()) {
 +                           p_23196_.m_46597_(this.f_23159_, blockstate2);
 +                           p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate2));
 +                           flag = true;
@@ -53,7 +53,7 @@
 -                        p_23196_.m_46597_(this.f_23159_, blockstate3);
 -                        p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate3));
 -                        flag = true;
-+                        if (!org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate3).isCancelled()) {
++                        if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate3).isCancelled()) {
 +                           p_23196_.m_46597_(this.f_23159_, blockstate3);
 +                           p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate3));
 +                           flag = true;
@@ -63,13 +63,13 @@
 -                        p_23196_.m_46597_(this.f_23159_, blockstate4);
 -                        p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate4));
 -                        flag = true;
-+                        if (!org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate4).isCancelled()) {
++                        if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate4).isCancelled()) {
 +                           p_23196_.m_46597_(this.f_23159_, blockstate4);
 +                           p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate4));
 +                           flag = true;
 +                        }
 +                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP && !org.bukkit.craftbukkit.v1_19_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_)).isCancelled()) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP && !org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_)).isCancelled()) {
 +                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
 +                           flag = true;
 +                        }

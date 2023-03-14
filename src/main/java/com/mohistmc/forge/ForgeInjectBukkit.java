@@ -29,10 +29,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldType;
-import org.bukkit.craftbukkit.v1_19_R2.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_19_R2.potion.CraftPotionEffectType;
-import org.bukkit.craftbukkit.v1_19_R2.potion.CraftPotionUtil;
-import org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R3.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
@@ -149,7 +149,7 @@ public class ForgeInjectBukkit {
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 Particle particle = MohistDynamEnum.addEnum0(Particle.class, name, new Class[0]);
                 if (particle != null) {
-                    org.bukkit.craftbukkit.v1_19_R2.CraftParticle.putParticles(particle, resourceLocation);
+                    org.bukkit.craftbukkit.v1_19_R3.CraftParticle.putParticles(particle, resourceLocation);
                     MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
                 }
             }

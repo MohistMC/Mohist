@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.util.PathConverter;
-import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Main {

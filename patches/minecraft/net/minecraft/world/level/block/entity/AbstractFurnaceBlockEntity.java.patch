@@ -5,9 +5,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.World;
-+import org.bukkit.craftbukkit.v1_19_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.block.BlockExpEvent;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -264,7 +264,7 @@
 +      // CraftBukkit start - fire FurnaceExtractEvent / BlockExpEvent
 +      BlockExpEvent event;
 +      if (amount != 0) {
-+         event = new FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
++         event = new FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
 +      } else {
 +         event = new BlockExpEvent(CraftBlock.at(p_154999_, blockposition), i);
 +      }

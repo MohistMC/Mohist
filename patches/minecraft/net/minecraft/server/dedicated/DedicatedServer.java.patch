@@ -16,7 +16,7 @@
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_19_R2.util.ForwardLogHandler;
++import org.bukkit.craftbukkit.v1_19_R3.util.ForwardLogHandler;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
@@ -86,7 +86,7 @@
           if (dedicatedserverproperties.f_139747_) {
              f_139598_.info("Starting remote control listener");
              this.f_139603_ = RconThread.m_11615_(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_19_R2.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
++            this.remoteConsole = new org.bukkit.craftbukkit.v1_19_R3.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
           }
  
 -         if (this.m_139669_() > 0L) {
