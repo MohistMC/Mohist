@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import joptsimple.util.PathConverter;
 import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -57,6 +58,15 @@ public class Main {
                         .withRequiredArg()
                         .ofType(Integer.class)
                         .describedAs("Port");
+
+                accepts("serverId", "Server ID")
+                        .withRequiredArg();
+
+                accepts("jfrProfile", "Enable JFR profiling");
+
+                accepts("pidFile", "pid File")
+                        .withRequiredArg()
+                        .withValuesConvertedBy(new PathConverter());
 
                 acceptsAll(asList("o", "online-mode"), "Whether to use online authentication")
                         .withRequiredArg()

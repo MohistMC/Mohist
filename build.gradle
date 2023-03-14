@@ -185,14 +185,15 @@ def sharedDeps = {
     installer 'org.apache.maven:maven-resolver-provider:3.8.5'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3'
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
+    installer 'org.joml:joml:1.10.5' // 1.19.4
     compileOnly 'org.jetbrains:annotations:21.0.1'
 
     // craftbukkit
     installer 'org.fusesource.jansi:jansi:1.18'
     installer 'jline:jline:2.14.6'
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
-    installer 'org.xerial:sqlite-jdbc:3.36.0.3'
-    installer 'mysql:mysql-connector-java:8.0.29'
+    installer 'org.xerial:sqlite-jdbc:3.41.0.0'
+    installer 'com.mysql:mysql-connector-j:8.0.32'
     installer 'org.apache.logging.log4j:log4j-iostreams:2.19.0'
     installer 'net.md-5:SpecialSource:1.11.0'
 
@@ -201,13 +202,6 @@ def sharedDeps = {
     installer 'io.izzel:tools:1.3.0'
     installer 'com.mohistmc.remapper:mohistremapper:0.1'
     installer 'com.mohistmc:dynamicenum:0.1'
-
-    /*
-    installer 'org.lwjgl:lwjgl:3.2.2'
-    installer 'org.lwjgl:lwjgl-glfw:3.2.2'
-    installer 'org.lwjgl:lwjgl-opengl:3.2.2'
-    installer 'org.lwjgl:lwjgl-stb:3.2.2'
-    */
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -420,7 +414,7 @@ def sharedFmlonlyForge = { Project prj ->
                                     "libraries/com/google/code/gson/gson/2.10/gson-2.10.jar",
                                     "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
                                     "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
-                                    "libraries/com/mojang/authlib/3.16.29/authlib-3.16.29.jar",
+                                    "libraries/com/mojang/authlib/3.17.38/authlib-3.17.38.jar",
                                     "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
                                     "libraries/com/mojang/datafixerupper/5.0.28/datafixerupper-5.0.28.jar",
                                     "libraries/com/mojang/javabridge/2.0.25/javabridge-2.0.25.jar",
@@ -1035,9 +1029,9 @@ project(':forge') {
                                 "libraries/com/google/code/gson/gson/2.10/gson-2.10.jar",
                                 "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
                                 "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
-                                "libraries/com/mojang/authlib/3.16.29/authlib-3.16.29.jar",
+                                "libraries/com/mojang/authlib/3.17.30/authlib-3.17.30.jar",
                                 "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
-                                "libraries/com/mojang/datafixerupper/5.0.28/datafixerupper-5.0.28.jar",
+                                "libraries/com/mojang/datafixerupper/6.0.6/datafixerupper-6.0.6.jar",
                                 "libraries/com/mojang/javabridge/2.0.25/javabridge-2.0.25.jar",
                                 "libraries/com/mojang/logging/1.1.1/logging-1.1.1.jar",
                                 "libraries/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",

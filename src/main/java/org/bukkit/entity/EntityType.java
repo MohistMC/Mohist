@@ -1,17 +1,14 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.entity.MohistModsAbstractHorse;
-import com.mohistmc.entity.MohistModsAnimals;
-import com.mohistmc.entity.MohistModsChestHorse;
-import com.mohistmc.entity.MohistModsMinecartContainer;
-import com.mohistmc.entity.MohistModsMonster;
-import com.mohistmc.entity.MohistModsProjectileEntity;
-import com.mohistmc.entity.MohistModsTameableEntity;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Translatable;
+import org.bukkit.World;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -282,6 +279,11 @@ public enum EntityType implements Keyed, Translatable {
     TADPOLE("tadpole", Tadpole.class, -1),
     WARDEN("warden", Warden.class, -1),
     CAMEL("camel", Camel.class, -1),
+    BLOCK_DISPLAY("block_display", BlockDisplay.class, -1),
+    INTERACTION("interaction", Interaction.class, -1),
+    ITEM_DISPLAY("item_display", ItemDisplay.class, -1),
+    SNIFFER("sniffer", Sniffer.class, -1),
+    TEXT_DISPLAY("text_display", TextDisplay.class, -1),
     /**
      * A fishing line and bobber.
      */
@@ -296,14 +298,7 @@ public enum EntityType implements Keyed, Translatable {
     /**
      * An unknown entity without an Entity Class
      */
-    UNKNOWN(null, null, -1, false),
-    FORGE_MOD_PROJECTILE("forge_mod_projectile", MohistModsProjectileEntity.class, -1, false),
-    FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", MohistModsChestHorse.class, -1, false),
-    FORGE_MOD_MINECART_CONTAINER("forge_mod_minecart_container", MohistModsMinecartContainer.class, -1, false),
-    FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false),
-    FORGE_MOD_TAMEABLE_ANIMALS("forge_mod_tameable_animal", MohistModsTameableEntity.class, -1, false ),
-    FORGE_MOD_ANIMAL("forge_mod_animal", MohistModsAnimals.class, -1, false ),
-    FORGE_MOD_MONSTER("forge_mod_monster", MohistModsMonster.class, -1, false);
+    UNKNOWN(null, null, -1, false);
 
     private final String name;
     private final Class<? extends Entity> clazz;
@@ -311,8 +306,8 @@ public enum EntityType implements Keyed, Translatable {
     private final boolean independent, living;
     private final NamespacedKey key;
 
-    public static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
-    public static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
+    private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
+    private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
 
     static {
         for (EntityType type : values()) {
