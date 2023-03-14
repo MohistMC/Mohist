@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Mohist 1.19.3</h1>
+  <h1>Mohist 1.19.4</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
@@ -17,7 +17,7 @@
 
 | Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
 |---------|-------------|-----------|---------------------|----------------------|
-| 1.19.3  | WIP         | Poor      | Zero                | Zero                 |
+| 1.19.4  | WIP         | Poor      | Zero                | Zero                 |
 | 1.16.5  | Active      | Good      | Better than plugins | Good                 |
 | 1.12.2  | End Of Life | High      | Very good           | Very good            |
 | 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
