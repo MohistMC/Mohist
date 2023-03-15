@@ -7,9 +7,9 @@ package net.minecraftforge.event;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -113,16 +112,14 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
     public static final class BuildContents extends CreativeModeTabEvent implements Output
     {
         private final CreativeModeTab tab;
-        private final FeatureFlagSet flags;
-        private final boolean hasPermissions;
+        private final CreativeModeTab.ItemDisplayParameters parameters;
         private final MutableHashedLinkedMap<ItemStack, TabVisibility> entries;
 
         @ApiStatus.Internal
-        public BuildContents(CreativeModeTab tab, FeatureFlagSet flags, boolean hasPermissions, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
+        public BuildContents(CreativeModeTab tab, CreativeModeTab.ItemDisplayParameters parameters, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
         {
             this.tab = tab;
-            this.flags = flags;
-            this.hasPermissions = hasPermissions;
+            this.parameters = parameters;
             this.entries = entries;
         }
 
@@ -136,12 +133,17 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
 
         public FeatureFlagSet getFlags()
         {
-            return this.flags;
+            return this.parameters.enabledFeatures();
+        }
+
+        public CreativeModeTab.ItemDisplayParameters getParameters()
+        {
+            return parameters;
         }
 
         public boolean hasPermissions()
         {
-            return this.hasPermissions;
+            return this.parameters.hasPermissions();
         }
 
         public MutableHashedLinkedMap<ItemStack, TabVisibility> getEntries()
@@ -157,12 +159,12 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
 
         public void accept(Supplier<? extends ItemLike> item, CreativeModeTab.TabVisibility visibility)
         {
-            this.accept(item.get(), visibility);
+           this.accept(item.get(), visibility);
         }
 
         public void accept(Supplier<? extends ItemLike> item)
         {
-            this.accept(item.get());
+           this.accept(item.get());
         }
     }
 }

@@ -17,7 +17,7 @@
 +   @Override
 +   public void inactiveTick() {
 +      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
-+      if (f_19853_.spigotConfig.tickInactiveVillagers && this.m_6142_()) {
++      if (f_19853_.spigotConfig.tickInactiveVillagers && this.m_21515_()) {
 +         this.m_8024_();
 +      }
 +      super.inactiveTick();
@@ -68,8 +68,8 @@
 +         // CraftBukkit end
        }
  
-       this.f_35363_ = this.f_19853_.m_46467_();
-@@ -375,7 +_,13 @@
+       this.m_275846_();
+@@ -385,7 +_,13 @@
        int i = 2 - this.f_35364_;
        if (i > 0) {
           for(MerchantOffer merchantoffer : this.m_6616_()) {
@@ -84,7 +84,7 @@
           }
        }
  
-@@ -558,7 +_,7 @@
+@@ -569,7 +_,7 @@
        super.m_6667_(p_35419_);
     }
  
@@ -93,7 +93,7 @@
        this.m_35428_(MemoryModuleType.f_26359_);
        this.m_35428_(MemoryModuleType.f_26360_);
        this.m_35428_(MemoryModuleType.f_26361_);
-@@ -657,7 +_,8 @@
+@@ -668,7 +_,8 @@
     }
  
     protected Component m_5677_() {
@@ -103,7 +103,7 @@
     }
  
     public void m_7822_(byte p_35391_) {
-@@ -710,7 +_,7 @@
+@@ -721,7 +_,7 @@
     }
  
     public void m_8038_(ServerLevel p_35409_, LightningBolt p_35410_) {
@@ -112,7 +112,7 @@
           f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           if (witch != null) {
-@@ -723,6 +_,7 @@
+@@ -734,6 +_,7 @@
              }
  
              witch.m_21530_();

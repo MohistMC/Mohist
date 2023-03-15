@@ -10,6 +10,15 @@
  import org.slf4j.Logger;
  
  public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
+@@ -44,7 +_,7 @@
+    private static final RandomSource f_10016_ = RandomSource.m_216327_();
+    private final byte[] f_252396_;
+    final MinecraftServer f_10018_;
+-   final Connection f_10013_;
++   public final Connection f_10013_;
+    ServerLoginPacketListenerImpl.State f_10019_ = ServerLoginPacketListenerImpl.State.HELLO;
+    private int f_10020_;
+    @Nullable
 @@ -60,7 +_,13 @@
     }
  

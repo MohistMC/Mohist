@@ -6,7 +6,7 @@
           } else {
 -            if (p_63218_.m_60791_() > 0) {
 +            if (p_63218_.getLightEmission(this, p_63217_) > 0) {
-                this.f_63158_.add(BlockPos.containing((i & 15) + this.m_7697_().m_45604_(), j, (k & 15) + this.m_7697_().m_45605_()));
+                this.f_63158_.add(new BlockPos((i & 15) + this.m_7697_().m_45604_(), j, (k & 15) + this.m_7697_().m_45605_()));
              }
  
              LevelChunkSection levelchunksection = this.m_183278_(l);

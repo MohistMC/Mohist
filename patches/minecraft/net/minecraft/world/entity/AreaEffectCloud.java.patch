@@ -26,7 +26,7 @@
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
  import org.slf4j.Logger;
  
- public class AreaEffectCloud extends Entity {
+ public class AreaEffectCloud extends Entity implements TraceableEntity {
 @@ -149,6 +_,18 @@
        this.f_19687_ = p_19735_;
     }
@@ -46,7 +46,7 @@
     public void m_8119_() {
        super.m_8119_();
        boolean flag = this.m_19747_();
-@@ -236,18 +_,31 @@
+@@ -238,18 +_,31 @@
              } else {
                 List<LivingEntity> list1 = this.f_19853_.m_45976_(LivingEntity.class, this.m_20191_());
                 if (!list1.isEmpty()) {
@@ -78,7 +78,7 @@
                                   livingentity.m_147207_(new MobEffectInstance(mobeffectinstance1), this);
                                }
                             }
-@@ -424,4 +_,20 @@
+@@ -426,4 +_,20 @@
     public EntityDimensions m_6972_(Pose p_19721_) {
        return EntityDimensions.m_20395_(this.m_19743_() * 2.0F, 0.5F);
     }

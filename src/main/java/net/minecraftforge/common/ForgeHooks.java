@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +39,6 @@ import com.google.gson.JsonParseException;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.stream.Stream;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
@@ -49,7 +49,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatDecorator;
 import net.minecraft.network.chat.ClickEvent;
@@ -241,14 +240,14 @@ public class ForgeHooks
     //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
     // TODO: Remove in 1.20
-    @Deprecated(since = "1.19.3", forRemoval = true)
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target)
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
     // TODO: Remove in 1.20
-    @Deprecated(since = "1.19.3", forRemoval = true)
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, ILivingTargetType targetType)
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, targetType));
@@ -361,7 +360,7 @@ public class ForgeHooks
                 {
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
-                        BlockPos tmp = BlockPos.containing(x2, y2, z2);
+                        BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = level.getBlockState(tmp);
                         if (state.isLadder(level, tmp, entity))
                         {
@@ -1005,7 +1004,7 @@ public class ForgeHooks
     /**
      * @deprecated See {@link ForgeEventFactory#onAdvancementEarnedEvent} and {@link ForgeEventFactory#onAdvancementProgressedEvent}
      */
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static void onAdvancement(ServerPlayer player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
@@ -1316,7 +1315,7 @@ public class ForgeHooks
      * @deprecated To be removed in 1.20.
      * Use {@link #readAdditionalLevelSaveData(CompoundTag, LevelStorageSource.LevelDirectory)} instead.
      */
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
         readAdditionalLevelSaveData(rootTag, null);
     }
@@ -1550,7 +1549,7 @@ public class ForgeHooks
 
     private static String makePackFormatKey(PackType packType)
     {
-        return "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+        return "forge:" + packType.name().toLowerCase(Locale.ROOT) + "_pack_format";
     }
 
     /**
@@ -1597,7 +1596,7 @@ public class ForgeHooks
         return new HolderLookup.RegistryLookup.Delegate<>()
         {
             @Override protected RegistryLookup<T> parent() { return lookup; }
-            @Override public Stream<Named<T>> listTags() { return Stream.empty(); }
+            @Override public Stream<HolderSet.Named<T>> listTags() { return Stream.empty(); }
             @Override public Optional<HolderSet.Named<T>> get(TagKey<T> key) { return Optional.of(HolderSet.emptyNamed(lookup, key)); }
         };
     }

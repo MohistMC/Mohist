@@ -16,14 +16,6 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.Mth;
-@@ -62,7 +_,6 @@
- import net.minecraft.world.item.SpawnEggItem;
- import net.minecraft.world.item.SwordItem;
- import net.minecraft.world.item.enchantment.EnchantmentHelper;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
 @@ -71,6 +_,13 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -36,7 +28,7 @@
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
  
- public abstract class Mob extends LivingEntity {
+ public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> f_21340_ = SynchedEntityData.m_135353_(Mob.class, EntityDataSerializers.f_135027_);
 @@ -94,8 +_,8 @@
     protected JumpControl f_21343_;
@@ -67,7 +59,7 @@
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
-@@ -210,8 +_,29 @@
+@@ -224,8 +_,29 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -99,7 +91,7 @@
  
     public boolean m_6549_(EntityType<?> p_21399_) {
        return p_21399_ != EntityType.f_20453_;
-@@ -337,6 +_,12 @@
+@@ -351,6 +_,12 @@
        return null;
     }
  
@@ -112,7 +104,7 @@
     public void m_7380_(CompoundTag p_21484_) {
        super.m_7380_(p_21484_);
        p_21484_.m_128379_("CanPickUpLoot", this.m_21531_());
-@@ -408,15 +_,23 @@
+@@ -422,15 +_,23 @@
           p_21484_.m_128379_("NoAI", this.m_21525_());
        }
  
@@ -138,7 +130,7 @@
        if (p_21450_.m_128425_("ArmorItems", 9)) {
           ListTag listtag = p_21450_.m_128437_("ArmorItems", 10);
  
-@@ -460,6 +_,11 @@
+@@ -474,6 +_,11 @@
        }
  
        this.m_21557_(p_21450_.m_128471_("NoAI"));
@@ -150,7 +142,7 @@
     }
  
     protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
-@@ -499,9 +_,9 @@
+@@ -513,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
        this.f_19853_.m_46473_().m_6180_("looting");
@@ -161,7 +153,7 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
-@@ -673,6 +_,14 @@
+@@ -687,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
           Entity entity = this.f_19853_.m_45930_(this, -1.0D);
@@ -176,7 +168,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -697,6 +_,7 @@
+@@ -711,6 +_,7 @@
  
     protected final void m_6140_() {
        ++this.f_20891_;
@@ -184,7 +176,7 @@
        this.f_19853_.m_46473_().m_6180_("sensing");
        this.f_21349_.m_26789_();
        this.f_19853_.m_46473_().m_7238_();
-@@ -1023,6 +_,12 @@
+@@ -1037,6 +_,12 @@
        this.f_21353_ = true;
     }
  
@@ -197,7 +189,7 @@
     public void m_21409_(EquipmentSlot p_21410_, float p_21411_) {
        switch (p_21410_.m_20743_()) {
           case HAND:
-@@ -1055,6 +_,12 @@
+@@ -1069,6 +_,12 @@
        if (!this.m_6084_()) {
           return InteractionResult.PASS;
        } else if (this.m_21524_() == p_21420_) {
@@ -208,9 +200,9 @@
 +         }
 +         // CraftBukkit end
           this.m_21455_(true, !p_21420_.m_150110_().f_35937_);
+          this.m_146852_(GameEvent.f_223708_, p_21420_);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-       } else {
-@@ -1076,6 +_,12 @@
+@@ -1092,6 +_,12 @@
     private InteractionResult m_21499_(Player p_21500_, InteractionHand p_21501_) {
        ItemStack itemstack = p_21500_.m_21120_(p_21501_);
        if (itemstack.m_150930_(Items.f_42655_) && this.m_6573_(p_21500_)) {
@@ -223,30 +215,7 @@
           this.m_21463_(p_21500_, true);
           itemstack.m_41774_(1);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-@@ -1147,11 +_,11 @@
-    @Nullable
-    public <T extends Mob> T m_21406_(EntityType<T> p_21407_, boolean p_21408_) {
-       if (this.m_213877_()) {
--         return (T)null;
-+         return (T) null;
-       } else {
-          T t = p_21407_.m_20615_(this.f_19853_);
-          if (t == null) {
--            return (T)null;
-+            return (T) null;
-          } else {
-             t.m_20359_(this);
-             t.m_6863_(this.m_6162_());
-@@ -1169,7 +_,7 @@
-             if (p_21408_) {
-                t.m_21553_(this.m_21531_());
- 
--               for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-+               for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-                   ItemStack itemstack = this.m_6844_(equipmentslot);
-                   if (!itemstack.m_41619_()) {
-                      t.m_8061_(equipmentslot, itemstack.m_41777_());
-@@ -1179,7 +_,12 @@
+@@ -1195,7 +_,12 @@
                 }
              }
  
@@ -260,7 +229,7 @@
              if (this.m_20159_()) {
                 Entity entity = this.m_20202_();
                 this.m_8127_();
-@@ -1192,6 +_,20 @@
+@@ -1208,6 +_,20 @@
        }
     }
  
@@ -281,7 +250,7 @@
     protected void m_6119_() {
        if (this.f_21359_ != null) {
           this.m_21528_();
-@@ -1258,6 +_,7 @@
+@@ -1274,6 +_,7 @@
     public boolean m_7998_(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.m_7998_(p_21396_, p_21397_);
        if (flag && this.m_21523_()) {
@@ -289,7 +258,7 @@
           this.m_21455_(true, true);
        }
  
-@@ -1280,7 +_,9 @@
+@@ -1296,7 +_,9 @@
           }
  
           if (this.f_19797_ > 100) {
@@ -299,7 +268,7 @@
              this.f_21359_ = null;
           }
        }
-@@ -1352,7 +_,14 @@
+@@ -1364,7 +_,14 @@
  
        int i = EnchantmentHelper.m_44914_(this);
        if (i > 0) {
@@ -314,8 +283,8 @@
 +         // CraftBukkit end
        }
  
-       boolean flag = p_21372_.m_6469_(DamageSource.m_19370_(this), f);
-@@ -1398,15 +_,25 @@
+       boolean flag = p_21372_.m_6469_(this.m_269291_().m_269333_(this), f);
+@@ -1410,15 +_,25 @@
        return false;
     }
  
@@ -342,7 +311,7 @@
     public void m_147272_() {
        this.m_262441_((p_262562_) -> {
           return true;
-@@ -1420,9 +_,10 @@
+@@ -1432,9 +_,10 @@
  
     protected void m_6089_() {
        super.m_6089_();

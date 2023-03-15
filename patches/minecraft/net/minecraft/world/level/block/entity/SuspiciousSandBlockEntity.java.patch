@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/entity/SuspiciousSandBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SuspiciousSandBlockEntity.java
+@@ -39,12 +_,12 @@
+    private int f_271157_;
+    private long f_271530_;
+    private long f_271152_;
+-   private ItemStack f_271119_ = ItemStack.f_41583_;
++   public ItemStack f_271119_ = ItemStack.f_41583_;
+    @Nullable
+    private Direction f_271286_;
+    @Nullable
+-   private ResourceLocation f_271461_;
+-   private long f_271354_;
++   public ResourceLocation f_271461_;
++   public long f_271354_;
+ 
+    public SuspiciousSandBlockEntity(BlockPos p_272892_, BlockState p_273759_) {
+       super(BlockEntityType.f_271323_, p_272892_, p_273759_);

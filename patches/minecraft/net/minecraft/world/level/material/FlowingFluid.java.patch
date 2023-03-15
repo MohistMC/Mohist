@@ -80,6 +80,15 @@
     protected abstract boolean m_6760_(Level p_256009_);
  
     protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
+@@ -330,7 +_,7 @@
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+          BlockPos blockpos = p_76081_.m_121945_(direction);
+          short short1 = m_76058_(p_76081_, blockpos);
+-         Pair<BlockState, FluidState> pair = short2objectmap.computeIfAbsent(short1, (p_272585_) -> {
++         Pair<BlockState, FluidState> pair = short2objectmap.computeIfAbsent(short1, (p_255615_) -> {
+             BlockState blockstate1 = p_256191_.m_8055_(blockpos);
+             return Pair.of(blockstate1, blockstate1.m_60819_());
+          });
 @@ -396,11 +_,23 @@
           int i = this.m_6886_(p_75995_, p_75996_, p_75997_, fluidstate);
           if (fluidstate.m_76178_()) {

@@ -9,9 +9,9 @@
  import org.slf4j.Logger;
  
  public class AnvilMenu extends ItemCombinerMenu {
-@@ -31,6 +_,23 @@
-    private static final int f_150466_ = 1;
-    private static final int f_150467_ = 1;
+@@ -38,6 +_,23 @@
+    private static final int f_265992_ = 134;
+    private static final int f_266013_ = 47;
  
 +   // CraftBukkit start
 +   public static final int DEFAULT_DENIED_COST = -1;
@@ -33,7 +33,7 @@
     public AnvilMenu(int p_39005_, Inventory p_39006_) {
        this(p_39005_, p_39006_, ContainerLevelAccess.f_39287_);
     }
-@@ -45,7 +_,7 @@
+@@ -60,7 +_,7 @@
     }
  
     protected boolean m_6560_(Player p_39023_, boolean p_39024_) {
@@ -42,7 +42,7 @@
     }
  
     protected void m_142365_(Player p_150474_, ItemStack p_150475_) {
-@@ -53,6 +_,8 @@
+@@ -68,6 +_,8 @@
           p_150474_.m_6749_(-this.f_39002_.m_6501_());
        }
  
@@ -51,7 +51,7 @@
        this.f_39769_.m_6836_(0, ItemStack.f_41583_);
        if (this.f_39000_ > 0) {
           ItemStack itemstack = this.f_39769_.m_8020_(1);
-@@ -66,10 +_,10 @@
+@@ -81,10 +_,10 @@
           this.f_39769_.m_6836_(1, ItemStack.f_41583_);
        }
  
@@ -64,7 +64,7 @@
              BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
              if (blockstate1 == null) {
                 p_150479_.m_7471_(p_150480_, false);
-@@ -92,21 +_,24 @@
+@@ -107,21 +_,24 @@
        int j = 0;
        int k = 0;
        if (itemstack.m_41619_()) {
@@ -94,7 +94,7 @@
                    return;
                 }
  
-@@ -121,8 +_,8 @@
+@@ -136,8 +_,8 @@
                 this.f_39000_ = i3;
              } else {
                 if (!flag && (!itemstack1.m_150930_(itemstack2.m_41720_()) || !itemstack1.m_41763_())) {
@@ -105,7 +105,7 @@
                    return;
                 }
  
-@@ -200,8 +_,8 @@
+@@ -215,8 +_,8 @@
                 }
  
                 if (flag3 && !flag2) {
@@ -116,7 +116,7 @@
                    return;
                 }
              }
-@@ -218,17 +_,18 @@
+@@ -233,17 +_,18 @@
              i += k;
              itemstack1.m_41714_(Component.m_237113_(this.f_39001_));
           }
@@ -138,7 +138,7 @@
              itemstack1 = ItemStack.f_41583_;
           }
  
-@@ -246,7 +_,9 @@
+@@ -261,7 +_,9 @@
              EnchantmentHelper.m_44865_(map, itemstack1);
           }
  
@@ -149,7 +149,7 @@
           this.m_38946_();
        }
     }
-@@ -271,5 +_,9 @@
+@@ -286,5 +_,9 @@
  
     public int m_39028_() {
        return this.f_39002_.m_6501_();

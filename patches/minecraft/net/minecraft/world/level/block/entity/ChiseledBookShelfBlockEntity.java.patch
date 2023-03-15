@@ -29,7 +29,7 @@
  
     public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
        super(BlockEntityType.f_244310_, p_249541_, p_251752_);
-@@ -113,6 +_,38 @@
+@@ -107,6 +_,38 @@
     public boolean m_7013_(int p_256567_, ItemStack p_255922_) {
        return p_255922_.m_204117_(ItemTags.f_244646_) && this.m_8020_(p_256567_).m_41619_();
     }

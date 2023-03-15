@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -24,6 +_,7 @@
+@@ -13,6 +_,7 @@
+ import java.util.Optional;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
++import net.minecraft.SharedConstants;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.HolderGetter;
+@@ -23,6 +_,7 @@
  import net.minecraft.nbt.IntTag;
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtUtils;
@@ -8,7 +16,7 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.Clearable;
  import net.minecraft.world.entity.Entity;
-@@ -51,6 +_,8 @@
+@@ -50,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
  import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
@@ -17,18 +25,19 @@
  
  public class StructureTemplate {
     public static final String f_163789_ = "palette";
-@@ -65,8 +_,8 @@
+@@ -63,8 +_,9 @@
+    public static final String f_163797_ = "blockPos";
     public static final String f_163798_ = "nbt";
     public static final String f_163799_ = "size";
-    static final int f_163800_ = 16;
 -   private final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
 -   private final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
++   static final int CHUNK_SIZE = 16;
 +   public final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
 +   public final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
     private Vec3i f_74484_ = Vec3i.f_123288_;
     private String f_74485_ = "?";
  
-@@ -82,6 +_,11 @@
+@@ -80,6 +_,11 @@
        return this.f_74485_;
     }
  
@@ -40,7 +49,7 @@
     public void m_163802_(Level p_163803_, BlockPos p_163804_, Vec3i p_163805_, boolean p_163806_, @Nullable Block p_163807_) {
        if (p_163805_.m_123341_() >= 1 && p_163805_.m_123342_() >= 1 && p_163805_.m_123343_() >= 1) {
           BlockPos blockpos = p_163804_.m_121955_(p_163805_).m_7918_(-1, -1, -1);
-@@ -202,6 +_,10 @@
+@@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }
  
@@ -51,7 +60,7 @@
     public boolean m_230328_(ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_) {
        if (this.f_74482_.isEmpty()) {
           return false;
-@@ -219,7 +_,7 @@
+@@ -217,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
  
@@ -60,7 +69,7 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.f_74675_;
                 if (boundingbox == null || boundingbox.m_71051_(blockpos)) {
                    FluidState fluidstate = p_230332_.m_74413_() ? p_230329_.m_6425_(blockpos) : null;
-@@ -331,7 +_,7 @@
+@@ -329,7 +_,7 @@
              }
  
              if (!p_230332_.m_74408_()) {
@@ -69,7 +78,7 @@
              }
  
              return true;
-@@ -360,14 +_,19 @@
+@@ -358,14 +_,19 @@
        });
     }
  
@@ -90,7 +99,7 @@
           }
  
           if (structuretemplate$structureblockinfo1 != null) {
-@@ -378,13 +_,29 @@
+@@ -380,13 +_,29 @@
        return list;
     }
  
@@ -126,24 +135,24 @@
              ListTag listtag = new ListTag();
              listtag.add(DoubleTag.m_128500_(vec31.f_82479_));
              listtag.add(DoubleTag.m_128500_(vec31.f_82480_));
-@@ -392,10 +_,10 @@
+@@ -394,10 +_,10 @@
              compoundtag.m_128365_("Pos", listtag);
              compoundtag.m_128473_("UUID");
-             m_74543_(p_74524_, compoundtag).ifPresent((p_205061_) -> {
--               float f = p_205061_.m_7890_(p_74527_);
--               f += p_205061_.m_6961_(p_74526_) - p_205061_.m_146908_();
-+               float f = p_205061_.m_7890_(placementIn.m_74404_());
-+               f += p_205061_.m_6961_(placementIn.m_74401_()) - p_205061_.m_146908_();
-                p_205061_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_205061_.m_146909_());
--               if (p_74530_ && p_205061_ instanceof Mob) {
-+               if (placementIn.m_74414_() && p_205061_ instanceof Mob) {
-                   ((Mob)p_205061_).m_6518_(p_74524_, p_74524_.m_6436_(BlockPos.containing(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
+             m_74543_(p_74524_, compoundtag).ifPresent((p_275190_) -> {
+-               float f = p_275190_.m_7890_(p_74527_);
+-               f += p_275190_.m_6961_(p_74526_) - p_275190_.m_146908_();
++               float f = p_275190_.m_7890_(placementIn.m_74404_());
++               f += p_275190_.m_6961_(placementIn.m_74401_()) - p_275190_.m_146908_();
+                p_275190_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_275190_.m_146909_());
+-               if (p_74530_ && p_275190_ instanceof Mob) {
++               if (placementIn.m_74414_() && p_275190_ instanceof Mob) {
+                   ((Mob)p_275190_).m_6518_(p_74524_, p_74524_.m_6436_(BlockPos.m_274446_(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
                 }
  
-@@ -603,6 +_,13 @@
+@@ -604,6 +_,13 @@
+ 
        p_74619_.m_128365_("entities", listtag);
        p_74619_.m_128365_("size", this.m_74625_(this.f_74484_.m_123341_(), this.f_74484_.m_123342_(), this.f_74484_.m_123343_()));
-       p_74619_.m_128405_("DataVersion", SharedConstants.m_183709_().getWorldVersion());
 +
 +      // CraftBukkit Start - PDC
 +      if (!this.persistentDataContainer.isEmpty()) {
@@ -151,10 +160,10 @@
 +      }
 +      // CraftBukkit end
 +
-       return p_74619_;
+       return NbtUtils.m_264171_(p_74619_);
     }
  
-@@ -636,6 +_,12 @@
+@@ -637,6 +_,12 @@
           }
        }
  

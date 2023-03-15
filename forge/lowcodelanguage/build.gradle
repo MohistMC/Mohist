@@ -22,7 +22,7 @@ ext {
             'FMLModType': 'LANGPROVIDER',
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': '1.19.3',
+            'Git-Branch': '1.19.4',
             'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
         ] as LinkedHashMap,
         'net/minecraftforge/fml/loading/': [

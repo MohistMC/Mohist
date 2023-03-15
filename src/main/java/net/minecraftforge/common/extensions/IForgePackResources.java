@@ -7,7 +7,6 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;

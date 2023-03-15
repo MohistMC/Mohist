@@ -8,7 +8,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.commands.CommandSource;
  import net.minecraft.commands.CommandSourceStack;
-@@ -24,12 +_,21 @@
+@@ -25,12 +_,21 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
@@ -32,7 +32,7 @@
        public int m_6643_() {
           return 1;
        }
-@@ -66,11 +_,19 @@
+@@ -67,11 +_,19 @@
           }
        }
  
@@ -41,7 +41,7 @@
 +         if (p_59585_ == 0) {
 +            LecternBlockEntity.this.m_59536_(p_59586_);
 +            if (LecternBlockEntity.this.m_58904_() != null) {
-+               LecternBlock.m_54497_(LecternBlockEntity.this.m_58904_(), LecternBlockEntity.this.m_58899_(), LecternBlockEntity.this.m_58900_(), LecternBlockEntity.this.m_59567_());
++               LecternBlock.m_269306_(null, LecternBlockEntity.this.m_58904_(), LecternBlockEntity.this.m_58899_(), LecternBlockEntity.this.m_58900_(), LecternBlockEntity.this.m_59567_());
 +            }
 +         }
        }
@@ -53,7 +53,7 @@
        }
  
        public void m_6596_() {
-@@ -89,8 +_,50 @@
+@@ -86,8 +_,50 @@
           return false;
        }
  
@@ -104,7 +104,7 @@
     };
     private final ContainerData f_59526_ = new ContainerData() {
        public int m_6413_(int p_59600_) {
-@@ -141,12 +_,12 @@
+@@ -138,12 +_,12 @@
        this.m_6596_();
     }
  
@@ -119,7 +119,7 @@
        }
  
     }
-@@ -180,7 +_,7 @@
+@@ -177,7 +_,7 @@
        }
  
        Vec3 vec3 = Vec3.m_82512_(this.f_58858_);
@@ -128,7 +128,7 @@
     }
  
     public boolean m_6326_() {
-@@ -213,10 +_,36 @@
+@@ -210,10 +_,36 @@
     }
  
     public AbstractContainerMenu m_7208_(int p_59562_, Inventory p_59563_, Player p_59564_) {

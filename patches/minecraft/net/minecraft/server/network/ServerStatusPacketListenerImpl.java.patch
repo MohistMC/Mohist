@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -1,13 +_,19 @@
+@@ -1,5 +_,8 @@
  package net.minecraft.server.network;
  
 +import com.mohistmc.api.event.MohistServerListPingEvent;
@@ -9,54 +9,38 @@
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
- import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
-+import net.minecraft.network.protocol.status.ServerStatus;
+@@ -8,16 +_,24 @@
  import net.minecraft.network.protocol.status.ServerStatusPacketListener;
  import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
  import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
- import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
     private static final Component f_10081_ = Component.m_237115_("multiplayer.status.request_handled");
-@@ -31,8 +_,37 @@
+    private final ServerStatus f_271204_;
++   private final @org.jetbrains.annotations.Nullable String statusCache; // FORGE: cache status JSON
+    private final Connection f_10083_;
+    private boolean f_10084_;
+ 
+    public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
++      this(p_272864_, p_273586_, null);
++   }
++   public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_, @org.jetbrains.annotations.Nullable String statusCache) {
+       this.f_271204_ = p_272864_;
+       this.f_10083_ = p_273586_;
++      this.statusCache = statusCache;
+    }
+ 
+    public void m_7026_(Component p_10091_) {
+@@ -31,8 +_,7 @@
        if (this.f_10084_) {
           this.f_10083_.m_129507_(f_10081_);
        } else {
 -         this.f_10084_ = true;
--         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(this.f_10082_.m_129928_()));
+-         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(this.f_271204_));
 +          this.f_10084_ = true;
-+          // CraftBukkit start
-+          MohistServerListPingEvent event = new MohistServerListPingEvent(f_10083_, f_10082_);
-+          this.f_10082_.server.getPluginManager().callEvent(event);
-+
-+          java.util.List<GameProfile> profiles = new java.util.ArrayList<>(event.getPlayers().length);
-+          for (Object player : event.getPlayers()) {
-+              if (player != null) {
-+                  ServerPlayer entityPlayer = ((ServerPlayer) player);
-+                  if (entityPlayer.m_184128_()) {
-+                      profiles.add(entityPlayer.m_36316_());
-+                  } else {
-+                      profiles.add(MinecraftServer.f_195496_);
-+                  }
-+              }
-+          }
-+
-+          ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size());
-+          if (!this.f_10082_.m_183306_()) {
-+              playerSample.m_134924_(profiles.toArray(new GameProfile[profiles.size()]));
-+          }
-+
-+          ServerStatus ping = new ServerStatus();
-+          ping.m_134906_(event.icon.value);
-+          ping.m_134908_(CraftChatMessage.fromString(event.getMotd(), true)[0]);
-+          ping.m_134910_(playerSample);
-+          int version = SharedConstants.m_183709_().getProtocolVersion();
-+          ping.m_134912_(new ServerStatus.Version(f_10082_.m_130001_() + " " + f_10082_.m_7630_(), version));
-+          ping.setForgeData(this.f_10082_.m_129928_().getForgeData());
-+          this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping));
-+          // CraftBukkit end
        }
     }
  

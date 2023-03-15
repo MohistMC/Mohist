@@ -28,7 +28,7 @@ public interface IForgeAbstractMinecart
         int x = Mth.floor(self().getX());
         int y = Mth.floor(self().getY());
         int z = Mth.floor(self().getZ());
-        BlockPos pos = BlockPos.containing(x, y, z);
+        BlockPos pos = new BlockPos(x, y, z);
         if (self().level.getBlockState(pos.below()).is(BlockTags.RAILS)) pos = pos.below();
         return pos;
     }

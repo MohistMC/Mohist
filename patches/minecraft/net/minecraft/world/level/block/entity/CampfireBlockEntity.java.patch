@@ -13,7 +13,7 @@
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
     private static final int f_155298_ = 2;
 @@ -51,6 +_,20 @@
-                   return p_155305_.m_5874_(container);
+                   return p_270054_.m_5874_(container, p_155307_.m_9598_());
                 }).orElse(itemstack);
                 if (itemstack1.m_246617_(p_155307_.m_246046_())) {
 +                  // CraftBukkit start - fire BlockCookEvent

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.items.wrapper;
 
-import java.util.function.IntUnaryOperator;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
@@ -17,6 +16,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.IntUnaryOperator;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
@@ -167,6 +168,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 return stack;
 
             m = newStackInsertLimit.limitInsert(slot, slot1, stack);
+
             if (m < stack.getCount())
             {
                 // copy the stack to not modify the original one

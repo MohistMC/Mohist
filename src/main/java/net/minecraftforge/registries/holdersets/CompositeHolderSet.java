@@ -167,13 +167,13 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     {
         return this.getList().iterator();
     }
-
+    
     /**
      * Maps the sub-holdersets of this composite such that,
      * if the list contains more than one element, and is non-homogenous,
      * each element of the list will serialize as an object.
      * Prevents crashes from trying to serialize non-homogenous lists to NBT.
-     *
+     * 
      * Lists are considered non-homogenous if it contains more than one serialization type of holderset.
      * Holdersets may be serialized as strings, lists, or maps.
      * @see {@link #isHomogenous}
@@ -184,12 +184,12 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     public List<HolderSet<T>> homogenize()
     {
         List<HolderSet<T>> components = this.getComponents();
-
+        
         if (this.isHomogenous())
         {
             return components;
         }
-
+        
         List<HolderSet<T>> outputs = new ArrayList<>();
         for (HolderSet<T> holderset : components)
         {
@@ -204,7 +204,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
         }
         return outputs;
     }
-
+    
     /**
      * @return True if all of our sub-holdersets have the same {@link SerializationType} (string, list, or object).
      * False if we have more than one holderset AND if either we have more than one serialization type among them,
@@ -213,21 +213,21 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     public boolean isHomogenous()
     {
         final List<HolderSet<T>> holderSets = this.getComponents();
-
+        
         if (holderSets.size() < 2)
         {
             return true;
         }
-
+        
         // Get the first holderset and check if any subsequent holdersets are different
         SerializationType firstType = holderSets.get(0).serializationType();
-
+        
         // If any holderset has an unknown type, then we cannot assume we are homogenous
         if (firstType == SerializationType.UNKNOWN)
         {
             return false;
         }
-
+        
         final int size = holderSets.size();
         for (int i = 1; i < size; i++)
         {
@@ -237,7 +237,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
                 return false;
             }
         }
-
+        
         return true;
     }
 }

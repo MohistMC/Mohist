@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -18,11 +_,37 @@
+@@ -19,11 +_,37 @@
     protected int f_146733_;
     protected int f_146734_;
     protected int f_146735_;
@@ -38,7 +38,7 @@
     public SpawnGroupData m_6518_(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_, @Nullable CompoundTag p_146750_) {
        if (p_146749_ == null) {
           p_146749_ = new AgeableMob.AgeableMobGroupData(true);
-@@ -97,12 +_,14 @@
+@@ -98,12 +_,14 @@
        super.m_7380_(p_146761_);
        p_146761_.m_128405_("Age", this.m_146764_());
        p_146761_.m_128405_("ForcedAge", this.f_146734_);
@@ -53,7 +53,7 @@
     }
  
     public void m_7350_(EntityDataAccessor<?> p_146754_) {
-@@ -115,7 +_,7 @@
+@@ -116,7 +_,7 @@
  
     public void m_8107_() {
        super.m_8107_();

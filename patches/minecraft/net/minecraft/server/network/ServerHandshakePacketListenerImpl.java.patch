@@ -13,7 +13,7 @@
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
  import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-@@ -13,6 +_,15 @@
+@@ -14,6 +_,15 @@
     private static final Component f_9964_ = Component.m_237113_("Ignoring status request");
     private final MinecraftServer f_9965_;
     private final Connection f_9966_;
@@ -29,7 +29,7 @@
  
     public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
        this.f_9965_ = p_9969_;
-@@ -20,9 +_,45 @@
+@@ -21,9 +_,45 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
@@ -72,10 +72,10 @@
 +               org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
 +            }
 +            // CraftBukkit end
-             if (p_9975_.m_134738_() != SharedConstants.m_183709_().getProtocolVersion()) {
+             if (p_9975_.m_134738_() != SharedConstants.m_183709_().m_132495_()) {
                 Component component;
                 if (p_9975_.m_134738_() < 754) {
-@@ -35,6 +_,30 @@
+@@ -36,13 +_,37 @@
                 this.f_9966_.m_129507_(component);
              } else {
                 this.f_9966_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9965_, this.f_9966_));
@@ -106,3 +106,11 @@
              }
              break;
           case STATUS:
+             ServerStatus serverstatus = this.f_9965_.m_129928_();
+             if (this.f_9965_.m_6373_() && serverstatus != null) {
+                this.f_9966_.m_129498_(ConnectionProtocol.STATUS);
+-               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_));
++               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_, this.f_9965_.getStatusJson()));
+             } else {
+                this.f_9966_.m_129507_(f_9964_);
+             }

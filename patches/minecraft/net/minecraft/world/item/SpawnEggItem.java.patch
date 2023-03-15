@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/SpawnEggItem.java
 +++ b/net/minecraft/world/item/SpawnEggItem.java
-@@ -22,6 +_,7 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.flag.FeatureFlagSet;
- import net.minecraft.world.item.context.UseOnContext;
-+import net.minecraft.world.level.BaseSpawner;
- import net.minecraft.world.level.ClipContext;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Blocks;
 @@ -40,11 +_,14 @@
     private final int f_151201_;
     private final EntityType<?> f_43204_;

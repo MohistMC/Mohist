@@ -618,7 +618,7 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
         return !blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
@@ -726,7 +726,7 @@ public class ForgeEventFactory
      * @deprecated Use {@linkplain #onEnderPearlLand(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult) the hit result-sensitive version}.
      */
     @ApiStatus.Internal
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
     {
         return onEnderPearlLand(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);

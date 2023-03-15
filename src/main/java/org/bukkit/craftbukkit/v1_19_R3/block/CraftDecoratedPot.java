@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.bukkit.craftbukkit.v1_19_R3.block;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.DecoratedPot;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 
 public class CraftDecoratedPot extends CraftBlockEntityState<DecoratedPotBlockEntity> implements DecoratedPot {
 

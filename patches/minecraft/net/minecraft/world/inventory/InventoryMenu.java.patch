@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
-@@ -11,6 +_,8 @@
+@@ -12,6 +_,8 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -9,15 +9,13 @@
  
  public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150579_ = 0;
-@@ -34,13 +_,30 @@
+@@ -35,13 +_,30 @@
     private static final EquipmentSlot[] f_39700_ = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     private final CraftingContainer f_39701_ = new CraftingContainer(this, 2, 2);
     private final ResultContainer f_39702_ = new ResultContainer();
 +   // CraftBukkit start
     public final boolean f_39698_;
     private final Player f_39703_;
--
--   public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   @Override
@@ -31,8 +29,8 @@
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
-+
-+   public InventoryMenu(Inventory p_39706_, boolean p_39707_, Player p_39708_) {
+ 
+    public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
        super((MenuType<?>)null, 0);
        this.f_39698_ = p_39707_;
        this.f_39703_ = p_39708_;

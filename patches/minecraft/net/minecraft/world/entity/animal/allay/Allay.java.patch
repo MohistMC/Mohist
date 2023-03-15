@@ -38,7 +38,7 @@
     protected Brain.Provider<Allay> m_5490_() {
        return Brain.m_21923_(f_218301_, f_218297_);
     }
-@@ -276,7 +_,12 @@
+@@ -272,7 +_,12 @@
        ItemStack itemstack = p_218361_.m_21120_(p_218362_);
        ItemStack itemstack1 = this.m_21120_(InteractionHand.MAIN_HAND);
        if (this.m_239559_() && this.m_239735_(itemstack) && this.m_218324_()) {
@@ -52,7 +52,7 @@
           this.f_19853_.m_7605_(this, (byte)18);
           this.f_19853_.m_6269_(p_218361_, this, SoundEvents.f_144243_, SoundSource.NEUTRAL, 2.0F, 1.0F);
           this.m_239358_(p_218361_, itemstack);
-@@ -329,7 +_,7 @@
+@@ -325,7 +_,7 @@
  
     public boolean m_7243_(ItemStack p_218387_) {
        ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);
@@ -61,7 +61,7 @@
     }
  
     private boolean m_245613_(ItemStack p_252278_, ItemStack p_250405_) {
-@@ -391,6 +_,7 @@
+@@ -387,6 +_,7 @@
     }
  
     private boolean m_239812_() {
@@ -69,7 +69,7 @@
        return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
     }
  
-@@ -475,17 +_,23 @@
+@@ -471,17 +_,23 @@
           allay.m_21530_();
           allay.m_239811_();
           this.m_239811_();

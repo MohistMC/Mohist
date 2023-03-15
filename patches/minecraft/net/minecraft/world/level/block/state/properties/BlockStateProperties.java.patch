@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/state/properties/BlockStateProperties.java
++++ b/net/minecraft/world/level/block/state/properties/BlockStateProperties.java
+@@ -33,6 +_,7 @@
+    public static final BooleanProperty f_61360_ = BooleanProperty.m_61465_("triggered");
+    public static final BooleanProperty f_61361_ = BooleanProperty.m_61465_("unstable");
+    public static final BooleanProperty f_61362_ = BooleanProperty.m_61465_("waterlogged");
++   public static final BooleanProperty VINE_END = BooleanProperty.m_61465_("vine_end");
+    public static final BooleanProperty f_155977_ = BooleanProperty.m_61465_("berries");
+    public static final BooleanProperty f_222995_ = BooleanProperty.m_61465_("bloom");
+    public static final BooleanProperty f_222996_ = BooleanProperty.m_61465_("shrieking");

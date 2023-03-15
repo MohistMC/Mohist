@@ -16,7 +16,7 @@
  
     public Advancement(ResourceLocation p_138307_, @Nullable Advancement p_138308_, @Nullable DisplayInfo p_138309_, AdvancementRewards p_138310_, Map<String, Criterion> p_138311_, String[][] p_138312_) {
        this.f_138301_ = p_138307_;
-@@ -127,7 +_,7 @@
+@@ -144,7 +_,7 @@
        return this.f_138305_;
     }
  
@@ -25,7 +25,7 @@
        @Nullable
        private ResourceLocation f_138332_;
        @Nullable
-@@ -308,7 +_,14 @@
+@@ -325,7 +_,14 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + "}";
        }
  

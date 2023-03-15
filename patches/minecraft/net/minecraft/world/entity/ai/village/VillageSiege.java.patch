@@ -4,8 +4,8 @@
                    this.f_27002_ = blockpos.m_123341_() + Mth.m_14143_(Mth.m_14089_(f) * 32.0F);
                    this.f_27003_ = blockpos.m_123342_();
                    this.f_27004_ = blockpos.m_123343_() + Mth.m_14143_(Mth.m_14031_(f) * 32.0F);
--                  if (this.m_27009_(p_27008_, BlockPos.containing(this.f_27002_, this.f_27003_, this.f_27004_)) != null) {
-+                  Vec3 siegeLocation = this.m_27009_(p_27008_, BlockPos.containing(this.f_27002_, this.f_27003_, this.f_27004_));
+-                  if (this.m_27009_(p_27008_, new BlockPos(this.f_27002_, this.f_27003_, this.f_27004_)) != null) {
++                  Vec3 siegeLocation = this.m_27009_(p_27008_, new BlockPos(this.f_27002_, this.f_27003_, this.f_27004_));
 +                  if (siegeLocation != null) {
 +                     if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, p_27008_, player, siegeLocation))) return false;
                       this.f_27001_ = 0;

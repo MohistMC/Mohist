@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -1,12 +_,15 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.world.level.block.entity;
  
 +import java.util.ArrayList;
@@ -9,14 +9,15 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
- import net.minecraft.core.NonNullList;
+@@ -8,6 +_,7 @@
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
+ import net.minecraft.world.Container;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.Containers;
  import net.minecraft.world.WorldlyContainer;
-@@ -22,6 +_,14 @@
+@@ -23,6 +_,14 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BrewingStandBlock;
  import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +32,7 @@
  
  public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
     private static final int f_155280_ = 3;
-@@ -66,6 +_,37 @@
+@@ -67,6 +_,37 @@
        }
     };
  
@@ -69,7 +70,7 @@
     public BrewingStandBlockEntity(BlockPos p_155283_, BlockState p_155284_) {
        super(BlockEntityType.f_58927_, p_155283_, p_155284_);
     }
-@@ -91,19 +_,36 @@
+@@ -92,19 +_,36 @@
     public static void m_155285_(Level p_155286_, BlockPos p_155287_, BlockState p_155288_, BrewingStandBlockEntity p_155289_) {
        ItemStack itemstack = p_155289_.f_58975_.get(4);
        if (p_155289_.f_58979_ <= 0 && itemstack.m_150930_(Items.f_42593_)) {
@@ -111,7 +112,7 @@
              m_155232_(p_155286_, p_155287_, p_155288_);
           } else if (!flag || !itemstack1.m_150930_(p_155289_.f_58978_)) {
              p_155289_.f_58976_ = 0;
-@@ -111,7 +_,11 @@
+@@ -112,7 +_,11 @@
           }
        } else if (flag && p_155289_.f_58979_ > 0) {
           --p_155289_.f_58979_;
@@ -124,7 +125,7 @@
           p_155289_.f_58978_ = itemstack1.m_41720_();
           m_155232_(p_155286_, p_155287_, p_155288_);
        }
-@@ -147,6 +_,7 @@
+@@ -148,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
        ItemStack itemstack = p_155295_.get(3);
@@ -132,7 +133,7 @@
        if (itemstack.m_41619_()) {
           return false;
        } else if (!PotionBrewing.m_43506_(itemstack)) {
-@@ -163,22 +_,39 @@
+@@ -164,22 +_,39 @@
        }
     }
  
@@ -180,7 +181,7 @@
  
        p_155293_.set(3, itemstack);
        p_155291_.m_46796_(1035, p_155292_, 0);
-@@ -228,11 +_,11 @@
+@@ -225,11 +_,11 @@
  
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
@@ -194,7 +195,7 @@
        }
     }
  
-@@ -258,5 +_,34 @@
+@@ -255,5 +_,34 @@
  
     protected AbstractContainerMenu m_6555_(int p_58990_, Inventory p_58991_) {
        return new BrewingStandMenu(p_58990_, p_58991_, this, this.f_58971_);

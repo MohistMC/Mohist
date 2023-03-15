@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -6,7 +_,6 @@
- import com.google.gson.JsonArray;
- import com.google.gson.JsonElement;
- import com.google.gson.JsonObject;
--import com.google.gson.JsonParseException;
- import com.google.gson.JsonSyntaxException;
- import java.util.Map;
- import java.util.Set;
-@@ -20,8 +_,25 @@
+@@ -21,8 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
@@ -36,8 +28,8 @@
     final int f_44146_;
     final int f_44147_;
     final NonNullList<Ingredient> f_44148_;
-@@ -40,6 +_,67 @@
-       this.f_44149_ = p_248581_;
+@@ -47,6 +_,67 @@
+       this(p_250963_, p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
     }
  
 +   // CraftBukkit start
@@ -104,7 +96,7 @@
     public ResourceLocation m_6423_() {
        return this.f_44150_;
     }
-@@ -115,10 +_,20 @@
+@@ -126,10 +_,20 @@
        return this.f_44146_;
     }
  
@@ -125,7 +117,7 @@
     static NonNullList<Ingredient> m_44202_(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(p_44205_ * p_44206_, Ingredient.f_43901_);
        Set<String> set = Sets.newHashSet(p_44204_.keySet());
-@@ -185,7 +_,7 @@
+@@ -196,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
           return !p_151277_.m_43947_();
        }).anyMatch((p_151273_) -> {
@@ -134,7 +126,7 @@
        });
     }
  
-@@ -207,15 +_,15 @@
+@@ -218,15 +_,15 @@
  
     static String[] m_44196_(JsonArray p_44197_) {
        String[] astring = new String[p_44197_.size()];
@@ -154,7 +146,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -249,17 +_,7 @@
+@@ -260,17 +_,7 @@
     }
  
     public static ItemStack m_151274_(JsonObject p_151275_) {
@@ -173,7 +165,7 @@
     }
  
     public static Item m_151278_(JsonObject p_151279_) {
-@@ -275,6 +_,7 @@
+@@ -286,6 +_,7 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapedRecipe> {

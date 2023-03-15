@@ -304,14 +304,14 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 
             Map.Entry<?,?> e = (Map.Entry<?, ?>)o;
             return (key == null ? e.getKey() == null : key.equals(e.getKey())) &&
-                    (value == null ? e.getValue() == null : value.equals(e.getValue()));
+                   (value == null ? e.getValue() == null : value.equals(e.getValue()));
         }
 
         @Override
         public int hashCode()
         {
             return (key == null ? 0 : strategy.hashCode(key)) ^
-                    (value == null ? 0 : value.hashCode());
+                   (value == null ? 0 : value.hashCode());
         }
     }
 }

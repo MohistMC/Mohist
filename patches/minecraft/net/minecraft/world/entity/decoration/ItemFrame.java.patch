@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/ItemFrame.java
 +++ b/net/minecraft/world/entity/decoration/ItemFrame.java
-@@ -41,8 +_,8 @@
+@@ -43,8 +_,8 @@
  
  public class ItemFrame extends HangingEntity {
     private static final Logger f_31756_ = LogUtils.getLogger();
@@ -11,7 +11,7 @@
     public static final int f_149619_ = 8;
     public float f_31754_ = 1.0F;
     public boolean f_31755_;
-@@ -69,7 +_,7 @@
+@@ -71,7 +_,7 @@
        this.m_20088_().m_135372_(f_31758_, 0);
     }
  
@@ -20,7 +20,7 @@
        Validate.notNull(p_31793_);
        this.f_31699_ = p_31793_;
        if (p_31793_.m_122434_().m_122479_()) {
-@@ -114,6 +_,35 @@
+@@ -116,6 +_,35 @@
        }
     }
  
@@ -56,7 +56,7 @@
     public boolean m_7088_() {
        if (this.f_31755_) {
           return true;
-@@ -279,6 +_,24 @@
+@@ -283,6 +_,24 @@
        this.m_218865_(p_31790_);
        this.m_20088_().m_135381_(f_31757_, p_31790_);
        if (!p_31790_.m_41619_()) {

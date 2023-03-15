@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,12 +_,16 @@
+@@ -1,11 +_,16 @@
  package net.minecraft.world.food;
  
  import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.Difficulty;
- import net.minecraft.world.damagesource.DamageSource;
++import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@
  
  public class FoodData {
     public int f_38696_ = 20;
-@@ -15,7 +_,23 @@
+@@ -14,19 +_,51 @@
     public int f_38699_;
     public int f_38700_ = 20;
  
@@ -41,8 +41,10 @@
        this.f_38697_ = 5.0F;
     }
  
-@@ -24,10 +_,25 @@
+    public void m_38707_(int p_38708_, float p_38709_) {
+       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
++      this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
  
 +   // Use the LivingEntity sensitive version in favour of this.
@@ -69,7 +71,7 @@
        }
  
     }
-@@ -41,28 +_,41 @@
+@@ -40,28 +_,41 @@
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
              this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
@@ -112,5 +114,5 @@
 -         if (this.f_38699_ >= 80) {
 +         if (this.f_38699_ >= this.starvationRate) { // CraftBukkit - add regen rate manipulation
              if (p_38711_.m_21223_() > 10.0F || difficulty == Difficulty.HARD || p_38711_.m_21223_() > 1.0F && difficulty == Difficulty.NORMAL) {
-                p_38711_.m_6469_(DamageSource.f_19313_, 1.0F);
+                p_38711_.m_6469_(p_38711_.m_269291_().m_269064_(), 1.0F);
              }

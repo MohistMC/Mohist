@@ -67,7 +67,7 @@ public class LivingChangeTargetEvent extends LivingEvent
     }
 
     public void setfireCBEvent(boolean cancel) {
-       this.fireCBEvent = fireCBEvent;
+        this.fireCBEvent = fireCBEvent;
     }
 
     // Mohist end

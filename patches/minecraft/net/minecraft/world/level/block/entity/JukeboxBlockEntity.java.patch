@@ -1,0 +1,58 @@
+--- a/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/JukeboxBlockEntity.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.world.level.block.entity;
+ 
+ import com.google.common.annotations.VisibleForTesting;
++
++import java.util.List;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+@@ -23,6 +_,9 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.ticks.ContainerSingleItem;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem {
+    private static final int f_271500_ = 20;
+@@ -152,6 +_,36 @@
+ 
+    public boolean m_271862_(Container p_273497_, int p_273168_, ItemStack p_273785_) {
+       return p_273497_.m_216874_(ItemStack::m_41619_);
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
+    }
+ 
+    private void m_269320_(Level p_270782_, BlockPos p_270940_) {

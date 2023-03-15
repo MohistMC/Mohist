@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/damagesource/DamageSource.java
 +++ b/net/minecraft/world/damagesource/DamageSource.java
-@@ -49,6 +_,19 @@
-    private boolean f_181119_;
-    public final String f_19326_;
+@@ -20,6 +_,39 @@
+    @Nullable
+    private final Vec3 f_268454_;
  
 +   // CraftBukkit start
 +   private boolean sweep;
++   private boolean melting;
++   private boolean poison;
 +
 +   public boolean isSweep() {
 +      return sweep;
@@ -15,8 +17,26 @@
 +      this.sweep = true;
 +      return this;
 +   }
++
++   public boolean isMelting() {
++      return melting;
++   }
++
++   public DamageSource melting() {
++      this.melting = true;
++      return this;
++   }
++
++   public boolean isPoison() {
++      return poison;
++   }
++
++   public DamageSource poison() {
++      this.poison = true;
++      return this;
++   }
 +   // CraftBukkit end
 +   
-    public static DamageSource m_253038_(Entity p_254272_) {
-       return (new EntityDamageSource("fallingBlock", p_254272_)).m_146706_();
+    public String toString() {
+       return "DamageSource (" + this.m_269415_().f_268677_() + ")";
     }

@@ -133,7 +133,7 @@ public class UnbakedGeometryHelper
      */
     public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents)
     {
-    	return createUnbakedItemElements(layerIndex, spriteContents, null);
+        return createUnbakedItemElements(layerIndex, spriteContents, null);
     }
 
     /**
@@ -157,7 +157,7 @@ public class UnbakedGeometryHelper
      */
     public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents)
     {
-    	return createUnbakedItemMaskElements(layerIndex, spriteContents, null);
+        return createUnbakedItemMaskElements(layerIndex, spriteContents, null);
     }
 
     /**

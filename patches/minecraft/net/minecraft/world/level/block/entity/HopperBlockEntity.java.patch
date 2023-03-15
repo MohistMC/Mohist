@@ -132,9 +132,9 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
-@@ -196,7 +_,36 @@
+@@ -196,7 +_,34 @@
        ItemStack itemstack = p_59356_.m_8020_(p_59357_);
-       if (!itemstack.m_41619_() && m_59380_(p_59356_, itemstack, p_59357_, p_59358_)) {
+       if (!itemstack.m_41619_() && m_271906_(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
           ItemStack itemstack1 = itemstack.m_41777_();
 -         ItemStack itemstack2 = m_59326_(p_59356_, p_59355_, p_59356_.m_7407_(p_59357_, 1), (Direction)null);
 +         // ItemStack itemstack2 = addItem(iinventory, ihopper, iinventory.removeItem(i, 1), (EnumDirection) null);
@@ -159,8 +159,6 @@
 +
 +            if (p_59355_ instanceof HopperBlockEntity) {
 +               ((HopperBlockEntity) p_59355_).m_59395_(8); // Delay hopper checks
-+            } else if (p_59355_ instanceof MinecartHopper) {
-+               ((MinecartHopper) p_59355_).m_38610_(4); // Delay hopper minecart checks
 +            }
 +
 +            return false;
@@ -184,7 +182,7 @@
        ItemStack itemstack = p_59333_.m_32055_().m_41777_();
        ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
        if (itemstack1.m_41619_()) {
-@@ -292,15 +_,39 @@
+@@ -314,15 +_,39 @@
        return p_59323_;
     }
  
@@ -218,7 +216,7 @@
 +      // CraftBukkit start
 +      Container inventory = m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
 +
-+      BlockPos blockPosition = BlockPos.containing(p_155598_.m_6343_(), p_155598_.m_6358_(), p_155598_.m_6446_());
++      BlockPos blockPosition = BlockPos.m_274561_(p_155598_.m_6343_(), p_155598_.m_6358_(), p_155598_.m_6446_());
 +      CraftBlock hopper = CraftBlock.at(p_155597_, blockPosition);
 +      CraftBlock container = CraftBlock.at(p_155597_, blockPosition.m_7494_());
 +      return runHopperInventorySearchEvent(inventory, hopper, container, HopperInventorySearchEvent.ContainerType.SOURCE);
@@ -226,7 +224,7 @@
     }
  
     public static List<ItemEntity> m_155589_(Level p_155590_, Hopper p_155591_) {
-@@ -397,5 +_,14 @@
+@@ -417,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {
        return new HopperMenu(p_59312_, p_59313_, this);

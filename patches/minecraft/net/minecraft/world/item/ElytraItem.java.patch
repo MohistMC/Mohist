@@ -1,9 +1,18 @@
 --- a/net/minecraft/world/item/ElytraItem.java
 +++ b/net/minecraft/world/item/ElytraItem.java
-@@ -43,6 +_,25 @@
-       }
-    }
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.item;
  
++import javax.annotation.Nullable;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.world.InteractionHand;
+@@ -25,6 +_,25 @@
+ 
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_41137_, Player p_41138_, InteractionHand p_41139_) {
+       return this.m_269277_(this, p_41137_, p_41138_, p_41139_);
++   }
++
 +   @Override
 +   public boolean canElytraFly(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
 +      return ElytraItem.m_41140_(stack);
@@ -21,8 +30,6 @@
 +         }
 +      }
 +      return true;
-+   }
-+
-    @Nullable
-    public SoundEvent m_142602_() {
-       return SoundEvents.f_11674_;
+    }
+ 
+    public SoundEvent m_150681_() {

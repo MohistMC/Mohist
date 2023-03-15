@@ -42,7 +42,7 @@ public class SaplingGrowTreeEvent extends LevelEvent
     @Nullable
     private Holder<ConfiguredFeature<?, ?>> feature;
 
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
         this(level, randomSource, pos, null);
@@ -76,21 +76,24 @@ public class SaplingGrowTreeEvent extends LevelEvent
      * {@return the holder of the feature which will be placed, possibly null}
      */
     @Nullable
-    public Holder<ConfiguredFeature<?, ?>> getFeature() {
+    public Holder<ConfiguredFeature<?, ?>> getFeature()
+    {
         return feature;
     }
 
     /**
      * @param feature a {@linkplain Holder} referencing a tree feature to be placed instead of the current feature.
      */
-    public void setFeature(@Nullable Holder<ConfiguredFeature<?, ?>> feature) {
+    public void setFeature(@Nullable Holder<ConfiguredFeature<?, ?>> feature)
+    {
         this.feature = feature;
     }
 
     /**
      * @param featureKey a {@linkplain ResourceKey} referencing a tree feature to be placed instead of the current feature.
      */
-    public void setFeature(ResourceKey<ConfiguredFeature<?, ?>> featureKey) {
+    public void setFeature(ResourceKey<ConfiguredFeature<?, ?>> featureKey)
+    {
         this.feature = this.getLevel().registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(featureKey).orElse(null);
     }
 }

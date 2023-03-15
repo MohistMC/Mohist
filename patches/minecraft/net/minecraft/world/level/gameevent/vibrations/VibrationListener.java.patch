@@ -18,16 +18,16 @@
  
  public class VibrationListener implements GameEventListener {
     @VisibleForTesting
-@@ -161,7 +_,15 @@
+@@ -163,7 +_,15 @@
              return false;
           } else {
              Vec3 vec3 = optional.get();
--            if (!this.f_157889_.m_213641_(p_251930_, this, BlockPos.containing(p_250045_), p_250161_, p_251443_)) {
+-            if (!this.f_157889_.m_213641_(p_251930_, this, BlockPos.m_274446_(p_250045_), p_250161_, p_251443_)) {
 +            //if (!this.config.shouldListen(p_251930_, this, BlockPos.containing(p_250045_), p_250161_, p_251443_)) {
 +            // CraftBukkit start
-+            boolean defaultCancel = !this.f_157889_.m_213641_(p_251930_, this, BlockPos.containing(p_250045_), p_250161_, p_251443_);
++            boolean defaultCancel = !this.f_157889_.m_213641_(p_251930_, this, BlockPos.m_274446_(p_250045_), p_250161_, p_251443_);
 +            Entity entity = p_251443_.f_223711_();
-+            BlockReceiveGameEvent event = new BlockReceiveGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_250161_))), CraftBlock.at(p_251930_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
++            BlockReceiveGameEvent event = new BlockReceiveGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_250161_))), CraftBlock.at(p_251930_, BlockPos.m_274446_(vec3)), (entity == null) ? null : entity.getBukkitEntity());
 +            event.setCancelled(defaultCancel);
 +            p_251930_.getCraftServer().getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {

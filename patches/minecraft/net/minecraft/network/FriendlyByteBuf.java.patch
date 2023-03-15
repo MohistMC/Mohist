@@ -1,9 +1,17 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -70,8 +_,9 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.phys.BlockHitResult;
+@@ -61,6 +_,7 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtAccounter;
+ import net.minecraft.nbt.NbtIo;
++import net.minecraft.nbt.NbtOps;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.resources.ResourceKey;
+@@ -77,8 +_,9 @@
  import net.minecraft.world.phys.Vec3;
+ import org.joml.Quaternionf;
+ import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
  
 -public class FriendlyByteBuf extends ByteBuf {
@@ -11,7 +19,7 @@
     private static final int f_178335_ = 5;
     private static final int f_178336_ = 10;
     public static final int f_178337_ = 2097152;
-@@ -578,6 +_,15 @@
+@@ -622,6 +_,15 @@
     }
  
     public FriendlyByteBuf m_130055_(ItemStack p_130056_) {
@@ -27,7 +35,7 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -586,8 +_,8 @@
+@@ -630,8 +_,8 @@
           this.m_236818_(BuiltInRegistries.f_257033_, item);
           this.writeByte(p_130056_.m_41613_());
           CompoundTag compoundtag = null;
@@ -38,7 +46,7 @@
           }
  
           this.m_130079_(compoundtag);
-@@ -603,7 +_,12 @@
+@@ -647,7 +_,12 @@
           Item item = this.m_236816_(BuiltInRegistries.f_257033_);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);

@@ -6,28 +6,28 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
-import net.minecraft.core.RegistrySynchronization.NetworkedRegistryData;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public final class DataPackRegistriesHooks
 {
     private DataPackRegistriesHooks() {} // utility class
 
-    private static final Map<ResourceKey<? extends Registry<?>>, NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
+    private static final Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES = new ArrayList<>(RegistryDataLoader.WORLDGEN_REGISTRIES);
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES_VIEW = Collections.unmodifiableList(DATA_PACK_REGISTRIES);
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();

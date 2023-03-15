@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/levelgen/feature/TreeFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/TreeFeature.java
+@@ -123,13 +_,13 @@
+    }
+ 
+    public final boolean m_142674_(FeaturePlaceContext<TreeConfiguration> p_160530_) {
+-      final WorldGenLevel worldgenlevel = p_160530_.m_159774_();
++      WorldGenLevel worldgenlevel = p_160530_.m_159774_();
+       RandomSource randomsource = p_160530_.m_225041_();
+       BlockPos blockpos = p_160530_.m_159777_();
+       TreeConfiguration treeconfiguration = p_160530_.m_159778_();
+       Set<BlockPos> set = Sets.newHashSet();
+       Set<BlockPos> set1 = Sets.newHashSet();
+-      final Set<BlockPos> set2 = Sets.newHashSet();
++      Set<BlockPos> set2 = Sets.newHashSet();
+       Set<BlockPos> set3 = Sets.newHashSet();
+       BiConsumer<BlockPos, BlockState> biconsumer = (p_160555_, p_160556_) -> {
+          set.add(p_160555_.m_7949_());

@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -75,6 +_,22 @@
+@@ -11,6 +_,7 @@
+ import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
++import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+@@ -74,6 +_,22 @@
        this.m_5602_(p_37052_);
     }
  
@@ -23,7 +31,7 @@
     protected void m_8097_() {
        this.f_19804_.m_135372_(f_37019_, ItemStack.f_41583_);
        this.f_19804_.m_135372_(f_37020_, OptionalInt.empty());
-@@ -149,6 +_,13 @@
+@@ -148,6 +_,13 @@
           this.m_37080_();
        }
  

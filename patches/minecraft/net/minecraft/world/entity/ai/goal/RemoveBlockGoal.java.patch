@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
-@@ -12,7 +_,6 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.BlockGetter;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
 @@ -20,6 +_,8 @@
  import net.minecraft.world.level.chunk.ChunkAccess;
  import net.minecraft.world.level.chunk.ChunkStatus;
@@ -26,7 +18,7 @@
           return false;
        } else if (this.f_25600_ > 0) {
           --this.f_25600_;
-@@ -93,6 +_,14 @@
+@@ -89,6 +_,14 @@
           }
  
           if (this.f_25838_ > 60) {
@@ -41,7 +33,7 @@
              level.m_7471_(blockpos1, false);
              if (!level.f_46443_) {
                 for(int i = 0; i < 20; ++i) {
-@@ -133,6 +_,7 @@
+@@ -129,6 +_,7 @@
        if (chunkaccess == null) {
           return false;
        } else {

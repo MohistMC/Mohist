@@ -14,5 +14,5 @@
           MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.f_19599_, 6000, 2);
 +         LivingEntity.addEffectCause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit // Mohist
           List<ServerPlayer> list = MobEffectUtil.m_216946_((ServerLevel)this.f_19853_, this, this.m_20182_(), 50.0D, mobeffectinstance, 1200);
-          list.forEach((p_253573_) -> {
-             p_253573_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132163_, this.m_20067_() ? 0.0F : 1.0F));
+          list.forEach((p_275117_) -> {
+             p_275117_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132163_, this.m_20067_() ? 0.0F : 1.0F));

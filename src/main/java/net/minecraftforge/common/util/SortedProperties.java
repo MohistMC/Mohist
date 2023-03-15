@@ -50,6 +50,6 @@ public class SortedProperties extends Properties
     {
         SortedProperties sorted = new SortedProperties();
         sorted.putAll(props);
-        sorted.store(new OutputStreamWriter(stream, StandardCharsets.UTF_8), comment);
+        sorted.store(new OutputStreamWriter(stream, StandardCharsets.UTF_8), comment); // Mohist
     }
 }

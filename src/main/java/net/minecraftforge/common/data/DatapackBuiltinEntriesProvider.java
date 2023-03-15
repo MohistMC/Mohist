@@ -1,20 +1,30 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.common.data;
 
-import java.util.HashSet;
-import java.util.Set;
-import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistriesDatapackGenerator;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * An extension of the {@link RegistriesDatapackGenerator} which properly handles
+ * referencing existing dynamic registry objects within another dynamic registry
+ * object.
+ */
 public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
 {
+
     /**
      * Constructs a new datapack provider which generates all registry objects
      * from the provided mods using the holder.

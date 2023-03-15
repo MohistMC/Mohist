@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/PlayerRideableJumping.java
++++ b/net/minecraft/world/entity/PlayerRideableJumping.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.world.entity;
+ 
++import net.minecraft.world.entity.player.Player;
++
+ public interface PlayerRideableJumping extends PlayerRideable {
+    void m_7888_(int p_21696_);
+ 

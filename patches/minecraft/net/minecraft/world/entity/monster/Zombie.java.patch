@@ -70,39 +70,23 @@
                       zombie.m_6710_(livingentity);
                       zombie.m_6518_(serverlevel, this.f_19853_.m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
                       serverlevel.m_47205_(zombie);
-@@ -375,26 +_,28 @@
+@@ -375,7 +_,7 @@
  
     public boolean m_214076_(ServerLevel p_219160_, LivingEntity p_219161_) {
        boolean flag = super.m_214076_(p_219160_, p_219161_);
 -      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
-+      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.f_20530_, (timer) -> {
-+      })) {
++      if ((p_219160_.m_46791_() == Difficulty.NORMAL || p_219160_.m_46791_() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.f_20530_, (timer) -> {})) {
           if (p_219160_.m_46791_() != Difficulty.HARD && this.f_19796_.m_188499_()) {
              return flag;
           }
- 
-          ZombieVillager zombievillager = villager.m_21406_(EntityType.f_20530_, false);
-          if (zombievillager != null) {
--            zombievillager.m_6518_(p_219160_, p_219160_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
-+            zombievillager.m_6518_(p_219160_, p_219160_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag) null);
-             zombievillager.m_34375_(villager.m_7141_());
+@@ -387,6 +_,7 @@
              zombievillager.m_34391_(villager.m_35517_().m_262795_(NbtOps.f_128958_));
              zombievillager.m_34411_(villager.m_6616_().m_45388_());
              zombievillager.m_34373_(villager.m_7809_());
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
              if (!this.m_20067_()) {
--               p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
-+               p_219160_.m_5898_((Player) null, 1026, this.m_20183_(), 0);
+                p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
              }
- 
-             flag = false;
-          }
--      }
- 
-+      }
-       return flag;
-    }
- 
 @@ -464,7 +_,7 @@
     }
  

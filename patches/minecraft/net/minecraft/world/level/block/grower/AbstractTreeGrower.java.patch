@@ -8,18 +8,13 @@
     @Nullable
     protected abstract ResourceKey<ConfiguredFeature<?, ?>> m_213888_(RandomSource p_222910_, boolean p_222911_);
  
-@@ -23,10 +_,13 @@
+@@ -23,6 +_,9 @@
           return false;
        } else {
-          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.m_8891_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
+          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.m_9598_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222905_, p_222909_, p_222907_, holder);
 +         holder = event.getFeature();
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
           if (holder == null) {
              return false;
           } else {
--            ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();
-+            ConfiguredFeature<?, ?> configuredfeature = event.getFeature().m_203334_();
-             BlockState blockstate = p_222905_.m_6425_(p_222907_).m_76188_();
-             p_222905_.m_7731_(p_222907_, blockstate, 4);
-             if (configuredfeature.m_224953_(p_222905_, p_222906_, p_222909_, p_222907_)) {

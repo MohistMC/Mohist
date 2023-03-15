@@ -3,9 +3,9 @@
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.3)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.3)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.19.3--44.1.23-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.3.html)
+[![](https://img.shields.io/badge/Forge-1.19.4--45.0.1-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.4.html)
 [![](https://img.shields.io/badge/jdk-17.0.5+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.5.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -25,7 +25,7 @@
 Progress
 ------
 
-- [x] Rectify Forge([**1f44339d6**](https://github.com/MinecraftForge/MinecraftForge/commit/1f44339d6))  
+- [x] Rectify Forge([**3fffc1872**](https://github.com/MinecraftForge/MinecraftForge/commit/3fffc1872))  
 - [ ] Start patch
   * [x] Bukkit([**02ff2f89**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/02ff2f89))
   * [ ] CraftBukkit([**f150cfbd4**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f150cfbd4))
