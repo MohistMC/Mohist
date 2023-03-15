@@ -18,15 +18,7 @@
     });
     public static final MenuType<LoomMenu> f_39974_ = m_39988_("loom", LoomMenu::new);
     public static final MenuType<MerchantMenu> f_39975_ = m_39988_("merchant", MerchantMenu::new);
-@@ -47,13 +_,21 @@
-       return Registry.m_122961_(BuiltInRegistries.f_256818_, p_267295_, new MenuType<>(p_266945_, FeatureFlags.f_244280_.m_245769_(p_267055_)));
-    }
- 
--   private MenuType(MenuType.MenuSupplier<T> p_267054_, FeatureFlagSet p_266909_) {
-+   public MenuType(MenuType.MenuSupplier<T> p_267054_, FeatureFlagSet p_266909_) {
-       this.f_39981_ = p_267054_;
-       this.f_265869_ = p_266909_;
-    }
+@@ -54,6 +_,14 @@
  
     public T m_39985_(int p_39986_, Inventory p_39987_) {
        return this.f_39981_.m_39994_(p_39986_, p_39987_);

@@ -66,9 +66,8 @@
     public double f_19790_;
     public double f_19791_;
     public double f_19792_;
--   private float f_19793_;
 +   @Deprecated // Forge - see IForgeEntity#getStepHeight
-+   public float f_19793_;
+    public float f_19793_;
     public boolean f_19794_;
     protected final RandomSource f_19796_ = RandomSource.m_216327_();
     public int f_19797_;

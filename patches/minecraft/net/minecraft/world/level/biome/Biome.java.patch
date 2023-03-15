@@ -12,15 +12,6 @@
        }), BiomeGenerationSettings.f_47778_.forGetter((p_220548_) -> {
           return p_220548_.f_47438_;
        }), MobSpawnSettings.f_48327_.forGetter((p_220546_) -> {
-@@ -62,7 +_,7 @@
-    )
-    public static final PerlinSimplexNoise f_47433_ = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
-    private static final int f_151655_ = 1024;
--   private final Biome.ClimateSettings f_47437_;
-+   public final Biome.ClimateSettings f_47437_;
-    private final BiomeGenerationSettings f_47438_;
-    private final MobSpawnSettings f_47439_;
-    private final BiomeSpecialEffects f_47443_;
 @@ -82,6 +_,7 @@
        this.f_47438_ = p_220532_;
        this.f_47439_ = p_220533_;

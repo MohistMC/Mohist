@@ -16,7 +16,7 @@
  import net.minecraft.network.chat.PlayerChatMessage;
  import net.minecraft.network.chat.RemoteChatSession;
  import net.minecraft.network.chat.SignableCommand;
-@@ -179,16 +_,33 @@
+@@ -179,11 +_,28 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,12 +45,6 @@
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
     private static final int f_244471_ = 4096;
-    private static final Component f_244304_ = Component.m_237115_("multiplayer.disconnect.chat_validation_failed");
--   private final Connection f_9742_;
-+   public final Connection f_9742_;
-    private final MinecraftServer f_9745_;
-    public ServerPlayer f_9743_;
-    private int f_9746_;
 @@ -230,6 +_,28 @@
     private final MessageSignatureCache f_243718_ = MessageSignatureCache.m_246587_();
     private final FutureChain f_241681_;

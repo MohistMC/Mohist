@@ -58,42 +58,15 @@
           }
        }
  
-@@ -913,7 +_,7 @@
-       }
-    }
- 
--   private void m_264571_(PoseStack p_265358_, ResourceLocation p_265726_, float p_265119_) {
-+   protected void m_264571_(PoseStack p_265358_, ResourceLocation p_265726_, float p_265119_) {
-       RenderSystem.m_69465_();
-       RenderSystem.m_69458_(false);
-       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, p_265119_);
 @@ -924,7 +_,7 @@
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
     }
  
--   private void m_264541_(PoseStack p_265563_, float p_265127_) {
+-   public void m_264541_(PoseStack p_265563_, float p_265127_) {
 +   protected void m_264541_(PoseStack p_265563_, float p_265127_) {
        RenderSystem.m_69465_();
        RenderSystem.m_69458_(false);
        float f = (float)Math.min(this.f_92977_, this.f_92978_);
-@@ -954,7 +_,7 @@
-       }
-    }
- 
--   private void m_264148_(PoseStack p_265650_, Entity p_265294_) {
-+   public void m_264148_(PoseStack p_265650_, Entity p_265294_) {
-       WorldBorder worldborder = this.f_92986_.f_91073_.m_6857_();
-       float f = (float)worldborder.m_61925_(p_265294_);
-       double d0 = Math.min(worldborder.m_61966_() * (double)worldborder.m_61967_() * 1000.0D, Math.abs(worldborder.m_61961_() - worldborder.m_61959_()));
-@@ -985,7 +_,7 @@
-       RenderSystem.m_69453_();
-    }
- 
--   private void m_264464_(PoseStack p_265769_, float p_265121_) {
-+   protected void m_264464_(PoseStack p_265769_, float p_265121_) {
-       if (p_265121_ < 1.0F) {
-          p_265121_ *= p_265121_;
-          p_265121_ *= p_265121_;
 @@ -1054,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {

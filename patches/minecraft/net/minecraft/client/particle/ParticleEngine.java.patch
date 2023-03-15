@@ -14,7 +14,7 @@
     private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
     private final TextureAtlas f_107296_;
-@@ -191,11 +_,15 @@
+@@ -191,10 +_,14 @@
        this.m_107378_(ParticleTypes.f_235901_, ShriekParticle.Provider::new);
     }
  
@@ -25,13 +25,11 @@
 +      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7981_(p_107382_), p_107383_);
     }
  
--   private <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
-+   public <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
+    public <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
        this.m_107378_(p_273423_, (p_272320_) -> {
           return (p_272323_, p_272324_, p_272325_, p_272326_, p_272327_, p_272328_, p_272329_, p_272330_) -> {
-             TextureSheetParticle texturesheetparticle = p_273134_.m_272232_(p_272323_, p_272324_, p_272325_, p_272326_, p_272327_, p_272328_, p_272329_, p_272330_);
 @@ -208,10 +_,12 @@
        });
     }
