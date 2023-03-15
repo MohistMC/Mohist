@@ -53,7 +53,7 @@
        }
  
        public void m_6596_() {
-@@ -86,8 +_,50 @@
+@@ -86,8 +_,51 @@
           return false;
        }
  
@@ -92,6 +92,7 @@
 +
 +      @Override
 +      public Location getLocation() {
++         if (f_58857_ == null) return null;
 +         return new Location(f_58857_.getWorld(), f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_());
 +      }
 +

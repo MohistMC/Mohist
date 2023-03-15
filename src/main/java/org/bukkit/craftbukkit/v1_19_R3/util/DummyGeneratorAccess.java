@@ -120,7 +120,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
 
     @Override
     public void gameEvent(GameEvent gameevent, Vec3 vec3d, GameEvent.Context gameevent_a) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Used by BlockComposter
     }
 
     @Override
