@@ -103,7 +103,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         getHandle().setHealth((float) health);
 
         if (health == 0) {
-            getHandle().die(DamageSource.GENERIC);
+            getHandle().die(getHandle().damageSources().generic());
         }
     }
 
@@ -263,12 +263,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void damage(double amount, org.bukkit.entity.Entity source) {
         Preconditions.checkState(!getHandle().generation, "Cannot damage entity during world generation");
-        DamageSource reason = DamageSource.GENERIC;
+        DamageSource reason = getHandle().damageSources().generic();
 
         if (source instanceof HumanEntity) {
-            reason = DamageSource.playerAttack(((CraftHumanEntity) source).getHandle());
+            reason = getHandle().damageSources().playerAttack(((CraftHumanEntity) source).getHandle());
         } else if (source instanceof LivingEntity) {
-            reason = DamageSource.mobAttack(((CraftLivingEntity) source).getHandle());
+            reason = getHandle().damageSources().mobAttack(((CraftLivingEntity) source).getHandle());
         }
 
         entity.hurt(reason, (float) amount);
@@ -671,7 +671,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public Sound getHurtSound() {
-        SoundEvent sound = getHandle().getHurtSound0(DamageSource.GENERIC);
+        SoundEvent sound = getHandle().getHurtSound0(getHandle().damageSources().generic());
         return (sound != null) ? CraftSound.getBukkit(sound) : null;
     }
 

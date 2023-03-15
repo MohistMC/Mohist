@@ -114,7 +114,7 @@ public class CraftChunk implements Chunk {
     public Block getBlock(int x, int y, int z) {
         validateChunkCoordinates(getHandle().getMinBuildHeight(), getHandle().getMaxBuildHeight(), x, y, z);
 
-        return new CraftBlock(worldServer, new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
+        return new CraftBlock(worldServer, BlockPos.containing((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

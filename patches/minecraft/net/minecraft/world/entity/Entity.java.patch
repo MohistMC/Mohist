@@ -407,7 +407,7 @@
 @@ -736,10 +_,10 @@
        int j = Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_);
        int k = Mth.m_14107_(this.f_19825_.f_82481_);
-       BlockPos blockpos = new BlockPos(i, j, k);
+       BlockPos blockpos = BlockPos.containing(i, j, k);
 -      if (this.f_19853_.m_8055_(blockpos).m_60795_()) {
 +      if (this.f_19853_.m_46859_(blockpos)) {
           BlockPos blockpos1 = blockpos.m_7495_();
@@ -453,7 +453,7 @@
 +
     protected void m_20101_() {
        AABB aabb = this.m_20191_();
-       BlockPos blockpos = new BlockPos(aabb.f_82288_ + 1.0E-7D, aabb.f_82289_ + 1.0E-7D, aabb.f_82290_ + 1.0E-7D);
+       BlockPos blockpos = BlockPos.containing(aabb.f_82288_ + 1.0E-7D, aabb.f_82289_ + 1.0E-7D, aabb.f_82290_ + 1.0E-7D);
 @@ -943,7 +_,7 @@
        BlockState blockstate = this.f_19853_.m_8055_(p_20135_.m_7494_());
        boolean flag = blockstate.m_204336_(BlockTags.f_144271_);
@@ -519,7 +519,7 @@
     protected void m_20076_() {
 @@ -1174,19 +_,23 @@
        int k = Mth.m_14107_(this.m_20189_());
-       BlockPos blockpos = new BlockPos(i, j, k);
+       BlockPos blockpos = BlockPos.containing(i, j, k);
        BlockState blockstate = this.f_19853_.m_8055_(blockpos);
 +      if(!blockstate.addRunningEffects(f_19853_, blockpos, this))
        if (blockstate.m_60799_() != RenderShape.INVISIBLE) {

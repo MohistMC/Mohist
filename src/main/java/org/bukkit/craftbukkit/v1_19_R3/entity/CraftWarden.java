@@ -74,7 +74,7 @@ public class CraftWarden extends CraftMonster implements org.bukkit.entity.Warde
     public void setDisturbanceLocation(Location location) {
         Preconditions.checkArgument(location != null, "Location cannot be null");
 
-        WardenAi.setDisturbanceLocation(getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        WardenAi.setDisturbanceLocation(getHandle(), BlockPos.containing(location.getX(), location.getY(), location.getZ()));
     }
 
     @Override

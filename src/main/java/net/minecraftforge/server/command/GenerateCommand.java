@@ -44,7 +44,7 @@ class GenerateCommand
 
     private static int execute(CommandSourceStack source, BlockPos pos, int count, ServerLevel dim, int interval) throws CommandRuntimeException
     {
-        BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
+        BlockPos chunkpos = BlockPos.containing(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
         source.sendSuccess(worker.getStartMessage(source), true);

@@ -25,6 +25,7 @@ import io.netty.buffer.Unpooled;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -219,6 +220,7 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
@@ -241,7 +243,7 @@ public final class CraftServer implements Server {
     private final Map<Class<?>, org.bukkit.Registry<?>> registries = new HashMap<>();
     private YamlConfiguration configuration;
     private YamlConfiguration commandsConfiguration;
-    private final Yaml yaml = new Yaml(new SafeConstructor());
+    private final Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
@@ -1178,6 +1180,10 @@ public final class CraftServer implements Server {
                 toAdd = CraftStonecuttingRecipe.fromBukkitRecipe((StonecuttingRecipe) recipe);
             } else if (recipe instanceof SmithingRecipe) {
                 toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
+            } else if (recipe instanceof SmithingTransformRecipe) {
+                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingTransformRecipe) recipe);
+            } else if (recipe instanceof SmithingTrimRecipe) {
+                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingTrimRecipe) recipe);
             } else if (recipe instanceof ComplexRecipe) {
                 throw new UnsupportedOperationException("Cannot add custom complex recipe");
             } else {
@@ -1259,7 +1265,7 @@ public final class CraftServer implements Server {
         if (recipe.isPresent()) {
             CraftingRecipe recipeCrafting = recipe.get();
             if (craftResult.setRecipeUsed(craftWorld.getHandle(), craftPlayer.getHandle(), recipeCrafting)) {
-                itemstack = recipeCrafting.assemble(inventoryCrafting);
+                itemstack = recipeCrafting.assemble(inventoryCrafting, craftWorld.getHandle().registryAccess());
             }
         }
 
@@ -1492,7 +1498,7 @@ public final class CraftServer implements Server {
 
         ServerLevel worldServer = ((CraftWorld) world).getHandle();
         Location structureLocation = world.locateNearestStructure(location, structureType, radius, findUnexplored);
-        BlockPos structurePosition = new BlockPos(structureLocation.getBlockX(), structureLocation.getBlockY(), structureLocation.getBlockZ());
+        BlockPos structurePosition = BlockPos.containing(structureLocation.getBlockX(), structureLocation.getBlockY(), structureLocation.getBlockZ());
 
         // Create map with trackPlayer = true, unlimitedTracking = true
         net.minecraft.world.item.ItemStack stack = MapItem.create(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
@@ -1978,14 +1984,14 @@ public final class CraftServer implements Server {
     }
 
     static CraftIconCache loadServerIcon0(BufferedImage image) throws Exception {
-        ByteBuf bytebuf = Unpooled.buffer();
 
         Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
         Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
-        ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
-        ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
 
-        return new CraftIconCache("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
+        ByteArrayOutputStream bytebuf = new ByteArrayOutputStream();
+        ImageIO.write(image, "PNG", bytebuf);
+
+        return new CraftIconCache(bytebuf.toByteArray());
     }
 
     @Override

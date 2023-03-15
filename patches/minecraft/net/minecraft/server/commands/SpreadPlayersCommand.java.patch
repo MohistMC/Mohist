@@ -22,7 +22,7 @@
 @@ -268,7 +_,7 @@
  
        public boolean m_138773_(BlockGetter p_138774_, int p_138775_) {
-          BlockPos blockpos = new BlockPos(this.f_138749_, (double)(this.m_138758_(p_138774_, p_138775_) - 1), this.f_138750_);
+          BlockPos blockpos = BlockPos.containing(this.f_138749_, (double)(this.m_138758_(p_138774_, p_138775_) - 1), this.f_138750_);
 -         BlockState blockstate = p_138774_.m_8055_(blockpos);
 +         BlockState blockstate = getBlockState(p_138774_, blockpos); // CraftBukkit p_138774_.getBlockState(blockpos);
           Material material = blockstate.m_60767_();

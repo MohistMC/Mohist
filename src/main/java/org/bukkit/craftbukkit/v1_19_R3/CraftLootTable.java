@@ -90,7 +90,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
             if (context.getLootedEntity() != null) {
                 Entity nmsLootedEntity = ((CraftEntity) context.getLootedEntity()).getHandle();
                 setMaybe(builder, LootContextParams.THIS_ENTITY, nmsLootedEntity);
-                setMaybe(builder, LootContextParams.DAMAGE_SOURCE, DamageSource.GENERIC);
+                setMaybe(builder, LootContextParams.DAMAGE_SOURCE, handle.damageSources().generic());
                 setMaybe(builder, LootContextParams.ORIGIN, nmsLootedEntity.position());
             }
 
@@ -98,7 +98,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
                 net.minecraft.world.entity.player.Player nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
                 setMaybe(builder, LootContextParams.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
-                setMaybe(builder, LootContextParams.DAMAGE_SOURCE, DamageSource.playerAttack(nmsKiller));
+                setMaybe(builder, LootContextParams.DAMAGE_SOURCE, handle.damageSources().playerAttack(nmsKiller));
                 setMaybe(builder, LootContextParams.LAST_DAMAGE_PLAYER, nmsKiller); // SPIGOT-5603 - Set minecraft:killed_by_player
                 setMaybe(builder, LootContextParams.TOOL, nmsKiller.getUseItem()); // SPIGOT-6925 - Set minecraft:match_tool
             }

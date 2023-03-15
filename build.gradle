@@ -25,10 +25,10 @@ init() //Init all our extension methods!
 ext {
     JAR_SIGNER = null
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.19.3'
-    MC_VERSION = '1.19.3'
+    MAPPING_VERSION = '1.19.4'
+    MC_VERSION = '1.19.4'
     MC_NEXT_VERSION = '1.20'
-    MCP_VERSION = '20221207.122022'
+    MCP_VERSION = '20230314.122934'
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -237,7 +237,6 @@ def sharedDeps = {
     installer 'io.netty:netty-transport-native-epoll:4.1.89.Final'
     installer 'io.netty:netty-transport-native-unix-common:4.1.89.Final'
 }
-
 
 def sharedFmlonlyForge = { Project prj ->
     ['Client', 'Server', 'Joined'].each { side ->
@@ -513,6 +512,11 @@ project(':forge') {
         }
         moduleonly
         api.extendsFrom(installer)
+    }
+
+    task downloadJars(type: Copy) {
+        from configurations.installer
+        into 'libraries'
     }
 
     dependencies {

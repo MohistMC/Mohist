@@ -163,7 +163,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         validateChunkCoordinates(x, y, z);
 
         PalettedContainerRO<Holder<net.minecraft.world.level.biome.Biome>> biome = this.biome[getSectionIndex(y >> 2)];
-        return biome.get(x >> 2, (y & 0xF) >> 2, z >> 2).value().getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
+        return biome.get(x >> 2, (y & 0xF) >> 2, z >> 2).value().getTemperature(BlockPos.containing((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

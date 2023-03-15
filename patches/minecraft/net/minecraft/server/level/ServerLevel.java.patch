@@ -48,7 +48,7 @@
 +import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-    public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
+    public static final BlockPos f_8562_ = BlockPos.containing(100, 50, 0);
 @@ -170,7 +_,7 @@
     private final MinecraftServer f_8548_;
     public final ServerLevelData f_8549_;

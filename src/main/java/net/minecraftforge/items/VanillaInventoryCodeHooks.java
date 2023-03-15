@@ -235,7 +235,7 @@ public class VanillaInventoryCodeHooks
         int i = Mth.floor(x);
         int j = Mth.floor(y);
         int k = Mth.floor(z);
-        BlockPos blockpos = new BlockPos(i, j, k);
+        BlockPos blockpos = BlockPos.containing(i, j, k);
         net.minecraft.world.level.block.state.BlockState state = worldIn.getBlockState(blockpos);
 
         if (state.hasBlockEntity())

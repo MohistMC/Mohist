@@ -149,7 +149,7 @@ public final class CraftChunkData implements ChunkGenerator.ChunkData {
         }
 
         ChunkAccess access = getHandle();
-        return access.getBlockState(new BlockPos(access.getPos().getMinBlockX() + x, y, access.getPos().getMinBlockZ() + z));
+        return access.getBlockState(BlockPos.containing(access.getPos().getMinBlockX() + x, y, access.getPos().getMinBlockZ() + z));
     }
 
     @Override
@@ -163,7 +163,7 @@ public final class CraftChunkData implements ChunkGenerator.ChunkData {
         }
 
         ChunkAccess access = getHandle();
-        BlockPos blockPosition = new BlockPos(access.getPos().getMinBlockX() + x, y, access.getPos().getMinBlockZ() + z);
+        BlockPos blockPosition = BlockPos.containing(access.getPos().getMinBlockX() + x, y, access.getPos().getMinBlockZ() + z);
         net.minecraft.world.level.block.state.BlockState oldBlockData = access.setBlockState(blockPosition, type, false);
 
         if (type.hasBlockEntity()) {

@@ -237,7 +237,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public int getDataVersion() {
-        return SharedConstants.getCurrentVersion().getWorldVersion();
+        return SharedConstants.getCurrentVersion().getDataVersion().getVersion();
     }
 
     @Override

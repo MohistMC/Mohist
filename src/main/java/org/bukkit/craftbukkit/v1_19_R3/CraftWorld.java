@@ -155,7 +155,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Block getBlockAt(int x, int y, int z) {
-        return CraftBlock.at(world, new BlockPos(x, y, z));
+        return CraftBlock.at(world, BlockPos.containing(x, y, z));
     }
 
     @Override
@@ -181,7 +181,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     public boolean setSpawnLocation(int x, int y, int z, float angle) {
         try {
             Location previousLocation = getSpawnLocation();
-            world.levelData.setSpawn(new BlockPos(x, y, z), angle);
+            world.levelData.setSpawn(BlockPos.containing(x, y, z), angle);
 
             // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
@@ -753,7 +753,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setBiome(int x, int y, int z, Holder<net.minecraft.world.level.biome.Biome> bb) {
-        BlockPos pos = new BlockPos(x, 0, z);
+        BlockPos pos = BlockPos.containing(x, 0, z);
         if (this.world.hasChunkAt(pos)) {
             net.minecraft.world.level.chunk.LevelChunk chunk = this.world.getChunkAt(pos);
 
@@ -772,7 +772,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public double getTemperature(int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
+        BlockPos pos = BlockPos.containing(x, y, z);
         return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getTemperature(pos);
     }
 
@@ -783,7 +783,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
-        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getDownfall();
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().climateSettings.downfall();
     }
 
     @Override
@@ -1118,7 +1118,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.notNull(effect, "Effect cannot be null");
         Validate.notNull(location.getWorld(), "World cannot be null");
         int packetData = effect.getId();
-        ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), data, false);
+        ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()), data, false);
         int distance;
         radius *= radius;
 
@@ -1145,7 +1145,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.notNull(material, "Material cannot be null");
         Validate.isTrue(material.isBlock(), "Material must be a block");
 
-        FallingBlockEntity entity = FallingBlockEntity.fall(world, new BlockPos(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
+        FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 
@@ -1154,7 +1154,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.notNull(location, "Location cannot be null");
         Validate.notNull(data, "BlockData cannot be null");
 
-        FallingBlockEntity entity = FallingBlockEntity.fall(world, new BlockPos(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
+        FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 
@@ -1848,7 +1848,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
 
     public StructureSearchResult locateNearestStructure(Location origin, List<Structure> structures, int radius, boolean findUnexplored) {
-        BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
+        BlockPos originPos = BlockPos.containing(origin.getX(), origin.getY(), origin.getZ());
         List<Holder<net.minecraft.world.level.levelgen.structure.Structure>> holders = new ArrayList<>();
 
         for (Structure structure : structures) {
@@ -1910,7 +1910,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.isTrue(radius >= 0, "Radius cannot be negative");
 
         net.minecraft.world.entity.raid.Raids persistentRaid = world.getRaids();
-        net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), radius * radius);
+        net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()), radius * radius);
         return (raid == null) ? null : new CraftRaid(raid);
     }
 

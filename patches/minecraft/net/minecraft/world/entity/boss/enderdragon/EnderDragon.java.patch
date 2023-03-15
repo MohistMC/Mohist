@@ -28,7 +28,7 @@
        if (this.f_19853_.f_46443_) {
           this.m_21153_(this.m_21223_());
 @@ -419,7 +_,7 @@
-                BlockPos blockpos = new BlockPos(k1, l1, i2);
+                BlockPos blockpos = BlockPos.containing(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
                 if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
 -                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {

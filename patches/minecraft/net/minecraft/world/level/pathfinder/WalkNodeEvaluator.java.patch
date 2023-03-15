@@ -8,7 +8,7 @@
 +         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.getStepHeight()));
        }
  
-       double d0 = this.m_142213_(new BlockPos(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
+       double d0 = this.m_142213_(BlockPos.containing(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
 @@ -459,6 +_,11 @@
                 if (l != 0 || j1 != 0) {
                    p_77609_.m_122178_(i + l, j + i1, k + j1);

@@ -216,7 +216,7 @@ public enum CraftParticle {
             PositionSource source;
             if (vibration.getDestination() instanceof Vibration.Destination.BlockDestination) {
                 Location destination = ((Vibration.Destination.BlockDestination) vibration.getDestination()).getLocation();
-                source = new BlockPositionSource(new BlockPos(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ()));
+                source = new BlockPositionSource(BlockPos.containing(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ()));
             } else if (vibration.getDestination() instanceof Vibration.Destination.EntityDestination) {
                 Entity destination = ((CraftEntity) ((Vibration.Destination.EntityDestination) vibration.getDestination()).getEntity()).getHandle();
                 source = new EntityPositionSource(destination, destination.getEyeHeight());

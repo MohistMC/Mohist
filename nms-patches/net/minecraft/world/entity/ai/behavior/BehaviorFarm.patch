@@ -1,0 +1,75 @@
+--- a/net/minecraft/world/entity/ai/behavior/BehaviorFarm.java
++++ b/net/minecraft/world/entity/ai/behavior/BehaviorFarm.java
+@@ -80,8 +80,8 @@
+ 
+     protected void start(WorldServer worldserver, EntityVillager entityvillager, long i) {
+         if (i > this.nextOkStartTime && this.aboveFarmlandPos != null) {
+-            entityvillager.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, (Object) (new BehaviorTarget(this.aboveFarmlandPos)));
+-            entityvillager.getBrain().setMemory(MemoryModuleType.WALK_TARGET, (Object) (new MemoryTarget(new BehaviorTarget(this.aboveFarmlandPos), 0.5F, 1)));
++            entityvillager.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, (new BehaviorTarget(this.aboveFarmlandPos))); // CraftBukkit - decompile error
++            entityvillager.getBrain().setMemory(MemoryModuleType.WALK_TARGET, (new MemoryTarget(new BehaviorTarget(this.aboveFarmlandPos), 0.5F, 1))); // CraftBukkit - decompile error
+         }
+ 
+     }
+@@ -101,7 +101,11 @@
+                 Block block1 = worldserver.getBlockState(this.aboveFarmlandPos.below()).getBlock();
+ 
+                 if (block instanceof BlockCrops && ((BlockCrops) block).isMaxAge(iblockdata)) {
+-                    worldserver.destroyBlock(this.aboveFarmlandPos, true, entityvillager);
++                    // CraftBukkit start
++                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entityvillager, this.aboveFarmlandPos, Blocks.AIR.defaultBlockState()).isCancelled()) {
++                        worldserver.destroyBlock(this.aboveFarmlandPos, true, entityvillager);
++                    }
++                    // CraftBukkit end
+                 }
+ 
+                 if (iblockdata.isAir() && block1 instanceof BlockSoil && entityvillager.hasFarmSeeds()) {
+@@ -114,27 +118,30 @@
+                         if (!itemstack.isEmpty()) {
+                             IBlockData iblockdata1;
+ 
++                            // CraftBukkit start
+                             if (itemstack.is(Items.WHEAT_SEEDS)) {
+                                 iblockdata1 = Blocks.WHEAT.defaultBlockState();
+-                                worldserver.setBlockAndUpdate(this.aboveFarmlandPos, iblockdata1);
+-                                worldserver.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.a.of(entityvillager, iblockdata1));
+                                 flag = true;
+                             } else if (itemstack.is(Items.POTATO)) {
+                                 iblockdata1 = Blocks.POTATOES.defaultBlockState();
+-                                worldserver.setBlockAndUpdate(this.aboveFarmlandPos, iblockdata1);
+-                                worldserver.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.a.of(entityvillager, iblockdata1));
+                                 flag = true;
+                             } else if (itemstack.is(Items.CARROT)) {
+                                 iblockdata1 = Blocks.CARROTS.defaultBlockState();
+-                                worldserver.setBlockAndUpdate(this.aboveFarmlandPos, iblockdata1);
+-                                worldserver.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.a.of(entityvillager, iblockdata1));
+                                 flag = true;
+                             } else if (itemstack.is(Items.BEETROOT_SEEDS)) {
+                                 iblockdata1 = Blocks.BEETROOTS.defaultBlockState();
++                                flag = true;
++                            } else {
++                                iblockdata1 = null;
++                            }
++
++                            if (iblockdata1 != null && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(entityvillager, this.aboveFarmlandPos, iblockdata1).isCancelled()) {
+                                 worldserver.setBlockAndUpdate(this.aboveFarmlandPos, iblockdata1);
+                                 worldserver.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.a.of(entityvillager, iblockdata1));
+-                                flag = true;
++                            } else {
++                                flag = false;
+                             }
++                            // CraftBukkit end
+                         }
+ 
+                         if (flag) {
+@@ -153,8 +160,8 @@
+                     this.aboveFarmlandPos = this.getValidFarmland(worldserver);
+                     if (this.aboveFarmlandPos != null) {
+                         this.nextOkStartTime = i + 20L;
+-                        entityvillager.getBrain().setMemory(MemoryModuleType.WALK_TARGET, (Object) (new MemoryTarget(new BehaviorTarget(this.aboveFarmlandPos), 0.5F, 1)));
+-                        entityvillager.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, (Object) (new BehaviorTarget(this.aboveFarmlandPos)));
++                        entityvillager.getBrain().setMemory(MemoryModuleType.WALK_TARGET, (new MemoryTarget(new BehaviorTarget(this.aboveFarmlandPos), 0.5F, 1))); // CraftBukkit - decompile error
++                        entityvillager.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, (new BehaviorTarget(this.aboveFarmlandPos))); // CraftBukkit - decompile error
+                     }
+                 }
+             }

@@ -52,6 +52,7 @@ import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Blaze;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Camel;
 import org.bukkit.entity.Cat;
@@ -98,6 +99,7 @@ import org.bukkit.entity.Husk;
 import org.bukkit.entity.Illager;
 import org.bukkit.entity.Illusioner;
 import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.LightningStrike;
@@ -146,6 +148,7 @@ import org.bukkit.entity.Strider;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tadpole;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.entity.TippedArrow;
@@ -219,7 +222,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public BlockState getBlockState(int x, int y, int z) {
-        return CraftBlock.at(getHandle(), new BlockPos(x, y, z)).getState();
+        return CraftBlock.at(getHandle(), BlockPos.containing(x, y, z)).getState();
     }
 
     @Override
@@ -243,7 +246,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
     }
 
     private net.minecraft.world.level.block.state.BlockState getData(int x, int y, int z) {
-        return getHandle().getBlockState(new BlockPos(x, y, z));
+        return getHandle().getBlockState(BlockPos.containing(x, y, z));
     }
 
     @Override
@@ -254,7 +257,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
     @Override
     public void setBlockData(int x, int y, int z, BlockData blockData) {
         WorldGenLevel world = getHandle();
-        BlockPos pos = new BlockPos(x, y, z);
+        BlockPos pos = BlockPos.containing(x, y, z);
         net.minecraft.world.level.block.state.BlockState old = getHandle().getBlockState(pos);
 
         CraftBlock.setTypeAndData(world, pos, old, ((CraftBlockData) blockData).getState(), true);
@@ -272,7 +275,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public boolean generateTree(Location location, Random random, TreeType treeType) {
-        BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos pos = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         return generateTree(getHandle(), getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
     }
 
@@ -286,7 +289,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     // @Override
     public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<BlockState> predicate) {
-        BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos pos = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
         boolean result = generateTree(populator, getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
         populator.refreshTiles();
@@ -365,6 +368,9 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 break;
             case TALL_MANGROVE:
                 gen = TreeFeatures.TALL_MANGROVE;
+                break;
+            case CHERRY:
+                gen = TreeFeatures.CHERRY;
                 break;
             case TREE:
             default:
@@ -549,7 +555,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
             }
             entity.moveTo(x, y, z, yaw, pitch);
         } else if (FallingBlock.class.isAssignableFrom(clazz)) {
-            BlockPos pos = new BlockPos(x, y, z);
+            BlockPos pos = BlockPos.containing(x, y, z);
             entity = FallingBlockEntity.fall(world, pos, getHandle().getBlockState(pos));
         } else if (Projectile.class.isAssignableFrom(clazz)) {
             if (Snowball.class.isAssignableFrom(clazz)) {
@@ -835,7 +841,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         } else if (Hanging.class.isAssignableFrom(clazz)) {
             if (LeashHitch.class.isAssignableFrom(clazz)) {
                 // SPIGOT-5732: LeashHitch has no direction and is always centered at a block
-                entity = new LeashFenceKnotEntity(world, new BlockPos(x, y, z));
+                entity = new LeashFenceKnotEntity(world, BlockPos.containing(x, y, z));
             } else {
                 BlockFace face = BlockFace.SELF;
                 BlockFace[] faces = new BlockFace[]{BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH};
@@ -849,7 +855,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     faces = new BlockFace[]{BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN};
                 }
 
-                final BlockPos pos = new BlockPos(x, y, z);
+                final BlockPos pos = BlockPos.containing(x, y, z);
                 for (BlockFace dir : faces) {
                     net.minecraft.world.level.block.state.BlockState nmsBlock = getHandle().getBlockState(pos.relative(CraftBlock.blockFaceToNotch(dir)));
                     if (nmsBlock.getMaterial().isSolid() || net.minecraft.world.level.block.DiodeBlock.isDiode(nmsBlock)) {
@@ -890,9 +896,9 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                     }
                 } else if (ItemFrame.class.isAssignableFrom(clazz)) {
                     if (GlowItemFrame.class.isAssignableFrom(clazz)) {
-                        entity = new net.minecraft.world.entity.decoration.GlowItemFrame(world, new BlockPos(x, y, z), dir);
+                        entity = new net.minecraft.world.entity.decoration.GlowItemFrame(world, BlockPos.containing(x, y, z), dir);
                     } else {
-                        entity = new net.minecraft.world.entity.decoration.ItemFrame(world, new BlockPos(x, y, z), dir);
+                        entity = new net.minecraft.world.entity.decoration.ItemFrame(world, BlockPos.containing(x, y, z), dir);
                     }
                 }
             }
@@ -910,6 +916,21 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         } else if (Marker.class.isAssignableFrom(clazz)) {
             entity = net.minecraft.world.entity.EntityType.MARKER.create(world);
             entity.setPos(x, y, z);
+        } else if (Interaction.class.isAssignableFrom(clazz)) {
+            entity = net.minecraft.world.entity.EntityType.INTERACTION.create(world);
+            entity.setPos(x, y, z);
+        } else if (org.bukkit.entity.Display.class.isAssignableFrom(clazz)) {
+            if (BlockDisplay.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.world.entity.EntityType.BLOCK_DISPLAY.create(world);
+            } else if (ItemDisplay.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.world.entity.EntityType.ITEM_DISPLAY.create(world);
+            } else if (TextDisplay.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.world.entity.EntityType.TEXT_DISPLAY.create(world);
+            }
+
+            if (entity != null) {
+                entity.setPos(x, y, z);
+            }
         }
 
         if (entity != null) {

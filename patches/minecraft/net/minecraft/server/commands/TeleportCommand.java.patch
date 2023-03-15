@@ -7,6 +7,6 @@
 +      net.minecraftforge.event.entity.EntityTeleportEvent.TeleportCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportCommand(p_139016_, p_139018_, p_139019_, p_139020_);
 +      if (event.isCanceled()) return;
 +      p_139018_ = event.getTargetX(); p_139019_ = event.getTargetY(); p_139020_ = event.getTargetZ();
-       BlockPos blockpos = new BlockPos(p_139018_, p_139019_, p_139020_);
+       BlockPos blockpos = BlockPos.containing(p_139018_, p_139019_, p_139020_);
        if (!Level.m_46741_(blockpos)) {
           throw f_139006_.create();

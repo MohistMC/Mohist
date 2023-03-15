@@ -50,7 +50,7 @@ public class CraftVex extends CraftMonster implements Vex {
             getHandle().setBoundOrigin(null);
         } else {
             Preconditions.checkArgument(getWorld().equals(location.getWorld()), "The bound world cannot be different to the entity's world.");
-            getHandle().setBoundOrigin(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            getHandle().setBoundOrigin(BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }
     }
 

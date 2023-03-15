@@ -1,0 +1,101 @@
+--- a/net/minecraft/network/PacketDataSerializer.java
++++ b/net/minecraft/network/PacketDataSerializer.java
+@@ -81,6 +81,8 @@
+ import org.joml.Quaternionf;
+ import org.joml.Vector3f;
+ 
++import org.bukkit.craftbukkit.inventory.CraftItemStack; // CraftBukkit
++
+ public class PacketDataSerializer extends ByteBuf {
+ 
+     private static final int MAX_VARINT_SIZE = 5;
+@@ -220,7 +222,7 @@
+ 
+     public <T, C extends Collection<T>> C readCollection(IntFunction<C> intfunction, PacketDataSerializer.a<T> packetdataserializer_a) {
+         int i = this.readVarInt();
+-        C c0 = (Collection) intfunction.apply(i);
++        C c0 = intfunction.apply(i); // CraftBukkit - decompile error
+ 
+         for (int j = 0; j < i; ++j) {
+             c0.add(packetdataserializer_a.apply(this));
+@@ -231,7 +233,7 @@
+ 
+     public <T> void writeCollection(Collection<T> collection, PacketDataSerializer.b<T> packetdataserializer_b) {
+         this.writeVarInt(collection.size());
+-        Iterator iterator = collection.iterator();
++        Iterator<T> iterator = collection.iterator(); // CraftBukkit - decompile error
+ 
+         while (iterator.hasNext()) {
+             T t0 = iterator.next();
+@@ -258,12 +260,12 @@
+ 
+     public void writeIntIdList(IntList intlist) {
+         this.writeVarInt(intlist.size());
+-        intlist.forEach(this::writeVarInt);
++        intlist.forEach((java.util.function.IntConsumer) this::writeVarInt); // CraftBukkit - decompile error
+     }
+ 
+     public <K, V, M extends Map<K, V>> M readMap(IntFunction<M> intfunction, PacketDataSerializer.a<K> packetdataserializer_a, PacketDataSerializer.a<V> packetdataserializer_a1) {
+         int i = this.readVarInt();
+-        M m0 = (Map) intfunction.apply(i);
++        M m0 = intfunction.apply(i); // CraftBukkit - decompile error
+ 
+         for (int j = 0; j < i; ++j) {
+             K k0 = packetdataserializer_a.apply(this);
+@@ -297,7 +299,7 @@
+     }
+ 
+     public <E extends Enum<E>> void writeEnumSet(EnumSet<E> enumset, Class<E> oclass) {
+-        E[] ae = (Enum[]) oclass.getEnumConstants();
++        E[] ae = oclass.getEnumConstants(); // CraftBukkit - decompile error
+         BitSet bitset = new BitSet(ae.length);
+ 
+         for (int i = 0; i < ae.length; ++i) {
+@@ -308,7 +310,7 @@
+     }
+ 
+     public <E extends Enum<E>> EnumSet<E> readEnumSet(Class<E> oclass) {
+-        E[] ae = (Enum[]) oclass.getEnumConstants();
++        E[] ae = oclass.getEnumConstants(); // CraftBukkit - decompile error
+         BitSet bitset = this.readFixedBitSet(ae.length);
+         EnumSet<E> enumset = EnumSet.noneOf(oclass);
+ 
+@@ -545,7 +547,7 @@
+     }
+ 
+     public <T extends Enum<T>> T readEnum(Class<T> oclass) {
+-        return ((Enum[]) oclass.getEnumConstants())[this.readVarInt()];
++        return ((T[]) oclass.getEnumConstants())[this.readVarInt()]; // CraftBukkit - fix decompile error
+     }
+ 
+     public PacketDataSerializer writeEnum(Enum<?> oenum) {
+@@ -622,7 +624,7 @@
+         } else {
+             try {
+                 NBTCompressedStreamTools.write(nbttagcompound, (DataOutput) (new ByteBufOutputStream(this)));
+-            } catch (IOException ioexception) {
++            } catch (Exception ioexception) { // CraftBukkit - IOException -> Exception
+                 throw new EncoderException(ioexception);
+             }
+         }
+@@ -659,7 +661,7 @@
+     }
+ 
+     public PacketDataSerializer writeItem(ItemStack itemstack) {
+-        if (itemstack.isEmpty()) {
++        if (itemstack.isEmpty() || itemstack.getItem() == null) { // CraftBukkit - NPE fix itemstack.getItem()
+             this.writeBoolean(false);
+         } else {
+             this.writeBoolean(true);
+@@ -688,6 +690,11 @@
+             ItemStack itemstack = new ItemStack(item, b0);
+ 
+             itemstack.setTag(this.readNbt());
++            // CraftBukkit start
++            if (itemstack.getTag() != null) {
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
++            }
++            // CraftBukkit end
+             return itemstack;
+         }
+     }

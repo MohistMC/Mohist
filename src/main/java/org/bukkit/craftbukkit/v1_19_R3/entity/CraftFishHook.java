@@ -68,7 +68,7 @@ public class CraftFishHook extends CraftProjectile implements FishHook {
         net.minecraft.world.entity.projectile.FishingHook hook = getHandle();
 
         if (this.biteChance == -1) {
-            if (hook.level.isRainingAt(new BlockPos(Math.floor(hook.getX()), Math.floor(hook.getY()) + 1, Math.floor(hook.getZ())))) {
+            if (hook.level.isRainingAt(BlockPos.containing(Math.floor(hook.getX()), Math.floor(hook.getY()) + 1, Math.floor(hook.getZ())))) {
                 return 1 / 300.0;
             }
             return 1 / 500.0;

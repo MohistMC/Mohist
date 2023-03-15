@@ -34,7 +34,7 @@ public class CraftEnderCrystal extends CraftEntity implements EnderCrystal {
         } else if (location.getWorld() != getWorld()) {
             throw new IllegalArgumentException("Cannot set beam target location to different world");
         } else {
-            getHandle().setBeamTarget(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            getHandle().setBeamTarget(BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }
     }
 

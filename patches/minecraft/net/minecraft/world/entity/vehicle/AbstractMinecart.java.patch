@@ -64,7 +64,7 @@
     protected Vec3 m_7643_(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
 @@ -301,9 +_,9 @@
  
-          BlockPos blockpos = new BlockPos(k, i, j);
+          BlockPos blockpos = BlockPos.containing(k, i, j);
           BlockState blockstate = this.f_19853_.m_8055_(blockpos);
 -         if (BaseRailBlock.m_49416_(blockstate)) {
 +         if (canUseRail() && BaseRailBlock.m_49416_(blockstate)) {
@@ -181,19 +181,19 @@
           if (d27 > 0.01D) {
 @@ -566,7 +_,7 @@
  
-       BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
+       BlockState blockstate = this.f_19853_.m_8055_(BlockPos.containing(i, j, k));
        if (BaseRailBlock.m_49416_(blockstate)) {
 -         RailShape railshape = blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_());
-+         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, new BlockPos(i, j, k), this);
++         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, BlockPos.containing(i, j, k), this);
           p_38098_ = (double)j;
           if (railshape.m_61745_()) {
              p_38098_ = (double)(j + 1);
 @@ -605,7 +_,7 @@
  
-       BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
+       BlockState blockstate = this.f_19853_.m_8055_(BlockPos.containing(i, j, k));
        if (BaseRailBlock.m_49416_(blockstate)) {
 -         RailShape railshape = blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_());
-+         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, new BlockPos(i, j, k), this);
++         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, BlockPos.containing(i, j, k), this);
           Pair<Vec3i, Vec3i> pair = m_38125_(railshape);
           Vec3i vec3i = pair.getFirst();
           Vec3i vec3i1 = pair.getSecond();

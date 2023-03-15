@@ -361,7 +361,7 @@ public class ForgeHooks
                 {
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
-                        BlockPos tmp = new BlockPos(x2, y2, z2);
+                        BlockPos tmp = BlockPos.containing(x2, y2, z2);
                         state = level.getBlockState(tmp);
                         if (state.isLadder(level, tmp, entity))
                         {

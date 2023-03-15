@@ -11,7 +11,7 @@
  public class FollowOwnerGoal extends Goal {
     public static final int f_148087_ = 12;
 @@ -117,7 +_,19 @@
-       } else if (!this.m_25307_(new BlockPos(p_25304_, p_25305_, p_25306_))) {
+       } else if (!this.m_25307_(BlockPos.containing(p_25304_, p_25305_, p_25306_))) {
           return false;
        } else {
 -         this.f_25283_.m_7678_((double)p_25304_ + 0.5D, (double)p_25305_, (double)p_25306_ + 0.5D, this.f_25283_.m_146908_(), this.f_25283_.m_146909_());

@@ -106,6 +106,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
             case OAK -> Type.OAK;
             case BIRCH -> Type.BIRCH;
             case ACACIA -> Type.ACACIA;
+            case CHERRY -> Type.CHERRY;
             case JUNGLE -> Type.JUNGLE;
             case SPRUCE -> Type.SPRUCE;
             case DARK_OAK -> Type.DARK_OAK;
@@ -120,6 +121,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
             case SPRUCE -> net.minecraft.world.entity.vehicle.Boat.Type.SPRUCE;
             case DARK_OAK -> net.minecraft.world.entity.vehicle.Boat.Type.DARK_OAK;
             case JUNGLE -> net.minecraft.world.entity.vehicle.Boat.Type.JUNGLE;
+            case CHERRY -> net.minecraft.world.entity.vehicle.Boat.Type.CHERRY;
             case ACACIA -> net.minecraft.world.entity.vehicle.Boat.Type.ACACIA;
             case BIRCH -> net.minecraft.world.entity.vehicle.Boat.Type.BIRCH;
             case OAK -> net.minecraft.world.entity.vehicle.Boat.Type.OAK;

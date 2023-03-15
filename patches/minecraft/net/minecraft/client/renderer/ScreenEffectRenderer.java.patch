@@ -60,5 +60,5 @@
 -      RenderSystem.m_157456_(0, f_110714_);
 +      RenderSystem.m_157456_(0, texture);
        BufferBuilder bufferbuilder = Tesselator.m_85913_().m_85915_();
-       BlockPos blockpos = new BlockPos(p_110726_.f_91074_.m_20185_(), p_110726_.f_91074_.m_20188_(), p_110726_.f_91074_.m_20189_());
+       BlockPos blockpos = BlockPos.containing(p_110726_.f_91074_.m_20185_(), p_110726_.f_91074_.m_20188_(), p_110726_.f_91074_.m_20189_());
        float f = LightTexture.m_234316_(p_110726_.f_91074_.f_19853_.m_6042_(), p_110726_.f_91074_.f_19853_.m_46803_(blockpos));

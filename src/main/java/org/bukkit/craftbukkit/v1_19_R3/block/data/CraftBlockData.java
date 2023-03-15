@@ -479,7 +479,9 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.CaveVinesBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftCaveVines::new);
         register(net.minecraft.world.level.block.CaveVinesPlantBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftCaveVinesPlant::new);
         register(net.minecraft.world.level.block.CeilingHangingSignBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftCeilingHangingSign::new);
+        register(net.minecraft.world.level.block.CherryLeavesBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftCherryLeaves::new);
         register(net.minecraft.world.level.block.ChiseledBookShelfBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftChiseledBookShelf::new);
+        register(net.minecraft.world.level.block.DecoratedPotBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftDecoratedPot::new);
         register(net.minecraft.world.level.block.GlowLichenBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftGlowLichen::new);
         register(net.minecraft.world.level.block.HangingRootsBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftHangingRoots::new);
         register(net.minecraft.world.level.block.InfestedRotatedPillarBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftInfestedRotatedPillar::new);
@@ -490,6 +492,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.MangrovePropaguleBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftMangrovePropagule::new);
         register(net.minecraft.world.level.block.MangroveRootsBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftMangroveRoots::new);
         register(net.minecraft.world.level.block.PiglinWallSkullBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftPiglinWallSkull::new);
+        register(net.minecraft.world.level.block.PinkPetalsBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftPinkPetals::new);
         register(net.minecraft.world.level.block.PointedDripstoneBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftPointedDripstone::new);
         register(net.minecraft.world.level.block.PowderSnowCauldronBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftPowderSnowCauldron::new);
         register(net.minecraft.world.level.block.SculkCatalystBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftSculkCatalyst::new);
@@ -497,7 +500,9 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.world.level.block.SculkShriekerBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftSculkShrieker::new);
         register(net.minecraft.world.level.block.SculkVeinBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftSculkVein::new);
         register(net.minecraft.world.level.block.SmallDripleafBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftSmallDripleaf::new);
+        register(net.minecraft.world.level.block.SuspiciousSandBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftSuspiciousSand::new);
         register(net.minecraft.world.level.block.TallSeagrassBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftTallSeagrass::new);
+        register(net.minecraft.world.level.block.TorchflowerCropBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftTorchflowerCrop::new);
         register(net.minecraft.world.level.block.WallHangingSignBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftWallHangingSign::new);
         register(net.minecraft.world.level.block.WeatheringCopperSlabBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftWeatheringCopperSlab::new);
         register(net.minecraft.world.level.block.WeatheringCopperStairBlock.class, org.bukkit.craftbukkit.v1_19_R3.block.impl.CraftWeatheringCopperStair::new);
@@ -600,7 +605,7 @@ public class CraftBlockData implements BlockData {
         CraftWorld world = (CraftWorld) location.getWorld();
         Preconditions.checkArgument(world != null, "location must not have a null world");
 
-        BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos position = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         return state.canSurvive(world.getHandle(), position);
     }
 

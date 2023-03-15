@@ -48,7 +48,7 @@
                 double d2 = vec3.m_82557_(vec33);
 -               if (flag && d2 > 9.0D) {
 +               if (false && flag && d2 > 9.0D) { //Forge: Always keep the entity result to allow for extended reach interactions.
-                   this.f_109059_.f_91077_ = BlockHitResult.m_82426_(vec33, Direction.m_122366_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_), new BlockPos(vec33));
+                   this.f_109059_.f_91077_ = BlockHitResult.m_82426_(vec33, Direction.m_122366_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_), BlockPos.containing(vec33));
                 } else if (d2 < d1 || this.f_109059_.f_91077_ == null) {
                    this.f_109059_.f_91077_ = entityhitresult;
 @@ -748,7 +_,7 @@

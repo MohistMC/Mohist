@@ -19,7 +19,7 @@
 @@ -20,6 +_,14 @@
     public void m_245905_(GameEvent p_251754_, Vec3 p_250613_, GameEvent.Context p_251777_) {
        int i = p_251754_.m_157827_();
-       BlockPos blockpos = new BlockPos(p_250613_);
+       BlockPos blockpos = BlockPos.containing(p_250613_);
 +      // CraftBukkit start
 +      GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_251754_))), new Location(f_243917_.getWorld(), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()), (p_251777_.f_223711_() == null) ? null : p_251777_.f_223711_().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
 +      f_243917_.getCraftServer().getPluginManager().callEvent(event);

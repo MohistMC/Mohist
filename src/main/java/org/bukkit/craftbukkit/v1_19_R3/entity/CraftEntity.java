@@ -29,6 +29,7 @@ import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.monster.Ghast;
@@ -165,6 +166,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     else if (entity instanceof Axolotl) { return new CraftAxolotl(server, (Axolotl) entity); }
                     else if (entity instanceof Goat) { return new CraftGoat(server, (Goat) entity); }
                     else if (entity instanceof Frog) { return new CraftFrog(server, (Frog) entity); }
+                    else if (entity instanceof Sniffer) { return new CraftSniffer(server, (Sniffer) entity); }
                     else  { return new MohistModsAnimals(server, (Animal) entity); }
                 }
                 // Monsters
@@ -319,6 +321,13 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.world.entity.projectile.EvokerFangs) { return new CraftEvokerFangs(server, (net.minecraft.world.entity.projectile.EvokerFangs) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.LlamaSpit) { return new CraftLlamaSpit(server, (net.minecraft.world.entity.projectile.LlamaSpit) entity); }
         else if (entity instanceof Marker) { return new CraftMarker(server, (Marker) entity); }
+        else if (entity instanceof Interaction) { return new CraftInteraction(server, (Interaction) entity); }
+        else if (entity instanceof Display) {
+            if (entity instanceof Display.BlockDisplay) { return new CraftBlockDisplay(server, (Display.BlockDisplay) entity); }
+            else if (entity instanceof Display.ItemDisplay) { return new CraftItemDisplay(server, (Display.ItemDisplay) entity); }
+            else if (entity instanceof Display.TextDisplay) { return new CraftTextDisplay(server, (Display.TextDisplay) entity); }
+            else { return new CraftDisplay(server, (Display) entity); }
+        }
         else if (entity instanceof Projectile) { return new MohistModsProjectileEntity(server, (Projectile) entity);
         } else  { return new MohistModsEntity(server, entity); }
         // CHECKSTYLE:ON
@@ -909,7 +918,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public boolean isInvulnerable() {
-        return getHandle().isInvulnerableTo(DamageSource.GENERIC);
+        return getHandle().isInvulnerableTo(getHandle().damageSources().generic());
     }
 
     @Override

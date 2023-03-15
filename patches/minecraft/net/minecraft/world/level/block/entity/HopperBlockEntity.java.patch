@@ -218,7 +218,7 @@
 +      // CraftBukkit start
 +      Container inventory = m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
 +
-+      BlockPos blockPosition = new BlockPos(p_155598_.m_6343_(), p_155598_.m_6358_(), p_155598_.m_6446_());
++      BlockPos blockPosition = BlockPos.containing(p_155598_.m_6343_(), p_155598_.m_6358_(), p_155598_.m_6446_());
 +      CraftBlock hopper = CraftBlock.at(p_155597_, blockPosition);
 +      CraftBlock container = CraftBlock.at(p_155597_, blockPosition.m_7494_());
 +      return runHopperInventorySearchEvent(inventory, hopper, container, HopperInventorySearchEvent.ContainerType.SOURCE);

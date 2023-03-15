@@ -155,9 +155,9 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
 
         // SPIGOT-1753: Capture light blocks, for light updates
         if (type.getLightEmission() > 0) { // PAIL rename getLightEmission
-            lights.add(new BlockPos(x, y, z));
+            lights.add(BlockPos.containing(x, y, z));
         } else {
-            lights.remove(new BlockPos(x, y, z));
+            lights.remove(BlockPos.containing(x, y, z));
         }
 
         if (type.hasBlockEntity()) {
@@ -165,7 +165,7 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
                 tiles = new HashSet<>();
             }
 
-            tiles.add(new BlockPos(x, y, z));
+            tiles.add(BlockPos.containing(x, y, z));
         }
     }
 

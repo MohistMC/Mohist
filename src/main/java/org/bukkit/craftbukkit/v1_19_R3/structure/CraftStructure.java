@@ -64,7 +64,7 @@ public class CraftStructure implements Structure {
                 .setRandom(randomSource);
         definedstructureinfo.palette = palette;
 
-        BlockPos blockPosition = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos blockPosition = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         structure.placeInWorld(((CraftRegionAccessor) regionAccessor).getHandle(), blockPosition, blockPosition, definedstructureinfo, randomSource, 2);
     }
 
@@ -90,7 +90,7 @@ public class CraftStructure implements Structure {
             throw new IllegalArgumentException("Size must be at least 1x1x1 but was " + size.getBlockX() + "x" + size.getBlockY() + "x" + size.getBlockZ());
         }
 
-        structure.fillFromWorld(((CraftWorld) world).getHandle(), new BlockPos(origin.getBlockX(), origin.getBlockY(), origin.getBlockZ()), new BlockPos(size.getBlockX(), size.getBlockY(), size.getBlockZ()), includeEntities, Blocks.STRUCTURE_VOID);
+        structure.fillFromWorld(((CraftWorld) world).getHandle(), BlockPos.containing(origin.getBlockX(), origin.getBlockY(), origin.getBlockZ()), BlockPos.containing(size.getBlockX(), size.getBlockY(), size.getBlockZ()), includeEntities, Blocks.STRUCTURE_VOID);
     }
 
     @Override

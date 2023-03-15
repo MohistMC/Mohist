@@ -141,9 +141,9 @@
              }
           }
  
--         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
+-         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(BlockPos.containing(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 -            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
-+         if (!this.getEyeInFluidType().isAir() && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++         if (!this.getEyeInFluidType().isAir() && !this.f_19853_.m_8055_(BlockPos.containing(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 +            boolean flag1 = this.canDrownInFluidType(this.getEyeInFluidType()) && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
              if (flag1) {
                 this.m_20301_(this.m_7302_(this.m_20146_()));
@@ -158,7 +158,7 @@
              }
 -         } else if (this.m_20146_() < this.m_6062_()) {
 +         } // Forge: Move to if statement since we need to increase the air supply if in bubble column or can't drown
-+         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
++         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(BlockPos.containing(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
              this.m_20301_(this.m_7305_(this.m_20146_()));
           }
  
@@ -767,8 +767,8 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);
           int k = Mth.m_14107_(this.m_20189_());
--         BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
-+         BlockPos pos = new BlockPos(i, j, k);
+-         BlockState blockstate = this.f_19853_.m_8055_(BlockPos.containing(i, j, k));
++         BlockPos pos = BlockPos.containing(i, j, k);
 +         BlockState blockstate = this.f_19853_.m_8055_(pos);
           if (!blockstate.m_60795_()) {
 -            SoundType soundtype = blockstate.m_60827_();

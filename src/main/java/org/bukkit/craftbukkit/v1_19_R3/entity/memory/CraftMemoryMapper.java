@@ -51,6 +51,6 @@ public final class CraftMemoryMapper {
     }
 
     public static GlobalPos toNms(Location location) {
-        return GlobalPos.of(((CraftWorld) location.getWorld()).getHandle().dimension(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return GlobalPos.of(((CraftWorld) location.getWorld()).getHandle().dimension(), BlockPos.containing(location.getX(), location.getY(), location.getZ()));
     }
 }

@@ -53,14 +53,14 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public org.bukkit.inventory.ItemStack getRecord() {
-        ItemStack record = this.getSnapshot().getRecord();
+        ItemStack record = this.getSnapshot().getFirstItem();
         return CraftItemStack.asBukkitCopy(record);
     }
 
     @Override
     public void setRecord(org.bukkit.inventory.ItemStack record) {
         ItemStack nms = CraftItemStack.asNMSCopy(record);
-        this.getSnapshot().setRecord(nms);
+        this.getSnapshot().setRecordWithoutPlaying(nms);
         if (nms.isEmpty()) {
             this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, false);
         } else {
@@ -86,9 +86,8 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         if (!(tileEntity instanceof JukeboxBlockEntity)) return false;
 
         JukeboxBlockEntity jukebox = (JukeboxBlockEntity) tileEntity;
-        boolean result = !jukebox.getRecord().isEmpty();
-        CraftWorld world = (CraftWorld) this.getWorld();
-        ((JukeboxBlock) Blocks.JUKEBOX).dropRecording(world.getHandle(), getPosition());
+        boolean result = !jukebox.getFirstItem().isEmpty();
+        jukebox.popOutRecord();
         return result;
     }
 }

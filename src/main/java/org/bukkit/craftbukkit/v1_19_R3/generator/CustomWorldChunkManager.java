@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -30,8 +32,6 @@ public class CustomWorldChunkManager extends BiomeSource {
     }
 
     public CustomWorldChunkManager(WorldInfo worldInfo, BiomeProvider biomeProvider, net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry) {
-        super(biomeListToBiomeBaseList(biomeProvider.getBiomes(worldInfo), registry));
-
         this.worldInfo = worldInfo;
         this.biomeProvider = biomeProvider;
         this.registry = registry;
@@ -48,5 +48,10 @@ public class CustomWorldChunkManager extends BiomeSource {
         Preconditions.checkArgument(biome != Biome.CUSTOM, "Cannot set the biome to %s", biome);
 
         return CraftBlock.biomeToBiomeBase(registry, biome);
+    }
+
+    @Override
+    protected Stream<Holder<net.minecraft.world.level.biome.Biome>> collectPossibleBiomes() {
+        return biomeListToBiomeBaseList(biomeProvider.getBiomes(worldInfo), registry).stream();
     }
 }

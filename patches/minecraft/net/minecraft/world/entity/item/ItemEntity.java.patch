@@ -63,8 +63,8 @@
              this.m_6478_(MoverType.SELF, this.m_20184_());
              float f1 = 0.98F;
              if (this.f_19861_) {
--               f1 = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
-+               f1 = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).getFriction(f_19853_, new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_()), this) * 0.98F;
+-               f1 = this.f_19853_.m_8055_(BlockPos.containing(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
++               f1 = this.f_19853_.m_8055_(BlockPos.containing(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).getFriction(f_19853_, BlockPos.containing(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_()), this) * 0.98F;
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));

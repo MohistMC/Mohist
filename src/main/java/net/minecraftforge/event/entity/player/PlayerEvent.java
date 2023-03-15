@@ -105,7 +105,7 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
-        private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
+        private static final BlockPos LEGACY_UNKNOWN = BlockPos.containing(0, -1, 0);
         private final BlockState state;
         private final float originalSpeed;
         private float newSpeed = 0.0f;
