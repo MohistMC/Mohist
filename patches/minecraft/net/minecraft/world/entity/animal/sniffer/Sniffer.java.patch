@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -74,11 +_,20 @@
+ 
+    public Sniffer(EntityType<? extends Animal> p_273717_, Level p_273562_) {
+       super(p_273717_, p_273562_);
+-      this.f_19804_.m_135372_(f_271416_, Sniffer.State.IDLING);
+-      this.f_19804_.m_135372_(f_271498_, 0);
++      // this.entityData.define(DATA_STATE, Sniffer.State.IDLING); // CraftBukkit - moved down to appropriate location
++      // this.entityData.define(DATA_DROP_SEED_AT_TICK, 0); // CraftBukkit - moved down to appropriate location
+       this.m_21573_().m_7008_(true);
+       this.m_21441_(BlockPathTypes.WATER, -2.0F);
+    }
++
++   // CraftBukkit start - SPIGOT-7295: moved from constructor to appropriate location
++   @Override
++   protected void m_8097_() {
++      super.m_8097_();
++      this.f_19804_.m_135372_(Sniffer.f_271416_, Sniffer.State.IDLING);
++      this.f_19804_.m_135372_(Sniffer.f_271498_, 0);
++   }
++    // CraftBukkit end
+ 
+    protected float m_6431_(Pose p_272721_, EntityDimensions p_273353_) {
+       return this.m_6972_(p_272721_).f_20378_ * 0.6F;

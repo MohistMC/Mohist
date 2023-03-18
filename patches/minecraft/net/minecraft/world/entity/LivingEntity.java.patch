@@ -65,7 +65,7 @@
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity implements Attackable {
-+public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
++public abstract class LivingEntity extends Entity implements Attackable, net.minecraftforge.common.extensions.IForgeLivingEntity {
     private static final Logger f_201943_ = LogUtils.getLogger();
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
@@ -816,8 +816,8 @@
              if (entity instanceof ServerPlayer) {
                 ServerPlayer serverplayer = (ServerPlayer)entity;
 -               serverplayer.m_36222_(Stats.f_12929_, Math.round(f * 10.0F));
++               serverplayer.m_6278_(Stats.f_12988_.m_12902_(Stats.f_12929_), Math.round(f * 10.0F));
              }
-+            ((ServerPlayer)p_21240_.m_7639_()).m_6278_(Stats.f_12988_.m_12902_(Stats.f_12929_), Math.round(f * 10.0F));
           }
  
 +         f1 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f1);
