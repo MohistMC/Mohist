@@ -84,7 +84,7 @@
     private CompoundNBT field_77990_d;
     private boolean field_190928_g;
     private Entity field_234693_k_;
-@@ -109,33 +_,66 @@
+@@ -109,33 +_,68 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -121,16 +121,16 @@
        this.field_190928_g = this.func_190926_b();
     }
  
-+   public CompoundNBT getForgeCaps() {
-+      return this.serializeCaps();
-+   }
-+
-+
++   // Mohist start fix 'Bigger Stacks' mod mixin
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundNBT compound) {
++      this.loadNbt(compound);
++   }
++
++   private CompoundNBT loadNbt(CompoundNBT compound) {
 +      this.capNBT = compound.func_74764_b("ForgeCaps") ? compound.func_74775_l("ForgeCaps") : null;
 +      Item rawItem =
-+      this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(compound.func_74779_i("id")));
++              this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(compound.func_74779_i("id")));
 +      this.delegate = rawItem.delegate;
 +      this.field_77994_a = compound.func_74771_c("Count");
 +      if (compound.func_150297_b("tag", 10)) {
@@ -141,9 +141,10 @@
 +      }
 +
 +      this.forgeInit();
-+      if (this.func_77973_b().func_77645_m()) {
++      if (this.func_77973_b().isDamageable(this)) {
 +         this.func_196085_b(this.func_77952_i());
 +      }
++      return compound;
 +   }
 +
     private ItemStack(CompoundNBT p_i47263_1_) {
@@ -159,7 +160,8 @@
 -      }
 -
 +      super(ItemStack.class, true);
-+      this.load(p_i47263_1_);
++      CompoundNBT c = this.loadNbt(p_i47263_1_);
++      this.field_77994_a = c.func_74771_c("Count");
 +      // CraftBukkit stop
        this.func_190923_F();
     }
