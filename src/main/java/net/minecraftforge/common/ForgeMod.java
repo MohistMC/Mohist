@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -450,7 +451,7 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
-
+        EventDispatcherRegistry.init();
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
     }
 
