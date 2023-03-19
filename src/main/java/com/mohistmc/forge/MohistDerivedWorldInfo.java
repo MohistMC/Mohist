@@ -22,7 +22,7 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
 
     private final DerivedLevelData derivedWorldInfo;
 
-    public MohistDerivedWorldInfo(DerivedLevelData derivedWorldInfo, LevelSettings p_78470_, WorldOptions p_78471_, PrimaryLevelData.SpecialWorldProperty p_252268_, Lifecycle p_78472_) {
+    public MohistDerivedWorldInfo(DerivedLevelData derivedWorldInfo, LevelSettings p_78470_, WorldOptions p_78471_, SpecialWorldProperty p_252268_, Lifecycle p_78472_) {
         super(p_78470_, p_78471_, p_252268_, p_78472_);
         this.derivedWorldInfo = derivedWorldInfo;
     }
