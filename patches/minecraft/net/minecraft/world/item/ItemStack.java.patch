@@ -123,34 +123,23 @@
     }
  
     private void m_41617_() {
-@@ -147,15 +_,39 @@
+@@ -147,20 +_,38 @@
        this.f_41591_ = this.m_41619_();
     }
  
+-   private ItemStack(CompoundTag p_41608_) {
+-      this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
++   // Mohist start fix 'Bigger Stacks' mod mixin
 +   // CraftBukkit - break into own method
 +   private void load(CompoundTag p_41608_) {
-+      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
-+      Item rawItem =
-+      this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
-+      this.delegate = rawItem.delegate;
-+      this.f_41587_ = p_41608_.m_128445_("Count");
-+      if (p_41608_.m_128425_("tag", 10)) {
-+         this.f_41590_ = p_41608_.m_128469_("tag").m_6426_();
-+         this.m_41720_().m_142312_(this.f_41590_);
-+      }
-+      this.forgeInit();
-+
-+      if (this.m_41720_().isDamageable(this)) {
-+         this.m_41721_(this.m_41773_());
-+      }
++      loadNBT(p_41608_);
 +   }
 +   // CraftBukkit end
 +
-    private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
++   private CompoundTag loadNBT(CompoundTag p_41608_) {
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
-       this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
++              this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
 +      this.delegate = rawItem.delegate;
        this.f_41587_ = p_41608_.m_128445_("Count");
        if (p_41608_.m_128425_("tag", 10)) {
@@ -164,7 +153,19 @@
 +      if (this.m_41720_().isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
++      return p_41608_;
++   }
  
++   private ItemStack(CompoundTag p_41608_) {
++      super(ItemStack.class, true);
++      CompoundTag c = loadNBT(p_41608_);
++      this.f_41587_ = p_41608_.m_128445_("Count");
+       this.m_41617_();
+    }
++   // Mohist end
+ 
+    public static ItemStack m_41712_(CompoundTag p_41713_) {
+       try {
 @@ -190,7 +_,7 @@
     }
  
