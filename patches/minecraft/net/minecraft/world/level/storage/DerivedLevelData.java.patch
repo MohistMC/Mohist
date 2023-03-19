@@ -11,3 +11,13 @@
     public int m_6789_() {
        return this.f_78077_.m_6789_();
     }
+@@ -173,5 +_,9 @@
+    public void m_142471_(CrashReportCategory p_164852_, LevelHeightAccessor p_164853_) {
+       p_164852_.m_128159_("Derived", true);
+       this.f_78077_.m_142471_(p_164852_, p_164853_);
++   }
++
++   public ServerLevelData wrapped() {
++      return f_78077_;
+    }
+ }

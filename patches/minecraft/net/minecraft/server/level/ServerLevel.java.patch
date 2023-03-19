@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.Lists;
++import com.mohistmc.forge.MohistDerivedLevelData;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
 @@ -87,7 +_,6 @@
  import net.minecraft.world.entity.animal.Animal;
  import net.minecraft.world.entity.animal.WaterAnimal;
@@ -8,8 +16,11 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.entity.npc.Npc;
  import net.minecraft.world.entity.player.Player;
-@@ -138,6 +_,7 @@
+@@ -136,8 +_,10 @@
+ import net.minecraft.world.level.portal.PortalForcer;
+ import net.minecraft.world.level.saveddata.maps.MapIndex;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
++import net.minecraft.world.level.storage.DerivedLevelData;
  import net.minecraft.world.level.storage.DimensionDataStorage;
  import net.minecraft.world.level.storage.LevelStorageSource;
 +import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -41,7 +52,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,22 @@
+@@ -181,13 +_,28 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -60,6 +71,12 @@
        super(p_203765_, p_203766_, p_203767_, p_203762_::m_129905_, false, p_203770_, p_203771_);
 +      convertable = p_203764_;
 +      this.pvpMode = p_203762_.m_129799_();
++
++      if (p_203765_ instanceof PrimaryLevelData) {
++         this.serverLevelDataCB = (PrimaryLevelData) p_203765_;
++      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {
++         this.serverLevelDataCB = MohistDerivedLevelData.create(derivedLevelData);
++      }
 +      uuid = WorldUUID.getUUID(p_203764_.f_78271_.toFile());
 +      this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
        this.f_8561_ = p_203773_;
