@@ -29,7 +29,7 @@
  
     public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
        this.f_9965_ = p_9969_;
-@@ -21,9 +_,45 @@
+@@ -21,28 +_,88 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
@@ -75,7 +75,14 @@
              if (p_9975_.m_134738_() != SharedConstants.m_183709_().m_132495_()) {
                 Component component;
                 if (p_9975_.m_134738_() < 754) {
-@@ -36,13 +_,37 @@
+-                  component = Component.m_237110_("multiplayer.disconnect.outdated_client", SharedConstants.m_183709_().m_132493_());
++                  component = Component.m_237113_( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedClientMessage.replaceAll("'", "''"), SharedConstants.m_183709_().m_132493_())); // Spigot
+                } else {
+-                  component = Component.m_237110_("multiplayer.disconnect.incompatible", SharedConstants.m_183709_().m_132493_());
++                  component = Component.m_237113_( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedServerMessage.replaceAll("'", "''"), SharedConstants.m_183709_().m_132493_())); // Spigot
+                }
+ 
+                this.f_9966_.m_129512_(new ClientboundLoginDisconnectPacket(component));
                 this.f_9966_.m_129507_(component);
              } else {
                 this.f_9966_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9965_, this.f_9966_));

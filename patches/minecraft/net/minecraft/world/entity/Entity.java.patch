@@ -584,7 +584,7 @@
           p_20241_.m_128365_("Rotation", this.m_20065_(this.m_146908_(), this.m_146909_()));
           p_20241_.m_128350_("FallDistance", this.f_19789_);
           p_20241_.m_128376_("Fire", (short)this.f_19831_);
-@@ -1480,6 +_,25 @@
+@@ -1480,6 +_,26 @@
           p_20241_.m_128379_("Invulnerable", this.f_19840_);
           p_20241_.m_128405_("PortalCooldown", this.f_19839_);
           p_20241_.m_128362_("UUID", this.m_20148_());
@@ -606,6 +606,7 @@
 +         if (maxAirTicks != getDefaultMaxAirSupply()) {
 +            p_20241_.m_128405_("Bukkit.MaxAirSupply", m_6062_());
 +         }
++         p_20241_.m_128405_("Spigot.ticksLived", this.f_19797_);
 +         // CraftBukkit end
           Component component = this.m_7770_();
           if (component != null) {
@@ -653,11 +654,16 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1616,6 +_,43 @@
+@@ -1616,6 +_,48 @@
           } else {
              throw new IllegalStateException("Entity has invalid position");
           }
 +         // CraftBukkit start
++         // Spigot start
++         if (this instanceof LivingEntity) {
++            this.f_19797_ = p_20259_.m_128451_("Spigot.ticksLived");
++         }
++         // Spigot end
 +         this.persist = !p_20259_.m_128441_("Bukkit.persist") || p_20259_.m_128471_("Bukkit.persist");
 +         this.visibleByDefault = !p_20259_.m_128441_("Bukkit.visibleByDefault") || p_20259_.m_128471_("Bukkit.visibleByDefault");
 +         // SPIGOT-6907: re-implement LivingEntity#setMaximumAir()

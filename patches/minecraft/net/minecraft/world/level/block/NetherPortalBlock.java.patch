@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/NetherPortalBlock.java
++++ b/net/minecraft/world/level/block/NetherPortalBlock.java
+@@ -46,7 +_,7 @@
+    }
+ 
+    public void m_213898_(BlockState p_221799_, ServerLevel p_221800_, BlockPos p_221801_, RandomSource p_221802_) {
+-      if (p_221800_.m_6042_().f_63858_() && p_221800_.m_46469_().m_46207_(GameRules.f_46134_) && p_221802_.m_188503_(2000) < p_221800_.m_46791_().m_19028_()) {
++      if (p_221800_.spigotConfig.enableZombiePigmenPortalSpawns && p_221800_.m_6042_().f_63858_() && p_221800_.m_46469_().m_46207_(GameRules.f_46134_) && p_221802_.m_188503_(2000) < p_221800_.m_46791_().m_19028_()) {
+          while(p_221800_.m_8055_(p_221801_).m_60713_(this)) {
+             p_221801_ = p_221801_.m_7495_();
+          }

@@ -75,6 +75,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.spigotmc.ValidateUtils;
 
 /**
  * Children must include the following:
@@ -328,18 +329,18 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             CompoundTag display = tag.getCompound(DISPLAY.NBT);
 
             if (display.contains(NAME.NBT)) {
-                displayName = display.getString(NAME.NBT);
+                displayName = ValidateUtils.limit( display.getString(NAME.NBT), 8192 ); // Spigot
             }
 
             if (display.contains(LOCNAME.NBT)) {
-                locName = display.getString(LOCNAME.NBT);
+                locName = ValidateUtils.limit( display.getString(LOCNAME.NBT), 8192 ); // Spigot
             }
 
             if (display.contains(LORE.NBT)) {
                 ListTag list = display.getList(LORE.NBT, CraftMagicNumbers.NBT.TAG_STRING);
                 lore = new ArrayList<String>(list.size());
                 for (int index = 0; index < list.size(); index++) {
-                    String line = list.getString(index);
+                    String line = ValidateUtils.limit( list.getString(index), 8192 ); // Spigot
                     lore.add(line);
                 }
             }

@@ -243,7 +243,7 @@
 +                }
 +                speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
 +
-+                if (d10 - d9 > Math.max(100.0D, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.isSingleplayerOwner()) {
++                if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isSingleplayerOwner()) {
 +                // CraftBukkit end
                      PlayerConnection.LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", new Object[]{entity.getName().getString(), this.player.getName().getString(), d6, d7, d8});
                      this.connection.send(new PacketPlayOutVehicleMove(entity));
@@ -264,6 +264,17 @@
  
 +                // CraftBukkit start - fire PlayerMoveEvent
 +                Player player = this.getCraftPlayer();
++                // Spigot Start
++                if ( !hasMoved )
++                {
++                    lastPosX = curPos.getX();
++                    lastPosY = curPos.getY();
++                    lastPosZ = curPos.getZ();
++                    lastYaw = curPos.getYaw();
++                    lastPitch = curPos.getPitch();
++                    hasMoved = true;
++                }
++                // Spigot End
 +                Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
 +                Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
 +
@@ -853,7 +864,7 @@
  
      public void send(Packet<?> packet, @Nullable PacketSendListener packetsendlistener) {
 +        // CraftBukkit start
-+        if (packet == null) {
++        if (packet == null || this.processedDisconnect) { // Spigot
 +            return;
 +        } else if (packet instanceof PacketPlayOutSpawnPosition) {
 +            PacketPlayOutSpawnPosition packet6 = (PacketPlayOutSpawnPosition) packet;
@@ -1117,13 +1128,25 @@
 +        }
 +        // this.server.getPlayerList().broadcastChatMessage(playerchatmessage, this.player, ChatMessageType.bind(ChatMessageType.CHAT, (Entity) this.player));
 +        // CraftBukkit end
-         this.detectRateSpam();
++        this.detectRateSpam(s); // Spigot
      }
  
-     private void detectRateSpam() {
+-    private void detectRateSpam() {
++    // Spigot start - spam exclusions
++    private void detectRateSpam(String s) {
 -        this.chatSpamTickCount += 20;
 -        if (this.chatSpamTickCount > 200 && !this.server.getPlayerList().isOp(this.player.getGameProfile())) {
 +        // CraftBukkit start - replaced with thread safe throttle
++        boolean counted = true;
++        for ( String exclude : org.spigotmc.SpigotConfig.spamExclusions )
++        {
++            if ( exclude != null && s.startsWith( exclude ) )
++            {
++                counted = false;
++                break;
++            }
++        }
++        // Spigot end
 +        // this.chatSpamTickCount += 20;
 +        if (this.chatSpamTickCount.addAndGet(20) > 200 && !this.server.getPlayerList().isOp(this.player.getGameProfile())) {
 +            // CraftBukkit end

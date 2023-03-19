@@ -16,6 +16,15 @@
        this.f_104888_.f_91066_.m_92172_();
        this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.m_129629_())));
        this.f_252517_ = null;
+@@ -809,7 +_,7 @@
+ 
+    public void m_213990_(ClientboundSystemChatPacket p_233708_) {
+       PacketUtils.m_131363_(p_233708_, this, this.f_104888_);
+-      this.f_104888_.m_240442_().m_240494_(p_233708_.f_237849_(), p_233708_.f_240374_());
++      this.f_104888_.m_240442_().m_240494_(null, p_233708_.f_240374_());
+    }
+ 
+    public void m_213629_(ClientboundPlayerChatPacket p_233702_) {
 @@ -1055,8 +_,10 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }

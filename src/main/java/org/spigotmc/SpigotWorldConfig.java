@@ -138,14 +138,14 @@ public class SpigotWorldConfig
     public double itemMerge;
     private void itemMerge()
     {
-        itemMerge = getDouble("merge-radius.item", 2.5 );
+        itemMerge = getDouble("merge-radius.item", 4.0 );
         log( "Item Merge Radius: " + itemMerge );
     }
 
     public double expMerge;
     private void expMerge()
     {
-        expMerge = getDouble("merge-radius.exp", 3.0 );
+        expMerge = getDouble("merge-radius.exp", 6.0 );
         log( "Experience Merge Radius: " + expMerge );
     }
 
@@ -191,7 +191,7 @@ public class SpigotWorldConfig
     public int itemDespawnRate;
     private void itemDespawnRate()
     {
-        itemDespawnRate = getInt( "item-despawn-rate", 6000 );
+        itemDespawnRate = getInt( "item-despawn-rate", 1200 );
         log( "Item Despawn Rate: " + itemDespawnRate );
     }
 
@@ -234,13 +234,13 @@ public class SpigotWorldConfig
     private void hoppers()
     {
         // Set the tick delay between hopper item movements
-        hopperTransfer = getInt( "ticks-per.hopper-transfer", 8 );
+        hopperTransfer = getInt( "ticks-per.hopper-transfer", 24 );
         if ( SpigotConfig.version < 11 )
         {
-            set( "ticks-per.hopper-check", 1 );
+            set( "ticks-per.hopper-check", 24 );
         }
-        hopperCheck = getInt( "ticks-per.hopper-check", 1 );
-        hopperAmount = getInt( "hopper-amount", 1 );
+        hopperCheck = getInt( "ticks-per.hopper-check", 24 );
+        hopperAmount = getInt( "hopper-amount", 3 );
         hopperCanLoadChunks = getBoolean( "hopper-can-load-chunks", false );
         log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount + " Hopper Can Load Chunks: " + hopperCanLoadChunks );
     }
@@ -360,9 +360,9 @@ public class SpigotWorldConfig
     private void maxTntPerTick() {
         if ( SpigotConfig.version < 7 )
         {
-            set( "max-tnt-per-tick", 100 );
+            set( "max-tnt-per-tick", 10 ); // Mohist
         }
-        maxTntTicksPerTick = getInt( "max-tnt-per-tick", 100 );
+        maxTntTicksPerTick = getInt( "max-tnt-per-tick", 10 ); // Mohist
         log( "Max TNT Explosions: " + maxTntTicksPerTick );
     }
 
@@ -376,8 +376,8 @@ public class SpigotWorldConfig
     public int entityMaxTickTime;
     private void maxTickTimes()
     {
-        tileMaxTickTime = getInt("max-tick-time.tile", 50);
-        entityMaxTickTime = getInt("max-tick-time.entity", 50);
+        tileMaxTickTime = getInt("max-tick-time.tile", 8);
+        entityMaxTickTime = getInt("max-tick-time.entity", 16);
         log("Tile Max Tick Time: " + tileMaxTickTime + "ms Entity max Tick Time: " + entityMaxTickTime + "ms");
     }
 

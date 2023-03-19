@@ -17,7 +17,7 @@
 +         if (p_261751_.m_46859_(p_261616_.m_7494_()) && p_261751_.m_45524_(p_261616_.m_7494_(), 0) >= 9) {
              int i = this.m_261132_(p_261751_, p_261616_) + 1;
 -            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_261751_, p_261616_, p_261931_, p_261766_.m_188503_(3) == 0)) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_261751_, p_261616_, p_261931_, p_261766_.m_188501_() < (p_261751_.spigotConfig.bambooModifier / (100.0f * 3)))) { // Spigot - SPIGOT-7159: Better modifier resolution
                 this.m_261305_(p_261931_, p_261751_, p_261616_, p_261766_, i);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_261751_, p_261616_, p_261931_);
              }

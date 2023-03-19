@@ -13,6 +13,14 @@
                 } else {
                    this.m_135985_(advancement, p_265663_.getValue());
                    this.f_135967_.add(advancement);
+@@ -142,6 +_,7 @@
+    }
+ 
+    public void m_135991_() {
++      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return; // Spigot
+       Map<ResourceLocation, AdvancementProgress> map = new LinkedHashMap<>();
+ 
+       for(Map.Entry<Advancement, AdvancementProgress> entry : this.f_263740_.entrySet()) {
 @@ -167,6 +_,8 @@
     }
  

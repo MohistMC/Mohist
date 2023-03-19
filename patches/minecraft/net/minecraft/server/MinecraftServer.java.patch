@@ -57,11 +57,13 @@
  import org.slf4j.Logger;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-@@ -192,7 +_,7 @@
+@@ -191,8 +_,8 @@
+    @Nullable
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
-    private final ServerConnectionListener f_129755_;
+-   private final ServerConnectionListener f_129755_;
 -   private final ChunkProgressListenerFactory f_129756_;
++   private ServerConnectionListener f_129755_;
 +   public final ChunkProgressListenerFactory f_129756_;
     @Nullable
     private ServerStatus f_129757_;
@@ -116,6 +118,15 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+@@ -279,7 +_,7 @@
+             p_236729_.f_214336_().m_143974_(this);
+          }
+ 
+-         this.f_129755_ = new ServerConnectionListener(this);
++         // this.connection = new ServerConnectionListener(this); // Spigot
+          this.f_129756_ = p_236730_;
+          this.f_129744_ = p_236724_;
+          this.f_129745_ = p_236724_.m_78301_();
 @@ -289,8 +_,18 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_, holdergetter);
           this.f_129725_ = p_236723_;
@@ -204,6 +215,19 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
+@@ -598,6 +_,12 @@
+       } catch (IOException ioexception) {
+          f_129750_.error("Failed to unlock level {}", this.f_129744_.m_78277_(), ioexception);
+       }
++      // Spigot start
++      if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
++         f_129750_.info("Saving usercache.json");
++         this.m_129927_().m_11006_();
++      }
++      // Spigot end
+ 
+    }
+ 
 @@ -625,30 +_,116 @@
  
     }
@@ -323,7 +347,7 @@
              this.f_129726_ += 50L;
              this.m_177945_();
              this.f_129754_.m_6180_("tick");
-@@ -662,6 +_,8 @@
+@@ -662,8 +_,16 @@
              this.f_129717_ = true;
              JvmProfiler.f_185340_.m_183597_(this.f_129737_);
           }
@@ -331,7 +355,15 @@
 +         net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
        } catch (Throwable throwable1) {
           f_129750_.error("Encountered an unexpected exception", throwable1);
++         // Spigot Start
++         if ( throwable1.getCause() != null )
++         {
++            MinecraftServer.f_129750_.error( "\tCause of unexpected exception was", throwable1.getCause() );
++         }
++         // Spigot End
           CrashReport crashreport = m_206568_(throwable1);
+          this.m_177935_(crashreport.m_178626_());
+          File file1 = new File(new File(this.m_6237_(), "crash-reports"), "crash-" + Util.m_241986_() + "-server.txt");
 @@ -673,6 +_,7 @@
              f_129750_.error("We were unable to save this crash report to disk.");
           }
@@ -415,7 +447,7 @@
           this.f_129754_.m_6521_(() -> {
              return serverlevel + " " + serverlevel.m_46472_().m_135782_();
           });
-@@ -863,6 +_,7 @@
+@@ -863,24 +_,34 @@
           }
  
           this.f_129754_.m_6180_("tick");
@@ -423,7 +455,16 @@
  
           try {
              serverlevel.m_8793_(p_129954_);
-@@ -871,16 +_,18 @@
+          } catch (Throwable throwable) {
+-            CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception ticking world");
++            // Spigot Start
++            CrashReport crashreport;
++            try {
++               crashreport = CrashReport.m_127521_(throwable, "Exception ticking world");
++            } catch (Throwable t) {
++               throw new RuntimeException("Error generating crash report", t);
++            }
++            // Spigot End
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
@@ -475,6 +516,15 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
+@@ -1165,7 +_,7 @@
+ 
+    @Nullable
+    public ServerConnectionListener m_129919_() {
+-      return this.f_129755_;
++      return this.f_129755_ == null ? this.f_129755_ = new ServerConnectionListener(this) : this.f_129755_; // Spigot
+    }
+ 
+    public boolean m_129920_() {
 @@ -1302,6 +_,7 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.f_129740_.close();

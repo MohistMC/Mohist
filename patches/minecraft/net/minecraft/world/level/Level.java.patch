@@ -73,10 +73,11 @@
     private final Supplier<ProfilerFiller> f_46446_;
     public final boolean f_46443_;
     private final WorldBorder f_46447_;
-@@ -111,8 +_,58 @@
+@@ -111,8 +_,52 @@
     private final RegistryAccess f_268710_;
     private final DamageSources f_268497_;
     private long f_186455_;
+-
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -99,25 +100,19 @@
 +   public List<ItemEntity> captureDrops;
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
-+
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
-+
 +   public CraftWorld getWorld() {
 +      return this.world;
 +   }
-+
 +   public CraftServer getCraftServer() {
 +      return (CraftServer) Bukkit.getServer();
 +   }
-+
 +   public abstract ResourceKey<LevelStem> getTypeKey();
-+
 +   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
 +      generator = gen;
 +      environment = env;
 +      biomeProvider = bp;
 +   }
- 
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().f_129744_.m_197394_(p_270683_).getFileName().toFile().getName()); // Spigot // Mohist
@@ -318,13 +313,12 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -418,6 +_,13 @@
+@@ -418,6 +_,12 @@
  
        while(iterator.hasNext()) {
           TickingBlockEntity tickingblockentity = iterator.next();
 +         // Spigot start
 +         if (tickingblockentity == null) {
-+            getCraftServer().getLogger().severe("Spigot has detected a null entity and has removed it, preventing a crash");
 +            iterator.remove();
 +            continue;
 +         }
@@ -332,7 +326,12 @@
           if (tickingblockentity.m_142220_()) {
              iterator.remove();
           } else if (this.m_220393_(tickingblockentity.m_142689_())) {
-@@ -431,12 +_,19 @@
+@@ -427,16 +_,24 @@
+ 
+       this.f_151504_ = false;
+       profilerfiller.m_7238_();
++      spigotConfig.currentPrimedTnt = 0; // Spigot
+    }
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {

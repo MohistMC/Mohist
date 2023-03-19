@@ -45,7 +45,7 @@
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
     private static final int f_244471_ = 4096;
-@@ -230,6 +_,28 @@
+@@ -230,6 +_,29 @@
     private final MessageSignatureCache f_243718_ = MessageSignatureCache.m_246587_();
     private final FutureChain f_241681_;
  
@@ -66,6 +66,7 @@
 +   private float lastPitch = Float.MAX_VALUE;
 +   private float lastYaw = Float.MAX_VALUE;
 +   private boolean justTeleported = false;
++   private boolean hasMoved; // Spigot
 +
 +   public CraftPlayer getCraftPlayer() {
 +      return (this.f_9743_ == null) ? null : (CraftPlayer) this.f_9743_.getBukkitEntity();
@@ -148,8 +149,16 @@
        this.f_9742_.m_129540_();
        this.f_9745_.m_18709_(this.f_9742_::m_129541_);
     }
-@@ -428,9 +_,11 @@
+@@ -422,15 +_,18 @@
+             d8 = d5 - entity.m_20189_();
+             d10 = d6 * d6 + d7 * d7 + d8 * d8;
+             boolean flag2 = false;
+-            if (d10 > 0.0625D) {
++            if (d10 >org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
+                flag2 = true;
+                f_9744_.warn("{} (vehicle of {}) moved wrongly! {}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), Math.sqrt(d10));
              }
++            Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
              entity.m_19890_(d3, d4, d5, f, f1);
 +            this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
@@ -169,6 +178,45 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
+@@ -906,7 +_,7 @@
+                      d9 = d2 - this.f_9743_.m_20189_();
+                      d11 = d7 * d7 + d8 * d8 + d9 * d9;
+                      boolean flag2 = false;
+-                     if (!this.f_9743_.m_8958_() && d11 > 0.0625D && !this.f_9743_.m_5803_() && !this.f_9743_.f_8941_.m_9295_() && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR) {
++                     if (!this.f_9743_.m_8958_() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold && !this.f_9743_.m_5803_() && !this.f_9743_.f_8941_.m_9295_() && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR) {
+                         flag2 = true;
+                         f_9744_.warn("{} moved wrongly!", (Object)this.f_9743_.m_7755_().getString());
+                      }
+@@ -1019,8 +_,29 @@
+       }
+    }
+ 
++   // Spigot start - limit place/interactions
++   private int limitedPackets;
++   private long lastLimitedPacket = -1;
++
++   private boolean checkLimit(long timestamp) {
++      if (this.lastLimitedPacket != -1 && timestamp - this.lastLimitedPacket < 30 && this.limitedPackets++ >= 4) {
++         return false;
++      }
++
++      if (this.lastLimitedPacket == -1 || timestamp - this.lastLimitedPacket >= 30) {
++         this.lastLimitedPacket = timestamp;
++         this.limitedPackets = 0;
++         return true;
++      }
++
++      return true;
++   }
++   // Spigot end
++
+    public void m_6371_(ServerboundUseItemOnPacket p_9930_) {
+       PacketUtils.m_131359_(p_9930_, this, this.f_9743_.m_9236_());
++      if (this.f_9743_.m_6107_()) return; // CraftBukkit
++      if (!checkLimit(p_9930_.timestamp)) return; // Spigot - check limit
+       this.f_9743_.f_8906_.m_215201_(p_9930_.m_238008_());
+       ServerLevel serverlevel = this.f_9743_.m_9236_();
+       InteractionHand interactionhand = p_9930_.m_134703_();
 @@ -1030,7 +_,7 @@
           Vec3 vec3 = blockhitresult.m_82450_();
           BlockPos blockpos = blockhitresult.m_82425_();
@@ -187,6 +235,15 @@
                       InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                       if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                          Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
+@@ -1063,6 +_,8 @@
+ 
+    public void m_5760_(ServerboundUseItemPacket p_9932_) {
+       PacketUtils.m_131359_(p_9932_, this, this.f_9743_.m_9236_());
++      if (this.f_9743_.m_6107_()) return; // CraftBukkit
++      if (!checkLimit(p_9932_.timestamp)) return; // Spigot - check limit
+       this.m_215201_(p_9932_.m_238013_());
+       ServerLevel serverlevel = this.f_9743_.m_9236_();
+       InteractionHand interactionhand = p_9932_.m_134717_();
 @@ -1182,10 +_,13 @@
                 }
  

@@ -36,7 +36,7 @@
                       flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -511,7 +_,8 @@
+@@ -511,18 +_,37 @@
  
        if (this.f_19853_ instanceof ServerLevel) {
           if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
@@ -46,7 +46,28 @@
           }
  
           if (this.f_31084_ == 1 && !this.m_20067_()) {
-@@ -522,7 +_,8 @@
+-            this.f_19853_.m_6798_(1028, this.m_20183_(), 0);
++            // CraftBukkit start - Use relative location for far away sounds
++            // this.level.globalLevelEvent(1028, this.blockPosition(), 0);
++            int viewDistance = this.f_19853_.getCraftServer().getViewDistance() * 16;
++            for (net.minecraft.server.level.ServerPlayer player : this.f_19853_.m_7654_().m_6846_().f_11196_) {
++               double deltaX = this.m_20185_() - player.m_20185_();
++               double deltaZ = this.m_20189_() - player.m_20189_();
++               double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
++               if ( f_19853_.spigotConfig.dragonDeathSoundRadius > 0 && distanceSquared > f_19853_.spigotConfig.dragonDeathSoundRadius * f_19853_.spigotConfig.dragonDeathSoundRadius ) continue; // Spigot
++               if (distanceSquared > viewDistance * viewDistance) {
++                  double deltaLength = Math.sqrt(distanceSquared);
++                  double relativeX = player.m_20185_() + (deltaX / deltaLength) * viewDistance;
++                  double relativeZ = player.m_20189_() + (deltaZ / deltaLength) * viewDistance;
++                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
++               } else {
++                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
++               }
++            }
++            // CraftBukkit end
+          }
+       }
+ 
        this.m_6478_(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
        if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
           if (flag) {

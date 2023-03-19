@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
+@@ -81,7 +_,7 @@
+    public final int f_139714_ = this.m_139805_("view-distance", 10);
+    public final int f_183715_ = this.m_139805_("simulation-distance", 10);
+    public final int f_139715_ = this.m_139805_("max-players", 20);
+-   public final int f_139716_ = this.m_139805_("network-compression-threshold", 256);
++   public final int f_139716_ = this.m_139805_("network-compression-threshold", 512);
+    public final boolean f_139717_ = this.m_139836_("broadcast-rcon-to-ops", true);
+    public final boolean f_139718_ = this.m_139836_("broadcast-console-to-ops", true);
+    public final int f_139719_ = this.m_139832_("max-world-size", (p_139771_) -> {
 @@ -102,6 +_,7 @@
     public final boolean f_214804_ = this.m_139836_("enforce-secure-profile", true);
     private final DedicatedServerProperties.WorldDimensionData f_244504_;

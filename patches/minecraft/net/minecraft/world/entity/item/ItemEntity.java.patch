@@ -37,7 +37,7 @@
        this.m_6034_(p_149664_, p_149665_, p_149666_);
        this.m_20334_(p_149668_, p_149669_, p_149670_);
        this.m_32045_(p_149667_);
-+      this.lifespan = (p_149667_.m_41720_() == null ? 6000 : p_149667_.getEntityLifespan(p_149663_));
++      this.lifespan = (p_149667_.m_41720_() == null ? f_19853_.spigotConfig.itemDespawnRate : p_149667_.getEntityLifespan(p_149663_)); // Spigot // Mohist move to
     }
  
     private ItemEntity(ItemEntity p_31994_) {

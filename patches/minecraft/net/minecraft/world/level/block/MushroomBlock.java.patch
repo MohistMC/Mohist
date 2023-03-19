@@ -5,7 +5,7 @@
  
     public void m_213898_(BlockState p_221784_, ServerLevel p_221785_, BlockPos p_221786_, RandomSource p_221787_) {
 -      if (p_221787_.m_188503_(25) == 0) {
-+      if (p_221787_.m_188503_(Math.max(1, (int) (100.0F / p_221785_.spigotConfig.mushroomModifier) * 25)) == 0) { // Spigot
++      if (p_221787_.m_188501_() < (p_221785_.spigotConfig.mushroomModifier / (100.0f * 25))) { // Spigot - SPIGOT-7159: Better modifier resolution
           int i = 5;
           int j = 4;
  

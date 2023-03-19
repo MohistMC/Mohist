@@ -52,7 +52,7 @@ public final class JavaPluginLoader implements PluginLoader {
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
-    //private final LibraryLoader libraryLoader;
+    //private final LibraryLoader libraryLoader; // TODO Mohist
 
     /**
      * This class was not meant to be constructed explicitly
@@ -64,7 +64,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Preconditions.checkArgument(instance != null, "Server cannot be null");
         server = instance;
 
-        /*
+        /* // TODO Mohist
         LibraryLoader libraryLoader = null;
         try {
             libraryLoader = new LibraryLoader(server.getLogger());
@@ -307,7 +307,7 @@ public final class JavaPluginLoader implements PluginLoader {
                     }
                 }
             };
-            if (useTimings) {
+            if (false) { // Spigot - RL handles useTimings check now
                 eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
             } else {
                 eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));

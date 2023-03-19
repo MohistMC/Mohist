@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/item/EnderEyeItem.java
++++ b/net/minecraft/world/item/EnderEyeItem.java
+@@ -55,6 +_,25 @@
+                }
+ 
+                level.m_6798_(1038, blockpos1.m_7918_(1, 0, 1), 0);
++               // CraftBukkit start - Use relative location for far away sounds
++               // world.b(1038, blockposition1.c(1, 0, 1), 0);
++               int viewDistance = level.getCraftServer().getViewDistance() * 16;
++               BlockPos soundPos = blockpos1.m_7918_(1, 0, 1);
++               for (ServerPlayer player : level.m_7654_().m_6846_().f_11196_) {
++                  double deltaX = soundPos.m_123341_() - player.m_20185_();
++                  double deltaZ = soundPos.m_123343_() - player.m_20189_();
++                  double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
++                  if (level.spigotConfig.endPortalSoundRadius > 0 && distanceSquared > level.spigotConfig.endPortalSoundRadius * level.spigotConfig.endPortalSoundRadius) continue; // Spigot
++                  if (distanceSquared > viewDistance * viewDistance) {
++                     double deltaLength = Math.sqrt(distanceSquared);
++                     double relativeX = player.m_20185_() + (deltaX / deltaLength) * viewDistance;
++                     double relativeZ = player.m_20189_() + (deltaZ / deltaLength) * viewDistance;
++                     player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1038, new BlockPos((int) relativeX, (int) soundPos.m_123342_(), (int) relativeZ), 0, true));
++                  } else {
++                     player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1038, soundPos, 0, true));
++                  }
++               }
++               // CraftBukkit end
+             }
+ 
+             return InteractionResult.CONSUME;

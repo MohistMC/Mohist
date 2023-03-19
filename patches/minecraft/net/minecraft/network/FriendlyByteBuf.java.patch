@@ -35,13 +35,17 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -630,8 +_,8 @@
+@@ -630,8 +_,12 @@
           this.m_236818_(BuiltInRegistries.f_257033_, item);
           this.writeByte(p_130056_.m_41613_());
           CompoundTag compoundtag = null;
 -         if (item.m_41465_() || item.m_41468_()) {
 -            compoundtag = p_130056_.m_41783_();
 +         if (item.isDamageable(p_130056_) || item.m_41468_()) {
++            // Spigot start - filter
++            p_130056_ = p_130056_.m_41777_();
++            CraftItemStack.setItemMeta(p_130056_, CraftItemStack.getItemMeta(p_130056_));
++            // Spigot end
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
           }
  

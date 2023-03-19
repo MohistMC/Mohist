@@ -367,7 +367,7 @@
  
 -            return ichatmutablecomponent;
 +            // return chatmessage;
-+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(ichatmutablecomponent));
++            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
          } else if (!this.isWhiteListed(gameprofile)) {
 -            return IChatBaseComponent.translatable("multiplayer.disconnect.not_whitelisted");
 -        } else if (this.ipBans.isBanned(socketaddress)) {
@@ -388,7 +388,7 @@
 -            return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +            // return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile) ? IChatBaseComponent.translatable("multiplayer.disconnect.server_full") : null;
 +            if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(gameprofile)) {
-+                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "The server is full");
++                event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
 +            }
          }
 +
@@ -508,6 +508,11 @@
 +            Player respawnPlayer = entityplayer1.getBukkitEntity();
 +            PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2);
 +            cserver.getPluginManager().callEvent(respawnEvent);
++            // Spigot Start
++            if (entityplayer.connection.isDisconnected()) {
++                return entityplayer;
++            }
++            // Spigot End
 +
 +            location = respawnEvent.getRespawnLocation();
 +            if (!flag) entityplayer.reset(); // SPIGOT-4785

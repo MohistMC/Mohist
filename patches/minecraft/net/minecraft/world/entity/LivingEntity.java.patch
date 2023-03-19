@@ -645,6 +645,15 @@
        if (!this.m_213877_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
+@@ -1252,7 +_,7 @@
+          }
+ 
+          if (!this.f_19853_.f_46443_ && this.m_8077_()) {
+-            f_201943_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString());
++            if (org.spigotmc.SpigotConfig.logNamedDeaths) f_201943_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString());
+          }
+ 
+          this.f_20890_ = true;
 @@ -1275,10 +_,10 @@
        if (!this.f_19853_.f_46443_) {
           boolean flag = false;

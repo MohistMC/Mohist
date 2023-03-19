@@ -21,7 +21,7 @@
 +            } else {
 +               modifier = p_221051_.spigotConfig.wheatModifier;
 +            }
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188503_((int)((100.0F / modifier) * (25.0F / f)) + 1) == 0)) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188501_() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1)))))) { // Spigot - SPIGOT-7159: Better modifier resolution
                 p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }

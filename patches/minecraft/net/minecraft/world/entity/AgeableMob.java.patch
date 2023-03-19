@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
-@@ -19,11 +_,37 @@
+@@ -19,11 +_,32 @@
     protected int f_146733_;
     protected int f_146734_;
     protected int f_146735_;
@@ -12,26 +12,21 @@
  
 +   // Spigot start
 +   @Override
-+   public void inactiveTick()
-+   {
-+       super.inactiveTick();
-+       if ( this.f_19853_.f_46443_ || this.ageLocked )
-+       { // CraftBukkit
-+          this.m_6210_();
-+       } else
-+       {
-+          int i = this.m_146764_();
++   public void inactiveTick() {
++      super.inactiveTick();
++      if (this.f_19853_.f_46443_ || this.ageLocked) { // CraftBukkit
++         this.m_6210_();
++      } else {
++         int i = this.m_146764_();
 +
-+          if ( i < 0 )
-+          {
-+             ++i;
-+             this.m_146762_( i );
-+          } else if ( i > 0 )
-+          {
-+             --i;
-+             this.m_146762_( i );
-+          }
-+       }
++         if (i < 0) {
++            ++i;
++            this.m_146762_(i);
++         } else if (i > 0) {
++            --i;
++            this.m_146762_(i);
++         }
++      }
 +   }
 +   // Spigot end
 +

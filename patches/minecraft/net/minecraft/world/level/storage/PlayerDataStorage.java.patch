@@ -18,6 +18,14 @@
  import org.slf4j.Logger;
  
  public class PlayerDataStorage {
+@@ -24,6 +_,7 @@
+    }
+ 
+    public void m_78433_(Player p_78434_) {
++      if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
+       try {
+          CompoundTag compoundtag = p_78434_.m_20240_(new CompoundTag());
+          File file1 = File.createTempFile(p_78434_.m_20149_() + "-", ".dat", this.f_78427_);
 @@ -31,6 +_,7 @@
           File file2 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat");
           File file3 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat_old");
@@ -26,7 +34,33 @@
        } catch (Exception exception) {
           f_78426_.warn("Failed to save player data for {}", (Object)p_78434_.m_7755_().getString());
        }
-@@ -51,9 +_,20 @@
+@@ -43,17 +_,46 @@
+ 
+       try {
+          File file1 = new File(this.f_78427_, p_78436_.m_20149_() + ".dat");
++         // Spigot Start
++         boolean usingWrongFile = false;
++         if ( !file1.exists() )
++         {
++            file1 = new File( this.f_78427_, java.util.UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + p_78436_.m_6302_() ).getBytes( "UTF-8" ) ).toString() + ".dat");
++            if ( file1.exists() )
++            {
++               usingWrongFile = true;
++               org.bukkit.Bukkit.getServer().getLogger().warning( "Using offline mode UUID file for player " + p_78436_.m_6302_() + " as it is the only copy we can find." );
++            }
++         }
++         // Spigot End
+          if (file1.exists() && file1.isFile()) {
+             compoundtag = NbtIo.m_128937_(file1);
+          }
++         // Spigot Start
++         if ( usingWrongFile )
++         {
++            file1.renameTo( new File( file1.getPath() + ".offline-read" ) );
++         }
++         // Spigot End
+       } catch (Exception exception) {
+          f_78426_.warn("Failed to load player data for {}", (Object)p_78436_.m_7755_().getString());
        }
  
        if (compoundtag != null) {

@@ -9,7 +9,7 @@
        Validate.notNull(p_31728_);
        Validate.isTrue(p_31728_.m_122434_().m_122479_());
        this.f_31699_ = p_31728_;
-@@ -87,7 +_,42 @@
+@@ -87,14 +_,49 @@
        }
     }
  
@@ -53,6 +53,14 @@
        return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
+    public void m_8119_() {
+       if (!this.f_19853_.f_46443_) {
+          this.m_146871_();
+-         if (this.f_31700_++ == 100) {
++         if (this.f_31700_++ == this.f_19853_.spigotConfig.hangingTickFrequency) { // Spigot
+             this.f_31700_ = 0;
+             if (!this.m_213877_() && !this.m_7088_()) {
+                this.m_146870_();
 @@ -121,6 +_,8 @@
                 int j1 = (j - 1) / -2;
                 blockpos$mutableblockpos.m_122190_(blockpos).m_122175_(direction, k + i1).m_122175_(Direction.UP, l + j1);

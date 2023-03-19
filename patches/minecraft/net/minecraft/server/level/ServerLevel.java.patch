@@ -8,6 +8,14 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
+@@ -20,6 +_,7 @@
+ import java.nio.file.Path;
+ import java.util.ArrayList;
+ import java.util.Comparator;
++import java.util.Iterator;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Objects;
 @@ -27,6 +_,7 @@
  import java.util.Set;
  import java.util.UUID;
@@ -149,6 +157,15 @@
                       profilerfiller.m_7238_();
                    }
                 }
+@@ -383,7 +_,7 @@
+       int j = chunkpos.m_45605_();
+       ProfilerFiller profilerfiller = this.m_46473_();
+       profilerfiller.m_6180_("thunder");
+-      if (flag && this.m_46470_() && this.f_46441_.m_188503_(100000) == 0) {
++      if (flag && this.m_46470_() && this.spigotConfig.thunderChance > 0 && this.f_46441_.m_188503_(this.spigotConfig.thunderChance) == 0) { // Spigot
+          BlockPos blockpos = this.m_143288_(this.m_46496_(i, 0, j, 15));
+          if (this.m_46758_(blockpos)) {
+             DifficultyInstance difficultyinstance = this.m_6436_(blockpos);
 @@ -412,6 +_,7 @@
           BlockPos blockpos1 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
           BlockPos blockpos2 = blockpos1.m_7495_();
@@ -306,8 +323,8 @@
     public void m_8712_(LevelChunk p_8713_) {
 +      // Spigot Start
 +      for (net.minecraft.world.level.block.entity.BlockEntity tileentity : p_8713_.m_62954_().values()) {
-+         if (tileentity instanceof net.minecraft.world.Container) {
-+            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((net.minecraft.world.Container) tileentity).getViewers())) {
++         if (tileentity instanceof net.minecraft.world.Container container) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(container.getViewers())) {
 +               h.closeInventory();
 +            }
 +         }
@@ -432,10 +449,34 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
-@@ -1455,6 +_,13 @@
+@@ -1455,6 +_,37 @@
        }
  
        public void m_141981_(Entity p_143375_) {
++         // Spigot start
++         if ( p_143375_ instanceof Player )
++         {
++            com.google.common.collect.Streams.stream( ServerLevel.this.m_7654_().m_129785_() ).map( ServerLevel::m_8895_ ).forEach( (worldData) ->
++            {
++               for (Object o : worldData.f_78144_.values() )
++               {
++                  if ( o instanceof MapItemSavedData )
++                  {
++                     MapItemSavedData map = (MapItemSavedData) o;
++                     map.f_77896_.remove( (Player) p_143375_ );
++                     for (Iterator<MapItemSavedData.HoldingPlayer> iter = map.f_77893_.iterator(); iter.hasNext(); )
++                     {
++                        if ( iter.next().f_77959_ == p_143375_ )
++                        {
++                           map.f_77894_.remove(p_143375_.m_7755_().getString()); // Paper
++                           iter.remove();
++                        }
++                     }
++                  }
++               }
++            } );
++         }
++         // Spigot end
 +         // Spigot Start
 +         if (p_143375_.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(p_143375_ instanceof ServerPlayer) || p_143375_.m_146911_() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
 +            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) p_143375_.getBukkitEntity()).getInventory().getViewers())) {

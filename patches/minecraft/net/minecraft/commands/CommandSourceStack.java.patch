@@ -51,7 +51,7 @@
     public Vec3 m_81371_() {
        return this.f_81289_;
     }
-@@ -281,7 +_,7 @@
+@@ -281,13 +_,13 @@
        Component component = Component.m_237110_("chat.type.admin", this.m_81357_(), p_81367_).m_130944_(ChatFormatting.GRAY, ChatFormatting.ITALIC);
        if (this.f_81294_.m_129900_().m_46207_(GameRules.f_46144_)) {
           for(ServerPlayer serverplayer : this.f_81294_.m_6846_().m_11314_()) {
@@ -60,6 +60,13 @@
                 serverplayer.m_213846_(component);
              }
           }
+       }
+ 
+-      if (this.f_81288_ != this.f_81294_ && this.f_81294_.m_129900_().m_46207_(GameRules.f_46141_)) {
++      if (this.f_81288_ != this.f_81294_ && this.f_81294_.m_129900_().m_46207_(GameRules.f_46141_) && !org.spigotmc.SpigotConfig.silentCommandBlocks) { // Spigot
+          this.f_81294_.m_213846_(component);
+       }
+ 
 @@ -345,4 +_,10 @@
     public FeatureFlagSet m_245239_() {
        return this.f_81290_.m_246046_();

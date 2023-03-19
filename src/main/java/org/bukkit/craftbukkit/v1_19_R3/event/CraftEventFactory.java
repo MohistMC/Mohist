@@ -173,6 +173,7 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.entity.StriderTemperatureChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -613,14 +614,12 @@ public class CraftEventFactory {
             }
             event = CraftEventFactory.callLightningStrikeEvent((LightningStrike) entity.getBukkitEntity(), cause);
             // Spigot start
-        } else if (entity instanceof net.minecraft.world.entity.ExperienceOrb) {
-            net.minecraft.world.entity.ExperienceOrb xp = (net.minecraft.world.entity.ExperienceOrb) entity;
+        } else if (entity instanceof net.minecraft.world.entity.ExperienceOrb xp) {
             double radius = world.spigotConfig.expMerge;
             if (radius > 0) {
                 List<Entity> entities = world.getEntities(entity, entity.getBoundingBox().inflate(radius, radius, radius));
                 for (Entity e : entities) {
-                    if (e instanceof net.minecraft.world.entity.ExperienceOrb) {
-                        net.minecraft.world.entity.ExperienceOrb loopItem = (net.minecraft.world.entity.ExperienceOrb) e;
+                    if (e instanceof net.minecraft.world.entity.ExperienceOrb loopItem) {
                         if (!loopItem.isRemoved()) {
                             xp.value += loopItem.value;
                             loopItem.discard();
@@ -876,12 +875,15 @@ public class CraftEventFactory {
                 entity.lastDamageCancelled = true; // SPIGOT-5339, SPIGOT-6252, SPIGOT-6777: Keep track if the event was canceled
             }
             return event;
-        } else if (source.getEntity() != null) {
+        } else if (source.getEntity() != null || source.getDirectEntity() != null) {
             Entity damager = source.getEntity();
             DamageCause cause = (source.isSweep()) ? DamageCause.ENTITY_SWEEP_ATTACK : DamageCause.ENTITY_ATTACK;
 
             if (source.isIndirect() && source.getDirectEntity() != null) {
                 damager = source.getDirectEntity();
+            }
+
+            if (damager instanceof net.minecraft.world.entity.projectile.Projectile) {
                 if (damager.getBukkitEntity() instanceof org.bukkit.entity.ThrownPotion) {
                     cause = DamageCause.MAGIC;
                 } else if (damager.getBukkitEntity() instanceof Projectile) {
@@ -1707,5 +1709,20 @@ public class CraftEventFactory {
         List<org.bukkit.entity.Entity> bukkitEntities = Collections.unmodifiableList(entities.stream().map(Entity::getBukkitEntity).collect(Collectors.toList()));
         EntitiesUnloadEvent event = new EntitiesUnloadEvent(new CraftChunk((ServerLevel ) world, coords.x, coords.z), bukkitEntities);
         Bukkit.getPluginManager().callEvent(event);
+    }
+
+    /**
+     * Mob spawner event.
+     */
+    public static SpawnerSpawnEvent callSpawnerSpawnEvent(Entity spawnee, BlockPos pos) {
+        CraftEntity entity = spawnee.getBukkitEntity();
+        BlockState state = entity.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
+        if (!(state instanceof org.bukkit.block.CreatureSpawner)) {
+            state = null;
+        }
+
+        SpawnerSpawnEvent event = new SpawnerSpawnEvent(entity, (org.bukkit.block.CreatureSpawner) state);
+        entity.getServer().getPluginManager().callEvent(event);
+        return event;
     }
 }
