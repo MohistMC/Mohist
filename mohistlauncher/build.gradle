@@ -33,6 +33,7 @@ shadowJar {
         include(dependency('com.mohistmc.yaml:yaml:0.3'))
         include(dependency('org.yaml:snakeyaml:1.33'))
     }
+    relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
 
 jar.dependsOn(shadowJar)
