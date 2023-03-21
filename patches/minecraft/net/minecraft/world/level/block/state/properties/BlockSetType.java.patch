@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/state/properties/BlockSetType.java
++++ b/net/minecraft/world/level/block/state/properties/BlockSetType.java
+@@ -29,7 +_,7 @@
+       this(p_272860_, SoundType.f_56736_, SoundEvents.f_12626_, SoundEvents.f_12627_, SoundEvents.f_12628_, SoundEvents.f_12629_, SoundEvents.f_12636_, SoundEvents.f_12637_, SoundEvents.f_12631_, SoundEvents.f_12632_);
+    }
+ 
+-   public static BlockSetType m_272115_(BlockSetType p_273033_) {
++   private static BlockSetType m_272115_(BlockSetType p_273033_) {
+       f_271232_.add(p_273033_);
+       return p_273033_;
+    }

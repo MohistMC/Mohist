@@ -56,7 +56,7 @@ public class ClimateSettingsBuilder
      */
     public ClimateSettings build()
     {
-        return new ClimateSettings(true, this.temperature, this.temperatureModifier, this.downfall);
+        return new ClimateSettings(this.hasPrecipitation, this.temperature, this.temperatureModifier, this.downfall);
     }
 
     /**

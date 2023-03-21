@@ -616,4 +616,9 @@ public class CraftBlockData implements BlockData {
 
         return state.isFaceSturdy(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CraftBlock.blockFaceToNotch(face), CraftBlockSupport.toNMS(support));
     }
+
+    @Override
+    public Material getPlacementMaterial() {
+        return CraftMagicNumbers.getMaterial(state.getBlock().asItem());
+    }
 }

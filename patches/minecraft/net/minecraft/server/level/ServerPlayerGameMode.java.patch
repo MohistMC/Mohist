@@ -13,6 +13,21 @@
           this.m_215125_(p_215120_, false, p_215124_, "too far");
        } else if (p_215120_.m_123342_() >= p_215123_) {
           this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+@@ -142,6 +_,14 @@
+                return;
+             }
+ 
++            // Spigot start - handle debug stick left click for non-creative
++            if (this.f_9245_.m_21205_().m_150930_(net.minecraft.world.item.Items.f_42751_)
++                    && ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.f_42751_).m_150802_(this.f_9245_, this.f_9244_.m_8055_(p_215120_), this.f_9244_, p_215120_, false, this.f_9245_.m_21205_())) {
++               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               return;
++            }
++            // Spigot end
++
+             if (this.f_9245_.m_36187_(this.f_9244_, p_215120_, this.f_9247_)) {
+                this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+                this.m_215125_(p_215120_, false, p_215124_, "block action restricted");
 @@ -152,6 +_,7 @@
              float f = 1.0F;
              BlockState blockstate = this.f_9244_.m_8055_(p_215120_);

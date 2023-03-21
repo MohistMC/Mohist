@@ -248,7 +248,7 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
     @Override
     public ClassLoaderRemapper getRemapper() {
         if (remapper == null) {
-            MohistRemapper.init(McVersion.v1_19_3);
+            MohistRemapper.init(McVersion.v1_19_4);
             remapper = MohistRemapper.createClassLoaderRemapper(this);
         }
         return remapper;
