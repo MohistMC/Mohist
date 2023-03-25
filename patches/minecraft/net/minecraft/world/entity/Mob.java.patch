@@ -50,12 +50,15 @@
     private final Map<BlockPathTypes, Float> f_21354_ = Maps.newEnumMap(BlockPathTypes.class);
     @Nullable
     public ResourceLocation f_21355_;
-@@ -117,6 +_,8 @@
+@@ -116,7 +_,10 @@
+    private CompoundTag f_21359_;
     private BlockPos f_21360_ = BlockPos.f_121853_;
     private float f_21341_ = -1.0F;
- 
+-
++   @Nullable
++   private MobSpawnType spawnType;
++   private boolean spawnCancelled = false;
 +   public boolean aware = true; // CraftBukkit
-+
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
@@ -104,10 +107,14 @@
     public void m_7380_(CompoundTag p_21484_) {
        super.m_7380_(p_21484_);
        p_21484_.m_128379_("CanPickUpLoot", this.m_21531_());
-@@ -422,15 +_,23 @@
+@@ -422,15 +_,27 @@
           p_21484_.m_128379_("NoAI", this.m_21525_());
        }
  
++      if (this.spawnType != null) {
++         p_21484_.m_128359_("forge:spawn_type", this.spawnType.name());
++      }
++
 +      p_21484_.m_128379_("Bukkit.Aware", this.aware); // CraftBukkit
     }
  
@@ -130,10 +137,19 @@
        if (p_21450_.m_128425_("ArmorItems", 9)) {
           ListTag listtag = p_21450_.m_128437_("ArmorItems", 10);
  
-@@ -474,6 +_,11 @@
+@@ -474,6 +_,20 @@
        }
  
        this.m_21557_(p_21450_.m_128471_("NoAI"));
++
++      if (p_21450_.m_128441_("forge:spawn_type")) {
++         try {
++            this.spawnType = MobSpawnType.valueOf(p_21450_.m_128461_("forge:spawn_type"));
++         } catch (Exception ex) {
++            p_21450_.m_128473_("forge:spawn_type");
++         }
++      }
++
 +      // CraftBukkit start
 +      if (p_21450_.m_128441_("Bukkit.Aware")) {
 +         this.aware = p_21450_.m_128471_("Bukkit.Aware");
@@ -157,7 +173,7 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
           Entity entity = this.f_19853_.m_45930_(this, -1.0D);
-+         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel) this.f_19853_);
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            f_20891_ = 0;
 +            entity = null;
@@ -176,6 +192,30 @@
        this.f_19853_.m_46473_().m_6180_("sensing");
        this.f_21349_.m_26789_();
        this.f_19853_.m_46473_().m_7238_();
+@@ -1020,6 +_,15 @@
+ 
+    }
+ 
++   /**
++    * Forge: Deprecated, call via ForgeEventFactory.onFinalizeSpawn.<br>
++    * Overrides are fine. Super calls within overrides are fine and should not be wrapped (as that will cause stack overflows).<br>
++    * Vanilla calls are replaced with a transformer, and are not visible in source.
++    * <p>
++    * Be certain to either call super.finalizeSpawn or set the {@link #spawnType} field from within your override.
++    */
++   @Deprecated
++   @org.jetbrains.annotations.ApiStatus.OverrideOnly
+    @Nullable
+    public SpawnGroupData m_6518_(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
+       RandomSource randomsource = p_21434_.m_213780_();
+@@ -1030,6 +_,7 @@
+          this.m_21559_(false);
+       }
+ 
++      this.spawnType = p_21436_;
+       return p_21437_;
+    }
+ 
 @@ -1037,6 +_,12 @@
        this.f_21353_ = true;
     }
@@ -323,3 +363,43 @@
        });
     }
  
+@@ -1442,5 +_,39 @@
+    public ItemStack m_142340_() {
+       SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
+       return spawneggitem == null ? null : new ItemStack(spawneggitem);
++   }
++   /**
++    * Returns the type of spawn that created this mob, if applicable.
++    * If it could not be determined, this will return null.
++    * <p>
++    * This is set via {@link Mob#finalizeSpawn}, so you should not call this from within that method, instead using the parameter.
++    */
++   @Nullable
++   public final MobSpawnType getSpawnType() {
++      return this.spawnType;
++   }
++
++   /**
++    * This method exists so that spawns can be cancelled from the {@link net.minecraftforge.event.entity.living.MobSpawnEvent.FinalizeSpawn FinalizeSpawnEvent}
++    * without needing to hook up an additional handler for the {@link net.minecraftforge.event.entity.EntityJoinLevelEvent EntityJoinLevelEvent}.
++    * @return if this mob will be blocked from spawning during {@link Level#addFreshEntity(Entity)}
++    * @apiNote Not public-facing API.
++    */
++   @org.jetbrains.annotations.ApiStatus.Internal
++   public final boolean isSpawnCancelled() {
++      return this.spawnCancelled;
++   }
++
++   /**
++    * Marks this mob as being disallowed to spawn during {@link Level#addFreshEntity(Entity)}.<p>
++    * @throws UnsupportedOperationException if this entity has already been {@link Entity#isAddedToWorld() added to the world}.
++    * @apiNote Not public-facing API.
++    */
++   @org.jetbrains.annotations.ApiStatus.Internal
++   public final void setSpawnCancelled(boolean cancel) {
++      if (this.isAddedToWorld()) {
++         throw new UnsupportedOperationException("Late invocations of Mob#setSpawnCancelled are not permitted.");
++      }
++      this.spawnCancelled = cancel;
+    }
+ }

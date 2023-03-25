@@ -8,6 +8,7 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.Item;
@@ -53,12 +54,12 @@ public final class ItemDecoratorHandler
         return DECORATOR_LOOKUP.getOrDefault(stack.getItem(), EMPTY);
     }
 
-    public void render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
+    public void render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset)
     {
         resetRenderState();
         for (IItemDecorator itemDecorator : itemDecorators)
         {
-            if (itemDecorator.render(font, stack, xOffset, yOffset, blitOffset))
+            if (itemDecorator.render(poseStack, font, stack, xOffset, yOffset))
                 resetRenderState();
         }
     }
