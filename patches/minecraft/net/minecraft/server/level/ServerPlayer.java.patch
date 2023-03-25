@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -147,8 +_,14 @@
+@@ -147,8 +_,15 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -36,6 +36,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.BlockStateListPopulator;
++import org.bukkit.event.player.PlayerToggleSneakEvent;
  import org.slf4j.Logger;
  
  public class ServerPlayer extends Player {
@@ -278,6 +279,23 @@
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.f_36096_));
        this.f_36096_ = this.f_36095_;
     }
+ 
+@@ -1016,6 +_,16 @@
+          }
+ 
+          this.f_20899_ = p_8983_;
++         // CraftBukkit start
++         if (p_8984_ != this.m_6144_()) {
++            PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getBukkitEntity(), p_8984_);
++            this.f_8924_.server.getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++               return;
++            }
++         }
++         // CraftBukkit end
+          this.m_20260_(p_8984_);
+       }
  
 @@ -1131,6 +_,15 @@
        this.m_36362_(p_9016_.m_36331_());

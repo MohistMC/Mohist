@@ -1122,6 +1122,18 @@
     public boolean m_6063_() {
        return true;
     }
+@@ -2491,6 +_,11 @@
+       }
+    }
+ 
++   // CraftBukkit start
++   public boolean teleportTo(ServerLevel worldserver, double d0, double d1, double d2, Set<RelativeMovement> set, float f, float f1, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      return this.m_264318_(worldserver, d0, d1, d2, set, f, f1);
++   }
++   // CraftBukkit end
+    public boolean m_264318_(ServerLevel p_265257_, double p_265407_, double p_265727_, double p_265410_, Set<RelativeMovement> p_265083_, float p_265573_, float p_265094_) {
+       float f = Mth.m_14036_(p_265094_, -90.0F, 90.0F);
+       if (p_265257_ == this.f_19853_) {
 @@ -2560,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();

@@ -71,3 +71,16 @@
     }
  
     public boolean m_6542_(Player p_273466_) {
+@@ -185,7 +_,11 @@
+    @VisibleForTesting
+    public void m_272139_(ItemStack p_272693_) {
+       this.f_271436_.set(0, p_272693_);
+-      this.f_58857_.m_46672_(this.m_58899_(), this.m_58900_().m_60734_());
++      // CraftBukkit start - add null check for level
++      if (f_58857_ != null) {
++         this.f_58857_.m_46672_(this.m_58899_(), this.m_58900_().m_60734_());
++      }
++      // CraftBukkit end
+       this.m_6596_();
+    }
+ }

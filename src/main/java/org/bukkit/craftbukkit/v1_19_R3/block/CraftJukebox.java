@@ -10,13 +10,28 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Jukebox;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryJukebox;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
+import org.bukkit.inventory.JukeboxInventory;
 
 public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
 
     public CraftJukebox(World world, JukeboxBlockEntity te) {
         super(world, te);
+    }
+    @Override
+    public JukeboxInventory getSnapshotInventory() {
+        return new CraftInventoryJukebox(this.getSnapshot());
+    }
+
+    @Override
+    public JukeboxInventory getInventory() {
+        if (!this.isPlaced()) {
+            return this.getSnapshotInventory();
+        }
+
+        return new CraftInventoryJukebox(this.getTileEntity());
     }
 
     @Override

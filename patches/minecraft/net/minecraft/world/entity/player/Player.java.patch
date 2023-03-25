@@ -119,6 +119,23 @@
        return 20;
     }
  
+@@ -452,8 +_,14 @@
+    public void m_6083_() {
+       if (!this.f_19853_.f_46443_ && this.m_36342_() && this.m_20159_()) {
+          this.m_8127_();
+-         this.m_20260_(false);
+-      } else {
++         // CraftBukkit start - SPIGOT-7316: no longer passenger, dismount and return
++         if (!this.m_20159_()) {
++            this.m_20260_(false);
++            return;
++         }
++      }
++      {
++         // CraftBukkit end
+          double d0 = this.m_20185_();
+          double d1 = this.m_20186_();
+          double d2 = this.m_20189_();
 @@ -572,6 +_,7 @@
     }
  
