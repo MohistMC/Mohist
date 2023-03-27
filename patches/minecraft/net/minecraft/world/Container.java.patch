@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/Container.java
 +++ b/net/minecraft/world/Container.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world;
+ 
++import java.util.Collections;
+ import java.util.Set;
+ import java.util.function.Predicate;
+ import net.minecraft.core.BlockPos;
 @@ -9,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.BlockEntity;
@@ -10,19 +17,25 @@
  public interface Container extends Clearable {
     int f_146642_ = 64;
     int f_271421_ = 8;
-@@ -92,4 +_,29 @@
+@@ -92,4 +_,35 @@
           return p_272670_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) <= (double)(p_273411_ * p_273411_);
        }
     }
 +
 +   // CraftBukkit start
-+   java.util.List<ItemStack> getContents();
++   default java.util.List<ItemStack> getContents() {
++      return Collections.emptyList();
++   }
 +
 +   void onOpen(CraftHumanEntity who);
 +
 +   void onClose(CraftHumanEntity who);
 +
-+   java.util.List<org.bukkit.entity.HumanEntity> getViewers();
++   // Mohist start - fix exoticbirds mod
++   default java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
++      return Collections.emptyList();
++   }
++   // Mohist end
 +
 +   org.bukkit.inventory.InventoryHolder getOwner();
 +
