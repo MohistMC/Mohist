@@ -1,15 +1,17 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
-@@ -13,7 +_,12 @@
+@@ -13,7 +_,14 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SpawnUtil {
 +
     public static <T extends Mob> Optional<T> m_216403_(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_) {
++      // CraftBukkit start
 +      return trySpawnMob(p_216404_, p_216405_, p_216406_, p_216407_, p_216408_, p_216409_, p_216410_, p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      // CraftBukkit end
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.m_122032_();
  
        for(int i = 0; i < p_216408_; ++i) {
@@ -18,7 +20,7 @@
              if (t != null) {
                 if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
 -                  p_216406_.m_47205_(t);
-+                  p_216406_.addFreshEntityWithPassengers(t, reason);
++                  p_216406_.addFreshEntityWithPassengers(t, reason); // CraftBukkit
                    return Optional.of(t);
                 }
  

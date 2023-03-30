@@ -31,15 +31,18 @@
     }
  
     public Optional<MobEffectInstance.FactorData> m_216881_() {
-@@ -52,6 +_,7 @@
+@@ -52,25 +_,39 @@
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
        if (this == MobEffects.f_19605_) {
           if (p_19467_.m_21223_() < p_19467_.m_21233_()) {
-+            p_19467_.regainReason0.set(RegainReason.MAGIC_REGEN);
++            p_19467_.regainReason0.set(RegainReason.MAGIC_REGEN); // Mohist
              p_19467_.m_5634_(1.0F);
           }
        } else if (this == MobEffects.f_19614_) {
-@@ -61,16 +_,29 @@
+          if (p_19467_.m_21223_() > 1.0F) {
+-            p_19467_.m_6469_(p_19467_.m_269291_().m_269425_(), 1.0F);
++            p_19467_.m_6469_(p_19467_.m_269291_().poison, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
+          }
        } else if (this == MobEffects.f_19615_) {
           p_19467_.m_6469_(p_19467_.m_269291_().m_269251_(), 1.0F);
        } else if (this == MobEffects.f_19612_ && p_19467_ instanceof Player) {
@@ -66,7 +69,7 @@
              p_19467_.m_6469_(p_19467_.m_269291_().m_269425_(), (float)(6 << p_19468_));
           }
        } else {
-+         p_19467_.regainReason0.set(RegainReason.MAGIC);
++         p_19467_.regainReason0.set(RegainReason.MAGIC); // Mohist
           p_19467_.m_5634_((float)Math.max(4 << p_19468_, 0));
        }
  
@@ -74,7 +77,7 @@
           }
        } else {
           int i = (int)(p_19466_ * (double)(4 << p_19465_) + 0.5D);
-+         p_19464_.regainReason0.set(RegainReason.MAGIC);
++         p_19464_.regainReason0.set(RegainReason.MAGIC); // Mohist
           p_19464_.m_5634_((float)i);
        }
  

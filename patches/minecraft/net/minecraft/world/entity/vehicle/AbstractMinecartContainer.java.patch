@@ -7,7 +7,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.NonNullList;
  import net.minecraft.nbt.CompoundTag;
-@@ -16,6 +_,10 @@
+@@ -16,9 +_,53 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -17,50 +17,7 @@
 +import org.bukkit.inventory.InventoryHolder;
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
-    private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
-@@ -82,6 +_,8 @@
-    }
- 
-    public InteractionResult m_6096_(Player p_38232_, InteractionHand p_38233_) {
-+      InteractionResult ret = super.m_6096_(p_38232_, p_38233_);
-+      if (ret.m_19077_()) return ret;
-       return this.m_268996_(p_38232_);
-    }
- 
-@@ -120,6 +_,28 @@
- 
-    protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
- 
-+   // Forge Start
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
-+         return itemHandler.cast();
-+      return super.getCapability(capability, facing);
-+   }
-+
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      itemHandler.invalidate();
-+   }
-+
-+   @Override
-+   public void reviveCaps() {
-+      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+   }
-+
-    @Nullable
-    public ResourceLocation m_214142_() {
-       return this.f_38204_;
-@@ -144,4 +_,45 @@
-    public void m_213775_() {
-       this.f_38202_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
-    }
-+
+-   private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
 +   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
@@ -101,4 +58,45 @@
 +      return getBukkitEntity().getLocation();
 +   }
 +   // CraftBukkit end
- }
++   private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+    @Nullable
+    public ResourceLocation f_38204_;
+    public long f_38205_;
+@@ -82,6 +_,8 @@
+    }
+ 
+    public InteractionResult m_6096_(Player p_38232_, InteractionHand p_38233_) {
++      InteractionResult ret = super.m_6096_(p_38232_, p_38233_);
++      if (ret.m_19077_()) return ret;
+       return this.m_268996_(p_38232_);
+    }
+ 
+@@ -119,6 +_,28 @@
+    }
+ 
+    protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
++
++   // Forge Start
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++   }
+ 
+    @Nullable
+    public ResourceLocation m_214142_() {

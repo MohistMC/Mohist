@@ -18,10 +18,11 @@
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
     private static final int f_219867_ = 27;
-@@ -165,6 +_,51 @@
+@@ -165,6 +_,53 @@
        return this.m_219954_(p_219896_);
     }
  
++   // CraftBukkit start
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
@@ -66,6 +67,7 @@
 +   public Location getLocation() {
 +      return getBukkitEntity().getLocation();
 +   }
++   // CraftBukkit end
 +
     @Nullable
     public AbstractContainerMenu m_7208_(int p_219910_, Inventory p_219911_, Player p_219912_) {

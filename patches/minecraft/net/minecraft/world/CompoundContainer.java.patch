@@ -16,10 +16,10 @@
     public final Container f_18911_;
  
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<>();
 +
 +   public List<ItemStack> getContents() {
-+      List<ItemStack> result = new ArrayList<ItemStack>(this.m_6643_());
++      List<ItemStack> result = new ArrayList<>(this.m_6643_());
 +      for (int i = 0; i < this.m_6643_(); i++) {
 +         result.add(this.m_8020_(i));
 +      }

@@ -99,6 +99,15 @@
     }
  
     public boolean m_36341_() {
+@@ -298,7 +_,7 @@
+    private void m_36372_() {
+       ItemStack itemstack = this.m_6844_(EquipmentSlot.HEAD);
+       if (itemstack.m_150930_(Items.f_42354_) && !this.m_204029_(FluidTags.f_13131_)) {
+-         this.m_7292_(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true));
++         this.addEffect(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TURTLE_HELMET); // CraftBukkit
+       }
+ 
+    }
 @@ -351,6 +_,10 @@
     }
  
@@ -136,6 +145,15 @@
           double d0 = this.m_20185_();
           double d1 = this.m_20186_();
           double d2 = this.m_20189_();
+@@ -477,7 +_,7 @@
+ 
+       if (this.f_19853_.m_46791_() == Difficulty.PEACEFUL && this.f_19853_.m_46469_().m_46207_(GameRules.f_46139_)) {
+          if (this.m_21223_() < this.m_21233_() && this.f_19797_ % 20 == 0) {
+-            this.m_5634_(1.0F);
++            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
+          }
+ 
+          if (this.f_36097_.m_38721_() && this.f_19797_ % 10 == 0) {
 @@ -572,6 +_,7 @@
     }
  

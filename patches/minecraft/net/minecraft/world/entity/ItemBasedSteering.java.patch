@@ -21,7 +21,7 @@
        return this.f_20837_.m_135370_(this.f_20838_);
     }
  
-@@ -67,4 +_,13 @@
+@@ -67,4 +_,12 @@
     public boolean m_20851_() {
        return this.f_20837_.m_135370_(this.f_20839_);
     }
@@ -30,8 +30,7 @@
 +   public void setBoostTicks(int ticks) {
 +      this.f_20834_ = true;
 +      this.f_20835_ = 0;
-+      this.boostTimeTotal = ticks;
-+      this.f_20837_.m_135381_(this.f_20838_, this.boostTimeTotal);
++      this.f_20837_.m_135381_(this.f_20838_, ticks);
 +   }
 +   // CraftBukkit end
  }

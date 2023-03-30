@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,11 +_,16 @@
+@@ -1,11 +_,17 @@
  package net.minecraft.world.food;
  
  import net.minecraft.nbt.CompoundTag;
@@ -13,6 +13,7 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.GameRules;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  
  public class FoodData {
@@ -71,7 +72,7 @@
        }
  
     }
-@@ -40,28 +_,41 @@
+@@ -40,28 +_,39 @@
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
              this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
@@ -95,8 +96,8 @@
              float f = Math.min(this.f_38697_, 6.0F);
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(f / 6.0F);
-             this.m_38703_(f);
-+            // entityhuman.causeFoodExhaustion(f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Mohist TODO
+-            this.m_38703_(f);
++            p_38711_.causeFoodExhaustion(f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
              this.f_38699_ = 0;
           }
        } else if (flag && this.f_38696_ >= 18 && p_38711_.m_36325_()) {
@@ -105,8 +106,8 @@
 +         if (this.f_38699_ >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(1.0F);
-             this.m_38703_(6.0F);
-+            // entityhuman.causeFoodExhaustion(6.0f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Mohist TODO
+-            this.m_38703_(6.0F);
++            p_38711_.causeFoodExhaustion(6.0f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
              this.f_38699_ = 0;
           }
        } else if (this.f_38696_ <= 0) {

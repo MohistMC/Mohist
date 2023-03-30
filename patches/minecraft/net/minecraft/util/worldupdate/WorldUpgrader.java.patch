@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/worldupdate/WorldUpgrader.java
++++ b/net/minecraft/util/worldupdate/WorldUpgrader.java
+@@ -43,7 +_,7 @@
+    private static final Logger f_18797_ = LogUtils.getLogger();
+    private static final ThreadFactory f_18798_ = (new ThreadFactoryBuilder()).setDaemon(true).build();
+    private final Registry<LevelStem> f_243889_;
+-   private final Set<ResourceKey<Level>> f_243666_;
++   private final Set<ResourceKey<Level>> f_243666_; // Mohist TODO
+    private final boolean f_18800_;
+    private final LevelStorageSource.LevelStorageAccess f_18801_;
+    private final Thread f_18802_;
