@@ -18,7 +18,7 @@
  
  public class FoodData {
     public int f_38696_ = 20;
-@@ -14,19 +_,51 @@
+@@ -14,7 +_,23 @@
     public int f_38699_;
     public int f_38700_ = 20;
  
@@ -42,10 +42,8 @@
        this.f_38697_ = 5.0F;
     }
  
-    public void m_38707_(int p_38708_, float p_38709_) {
-       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
+@@ -23,10 +_,25 @@
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
-+      this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
  
 +   // Use the LivingEntity sensitive version in favour of this.
