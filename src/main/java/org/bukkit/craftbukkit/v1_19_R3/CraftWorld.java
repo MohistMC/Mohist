@@ -200,7 +200,18 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Chunk getChunkAt(int x, int z) {
-        return this.world.getChunkSource().getChunk(x, z, true).bukkitChunk;
+        net.minecraft.world.level.chunk.LevelChunk chunk = (net.minecraft.world.level.chunk.LevelChunk) this.world.getChunk(x, z, ChunkStatus.FULL, true);
+        return new CraftChunk(chunk);
+    }
+
+    @NotNull
+    @Override
+    public Chunk getChunkAt(int x, int z, boolean generate) {
+        if (generate) {
+            return getChunkAt(x, z);
+        }
+
+        return new CraftChunk(getHandle(), x, z);
     }
 
     @Override
@@ -227,7 +238,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public Chunk[] getLoadedChunks() {
         Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = world.getChunkSource().chunkMap.visibleChunkMap;
-        return chunks.values().stream().map(ChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(net.minecraft.world.level.chunk.LevelChunk::getBukkitChunk).toArray(Chunk[]::new);
+        return chunks.values().stream().map(ChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(CraftChunk::new).toArray(Chunk[]::new);
     }
 
     @Override
@@ -265,7 +276,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         }
         net.minecraft.world.level.chunk.LevelChunk chunk = world.getChunk(x, z);
 
-        chunk.mustNotSave = !save;
+        chunk.setUnsaved(!save); // Use method call to account for persistentDataContainer
         unloadChunkRequest(x, z);
 
         world.getChunkSource().purgeUnload();
@@ -353,7 +364,6 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Preconditions.checkArgument(chunk != null, "null chunk");
 
         loadChunk(chunk.getX(), chunk.getZ());
-        ((CraftChunk) getChunkAt(chunk.getX(), chunk.getZ())).getHandle().bukkitChunk = chunk;
     }
 
     @Override

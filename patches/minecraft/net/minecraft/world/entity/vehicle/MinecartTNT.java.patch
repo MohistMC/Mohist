@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartTNT.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartTNT.java
-@@ -22,6 +_,7 @@
+@@ -22,10 +_,11 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.material.FluidState;
@@ -8,6 +8,20 @@
  
  public class MinecartTNT extends AbstractMinecart {
     private static final byte f_150345_ = 10;
+-   private int f_38647_ = -1;
++   public int f_38647_ = -1;
+ 
+    public MinecartTNT(EntityType<? extends MinecartTNT> p_38649_, Level p_38650_) {
+       super(p_38649_, p_38650_);
+@@ -90,7 +_,7 @@
+       return Items.f_42693_;
+    }
+ 
+-   protected void m_38688_(double p_38689_) {
++   public void m_38688_(double p_38689_) {
+       this.m_257440_((DamageSource)null, p_38689_);
+    }
+ 
 @@ -101,7 +_,15 @@
              d0 = 5.0D;
           }

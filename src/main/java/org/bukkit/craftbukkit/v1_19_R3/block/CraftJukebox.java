@@ -39,14 +39,19 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         boolean result = super.update(force, applyPhysics);
 
         if (result && this.isPlaced() && this.getType() == Material.JUKEBOX) {
-            CraftWorld world = (CraftWorld) this.getWorld();
             Material record = this.getPlaying();
-            if (record == Material.AIR) {
-                getWorldHandle().setBlock(this.getPosition(), Blocks.JUKEBOX.defaultBlockState().setValue(JukeboxBlock.HAS_RECORD, false), 3);
-            } else {
-                getWorldHandle().setBlock(this.getPosition(), Blocks.JUKEBOX.defaultBlockState().setValue(JukeboxBlock.HAS_RECORD, true), 3);
+            getWorldHandle().setBlock(this.getPosition(), data, 3);
+
+            BlockEntity tileEntity = this.getTileEntityFromWorld();
+            if (tileEntity instanceof JukeboxBlockEntity jukebox) {
+                CraftWorld world = (CraftWorld) this.getWorld();
+                if (record.isAir()) {
+                    jukebox.setRecordWithoutPlaying(ItemStack.EMPTY);
+                    world.playEffect(this.getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
+                } else {
+                    world.playEffect(this.getLocation(), Effect.RECORD_PLAY, record);
+                }
             }
-            world.playEffect(this.getLocation(), Effect.RECORD_PLAY, record);
         }
 
         return result;
@@ -67,6 +72,11 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
     }
 
     @Override
+    public boolean hasRecord() {
+        return getHandle().getValue(JukeboxBlock.HAS_RECORD) && !getPlaying().isAir();
+    }
+
+    @Override
     public org.bukkit.inventory.ItemStack getRecord() {
         ItemStack record = this.getSnapshot().getFirstItem();
         return CraftItemStack.asBukkitCopy(record);
@@ -75,22 +85,54 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
     @Override
     public void setRecord(org.bukkit.inventory.ItemStack record) {
         ItemStack nms = CraftItemStack.asNMSCopy(record);
-        this.getSnapshot().setRecordWithoutPlaying(nms);
-        if (nms.isEmpty()) {
-            this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, false);
-        } else {
-            this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, true);
-        }
+
+        JukeboxBlockEntity snapshot = this.getSnapshot();
+        snapshot.setRecordWithoutPlaying(nms);
+        snapshot.recordStartedTick = snapshot.tickCount;
+        snapshot.isPlaying = !nms.isEmpty();
+
+        this.data = this.data.setValue(JukeboxBlock.HAS_RECORD, !nms.isEmpty());
     }
 
     @Override
     public boolean isPlaying() {
-        return getHandle().getValue(JukeboxBlock.HAS_RECORD);
+        requirePlaced();
+
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
+        return tileEntity instanceof JukeboxBlockEntity jukebox && jukebox.isRecordPlaying();
+    }
+
+    @Override
+    public boolean startPlaying() {
+        requirePlaced();
+
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
+        if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
+            return false;
+        }
+
+        ItemStack record = jukebox.getFirstItem();
+        if (record.isEmpty() || isPlaying()) {
+            return false;
+        }
+
+        jukebox.isPlaying = true;
+        jukebox.recordStartedTick = jukebox.tickCount;
+        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, CraftMagicNumbers.getMaterial(record.getItem()));
+        return true;
     }
 
     @Override
     public void stopPlaying() {
-        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, Material.AIR);
+        requirePlaced();
+
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
+        if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
+            return;
+        }
+
+        jukebox.isPlaying = false;
+        getWorld().playEffect(getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
     }
 
     @Override

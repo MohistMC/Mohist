@@ -36,7 +36,7 @@ public class VanillaPacketSplitter
     private static final ResourceLocation CHANNEL = new ResourceLocation("forge", "split");
     private static final String VERSION = "1.1";
 
-    private static final int PROTOCOL_MAX = 2097152;
+    private static final int PROTOCOL_MAX = CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH;
 
     private static final int PAYLOAD_TO_CLIENT_MAX = 1048576;
     // 1 byte for state, 5 byte for VarInt PacketID
@@ -117,7 +117,6 @@ public class VanillaPacketSplitter
 
     private static final List<FriendlyByteBuf> receivedBuffers = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
     private static void onClientPacket(NetworkEvent.ServerCustomPayloadEvent event)
     {
         NetworkEvent.Context ctx = event.getSource().get();
@@ -152,9 +151,15 @@ public class VanillaPacketSplitter
             {
                 receivedBuffers.clear();
                 full.release();
-                ctx.enqueueWork(() -> ((Packet<ClientPacketListener>)packet).handle(Minecraft.getInstance().getConnection()));
+                ctx.enqueueWork(() -> genericsFtw(packet, event.getSource().get().getNetworkManager().getPacketListener()));
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends PacketListener> void genericsFtw(Packet<T> pkt, Object listener)
+    {
+        pkt.handle((T) listener);
     }
 
     public enum RemoteCompatibility

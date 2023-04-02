@@ -621,13 +621,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendBlockDamage(Location loc, float progress) {
+        this.sendBlockDamage(loc, progress, getEntityId());
+    }
+
+    @Override
+    public void sendBlockDamage(Location loc, float progress, org.bukkit.entity.Entity source) {
+        Preconditions.checkArgument(source != null, "source must not be null");
+        this.sendBlockDamage(loc, progress, source.getEntityId());
+    }
+
+    @Override
+    public void sendBlockDamage(Location loc, float progress, int sourceId) {
         Preconditions.checkArgument(loc != null, "loc must not be null");
         Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "progress must be between 0.0 and 1.0 (inclusive)");
 
         if (getHandle().connection == null) return;
 
         int stage = (int) (9 * progress); // There are 0 - 9 damage states
-        ClientboundBlockDestructionPacket packet = new ClientboundBlockDestructionPacket(getHandle().getId(), BlockPos.containing(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), stage);
+        if (progress == 0.0F) {
+            stage = -1; // The protocol states that any other value will reset the damage, which this API promises
+        }
+
+        ClientboundBlockDestructionPacket packet = new ClientboundBlockDestructionPacket(sourceId, new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), stage);
         getHandle().connection.send(packet);
     }
 
@@ -782,6 +797,20 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         ClientboundMapItemDataPacket packet = new ClientboundMapItemDataPacket(map.getId(), map.getScale().getValue(), map.isLocked(), icons, new MapItemSavedData.MapPatch(0, 0, 128, 128, data.buffer));
         getHandle().connection.send(packet);
+    }
+
+    @Override
+    public void sendHurtAnimation(float yaw) {
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        /*
+         * Vanilla degrees state that 0 = left, 90 = front, 180 = right, and 270 = behind.
+         * This makes no sense. We'll add 90 to it so that 0 = front, clockwise from there.
+         */
+        float actualYaw = yaw + 90;
+        getHandle().connection.send(new ClientboundHurtAnimationPacket(getEntityId(), actualYaw));
     }
 
     @Override

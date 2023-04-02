@@ -29,6 +29,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockSupport;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.structure.Mirror;
+import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.craftbukkit.v1_19_R3.CraftSoundGroup;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
@@ -620,5 +622,15 @@ public class CraftBlockData implements BlockData {
     @Override
     public Material getPlacementMaterial() {
         return CraftMagicNumbers.getMaterial(state.getBlock().asItem());
+    }
+
+    @Override
+    public void rotate(StructureRotation rotation) {
+        this.state = state.rotate(net.minecraft.world.level.block.Rotation.valueOf(rotation.name()));
+    }
+
+    @Override
+    public void mirror(Mirror mirror) {
+        this.state = state.mirror(net.minecraft.world.level.block.Mirror.valueOf(mirror.name()));
     }
 }

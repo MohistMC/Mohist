@@ -543,8 +543,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     public void sendBlockChanges(@NotNull Collection<BlockState> blocks, boolean suppressLightUpdates);
 
     /**
-     * Send block damage. This fakes block break progress for a user at a
-     * certain location. This will not actually change the block's break
+     * Send block damage. This fakes block break progress at a certain location
+     * sourced by this player. This will not actually change the block's break
      * progress in any way.
      *
      * @param loc the location of the damaged block
@@ -552,6 +552,39 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * 1.0 is the most damaged
      */
     public void sendBlockDamage(@NotNull Location loc, float progress);
+
+    /**
+     * Send block damage. This fakes block break progress at a certain location
+     * sourced by the provided entity. This will not actually change the block's
+     * break progress in any way.
+     * <p>
+     * At the same location for each unique damage source sent to the player, a
+     * separate damage overlay will be displayed with the given progress. This allows
+     * for block damage at different progress from multiple entities at once.
+     *
+     * @param loc the location of the damaged block
+     * @param progress the progress from 0.0 - 1.0 where 0 is no damage and
+     * 1.0 is the most damaged
+     * @param source the entity to which the damage belongs
+     */
+    public void sendBlockDamage(@NotNull Location loc, float progress, @NotNull Entity source);
+
+    /**
+     * Send block damage. This fakes block break progress at a certain location
+     * sourced by the provided entity id. This will not actually change the block's
+     * break progress in any way.
+     * <p>
+     * At the same location for each unique damage source sent to the player, a
+     * separate damage overlay will be displayed with the given progress. This allows
+     * for block damage at different progress from multiple entities at once.
+     *
+     * @param loc the location of the damaged block
+     * @param progress the progress from 0.0 - 1.0 where 0 is no damage and
+     * 1.0 is the most damaged
+     * @param sourceId the entity id of the entity to which the damage belongs.
+     * Can be an id that does not associate directly with an existing or loaded entity.
+     */
+    public void sendBlockDamage(@NotNull Location loc, float progress, int sourceId);
 
     /**
      * Send an equipment change for the target entity. This will not
@@ -637,6 +670,16 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param map The map to be sent
      */
     public void sendMap(@NotNull MapView map);
+
+    /**
+     * Send a hurt animation. This fakes incoming damage towards the player from
+     * the given yaw relative to the player's direction.
+     *
+     * @param yaw the yaw in degrees relative to the player's direction where 0
+     * is in front of the player, 90 is to the right, 180 is behind, and 270 is
+     * to the left
+     */
+    public void sendHurtAnimation(float yaw);
 
     /**
      * Add custom chat completion suggestions shown to the player while typing a
