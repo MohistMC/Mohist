@@ -17,7 +17,7 @@
  
  public class ArmorItem extends Item implements Equipable {
     private static final EnumMap<ArmorItem.Type, UUID> f_265987_ = Util.m_137469_(new EnumMap<>(ArmorItem.Type.class), (p_266744_) -> {
-@@ -53,7 +_,32 @@
+@@ -53,7 +_,33 @@
           LivingEntity livingentity = list.get(0);
           EquipmentSlot equipmentslot = Mob.m_147233_(p_40400_);
           ItemStack itemstack = p_40400_.m_41620_(1);
@@ -48,6 +48,7 @@
 +            }
 +         }
 +         livingentity.m_8061_(equipmentslot, CraftItemStack.asNMSCopy(event.getItem()));
++         // CraftBukkit end
           if (livingentity instanceof Mob) {
              ((Mob)livingentity).m_21409_(equipmentslot, 2.0F);
              ((Mob)livingentity).m_21530_();

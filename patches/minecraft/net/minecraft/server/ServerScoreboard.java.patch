@@ -117,7 +117,7 @@
 +
 +   // CraftBukkit start - Send to players
 +   private void broadcastAll(Packet packet) {
-+      for (ServerPlayer entityplayer : (List<ServerPlayer>) this.f_136193_.m_6846_().f_11196_) {
++      for (ServerPlayer entityplayer : this.f_136193_.m_6846_().f_11196_) {
 +         if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
 +            entityplayer.f_8906_.m_9829_(packet);
 +         }

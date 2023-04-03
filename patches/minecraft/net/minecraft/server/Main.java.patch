@@ -170,7 +170,7 @@
 -               dedicatedserver1.m_139667_();
 +            boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
-+               dedicatedServer.m_139667_();
++               //dedicatedServer.showGui();
              }
  
              return dedicatedserver1;

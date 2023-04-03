@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -30,10 +_,16 @@
+@@ -30,10 +_,17 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_40637_) {
@@ -8,6 +8,7 @@
 +      return bukkit_applyBonemeal(p_40637_);
 +   }
 +
++   // Mohist TODO fix mixin?
 +   public static InteractionResult bukkit_applyBonemeal(UseOnContext p_40637_) {
 +      // CraftBukkit end
        Level level = p_40637_.m_43725_();
