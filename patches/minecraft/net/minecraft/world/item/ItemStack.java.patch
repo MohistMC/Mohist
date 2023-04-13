@@ -1,7 +1,43 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -74,7 +_,7 @@
+@@ -6,6 +_,7 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Codec;
++import com.mojang.serialization.Dynamic;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.text.DecimalFormat;
+ import java.text.DecimalFormatSymbols;
+@@ -30,6 +_,7 @@
+ import net.minecraft.core.registries.Registries;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
++import net.minecraft.nbt.NbtOps;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+@@ -38,11 +_,13 @@
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.chat.Style;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.RandomSource;
++import net.minecraft.util.datafix.fixes.References;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.InteractionResultHolder;
+@@ -72,9 +_,13 @@
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
++import org.bukkit.event.player.PlayerItemDamageEvent;
  import org.slf4j.Logger;
  
 -public final class ItemStack {
@@ -39,7 +75,12 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -154,20 +_,41 @@
+@@ -150,24 +_,55 @@
+    }
+ 
+    private void m_41617_() {
++      if (this.f_41591_ && this == ItemStack.f_41583_) throw new AssertionError("TRAP"); // CraftBukkit
+       this.f_41591_ = false;
        this.f_41591_ = this.m_41619_();
     }
  
@@ -48,6 +89,15 @@
 -      this.f_41587_ = p_41608_.m_128445_("Count");
 -      if (p_41608_.m_128425_("tag", 10)) {
 -         this.f_41590_ = p_41608_.m_128469_("tag");
++   // Called to run this stack through the data converter to handle older storage methods and serialized items
++   public void convertStack(int version) {
++      if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
++         CompoundTag savedStack = new CompoundTag();
++         this.m_41739_(savedStack);
++         savedStack = (CompoundTag) MinecraftServer.getServer().m_129933_().update(References.f_16782_, new Dynamic(NbtOps.f_128958_, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
++         this.load(savedStack);
++      }
++   }
 +
 +   // Mohist start fix 'Bigger Stacks' mod mixin
 +   // CraftBukkit start - break into own method
@@ -171,7 +221,29 @@
     }
  
     public boolean m_220157_(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -334,6 +_,7 @@
+@@ -316,6 +_,21 @@
+             }
+ 
+             p_220158_ -= j;
++            // CraftBukkit start
++            if (p_220160_ != null) {
++               PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_220160_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), p_220158_);
++               event.getPlayer().getServer().getPluginManager().callEvent(event);
++
++               if (p_220158_ != event.getDamage() || event.isCancelled()) {
++                  event.getPlayer().updateInventory();
++               }
++               if (event.isCancelled()) {
++                  return false;
++               }
++
++               p_220158_ = event.getDamage();
++            }
++            // CraftBukkit end
+             if (p_220158_ <= 0) {
+                return false;
+             }
+@@ -334,9 +_,15 @@
     public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.f_19853_.f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {
           if (this.m_41763_()) {
@@ -179,6 +251,14 @@
              if (this.m_220157_(p_41623_, p_41624_.m_217043_(), p_41624_ instanceof ServerPlayer ? (ServerPlayer)p_41624_ : null)) {
                 p_41625_.accept(p_41624_);
                 Item item = this.m_41720_();
++               // CraftBukkit start - Check for item breaking
++               if (this.f_41587_ == 1 && p_41624_ instanceof Player) {
++                  CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
++               }
++               // CraftBukkit end
+                this.m_41774_(1);
+                if (p_41624_ instanceof Player) {
+                   ((Player)p_41624_).m_36246_(Stats.f_12983_.m_12902_(item));
 @@ -386,7 +_,7 @@
     }
  
@@ -215,6 +295,24 @@
        }
     }
  
+@@ -512,6 +_,17 @@
+       return this.f_41590_;
+    }
+ 
++   // CraftBukkit start
++   @Nullable
++   private CompoundTag getTagClone() {
++      return this.f_41590_ == null ? null : this.f_41590_.m_6426_();
++   }
++
++   private void setTagClone(@Nullable CompoundTag nbtttagcompound) {
++      this.m_41751_(nbtttagcompound == null ? null : nbtttagcompound.m_6426_());
++   }
++   // CraftBukkit end
++
+    public CompoundTag m_41784_() {
+       if (this.f_41590_ == null) {
+          this.m_41751_(new CompoundTag());
 @@ -551,7 +_,7 @@
  
     public void m_41751_(@Nullable CompoundTag p_41752_) {
@@ -250,6 +348,19 @@
     }
  
     public void m_41654_(ItemStack.TooltipPart p_41655_) {
+@@ -860,6 +_,12 @@
+    }
+ 
+    public void m_41742_(int p_41743_) {
++      // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
++      if (p_41743_ == 0) {
++         this.m_41749_("RepairCost");
++         return;
++      }
++      // CraftBukkit end
+       this.m_41784_().m_128405_("RepairCost", p_41743_);
+    }
+ 
 @@ -882,9 +_,10 @@
              }
           }
@@ -304,7 +415,7 @@
     public SoundEvent m_41615_() {
        return this.m_41720_().m_6023_();
     }
-@@ -980,6 +_,17 @@
+@@ -980,6 +_,14 @@
     public SoundEvent m_41616_() {
        return this.m_41720_().m_6061_();
     }
@@ -314,9 +425,6 @@
 +   public void setItem(Item item) {
 +      this.f_41589_ = item;
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item);
-+   }
-+
-+   public void convertStack(int version) {
 +   }
 +   // CraftBukkit end
  

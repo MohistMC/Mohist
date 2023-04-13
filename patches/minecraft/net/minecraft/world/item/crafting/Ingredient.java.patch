@@ -24,6 +24,22 @@
        this.f_43902_ = p_43907_.toArray((p_43933_) -> {
           return new Ingredient.Value[p_43933_];
        });
+@@ -62,6 +_,15 @@
+          return p_43914_.m_41619_();
+       } else {
+          for(ItemStack itemstack : this.m_43908_()) {
++            // CraftBukkit start
++            if (exact) {
++               if (itemstack.m_41720_() == p_43914_.m_41720_() && ItemStack.m_41658_(p_43914_, itemstack)) {
++                  return true;
++               }
++
++               continue;
++            }
++            // CraftBukkit end
+             if (itemstack.m_150930_(p_43914_.m_41720_())) {
+                return true;
+             }
 @@ -72,7 +_,8 @@
     }
  

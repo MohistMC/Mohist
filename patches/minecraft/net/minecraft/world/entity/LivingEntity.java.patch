@@ -1103,6 +1103,18 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
+@@ -2992,6 +_,11 @@
+       return this.f_20937_;
+    }
+ 
++   public Optional<Boolean> randomTeleport(double d0, double d1, double d2, boolean flag, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      // CraftBukkit end
++      return Optional.of(m_20984_(d0, d1, d2, flag)); // CraftBukkit
++   }
++
+    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
+       double d0 = this.m_20185_();
+       double d1 = this.m_20186_();
 @@ -3092,8 +_,8 @@
        }
  

@@ -1,6 +1,17 @@
 --- a/net/minecraft/world/item/crafting/LegacyUpgradeRecipe.java
 +++ b/net/minecraft/world/item/crafting/LegacyUpgradeRecipe.java
-@@ -72,7 +_,7 @@
+@@ -10,6 +_,10 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmithingRecipe;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
+ 
+ /** @deprecated */
+ @Deprecated(
+@@ -72,9 +_,20 @@
  
     public boolean m_142505_() {
        return Stream.of(this.f_265911_, this.f_265910_).anyMatch((p_267290_) -> {
@@ -8,4 +19,17 @@
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_267290_);
        });
     }
++
++   // CraftBukkit start
++   @Override
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_265880_);
++
++      CraftSmithingRecipe recipe = new CraftSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.f_266103_), result, CraftRecipe.toBukkit(this.f_265911_), CraftRecipe.toBukkit(this.f_265910_));
++
++      return recipe;
++   }
++   // CraftBukkit end
  
+    public static class Serializer implements RecipeSerializer<LegacyUpgradeRecipe> {
+       public LegacyUpgradeRecipe m_6729_(ResourceLocation p_267011_, JsonObject p_267297_) {

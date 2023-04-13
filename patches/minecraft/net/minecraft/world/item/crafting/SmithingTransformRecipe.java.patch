@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
++++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
+@@ -10,6 +_,10 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmithingTransformRecipe;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
+ 
+ public class SmithingTransformRecipe implements SmithingRecipe {
+    private final ResourceLocation f_265924_;
+@@ -67,6 +_,17 @@
+    public boolean m_142505_() {
+       return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(Ingredient::m_43947_);
+    }
++
++   // CraftBukkit start
++   @Override
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_266098_);
++
++      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(CraftNamespacedKey.fromMinecraft(this.f_265924_), result, CraftRecipe.toBukkit(this.f_265949_), CraftRecipe.toBukkit(this.f_265888_), CraftRecipe.toBukkit(this.f_265907_));
++
++      return recipe;
++   }
++   // CraftBukkit end
+ 
+    public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
+       public SmithingTransformRecipe m_6729_(ResourceLocation p_266953_, JsonObject p_266720_) {
