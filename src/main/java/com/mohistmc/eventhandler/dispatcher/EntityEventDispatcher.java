@@ -18,18 +18,22 @@
 
 package com.mohistmc.eventhandler.dispatcher;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
@@ -130,5 +134,15 @@ public class EntityEventDispatcher {
                 }
             }
         }
+    }
+
+    @SubscribeEvent(receiveCanceled = true)
+    public void changeTargetEvent(EntityTeleportEvent event) {
+        ServerPlayer serverplayer = (ServerPlayer)event.getEntity();
+        CraftPlayer player = serverplayer.getBukkitEntity();
+        org.bukkit.Location location = player.getLocation();
+        PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
+        Bukkit.getPluginManager().callEvent(teleEvent);
+        event.setCanceled(teleEvent.isCancelled());
     }
 }

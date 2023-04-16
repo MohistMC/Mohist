@@ -73,6 +73,35 @@
     public Inventory(Player p_35983_) {
        this.f_35978_ = p_35983_;
     }
+@@ -56,6 +_,28 @@
+       return !p_36015_.m_41619_() && ItemStack.m_150942_(p_36015_, p_36016_) && p_36015_.m_41753_() && p_36015_.m_41613_() < p_36015_.m_41741_() && p_36015_.m_41613_() < this.m_6893_();
+    }
+ 
++   // CraftBukkit start - Watch method above! :D
++   public int canHold(ItemStack itemstack) {
++      int remains = itemstack.m_41613_();
++      for (int i = 0; i < this.f_35974_.size(); ++i) {
++         ItemStack itemstack1 = this.m_8020_(i);
++         if (itemstack1.m_41619_()) return itemstack.m_41613_();
++
++         if (this.m_36014_(itemstack1, itemstack)) {
++            remains -= (itemstack1.m_41741_() < this.m_6893_() ? itemstack1.m_41741_() : this.m_6893_()) - itemstack1.m_41613_();
++         }
++         if (remains <= 0) return itemstack.m_41613_();
++      }
++      ItemStack offhandItemStack = this.m_8020_(this.f_35974_.size() + this.f_35975_.size());
++      if (this.m_36014_(offhandItemStack, itemstack)) {
++         remains -= (offhandItemStack.m_41741_() < this.m_6893_() ? offhandItemStack.m_41741_() : this.m_6893_()) - offhandItemStack.m_41613_();
++      }
++      if (remains <= 0) return itemstack.m_41613_();
++
++      return itemstack.m_41613_() - remains;
++   }
++   // CraftBukkit end
++
+    public int m_36062_() {
+       for(int i = 0; i < this.f_35974_.size(); ++i) {
+          if (this.f_35974_.get(i).m_41619_()) {
 @@ -126,14 +_,14 @@
           if (this.f_35974_.get(j).m_41619_()) {
              return j;

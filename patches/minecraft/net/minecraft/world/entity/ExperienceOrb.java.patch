@@ -85,7 +85,7 @@
 +         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
 +         i = event.getRepairAmount();
 +         if (event.isCancelled()) {
-+            return i;
++            return p_147094_;
 +         }
 +         // CraftBukkit end
 +

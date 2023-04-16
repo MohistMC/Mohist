@@ -50,18 +50,17 @@
     private final Map<BlockPathTypes, Float> f_21354_ = Maps.newEnumMap(BlockPathTypes.class);
     @Nullable
     public ResourceLocation f_21355_;
-@@ -116,7 +_,10 @@
+@@ -116,6 +_,10 @@
     private CompoundTag f_21359_;
     private BlockPos f_21360_ = BlockPos.f_121853_;
     private float f_21341_ = -1.0F;
--
 +   @Nullable
 +   private MobSpawnType spawnType;
 +   private boolean spawnCancelled = false;
 +   public boolean aware = true; // CraftBukkit
+ 
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-       this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
 @@ -224,8 +_,29 @@
     }
  
@@ -169,6 +168,55 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
+@@ -532,6 +_,7 @@
+ 
+    protected void m_7581_(ItemEntity p_21471_) {
+       ItemStack itemstack = p_21471_.m_32055_();
++      this.entityitem = p_21471_;
+       ItemStack itemstack1 = this.m_255207_(itemstack.m_41777_());
+       if (!itemstack1.m_41619_()) {
+          this.m_21053_(p_21471_);
+@@ -544,6 +_,8 @@
+ 
+    }
+ 
++
++   public ItemEntity entityitem = null;
+    public ItemStack m_255207_(ItemStack p_255842_) {
+       EquipmentSlot equipmentslot = m_147233_(p_255842_);
+       ItemStack itemstack = this.m_6844_(equipmentslot);
+@@ -554,10 +_,18 @@
+          flag = this.m_7808_(p_255842_, itemstack);
+       }
+ 
+-      if (flag && this.m_7252_(p_255842_)) {
++      // CraftBukkit start
++      boolean canPickup = flag && this.m_7252_(itemstack);
++      if (entityitem != null) {
++         canPickup = !CraftEventFactory.callEntityPickupItemEvent(this, entityitem, 0, !canPickup).isCancelled();
++      }
++      if (canPickup) {
++         // CraftBukkit end
+          double d0 = (double)this.m_21519_(equipmentslot);
+          if (!itemstack.m_41619_() && (double)Math.max(this.f_19796_.m_188501_() - 0.1F, 0.0F) < d0) {
++            this.forceDrops = true; // CraftBukkit
+             this.m_19983_(itemstack);
++            this.forceDrops = false; // CraftBukkit
+          }
+ 
+          if (equipmentslot.m_254934_() && p_255842_.m_41613_() > 1) {
+@@ -573,6 +_,11 @@
+       }
+    }
+ 
++   public ItemStack equipItemIfPossible(ItemStack itemstack, ItemEntity entityitem) {
++      this.entityitem = entityitem;
++      return m_255207_(itemstack);
++   }
++
+    protected void m_21468_(EquipmentSlot p_21469_, ItemStack p_21470_) {
+       this.m_8061_(p_21469_, p_21470_);
+       this.m_21508_(p_21469_);
 @@ -687,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
@@ -251,7 +299,7 @@
 +            ((ServerPlayer) p_21500_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(this, this.m_21524_()));
 +            return InteractionResult.PASS;
 +         }
-+                    // CraftBukkit end
++         // CraftBukkit end
           this.m_21463_(p_21500_, true);
           itemstack.m_41774_(1);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
@@ -290,6 +338,16 @@
     protected void m_6119_() {
        if (this.f_21359_ != null) {
           this.m_21528_();
+@@ -1226,7 +_,9 @@
+          this.f_21357_ = null;
+          this.f_21359_ = null;
+          if (!this.f_19853_.f_46443_ && p_21457_) {
++            this.forceDrops = true; // CraftBukkit
+             this.m_19998_(Items.f_42655_);
++            this.forceDrops = false; // CraftBukkit
+          }
+ 
+          if (!this.f_19853_.f_46443_ && p_21456_ && this.f_19853_ instanceof ServerLevel) {
 @@ -1274,6 +_,7 @@
     public boolean m_7998_(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.m_7998_(p_21396_, p_21397_);

@@ -1,0 +1,160 @@
+--- a/net/minecraft/world/entity/projectile/ThrownPotion.java
++++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
+@@ -1,11 +_,14 @@
+ package net.minecraft.world.entity.projectile;
+ 
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Map;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.nbt.CompoundTag;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.effect.MobEffect;
+ import net.minecraft.world.effect.MobEffectInstance;
+@@ -23,12 +_,15 @@
+ import net.minecraft.world.item.alchemy.Potions;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.AbstractCandleBlock;
++import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.CampfireBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
++import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
+ 
+ public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
+    public static final double f_150190_ = 4.0D;
+@@ -88,7 +_,7 @@
+          boolean flag = potion == Potions.f_43599_ && list.isEmpty();
+          if (flag) {
+             this.m_37552_();
+-         } else if (!list.isEmpty()) {
++         } else if (true || !list.isEmpty()) { // CraftBukkit - Call event even if no effects to apply
+             if (this.m_37553_()) {
+                this.m_37537_(itemstack, potion);
+             } else {
+@@ -127,10 +_,11 @@
+    private void m_37547_(List<MobEffectInstance> p_37548_, @Nullable Entity p_37549_) {
+       AABB aabb = this.m_20191_().m_82377_(4.0D, 2.0D, 4.0D);
+       List<LivingEntity> list = this.f_19853_.m_45976_(LivingEntity.class, aabb);
++      Map<org.bukkit.entity.LivingEntity, Double> affected = new HashMap<>(); // CraftBukkit
+       if (!list.isEmpty()) {
+          Entity entity = this.m_150173_();
+ 
+-         for(LivingEntity livingentity : list) {
++         for (LivingEntity livingentity : list) {
+             if (livingentity.m_5801_()) {
+                double d0 = this.m_20280_(livingentity);
+                if (d0 < 16.0D) {
+@@ -140,20 +_,43 @@
+                   } else {
+                      d1 = 1.0D - Math.sqrt(d0) / 4.0D;
+                   }
+-
+-                  for(MobEffectInstance mobeffectinstance : p_37548_) {
+-                     MobEffect mobeffect = mobeffectinstance.m_19544_();
+-                     if (mobeffect.m_8093_()) {
+-                        mobeffect.m_19461_(this, this.m_19749_(), livingentity, mobeffectinstance.m_19564_(), d1);
+-                     } else {
+-                        int i = mobeffectinstance.m_267696_((p_267930_) -> {
+-                           return (int)(d1 * (double)p_267930_ + 0.5D);
+-                        });
+-                        MobEffectInstance mobeffectinstance1 = new MobEffectInstance(mobeffect, i, mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_());
+-                        if (!mobeffectinstance1.m_267633_(20)) {
+-                           livingentity.m_147207_(mobeffectinstance1, entity);
+-                        }
+-                     }
++                  affected.put((org.bukkit.entity.LivingEntity) livingentity.getBukkitEntity(), d1);
++               }
++            }
++         }
++      }
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++      if (!event.isCancelled() && list != null && !list.isEmpty()) { // do not process effects if there are no effects to process
++         Entity entity = this.m_150173_();
++         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
++            if (!(victim instanceof CraftLivingEntity)) {
++               continue;
++            }
++            LivingEntity livingentity = ((CraftLivingEntity) victim).getHandle();
++            double d1 = event.getIntensity(victim);
++            // CraftBukkit end
++
++            for (MobEffectInstance mobeffectinstance : p_37548_) {
++               MobEffect mobeffect = mobeffectinstance.m_19544_();
++
++               // CraftBukkit start - Abide by PVP settings - for players only!
++               if (!this.f_19853_.pvpMode && this.m_19749_() instanceof ServerPlayer && livingentity instanceof ServerPlayer && livingentity != this.m_19749_()) {
++                  int i = MobEffect.m_19459_(mobeffect);
++                  // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
++                  if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19) {
++                     continue;
++                  }
++               }
++               // CraftBukkit end
++               if (mobeffect.m_8093_()) {
++                  mobeffect.m_19461_(this, this.m_19749_(), livingentity, mobeffectinstance.m_19564_(), d1);
++               } else {
++                  int i = mobeffectinstance.m_267696_((p_267930_) -> {
++                     return (int) (d1 * (double) p_267930_ + 0.5D);
++                  });
++                  MobEffectInstance mobeffectinstance1 = new MobEffectInstance(mobeffect, i, mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_());
++                  if (!mobeffectinstance1.m_267633_(20)) {
++                     livingentity.addEffect(mobeffectinstance1, entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.POTION_SPLASH); // CraftBukkit
+                   }
+                }
+             }
+@@ -184,7 +_,14 @@
+          areaeffectcloud.m_19714_(compoundtag.m_128451_("CustomPotionColor"));
+       }
+ 
+-      this.f_19853_.m_7967_(areaeffectcloud);
++      // CraftBukkit start
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloud);
++      if (!(event.isCancelled() || areaeffectcloud.m_213877_())) {
++         this.f_19853_.m_7967_(areaeffectcloud);
++      } else {
++         areaeffectcloud.m_146870_();
++      }
++      // CraftBukkit end
+    }
+ 
+    private boolean m_37553_() {
+@@ -194,13 +_,25 @@
+    private void m_150192_(BlockPos p_150193_) {
+       BlockState blockstate = this.f_19853_.m_8055_(p_150193_);
+       if (blockstate.m_204336_(BlockTags.f_13076_)) {
+-         this.f_19853_.m_7471_(p_150193_, false);
++         // CraftBukkit start
++         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++            this.f_19853_.m_7471_(p_150193_, false);
++         }
++         // CraftBukkit end
+       } else if (AbstractCandleBlock.m_151933_(blockstate)) {
+-         AbstractCandleBlock.m_151899_((Player)null, blockstate, this.f_19853_, p_150193_);
++         // CraftBukkit start
++         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(AbstractCandleBlock.f_151895_, false)).isCancelled()) {
++            AbstractCandleBlock.m_151899_((Player) null, blockstate, this.f_19853_, p_150193_);
++         }
++         // CraftBukkit end
+       } else if (CampfireBlock.m_51319_(blockstate)) {
+-         this.f_19853_.m_5898_((Player)null, 1009, p_150193_, 0);
+-         CampfireBlock.m_152749_(this.m_19749_(), this.f_19853_, p_150193_, blockstate);
+-         this.f_19853_.m_46597_(p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, Boolean.valueOf(false)));
++         // CraftBukkit start
++         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, false)).isCancelled()) {
++            this.f_19853_.m_5898_((Player) null, 1009, p_150193_, 0);
++            CampfireBlock.m_152749_(this.m_19749_(), this.f_19853_, p_150193_, blockstate);
++            this.f_19853_.m_46597_(p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, Boolean.valueOf(false)));
++         }
++         // CraftBukkit end
+       }
+ 
+    }
