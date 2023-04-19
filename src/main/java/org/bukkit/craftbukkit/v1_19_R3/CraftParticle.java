@@ -29,6 +29,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -211,12 +212,11 @@ public enum CraftParticle {
         }
         if (particle.getDataType() == Vibration.class) {
             Vibration vibration = (Vibration) obj;
-            Location origin = vibration.getOrigin();
 
             PositionSource source;
             if (vibration.getDestination() instanceof Vibration.Destination.BlockDestination) {
                 Location destination = ((Vibration.Destination.BlockDestination) vibration.getDestination()).getLocation();
-                source = new BlockPositionSource(BlockPos.containing(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ()));
+                source = new BlockPositionSource(CraftLocation.toBlockPosition(destination));
             } else if (vibration.getDestination() instanceof Vibration.Destination.EntityDestination) {
                 Entity destination = ((CraftEntity) ((Vibration.Destination.EntityDestination) vibration.getDestination()).getEntity()).getHandle();
                 source = new EntityPositionSource(destination, destination.getEyeHeight());

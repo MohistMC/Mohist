@@ -14,6 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
@@ -238,7 +239,7 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
 
     @Override
     public Location getLocation() {
-        return new Location(world, getX(), getY(), getZ());
+        return CraftLocation.toBukkit(this.position, this.world);
     }
 
     @Override

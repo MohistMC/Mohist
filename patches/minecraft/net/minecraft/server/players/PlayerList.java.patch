@@ -24,7 +24,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -102,6 +_,13 @@
+@@ -102,6 +_,14 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -35,6 +35,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 +import org.bukkit.event.player.PlayerJoinEvent;
++import org.bukkit.event.player.PlayerRespawnEvent;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
@@ -229,18 +230,25 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -409,6 +_,11 @@
+@@ -409,7 +_,18 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
-+   // Mohist TODO
-+   public ServerPlayer respawn(ServerPlayer p_11237_, ServerLevel worldserver, boolean p_11238_, Location location, boolean avoidSuffocation) {
++   // Mohist TODO start
++   public ServerPlayer respawn(ServerPlayer p_11237_, ServerLevel worldserver, boolean p_11238_, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason reason) {
 +      return null;
 +   }
 +
++   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
++      return m_11236_(p_11237_, p_11238_);
++   }
++   // Mohist TODO end
++
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
++      p_11237_.m_8127_(); // CraftBukkit
        this.f_11196_.remove(p_11237_);
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
+       BlockPos blockpos = p_11237_.m_8961_();
 @@ -461,6 +_,8 @@
        byte b0 = (byte)(p_11238_ ? 1 : 0);
        LevelData leveldata = serverplayer.f_19853_.m_6106_();

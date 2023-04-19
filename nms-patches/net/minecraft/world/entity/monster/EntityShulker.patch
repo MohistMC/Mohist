@@ -18,7 +18,7 @@
  
                      if (enumdirection != null) {
 +                        // CraftBukkit start
-+                        EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(this.level.getWorld(), blockposition1.getX(), blockposition1.getY(), blockposition1.getZ()));
++                        EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), CraftLocation.toBukkit(blockposition1, this.level.getWorld()));
 +                        this.level.getCraftServer().getPluginManager().callEvent(teleport);
 +                        if (!teleport.isCancelled()) {
 +                            Location to = teleport.getTo();

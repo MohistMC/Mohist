@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R3.entity;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
@@ -64,5 +65,35 @@ public class CraftFallingBlock extends CraftEntity implements FallingBlock {
 
         // Second field for net.minecraft.world.entity.item.FallingBlockEntity
         getHandle().time = value;
+    }
+
+    @Override
+    public float getDamagePerBlock() {
+        return getHandle().fallDamagePerDistance;
+    }
+
+    @Override
+    public void setDamagePerBlock(float damage) {
+        Preconditions.checkArgument(damage >= 0.0, "damage must be >= 0.0, given %s", damage);
+
+        getHandle().fallDamagePerDistance = damage;
+        if (damage > 0.0) {
+            this.setHurtEntities(true);
+        }
+    }
+
+    @Override
+    public int getMaxDamage() {
+        return getHandle().fallDamageMax;
+    }
+
+    @Override
+    public void setMaxDamage(int damage) {
+        Preconditions.checkArgument(damage >= 0, "damage must be >= 0, given %s", damage);
+
+        getHandle().fallDamageMax = damage;
+        if (damage > 0) {
+            this.setHurtEntities(true);
+        }
     }
 }

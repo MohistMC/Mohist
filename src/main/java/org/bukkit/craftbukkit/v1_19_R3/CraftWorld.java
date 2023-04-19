@@ -87,6 +87,7 @@ import org.bukkit.craftbukkit.v1_19_R3.metadata.BlockMetadataStore;
 import org.bukkit.craftbukkit.v1_19_R3.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_19_R3.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftRayTraceResult;
@@ -167,7 +168,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     public Location getSpawnLocation() {
         BlockPos spawn = world.getSharedSpawnPos();
         float yaw = world.getSharedSpawnAngle();
-        return new Location(this, spawn.getX(), spawn.getY(), spawn.getZ(), yaw, 0);
+        return CraftLocation.toBukkit(spawn, this, yaw, 0);
     }
 
     @Override
@@ -934,8 +935,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         }
 
         Vector dir = direction.clone().normalize().multiply(maxDistance);
-        Vec3 startPos = new Vec3(start.getX(), start.getY(), start.getZ());
-        Vec3 endPos = new Vec3(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
+        Vec3 startPos = CraftLocation.toVec3D(start);
+        Vec3 endPos = startPos.add(dir.getX(), dir.getY(), dir.getZ());
         HitResult nmsHitResult = this.getHandle().clip(new ClipContext(startPos, endPos, ignorePassableBlocks ? ClipContext.Block.COLLIDER : ClipContext.Block.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null));
 
         return CraftRayTraceResult.fromNMS(this, nmsHitResult);
@@ -1128,7 +1129,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.notNull(effect, "Effect cannot be null");
         Validate.notNull(location.getWorld(), "World cannot be null");
         int packetData = effect.getId();
-        ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()), data, false);
+        ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, CraftLocation.toBlockPosition(location), data, false);
         int distance;
         radius *= radius;
 
@@ -1870,7 +1871,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             return null;
         }
 
-        return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), new Location(this, found.getFirst().getX(), found.getFirst().getY(), found.getFirst().getZ()));
+        return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), CraftLocation.toBukkit(found.getFirst(), this));
     }
 
     // Spigot start
@@ -1920,7 +1921,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Validate.isTrue(radius >= 0, "Radius cannot be negative");
 
         net.minecraft.world.entity.raid.Raids persistentRaid = world.getRaids();
-        net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()), radius * radius);
+        net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(CraftLocation.toBlockPosition(location), radius * radius);
         return (raid == null) ? null : new CraftRaid(raid);
     }
 

@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Beehive;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftBee;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.entity.Bee;
 
 public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> implements Beehive {
@@ -21,13 +22,13 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> impl
     @Override
     public Location getFlower() {
         BlockPos flower = getSnapshot().savedFlowerPos;
-        return (flower == null) ? null : new Location(getWorld(), flower.getX(), flower.getY(), flower.getZ());
+        return (flower == null) ? null : CraftLocation.toBukkit(flower, getWorld());
     }
 
     @Override
     public void setFlower(Location location) {
         Preconditions.checkArgument(location == null || this.getWorld().equals(location.getWorld()), "Flower must be in same world");
-        getSnapshot().savedFlowerPos = (location == null) ? null : BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        getSnapshot().savedFlowerPos = (location == null) ? null : CraftLocation.toBlockPosition(location);
     }
 
     @Override

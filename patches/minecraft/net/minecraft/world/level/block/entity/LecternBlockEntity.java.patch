@@ -8,7 +8,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.commands.CommandSource;
  import net.minecraft.commands.CommandSourceStack;
-@@ -25,12 +_,21 @@
+@@ -25,12 +_,22 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
  
@@ -17,6 +17,7 @@
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_19_R3.command.CraftBlockCommandSender;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
 +
@@ -93,7 +94,7 @@
 +      @Override
 +      public Location getLocation() {
 +         if (f_58857_ == null) return null;
-+         return new Location(f_58857_.getWorld(), f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_());
++         return CraftLocation.toBukkit(f_58858_, f_58857_.getWorld());
 +      }
 +
        public void m_6211_() {

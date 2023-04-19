@@ -123,7 +123,7 @@
 +
 +         List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
 +         for (int i1 = this.f_46020_.size() - 1; i1 >= 0; i1--) {
-+            BlockPos cpos = (BlockPos) this.f_46020_.get(i1);
++            BlockPos cpos = this.f_46020_.get(i1);
 +            org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.m_123341_(), cpos.m_123342_(), cpos.m_123343_());
 +            if (!bblock.getType().isAir()) {
 +               blockList.add(bblock);

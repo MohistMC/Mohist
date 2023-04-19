@@ -49,6 +49,7 @@ import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftRayTraceResult;
@@ -105,7 +106,7 @@ public class CraftBlock implements Block {
 
     @Override
     public Location getLocation() {
-        return new Location(getWorld(), position.getX(), position.getY(), position.getZ());
+        return CraftLocation.toBukkit(position, getWorld());
     }
 
     @Override
@@ -604,8 +605,8 @@ public class CraftBlock implements Block {
         }
 
         Vector dir = direction.clone().normalize().multiply(maxDistance);
-        Vec3 startPos = new Vec3(start.getX(), start.getY(), start.getZ());
-        Vec3 endPos = new Vec3(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
+        Vec3 startPos = CraftLocation.toVec3D(start);
+        Vec3 endPos = startPos.add(dir.getX(), dir.getY(), dir.getZ());
 
         HitResult nmsHitResult = world.clip(new ClipContext(startPos, endPos, ClipContext.Block.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null), position);
         return CraftRayTraceResult.fromNMS(this.getWorld(), nmsHitResult);

@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -147,8 +_,15 @@
+@@ -147,8 +_,18 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -32,10 +32,13 @@
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.Bukkit;
++import org.bukkit.Location;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
++import org.bukkit.event.player.PlayerSpawnChangeEvent;
 +import org.bukkit.event.player.PlayerToggleSneakEvent;
  import org.slf4j.Logger;
  
@@ -196,9 +199,11 @@
        Direction direction = this.f_19853_.m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
        if (!this.m_5803_() && this.m_6084_()) {
           if (!this.f_19853_.m_6042_().f_63858_()) {
-@@ -840,7 +_,7 @@
+@@ -839,8 +_,9 @@
+          } else if (this.m_9191_(p_9115_, direction)) {
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
++            this.cause = PlayerSpawnChangeEvent.Cause.BED;
              this.m_9158_(this.f_19853_.m_46472_(), p_9115_, this.m_146908_(), false, true);
 -            if (this.f_19853_.m_46461_()) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
@@ -381,10 +386,40 @@
        }
  
     }
-@@ -1438,6 +_,7 @@
+@@ -1437,7 +_,37 @@
+       return this.f_8937_;
     }
  
++
++   public PlayerSpawnChangeEvent.Cause cause = PlayerSpawnChangeEvent.Cause.UNKNOWN;
++
++   public void setRespawnPosition(ResourceKey<Level> resourcekey, @Nullable BlockPos blockposition, float f, boolean flag, boolean flag1, PlayerSpawnChangeEvent.Cause cause) {
++      this.cause = cause;
++      this.m_9158_(resourcekey, blockposition, f, flag, flag1);
++   }
++
     public void m_9158_(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
++      ServerLevel newWorld = this.f_8924_.m_129880_(p_9159_);
++      Location newSpawn = (p_9160_ != null) ? CraftLocation.toBukkit(p_9160_, newWorld.getWorld(), p_9161_, 0) : null;
++
++      PlayerSpawnChangeEvent event = new PlayerSpawnChangeEvent(this.getBukkitEntity(), newSpawn, p_9162_, cause);
++      Bukkit.getServer().getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return;
++      }
++      newSpawn = event.getNewSpawn();
++      p_9162_ = event.isForced();
++
++      if (newSpawn != null) {
++         p_9159_ = ((CraftWorld) newSpawn.getWorld()).getHandle().m_46472_();
++         p_9160_ = BlockPos.m_274561_(newSpawn.getX(), newSpawn.getY(), newSpawn.getZ());
++         p_9161_ = newSpawn.getYaw();
++      } else {
++         p_9159_ = Level.f_46428_;
++         p_9160_ = null;
++         p_9161_ = 0.0F;
++      }
++      // CraftBukkit end
 +      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.f_46428_ : p_9159_, p_9160_, p_9162_)) return;
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.f_8936_) && p_9159_.equals(this.f_8935_);

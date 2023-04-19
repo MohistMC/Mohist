@@ -44,6 +44,7 @@ import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftMerchantCustom;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Firework;
@@ -132,7 +133,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(location.getWorld() != null, "Location needs to be in a world");
         Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
 
-        BlockPos blockposition = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos blockposition = CraftLocation.toBlockPosition(location);
         BlockState iblockdata = getHandle().level.getBlockState(blockposition);
         if (!(iblockdata.getBlock() instanceof BedBlock)) {
             return false;
@@ -143,7 +144,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         }
 
         // From BedBlock
-        iblockdata = (BlockState) iblockdata.setValue(BedBlock.OCCUPIED, true);
+        iblockdata = iblockdata.setValue(BedBlock.OCCUPIED, true);
         getHandle().level.setBlock(blockposition, iblockdata, 4);
 
         return true;
@@ -161,7 +162,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkState(isSleeping(), "Not sleeping");
 
         BlockPos bed = getHandle().getSleepingPos().get();
-        return new Location(getWorld(), bed.getX(), bed.getY(), bed.getZ());
+        return CraftLocation.toBukkit(bed, getWorld());
     }
 
     @Override
@@ -336,7 +337,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                 return null;
             }
         }
-        getHandle().openMenu(((CraftingTableBlock) Blocks.CRAFTING_TABLE).getMenuProvider(null, getHandle().level, BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ())));
+        getHandle().openMenu(((CraftingTableBlock) Blocks.CRAFTING_TABLE).getMenuProvider(null, getHandle().level, CraftLocation.toBlockPosition(location)));
         if (force) {
             getHandle().containerMenu.checkReachable = false;
         }
@@ -356,7 +357,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         }
 
         // If there isn't an enchant table we can force create one, won't be very useful though.
-        BlockPos pos = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos pos = CraftLocation.toBlockPosition(location);
         getHandle().openMenu(((EnchantmentTableBlock) Blocks.ENCHANTING_TABLE).getMenuProvider(null, getHandle().level, pos));
 
         if (force) {

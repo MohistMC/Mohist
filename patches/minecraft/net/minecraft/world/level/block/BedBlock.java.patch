@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/BedBlock.java
++++ b/net/minecraft/world/level/block/BedBlock.java
+@@ -286,6 +_,11 @@
+       if (!p_49499_.f_46443_) {
+          BlockPos blockpos = p_49500_.m_121945_(p_49501_.m_61143_(f_54117_));
+          p_49499_.m_7731_(blockpos, p_49501_.m_61124_(f_49440_, BedPart.HEAD), 3);
++         // CraftBukkit start - SPIGOT-7315: Don't updated if we capture block states
++         if (p_49499_.captureBlockStates) {
++            return;
++         }
++                    // CraftBukkit end
+          p_49499_.m_6289_(p_49500_, Blocks.f_50016_);
+          p_49501_.m_60701_(p_49499_, p_49500_, 3);
+       }

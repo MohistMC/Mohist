@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.19.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.19.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.19.4--45.0.43-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.4.html)
+[![](https://img.shields.io/badge/Forge-1.19.4--45.0.44-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.19.4.html)
 [![](https://img.shields.io/badge/jdk-17.0.5+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-7.5.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -25,11 +25,11 @@
 Progress
 ------
 
-- [x] Rectify Forge([**01846c729**](https://github.com/MinecraftForge/MinecraftForge/commit/01846c729))
+- [x] Rectify Forge([**dcef406df**](https://github.com/MinecraftForge/MinecraftForge/commit/dcef406df))
 - [ ] Start patch
-  * [x] Bukkit([**5efeb7bd**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/5efeb7bd))
-  * [ ] CraftBukkit([**be8682aa8**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/be8682aa8))
-  * [ ] Spigot ([**b31949f2**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/b31949f2))
+  * [x] Bukkit([**ccb2d01b**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/ccb2d01b))
+  * [ ] CraftBukkit([**f92a41c39**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f92a41c39))
+  * [ ] Spigot ([**d1bd3bd2**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/d1bd3bd2))
     * [x] Bukkit-Patches 
     * [ ] CraftBukkit-Patches (98%) - (029/030/091)
 

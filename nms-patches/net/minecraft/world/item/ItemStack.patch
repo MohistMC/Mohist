@@ -73,7 +73,7 @@
 +            world.captureBlockStates = false;
 +            if (enuminteractionresult.consumesAction() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
 +                world.captureTreeGeneration = false;
-+                Location location = new Location(world.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ());
++                Location location = CraftLocation.toBukkit(blockposition, world.getWorld());
 +                TreeType treeType = BlockSapling.treeType;
 +                BlockSapling.treeType = null;
 +                List<CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
@@ -203,6 +203,17 @@
 +                            entityhuman.openTextEdit((TileEntitySign) world.getBlockEntity(ItemSign.openSign));
 +                        } finally {
 +                            ItemSign.openSign = null;
++                        }
++                    }
+
++                    // SPIGOT-7315: Moved from BlockBed#setPlacedBy
++                    if (placeEvent != null && this.item instanceof ItemBed) {
++                        BlockPosition position = ((CraftBlock) placeEvent.getBlock()).getPosition();
++                        IBlockData blockData =  world.getBlockState(position);
++
++                        if (blockData.getBlock() instanceof BlockBed) {
++                            world.blockUpdated(position, Blocks.AIR);
++                            blockData.updateNeighbourShapes(world, position, 3);
 +                        }
 +                    }
 +

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 
@@ -70,7 +71,7 @@ public class CraftAllay extends CraftCreature implements org.bukkit.entity.Allay
     public void startDancing(Location location) {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(location.getBlock().getType().equals(Material.JUKEBOX), "The Block in the Location need to be a JukeBox");
-        getHandle().setJukeboxPlaying(BlockPos.containing(location.getX(), location.getY(), location.getZ()), true);
+        getHandle().setJukeboxPlaying(CraftLocation.toBlockPosition(location), true);
     }
 
     @Override
@@ -94,6 +95,6 @@ public class CraftAllay extends CraftCreature implements org.bukkit.entity.Allay
 
     public Location getJukebox() {
         BlockPos nmsJukeboxPos = getHandle().jukeboxPos;
-        return (nmsJukeboxPos != null) ? new Location(getWorld(), nmsJukeboxPos.getX(), nmsJukeboxPos.getY(), nmsJukeboxPos.getZ()) : null;
+        return (nmsJukeboxPos != null) ? CraftLocation.toBukkit(nmsJukeboxPos, getWorld()) : null;
     }
 }

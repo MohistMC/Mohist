@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/commands/SetSpawnCommand.java
++++ b/net/minecraft/server/commands/SetSpawnCommand.java
+@@ -33,6 +_,7 @@
+       ResourceKey<Level> resourcekey = p_138650_.m_81372_().m_46472_();
+ 
+       for(ServerPlayer serverplayer : p_138651_) {
++         serverplayer.cause = org.bukkit.event.player.PlayerSpawnChangeEvent.Cause.COMMAND;
+          serverplayer.m_9158_(resourcekey, p_138652_, p_138653_, true, false);
+       }
+ 

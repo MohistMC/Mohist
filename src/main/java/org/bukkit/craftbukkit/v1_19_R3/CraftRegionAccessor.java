@@ -38,6 +38,7 @@ import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_19_R3.util.BlockStateListPopulator;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.RandomSourceWrapper;
 import org.bukkit.entity.AbstractArrow;
@@ -275,7 +276,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public boolean generateTree(Location location, Random random, TreeType treeType) {
-        BlockPos pos = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos pos = CraftLocation.toBlockPosition(location);
         return generateTree(getHandle(), getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
     }
 
@@ -289,7 +290,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     // @Override
     public boolean generateTree(Location location, Random random, TreeType treeType, Predicate<BlockState> predicate) {
-        BlockPos pos = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos pos = CraftLocation.toBlockPosition(location);
         BlockStateListPopulator populator = new BlockStateListPopulator(getHandle());
         boolean result = generateTree(populator, getHandle().getMinecraftWorld().getChunkSource().getGenerator(), pos, new RandomSourceWrapper(random), treeType);
         populator.refreshTiles();

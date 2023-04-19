@@ -63,12 +63,20 @@ public final class CraftMapView implements MapView {
         ResourceKey<net.minecraft.world.level.Level> dimension = worldMap.dimension;
         ServerLevel world = MinecraftServer.getServer().getLevel(dimension);
 
-        return (world == null) ? null : world.getWorld();
+        if (world != null) {
+            return world.getWorld();
+        }
+
+        if (worldMap.uniqueId != null) {
+            return Bukkit.getServer().getWorld(worldMap.uniqueId);
+        }
+        return null;
     }
 
     @Override
     public void setWorld(World world) {
         worldMap.dimension = ((CraftWorld) world).getHandle().dimension();
+        worldMap.uniqueId = world.getUID();
     }
 
     @Override

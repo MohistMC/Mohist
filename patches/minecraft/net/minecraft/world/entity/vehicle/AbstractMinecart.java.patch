@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -44,8 +_,14 @@
+@@ -44,8 +_,15 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 +import org.bukkit.entity.Vehicle;
 +import org.bukkit.event.vehicle.VehicleDamageEvent;
 +import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -165,7 +166,7 @@
 +         // CraftBukkit start
 +         org.bukkit.World bworld = this.f_19853_.getWorld();
 +         Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
-+         Location to = new Location(bworld, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
++         Location to = CraftLocation.toBukkit(this.m_20182_(), bworld, this.m_146908_(), this.m_146909_());
 +         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +
 +         this.f_19853_.getCraftServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));

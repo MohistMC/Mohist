@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/gameevent/GameEventDispatcher.java
 +++ b/net/minecraft/world/level/gameevent/GameEventDispatcher.java
-@@ -5,10 +_,15 @@
+@@ -5,10 +_,16 @@
  import java.util.List;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
@@ -11,6 +11,7 @@
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 +import org.bukkit.event.world.GenericGameEvent;
  
@@ -21,7 +22,7 @@
        int i = p_251754_.m_157827_();
        BlockPos blockpos = BlockPos.m_274446_(p_250613_);
 +      // CraftBukkit start
-+      GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_251754_))), new Location(f_243917_.getWorld(), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()), (p_251777_.f_223711_() == null) ? null : p_251777_.f_223711_().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
++      GenericGameEvent event = new GenericGameEvent(org.bukkit.GameEvent.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256726_.m_7981_(p_251754_))), CraftLocation.toBukkit(blockpos, f_243917_.getWorld()), (p_251777_.f_223711_() == null) ? null : p_251777_.f_223711_().getBukkitEntity(), i, !Bukkit.isPrimaryThread());
 +      f_243917_.getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return;

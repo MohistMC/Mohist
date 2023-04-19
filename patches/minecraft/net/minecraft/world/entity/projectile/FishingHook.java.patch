@@ -9,14 +9,20 @@
  import org.slf4j.Logger;
  
  public class FishingHook extends Projectile {
-@@ -65,6 +_,12 @@
+@@ -65,6 +_,18 @@
     private final int f_37096_;
     private final int f_37097_;
  
 +   // CraftBukkit start - Extra variables to enable modification of fishing wait time, values are minecraft defaults
 +   public int minWaitTime = 100;
 +   public int maxWaitTime = 600;
++   public int minLureTime = 20;
++   public int maxLureTime = 80;
++   public float minLureAngle = 0.0F;
++   public float maxLureAngle = 360.0F;
 +   public boolean applyLure = true;
++   public boolean rainInfluenced = true;
++   public boolean skyInfluenced = true;
 +   // CraftBukkit end
 +
     private FishingHook(EntityType<? extends FishingHook> p_150141_, Level p_150142_, int p_150143_, int p_150144_) {
@@ -42,6 +48,20 @@
     }
  
     protected boolean m_5603_(Entity p_37135_) {
+@@ -270,11 +_,11 @@
+       ServerLevel serverlevel = (ServerLevel)this.f_19853_;
+       int i = 1;
+       BlockPos blockpos = p_37146_.m_7494_();
+-      if (this.f_19796_.m_188501_() < 0.25F && this.f_19853_.m_46758_(blockpos)) {
++      if (this.rainInfluenced && this.f_19796_.m_188501_() < 0.25F && this.f_19853_.m_46758_(blockpos)) { // CraftBukkit
+          ++i;
+       }
+ 
+-      if (this.f_19796_.m_188501_() < 0.5F && !this.f_19853_.m_45527_(blockpos)) {
++      if (this.skyInfluenced && this.f_19796_.m_188501_() < 0.5F && !this.f_19853_.m_45527_(blockpos)) { // CraftBukkit
+          --i;
+       }
+ 
 @@ -284,6 +_,10 @@
              this.f_37090_ = 0;
              this.f_37091_ = 0;
@@ -76,7 +96,7 @@
              this.m_5496_(SoundEvents.f_11940_, 0.25F, 1.0F + (this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.4F);
              double d3 = this.m_20186_() + 0.5D;
              serverlevel.m_8767_(ParticleTypes.f_123795_, this.m_20185_(), d3, this.m_20189_(), (int)(1.0F + this.m_20205_() * 20.0F), (double)this.m_20205_(), 0.0D, (double)this.m_20205_(), (double)0.2F);
-@@ -332,7 +_,7 @@
+@@ -332,18 +_,20 @@
              double d5 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
              double d6 = this.m_20189_() + (double)(Mth.m_14089_(f6) * f7) * 0.1D;
              BlockState blockstate1 = serverlevel.m_8055_(BlockPos.m_274561_(d4, d5 - 1.0D, d6));
@@ -85,8 +105,12 @@
                 serverlevel.m_8767_(ParticleTypes.f_123769_, d4, d5, d6, 2 + this.f_19796_.m_188503_(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
              }
           }
-@@ -342,8 +_,10 @@
-             this.f_37091_ = Mth.m_216271_(this.f_19796_, 20, 80);
+ 
+          if (this.f_37090_ <= 0) {
+-            this.f_37092_ = Mth.m_216267_(this.f_19796_, 0.0F, 360.0F);
+-            this.f_37091_ = Mth.m_216271_(this.f_19796_, 20, 80);
++            this.f_37092_ = Mth.m_216267_(this.f_19796_, this.minLureAngle, this.maxLureAngle);
++            this.f_37091_ = Mth.m_216271_(this.f_19796_, this.minLureTime, this.maxLureTime);
           }
        } else {
 -         this.f_37090_ = Mth.m_216271_(this.f_19796_, 100, 600);

@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.DataLayer;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.PalettedContainerRO;
@@ -76,7 +77,14 @@ public class CraftChunk implements Chunk {
     }
 
     public ChunkAccess getHandle(ChunkStatus chunkStatus) {
-        return worldServer.getChunk(x, z, chunkStatus);
+        ChunkAccess chunkAccess = worldServer.getChunk(x, z, chunkStatus);
+
+        // SPIGOT-7332: Get unwrapped extension
+        if (chunkAccess instanceof ImposterProtoChunk extension) {
+            return extension.getWrapped();
+        }
+
+        return chunkAccess;
     }
 
     @Override

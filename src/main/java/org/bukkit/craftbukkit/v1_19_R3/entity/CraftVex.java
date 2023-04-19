@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Vex;
 
@@ -41,7 +42,7 @@ public class CraftVex extends CraftMonster implements Vex {
     @Override
     public Location getBound() {
         BlockPos blockPosition = getHandle().getBoundOrigin();
-        return (blockPosition == null) ? null : new Location(getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+        return (blockPosition == null) ? null : CraftLocation.toBukkit(blockPosition, getWorld());
     }
 
     @Override
@@ -50,7 +51,7 @@ public class CraftVex extends CraftMonster implements Vex {
             getHandle().setBoundOrigin(null);
         } else {
             Preconditions.checkArgument(getWorld().equals(location.getWorld()), "The bound world cannot be different to the entity's world.");
-            getHandle().setBoundOrigin(BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            getHandle().setBoundOrigin(CraftLocation.toBlockPosition(location));
         }
     }
 

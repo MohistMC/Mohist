@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -46,6 +47,9 @@ public class TrackingRange {
         } else if ( entity instanceof ItemFrame || entity instanceof Painting || entity instanceof ItemEntity || entity instanceof ExperienceOrb)
         {
             return config.miscTrackingRange;
+        } else if ( entity instanceof Display)
+        {
+            return config.displayTrackingRange;
         } else
         {
                 return config.otherTrackingRange;

@@ -16,7 +16,7 @@
  import net.minecraft.network.chat.PlayerChatMessage;
  import net.minecraft.network.chat.RemoteChatSession;
  import net.minecraft.network.chat.SignableCommand;
-@@ -179,11 +_,28 @@
+@@ -179,11 +_,29 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,6 +31,7 @@
 +import org.bukkit.event.player.PlayerChatEvent;
 +import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 +import org.bukkit.event.player.PlayerKickEvent;
++import org.bukkit.event.player.PlayerRespawnEvent;
  import org.slf4j.Logger;
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, TickablePacketListener, ServerGamePacketListener {
@@ -302,6 +303,23 @@
                       return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
                    });
                 }
+@@ -1487,14 +_,14 @@
+          case PERFORM_RESPAWN:
+             if (this.f_9743_.f_8944_) {
+                this.f_9743_.f_8944_ = false;
+-               this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, true);
++               this.f_9743_ = this.f_9745_.m_6846_().respawn(this.f_9743_, true, PlayerRespawnEvent.RespawnReason.END_PORTAL);
+                CriteriaTriggers.f_10588_.m_19757_(this.f_9743_, Level.f_46430_, Level.f_46428_);
+             } else {
+                if (this.f_9743_.m_21223_() > 0.0F) {
+                   return;
+                }
+ 
+-               this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, false);
++               this.f_9743_ = this.f_9745_.m_6846_().respawn(this.f_9743_, false, PlayerRespawnEvent.RespawnReason.DEATH);
+                if (this.f_9745_.m_7035_()) {
+                   this.f_9743_.m_143403_(GameType.SPECTATOR);
+                   this.f_9743_.m_9236_().m_46469_().m_46170_(GameRules.f_46146_).m_46246_(false, this.f_9745_);
 @@ -1670,6 +_,7 @@
     }
  

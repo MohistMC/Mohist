@@ -216,6 +216,7 @@ public class SpigotWorldConfig
     public int animalTrackingRange = 48;
     public int monsterTrackingRange = 48;
     public int miscTrackingRange = 32;
+    public int displayTrackingRange = 128;
     public int otherTrackingRange = 64;
     private void trackingRange()
     {
@@ -223,8 +224,9 @@ public class SpigotWorldConfig
         animalTrackingRange = getInt( "entity-tracking-range.animals", animalTrackingRange );
         monsterTrackingRange = getInt( "entity-tracking-range.monsters", monsterTrackingRange );
         miscTrackingRange = getInt( "entity-tracking-range.misc", miscTrackingRange );
+        displayTrackingRange = getInt( "entity-tracking-range.display", displayTrackingRange );
         otherTrackingRange = getInt( "entity-tracking-range.other", otherTrackingRange );
-        log( "Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Other " + otherTrackingRange );
+        log( "Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Di " + displayTrackingRange + " / Other " + otherTrackingRange );
     }
 
     public int hopperTransfer;

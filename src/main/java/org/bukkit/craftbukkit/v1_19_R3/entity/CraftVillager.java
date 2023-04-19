@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -98,7 +99,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
         Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
         Preconditions.checkState(!getHandle().generation, "Cannot sleep during world generation");
 
-        BlockPos position = BlockPos.containing(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockPos position = CraftLocation.toBlockPosition(location);
         BlockState iblockdata = getHandle().level.getBlockState(position);
         if (!(iblockdata.getBlock() instanceof BedBlock)) {
             return false;

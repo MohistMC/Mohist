@@ -36,7 +36,7 @@
 +                if (worldserver.capturedBlockStates.size() > 0) {
 +                    TreeType treeType = BlockSapling.treeType;
 +                    BlockSapling.treeType = null;
-+                    Location location = new Location(worldserver.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ());
++                    Location location = CraftLocation.toBukkit(blockposition, worldserver.getWorld());
 +                    java.util.List<BlockState> blocks = new java.util.ArrayList<>(worldserver.capturedBlockStates.values());
 +                    worldserver.capturedBlockStates.clear();
 +                    StructureGrowEvent event = null;

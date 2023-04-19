@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.bukkit.Location;
 import org.bukkit.Raid;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.entity.Raider;
 
 public final class CraftRaid implements Raid {
@@ -47,7 +48,7 @@ public final class CraftRaid implements Raid {
     public Location getLocation() {
         BlockPos pos = handle.getCenter();
         Level world = handle.getLevel();
-        return new Location(world.getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        return CraftLocation.toBukkit(pos, world.getWorld());
     }
 
     @Override

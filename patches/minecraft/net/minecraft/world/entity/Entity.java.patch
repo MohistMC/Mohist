@@ -16,7 +16,7 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.BlockParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -118,9 +_,36 @@
+@@ -118,9 +_,37 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -33,6 +33,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftPortalEvent;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
 +import org.bukkit.event.entity.EntityAirChangeEvent;
@@ -1089,7 +1090,7 @@
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, PositionImpl exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
 +      Location enter = bukkitEntity.getLocation();
-+      Location exit = new Location(exitWorldServer.getWorld(), exitPosition.m_7096_(), exitPosition.m_7098_(), exitPosition.m_7094_());
++      Location exit = CraftLocation.toBukkit(exitPosition, exitWorldServer.getWorld());
 +
 +      EntityPortalEvent event = new EntityPortalEvent(bukkitEntity, enter, exit, searchRadius);
 +      event.getEntity().getServer().getPluginManager().callEvent(event);
