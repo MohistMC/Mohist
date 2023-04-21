@@ -144,8 +144,7 @@ public class BlockEventDispatcher {
             org.bukkit.event.player.PlayerInteractEvent bukkitEvent = CraftEventFactory.callPlayerInteractEvent(serverPlayer,
                     Action.LEFT_CLICK_BLOCK, event.getPos(), event.getFace(),
                     serverPlayer.getInventory().getSelected(), InteractionHand.MAIN_HAND);
-            if (bukkitEvent.isCancelled()
-                    || event.isCanceled()) {
+            if (bukkitEvent.isCancelled() || event.isCanceled()) {
                 // Let the client know the block still exists
                 serverPlayer.connection.send(new ClientboundBlockUpdatePacket(event.getLevel().getMinecraftWorld(), event.getPos()));
                 // Update any tile entity data for this block

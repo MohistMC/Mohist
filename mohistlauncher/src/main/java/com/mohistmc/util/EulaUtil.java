@@ -18,7 +18,7 @@
 
 package com.mohistmc.util;
 
-import com.mohistmc.util.i18n.i18n;
+import com.mohistmc.i18n.i18n;
 
 import java.io.BufferedWriter;
 import java.io.File;

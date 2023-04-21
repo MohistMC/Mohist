@@ -27,11 +27,9 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,20 +51,6 @@ public class Control {
             return pdf;
         } catch (InvalidDescriptionException | IOException ioe) {
             ioe.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static File getFile(JavaPlugin plugin) {
-        Field file;
-
-        try {
-            file = JavaPlugin.class.getDeclaredField("file");
-            file.setAccessible(true);
-            return (File) file.get(plugin);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return null;

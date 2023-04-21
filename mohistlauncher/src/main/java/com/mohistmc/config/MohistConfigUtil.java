@@ -18,11 +18,14 @@
 
 package com.mohistmc.config;
 
+import com.mohistmc.MohistMCStart;
+import com.mohistmc.i18n.i18n;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 public class MohistConfigUtil {
 
@@ -71,5 +74,12 @@ public class MohistConfigUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void i18n() {
+        String mohist_lang = yml.getString("mohist.lang");
+        String l = mohist_lang.split("_")[0];
+        String c = mohist_lang.split("_")[1];
+        new i18n().build(MohistMCStart.class.getClassLoader(), new Locale(l, c));
     }
 }

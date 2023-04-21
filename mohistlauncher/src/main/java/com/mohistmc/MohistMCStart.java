@@ -25,7 +25,7 @@ import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
-import com.mohistmc.util.i18n.i18n;
+import com.mohistmc.i18n.i18n;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class MohistMCStart {
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
-
+        MohistConfigUtil.i18n();
         MohistConfigUtil.copyMohistConfig();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
@@ -66,12 +66,12 @@ public class MohistMCStart {
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
-        CustomLibraries.loadCustomLibs();
+
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
             v_1_19_R2.run();
         }
-
+        CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
             forgeArgs.add(arg.split(" ")[0]);

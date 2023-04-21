@@ -114,7 +114,7 @@ public abstract class JavaPlugin extends PluginBase {
      * @return File containing this plugin
      */
     @NotNull
-    protected File getFile() {
+    public File getFile() {
         return file;
     }
 

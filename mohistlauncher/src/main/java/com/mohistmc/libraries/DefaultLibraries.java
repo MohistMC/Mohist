@@ -25,7 +25,7 @@ import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
-import com.mohistmc.util.i18n.i18n;
+import com.mohistmc.i18n.i18n;
 
 import java.io.BufferedReader;
 import java.io.File;

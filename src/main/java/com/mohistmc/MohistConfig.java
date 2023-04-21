@@ -46,6 +46,9 @@ public class MohistConfig {
     static Map<String, Command> commands;
     private static File CONFIG_FILE;
 
+    public static File mohistyml = new File("mohist-config", "mohist.yml");
+    public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
+
     public static void init(File configFile) {
         CONFIG_FILE = configFile;
         config = new YamlConfiguration();
@@ -131,10 +134,13 @@ public class MohistConfig {
 
     public static boolean show_logo;
     public static String mohist_lang;
+    public static String mohist_vanilla_lang;
+
     private static void mohist()
     {
         show_logo = getBoolean( "mohist.show_logo", true );
         mohist_lang = getString( "mohist.lang", "xx_XX" );
+        mohist_vanilla_lang = getString( "mohist.vanilla_lang", "en_us" );
     }
 
 }

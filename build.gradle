@@ -202,6 +202,7 @@ def sharedDeps = {
     installer 'io.izzel:tools:1.3.0'
     installer 'com.mohistmc.remapper:mohistremapper:0.3'
     installer 'com.mohistmc:dynamicenum:0.1'
+    installer 'com.mohistmc:i18n:0.1'
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer 'com.google.guava:guava:31.0.1-jre'
@@ -528,7 +529,6 @@ project(':forge') {
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
-        implementation(project(':mohistlauncher'))
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
@@ -1054,6 +1054,7 @@ project(':forge') {
                             'Premain-Class': 'com.mohistmc.util.JarLoader',
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
                             'Main-Class': 'com.mohistmc.MohistMCStart',
+                            'MixinConnector': 'com.mohistmc.ExampleConnector',
                             'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
                     ])
                 } else {
