@@ -115,11 +115,15 @@
                    this.m_38946_();
                    return;
                 }
-@@ -163,9 +_,10 @@
+@@ -163,9 +_,14 @@
              itemstack2 = flag3 ? itemstack : itemstack1;
           }
  
 -         this.f_39559_.m_6836_(0, this.m_39579_(itemstack2, i, j));
++         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
++         if (j > itemstack2.m_41741_())
++            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++         else
 +         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.m_39579_(itemstack2, i, j)); // CraftBukkit
        }
  
