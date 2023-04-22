@@ -209,7 +209,7 @@ def sharedDeps = {
     installer 'com.google.code.gson:gson:2.10'
     installer 'com.mojang:authlib:3.17.30'
     installer 'com.mojang:logging:1.1.1'
-    installer 'commons-lang:commons-lang:2.6'
+    compileOnly 'commons-lang:commons-lang:2.6'
     installer 'org.slf4j:slf4j-api:2.0.6'
 
     installer 'org.apache.logging.log4j:log4j-core:2.20.0'
