@@ -125,7 +125,7 @@ public class HighlightLevelConverter extends LogEventPatternConverter {
         }
 
         if (toAppendTo.length() == end) {
-            // No content so we don't need to append the ANSI escape code
+            // No content, so we don't need to append the ANSI escape code
             toAppendTo.setLength(start);
         } else {
             // Append reset code after the line

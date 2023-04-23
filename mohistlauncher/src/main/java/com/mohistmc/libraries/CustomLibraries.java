@@ -25,7 +25,7 @@ import java.io.File;
 
 public class CustomLibraries {
 
-    public static File file = new File(JarTool.getJarDir() + "/libraries/customize_libraries");
+    public static final File file = new File(JarTool.getJarDir() + "/libraries/customize_libraries");
 
     public static void loadCustomLibs() throws Exception {
         if (!file.exists()) {

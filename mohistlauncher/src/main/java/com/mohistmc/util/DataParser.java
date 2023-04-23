@@ -6,8 +6,8 @@ import java.util.List;
 
 public class DataParser {
 
-    public static HashMap<String, String> versionMap = new HashMap<>();
-    public static List<String> launchArgs = new ArrayList<>();
+    public static final HashMap<String, String> versionMap = new HashMap<>();
+    public static final List<String> launchArgs = new ArrayList<>();
 
     public static void parseVersions() {
         versionMap.put("forge", FileUtil.readFileFromJar("versions/forge.txt").get(0));

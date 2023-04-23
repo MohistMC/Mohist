@@ -29,8 +29,8 @@ import java.util.Locale;
 
 public class MohistConfigUtil {
 
-    public static File mohistyml = new File("mohist-config", "mohist.yml");
-    public static YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
+    public static final File mohistyml = new File("mohist-config", "mohist.yml");
+    public static final YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
 
     public static void copyMohistConfig() {
         try {
@@ -77,7 +77,7 @@ public class MohistConfigUtil {
     }
 
     public static void i18n() {
-        String mohist_lang = yml.getString("mohist.lang");
+        String mohist_lang = yml.getString("mohist.lang", "xx_XX");
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];
         new i18n().build(MohistMCStart.class.getClassLoader(), new Locale(l, c));

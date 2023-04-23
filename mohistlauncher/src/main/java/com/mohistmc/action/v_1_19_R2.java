@@ -16,9 +16,9 @@ import java.util.List;
 
 public class v_1_19_R2 {
 
-    public static List<String> loadedLibsPaths = new ArrayList<>();
+    public static final List<String> loadedLibsPaths = new ArrayList<>();
 
-    public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
+    public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
         if (cmd.stream().anyMatch(s -> s.contains("-Xms"))) {
             System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
         }
@@ -41,15 +41,15 @@ public class v_1_19_R2 {
 
     public static class Install_1_19 extends Action {
 
-        public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
-        public File fmlloader;
-        public File fmlcore;
-        public File javafmllanguage;
-        public File mclanguage;
-        public File lowcodelanguage;
-        public File mojmap;
-        public File mc_unpacked;
-        public File mergedMapping;
+        public static final List<String> launchArgs = Arrays.asList("java", "-jar");
+        public final File fmlloader;
+        public final File fmlcore;
+        public final File javafmllanguage;
+        public final File mclanguage;
+        public final File lowcodelanguage;
+        public final File mojmap;
+        public final File mc_unpacked;
+        public final File mergedMapping;
 
         protected Install_1_19() throws Exception {
             super();
@@ -176,7 +176,7 @@ public class v_1_19_R2 {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
-                        stringToUrl(new ArrayList<>(Arrays.asList(
+                        stringToUrl(Arrays.asList(
                                 libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
                                 libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
@@ -189,7 +189,7 @@ public class v_1_19_R2 {
                                 libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
                                 libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
                                 libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
-                        ))));
+                        )));
                 unmute();
                 serverMD5 = MD5Util.getMd5(serverJar);
             }

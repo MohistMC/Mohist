@@ -37,8 +37,8 @@ import static com.mohistmc.util.EulaUtil.writeInfos;
 
 public class MohistMCStart {
 
-    public static List<String> mainArgs = new ArrayList<>();
-    public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
+    public static final List<String> mainArgs = new ArrayList<>();
+    public static final float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
@@ -48,8 +48,8 @@ public class MohistMCStart {
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
-        MohistConfigUtil.i18n();
         MohistConfigUtil.copyMohistConfig();
+        MohistConfigUtil.i18n();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             System.out.println("\n" + "\n" +
@@ -82,7 +82,6 @@ public class MohistMCStart {
         if (!hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
-                ;
             }
             writeInfos();
         }

@@ -38,8 +38,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
-    public static HashMap<String, String> fail = new HashMap<>();
-    public static String MAVENURL = DownloadSource.get().getUrl();
+    public static final HashMap<String, String> fail = new HashMap<>();
+    public static final String MAVENURL = DownloadSource.get().getUrl();
 
     public static String libUrl(File lib) {
         return MAVENURL + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
@@ -67,7 +67,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / allSize.get()) + "%"); //Global percentage
+            System.out.println(i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());

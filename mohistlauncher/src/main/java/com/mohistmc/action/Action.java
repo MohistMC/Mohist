@@ -41,29 +41,29 @@ import java.util.jar.JarFile;
 public abstract class Action {
 
     private static final PrintStream origin = System.out;
-    public String mohistVer;
-    public String forgeVer;
-    public String mcpVer;
-    public String mcVer;
-    public String libPath = new File(JarTool.getJarDir(), "libraries").getAbsolutePath() + "/";
+    public final String mohistVer;
+    public final String forgeVer;
+    public final String mcpVer;
+    public final String mcVer;
+    public final String libPath = new File(JarTool.getJarDir(), "libraries").getAbsolutePath() + "/";
 
-    public String forgeStart;
-    public File universalJar;
-    public File serverJar;
+    public final String forgeStart;
+    public final File universalJar;
+    public final File serverJar;
 
-    public File lzma;
-    public File installInfo;
+    public final File lzma;
+    public final File installInfo;
 
-    public String otherStart;
-    public File extra;
-    public File slim;
-    public File srg;
+    public final String otherStart;
+    public final File extra;
+    public final File slim;
+    public final File srg;
 
-    public String mcpStart;
-    public File mcpZip;
-    public File mcpTxt;
+    public final String mcpStart;
+    public final File mcpZip;
+    public final File mcpTxt;
 
-    public File minecraft_server;
+    public final File minecraft_server;
 
     protected Action() {
         this.mohistVer = DataParser.versionMap.get("mohist");
