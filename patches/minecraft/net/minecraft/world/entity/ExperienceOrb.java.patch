@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -19,6 +_,10 @@
+@@ -19,6 +_,11 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -8,6 +8,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
++import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
  
  public class ExperienceOrb extends Entity {
     private static final int f_147073_ = 6000;
@@ -65,8 +66,9 @@
     public void m_6123_(Player p_20792_) {
        if (!this.f_19853_.f_46443_) {
           if (p_20792_.f_36101_ == 0) {
+-            p_20792_.f_36101_ = 2;
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp(p_20792_, this))) return;
-             p_20792_.f_36101_ = 2;
++            p_20792_.f_36101_ = CraftEventFactory.callPlayerXpCooldownEvent(p_20792_, 2, PlayerExpCooldownChangeEvent.ChangeReason.PICKUP_ORB).getNewCooldown(); // CraftBukkit - entityhuman.takeXpDelay = 2;
              p_20792_.m_7938_(this, 1);
              int i = this.m_147092_(p_20792_, this.f_20770_);
              if (i > 0) {

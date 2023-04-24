@@ -802,6 +802,27 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     public void resetPlayerWeather();
 
     /**
+     * Gets the player's cooldown between picking up experience orbs.
+     *
+     * @return The cooldown in ticks
+     */
+    public int getExpCooldown();
+
+    /**
+     * Sets the player's cooldown between picking up experience orbs..
+     *
+     * <strong>Note:</strong> Setting this to 0 allows the player to pick up
+     * instantly, but setting this to a negative value will cause the player to
+     * be unable to pick up xp-orbs.
+     *
+     * Calling this Method will result in {@link PlayerExpCooldownChangeEvent}
+     * being called.
+     *
+     * @param ticks The cooldown in ticks
+     */
+    public void setExpCooldown(int ticks);
+
+    /**
      * Gives the player the amount of experience specified.
      *
      * @param amount Exp amount to give

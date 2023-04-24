@@ -78,6 +78,7 @@ import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_19_R3.block.CraftSign;
 import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R3.conversations.ConversationTracker;
+import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R3.map.CraftMapView;
 import org.bukkit.craftbukkit.v1_19_R3.map.RenderData;
@@ -89,6 +90,7 @@ import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
 import org.bukkit.event.player.PlayerHideEntityEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerShowEntityEvent;
@@ -1127,6 +1129,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public WeatherType getPlayerWeather() {
         return getHandle().getPlayerWeather();
+    }
+
+    @Override
+    public int getExpCooldown() {
+        return getHandle().takeXpDelay;
+    }
+
+    @Override
+    public void setExpCooldown(int ticks) {
+        getHandle().takeXpDelay = CraftEventFactory.callPlayerXpCooldownEvent(this.getHandle(), ticks, PlayerExpCooldownChangeEvent.ChangeReason.PLUGIN).getNewCooldown();
     }
 
     @Override
