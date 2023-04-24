@@ -14,3 +14,12 @@
     }
  
     public boolean m_33816_() {
+@@ -160,7 +_,7 @@
+       if (p_33793_ instanceof Spider.SpiderEffectsGroupData spider$spidereffectsgroupdata) {
+          MobEffect mobeffect = spider$spidereffectsgroupdata.f_33827_;
+          if (mobeffect != null) {
+-            this.m_7292_(new MobEffectInstance(mobeffect, -1));
++            this.addEffect(new MobEffectInstance(mobeffect, -1), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.SPIDER_SPAWN); // CraftBukkit
+          }
+       }
+ 

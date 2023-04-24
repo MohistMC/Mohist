@@ -18,6 +18,7 @@
 
 package com.mohistmc.network.download;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.i18n.i18n;
 import lombok.AllArgsConstructor;
@@ -51,7 +52,6 @@ public enum DownloadSource {
     }
 
     public static boolean isCN() {
-        TimeZone timeZone = TimeZone.getDefault();
-        return "Asia/Shanghai".equals(timeZone.getID()) || "CN".equals(Locale.getDefault().getCountry());
+        return MohistMCStart.i18n.isCN();
     }
 }

@@ -1,5 +1,26 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
+@@ -1,7 +_,10 @@
+ package net.minecraft.world.entity.monster;
+ 
+ import com.google.common.annotations.VisibleForTesting;
++
++import java.util.ArrayList;
+ import java.util.EnumSet;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.particles.ParticleOptions;
+@@ -41,6 +_,9 @@
+ import net.minecraft.world.level.WorldGenLevel;
+ import net.minecraft.world.level.levelgen.WorldgenRandom;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.SlimeSplitEvent;
+ 
+ public class Slime extends Mob implements Enemy {
+    private static final EntityDataAccessor<Integer> f_33582_ = SynchedEntityData.m_135353_(Slime.class, EntityDataSerializers.f_135028_);
 @@ -124,6 +_,8 @@
        if (this.f_19861_ && !this.f_33583_) {
           int i = this.m_33632_();
@@ -9,6 +30,46 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
              float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
+@@ -184,6 +_,19 @@
+          int j = i / 2;
+          int k = 2 + this.f_19796_.m_188503_(3);
+ 
++         // CraftBukkit start
++         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled() && event.getCount() > 0) {
++            k = event.getCount();
++         } else {
++            super.m_142687_(p_149847_);
++            return;
++         }
++         List<LivingEntity> slimes = new ArrayList<>(j);
++         // CraftBukkit end
++
+          for(int l = 0; l < k; ++l) {
+             float f1 = ((float)(l % 2) - 0.5F) * f;
+             float f2 = ((float)(l / 2) - 0.5F) * f;
+@@ -198,9 +_,18 @@
+                slime.m_20331_(this.m_20147_());
+                slime.m_7839_(j, true);
+                slime.m_7678_(this.m_20185_() + (double)f1, this.m_20186_() + 0.5D, this.m_20189_() + (double)f2, this.f_19796_.m_188501_() * 360.0F, 0.0F);
+-               this.f_19853_.m_7967_(slime);
++               slimes.add(slime); // CraftBukkit
+             }
+          }
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++            super.m_142687_(p_149847_);
++            return;
++         }
++         for (LivingEntity living : slimes) {
++            this.f_19853_.addFreshEntity(living, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
++         }
++         // CraftBukkit end
+       }
+ 
+       super.m_142687_(p_149847_);
 @@ -319,6 +_,12 @@
     public EntityDimensions m_6972_(Pose p_33597_) {
        return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());

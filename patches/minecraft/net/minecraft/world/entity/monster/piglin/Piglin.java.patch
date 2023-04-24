@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -2,14 +_,21 @@
+@@ -2,14 +_,22 @@
  
  import com.google.common.collect.ImmutableList;
  import com.mojang.serialization.Dynamic;
@@ -8,6 +8,7 @@
  import java.util.List;
 +import java.util.Set;
  import java.util.UUID;
++import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
 +import net.minecraft.core.Registry;
@@ -42,11 +43,10 @@
     public Piglin(EntityType<? extends AbstractPiglin> p_34683_, Level p_34684_) {
        super(p_34683_, p_34684_);
        this.f_21364_ = 5;
-@@ -92,6 +_,15 @@
+@@ -92,6 +_,14 @@
        }
  
        this.m_252802_(p_34751_);
-+
 +      // CraftBukkit start
 +      ListTag barterList = new ListTag();
 +      allowedBarterItems.stream().map(BuiltInRegistries.f_257033_::m_7981_).map( ResourceLocation::toString).map( StringTag::m_129297_).forEach(barterList::add);
@@ -58,6 +58,17 @@
     }
  
     public void m_7378_(CompoundTag p_34725_) {
+@@ -99,6 +_,10 @@
+       this.m_6863_(p_34725_.m_128471_("IsBaby"));
+       this.m_34791_(p_34725_.m_128471_("CannotHunt"));
+       this.m_253224_(p_34725_);
++      // CraftBukkit start
++      this.allowedBarterItems = p_34725_.m_128437_("Bukkit.BarterList", 8).stream().map(net.minecraft.nbt.Tag::m_7916_).map(ResourceLocation::m_135820_).map(BuiltInRegistries.f_257033_::m_7745_).collect(Collectors.toCollection(HashSet::new));
++      this.interestItems = p_34725_.m_128437_("Bukkit.InterestList", 8).stream().map(net.minecraft.nbt.Tag::m_7916_).map(ResourceLocation::m_135820_).map(BuiltInRegistries.f_257033_::m_7745_).collect(Collectors.toCollection(HashSet::new));
++      // CraftBukkit end
+    }
+ 
+    @VisibleForDebug
 @@ -297,7 +_,7 @@
        } else if (this.m_34773_()) {
           return PiglinArmPose.CROSSBOW_CHARGE;
@@ -72,7 +83,7 @@
  
     protected void m_34785_(ItemStack p_34786_) {
 -      if (p_34786_.m_150930_(PiglinAi.f_34794_)) {
-+      if (p_34786_.isPiglinCurrency()) {
++      if (p_34786_.isPiglinCurrency() || allowedBarterItems.contains(p_34786_.m_41720_())) { // CraftBukkit - Changes to accept custom payment items
           this.m_8061_(EquipmentSlot.OFFHAND, p_34786_);
           this.m_21508_(EquipmentSlot.OFFHAND);
        } else {
@@ -85,3 +96,14 @@
     }
  
     protected boolean m_34787_(ItemStack p_34788_) {
+@@ -362,8 +_,8 @@
+       if (EnchantmentHelper.m_44920_(p_34713_)) {
+          return false;
+       } else {
+-         boolean flag = PiglinAi.m_149965_(p_34712_) || p_34712_.m_150930_(Items.f_42717_);
+-         boolean flag1 = PiglinAi.m_149965_(p_34713_) || p_34713_.m_150930_(Items.f_42717_);
++         boolean flag = PiglinAi.isLovedItem(p_34712_, this) || p_34712_.m_150930_(Items.f_42717_);
++         boolean flag1 = PiglinAi.isLovedItem(p_34713_, this) || p_34713_.m_150930_(Items.f_42717_);
+          if (flag && !flag1) {
+             return true;
+          } else if (!flag && flag1) {

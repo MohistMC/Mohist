@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -77,7 +_,7 @@
+@@ -77,13 +_,13 @@
  
     }
  
@@ -9,3 +9,10 @@
        this.f_149828_ = p_149831_;
        this.m_149842_(true);
     }
+ 
+    protected void m_149840_() {
+-      this.m_21406_(EntityType.f_20481_, true);
++      this.convertTo(EntityType.f_20481_, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); // CraftBukkit - add spawn and transform reasons
+       if (!this.m_20067_()) {
+          this.f_19853_.m_5898_((Player)null, 1048, this.m_20183_(), 0);
+       }
