@@ -24,6 +24,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 @ToString
 @AllArgsConstructor
 public enum DownloadSource {
@@ -32,7 +35,7 @@ public enum DownloadSource {
     CHINA("http://s1.devicloud.cn:25119/"),
     GITHUB("https://mavenmirror.mohistmc.com/");
 
-    public static final DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
+    public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
     @Getter
     final
     String url;
@@ -45,5 +48,10 @@ public enum DownloadSource {
             }
         }
         return defaultSource;
+    }
+
+    public static boolean isCN() {
+        TimeZone timeZone = TimeZone.getDefault();
+        return "Asia/Shanghai".equals(timeZone.getID()) || "CN".equals(Locale.getDefault().getCountry());
     }
 }
