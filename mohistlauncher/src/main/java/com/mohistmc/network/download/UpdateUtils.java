@@ -51,16 +51,16 @@ public class UpdateUtils {
         System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
 
         try {
-            JsonElement root = new JsonParser().parse(new InputStreamReader(getInput("https://mohistmc.com//api/1.19.4/latest")));
+            JsonElement root = JsonParser.parseReader(new InputStreamReader(getInput("https://mohistmc.com//api/1.19.4/latest")));
 
             String jar_sha = MohistMCStart.getVersion();
             String build_number = "1.19.4-" + root.getAsJsonObject().get("number").toString();
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timeinmillis").toString())));
 
             if (jar_sha.equals(build_number))
-                System.out.println(MohistMCStart.i18n.get("update.latest", new Object[]{jar_sha, build_number}));
+                System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
             else {
-                System.out.println(MohistMCStart.i18n.get("update.detect", new Object[]{build_number, jar_sha, time}));
+                System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
             }
         } catch (Throwable e) {
             System.out.println(MohistMCStart.i18n.get("check.update.noci"));

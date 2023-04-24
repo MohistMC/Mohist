@@ -55,8 +55,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.4-45.0.47'
-    FORGE_VERSION = '45.0.47'
+    VERSION = '1.19.4-45.0.49'
+    FORGE_VERSION = '45.0.49'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -672,6 +672,13 @@ project(':forge') {
                         && insn.desc.equals('(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;')
         }
     }
+
+    tasks.register('validateDeprecations', ValidateDeprecations) {
+        input = tasks.jar.archiveFile
+        mcVersion = MC_VERSION
+    }
+
+    tasks.jar.finalizedBy 'validateDeprecations'
 
     tasks.register('checkAll') {
         dependsOn 'checkLicenses'
