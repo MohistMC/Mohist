@@ -14,12 +14,13 @@ import java.util.Locale;
 public class MohistMC {
     public static final String NAME = "Mohist";
     public static Logger LOGGER = LogManager.getLogger();
+    public static i18n i18n;
 
     public MohistMC() {
         String mohist_lang = MohistConfig.yml.getString("mohist.lang");
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];
-        new i18n().build(MohistMC.class.getClassLoader(), new Locale(l, c));
+        i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
         //TODO: do something when mod loading
         LOGGER.info("Mohist loading.....");
     }

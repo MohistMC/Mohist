@@ -41,7 +41,7 @@ public class v_1_19_R2 {
 
     public static class Install_1_19 extends Action {
 
-        public static final List<String> launchArgs = Arrays.asList("java", "-jar");
+        public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
         public final File fmlloader;
         public final File fmlcore;
         public final File javafmllanguage;
@@ -66,7 +66,7 @@ public class v_1_19_R2 {
         }
 
         private void install() throws Exception {
-            System.out.println(i18n.get("installation.start"));
+            System.out.println(MohistMCStart.i18n.get("installation.start"));
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
@@ -96,7 +96,7 @@ public class v_1_19_R2 {
                     unmute();
                 }
             } else {
-                System.out.println(i18n.get("installation.minecraftserver"));
+                System.out.println(MohistMCStart.i18n.get("installation.minecraftserver"));
             }
 
             if (mcpZip.exists()) {
@@ -104,7 +104,7 @@ public class v_1_19_R2 {
 
                     // MAKE THE MAPPINGS TXT FILE
 
-                    System.out.println(i18n.get("installation.mcp"));
+                    System.out.println(MohistMCStart.i18n.get("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
@@ -112,7 +112,7 @@ public class v_1_19_R2 {
                     unmute();
                 }
             } else {
-                System.out.println(i18n.get("installation.mcpfilemissing"));
+                System.out.println(MohistMCStart.i18n.get("installation.mcpfilemissing"));
                 System.exit(0);
             }
 
@@ -199,7 +199,7 @@ public class v_1_19_R2 {
             fw.write(mohistMD5);
             fw.close();
 
-            System.out.println(i18n.get("installation.finished"));
+            System.out.println(MohistMCStart.i18n.get("installation.finished"));
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);

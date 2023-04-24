@@ -80,6 +80,6 @@ public class MohistConfigUtil {
         String mohist_lang = yml.getString("mohist.lang", "xx_XX");
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];
-        new i18n().build(MohistMCStart.class.getClassLoader(), new Locale(l, c));
+        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), new Locale(l, c));
     }
 }

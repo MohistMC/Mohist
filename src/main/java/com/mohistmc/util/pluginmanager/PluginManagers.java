@@ -18,6 +18,7 @@
 
 package com.mohistmc.util.pluginmanager;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.i18n.i18n;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -35,7 +36,7 @@ public class PluginManagers {
     public static boolean loadPluginCommand(CommandSender sender, String label, String[] split) {
         if (split.length < 2) {
             Object[] f = {label};
-            sender.sendMessage(i18n.get("pluginscommand.load", f));
+            sender.sendMessage(MohistMC.i18n.get("pluginscommand.load", f));
             return true;
         }
         Object[] objects = new Object[]{split[1]};

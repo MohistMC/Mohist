@@ -18,6 +18,7 @@
 
 package com.mohistmc.libraries;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.v_1_19_R2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
@@ -46,7 +47,7 @@ public class DefaultLibraries {
     }
 
     public static void run() throws Exception {
-        System.out.println(i18n.get("libraries.checking.start"));
+        System.out.println(MohistMCStart.i18n.get("libraries.checking.start"));
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -67,7 +68,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
+            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
@@ -75,7 +76,7 @@ public class DefaultLibraries {
                 fail.remove(u.replace(MAVENURL, ""));
             } catch (Exception e) {
                 if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
-                    System.out.println(i18n.get("file.download.nook", u));
+                    System.out.println(MohistMCStart.i18n.get("file.download.nook", u));
                     lib.delete();
                 }
                 fail.put(u.replace(MAVENURL, ""), lib.getAbsolutePath());
@@ -85,7 +86,7 @@ public class DefaultLibraries {
         if (!fail.isEmpty()) {
             run();
         } else {
-            System.out.println(i18n.get("libraries.check.end"));
+            System.out.println(MohistMCStart.i18n.get("libraries.check.end"));
         }
     }
 

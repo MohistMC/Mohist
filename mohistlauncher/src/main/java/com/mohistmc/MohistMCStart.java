@@ -39,6 +39,7 @@ public class MohistMCStart {
 
     public static final List<String> mainArgs = new ArrayList<>();
     public static final float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
+    public static i18n i18n;
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";

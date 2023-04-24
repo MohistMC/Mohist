@@ -18,6 +18,7 @@
 
 package com.mohistmc.network.download;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.i18n.i18n;
 
@@ -46,7 +47,7 @@ public class UpdateUtils {
 
     public static void downloadFile(String URL, File f, String md5) throws Exception {
         URLConnection conn = getConn(URL);
-        System.out.println(i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+        System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         int fS = conn.getContentLength();
@@ -56,7 +57,7 @@ public class UpdateUtils {
                 () -> {
                     if (rbc.isOpen()) {
                         if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100) {
-                            System.out.println(i18n.get("file.download.percentage", f.getName(), percentage));
+                            System.out.println(MohistMCStart.i18n.get("file.download.percentage", f.getName(), percentage));
                         }
                         percentage = Math.round((float) f.length() / fS * 100);
                     }
@@ -68,10 +69,10 @@ public class UpdateUtils {
         String MD5 = MD5Util.getMd5(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            System.out.println(i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             throw new Exception("md5");
         }
-        System.out.println(i18n.get("download.file.ok", f.getName()));
+        System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
     }
 
     public static String getSize(long size) {
