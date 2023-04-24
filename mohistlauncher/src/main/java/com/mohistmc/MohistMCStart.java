@@ -20,12 +20,13 @@ package com.mohistmc;
 
 import com.mohistmc.action.v_1_19_R2;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
-import com.mohistmc.i18n.i18n;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,8 @@ public class MohistMCStart {
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
+
+       if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();

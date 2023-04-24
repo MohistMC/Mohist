@@ -135,12 +135,14 @@ public class MohistConfig {
     public static boolean show_logo;
     public static String mohist_lang;
     public static String mohist_vanilla_lang;
+    public static boolean check_update;
 
     private static void mohist()
     {
         show_logo = getBoolean( "mohist.show_logo", true );
         mohist_lang = getString( "mohist.lang", "xx_XX" );
         mohist_vanilla_lang = getString( "mohist.vanilla_lang", "en_us" );
+        check_update = getBoolean("mohist.check_update", true);
     }
 
 }

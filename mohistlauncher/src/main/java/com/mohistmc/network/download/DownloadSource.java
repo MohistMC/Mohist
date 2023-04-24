@@ -20,13 +20,9 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.i18n.i18n;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Locale;
-import java.util.TimeZone;
 
 @ToString
 @AllArgsConstructor
