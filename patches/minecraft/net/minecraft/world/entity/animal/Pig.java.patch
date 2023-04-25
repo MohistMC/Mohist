@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Pig.java
 +++ b/net/minecraft/world/entity/animal/Pig.java
+@@ -46,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
+ 
+ public class Pig extends Animal implements ItemSteerable, Saddleable {
+    private static final EntityDataAccessor<Boolean> f_29456_ = SynchedEntityData.m_135353_(Pig.class, EntityDataSerializers.f_135035_);
 @@ -201,7 +_,7 @@
     }
  
@@ -9,11 +17,19 @@
           ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
           if (zombifiedpiglin != null) {
              zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
-@@ -214,6 +_,7 @@
+@@ -214,7 +_,14 @@
              }
  
              zombifiedpiglin.m_21530_();
+-            p_29473_.m_7967_(zombifiedpiglin);
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
-             p_29473_.m_7967_(zombifiedpiglin);
++            // CraftBukkit start
++            if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
++               return;
++            }
++            // CraftBukkit - added a reason for spawning this creature
++            p_29473_.addFreshEntity(zombifiedpiglin, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            // CraftBukkit end
              this.m_146870_();
           } else {
+             super.m_8038_(p_29473_, p_29474_);

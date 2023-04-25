@@ -19,7 +19,7 @@
           this.m_142075_(p_29021_, p_29022_, itemstack);
           if (!this.f_19853_.f_46443_) {
 -            if (this.f_19796_.m_188503_(3) == 0) {
-+            if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_)) {
++            if (this.f_19796_.m_188503_(3) == 0 && (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_) || !org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityTameEvent(this, p_29021_).isCancelled())) {
                 this.m_29045_(true);
                 this.m_29047_(true);
                 this.f_19853_.m_7605_(this, (byte)41);
