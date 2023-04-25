@@ -24,7 +24,7 @@
           if (this.f_25838_ > 60) {
 +            // CraftBukkit start - Step on eggs
 +            EntityInteractEvent event = new EntityInteractEvent(this.f_25837_.getBukkitEntity(), CraftBlock.at(level, blockpos1));
-+            level.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) event);
++            level.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
 +               return;

@@ -18,7 +18,7 @@
  
  public class PrepareRamNearestTarget<E extends PathfinderMob> extends Behavior<E> {
     public static final int f_147713_ = 160;
-@@ -56,6 +_,12 @@
+@@ -56,6 +_,13 @@
              return this.f_147718_.m_26885_(p_147737_, p_147789_);
           });
        }).ifPresent((p_147778_) -> {
@@ -28,6 +28,7 @@
 +            return;
 +         }
 +         p_147778_ = ((CraftLivingEntity) event.getTarget()).getHandle();
++         // CraftBukkit end
           this.m_147765_(p_147737_, p_147778_);
        });
     }

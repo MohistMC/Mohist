@@ -10,7 +10,7 @@
  
  public class ResetProfession {
     public static BehaviorControl<Villager> m_257593_() {
-@@ -13,7 +_,12 @@
+@@ -13,7 +_,13 @@
              return (p_260244_, p_260084_, p_259597_) -> {
                 VillagerData villagerdata = p_260084_.m_7141_();
                 if (villagerdata.m_35571_() != VillagerProfession.f_35585_ && villagerdata.m_35571_() != VillagerProfession.f_35596_ && p_260084_.m_7809_() == 0 && villagerdata.m_35576_() <= 1) {
@@ -21,6 +21,7 @@
 +                     return false;
 +                  }
 +                  p_260084_.m_34375_(p_260084_.m_7141_().m_35565_(CraftVillager.bukkitToNmsProfession(event.getProfession())));
++                  // CraftBukkit end
                    p_260084_.m_35483_(p_260244_);
                    return true;
                 } else {
