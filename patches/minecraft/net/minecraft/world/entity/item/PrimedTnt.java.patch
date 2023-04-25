@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/entity/item/PrimedTnt.java
 +++ b/net/minecraft/world/entity/item/PrimedTnt.java
-@@ -20,6 +_,8 @@
+@@ -14,12 +_,15 @@
+ import net.minecraft.world.entity.Pose;
+ import net.minecraft.world.entity.TraceableEntity;
+ import net.minecraft.world.level.Level;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
+ 
+ public class PrimedTnt extends Entity implements TraceableEntity {
+    private static final EntityDataAccessor<Integer> f_32071_ = SynchedEntityData.m_135353_(PrimedTnt.class, EntityDataSerializers.f_135028_);
     private static final int f_149679_ = 80;
     @Nullable
     public LivingEntity f_32072_;
@@ -17,3 +24,35 @@
        if (!this.m_20068_()) {
           this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.04D, 0.0D));
        }
+@@ -64,10 +_,13 @@
+       int i = this.m_32100_() - 1;
+       this.m_32085_(i);
+       if (i <= 0) {
+-         this.m_146870_();
++         // CraftBukkit start - Need to reverse the order of the explosion and the entity death so we have a location for the event
++         // this.discard();
+          if (!this.f_19853_.f_46443_) {
+             this.m_32103_();
+          }
++         this.m_146870_();
++         // CraftBukkit end
+       } else {
+          this.m_20073_();
+          if (this.f_19853_.f_46443_) {
+@@ -78,8 +_,14 @@
+    }
+ 
+    protected void m_32103_() {
+-      float f = 4.0F;
+-      this.f_19853_.m_254849_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), 4.0F, Level.ExplosionInteraction.TNT);
++      // CraftBukkit start
++      ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++      if (!event.isCancelled()) {
++         this.f_19853_.m_255391_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
++      }
++      // CraftBukkit end
+    }
+ 
+    protected void m_7380_(CompoundTag p_32097_) {

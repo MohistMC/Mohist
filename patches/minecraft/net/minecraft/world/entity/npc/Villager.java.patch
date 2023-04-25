@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -86,6 +_,8 @@
+@@ -86,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.VillagerReplenishTradeEvent;
  import org.slf4j.Logger;
  
@@ -121,11 +123,26 @@
           f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           if (witch != null) {
-@@ -734,6 +_,7 @@
+@@ -734,7 +_,12 @@
              }
  
              witch.m_21530_();
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
-             p_35409_.m_47205_(witch);
+-            p_35409_.m_47205_(witch);
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
++            // CraftBukkit start
++            if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
++               return;
++            }
++            p_35409_.addFreshEntityWithPassengers(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
              this.m_35524_();
              this.m_146870_();
+          } else {
+@@ -813,7 +_,7 @@
+             return p_186293_.m_35392_(p_35399_);
+          }).limit(5L).collect(Collectors.toList());
+          if (list1.size() >= p_35400_) {
+-            if (SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isPresent()) {
++            if (SpawnUtil.trySpawnMob(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isPresent()) {
+                list.forEach(GolemSensor::m_26649_);
+             }
+          }
