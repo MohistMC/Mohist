@@ -36,7 +36,7 @@ public class JarLoader {
     }
 
     // Don't forget to specify -javaagent:<mohist jar> on Java 9+,
-    // if you load main Mohist jar from -cp rather than direct -jar
+    // if you load the main Mohist jar from -cp rather than direct-jar
     public static void premain(String agentArgs, Instrumentation inst) {
         JarLoader.inst = inst;
     }

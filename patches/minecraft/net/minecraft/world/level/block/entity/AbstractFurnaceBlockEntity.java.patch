@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -6,6 +_,8 @@
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
 @@ -44,6 +_,16 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -195,17 +204,21 @@
        }
     }
  
-@@ -453,32 +_,49 @@
+@@ -453,32 +_,53 @@
     public void m_8015_(Player p_58396_) {
     }
  
 -   public void m_155003_(ServerPlayer p_155004_) {
 -      List<Recipe<?>> list = this.m_154995_(p_155004_.m_9236_(), p_155004_.m_20182_());
-+   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
-+      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_9236_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, itemstack, amount); // CraftBukkit
++   // Mohist start - Fix Minecraft Comes Alive mod mixin (MixinAbstractFurnaceBlockEntity)
++   public AtomicReference<ItemStack> stackAtomicReference = new AtomicReference<>(null);
++   public AtomicInteger amount = new AtomicInteger(0);
++   public void m_155003_(ServerPlayer p_155004_) { // CraftBukkit
++      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_9236_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, stackAtomicReference.getAndSet(null), amount.getAndSet(0)); // CraftBukkit
        p_155004_.m_7281_(list);
        this.f_58320_.clear();
     }
++   // Mohist end
  
     public List<Recipe<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
 +      // CraftBukkit start

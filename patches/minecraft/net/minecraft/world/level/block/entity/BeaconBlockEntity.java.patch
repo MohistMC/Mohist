@@ -69,6 +69,7 @@
 +   public PotionEffect getSecondaryEffect() {
 +      return (hasSecondaryEffect(f_58650_, f_58652_, f_58653_)) ? CraftPotionUtil.toBukkit(new MobEffectInstance(this.f_58653_, getLevel(this.f_58650_), getAmplification(f_58650_, f_58652_, f_58653_), true, true)) : null;
 +   }
++   // CraftBukkit end
 +
 +   public static List getHumansInRange(Level world, BlockPos blockposition, int i) {
 +      {
@@ -101,8 +102,7 @@
 +   }
 +
 +   private static void applyEffect(List list, MobEffect mobeffectlist, int j, int b0) {
-+      {
-+              Iterator iterator = list.iterator();
++      Iterator iterator = list.iterator();
 +
 +      Player entityhuman;
 +
@@ -110,7 +110,7 @@
 +         entityhuman = (Player) iterator.next();
 +         entityhuman.addEffect(new MobEffectInstance(mobeffectlist, j, b0, true, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.BEACON);
 +      }
-+      }
++
 +   }
 +
 +   private static boolean hasSecondaryEffect(int i, @Nullable MobEffect mobeffectlist, @Nullable MobEffect mobeffectlist1) {
