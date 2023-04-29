@@ -1,0 +1,17 @@
+--- a/net/minecraft/entity/boss/dragon/phase/PhaseType.java
++++ b/net/minecraft/entity/boss/dragon/phase/PhaseType.java
+@@ -62,4 +_,14 @@
+       field_188752_l[phasetype.func_188740_b()] = phasetype;
+       return phasetype;
+    }
++
++   // Mohist start
++   public static PhaseType<?>[] getPhases() {
++      return field_188752_l;
++   }
++
++   public String getName() {
++      return field_188755_o;
++   }
++   // Mohist end
+ }

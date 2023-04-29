@@ -33,6 +33,7 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
@@ -62,6 +63,7 @@ import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.permissions.PermissionDefault;
@@ -94,6 +96,7 @@ public class ForgeInjectBukkit {
         addEnumAttribute();
         addEnumArt();
         addEnumParticle();
+        addPhaseType();
     }
 
 
@@ -298,6 +301,16 @@ public class ForgeInjectBukkit {
                 BY_ID.put(id, art);
                 MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
                 i++;
+            }
+        }
+    }
+
+    public static void addPhaseType() {
+        for (PhaseType phaseTypes : PhaseType.getPhases()) {
+            if (phaseTypes.getId() > 11) {
+                EnderDragon.Phase bukkit = MohistEnumHelper.addEnum0( EnderDragon.Phase.class, phaseTypes.getName(), new Class[0]);
+                ServerAPI.phasetypeMap.put(phaseTypes.getId(), bukkit);
+                MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
             }
         }
     }
