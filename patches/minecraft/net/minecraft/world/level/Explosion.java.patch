@@ -112,7 +112,7 @@
                    double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -239,20 +_,63 @@
+@@ -239,20 +_,73 @@
           boolean flag1 = this.m_252906_() instanceof Player;
           Util.m_214673_(this.f_46020_, this.f_46012_.f_46441_);
  
@@ -162,6 +162,16 @@
           for(BlockPos blockpos : this.f_46020_) {
              BlockState blockstate = this.f_46012_.m_8055_(blockpos);
              Block block = blockstate.m_60734_();
++            // CraftBukkit start - TNTPrimeEvent
++            if (block instanceof net.minecraft.world.level.block.TntBlock) {
++               Entity sourceEntity = f_46016_ == null ? null : f_46016_;
++               BlockPos sourceBlock = sourceEntity == null ? BlockPos.m_274561_(this.f_46013_, this.f_46014_, this.f_46015_) : null;
++               if (!CraftEventFactory.callTNTPrimeEvent(this.f_46012_, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.EXPLOSION, sourceEntity, sourceBlock)) {
++                  this.f_46012_.m_7260_(blockpos, Blocks.f_50016_.m_49966_(), blockstate, 3); // Update the block on the client
++                  continue;
++               }
++            }
++                           // CraftBukkit end
              if (!blockstate.m_60795_()) {
                 BlockPos blockpos1 = blockpos.m_7949_();
                 this.f_46012_.m_46473_().m_6180_("explosion_blocks");

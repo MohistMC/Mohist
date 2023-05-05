@@ -66,7 +66,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -185,23 +_,38 @@
+@@ -185,23 +_,42 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -81,6 +81,10 @@
 +   public PrimaryLevelData serverLevelDataCB;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++
++   public LevelChunk getChunkIfLoaded(int x, int z) {
++      return this.f_8547_.m_62227_(x, z, false);
++   }
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());

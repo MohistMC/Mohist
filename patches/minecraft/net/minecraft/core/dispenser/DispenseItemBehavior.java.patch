@@ -419,7 +419,7 @@
                    p_123567_.m_41774_(1);
                    if (p_123567_.m_41619_()) {
                       return new ItemStack(item);
-@@ -403,17 +_,47 @@
+@@ -403,17 +_,48 @@
        DispenserBlock.m_52672_(Items.f_42409_, new OptionalDispenseItemBehavior() {
           protected ItemStack m_7498_(BlockSource p_123412_, ItemStack p_123413_) {
              Level level = p_123412_.m_7727_();
@@ -467,8 +467,9 @@
 -                  level.m_7471_(blockpos, false);
 +               if (blockstate.isFlammable(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_())) {
 +                  blockstate.onCaughtFire(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_(), null);
-+                  if (blockstate.m_60734_() instanceof TntBlock)
++                  if (blockstate.m_60734_() instanceof TntBlock && org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.m_7961_())) {
 +                     level.m_7471_(blockpos, false);
++                  }
                 } else {
                    this.m_123573_(false);
                 }
