@@ -40,6 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 
@@ -109,6 +110,7 @@ public class NetworkHooks
         final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());
+        Bukkit.getMessenger().getIncomingChannels().stream().map(ResourceLocation::new).forEach(resourceLocations::add);
         MCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
         MCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }

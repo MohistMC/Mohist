@@ -144,7 +144,7 @@
        }
  
     }
-@@ -179,19 +_,56 @@
+@@ -179,19 +_,23 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
@@ -157,46 +157,14 @@
 -               ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
 +               ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.getAddress());
                 if (ServerLoginPacketListenerImpl.this.f_10021_ != null) {
+-                  ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
 +                  // CraftBukkit start - fire PlayerPreLoginEvent
 +                  if (!f_10013_.m_129536_()) {
 +                     return;
 +                  }
 +
-+                  String playerName = f_10021_.getName();
-+                  java.net.InetAddress address = ((java.net.InetSocketAddress) f_10013_.m_129523_()).getAddress();
-+                  java.util.UUID uniqueId = f_10021_.getId();
-+                  final org.bukkit.craftbukkit.v1_18_R2.CraftServer server = ServerLoginPacketListenerImpl.this.f_10018_.server;
-+
-+                  AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
-+                  server.getPluginManager().callEvent(asyncEvent);
-+
-+                  if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-+                     final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-+                     if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+                        event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
-+                     }
-+                     Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
-+                         @Override
-+                         protected PlayerPreLoginEvent.Result evaluate() {
-+                            server.getPluginManager().callEvent(event);
-+                            return event.getResult();
-+                         }};
-+
-+                     ServerLoginPacketListenerImpl.this.f_10018_.processQueue.add(waitable);
-+                     if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-+                        disconnect(event.getKickMessage());
-+                        return;
-+                     }
-+                  } else {
-+                     if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-+                        disconnect(asyncEvent.getKickMessage());
-+                        return;
-+                     }
-+                  }
-+                  // CraftBukkit end
-                   ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
--                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
-+                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
++                  new LoginHandler().fireEvents();
                 } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
                    ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
                    ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);

@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -12,7 +_,6 @@
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
--import net.minecraft.sounds.SoundSource;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
 @@ -30,6 +_,14 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
@@ -63,7 +55,7 @@
                 level.m_142346_(player, GameEvent.f_157797_, blockpos);
 -               if (player == null || !player.m_150110_().f_35937_) {
 +               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.m_43723_());
-+               //level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               level.m_5594_(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.m_43723_()), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
 +               if (player == null || !player.m_150110_().f_35937_ && itemstack != ItemStack.f_41583_) { // CraftBukkit
                    itemstack.m_41774_(1);
                 }

@@ -548,7 +548,7 @@
                       d7 = d0 - this.f_9743_.m_20185_();
                       d8 = d1 - this.f_9743_.m_20186_();
                       if (d8 > -0.5D || d8 < 0.5D) {
-@@ -851,8 +_,71 @@
+@@ -851,8 +_,72 @@
  
                       this.f_9743_.m_19890_(d0, d1, d2, f, f1);
                       if (this.f_9743_.f_19794_ || this.f_9743_.m_5803_() || (!flag2 || !serverlevel.m_45756_(this.f_9743_, aabb)) && !this.m_9795_(serverlevel, aabb)) {
@@ -618,7 +618,8 @@
 +
 +                        // MC-135989, SPIGOT-5564: isRiptiding
 +                        this.f_9736_ = d8 >= -0.03125D && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR && !this.f_9745_.m_129915_() && !this.f_9743_.m_150110_().f_35936_ && !this.f_9743_.m_21023_(MobEffects.f_19620_) && !this.f_9743_.m_21255_() && this.m_9793_(this.f_9743_) && !this.f_9743_.m_21209_();
-+                        // CraftBukkit end                        this.player.getLevel().getChunkSource().move(this.player);
++                        // CraftBukkit end
++						this.f_9743_.m_183503_().m_7726_().m_8385_(this.f_9743_);
                          this.f_9743_.m_8972_(this.f_9743_.m_20186_() - d6, p_9874_.m_134139_());
                          this.f_9743_.m_6853_(p_9874_.m_134139_());
                          if (flag) {

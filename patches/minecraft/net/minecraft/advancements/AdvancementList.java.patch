@@ -1,10 +1,12 @@
 --- a/net/minecraft/advancements/AdvancementList.java
 +++ b/net/minecraft/advancements/AdvancementList.java
-@@ -91,6 +_,7 @@
+@@ -91,7 +_,8 @@
           }
        }
  
+-      f_139325_.info("Loaded {} advancements", (int)this.f_139326_.size());
 +      net.minecraftforge.common.AdvancementLoadFix.buildSortedTrees(this.f_139327_);
-       f_139325_.info("Loaded {} advancements", (int)this.f_139326_.size());
++      // LOGGER.info("Loaded {} advancements", (int)this.advancements.size());
     }
  
+    public void m_139332_() {
