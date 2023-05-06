@@ -10,6 +10,23 @@
  
  public class LayeredCauldronBlock extends AbstractCauldronBlock {
     public static final int f_153512_ = 1;
+@@ -51,10 +_,15 @@
+ 
+    public void m_7892_(BlockState p_153534_, Level p_153535_, BlockPos p_153536_, Entity p_153537_) {
+       if (!p_153535_.f_46443_ && p_153537_.m_6060_() && this.m_151979_(p_153534_, p_153536_, p_153537_)) {
+-         p_153537_.m_20095_();
++         // CraftBukkit start
+          if (p_153537_.m_142265_(p_153535_, p_153536_)) {
+             this.m_142266_(p_153534_, p_153535_, p_153536_);
++            if (!lowerFillLevel(p_153534_, p_153535_, p_153536_, p_153537_, CauldronLevelChangeEvent.ChangeReason.EXTINGUISH)) {
++               return;
++            }
+          }
++         p_153537_.m_20095_();
++         // CraftBukkit end
+       }
+ 
+    }
 @@ -66,15 +_,38 @@
     public static void m_153559_(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
        int i = p_153560_.m_61143_(f_153514_) - 1;
