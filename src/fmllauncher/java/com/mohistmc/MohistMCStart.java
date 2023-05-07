@@ -53,7 +53,7 @@ public class MohistMCStart {
 		MohistConfigUtil.copyMohistConfig();
 		CustomFlagsHandler.handleCustomArgs();
 
-		if(ServerMain.javaVersion >= 63.0) {
+		if(ServerMain.javaVersion >= 62.0) {
 			System.out.println(i18n.get("newjava.use"));
 			System.exit(0);
 		}
