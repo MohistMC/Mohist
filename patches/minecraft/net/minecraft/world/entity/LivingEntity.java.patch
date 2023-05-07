@@ -196,7 +196,7 @@
           this.m_252836_();
        }
  
-@@ -618,23 +_,27 @@
+@@ -618,12 +_,14 @@
        return true;
     }
  
@@ -204,21 +204,15 @@
 +   public AtomicBoolean silent0 = new AtomicBoolean(false);
     public void m_238392_(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_) {
        boolean flag = p_238395_.m_41619_() && p_238394_.m_41619_();
--      if (!flag && !ItemStack.m_150942_(p_238394_, p_238395_) && !this.f_19803_) {
--         Equipable equipable = Equipable.m_269088_(p_238395_);
--         if (equipable != null && !this.m_5833_() && equipable.m_40402_() == p_238393_) {
+       if (!flag && !ItemStack.m_150942_(p_238394_, p_238395_) && !this.f_19803_) {
+          Equipable equipable = Equipable.m_269088_(p_238395_);
+          if (equipable != null && !this.m_5833_() && equipable.m_40402_() == p_238393_) {
 -            if (!this.f_19853_.m_5776_() && !this.m_20067_()) {
--               this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), equipable.m_150681_(), this.m_5720_(), 1.0F, 1.0F);
--            }
--
--            if (this.m_213772_(p_238393_)) {
--               this.m_146850_(GameEvent.f_157811_);
--            }
-+      if (!flag && !ItemStack.m_41746_(p_238394_, p_238395_) && !this.f_19803_) {
-+         if (this.m_213772_(p_238393_)) {
-+            this.m_146850_(GameEvent.f_157811_);
-          }
++            if (!this.f_19853_.m_5776_() && !this.m_20067_() && !silent0.get()) {
+                this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), equipable.m_150681_(), this.m_5720_(), 1.0F, 1.0F);
+             }
  
+@@ -635,6 +_,15 @@
        }
     }
  
