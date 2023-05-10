@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
 
 public final class WeakCollection<T> implements Collection<T> {
     static final Object NO_VALUE = new Object();

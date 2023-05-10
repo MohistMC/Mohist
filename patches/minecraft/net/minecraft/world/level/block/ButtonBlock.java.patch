@@ -1,0 +1,65 @@
+--- a/net/minecraft/world/level/block/ButtonBlock.java
++++ b/net/minecraft/world/level/block/ButtonBlock.java
+@@ -26,6 +_,8 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
+    public static final BooleanProperty f_51045_ = BlockStateProperties.f_61448_;
+@@ -107,6 +_,19 @@
+       if (p_51088_.m_61143_(f_51045_)) {
+          return InteractionResult.CONSUME;
+       } else {
++         // CraftBukkit start
++         boolean powered = ((Boolean) p_51088_.m_61143_(f_51045_));
++         org.bukkit.block.Block block = p_51089_.getWorld().getBlockAt(p_51090_.m_123341_(), p_51090_.m_123342_(), p_51090_.m_123343_());
++         int old = (powered) ? 15 : 0;
++         int current = (!powered) ? 15 : 0;
++
++         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++         p_51089_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++
++         if ((eventRedstone.getNewCurrent() > 0) != (!powered)) {
++            return InteractionResult.SUCCESS;
++         }
++         // CraftBukkit end
+          this.m_51116_(p_51088_, p_51089_, p_51090_);
+          this.m_51067_(p_51091_, p_51089_, p_51090_, true);
+          p_51089_.m_142346_(p_51091_, GameEvent.f_223702_, p_51090_);
+@@ -166,7 +_,33 @@
+       AbstractArrow abstractarrow = this.f_243959_ ? p_51122_.m_45976_(AbstractArrow.class, p_51121_.m_60808_(p_51122_, p_51123_).m_83215_().m_82338_(p_51123_)).stream().findFirst().orElse((AbstractArrow)null) : null;
+       boolean flag = abstractarrow != null;
+       boolean flag1 = p_51121_.m_61143_(f_51045_);
++
++      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
++      if (flag1 != flag && flag) {
++         org.bukkit.block.Block block = p_51122_.getWorld().getBlockAt(p_51123_.m_123341_(), p_51123_.m_123342_(), p_51123_.m_123343_());
++         EntityInteractEvent event = new EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
++         p_51122_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return;
++         }
++      }
++      // CraftBukkit end
++
+       if (flag != flag1) {
++         // CraftBukkit start
++         boolean powered = flag1;
++         org.bukkit.block.Block block = p_51122_.getWorld().getBlockAt(p_51123_.m_123341_(), p_51123_.m_123342_(), p_51123_.m_123343_());
++         int old = (powered) ? 15 : 0;
++         int current = (!powered) ? 15 : 0;
++
++         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, old, current);
++         p_51122_.getCraftServer().getPluginManager().callEvent(eventRedstone);
++
++         if ((flag && eventRedstone.getNewCurrent() <= 0) || (!flag && eventRedstone.getNewCurrent() > 0)) {
++            return;
++         }
++         // CraftBukkit end
+          p_51122_.m_7731_(p_51123_, p_51121_.m_61124_(f_51045_, Boolean.valueOf(flag)), 3);
+          this.m_51124_(p_51121_, p_51122_, p_51123_);
+          this.m_51067_((Player)null, p_51122_, p_51123_, flag);

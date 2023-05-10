@@ -25,3 +25,17 @@
     }
  
     @Nullable
+@@ -141,5 +_,13 @@
+       return !p_222173_.f_46443_ ? BaseEntityBlock.m_152132_(p_222175_, BlockEntityType.f_222759_, (p_222182_, p_222183_, p_222184_, p_222185_) -> {
+          p_222185_.m_222879_().m_157898_(p_222182_);
+       }) : null;
++   }
++
++   @Override
++   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
++      if (flag) {
++         return this.tryDropExperience(worldserver, blockposition, itemstack, ConstantInt.m_146483_(5));
++      }
++      return 0;
+    }
+ }
