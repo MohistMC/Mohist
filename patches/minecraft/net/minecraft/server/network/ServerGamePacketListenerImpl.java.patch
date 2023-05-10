@@ -285,12 +285,18 @@
 +            }
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
 +
-+            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.m_9956_()) {
++            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.m_9956_()) {
 +               // CraftBukkit end
                 f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -385,13 +_,69 @@
+@@ -380,18 +_,74 @@
+             d8 = d5 - entity.m_20189_();
+             d10 = d6 * d6 + d7 * d7 + d8 * d8;
+             boolean flag2 = false;
+-            if (d10 > 0.0625D) {
++            if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
+                flag2 = true;
                 f_9744_.warn("{} (vehicle of {}) moved wrongly! {}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), Math.sqrt(d10));
              }
  
@@ -535,7 +541,7 @@
                       if (!this.f_9743_.m_8958_() && (!this.f_9743_.m_183503_().m_46469_().m_46207_(GameRules.f_46148_) || !this.f_9743_.m_21255_())) {
                          float f2 = this.f_9743_.m_21255_() ? 300.0F : 100.0F;
 -                        if (d11 - d10 > (double)(f2 * (float)i) && !this.m_9956_()) {
-+                        if (d11 - d10 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.m_9956_()) {
++                        if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.m_9956_()) {
 +                           // CraftBukkit end
                             f_9744_.warn("{} moved too quickly! {},{},{}", this.f_9743_.m_7755_().getString(), d7, d8, d9);
                             this.m_9774_(this.f_9743_.m_20185_(), this.f_9743_.m_20186_(), this.f_9743_.m_20189_(), this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
@@ -548,7 +554,15 @@
                       d7 = d0 - this.f_9743_.m_20185_();
                       d8 = d1 - this.f_9743_.m_20186_();
                       if (d8 > -0.5D || d8 < 0.5D) {
-@@ -851,8 +_,72 @@
+@@ -844,15 +_,79 @@
+                      d9 = d2 - this.f_9743_.m_20189_();
+                      d11 = d7 * d7 + d8 * d8 + d9 * d9;
+                      boolean flag2 = false;
+-                     if (!this.f_9743_.m_8958_() && d11 > 0.0625D && !this.f_9743_.m_5803_() && !this.f_9743_.f_8941_.m_9295_() && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR) {
++                     if (!this.f_9743_.m_8958_() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold && !this.f_9743_.m_5803_() && !this.f_9743_.f_8941_.m_9295_() && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR) {
+                         flag2 = true;
+                         f_9744_.warn("{} moved wrongly!", (Object)this.f_9743_.m_7755_().getString());
+                      }
  
                       this.f_9743_.m_19890_(d0, d1, d2, f, f1);
                       if (this.f_9743_.f_19794_ || this.f_9743_.m_5803_() || (!flag2 || !serverlevel.m_45756_(this.f_9743_, aabb)) && !this.m_9795_(serverlevel, aabb)) {
@@ -788,7 +802,15 @@
        ServerLevel serverlevel = this.f_9743_.m_183503_();
        InteractionHand interactionhand = p_9930_.m_134703_();
        ItemStack itemstack = this.f_9743_.m_21120_(interactionhand);
-@@ -979,7 +_,8 @@
+@@ -972,14 +_,15 @@
+       Vec3 vec3 = blockhitresult.m_82450_();
+       BlockPos blockpos = blockhitresult.m_82425_();
+       Vec3 vec31 = vec3.m_82546_(Vec3.m_82512_(blockpos));
+-      if (this.f_9743_.f_19853_.m_142572_() != null && this.f_9743_.m_146902_().m_45594_(new ChunkPos(blockpos)) < this.f_9743_.f_19853_.m_142572_().m_6846_().m_11312_()) {
++      if (this.f_9743_.f_19853_.m_142572_() != null && this.f_9743_.m_146902_().m_45594_(new ChunkPos(blockpos)) < this.f_9743_.f_19853_.spigotConfig.viewDistance) {
+          double d0 = 1.0000001D;
+          if (Math.abs(vec31.m_7096_()) < 1.0000001D && Math.abs(vec31.m_7098_()) < 1.0000001D && Math.abs(vec31.m_7094_()) < 1.0000001D) {
+             Direction direction = blockhitresult.m_82434_();
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
              if (blockpos.m_123342_() < i) {
