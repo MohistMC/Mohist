@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -27,17 +_,36 @@
+@@ -27,20 +_,39 @@
     public AdvancementList f_136023_ = new AdvancementList();
     private final PredicateManager f_136024_;
  
@@ -37,4 +37,8 @@
 +            }
              map.put(p_136039_, advancement$builder);
           } catch (Exception exception) {
-             f_136021_.error("Parsing error loading custom advancement {}: {}", p_136039_, exception.getMessage());
+-            f_136021_.error("Parsing error loading custom advancement {}: {}", p_136039_, exception.getMessage());
++            f_136021_.debug("Parsing error loading custom advancement {}: {}", p_136039_, exception.getMessage());
+          }
+ 
+       });

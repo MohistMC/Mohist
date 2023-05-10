@@ -100,7 +100,7 @@
 +            }).putAndMoveToFirst(minecraftkey, recipe);
 +            // CraftBukkit end
 +         } catch (IllegalArgumentException | JsonParseException jsonparseexception) { // Mohist - Suppress recipe loading error
-+            f_44006_.error("Parsing error loading recipe {}", minecraftkey, jsonparseexception);
++            f_44006_.debug("Parsing error loading recipe {}", minecraftkey, jsonparseexception);
 +         }
 +      }
 +
