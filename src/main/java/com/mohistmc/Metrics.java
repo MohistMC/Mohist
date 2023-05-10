@@ -19,6 +19,17 @@
 package com.mohistmc;
 
 import com.mohistmc.api.ServerAPI;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.thread.NamedThreadFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
+import org.bukkit.plugin.Plugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.spigotmc.SpigotConfig;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -37,20 +48,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.thread.NamedThreadFactory;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
-import org.bukkit.plugin.Plugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.spigotmc.SpigotConfig;
 
 /**
  * bStats collects some data for plugin authors.
- *
+ * <p>
  * Check out https://bStats.org/ to learn more about bStats!
  */
 public class Metrics {
@@ -60,8 +61,8 @@ public class Metrics {
     private final List<CustomChart> charts = new ArrayList<>();
 
     public Metrics(String name, String serverUUID) {
-            this.name = name;
-            this.serverUUID = serverUUID;
+        this.name = name;
+        this.serverUUID = serverUUID;
 
         startSubmitting();
     }
@@ -147,14 +148,18 @@ public class Metrics {
         pluginData.add(getPluginData());
         data.put("plugins", pluginData);
 
-        try { sendData(data); } catch (Exception ignored) {}
+        try {
+            sendData(data);
+        } catch (Exception ignored) {
+        }
     }
 
     public static abstract class CustomChart {
         final String chartId;
 
         CustomChart(String chartId) {
-            if (chartId == null || chartId.isEmpty()) throw new IllegalArgumentException("ChartId cannot be null or empty!");
+            if (chartId == null || chartId.isEmpty())
+                throw new IllegalArgumentException("ChartId cannot be null or empty!");
             this.chartId = chartId;
         }
 
@@ -165,7 +170,9 @@ public class Metrics {
                 JSONObject data = getChartData();
                 if (data == null) return null;
                 chart.put("data", data);
-            } catch (Throwable t) { return null; }
+            } catch (Throwable t) {
+                return null;
+            }
             return chart;
         }
 
@@ -262,7 +269,10 @@ public class Metrics {
                                 "This has nearly no effect on the server performance!\n" +
                                 "Check out https://bStats.org/ to learn more :)"
                 ).copyDefaults(true);
-                try { config.save(configFile); } catch (IOException ignored) {}
+                try {
+                    config.save(configFile);
+                } catch (IOException ignored) {
+                }
             }
 
             String serverUUID = config.getString("serverUuid");
@@ -310,7 +320,7 @@ public class Metrics {
 
                     Map<String, Integer> modslist = new HashMap<>();
                     String[] mods = ServerAPI.getModList().replace("[", "").replace("]", "").split(", ");
-                    for(String x : mods){
+                    for (String x : mods) {
                         if (x.equals("minecraft") || x.equals("forge") || x.equals("mohist")) {
                             continue;
                         }

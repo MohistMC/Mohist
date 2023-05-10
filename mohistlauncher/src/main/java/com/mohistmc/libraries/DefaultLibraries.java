@@ -67,7 +67,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / allSize.get()) + "%"); //Global percentage
+            System.out.println(i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());

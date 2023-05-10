@@ -15,7 +15,7 @@ public class PlayerAPI {
     public static Map<SocketAddress, String> modlist = new ConcurrentHashMap<>();
 
     /**
-     *  Get Player ping
+     * Get Player ping
      *
      * @param player org.bukkit.entity.player
      */
@@ -42,17 +42,15 @@ public class PlayerAPI {
         return modlist.get(socketAddress) == null ? "null" : modlist.get(socketAddress);
     }
 
-    public static Boolean hasMod(Player player, String modid){
+    public static Boolean hasMod(Player player, String modid) {
         return getModlist(player).contains(modid);
     }
 
-    public static boolean isOp(ServerPlayer ep)
-    {
+    public static boolean isOp(ServerPlayer ep) {
         return MinecraftServer.getServer().getPlayerList().isOp(ep.getGameProfile());
     }
 
-    public static SocketAddress getRemoteAddress(Player player)
-    {
+    public static SocketAddress getRemoteAddress(Player player) {
         return getNMSPlayer(player).connection.connection.getRemoteAddress();
     }
 }

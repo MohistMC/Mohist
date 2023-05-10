@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerAPI {
 
-    public static Map<String, Integer> mods = new ConcurrentHashMap();
-    public static Set<String> modlists = new ConcurrentSet();
-    public static Map<String, String> forgecmdper = new ConcurrentHashMap();
+    public static Map<String, Integer> mods = new ConcurrentHashMap<>();
+    public static Set<String> modlists = new ConcurrentSet<>();
+    public static Map<String, String> forgecmdper = new ConcurrentHashMap<>();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
 
@@ -38,11 +38,11 @@ public class ServerAPI {
         return Bukkit.getPluginManager().getPlugin(pluginname) != null;
     }
 
-    public static void registerBukkitEvents(Listener listener, Plugin plugin){
+    public static void registerBukkitEvents(Listener listener, Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    public static MinecraftServer getNMSServer(){
+    public static MinecraftServer getNMSServer() {
         return MinecraftServer.getServer();
     }
 }

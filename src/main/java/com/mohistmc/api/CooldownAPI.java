@@ -53,8 +53,8 @@ public class CooldownAPI {
             long now = System.currentTimeMillis();
             long cooldownTime = cooldown.start;
             int totalTime = cooldown.timeInSeconds;
-            double r = (now - cooldownTime) / 1000;
-            f = (double) (r - totalTime) * -1;
+            double r = (double) (now - cooldownTime) / 1000;
+            f = (r - totalTime) * -1;
         }
         return f;
     }

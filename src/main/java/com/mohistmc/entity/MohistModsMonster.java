@@ -1,11 +1,12 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
-import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.monster.Monster;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftMonster;
 import org.bukkit.entity.EntityType;
+
+import java.util.Objects;
 
 /**
  * Mohist
@@ -14,13 +15,11 @@ import org.bukkit.entity.EntityType;
  * @Created at 20.02.2022 - 21:02 GMT+1
  * © Copyright 2021 / 2022 - M1lcolm
  */
-public class MohistModsMonster extends CraftMonster
-{
+public class MohistModsMonster extends CraftMonster {
     public String entityName;
 
-    public MohistModsMonster ( CraftServer server, Monster entity )
-    {
-        super( server, entity );
+    public MohistModsMonster(CraftServer server, Monster entity) {
+        super(server, entity);
         this.entityName = EntityAPI.entityName(entity);
     }
 
@@ -33,11 +32,7 @@ public class MohistModsMonster extends CraftMonster
     @Override
     public EntityType getType() {
         EntityType type = EntityType.fromName(this.entityName);
-        if (type != null) {
-            return type;
-        } else {
-            return EntityType.FORGE_MOD_MONSTER;
-        }
+        return Objects.requireNonNullElse(type, EntityType.FORGE_MOD_MONSTER);
     }
 
     @Override

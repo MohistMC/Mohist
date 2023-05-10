@@ -9,7 +9,6 @@ import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.entity.MohistModsEntity;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.decoration.Motive;
@@ -19,11 +18,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.bukkit.*;
+import org.bukkit.Art;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.WorldType;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionEffectType;
@@ -50,7 +52,7 @@ public class ForgeInjectBukkit {
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<Motive, Art> artMap = new HashMap<>();
 
-    public static void init(){
+    public static void init() {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
@@ -63,10 +65,10 @@ public class ForgeInjectBukkit {
     }
 
 
-    public static void addEnumMaterialInItems(){
+    public static void addEnumMaterialInItems() {
         for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
             ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject item materials into Bukkit for FML
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
                 Item item = entry.getValue();
@@ -82,10 +84,10 @@ public class ForgeInjectBukkit {
     }
 
 
-    public static void addEnumMaterialsInBlocks(){
+    public static void addEnumMaterialsInBlocks() {
         for (Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
             ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject block materials into Bukkit for FML
                 String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
                 Block block = entry.getValue();
@@ -131,7 +133,7 @@ public class ForgeInjectBukkit {
         map.clear();
     }
 
-    public static void addEnumPattern(){
+    public static void addEnumPattern() {
         Map<String, PatternType> PATTERN_MAP = ObfuscationReflectionHelper.getPrivateValue(PatternType.class, null, "byString");
         for (BannerPattern bannerpattern : BannerPattern.values()) {
             String p_i47246_3_ = bannerpattern.name();
@@ -160,9 +162,8 @@ public class ForgeInjectBukkit {
         }
     }
 
-    public static WorldType addEnumWorldType(String name)
-    {
-        WorldType worldType = MohistDynamEnum.addEnum0(WorldType.class, name, new Class [] { String.class }, name);
+    public static WorldType addEnumWorldType(String name) {
+        WorldType worldType = MohistDynamEnum.addEnum0(WorldType.class, name, new Class[]{String.class}, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
         BY_NAME.put(name.toUpperCase(), worldType);
         return worldType;
@@ -185,7 +186,7 @@ public class ForgeInjectBukkit {
     public static void addEnumVillagerProfession() {
         for (VillagerProfession villagerProfession : ForgeRegistries.PROFESSIONS) {
             ResourceLocation resourceLocation = villagerProfession.getRegistryName();
-            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistDynamEnum.addEnum0(Villager.Profession.class, name, new Class[0]);
                 profession.put(vp, resourceLocation);
@@ -198,7 +199,7 @@ public class ForgeInjectBukkit {
         for (Attribute attribute : ForgeRegistries.ATTRIBUTES) {
             ResourceLocation resourceLocation = attribute.getRegistryName();
             String name = normalizeName(resourceLocation.getPath());
-            if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 org.bukkit.attribute.Attribute ab = MohistDynamEnum.addEnum0(org.bukkit.attribute.Attribute.class, name, new Class[]{String.class}, resourceLocation.getPath());
                 attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());

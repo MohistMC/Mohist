@@ -8,6 +8,8 @@ import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 
+import java.util.Objects;
+
 public class MohistModsChestHorse extends CraftChestedHorse {
 
     public String entityName;
@@ -30,11 +32,7 @@ public class MohistModsChestHorse extends CraftChestedHorse {
     @Override
     public EntityType getType() {
         EntityType type = EntityType.fromName(this.entityName);
-        if (type != null) {
-            return type;
-        } else {
-            return EntityType.FORGE_MOD_CHEST_HORSE;
-        }
+        return Objects.requireNonNullElse(type, EntityType.FORGE_MOD_CHEST_HORSE);
     }
 
     @Override

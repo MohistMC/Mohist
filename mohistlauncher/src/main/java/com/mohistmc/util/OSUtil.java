@@ -26,7 +26,7 @@ package com.mohistmc.util;
 public class OSUtil {
     private static OS os = null;
 
-    ;// Operating systems.
+    // Operating systems.
 
     public static OS getOS() {
         if (os == null) {

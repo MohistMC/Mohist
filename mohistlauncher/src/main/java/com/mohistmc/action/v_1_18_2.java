@@ -24,7 +24,7 @@ import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
-import com.mohistmc.yaml.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;

@@ -252,7 +252,7 @@ public class MohistDerivedLevelData extends PrimaryLevelData {
 
     private static Lifecycle lifecycle(ServerLevelData worldInfo) {
         if (worldInfo instanceof PrimaryLevelData) {
-            return ((PrimaryLevelData)worldInfo).worldGenSettingsLifecycle();
+            return ((PrimaryLevelData) worldInfo).worldGenSettingsLifecycle();
         } else {
             return lifecycle(((DerivedLevelData) worldInfo).wrapped());
         }

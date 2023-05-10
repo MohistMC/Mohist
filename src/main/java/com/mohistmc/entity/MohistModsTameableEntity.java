@@ -1,11 +1,12 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
-import com.mohistmc.api.ServerAPI;
 import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftTameableAnimal;
 import org.bukkit.entity.EntityType;
+
+import java.util.Objects;
 
 /**
  * Mohist
@@ -14,13 +15,12 @@ import org.bukkit.entity.EntityType;
  * @Created at 20.02.2022 - 20:40 GMT+1
  * © Copyright 2021 / 2022 - M1lcolm
  */
-public class MohistModsTameableEntity extends CraftTameableAnimal
-{
+public class MohistModsTameableEntity extends CraftTameableAnimal {
 
     public String entityName;
-    public MohistModsTameableEntity ( CraftServer server, TamableAnimal entity )
-    {
-        super( server, entity );
+
+    public MohistModsTameableEntity(CraftServer server, TamableAnimal entity) {
+        super(server, entity);
         this.entityName = EntityAPI.entityName(entity);
     }
 
@@ -33,11 +33,7 @@ public class MohistModsTameableEntity extends CraftTameableAnimal
     @Override
     public EntityType getType() {
         EntityType type = EntityType.fromName(this.entityName);
-        if (type != null) {
-            return type;
-        } else {
-            return EntityType.FORGE_MOD_TAMEABLE_ANIMALS;
-        }
+        return Objects.requireNonNullElse(type, EntityType.FORGE_MOD_TAMEABLE_ANIMALS);
     }
 
     @Override
