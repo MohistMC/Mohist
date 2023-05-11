@@ -42,6 +42,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         return ret;
     }
 
+    // Mohsit start
+    public WorldlyContainer getInv() {
+        return inv;
+    }
+    // Mohist end
+
     public SidedInvWrapper(WorldlyContainer inv, @Nullable Direction side)
     {
         this.inv = inv;

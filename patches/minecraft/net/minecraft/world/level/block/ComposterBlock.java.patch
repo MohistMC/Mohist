@@ -1,14 +1,102 @@
 --- a/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/net/minecraft/world/level/block/ComposterBlock.java
-@@ -313,7 +_,7 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.block;
+ 
++import com.google.common.util.concurrent.AtomicDouble;
+ import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+ import javax.annotation.Nullable;
+@@ -39,6 +_,9 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.v1_19_R3.util.DummyGeneratorAccess;
+ 
+ public class ComposterBlock extends Block implements WorldlyContainerHolder {
+    public static final int f_153088_ = 8;
+@@ -234,7 +_,15 @@
+    public static BlockState m_268990_(Entity p_270919_, BlockState p_270087_, ServerLevel p_270284_, ItemStack p_270253_, BlockPos p_270678_) {
+       int i = p_270087_.m_61143_(f_51913_);
+       if (i < 7 && f_51914_.containsKey(p_270253_.m_41720_())) {
+-         BlockState blockstate = m_269330_(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_);
++         // CraftBukkit start
++         double rand = p_270284_.m_213780_().m_188500_();
++         BlockState blockstate = addItem(p_270919_, p_270087_, DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
++         if (p_270087_ == blockstate || CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate).isCancelled()) {
++            return p_270087_;
++         }
++         blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_, rand);
++         // CraftBukkit end
++
+          p_270253_.m_41774_(1);
+          return blockstate;
+       } else {
+@@ -243,6 +_,14 @@
+    }
+ 
+    public static BlockState m_51998_(Entity p_270467_, BlockState p_51999_, Level p_52000_, BlockPos p_52001_) {
++      // CraftBukkit start
++      if (p_270467_ != null && !(p_270467_ instanceof Player)) {
++         BlockState iblockdata1 = m_269590_(p_270467_, p_51999_, DummyGeneratorAccess.INSTANCE, p_52001_);
++         if (CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1).isCancelled()) {
++            return p_51999_;
++         }
++      }
++      // CraftBukkit end
+       if (!p_52000_.f_46443_) {
+          Vec3 vec3 = Vec3.m_272021_(p_52001_, 0.5D, 1.01D, 0.5D).m_272010_(p_52000_.f_46441_, 0.7F);
+          ItemEntity itementity = new ItemEntity(p_52000_, vec3.m_7096_(), vec3.m_7098_(), vec3.m_7094_(), new ItemStack(Items.f_42499_));
+@@ -262,10 +_,15 @@
+       return blockstate;
+    }
+ 
++   // Mohist start
++   static AtomicDouble bukkitRand = new AtomicDouble(-114514);
+    static BlockState m_269330_(@Nullable Entity p_270464_, BlockState p_270603_, LevelAccessor p_270151_, BlockPos p_270547_, ItemStack p_270354_) {
+       int i = p_270603_.m_61143_(f_51913_);
+       float f = f_51914_.getFloat(p_270354_.m_41720_());
+-      if ((i != 0 || !(f > 0.0F)) && !(p_270151_.m_213780_().m_188500_() < (double)f)) {
++      if (bukkitRand.get() == -114514) {
++         bukkitRand.set(p_270151_.m_213780_().m_188500_());
++      }
++      if ((i != 0 || !(f > 0.0F)) && !(bukkitRand.getAndSet(-114514) < (double)f)) {
+          return p_270603_;
+       } else {
+          int j = i + 1;
+@@ -280,6 +_,12 @@
+       }
+    }
+ 
++   static BlockState addItem(@Nullable Entity p_270464_, BlockState p_270603_, LevelAccessor p_270151_, BlockPos p_270547_, ItemStack p_270354_, double rand) {
++      bukkitRand.set(rand);
++      return m_269330_(p_270464_, p_270603_, p_270151_, p_270547_, p_270354_);
++   }
++   // Mohist end
++
+    public void m_213897_(BlockState p_221015_, ServerLevel p_221016_, BlockPos p_221017_, RandomSource p_221018_) {
+       if (p_221015_.m_61143_(f_51913_) == 7) {
+          p_221016_.m_7731_(p_221017_, p_221015_.m_61122_(f_51913_), 3);
+@@ -309,13 +_,14 @@
+       if (i == 8) {
+          return new ComposterBlock.OutputContainer(p_51956_, p_51957_, p_51958_, new ItemStack(Items.f_42499_));
+       } else {
+-         return (WorldlyContainer)(i < 7 ? new ComposterBlock.InputContainer(p_51956_, p_51957_, p_51958_) : new ComposterBlock.EmptyContainer());
++         return (WorldlyContainer)(i < 7 ? new ComposterBlock.InputContainer(p_51956_, p_51957_, p_51958_) : new ComposterBlock.EmptyContainer(p_51957_, p_51958_));
        }
     }
  
 -   static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
+-      public EmptyContainer() {
 +   public static class EmptyContainer extends SimpleContainer implements WorldlyContainer {
-       public EmptyContainer() {
++      public EmptyContainer(LevelAccessor levelAccessor, BlockPos blockPos) { // Mohist TODO
           super(0);
++         this.bukkitOwner = new CraftBlockInventoryHolder(levelAccessor, blockPos, this); // CraftBukkit
        }
+ 
+       public int[] m_7071_(Direction p_52012_) {
 @@ -331,7 +_,7 @@
        }
     }
@@ -18,6 +106,14 @@
        private final BlockState f_52017_;
        private final LevelAccessor f_52018_;
        private final BlockPos f_52019_;
+@@ -339,6 +_,7 @@
+ 
+       public InputContainer(BlockState p_52022_, LevelAccessor p_52023_, BlockPos p_52024_) {
+          super(1);
++         this.bukkitOwner = new CraftBlockInventoryHolder(p_52023_, p_52024_, this); // CraftBukkit
+          this.f_52017_ = p_52022_;
+          this.f_52018_ = p_52023_;
+          this.f_52019_ = p_52024_;
 @@ -372,7 +_,7 @@
        }
     }

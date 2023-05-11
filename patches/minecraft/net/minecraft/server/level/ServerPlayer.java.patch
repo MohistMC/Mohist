@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -147,8 +_,18 @@
+@@ -147,8 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -39,6 +39,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.util.BlockStateListPopulator;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 +import org.bukkit.event.player.PlayerSpawnChangeEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.player.PlayerToggleSneakEvent;
  import org.slf4j.Logger;
  
@@ -526,7 +527,7 @@
     }
  
     public boolean m_184128_() {
-@@ -1599,4 +_,136 @@
+@@ -1599,4 +_,140 @@
        this.f_263750_ = (float)(Mth.m_14136_(p_270478_, p_270621_) * (double)(180F / (float)Math.PI) - (double)this.m_146908_());
        this.f_8906_.m_9829_(new ClientboundHurtAnimationPacket(this));
     }
@@ -660,6 +661,10 @@
 +      }
 +      this.keepLevel = false;
 +      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
++   }
++
++   public void changeDimension(ServerLevel serverlevel, PlayerTeleportEvent.TeleportCause teleportCause) {
++      m_5489_(serverlevel); // Mohist TODO
 +   }
 +   // CraftBukkit end
  }

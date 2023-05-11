@@ -126,7 +126,7 @@
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_222692_(p_155014_, p_155017_);
 -               if (m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
-+               if (p_155017_.m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
++               if (p_155017_.burn(p_155017_.f_58857_, p_155017_.f_58858_, p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) { // CraftBukkit
                    p_155017_.m_6029_(recipe);
                 }
  
@@ -155,23 +155,45 @@
              }
           }
        } else {
-@@ -317,15 +_,15 @@
+@@ -317,15 +_,34 @@
        }
     }
  
 -   private static boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
 -      if (p_266780_ != null && m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
-+   private boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
++   private boolean burn(Level world, BlockPos blockposition, RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
 +      if (p_266780_ != null && this.m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
           ItemStack itemstack = p_267073_.get(0);
 -         ItemStack itemstack1 = p_266780_.m_8043_(p_266740_);
 +         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_266780_).m_5874_(this, p_266740_);
           ItemStack itemstack2 = p_267073_.get(2);
-          if (itemstack2.m_41619_()) {
-             p_267073_.set(2, itemstack1.m_41777_());
-          } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
+-         if (itemstack2.m_41619_()) {
+-            p_267073_.set(2, itemstack1.m_41777_());
+-         } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
 -            itemstack2.m_41769_(1);
-+            itemstack2.m_41769_(itemstack1.m_41613_());
++
++         // CraftBukkit start - fire FurnaceSmeltEvent
++         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++
++         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(world, blockposition), source, result);
++         world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
++
++         if (furnaceSmeltEvent.isCancelled()) {
++            return false;
++         }
++
++         result = furnaceSmeltEvent.getResult();
++         itemstack1 = CraftItemStack.asNMSCopy(result);
++
++         if (!itemstack1.m_41619_()) {
++            if (itemstack2.m_41619_()) {
++               p_267073_.set(2, itemstack1.m_41777_());
++            } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++               itemstack2.m_41769_(itemstack1.m_41613_());
++            } else {
++               return false;
++            }
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_267073_.get(1).m_41619_() && p_267073_.get(1).m_150930_(Items.f_42446_)) {

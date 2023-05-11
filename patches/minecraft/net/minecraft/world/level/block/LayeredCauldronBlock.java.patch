@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block;
+ 
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.cauldron.CauldronInteraction;
 @@ -16,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.Fluid;
@@ -34,13 +42,13 @@
 -      p_153561_.m_46597_(p_153562_, blockstate);
 -      p_153561_.m_220407_(GameEvent.f_157792_, p_153562_, GameEvent.Context.m_223722_(blockstate));
 -   }
-+       changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++      changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
 +   }
 +
 +   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
 +      int i = p_153560_.m_61143_(f_153514_) - 1;
 +      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
-+      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
++      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, reason);
 +   }
 +
 +   // CraftBukkit start
@@ -71,10 +79,12 @@
        }
     }
  
-@@ -91,6 +_,11 @@
+@@ -89,8 +_,11 @@
+    protected void m_142310_(BlockState p_153544_, Level p_153545_, BlockPos p_153546_, Fluid p_153547_) {
+       if (!this.m_142596_(p_153544_)) {
           BlockState blockstate = p_153544_.m_61124_(f_153514_, Integer.valueOf(p_153544_.m_61143_(f_153514_) + 1));
-          p_153545_.m_46597_(p_153546_, blockstate);
-          p_153545_.m_220407_(GameEvent.f_157792_, p_153546_, GameEvent.Context.m_223722_(blockstate));
+-         p_153545_.m_46597_(p_153546_, blockstate);
+-         p_153545_.m_220407_(GameEvent.f_157792_, p_153546_, GameEvent.Context.m_223722_(blockstate));
 +         // CraftBukkit start
 +         if (!changeLevel(p_153544_, p_153545_, p_153546_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.NATURAL_FILL)) {
 +            return;

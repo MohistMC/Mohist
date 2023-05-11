@@ -1,22 +1,58 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -20,7 +_,7 @@
+@@ -10,6 +_,10 @@
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockStates;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.event.block.BlockFormEvent;
+ 
+ public class ConcretePowderBlock extends FallingBlock {
+    private final BlockState f_52058_;
+@@ -20,33 +_,54 @@
     }
  
     public void m_48792_(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
 -      if (m_52080_(p_52068_, p_52069_, p_52071_)) {
+-         p_52068_.m_7731_(p_52069_, this.f_52058_, 3);
 +      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.m_60819_())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-          p_52068_.m_7731_(p_52069_, this.f_52058_, 3);
++         CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.f_52058_, 3); // CraftBukkit
        }
  
-@@ -33,20 +_,24 @@
-       return m_52080_(blockgetter, blockpos, blockstate) ? this.f_52058_ : super.m_5573_(p_52063_);
     }
  
-+   private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_, net.minecraft.world.level.material.FluidState fluidState) {
-+      return p_52083_.canBeHydrated(p_52081_, p_52082_, fluidState, p_52082_) || touchesLiquid(p_52081_, p_52082_, p_52083_);
+    public BlockState m_5573_(BlockPlaceContext p_52063_) {
+-      BlockGetter blockgetter = p_52063_.m_43725_();
++      LevelAccessor blockgetter = p_52063_.m_43725_(); // Mohist TODO
+       BlockPos blockpos = p_52063_.m_8083_();
+       BlockState blockstate = blockgetter.m_8055_(blockpos);
+-      return m_52080_(blockgetter, blockpos, blockstate) ? this.f_52058_ : super.m_5573_(p_52063_);
++      // CraftBukkit start
++      if (!m_52080_(blockgetter, blockpos, blockstate)) {
++         return super.m_5573_(p_52063_);
++      }
++
++      // TODO: An event factory call for methods like this
++      CraftBlockState blockState = CraftBlockStates.getBlockState(blockgetter, blockpos);
++      blockState.setData(this.f_52058_);
++
++      BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
++      blockgetter.m_7654_().server.getPluginManager().callEvent(event);
++
++      if (!event.isCancelled()) {
++         return blockState.getHandle();
++      }
++
++      return super.m_5573_(p_52063_);
++      // CraftBukkit end
 +   }
 +
++   private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_, net.minecraft.world.level.material.FluidState fluidState) {
++      return p_52083_.canBeHydrated(p_52081_, p_52082_, fluidState, p_52082_) || touchesLiquid(p_52081_, p_52082_, p_52083_);
+    }
+ 
     private static boolean m_52080_(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_) {
 -      return m_52088_(p_52083_) || m_52064_(p_52081_, p_52082_);
 +      return shouldSolidify(p_52081_, p_52082_, p_52083_, p_52081_.m_6425_(p_52082_));
@@ -38,12 +74,30 @@
                 flag = true;
                 break;
              }
-@@ -61,7 +_,7 @@
+@@ -61,7 +_,25 @@
     }
  
     public BlockState m_7417_(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
 -      return m_52064_(p_52077_, p_52078_) ? this.f_52058_ : super.m_7417_(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
-+      return touchesLiquid(p_52077_, p_52078_, p_52074_) ? this.f_52058_ : super.m_7417_(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
++      // CraftBukkit start
++      if (touchesLiquid(p_52077_, p_52078_, p_52074_)) {
++         // Suppress during worldgen
++         if (!(p_52077_ instanceof Level)) {
++            return this.f_52058_;
++         }
++         CraftBlockState blockState = CraftBlockStates.getBlockState(p_52077_, p_52078_);
++         blockState.setData(this.f_52058_);
++
++         BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
++         ((Level) p_52077_).getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled()) {
++            return blockState.getHandle();
++         }
++      }
++
++      return super.m_7417_(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
++      // CraftBukkit end
     }
  
     public int m_6248_(BlockState p_52085_, BlockGetter p_52086_, BlockPos p_52087_) {

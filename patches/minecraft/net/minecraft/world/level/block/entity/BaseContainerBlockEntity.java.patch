@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
+ 
+ public abstract class BaseContainerBlockEntity extends BlockEntity implements Container, MenuProvider, Nameable {
+    public LockCode f_58621_ = LockCode.f_19102_;
 @@ -81,4 +_,35 @@
     }
  

@@ -8,6 +8,36 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.network.chat.Component;
+@@ -80,27 +_,8 @@
+    };
+    private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> f_51487_ = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
+       public Optional<MenuProvider> m_6959_(final ChestBlockEntity p_51604_, final ChestBlockEntity p_51605_) {
+-         final Container container = new CompoundContainer(p_51604_, p_51605_);
+-         return Optional.of(new MenuProvider() {
+-            @Nullable
+-            public AbstractContainerMenu m_7208_(int p_51622_, Inventory p_51623_, Player p_51624_) {
+-               if (p_51604_.m_7525_(p_51624_) && p_51605_.m_7525_(p_51624_)) {
+-                  p_51604_.m_59640_(p_51623_.f_35978_);
+-                  p_51605_.m_59640_(p_51623_.f_35978_);
+-                  return ChestMenu.m_39246_(p_51622_, p_51623_, container);
+-               } else {
+-                  return null;
+-               }
+-            }
+-
+-            public Component m_5446_() {
+-               if (p_51604_.m_8077_()) {
+-                  return p_51604_.m_5446_();
+-               } else {
+-                  return (Component)(p_51605_.m_8077_() ? p_51605_.m_5446_() : Component.m_237115_("container.chestDouble"));
+-               }
+-            }
+-         });
++         final CompoundContainer container = new CompoundContainer(p_51604_, p_51605_); // Mohist TODO Container -> CompoundContainer
++         return Optional.of(new DoubleInventory(p_51604_, p_51605_, container)); // CraftBukkit
+       }
+ 
+       public Optional<MenuProvider> m_7693_(ChestBlockEntity p_51602_) {
 @@ -270,8 +_,15 @@
  
     @Nullable
@@ -36,7 +66,7 @@
     }
  
     protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51562_) {
-@@ -353,4 +_,36 @@
+@@ -353,4 +_,35 @@
        }
  
     }
@@ -67,8 +97,7 @@
 +
 +      @Override
 +      public net.minecraft.network.chat.Component m_5446_() {
-+         return this.tileentitychest.m_8077_() ? this.tileentitychest.m_5446_()
-+                 : (this.tileentitychest1.m_8077_() ? this.tileentitychest1.m_5446_() : (tileentitychest1.m_8077_() ? tileentitychest1.m_5446_() : Component.m_237115_("container.chestDouble")));
++         return this.tileentitychest.m_8077_() ? this.tileentitychest.m_5446_() : (this.tileentitychest1.m_8077_() ? this.tileentitychest1.m_5446_() : (tileentitychest1.m_8077_() ? tileentitychest1.m_5446_() : Component.m_237115_("container.chestDouble")));
 +      }
 +   }
 +   // CraftBukkit end

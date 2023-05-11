@@ -1,5 +1,26 @@
 --- a/net/minecraft/world/level/block/NoteBlock.java
 +++ b/net/minecraft/world/level/block/NoteBlock.java
+@@ -72,6 +_,7 @@
+       if (flag != p_55041_.m_61143_(f_55012_)) {
+          if (flag) {
+             this.m_260916_((Entity)null, p_55041_, p_55042_, p_55043_);
++            p_55041_ = p_55042_.m_8055_(p_55043_); // CraftBukkit - SPIGOT-5617: update in case changed in event
+          }
+ 
+          p_55042_.m_7731_(p_55043_, p_55041_.m_61124_(f_55012_, Boolean.valueOf(flag)), 3);
+@@ -81,6 +_,12 @@
+ 
+    private void m_260916_(@Nullable Entity p_261664_, BlockState p_261606_, Level p_261819_, BlockPos p_262042_) {
+       if (!p_261606_.m_61143_(f_55011_).m_262415_() || p_261819_.m_8055_(p_262042_.m_7494_()).m_60795_()) {
++         // CraftBukkit start
++         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callNotePlayEvent(p_261819_, p_262042_, p_261606_.m_61143_(f_55011_), p_261606_.m_61143_(f_55013_));
++         if (event.isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
+          p_261819_.m_7696_(p_262042_, this, 0, 0);
+          p_261819_.m_142346_(p_261664_, GameEvent.f_223699_, p_262042_);
+       }
 @@ -98,7 +_,9 @@
        if (p_55035_.f_46443_) {
           return InteractionResult.SUCCESS;

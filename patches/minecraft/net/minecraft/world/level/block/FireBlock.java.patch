@@ -8,15 +8,44 @@
  import java.util.function.Function;
  import java.util.stream.Collectors;
  import net.minecraft.Util;
-@@ -27,6 +_,8 @@
+@@ -27,6 +_,11 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockStates;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockBurnEvent;
++import org.bukkit.event.block.BlockFadeEvent;
  
  public class FireBlock extends BaseFireBlock {
     public static final int f_153264_ = 15;
+@@ -90,7 +_,24 @@
+    }
+ 
+    public BlockState m_7417_(BlockState p_53458_, Direction p_53459_, BlockState p_53460_, LevelAccessor p_53461_, BlockPos p_53462_, BlockPos p_53463_) {
+-      return this.m_7898_(p_53458_, p_53461_, p_53462_) ? this.m_53437_(p_53461_, p_53462_, p_53458_.m_61143_(f_53408_)) : Blocks.f_50016_.m_49966_();
++      // CraftBukkit start
++      if (!this.m_7898_(p_53458_, p_53461_, p_53462_)) {
++         // Suppress during worldgen
++         if (!(p_53461_ instanceof Level)) {
++            return Blocks.f_50016_.m_49966_();
++         }
++         CraftBlockState blockState = CraftBlockStates.getBlockState(p_53461_, p_53462_);
++         blockState.setData(Blocks.f_50016_.m_49966_());
++
++         BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++         ((Level) p_53461_).getCraftServer().getPluginManager().callEvent(event);
++
++         if (!event.isCancelled()) {
++            return blockState.getHandle();
++         }
++      }
++      return this.m_53437_(p_53461_, p_53462_, p_53458_.m_61143_(f_53408_));
++      // CraftBukkit end
+    }
+ 
+    public VoxelShape m_5940_(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
 @@ -104,13 +_,13 @@
     protected BlockState m_53470_(BlockGetter p_53471_, BlockPos p_53472_) {
        BlockPos blockpos = p_53472_.m_7495_();
@@ -38,12 +67,13 @@
     }
  
 +   // Mohist start
-+   private AtomicReference<BlockPos> sourceposition = new AtomicReference();
++   private AtomicReference<BlockPos> sourceposition = new AtomicReference(BlockPos.f_121853_);
     public void m_213897_(BlockState p_221160_, ServerLevel p_221161_, BlockPos p_221162_, RandomSource p_221163_) {
        p_221161_.m_186460_(p_221162_, this, m_221148_(p_221161_.f_46441_));
        if (p_221161_.m_46469_().m_46207_(GameRules.f_46131_)) {
           if (!p_221160_.m_60710_(p_221161_, p_221162_)) {
 -            p_221161_.m_7471_(p_221162_, false);
++            fireExtinguished(p_221161_, p_221162_); // CraftBukkit - invalid place location
           }
  
           BlockState blockstate = p_221161_.m_8055_(p_221162_.m_7495_());
@@ -51,21 +81,29 @@
 +         boolean flag = blockstate.isFireSource(p_221161_, p_221162_, Direction.UP);
           int i = p_221160_.m_61143_(f_53408_);
           if (!flag && p_221161_.m_46471_() && this.m_53428_(p_221161_, p_221162_) && p_221163_.m_188501_() < 0.2F + (float)i * 0.03F) {
-             p_221161_.m_7471_(p_221162_, false);
-+            p_221161_.m_7471_(p_221162_, false);
+-            p_221161_.m_7471_(p_221162_, false);
++            fireExtinguished(p_221161_, p_221162_); // CraftBukkit - extinguished by rain
           } else {
              int j = Math.min(15, i + p_221163_.m_188503_(3) / 2);
              if (i != j) {
-@@ -154,7 +_,7 @@
+@@ -148,26 +_,32 @@
+                if (!this.m_53485_(p_221161_, p_221162_)) {
+                   BlockPos blockpos = p_221162_.m_7495_();
+                   if (!p_221161_.m_8055_(blockpos).m_60783_(p_221161_, blockpos, Direction.UP) || i > 3) {
+-                     p_221161_.m_7471_(p_221162_, false);
++                     fireExtinguished(p_221161_, p_221162_); // CraftBukkit
+                   }
+ 
                    return;
                 }
  
 -               if (i == 15 && p_221163_.m_188503_(4) == 0 && !this.m_7599_(p_221161_.m_8055_(p_221162_.m_7495_()))) {
+-                  p_221161_.m_7471_(p_221162_, false);
 +               if (i == 15 && p_221163_.m_188503_(4) == 0 && !this.canCatchFire(p_221161_, p_221162_.m_7495_(), Direction.UP)) {
-                   p_221161_.m_7471_(p_221162_, false);
++                  fireExtinguished(p_221161_, p_221162_); // CraftBukkit
                    return;
                 }
-@@ -162,12 +_,14 @@
+             }
  
              boolean flag1 = p_221161_.m_204166_(p_221162_).m_203656_(BiomeTags.f_263839_);
              int k = flag1 ? -50 : 0;
@@ -77,16 +115,36 @@
 -            this.m_221150_(p_221161_, p_221162_.m_122019_(), 300 + k, p_221163_, i);
 +            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_122029_(), 300 + k, p_221163_, i, Direction.WEST);
++            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_122024_(), 300 + k, p_221163_, i, Direction.EAST);
++            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_7495_(), 250 + k, p_221163_, i, Direction.UP);
++            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_7494_(), 250 + k, p_221163_, i, Direction.DOWN);
++            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_122012_(), 300 + k, p_221163_, i, Direction.SOUTH);
++            sourceposition.set(p_221162_);
 +            this.tryCatchFire(p_221161_, p_221162_.m_122019_(), 300 + k, p_221163_, i, Direction.NORTH);
-+            sourceposition.set(null);
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -205,28 +_,44 @@
+@@ -189,7 +_,14 @@
+ 
+                            if (i2 > 0 && p_221163_.m_188503_(k1) <= i2 && (!p_221161_.m_46471_() || !this.m_53428_(p_221161_, blockpos$mutableblockpos))) {
+                               int j2 = Math.min(15, i + p_221163_.m_188503_(5) / 4);
+-                              p_221161_.m_7731_(blockpos$mutableblockpos, this.m_53437_(p_221161_, blockpos$mutableblockpos, j2), 3);
++                              // CraftBukkit start - Call to stop the spread of fire
++                              if (p_221161_.m_8055_(blockpos$mutableblockpos).m_60734_() != Blocks.f_50083_) {
++                                 if (CraftEventFactory.callBlockIgniteEvent(p_221161_, blockpos$mutableblockpos, p_221162_).isCancelled()) {
++                                    continue;
++                                 }
++                                 CraftEventFactory.handleBlockSpreadEvent(p_221161_, p_221162_, blockpos$mutableblockpos, this.m_53437_(p_221161_, blockpos$mutableblockpos, j2), 3); // CraftBukkit
++                              }
++                              // CraftBukkit end
+                            }
+                         }
+                      }
+@@ -205,28 +_,43 @@
        return p_53429_.m_46758_(p_53430_) || p_53429_.m_46758_(p_53430_.m_122024_()) || p_53429_.m_46758_(p_53430_.m_122029_()) || p_53429_.m_46758_(p_53430_.m_122012_()) || p_53429_.m_46758_(p_53430_.m_122019_());
     }
  
@@ -123,9 +181,8 @@
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         // CraftBukkit end
 +
-+         if (blockstate.m_60734_() instanceof TntBlock && !CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, sourceposition.get())) {
++         if (blockstate.m_60734_() instanceof TntBlock && !CraftEventFactory.callTNTPrimeEvent(p_53432_, p_53433_, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.FIRE, null, sourceposition.getAndSet(null))) {
 +            return;
 +         }
 +         // CraftBukkit end

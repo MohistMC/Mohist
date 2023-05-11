@@ -38,7 +38,7 @@
  
 +   // CraftBukkit start - add fields and methods
 +   private int lastTick = MinecraftServer.currentTick;
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<>();
 +   private int maxStack = 64;
 +
 +   public void onOpen(CraftHumanEntity who) {
@@ -133,12 +133,13 @@
        if (itemstack.m_41619_()) {
           return false;
        } else if (!PotionBrewing.m_43506_(itemstack)) {
-@@ -164,22 +_,39 @@
+@@ -164,22 +_,40 @@
        }
     }
  
 -   private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
 +   // Mohist TODO
++   // CraftBukkit start
 +   private static void doBrew(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_, BrewingStandBlockEntity brewingStandBlock) {
 +      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_)) return;
        ItemStack itemstack = p_155293_.get(3);
@@ -154,7 +155,7 @@
 +      List<org.bukkit.inventory.ItemStack> brewResults = new ArrayList<>(3);
 +
 +      for (int i = 0; i < 3; ++i) {
-+         brewResults.add(i, CraftItemStack.asCraftMirror(PotionBrewing.m_43529_(itemstack, (ItemStack) p_155293_.get(i))));
++         brewResults.add(i, CraftItemStack.asCraftMirror(PotionBrewing.m_43529_(itemstack, p_155293_.get(i))));
 +      }
 +
 +      if (owner != null) {

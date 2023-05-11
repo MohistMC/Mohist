@@ -19,7 +19,8 @@
 +      if (p_221350_.m_61143_(f_53924_) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221351_, p_221352_.m_121945_(this.f_53859_), p_221351_.m_8055_(p_221352_.m_121945_(this.f_53859_)),p_221353_.m_188500_() < ((modifier / 100.0D) * this.f_53925_))) { // Spigot - SPIGOT-7159: Better modifier resolution
           BlockPos blockpos = p_221352_.m_121945_(this.f_53859_);
           if (this.m_5971_(p_221351_.m_8055_(blockpos))) {
-             p_221351_.m_46597_(blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_));
+-            p_221351_.m_46597_(blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_));
++            org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_221351_, p_221352_, blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_)); // CraftBukkit
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221351_, blockpos, p_221351_.m_8055_(blockpos));
           }
        }

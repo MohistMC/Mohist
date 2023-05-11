@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/DirtPathBlock.java
++++ b/net/minecraft/world/level/block/DirtPathBlock.java
+@@ -39,6 +_,11 @@
+    }
+ 
+    public void m_213897_(BlockState p_221070_, ServerLevel p_221071_, BlockPos p_221072_, RandomSource p_221073_) {
++      // CraftBukkit start - do not fade if the block is valid here
++      if (p_221070_.m_60710_(p_221071_, p_221072_)) {
++         return;
++      }
++      // CraftBukkit end
+       FarmBlock.m_269406_((Entity)null, p_221070_, p_221071_, p_221072_);
+    }
+ 
