@@ -43,15 +43,15 @@ public class ClientChatEvent extends Event
         return this.message;
     }
 
-     /**
-      * Sets the new message to be sent to the server, if the event is not cancelled.
-      *
-      * @param message the new message to be sent
-      */
-     public void setMessage(String message)
-     {
-         this.message = Strings.nullToEmpty(message);
-     }
+    /**
+     * Sets the new message to be sent to the server, if the event is not cancelled.
+     *
+     * @param message the new message to be sent
+     */
+    public void setMessage(String message)
+    {
+        this.message = Strings.nullToEmpty(message);
+    }
 
     /**
      * {@return the original message that was to be sent to the server. This cannot be changed by mods}

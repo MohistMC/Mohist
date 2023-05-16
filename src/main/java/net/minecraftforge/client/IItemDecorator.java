@@ -6,6 +6,7 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +19,6 @@ import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
  */
 public interface IItemDecorator
 {
-
     /**
      * Use {@linkplain IItemDecorator#render(PoseStack, Font, ItemStack, int, int)} instead.
      */

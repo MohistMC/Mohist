@@ -324,6 +324,9 @@ public class ModLoader
         }
         ModList.get().forEachModInOrder(mc -> mc.acceptEvent(e));
     }
+    public <T extends Event & IModBusEvent> void postEventWrapContainerInModOrder(T event) {
+        postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+    }
     public <T extends Event & IModBusEvent> void postEventWithWrapInModOrder(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());

@@ -7,6 +7,8 @@ package net.minecraftforge.server;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,13 @@ public class ServerLifecycleHooks
     private static Path getServerConfigPath(final MinecraftServer server)
     {
         final Path serverConfig = server.getWorldPath(SERVERCONFIG);
-        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+        if (!Files.isDirectory(serverConfig)) {
+            try {
+                Files.createDirectories(serverConfig);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return serverConfig;
     }
 

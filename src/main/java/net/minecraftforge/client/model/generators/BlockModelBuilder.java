@@ -5,8 +5,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.math.Transformation;
 import net.minecraft.resources.ResourceLocation;
@@ -51,9 +49,14 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         return super.toJson();
     }
 
+    /**
+     * @deprecated Use {@link ModelBuilder.RootTransformsBuilder} instead via {@link ModelBuilder#rootTransforms()}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public class RootTransformBuilder
     {
         private final ModelBuilder<BlockModelBuilder>.RootTransformsBuilder rootTransforms;
+
         private RootTransformBuilder(ModelBuilder<BlockModelBuilder>.RootTransformsBuilder rootTransforms)
         {
             this.rootTransforms = rootTransforms;
@@ -170,6 +173,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          *
          * @param postRotation the right rotation
          * @return this builder
+         * @throws NullPointerException if {@code rightRotation} is {@code null}
          */
         public RootTransformBuilder postRotation(Quaternionf postRotation)
         {
@@ -195,7 +199,6 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          *
          * @param scale the scale
          * @return this builder
-         * @throws NullPointerException if {@code scale} is {@code null}
          */
         public RootTransformBuilder scale(float scale)
         {
