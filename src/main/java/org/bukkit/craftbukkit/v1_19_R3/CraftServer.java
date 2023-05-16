@@ -161,6 +161,8 @@ import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftShapedRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftShapelessRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmithingRecipe;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmithingTransformRecipe;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmithingTrimRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftSmokingRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.RecipeIterator;
@@ -1195,9 +1197,9 @@ public final class CraftServer implements Server {
             } else if (recipe instanceof SmithingRecipe) {
                 toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
             } else if (recipe instanceof SmithingTransformRecipe) {
-                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingTransformRecipe) recipe);
+                toAdd = CraftSmithingTransformRecipe.fromBukkitRecipe((SmithingTransformRecipe) recipe);
             } else if (recipe instanceof SmithingTrimRecipe) {
-                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingTrimRecipe) recipe);
+                toAdd = CraftSmithingTrimRecipe.fromBukkitRecipe((SmithingTrimRecipe) recipe);
             } else if (recipe instanceof ComplexRecipe) {
                 throw new UnsupportedOperationException("Cannot add custom complex recipe");
             } else {
