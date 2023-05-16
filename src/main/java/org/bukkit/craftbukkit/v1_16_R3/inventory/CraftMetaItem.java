@@ -530,13 +530,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 deserializeInternal(internalTag, map);
                 Set<String> keys = internalTag.getAllKeys();
                 for (String key : keys) {
-                    if (!getHandledTags().contains(key)) {
+                    // Mohist start - handle modded tgas
+                    if (handlemoddedTgas(key)) {
                         unhandledTags.put(key, internalTag.get(key));
-                    }
-                    else {// Mohist start - handle modded tgas
-                        if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
-                            unhandledTags.put(key, internalTag.get(key));
-                        }
                     }
                     //Mohist end
                 }
@@ -550,6 +546,15 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             this.persistentDataContainer.putAll((CompoundNBT) CraftNBTTagConfigSerializer.deserialize(nbtMap));
         }
     }
+
+    private boolean handlemoddedTgas(String key) {
+        if (this instanceof CraftMetaItem) {
+            return true;
+        } else {
+            return !getHandledTags().contains(key);
+        }
+    }
+
 
     void deserializeInternal(CompoundNBT tag, Object context) {
         // SPIGOT-4576: Need to migrate from internal to proper data
