@@ -307,7 +307,8 @@ public class ForgeInjectBukkit {
 
     public static void addPhaseType() {
         for (PhaseType phaseTypes : PhaseType.getPhases()) {
-            if (phaseTypes.getId() > 11) {
+            MohistMC.LOGGER.error(phaseTypes.getName() + " -> " + phaseTypes.getId());
+            if (phaseTypes.getId() > 10) {
                 EnderDragon.Phase bukkit = MohistEnumHelper.addEnum0( EnderDragon.Phase.class, phaseTypes.getName(), new Class[0]);
                 ServerAPI.phasetypeMap.put(phaseTypes.getId(), bukkit);
                 MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);

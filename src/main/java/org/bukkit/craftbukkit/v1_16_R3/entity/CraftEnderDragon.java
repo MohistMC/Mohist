@@ -52,7 +52,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
     public Phase getPhase() {
         // Mohist start
         int id = getHandle().getEntityData().get(EnderDragonEntity.DATA_PHASE);
-        if (id > 11) {
+        if (id > 10) {
             return ServerAPI.phasetypeMap.get(id);
         }
         // Mohist end
@@ -66,7 +66,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     public static Phase getBukkitPhase(PhaseType phase) {
         // Mohist start
-        if (phase.getId() > 11) {
+        if (phase.getId() > 10) {
             return ServerAPI.phasetypeMap.get(phase.getId());
         }
         // Mohist end
