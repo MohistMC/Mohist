@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_16_R3;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 
@@ -945,7 +946,7 @@ public class CraftWorld implements World {
     @Override
     public void setBiome(int x, int y, int z, Biome bio) {
         Preconditions.checkArgument(bio != Biome.CUSTOM, "Cannot set the biome to %s", bio);
-        net.minecraft.world.biome.Biome bb = CraftBlock.biomeToBiomeBase(getHandle().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY), bio);
+        net.minecraft.world.biome.Biome bb = ForgeInjectBukkit.biomeMap.containsKey(bio) ? ForgeInjectBukkit.biomeMap.get(bio) : CraftBlock.biomeToBiomeBase(getHandle().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY), bio);
         BlockPos pos = new BlockPos(x, 0, z);
         if (this.world.hasChunkAt(pos)) {
             net.minecraft.world.chunk.Chunk chunk = this.world.getChunkAt(pos);

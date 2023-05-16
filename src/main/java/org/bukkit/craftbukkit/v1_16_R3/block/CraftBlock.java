@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.RedstoneWireBlock;
@@ -532,7 +534,7 @@ public class CraftBlock implements Block {
             return null;
         }
 
-        return registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
+        return ForgeInjectBukkit.biomeMap.containsKey(bio) ? ForgeInjectBukkit.biomeMap.get(bio) : registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
     }
 
     @Override

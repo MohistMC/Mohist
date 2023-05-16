@@ -26,10 +26,10 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -48,6 +48,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
@@ -83,6 +84,7 @@ public class ForgeInjectBukkit {
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<PaintingType, Art> artMap = new HashMap<>();
+    public static Map<org.bukkit.block.Biome, Biome> biomeMap = new HashMap<>();
 
     public static void init(){
         addEnumMaterialInItems();
@@ -188,6 +190,7 @@ public class ForgeInjectBukkit {
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
                 map.add(biomeName);
                 org.bukkit.block.Biome biomeCB = MohistEnumHelper.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                biomeMap.put(biomeCB, biome);
                 MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }
