@@ -7,11 +7,15 @@
  import com.google.common.base.Suppliers;
  import com.google.common.collect.HashBasedTable;
  import com.google.common.collect.Lists;
-@@ -8,7 +_,9 @@
+@@ -8,7 +_,13 @@
  import com.mojang.logging.LogUtils;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
++
++import java.util.ArrayList;
 +import java.util.HashMap;
++import java.util.HashSet;
++import java.util.Iterator;
  import java.util.List;
 +import java.util.Map;
  import java.util.Optional;
@@ -26,11 +30,13 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -29,6 +_,14 @@
+@@ -29,6 +_,16 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
@@ -41,22 +47,61 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -60,6 +_,61 @@
+@@ -60,6 +_,100 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
 +   // CraftBukkit star
-+   private CraftInventoryView bukkitEntity = null;
 +   public boolean checkReachable = true;
 +   // Mohist start
-+   public InventoryView bukkitView = null;
++   public InventoryView bukkitView;
++
++   private boolean isBukkitViewCreated;
++
 +   public InventoryView getBukkitView(){
++      if(!isBukkitViewCreated) {
++         isBukkitViewCreated = true;
++         bukkitView = computeBukkitView();
++         return bukkitView;
++      }
 +      return bukkitView;
 +   }
 +
 +   public void setBukkitView(InventoryView iv) {
-+      bukkitView = iv;
++      this.bukkitView = iv;
++      isBukkitViewCreated = true;
 +   }
++
++   @Nullable
++   private InventoryView computeBukkitView() {
++      Set<Container> uniqueInventorySet = new HashSet<>();
++      for(Slot slot : f_38839_) {
++         if (slot.f_40218_ != null) uniqueInventorySet.add(slot.f_40218_);
++      }
++      List<Container> inventories = new ArrayList<>(uniqueInventorySet);
++      Inventory playerInv = null;
++
++      for(Iterator<Container> it = inventories.iterator(); it.hasNext();) {
++         Container inv = it.next();
++         if(inv instanceof Inventory) {
++            playerInv = (Inventory) inv;
++            it.remove();
++            break;
++         }
++      }
++      if(playerInv == null) {
++         return null;
++      }
++      CraftPlayer bukkitPlayer = (CraftPlayer) playerInv.f_35978_.getBukkitEntity();
++      org.bukkit.inventory.Inventory craftInv;
++      if(inventories.size() != 1) {
++         craftInv = Bukkit.getServer().createInventory(bukkitPlayer, InventoryType.CHEST);
++      } else {
++         craftInv = new CraftInventory(inventories.get(0));
++      }
++      return new CraftInventoryView(bukkitPlayer, craftInv, this);
++   }
++
 +   // Mohist end
 +   public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
@@ -146,10 +191,10 @@
 +               }
 +
 +               // CraftBukkit start - InventoryDragEvent
-+               InventoryView view = getBukkitView();
++               InventoryView view = this.getBukkitView();
 +               org.bukkit.inventory.ItemStack newcursor = CraftItemStack.asCraftMirror(itemstack3);
 +               newcursor.setAmount(j1);
-+               Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
++               Map<Integer, org.bukkit.inventory.ItemStack> eventmap = new HashMap<>();
 +               for (Map.Entry<Integer, ItemStack> ditem : draggedSlots.entrySet()) {
 +                  eventmap.put(ditem.getKey(), CraftItemStack.asBukkitCopy(ditem.getValue()));
 +               }
