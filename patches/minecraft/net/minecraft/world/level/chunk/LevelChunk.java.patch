@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
+@@ -6,6 +_,8 @@
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Consumer;
+ import java.util.function.Supplier;
+ import java.util.stream.Stream;
 @@ -46,9 +_,11 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
@@ -52,27 +61,22 @@
     }
  
     public TickContainerAccess<Block> m_183531_() {
-@@ -209,8 +_,14 @@
+@@ -209,6 +_,9 @@
        }
     }
  
++   private AtomicBoolean mohist$doPlace = new AtomicBoolean(true);
++
 +   // CraftBukkit start
     @Nullable
     public BlockState m_6978_(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
-+      return this.setBlockState(p_62865_, p_62866_, p_62867_, true);
-+   }
-+
-+   @Nullable
-+   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
        int i = p_62865_.m_123342_();
-       LevelChunkSection levelchunksection = this.m_183278_(this.m_151564_(i));
-       boolean flag = levelchunksection.m_188008_();
 @@ -237,14 +_,15 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {
                 blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
 -            } else if (!blockstate.m_60713_(block) && flag2) {
-+         } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
++            } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
                 this.m_8114_(p_62865_);
              }
  
@@ -80,15 +84,34 @@
                 return null;
              } else {
 -               if (!this.f_62776_.f_46443_) {
-+             // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+               if (!this.f_62776_.f_46443_ && doPlace && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
++               // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
++               if (!this.f_62776_.f_46443_ && mohist$doPlace.get() && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
                    p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
                 }
  
-@@ -287,6 +_,10 @@
+@@ -268,6 +_,16 @@
+       }
+    }
+ 
++   @Nullable
++   public BlockState setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, boolean doPlace) {
++      mohist$doPlace.set(doPlace);
++      try {
++         return m_6978_(p_62865_, p_62866_, p_62867_);
++      } finally {
++         mohist$doPlace.set(true);
++      }
++   }
++
+    /** @deprecated */
+    @Deprecated
+    public void m_6286_(Entity p_62826_) {
+@@ -286,7 +_,11 @@
+ 
     @Nullable
     public BlockEntity m_5685_(BlockPos p_62868_, LevelChunk.EntityCreationType p_62869_) {
-       BlockEntity blockentity = this.f_187610_.get(p_62868_);
+-      BlockEntity blockentity = this.f_187610_.get(p_62868_);
++      BlockEntity blockentity = (BlockEntity) this.f_187610_.get(p_62868_);
 +      if (blockentity != null && blockentity.m_58901_()) {
 +         f_187610_.remove(p_62868_);
 +         blockentity = null;
@@ -129,6 +152,93 @@
        } else {
           CompoundTag compoundtag = this.f_187609_.get(p_62932_);
           if (compoundtag != null) {
+@@ -378,6 +_,12 @@
+    public void m_8114_(BlockPos p_62919_) {
+       if (this.m_156370_()) {
+          BlockEntity blockentity = this.f_187610_.remove(p_62919_);
++
++         // CraftBukkit start - SPIGOT-5561: Also remove from pending map
++         if (!f_187609_.isEmpty()) {
++            f_187609_.remove(p_62919_);
++         }
++         // CraftBukkit end
+          if (blockentity != null) {
+             Level level = this.f_62776_;
+             if (level instanceof ServerLevel) {
+@@ -386,6 +_,12 @@
+             }
+ 
+             blockentity.m_7651_();
++         }else {
++            System.out.println("Attempted to place a tile entity (" + blockentity + ") at " + blockentity.m_58899_().m_123341_() + "," + blockentity.m_58899_().m_123342_() + "," + blockentity.m_58899_().m_123343_()
++                    + " (" + m_8055_(p_62919_) + ") where there was no entity tile!");
++            System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
++            new Exception().printStackTrace();
++            // CraftBukkit end
+          }
+       }
+ 
+@@ -424,6 +_,60 @@
+ 
+    }
+ 
++   // CraftBukkit start
++   public void loadCallback() {
++      org.bukkit.Server server = this.f_62776_.getCraftServer();
++      if (server != null) {
++         /*
++          * If it's a new world, the first few chunks are generated inside
++          * the World constructor. We can't reliably alter that, so we have
++          * no way of creating a CraftWorld/CraftServer at that point.
++          */
++         org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_19_R3.CraftChunk(this);
++         server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(bukkitChunk, this.needsDecoration));
++
++         if (this.needsDecoration) {
++            this.needsDecoration = false;
++            java.util.Random random = new java.util.Random();
++            if (f_62776_ instanceof ServerLevel serverLevel) {
++               random.setSeed(serverLevel.m_7328_());
++               long xRand = random.nextLong() / 2L * 2L + 1L;
++               long zRand = random.nextLong() / 2L * 2L + 1L;
++               random.setSeed((long) this.f_187604_.f_45578_ * xRand + (long) this.f_187604_.f_45579_ * zRand ^ serverLevel.m_7328_());
++
++               org.bukkit.World world = this.f_62776_.getWorld();
++               if (world != null) {
++                  this.f_62776_.populating = true;
++                  try {
++                     for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
++                        populator.populate(world, random, bukkitChunk);
++                     }
++                  } finally {
++                     this.f_62776_.populating = false;
++                  }
++               }
++               server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
++            }
++         }
++      }
++   }
++
++   public void unloadCallback() {
++      org.bukkit.Server server = this.f_62776_.getCraftServer();
++      org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_19_R3.CraftChunk(this);
++      org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(bukkitChunk, this.m_6344_());
++      server.getPluginManager().callEvent(unloadEvent);
++      // note: saving can be prevented, but not forced if no saving is actually required
++      this.mustNotSave = !unloadEvent.isSaveChunk();
++   }
++
++   @Override
++   public boolean m_6344_() {
++      return super.m_6344_() && !this.mustNotSave;
++   }
++   // CraftBukkit end
++
++
+    public boolean m_6430_() {
+       return false;
+    }
 @@ -445,7 +_,7 @@
        p_187974_.accept((p_187968_, p_187969_, p_187970_) -> {
           BlockEntity blockentity = this.m_5685_(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);

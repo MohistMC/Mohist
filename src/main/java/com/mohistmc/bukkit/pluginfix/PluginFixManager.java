@@ -23,6 +23,9 @@ public class PluginFixManager {
         if (className.equals("com.earth2me.essentials.utils.VersionUtil")) {
             return helloWorld(clazz, "net.minecraftforge.common.MinecraftForge", "hello.World");
         }
+        if (className.endsWith("net.ess3.nms.refl.providers.ReflServerStateProvider")) {
+            return helloWorld(clazz, "u", "m_129798_");
+        }
         if (className.equals("com.sk89q.worldedit.bukkit.adapter.Refraction")) {
             return helloWorld(clazz, "net.minecraft.nbt.ListTag", "hello.World");
         }

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -17,6 +_,7 @@
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
 @@ -74,12 +_,15 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -17,10 +25,18 @@
  
     public ChunkGenerator(BiomeSource p_256133_) {
        this(p_256133_, (p_223234_) -> {
-@@ -363,6 +_,42 @@
-             throw new ReportedException(crashreport);
-          }
+@@ -265,6 +_,31 @@
        }
+    }
+ 
++   public void addVanillaDecorations(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) { // CraftBukkit
++      this.m_213609_(p_223087_, p_223088_, p_223089_);
++   }
++
++   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_, boolean vanilla) {
++      if (vanilla) {
++         this.addVanillaDecorations(p_223087_, p_223088_, p_223089_);
++      }
 +      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
@@ -38,10 +54,13 @@
 +      // CraftBukkit end
 +   }
 +
-+   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_, final boolean vanilla) {
-+      if (vanilla) {
-+         this.m_213609_(p_223087_, p_223088_, p_223089_);
-+      }
+    public void m_213609_(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
+       ChunkPos chunkpos = p_223088_.m_7697_();
+       if (!SharedConstants.m_183707_(chunkpos)) {
+@@ -363,6 +_,21 @@
+             throw new ReportedException(crashreport);
+          }
+       }
 +      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
