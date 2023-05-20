@@ -86,7 +86,7 @@
 +      } else if (worldgentreeabstract == TreeFeatures.f_271469_ || worldgentreeabstract == TreeFeatures.f_271485_) {
 +         SaplingBlock.treeType = TreeType.CHERRY;
 +      } else {
-+         throw new IllegalArgumentException("Unknown tree generator " + worldgentreeabstract);
++         SaplingBlock.treeType = TreeType.CUSTOM; // Mohist - handle mod tree generator
 +      }
 +   }
 +   // CraftBukkit end

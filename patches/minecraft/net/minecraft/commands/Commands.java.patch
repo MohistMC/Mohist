@@ -9,7 +9,7 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -13,6 +_,8 @@
+@@ -13,9 +_,12 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
@@ -18,6 +18,10 @@
  import java.util.Map;
  import java.util.Optional;
  import java.util.Set;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import java.util.function.UnaryOperator;
+ import java.util.stream.Collectors;
 @@ -117,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
@@ -61,7 +65,7 @@
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
        });
-@@ -228,12 +_,59 @@
+@@ -228,12 +_,63 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -105,6 +109,7 @@
     public int m_230957_(CommandSourceStack p_230958_, String p_230959_) {
 -      p_230959_ = p_230959_.startsWith("/") ? p_230959_.substring(1) : p_230959_;
 -      return this.m_242674_(this.f_82090_.parse(p_230959_, p_230958_), p_230959_);
+-   }
 +      // CraftBukkit start
 +      return this.performPrefixedCommand(p_230958_, p_230959_, p_230959_);
 +   }
@@ -113,13 +118,17 @@
 +      s = s.startsWith("/") ? s.substring(1) : s;
 +      return this.performCommand(this.f_82090_.parse(s, commandlistenerwrapper), s, label);
 +      // CraftBukkit end
-    }
- 
-    public int m_242674_(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
-+      return this.performCommand(p_242844_, p_242841_, p_242841_);
 +   }
 +
-+   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++   // Mohist start - add field to compat with mods
++   private AtomicReference<String> mohist$label = new AtomicReference<>();
++
+ 
+    public int m_242674_(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
++      var label = mohist$label.get();
++      label = label == null ? "/" + p_242841_ : label;
++      String finalLabel = label;
++      // Mohist end
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
           return "/" + p_242841_;
@@ -146,13 +155,19 @@
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
 -                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + p_242841_));
-+                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
++                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, finalLabel));
                 });
                 if (j > 10) {
                    mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -294,15 +_,45 @@
+@@ -293,16 +_,51 @@
+       }
     }
  
++   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++      mohist$label.set(label);
++      return this.m_242674_(p_242844_, p_242841_);
++   }
++
     public void m_82095_(ServerPlayer p_82096_) {
 -      Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
 +      if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) return; // Spigot
