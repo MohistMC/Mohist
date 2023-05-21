@@ -1,7 +1,27 @@
 --- a/net/minecraft/entity/boss/dragon/phase/PhaseType.java
 +++ b/net/minecraft/entity/boss/dragon/phase/PhaseType.java
-@@ -62,4 +_,14 @@
+@@ -2,7 +_,12 @@
+ 
+ import java.lang.reflect.Constructor;
+ import java.util.Arrays;
++
++import com.mohistmc.MohistMC;
++import com.mohistmc.api.ServerAPI;
++import com.mohistmc.util.MohistEnumHelper;
+ import net.minecraft.entity.boss.dragon.EnderDragonEntity;
++import org.bukkit.entity.EnderDragon;
+ 
+ public class PhaseType<T extends IPhase> {
+    private static PhaseType<?>[] field_188752_l = new PhaseType[0];
+@@ -60,6 +_,21 @@
+       PhaseType<T> phasetype = new PhaseType<>(field_188752_l.length, p_188735_0_, p_188735_1_);
+       field_188752_l = Arrays.copyOf(field_188752_l, field_188752_l.length + 1);
        field_188752_l[phasetype.func_188740_b()] = phasetype;
++      if (phasetype.func_188740_b() > 10) {
++         EnderDragon.Phase bukkit = MohistEnumHelper.addEnum0(EnderDragon.Phase.class, phasetype.getName(), new Class[0]);
++         ServerAPI.phasetypeMap.put(phasetype.func_188740_b(), bukkit);
++         MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
++      }
        return phasetype;
     }
 +

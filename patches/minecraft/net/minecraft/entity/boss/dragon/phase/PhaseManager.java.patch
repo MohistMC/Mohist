@@ -12,13 +12,12 @@
  
  public class PhaseManager {
     private static final Logger field_188759_a = LogManager.getLogger();
-@@ -21,12 +_,22 @@
+@@ -21,12 +_,21 @@
              this.field_188762_d.func_188658_e();
           }
  
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
-+         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent((CraftEnderDragon) this.field_188760_b.getBukkitEntity(),
-+             (this.field_188762_d == null) ? null : CraftEnderDragon.getBukkitPhase(this.field_188762_d.func_188652_i()), CraftEnderDragon.getBukkitPhase(p_188758_1_));
++         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent((CraftEnderDragon) this.field_188760_b.getBukkitEntity(),  (this.field_188762_d == null) ? null : CraftEnderDragon.getBukkitPhase(this.field_188762_d.func_188652_i()), CraftEnderDragon.getBukkitPhase(p_188758_1_));
 +         this.field_188760_b.field_70170_p.getCBServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;

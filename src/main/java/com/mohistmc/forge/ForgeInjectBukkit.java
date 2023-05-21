@@ -98,7 +98,6 @@ public class ForgeInjectBukkit {
         addEnumAttribute();
         addEnumArt();
         addEnumParticle();
-        addPhaseType();
     }
 
 
@@ -304,16 +303,6 @@ public class ForgeInjectBukkit {
                 BY_ID.put(id, art);
                 MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
                 i++;
-            }
-        }
-    }
-
-    public static void addPhaseType() {
-        for (PhaseType phaseTypes : PhaseType.getPhases()) {
-            if (phaseTypes.getId() > 10) {
-                EnderDragon.Phase bukkit = MohistEnumHelper.addEnum0( EnderDragon.Phase.class, phaseTypes.getName(), new Class[0]);
-                ServerAPI.phasetypeMap.put(phaseTypes.getId(), bukkit);
-                MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
             }
         }
     }
