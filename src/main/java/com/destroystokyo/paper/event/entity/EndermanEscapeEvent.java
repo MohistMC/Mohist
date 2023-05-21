@@ -42,7 +42,7 @@ public class EndermanEscapeEvent extends EntityEvent implements Cancellable {
 
     /**
      * Cancels the escape.
-     *
+     * <p>
      * If this escape normally would of resulted in damage avoidance such as indirect,
      * the enderman will now take damage.
      *

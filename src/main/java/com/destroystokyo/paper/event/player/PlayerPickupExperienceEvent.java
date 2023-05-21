@@ -64,6 +64,7 @@ public class PlayerPickupExperienceEvent extends PlayerEvent implements Cancella
 
     /**
      * If true, Cancels picking up the experience orb, leaving it in the world
+     *
      * @param cancel true if you wish to cancel this event
      */
     @Override

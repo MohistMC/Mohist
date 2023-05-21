@@ -1,7 +1,8 @@
 package com.destroystokyo.paper.exception;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import org.bukkit.scheduler.BukkitTask;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Thrown when a plugin's scheduler fails with an exception

@@ -12,7 +12,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -15,23 +17,32 @@
+@@ -15,12 +17,15 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
@@ -29,11 +29,8 @@
      public boolean field_186210_e;
      public boolean field_191096_f;
      public byte field_76197_d;
-     public byte[] field_76198_e = new byte[16384];
--    public List<MapData.MapInfo> field_76196_g = Lists.<MapData.MapInfo>newArrayList();
--    private final Map<EntityPlayer, MapData.MapInfo> field_76202_j = Maps.<EntityPlayer, MapData.MapInfo>newHashMap();
-+    public List<MapInfo> field_76196_g = Lists.<MapInfo>newArrayList();
-+    private final Map<EntityPlayer, MapInfo> field_76202_j = Maps.<EntityPlayer, MapInfo>newHashMap();
+@@ -29,9 +34,15 @@
+     private final Map<EntityPlayer, MapData.MapInfo> field_76202_j = Maps.<EntityPlayer, MapData.MapInfo>newHashMap();
      public Map<String, MapDecoration> field_76203_h = Maps.<String, MapDecoration>newLinkedHashMap();
  
 +    public final CraftMapView mapView;

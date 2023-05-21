@@ -511,7 +511,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 int realId = add(id, entry.getValue());
                 if (id != realId && id != -1)
                 {
-                    FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
+                    FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
                     errored = true;
                 }
             }
@@ -523,14 +523,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     OverrideOwner owner = from.owners.inverse().get(value);
                     if (owner == null)
                     {
-                        FMLLog.log.warn("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
+                        FMLLog.log.debug("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
                         errored = true;
                         continue;
                     }
                     int realId = add(id, value, owner.owner);
                     if (id != realId && id != -1)
                     {
-                        FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
+                        FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
                         errored = true;
                     }
                 }
@@ -644,7 +644,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             if (currId == -1)
             {
-                FMLLog.log.info("Registry {}: Found a missing id from the world {}", this.superType.getSimpleName(), itemName);
+                FMLLog.log.debug("Registry {}: Found a missing id from the world {}", this.superType.getSimpleName(), itemName);
                 missing.put(itemName, newId);
                 continue; // no block/item -> nothing to add
             }
@@ -676,7 +676,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 OverrideOwner owner = old.owners.inverse().get(value);
                 if (owner == null)
                 {
-                    FMLLog.log.warn("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
+                    FMLLog.log.debug("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
                     continue;
                 }
 
@@ -685,12 +685,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
                 int realId = add(newId, value, owner.owner);
                 if (newId != realId)
-                    FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
+                    FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             }
 
             int realId = add(newId, obj, primaryName == null ? itemName.getResourceDomain() : primaryName);
             if (realId != newId)
-                FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
+                FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             ovs.remove(itemName);
         }
 
@@ -704,16 +704,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 V _new = this.owners.get(new OverrideOwner(owner, itemName));
                 if (_new == null)
                 {
-                    FMLLog.log.warn("Registry {}: Skipping override for {}, Unknown owner {}", this.superType.getSimpleName(), itemName, owner);
+                    FMLLog.log.debug("Registry {}: Skipping override for {}, Unknown owner {}", this.superType.getSimpleName(), itemName, owner);
                     continue;
                 }
 
-                FMLLog.log.info("Registry {}: Activating override {} for {}", this.superType.getSimpleName(), owner, itemName);
+                FMLLog.log.debug("Registry {}: Activating override {} for {}", this.superType.getSimpleName(), owner, itemName);
 
                 int newId = this.getID(itemName);
                 int realId = this.add(newId, _new, owner);
                 if (newId != realId)
-                    FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
+                    FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             }
         }
     }
@@ -750,7 +750,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         int realId = this.add(id, dummy);
         if (realId != id)
-            FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), key, id, realId);
+            FMLLog.log.debug("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), key, id, realId);
         this.dummies.add(key);
 
         return true;
@@ -924,7 +924,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
                 int realId = this.add(remap.id, remap.getTarget());
                 if (realId != remap.id)
-                    FMLLog.log.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
+                    FMLLog.log.debug("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
                 this.addAlias(remap.key, newName);
 
 
@@ -957,7 +957,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 }
                 else if (action == MissingMappings.Action.WARN)
                 {
-                    FMLLog.log.warn("  {} may cause world breakage!", remap.key);
+                    FMLLog.log.debug("  {} may cause world breakage!", remap.key);
                 }
                 this.block(remap.id);
             }

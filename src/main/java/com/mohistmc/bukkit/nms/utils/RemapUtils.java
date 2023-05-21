@@ -1,7 +1,14 @@
 package com.mohistmc.bukkit.nms.utils;
 
 import com.mohistmc.bukkit.nms.model.ClassMapping;
-import com.mohistmc.bukkit.nms.remappers.*;
+import com.mohistmc.bukkit.nms.remappers.ClassRemapperSupplier;
+import com.mohistmc.bukkit.nms.remappers.MohistInheritanceMap;
+import com.mohistmc.bukkit.nms.remappers.MohistInheritanceProvider;
+import com.mohistmc.bukkit.nms.remappers.MohistJarMapping;
+import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
+import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
+import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
+import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;

@@ -21,13 +21,14 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class TypeAdapters$EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
-    private final Map<String, T> nameToConstant = new HashMap<String, T>();
-    private final Map<T, String> constantToName = new HashMap<T, String>();
+    private final Map<String, T> nameToConstant = new HashMap<>();
+    private final Map<T, String> constantToName = new HashMap<>();
 
     public TypeAdapters$EnumTypeAdapter(Class<T> classOfT) {
         try {

@@ -37,6 +37,7 @@ public class WitchConsumePotionEvent extends EntityEvent implements Cancellable 
 
     /**
      * Sets the potion to be consumed and applied to the witch.
+     *
      * @param potion The potion
      */
     public void setPotion(ItemStack potion) {

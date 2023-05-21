@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityEvent;
 
 /**
  * Fired when an Entity decides to start moving towards a location.
- *
+ * <p>
  * This event does not fire for the entities actual movement. Only when it
  * is choosing to start moving to a location.
  */
@@ -30,6 +30,7 @@ public class EntityPathfindEvent extends EntityEvent implements Cancellable {
 
     /**
      * The Entity that is pathfinding.
+     *
      * @return The Entity that is pathfinding.
      */
     public Entity getEntity() {
@@ -38,7 +39,7 @@ public class EntityPathfindEvent extends EntityEvent implements Cancellable {
 
     /**
      * If the Entity is trying to pathfind to an entity, this is the entity in relation.
-     *
+     * <p>
      * Otherwise this will return null.
      *
      * @return The entity target or null
@@ -49,8 +50,9 @@ public class EntityPathfindEvent extends EntityEvent implements Cancellable {
 
     /**
      * The Location of where the entity is about to move to.
-     *
+     * <p>
      * Note that if the target happened to of been an entity
+     *
      * @return Location of where the entity is trying to pathfind to.
      */
     public Location getLoc() {

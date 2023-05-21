@@ -16,7 +16,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.mohistmc.configuration.MohistConfigUtil.bMohist;
 import static com.mohistmc.network.download.NetworkUtil.getConn;

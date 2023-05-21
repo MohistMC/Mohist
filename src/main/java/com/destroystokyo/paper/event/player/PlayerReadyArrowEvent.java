@@ -76,6 +76,7 @@ public class PlayerReadyArrowEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Cancel use of this arrow. On cancel, the server will try the next arrow available and fire another event.
+     *
      * @param cancel true if you wish to cancel this event
      */
     @Override

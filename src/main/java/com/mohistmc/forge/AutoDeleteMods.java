@@ -21,6 +21,7 @@ public class AutoDeleteMods {
             "optifine.Differ" /*OptiFine*/,
             "guichaguri.betterfps.patches.misc.ServerPatch" /*BetterFps*/,
             "com.unnoen.unloader.UnloadHandler" /*Unloader*/,
+            "cf.terminator.laggoggles.Main" /*LagGoggles*/,
             "com.github.terminatornl.laggoggles.Main" /*LagGoggles*/));
 
     public static void jar() throws Exception {

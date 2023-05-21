@@ -23,8 +23,6 @@
 
 package com.destroystokyo.paper.event.server;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -33,9 +31,12 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Allows plugins to compute tab completion results asynchronously. If this event provides completions, then the standard synchronous process will not be fired to populate the results. However, the synchronous TabCompleteEvent will fire with the Async results.
- *
+ * <p>
  * Only 1 process will be allowed to provide completions, the Async Event, or the standard process.
  */
 public class AsyncTabCompleteEvent extends Event implements Cancellable {
@@ -74,7 +75,7 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
     /**
      * The list of completions which will be offered to the sender, in order.
      * This list is mutable and reflects what will be offered.
-     *
+     * <p>
      * If this collection is not empty after the event is fired, then
      * the standard process of calling {@link Command#tabComplete(CommandSender, String, String[])}
      * or current player names will not be called.
@@ -90,7 +91,7 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
      * If this collection is not empty after the event is fired, then
      * the standard process of calling {@link Command#tabComplete(CommandSender, String, String[])}
      * or current player names will not be called.
-     *
+     * <p>
      * The passed collection will be cloned to a new List. You must call {{@link #getCompletions()}} to mutate from here
      *
      * @param completions the new completions
@@ -151,6 +152,7 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
 
     /**
      * Will provide no completions, and will not fire the synchronous process
+     *
      * @param cancelled true if you wish to cancel this event
      */
     @Override

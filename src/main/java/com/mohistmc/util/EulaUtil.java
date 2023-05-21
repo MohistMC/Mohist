@@ -2,7 +2,10 @@ package com.mohistmc.util;
 
 import com.mohistmc.util.i18n.Message;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;

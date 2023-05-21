@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBeacon.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBeacon.java
-@@ -1,21 +1,25 @@
+@@ -1,19 +1,23 @@
  package net.minecraft.inventory;
  
  import net.minecraft.entity.player.EntityPlayer;
@@ -15,8 +15,7 @@
  public class ContainerBeacon extends Container
  {
      private final IInventory field_82866_e;
--    private final ContainerBeacon.BeaconSlot field_82864_f;
-+    private final BeaconSlot field_82864_f;
+     private final ContainerBeacon.BeaconSlot field_82864_f;
  
 +    private CraftInventoryView bukkitEntity = null;
 +    private InventoryPlayer player;
@@ -25,11 +24,8 @@
      {
 +        player = (InventoryPlayer) p_i45804_1_; // CraftBukkit - TODO: check this
          this.field_82866_e = p_i45804_2_;
--        this.field_82864_f = new ContainerBeacon.BeaconSlot(p_i45804_2_, 0, 136, 110);
-+        this.field_82864_f = new BeaconSlot(p_i45804_2_, 0, 136, 110);
+         this.field_82864_f = new ContainerBeacon.BeaconSlot(p_i45804_2_, 0, 136, 110);
          this.func_75146_a(this.field_82864_f);
-         int i = 36;
-         int j = 137;
 @@ -68,6 +72,7 @@
  
      public boolean func_75145_c(EntityPlayer p_75145_1_)

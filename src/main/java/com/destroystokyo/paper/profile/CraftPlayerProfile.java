@@ -1,21 +1,22 @@
 package com.destroystokyo.paper.profile;
 
 import com.google.common.base.Charsets;
+import com.mohistmc.configuration.MohistConfig;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerProfileCache;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import com.mohistmc.configuration.MohistConfig;
 
 public class CraftPlayerProfile implements PlayerProfile {
 
@@ -222,8 +223,7 @@ public class CraftPlayerProfile implements PlayerProfile {
                 if (result != null) {
                     this.profile = result;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 if (MohistConfig.instance.FailOnUnresolvedGameProfile.getValue()) {
                     e.printStackTrace();
                     throw e;

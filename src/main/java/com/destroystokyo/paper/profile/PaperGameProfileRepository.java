@@ -8,6 +8,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilGameProfileRepository;
+
 import java.util.Set;
 
 public class PaperGameProfileRepository extends YggdrasilGameProfileRepository {
