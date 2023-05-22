@@ -77,6 +77,20 @@
        this.f_199900_ = builder.build();
        f_44006_.info("Loaded {} recipes", (int)map.size());
     }
+@@ -73,9 +_,11 @@
+    }
+ 
+    public <C extends Container, T extends Recipe<C>> Optional<T> m_44015_(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
+-      return this.m_44054_(p_44016_).values().stream().filter((p_220266_) -> {
+-         return p_220266_.m_5818_(p_44017_, p_44018_);
++      Optional<T> optional = this.m_44054_(p_44016_).values().stream().filter((recipe) -> {
++         return recipe.m_5818_(p_44017_, p_44018_);
+       }).findFirst();
++      p_44017_.setCurrentRecipe(optional.orElse(null));
++      return optional;
+    }
+ 
+    public <C extends Container, T extends Recipe<C>> Optional<Pair<ResourceLocation, T>> m_220248_(RecipeType<T> p_220249_, C p_220250_, Level p_220251_, @Nullable ResourceLocation p_220252_) {
 @@ -141,11 +_,17 @@
        });
     }
@@ -96,7 +110,7 @@
     }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
-@@ -189,4 +_,50 @@
+@@ -189,4 +_,51 @@
     public interface CachedCheck<C extends Container, T extends Recipe<C>> {
        Optional<T> m_213657_(C p_220280_, Level p_220281_);
     }
@@ -132,6 +146,7 @@
 +         this.f_44007_.put(recipeType, Collections.emptyMap());
 +         this.recipesCB.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
 +      }
++      this.f_199900_ = new HashMap<>();
 +   }
 +
 +   public boolean removeRecipe(ResourceLocation mcKey) {
