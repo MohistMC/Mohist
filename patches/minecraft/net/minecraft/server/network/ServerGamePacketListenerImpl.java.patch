@@ -1,14 +1,15 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -5,6 +_,7 @@
+@@ -5,13 +_,16 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
 +import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
++import com.mysql.cj.util.StringUtils;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-@@ -12,6 +_,7 @@
+ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import java.net.SocketAddress;
  import java.time.Duration;
  import java.time.Instant;
@@ -1745,7 +1746,7 @@
     }
  
     public void m_5617_(ServerboundClientInformationPacket p_9845_) {
-@@ -1669,7 +_,42 @@
+@@ -1669,7 +_,48 @@
        this.f_9743_.m_9156_(p_9845_);
     }
  
@@ -1759,7 +1760,9 @@
 +         try {
 +            String channels = p_9860_.f_133981_.toString(com.google.common.base.Charsets.UTF_8);
 +            for (String channel : channels.split("\0")) {
-+               getCraftPlayer().addChannel(channel);
++               if (!StringUtils.isNullOrEmpty(channel)) {
++                  getCraftPlayer().addChannel(channel);
++               }
 +            }
 +         } catch (Exception ex) {
 +            f_9744_.error("Couldn\'t register custom payload", ex);
@@ -1769,7 +1772,9 @@
 +         try {
 +            String channels = p_9860_.f_133981_.toString(com.google.common.base.Charsets.UTF_8);
 +            for (String channel : channels.split("\0")) {
-+               getCraftPlayer().removeChannel(channel);
++               if (!StringUtils.isNullOrEmpty(channel)) {
++                  getCraftPlayer().removeChannel(channel);
++               }
 +            }
 +         } catch (Exception ex) {
 +            f_9744_.error("Couldn\'t unregister custom payload", ex);
@@ -1777,9 +1782,11 @@
 +         }
 +      } else {
 +         try {
-+            byte[] data = new byte[p_9860_.f_133981_.readableBytes()];
++            int readerIndex = p_9860_.f_133981_.readerIndex();
++            final byte[] data = new byte[p_9860_.f_133981_.readableBytes()];
 +            p_9860_.f_133981_.readBytes(data);
-+            cserver.getMessenger().dispatchIncomingMessage(f_9743_.getBukkitEntity(), p_9860_.f_133980_.toString(), data);
++            this.cserver.getMessenger().dispatchIncomingMessage(this.f_9743_.getBukkitEntity(), p_9860_.f_133980_.toString(), data);
++            p_9860_.f_133981_.readerIndex(readerIndex);
 +         } catch (Exception ex) {
 +            f_9744_.error("Couldn\'t dispatch custom payload", ex);
 +            this.disconnect("Invalid custom payload!");
