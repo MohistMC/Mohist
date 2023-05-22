@@ -9,14 +9,18 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -28,18 +_,36 @@
+@@ -28,18 +_,40 @@
  import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_19_R3.util.DummyGeneratorAccess;
++import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
++import org.spongepowered.asm.mixin.injection.At;
++
++import java.util.concurrent.atomic.AtomicReference;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
     private final Fluid f_40687_;
@@ -85,27 +89,57 @@
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
                       CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -98,7 +_,12 @@
+@@ -98,7 +_,24 @@
     public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
  
 +   @Deprecated //Forge: use the ItemStack sensitive version
     public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
-+      return this.emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null);
++      // CraftBukkit start
++      return this.emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null, null, null, InteractionHand.MAIN_HAND);
++   }
++
++   private AtomicReference<Direction> mohist$direction = new AtomicReference<>();
++   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>();
++   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>();
++
++   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, Direction enumdirection, BlockPos clicked, @Nullable ItemStack container, InteractionHand enumhand) {
++      mohist$direction.set(enumdirection);
++      mohist$clickedPos.set(clicked);
++      mohist$hand.set(enumhand);
++      return emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, container);
 +   }
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {
        if (!(this.f_40687_ instanceof FlowingFluid)) {
           return false;
        } else {
-@@ -107,8 +_,12 @@
+@@ -107,8 +_,30 @@
           Material material = blockstate.m_60767_();
           boolean flag = blockstate.m_60722_(this.f_40687_);
           boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
 +         java.util.Optional<net.minecraftforge.fluids.FluidStack> containedFluidStack = java.util.Optional.ofNullable(container).flatMap(net.minecraftforge.fluids.FluidUtil::getFluidContained);
++         // Mohist start - handle bukkit added field
++         Direction enumdirection = mohist$direction.get();
++         enumdirection = enumdirection == null ? p_150719_.m_82434_() : enumdirection;
++         BlockPos clicked = mohist$clickedPos.get();
++         clicked = clicked == null ? p_150719_.m_82425_() : clicked;
++         InteractionHand enumhand = mohist$hand.get();
++         enumhand = enumhand == null ? p_150716_.m_7655_() : enumhand;
++         // Mohist end
++         // CraftBukkit start
++         if (flag1 && p_150716_ != null) {
++            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerLevel) p_150717_, p_150716_, p_150718_, clicked, enumdirection, container, enumhand);
++            if (event.isCancelled()) {
++               ((ServerPlayer) p_150716_).f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
++               ((ServerPlayer) p_150716_).getBukkitEntity().updateInventory(); // SPIGOT-4541
++               return false;
++            }
++         }
++         // CraftBukkit end
           if (!flag1) {
 -            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null);
-+            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null, container);
++            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null, enumdirection, clicked, container, enumhand); // CraftBukkit
 +         } else if (containedFluidStack.isPresent() && this.f_40687_.getFluidType().isVaporizedOnPlacement(p_150717_, p_150718_, containedFluidStack.get())) {
 +            this.f_40687_.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
 +            return true;

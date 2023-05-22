@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/chunk/ChunkStatus.java
++++ b/net/minecraft/world/level/chunk/ChunkStatus.java
+@@ -45,7 +_,7 @@
+    });
+    public static final ChunkStatus f_62315_ = m_62406_("structure_starts", f_62314_, 0, f_62327_, ChunkStatus.ChunkType.PROTOCHUNK, (p_223361_, p_223362_, p_223363_, p_223364_, p_223365_, p_223366_, p_223367_, p_223368_, p_223369_, p_223370_) -> {
+       if (!p_223369_.m_6415_().m_62427_(p_223361_)) {
+-         if (p_223363_.m_7654_().m_129910_().m_246337_().m_247749_()) {
++         if (p_223363_.serverLevelDataCB.m_246337_().m_247749_()) {// CraftBukkit
+             p_223364_.m_255037_(p_223363_.m_9598_(), p_223363_.m_7726_().m_255415_(), p_223363_.m_215010_(), p_223369_, p_223365_);
+          }
+ 
