@@ -219,7 +219,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        return world.getChunkSource().hasChunk(x, z);
+        return world.getChunkSource().isChunkLoaded(x, z);
     }
 
     @Override

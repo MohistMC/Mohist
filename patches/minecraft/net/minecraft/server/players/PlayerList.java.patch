@@ -24,7 +24,7 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -102,6 +_,14 @@
+@@ -102,6 +_,15 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -35,6 +35,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 +import org.bukkit.event.player.PlayerJoinEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
 +import org.bukkit.event.player.PlayerRespawnEvent;
  import org.slf4j.Logger;
  
@@ -222,14 +223,64 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
-@@ -331,6 +_,7 @@
+@@ -330,9 +_,25 @@
+ 
     }
  
-    public void m_11286_(ServerPlayer p_11287_) {
+-   public void m_11286_(ServerPlayer p_11287_) {
++   public String remove(ServerPlayer p_11287_) { // CraftBukkit - return string
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
++
++      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
++      // See SPIGOT-5799, SPIGOT-6145
++      if (p_11287_.f_36096_ != p_11287_.f_36095_) {
++         p_11287_.m_6915_();
++      }
++
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(p_11287_.getBukkitEntity(), p_11287_.kickLeaveMessage != null ? p_11287_.kickLeaveMessage : "\u00A7e" + p_11287_.m_6302_() + " left the game");
++      cserver.getPluginManager().callEvent(playerQuitEvent);
++      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
++
++      p_11287_.m_9240_(); // SPIGOT-924
++      // CraftBukkit end
++
++
        this.m_6765_(p_11287_);
+       if (p_11287_.m_20159_()) {
+          Entity entity = p_11287_.m_20201_();
+@@ -354,11 +_,25 @@
+       ServerPlayer serverplayer = this.f_11197_.get(uuid);
+       if (serverplayer == p_11287_) {
+          this.f_11197_.remove(uuid);
+-         this.f_11202_.remove(uuid);
+-         this.f_11203_.remove(uuid);
+-      }
+-
+-      this.m_11268_(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_())));
++      }
++
++      // CraftBukkit start
++      // this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entityplayer.getUUID())));
++      ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_()));
++      for (int i = 0; i < f_11196_.size(); i++) {
++         ServerPlayer entityplayer2 = (ServerPlayer) this.f_11196_.get(i);
++
++         if (entityplayer2.getBukkitEntity().canSee(p_11287_.getBukkitEntity())) {
++            entityplayer2.f_8906_.m_9829_(packet);
++         } else {
++            entityplayer2.getBukkitEntity().onEntityRemove(p_11287_);
++         }
++      }
++      // This removes the scoreboard (and player reference) for the specific player in the manager
++      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
++      // CraftBukkit end
++
++      return playerQuitEvent.getQuitMessage(); // CraftBukkit
+    }
+ 
+    @Nullable
 @@ -409,7 +_,18 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
@@ -266,6 +317,32 @@
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
+@@ -500,6 +_,25 @@
+ 
+    }
+ 
++   // CraftBukkit start - add a world/entity limited version
++   public void broadcastAll(Packet packet, Player entityhuman) {
++      for (int i = 0; i < this.f_11196_.size(); ++i) {
++         ServerPlayer entityplayer =  this.f_11196_.get(i);
++         if (entityhuman != null && !entityplayer.getBukkitEntity().canSee(entityhuman.getBukkitEntity())) {
++            continue;
++         }
++         ((ServerPlayer) this.f_11196_.get(i)).f_8906_.m_9829_(packet);
++      }
++   }
++
++   public void broadcastAll(Packet packet, Level world) {
++      for (int i = 0; i < world.m_6907_().size(); ++i) {
++         ((ServerPlayer) world.m_6907_().get(i)).f_8906_.m_9829_(packet);
++      }
++
++   }
++   // CraftBukkit end
++
+    public void m_11270_(Packet<?> p_11271_, ResourceKey<Level> p_11272_) {
+       for(ServerPlayer serverplayer : this.f_11196_) {
+          if (serverplayer.f_19853_.m_46472_() == p_11272_) {
 @@ -556,6 +_,7 @@
     }
  
@@ -282,6 +359,33 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
+@@ -719,11 +_,21 @@
+    }
+ 
+    public void m_11313_() {
+-      for(int i = 0; i < this.f_11196_.size(); ++i) {
+-         (this.f_11196_.get(i)).f_8906_.m_9942_(Component.m_237115_("multiplayer.disconnect.server_shutdown"));
+-      }
+-
+-   }
++      // CraftBukkit start - disconnect safely
++      for (ServerPlayer player : this.f_11196_) {
++         player.f_8906_.disconnect(this.f_11195_.server.getShutdownMessage()); // CraftBukkit - add custom shutdown message
++      }
++      // CraftBukkit end
++
++   }
++
++   // CraftBukkit start
++   public void broadcastMessage(Component[] iChatBaseComponents) {
++      for (Component component : iChatBaseComponents) {
++         m_240416_(component, false);
++      }
++   }
++   // CraftBukkit end
+ 
+    public void m_240416_(Component p_240618_, boolean p_240644_) {
+       this.m_240502_(p_240618_, (p_215639_) -> {
 @@ -770,7 +_,7 @@
     }
  

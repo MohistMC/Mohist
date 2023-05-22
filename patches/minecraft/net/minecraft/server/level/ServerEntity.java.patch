@@ -8,26 +8,75 @@
  import java.util.ArrayList;
  import java.util.Collection;
  import java.util.Collections;
-@@ -96,10 +_,9 @@
+@@ -27,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+ import net.minecraft.network.protocol.game.VecDeltaCodec;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.server.network.ServerPlayerConnection;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.entity.Entity;
+@@ -40,6 +_,8 @@
+ import net.minecraft.world.item.MapItem;
+ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerVelocityEvent;
+ import org.slf4j.Logger;
+ 
+ public class ServerEntity {
+@@ -62,8 +_,12 @@
+    private boolean f_8525_;
+    @Nullable
+    private List<SynchedEntityData.DataValue<?>> f_263120_;
++   // CraftBukkit start
++   private final Set<ServerPlayerConnection> trackedPlayers;
+ 
+-   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_) {
++   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_, Set<ServerPlayerConnection> trackedPlayers) {
++      this.trackedPlayers = trackedPlayers;
++      // CraftBukkit end
+       this.f_8509_ = p_8528_;
+       this.f_8513_ = p_8532_;
+       this.f_8510_ = p_8529_;
+@@ -80,7 +_,7 @@
+    public void m_8533_() {
+       List<Entity> list = this.f_8510_.m_20197_();
+       if (!list.equals(this.f_8523_)) {
+-         this.f_8513_.accept(new ClientboundSetPassengersPacket(this.f_8510_));
++         this.m_8538_(new ClientboundSetPassengersPacket(this.f_8510_)); // CraftBukkit
+          this.m_274465_(list, this.f_8523_).forEach((p_275907_) -> {
+             if (p_275907_ instanceof ServerPlayer serverplayer1) {
+                if (!list.contains(serverplayer1)) {
+@@ -94,18 +_,16 @@
+ 
+       Entity $$11 = this.f_8510_;
        if ($$11 instanceof ItemFrame itemframe) {
-          if (this.f_8521_ % 10 == 0) {
+-         if (this.f_8521_ % 10 == 0) {
++         if (true || this.f_8521_ % 10 == 0) { // CraftBukkit - Moved below, should always enter this block
              ItemStack itemstack = itemframe.m_31822_();
 -            if (itemstack.m_41720_() instanceof MapItem) {
 -               Integer integer = MapItem.m_151131_(itemstack);
 -               MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
 -               if (mapitemsaveddata != null) {
-+         Integer integer = MapItem.m_151131_(itemstack);
-+         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
-+         if (mapitemsaveddata != null) {
-                   for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
-                      mapitemsaveddata.m_77918_(serverplayer, itemstack);
-                      Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
-@@ -108,11 +_,12 @@
-                      }
+-                  for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
+-                     mapitemsaveddata.m_77918_(serverplayer, itemstack);
+-                     Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
+-                     if (packet != null) {
+-                        serverplayer.f_8906_.m_9829_(packet);
+-                     }
++            Integer integer = MapItem.m_151131_(itemstack);
++            MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
++            if (this.f_8521_ % 10 == 0 && mapitemsaveddata != null) {
++               for (ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
++                  mapitemsaveddata.m_77918_(serverplayer, itemstack);
++                  Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
++                  if (packet != null) {
++                     serverplayer.f_8906_.m_9829_(packet);
                    }
                 }
--            }
- 
+             }
+@@ -113,6 +_,8 @@
              this.m_8543_();
           }
        }
@@ -36,7 +85,36 @@
  
        if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
           if (this.f_8510_.m_20159_()) {
-@@ -221,6 +_,7 @@
+@@ -204,7 +_,27 @@
+ 
+       ++this.f_8521_;
+       if (this.f_8510_.f_19864_) {
+-         this.m_8538_(new ClientboundSetEntityMotionPacket(this.f_8510_));
++         // CraftBukkit start - Create PlayerVelocity event
++         boolean cancelled = false;
++
++         if (this.f_8510_ instanceof ServerPlayer) {
++            Player player = (Player) this.f_8510_.getBukkitEntity();
++            org.bukkit.util.Vector velocity = player.getVelocity();
++
++            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
++            this.f_8510_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++               cancelled = true;
++            } else if (!velocity.equals(event.getVelocity())) {
++               player.setVelocity(event.getVelocity());
++            }
++         }
++
++         if (!cancelled) {
++            this.m_8538_(new ClientboundSetEntityMotionPacket(this.f_8510_));
++         }
++         // CraftBukkit end
+          this.f_8510_.f_19864_ = false;
+       }
+ 
+@@ -221,18 +_,20 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
        p_8535_.f_8906_.m_9829_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
@@ -44,11 +122,57 @@
     }
  
     public void m_8541_(ServerPlayer p_8542_) {
-@@ -228,6 +_,7 @@
-       this.m_8536_(list::add);
+       List<Packet<ClientGamePacketListener>> list = new ArrayList<>();
+-      this.m_8536_(list::add);
++      this.sendPairingData(list::add, p_8542_); // CraftBukkit - add player
        p_8542_.f_8906_.m_9829_(new ClientboundBundlePacket(list));
        this.f_8510_.m_6457_(p_8542_);
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
     }
  
-    public void m_8536_(Consumer<Packet<ClientGamePacketListener>> p_8537_) {
+-   public void m_8536_(Consumer<Packet<ClientGamePacketListener>> p_8537_) {
++   public void sendPairingData(Consumer<Packet<ClientGamePacketListener>> p_8537_, ServerPlayer entityplayer) { // CraftBukkit - add player
+       if (this.f_8510_.m_213877_()) {
+-         f_8508_.warn("Fetching packet for removed entity {}", (Object)this.f_8510_);
++         return;
+       }
+ 
+       Packet<ClientGamePacketListener> packet = this.f_8510_.m_5654_();
+@@ -245,6 +_,11 @@
+       boolean flag = this.f_8512_;
+       if (this.f_8510_ instanceof LivingEntity) {
+          Collection<AttributeInstance> collection = ((LivingEntity)this.f_8510_).m_21204_().m_22170_();
++         // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
++         if (this.f_8510_.m_19879_() == entityplayer.m_19879_()) {
++            ((ServerPlayer) this.f_8510_).getBukkitEntity().injectScaledMaxHealth(collection, false);
++         }
++         // CraftBukkit end
+          if (!collection.isEmpty()) {
+             p_8537_.accept(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), collection));
+          }
+@@ -272,7 +_,13 @@
+          if (!list.isEmpty()) {
+             p_8537_.accept(new ClientboundSetEquipmentPacket(this.f_8510_.m_19879_(), list));
+          }
++         ((LivingEntity) this.f_8510_).m_21315_(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
+       }
++
++      // CraftBukkit start - Fix for nonsensical head yaw
++      this.f_8519_ = Mth.m_14143_(this.f_8510_.m_6080_() * 256.0F / 360.0F);
++      p_8537_.accept(new ClientboundRotateHeadPacket(this.f_8510_, (byte) f_8519_));
++      // CraftBukkit end
+ 
+       if (this.f_8510_ instanceof LivingEntity) {
+          LivingEntity livingentity = (LivingEntity)this.f_8510_;
+@@ -310,6 +_,11 @@
+       if (this.f_8510_ instanceof LivingEntity) {
+          Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();
+          if (!set.isEmpty()) {
++            // CraftBukkit start - Send scaled max health
++            if (this.f_8510_ instanceof ServerPlayer) {
++               ((ServerPlayer) this.f_8510_).getBukkitEntity().injectScaledMaxHealth(set, false);
++            }
++            // CraftBukkit end
+             this.m_8538_(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), set));
+          }
+ 

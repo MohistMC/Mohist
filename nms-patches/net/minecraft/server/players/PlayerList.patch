@@ -263,62 +263,7 @@
          if (advancementdataplayer != null) {
              advancementdataplayer.save();
 @@ -390,10 +489,24 @@
- 
-     }
- 
--    public void remove(EntityPlayer entityplayer) {
-+    public String remove(EntityPlayer entityplayer) { // CraftBukkit - return string
-         WorldServer worldserver = entityplayer.getLevel();
- 
-         entityplayer.awardStat(StatisticList.LEAVE_GAME);
-+
-+        // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
-+        // See SPIGOT-5799, SPIGOT-6145
-+        if (entityplayer.containerMenu != entityplayer.inventoryMenu) {
-+            entityplayer.closeContainer();
-+        }
-+
-+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(entityplayer.getBukkitEntity(), entityplayer.kickLeaveMessage != null ? entityplayer.kickLeaveMessage : "\u00A7e" + entityplayer.getScoreboardName() + " left the game");
-+        cserver.getPluginManager().callEvent(playerQuitEvent);
-+        entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
-+
-+        entityplayer.doTick(); // SPIGOT-924
-+        // CraftBukkit end
-+
-         this.save(entityplayer);
-         if (entityplayer.isPassenger()) {
-             Entity entity = entityplayer.getRootVehicle();
-@@ -417,18 +530,66 @@
- 
-         if (entityplayer1 == entityplayer) {
-             this.playersByUUID.remove(uuid);
--            this.stats.remove(uuid);
--            this.advancements.remove(uuid);
-+            // CraftBukkit start
-+            // this.stats.remove(uuid);
-+            // this.advancements.remove(uuid);
-+            // CraftBukkit end
-         }
- 
--        this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entityplayer.getUUID())));
-+        // CraftBukkit start
-+        // this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entityplayer.getUUID())));
-+        ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(entityplayer.getUUID()));
-+        for (int i = 0; i < players.size(); i++) {
-+            EntityPlayer entityplayer2 = (EntityPlayer) this.players.get(i);
-+
-+            if (entityplayer2.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
-+                entityplayer2.connection.send(packet);
-+            } else {
-+                entityplayer2.getBukkitEntity().onEntityRemove(entityplayer);
-+            }
-+        }
-+        // This removes the scoreboard (and player reference) for the specific player in the manager
-+        cserver.getScoreboardManager().removePlayer(entityplayer.getBukkitEntity());
-+        // CraftBukkit end
-+
-+        return playerQuitEvent.getQuitMessage(); // CraftBukkit
-     }
+
  
 -    @Nullable
 -    public IChatBaseComponent canPlayerLogin(SocketAddress socketaddress, GameProfile gameprofile) {
@@ -700,31 +645,6 @@
      }
  
      public int getPlayerCount() {
-@@ -832,12 +1133,22 @@
-     }
- 
-     public void removeAll() {
--        for (int i = 0; i < this.players.size(); ++i) {
--            ((EntityPlayer) this.players.get(i)).connection.disconnect(IChatBaseComponent.translatable("multiplayer.disconnect.server_shutdown"));
-+        // CraftBukkit start - disconnect safely
-+        for (EntityPlayer player : this.players) {
-+            player.connection.disconnect(this.server.server.getShutdownMessage()); // CraftBukkit - add custom shutdown message
-         }
-+        // CraftBukkit end
- 
-     }
- 
-+    // CraftBukkit start
-+    public void broadcastMessage(IChatBaseComponent[] iChatBaseComponents) {
-+        for (IChatBaseComponent component : iChatBaseComponents) {
-+            broadcastSystemMessage(component, false);
-+        }
-+    }
-+    // CraftBukkit end
-+
-     public void broadcastSystemMessage(IChatBaseComponent ichatbasecomponent, boolean flag) {
-         this.broadcastSystemMessage(ichatbasecomponent, (entityplayer) -> {
-             return ichatbasecomponent;
 @@ -895,16 +1206,23 @@
          return playerchatmessage.hasSignature() && !playerchatmessage.hasExpiredServer(Instant.now());
      }

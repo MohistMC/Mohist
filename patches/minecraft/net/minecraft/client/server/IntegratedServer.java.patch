@@ -42,7 +42,7 @@
     public File m_6237_() {
        return this.f_120015_.f_91069_;
     }
-@@ -192,6 +_,7 @@
+@@ -192,10 +_,11 @@
     }
  
     public void m_7570_(boolean p_120053_) {
@@ -50,3 +50,8 @@
        this.m_18709_(() -> {
           for(ServerPlayer serverplayer : Lists.newArrayList(this.m_6846_().m_11314_())) {
              if (!serverplayer.m_20148_().equals(this.f_120019_)) {
+-               this.m_6846_().m_11286_(serverplayer);
++               this.m_6846_().remove(serverplayer);
+             }
+          }
+ 
