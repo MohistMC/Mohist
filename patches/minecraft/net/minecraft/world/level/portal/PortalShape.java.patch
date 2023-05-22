@@ -1,10 +1,20 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -21,6 +_,7 @@
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.portal;
+ 
+ import java.util.Optional;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.BlockUtil;
+@@ -21,6 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R3.event.CraftPortalEvent;
 +import org.bukkit.craftbukkit.v1_19_R3.util.BlockStateListPopulator;
++import org.bukkit.event.world.PortalCreateEvent;
  
  public class PortalShape {
     private static final int f_164752_ = 2;
@@ -68,3 +78,59 @@
        }
  
        return 21;
+@@ -165,13 +_,32 @@
+       return this.f_77690_ != null && this.f_77692_ >= 2 && this.f_77692_ <= 21 && this.f_77691_ >= 3 && this.f_77691_ <= 21;
+    }
+ 
++   private AtomicReference<BlockState> mohist$state = new AtomicReference<>();
++
+    public void m_77743_() {
+       BlockState blockstate = Blocks.f_50142_.m_49966_().m_61124_(NetherPortalBlock.f_54904_, this.f_77687_);
++      mohist$state.set(blockstate);
+       BlockPos.m_121940_(this.f_77690_, this.f_77690_.m_5484_(Direction.UP, this.f_77691_ - 1).m_5484_(this.f_77688_, this.f_77692_ - 1)).forEach((p_77725_) -> {
+          this.f_77686_.m_7731_(p_77725_, blockstate, 18);
+       });
+    }
+ 
++   public boolean createPortalBlocksCB() {
++      org.bukkit.World bworld = this.f_77686_.getMinecraftWorld().getWorld();
++      m_77743_();
++      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
++      this.f_77686_.getMinecraftWorld().m_7654_().server.getPluginManager().callEvent(event);
++
++      if (event.isCancelled()) {
++         return false;
++      }
++      // CraftBukkit end
++      BlockPos.m_121940_(this.f_77690_, this.f_77690_.m_5484_(Direction.UP, this.f_77691_ - 1).m_5484_(this.f_77688_, this.f_77692_ - 1)).forEach((p_77725_) -> {
++         this.f_77686_.m_7731_(p_77725_, mohist$state.get(), 18);
++      });
++      return true; // CraftBukkit
++   }
++
+    public boolean m_77744_() {
+       return this.m_77698_() && this.f_77689_ == this.f_77692_ * this.f_77691_;
+    }
+@@ -201,6 +_,8 @@
+       return new Vec3(d2, d4, d3);
+    }
+ 
++   private static AtomicReference<CraftPortalEvent> mohist$portalInfo = new AtomicReference<>();
++
+    public static PortalInfo m_257966_(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
+       BlockPos blockpos = p_259931_.f_124348_;
+       BlockState blockstate = p_259301_.m_8055_(blockpos);
+@@ -216,7 +_,12 @@
+       boolean flag = direction$axis == Direction.Axis.X;
+       Vec3 vec31 = new Vec3((double)blockpos.m_123341_() + (flag ? d2 : d4), (double)blockpos.m_123342_() + d3, (double)blockpos.m_123343_() + (flag ? d4 : d2));
+       Vec3 vec32 = m_257963_(vec31, p_259301_, p_259166_, entitydimensions);
+-      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
++      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_, p_259301_, mohist$portalInfo.get());
++   }
++
++   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, CraftPortalEvent portalEventInfo) { // CraftBukkit
++      mohist$portalInfo.set(portalEventInfo);
++      return m_257966_(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_);
+    }
+ 
+    private static Vec3 m_257963_(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {
