@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
+@@ -69,6 +_,7 @@
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.WorldDataConfiguration;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldDimensions;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
 @@ -119,6 +_,7 @@
     public static void m_232896_(Minecraft p_232897_, @Nullable Screen p_232898_) {
        m_232899_(p_232897_, f_232866_);
@@ -17,6 +25,15 @@
                 }
  
              }, Component.m_237115_("dataPack.validation.failed"), CommonComponents.f_237098_, Component.m_237115_("dataPack.validation.back"), Component.m_237115_("dataPack.validation.reset")));
+@@ -418,7 +_,7 @@
+       String s = this.f_267389_.m_275837_();
+ 
+       try {
+-         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().m_78260_(s);
++         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().createAccess(s, LevelStem.f_63971_);
+          if (this.f_100831_ == null) {
+             return Optional.of(levelstoragesource$levelstorageaccess);
+          }
 @@ -482,6 +_,7 @@
        if (path != null) {
           if (this.f_100832_ == null) {

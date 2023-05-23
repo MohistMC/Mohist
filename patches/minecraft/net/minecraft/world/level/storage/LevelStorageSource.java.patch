@@ -16,19 +16,26 @@
  import net.minecraft.world.flag.FeatureFlagSet;
  import net.minecraft.world.flag.FeatureFlags;
  import net.minecraft.world.level.Level;
-@@ -301,6 +_,11 @@
-       return new LevelStorageSource.LevelStorageAccess(p_78261_);
+@@ -224,6 +_,7 @@
+          WorldDimensions.Complete worlddimensions$complete = worldgensettings.f_64605_().m_245300_(p_249363_);
+          Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_251214_);
+          PrimaryLevelData primaryleveldata = PrimaryLevelData.m_78530_(dynamic, p_265021_, i, compoundtag2, levelsettings, levelversion, worlddimensions$complete.f_244634_(), worldgensettings.f_243992_(), lifecycle);
++         primaryleveldata.pdc = compoundtag1.m_128423_("BukkitValues"); // CraftBukkit - Add PDC to world
+          return Pair.of(primaryleveldata, worlddimensions$complete);
+       };
+    }
+@@ -297,8 +_,8 @@
+       return this.f_78195_;
     }
  
-+   // Mohist TODO
-+   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> dimensionType) {
-+      return null;
-+   }
-+
+-   public LevelStorageSource.LevelStorageAccess m_78260_(String p_78261_) throws IOException {
+-      return new LevelStorageSource.LevelStorageAccess(p_78261_);
++   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> dimensionType) throws IOException {
++      return new LevelStorageSource.LevelStorageAccess(name, dimensionType);
+    }
+ 
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
-       public boolean m_230843_() {
-          return this.f_230840_.isEmpty();
-@@ -343,7 +_,7 @@
+@@ -343,11 +_,15 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -36,7 +43,16 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
++      // CraftBukkit start
++      public final ResourceKey<LevelStem> dimensionType;
  
+-      public LevelStorageAccess(String p_78276_) throws IOException {
++      public LevelStorageAccess(String p_78276_, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this.dimensionType = dimensionType;
++         // CraftBukkit end
+          this.f_78272_ = p_78276_;
+          this.f_230867_ = new LevelStorageSource.LevelDirectory(LevelStorageSource.this.f_78194_.resolve(p_78276_));
+          this.f_78270_ = DirectoryLock.m_13640_(this.f_230867_.f_230850_());
 @@ -388,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
        }
