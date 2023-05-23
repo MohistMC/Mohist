@@ -52,16 +52,20 @@
  import net.minecraft.world.level.block.BedBlock;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.HoneyBlock;
-@@ -115,14 +_,22 @@
+@@ -115,14 +_,26 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_19_R3.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
++import org.bukkit.event.entity.EntityTeleportEvent;
++import org.bukkit.event.player.PlayerItemConsumeEvent;
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity implements Attackable {
@@ -863,6 +867,19 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
+@@ -1833,6 +_,12 @@
+ 
+    public abstract ItemStack m_6844_(EquipmentSlot p_21127_);
+ 
++   // CraftBukkit start
++   public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
++      this.m_8061_(enumitemslot, itemstack);
++   }
++   // CraftBukkit end
++
+    public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
+ 
+    protected void m_181122_(ItemStack p_181123_) {
 @@ -1927,14 +_,17 @@
        }
  
@@ -921,7 +938,12 @@
           } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
              double d8 = this.m_20186_();
              this.m_19920_(0.02F, p_21280_);
-@@ -2052,7 +_,7 @@
+@@ -2048,11 +_,12 @@
+             }
+ 
+             if (this.f_19861_ && !this.f_19853_.f_46443_) {
++               if (m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
+                this.m_20115_(7, false);
              }
           } else {
              BlockPos blockpos = this.m_20099_();
@@ -1003,6 +1025,37 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
+@@ -2576,6 +_,7 @@
+       }
+ 
+       if (!this.f_19853_.f_46443_) {
++         if (flag != this.m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, flag).isCancelled()) // CraftBukkit
+          this.m_20115_(7, flag);
+       }
+ 
+@@ -2725,12 +_,19 @@
+    }
+ 
+    public boolean m_6087_() {
+-      return !this.m_213877_();
++      return !this.m_213877_() && this.collides; // CraftBukkit
+    }
+ 
+    public boolean m_6094_() {
+-      return this.m_6084_() && !this.m_5833_() && !this.m_6147_();
+-   }
++      return this.m_6084_() && !this.m_5833_() && !this.m_6147_() && this.collides; // CraftBukkit
++   }
++
++   // CraftBukkit start - collidable API
++   @Override
++   public boolean canCollideWithBukkit(Entity entity) {
++     return m_6094_() && this.collides != this.collidableExemptions.contains(entity.m_20148_());
++   }
++   // CraftBukkit end
+ 
+    public float m_6080_() {
+       return this.f_20885_;
 @@ -2786,23 +_,28 @@
  
     private void m_21329_() {
@@ -1068,13 +1121,34 @@
           this.f_19853_.m_7106_(new ItemParticleOption(ParticleTypes.f_123752_, p_21061_), vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, vec3.f_82479_, vec3.f_82480_ + 0.05D, vec3.f_82481_);
        }
  
-@@ -2915,7 +_,8 @@
+@@ -2915,7 +_,29 @@
           } else {
              if (!this.f_20935_.m_41619_() && this.m_6117_()) {
                 this.m_21137_(this.f_20935_, 16);
 -               ItemStack itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
 +               ItemStack copy = this.f_20935_.m_41777_();
-+               ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
++               ItemStack itemstackForge = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
++
++               // CraftBukkit start - fire PlayerItemConsumeEvent
++               ItemStack itemstack;
++               if (this instanceof ServerPlayer) {
++                  org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(this.f_20935_);
++                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_19_R3.CraftEquipmentSlot.getHand(interactionhand);
++                  PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((org.bukkit.entity.Player) this.getBukkitEntity(), craftItem, hand);
++                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++                  if (event.isCancelled()) {
++                     // Update client
++                     ((ServerPlayer) this).getBukkitEntity().updateInventory();
++                     ((ServerPlayer) this).getBukkitEntity().updateScaledHealth();
++                     return;
++                  }
++
++                  itemstack = (craftItem.equals(event.getItem())) ? itemstackForge : CraftItemStack.asNMSCopy(event.getItem()).m_41671_(f_19853_, this);
++               } else {
++                  itemstack = itemstackForge;
++               }
++               // CraftBukkit end
                 if (itemstack != this.f_20935_) {
                    this.m_21008_(interactionhand, itemstack);
                 }
@@ -1107,18 +1181,68 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -2992,6 +_,11 @@
-       return this.f_20937_;
+@@ -2993,6 +_,11 @@
     }
  
-+   public Optional<Boolean> randomTeleport(double d0, double d1, double d2, boolean flag, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
+    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
 +      // CraftBukkit end
-+      return Optional.of(m_20984_(d0, d1, d2, flag)); // CraftBukkit
++      return m_20984_(p_20985_, p_20986_, p_20987_, p_20988_); // CraftBukkit
 +   }
 +
-    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
++   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
        double d0 = this.m_20185_();
        double d1 = this.m_20186_();
+       double d2 = this.m_20189_();
+@@ -3015,16 +_,37 @@
+          }
+ 
+          if (flag1) {
+-            this.m_6021_(p_20985_, d3, p_20987_);
++            // CraftBukkit start - Teleport event
++            this.m_6034_(p_20985_, d3, p_20987_);
+             if (level.m_45786_(this) && !level.m_46855_(this.m_20191_())) {
+                flag = true;
+             }
++            // now revert and call event if the teleport place is valid
++            this.m_6034_(d0, d1, d2);
++
++            if (flag1) {
++               if (!(this instanceof ServerPlayer)) {
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), p_20985_, d3, p_20987_));
++                  this.f_19853_.getCraftServer().getPluginManager().callEvent(teleport);
++                  if (!teleport.isCancelled()) {
++                     Location to = teleport.getTo();
++                     this.m_6021_(to.getX(), to.getY(), to.getZ());
++                  } else {
++                     return Optional.empty();
++                  }
++               } else {
++                  // player teleport event is called in the underlining code
++                  if (((ServerPlayer) this).f_8906_.teleport(p_20985_, d3, p_20987_, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), cause)) {
++                     return Optional.empty();
++                  }
++               }
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+       if (!flag) {
+-         this.m_6021_(d0, d1, d2);
+-         return false;
++         return Optional.of(false); // CraftBukkit
+       } else {
+          if (p_20988_) {
+             level.m_7605_(this, (byte)46);
+@@ -3034,7 +_,7 @@
+             ((PathfinderMob)this).m_21573_().m_26573_();
+          }
+ 
+-         return true;
++         return Optional.of(true); // CraftBukkit
+       }
+    }
+ 
 @@ -3092,8 +_,8 @@
        }
  
@@ -1170,15 +1294,18 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3176,7 +_,7 @@
+@@ -3176,9 +_,9 @@
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
        Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
 -         for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
 +         for(Pair<MobEffectInstance, Float> pair : p_21064_.getFoodProperties(this).m_38749_()) {
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
-                p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
+-               p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
++               p_21066_.addEffect(new MobEffectInstance(pair.getFirst()), EntityPotionEffectEvent.Cause.FOOD); // CraftBukkit
              }
+          }
+       }
 @@ -3212,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
@@ -1253,17 +1380,10 @@
        Equipable equipable = Equipable.m_269088_(p_147234_);
        return equipable != null ? equipable.m_40402_() : EquipmentSlot.MAINHAND;
     }
-@@ -3299,4 +_,22 @@
+@@ -3299,4 +_,15 @@
  
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
     }
-+
-+
-+   // CraftBukkit start
-+   public void setItemSlot(EquipmentSlot enumitemslot, ItemStack itemstack, boolean silent) {
-+      this.m_8061_(enumitemslot, itemstack);
-+   }
-+   // CraftBukkit end
 +
 +   // CraftBukkit start
 +   public int getExpReward() {

@@ -1754,8 +1754,8 @@
 +   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
 +   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {
-+      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.f_9742_);
 +      PacketUtils.m_131359_(p_9860_, this, this.f_9743_.m_9236_());
++      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.f_9742_);
 +      if (p_9860_.f_133980_.equals(CUSTOM_REGISTER)) {
 +         try {
 +            String channels = p_9860_.f_133981_.toString(com.google.common.base.Charsets.UTF_8);

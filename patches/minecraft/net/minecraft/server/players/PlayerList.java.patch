@@ -68,7 +68,7 @@
        ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
        ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
        ServerLevel serverlevel1;
-@@ -164,19 +_,34 @@
+@@ -164,19 +_,35 @@
           s1 = p_11262_.m_129523_().toString();
        }
  
@@ -97,6 +97,7 @@
 +      // Spigot - view distance
 +      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_256838_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), serverlevel1.spigotConfig.viewDistance, serverlevel1.spigotConfig.simulationDistance, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.f_244280_.m_245829_(serverlevel1.m_246046_())));
++      p_11263_.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
        servergamepacketlistenerimpl.m_9829_(new ClientboundCustomPayloadPacket(ClientboundCustomPayloadPacket.f_132012_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(this.m_7873_().m_130001_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
