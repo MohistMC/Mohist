@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -2,6 +_,7 @@
+@@ -2,6 +_,8 @@
  
  import com.google.common.annotations.VisibleForTesting;
  import com.google.common.collect.Lists;
++import com.mohistmc.forge.ForgeInjectBukkit;
 +import com.mohistmc.forge.MohistDerivedWorldInfo;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
@@ -88,7 +89,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -185,23 +_,61 @@
+@@ -185,23 +_,66 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -129,7 +130,6 @@
        this.f_8549_ = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.f_63976_();
 +      // CraftBukkit start
-+      serverLevelDataCB.setWorld(this);
 +      if (biomeProvider != null) {
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
 +         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
@@ -142,6 +142,12 @@
 +      if (generator != null) {
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_19_R3.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      }
++      if (generator == null && p_215003_ != null) { // Mohist - Fix Advanced Rocketry assembler crash
++         generator = getCraftServer().getGenerator(p_215003_.m_135782_().m_135827_());
++      }
++      if (environment == null) {
++         environment = ForgeInjectBukkit.environment.get(getTypeKey());
++      }
 +      // CraftBukkit end
        boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
@@ -152,13 +158,15 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -229,6 +_,9 @@
+@@ -229,6 +_,11 @@
  
        this.f_143245_ = new SleepStatus();
        this.f_243695_ = new GameEventDispatcher(this);
 +      this.initCapabilities();
 +      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
++      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
++      serverLevelDataCB.setWorld(this);
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
