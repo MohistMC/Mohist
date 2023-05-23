@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/state/BlockStateContainer.java
 +++ ../src-work/minecraft/net/minecraft/block/state/BlockStateContainer.java
-@@ -59,12 +59,22 @@
+@@ -41,6 +41,9 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
++import org.bukkit.event.block.BlockPhysicsEvent;
+ 
+ public class BlockStateContainer
+ {
+@@ -59,12 +62,22 @@
  
      public BlockStateContainer(Block p_i45663_1_, IProperty<?>... p_i45663_2_)
      {
@@ -26,7 +36,7 @@
              map.put(iproperty.func_177701_a(), iproperty);
          }
  
-@@ -75,7 +85,7 @@
+@@ -75,7 +88,7 @@
          for (List < Comparable<? >> list : Cartesian.func_179321_a(this.func_177620_e()))
          {
              Map < IProperty<?>, Comparable<? >> map1 = MapPopulator. < IProperty<?>, Comparable<? >> func_179400_b(this.field_177624_d.values(), list);
@@ -35,7 +45,7 @@
              map2.put(map1, blockstatecontainer$stateimplementation);
              list1.add(blockstatecontainer$stateimplementation);
          }
-@@ -170,6 +180,13 @@
+@@ -170,6 +183,13 @@
                  this.field_177237_b = p_i45660_2_;
              }
  
@@ -49,7 +59,23 @@
              public Collection < IProperty<? >> func_177227_a()
              {
                  return Collections. < IProperty<? >> unmodifiableCollection(this.field_177237_b.keySet());
-@@ -473,5 +490,94 @@
+@@ -461,6 +481,15 @@
+ 
+             public void func_189546_a(World p_189546_1_, BlockPos p_189546_2_, Block p_189546_3_, BlockPos p_189546_4_)
+             {
++                CraftWorld world = p_189546_1_.getWorld();
++                if (world != null && p_189546_1_.func_175667_e(p_189546_2_)) {
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_189546_2_.func_177958_n(), p_189546_2_.func_177956_o(), p_189546_2_.func_177952_p()), CraftMagicNumbers.getId(p_189546_3_), p_189546_4_.func_177958_n(), p_189546_4_.func_177956_o(), p_189546_4_.func_177952_p()); // Paper - add source block
++                    p_189546_1_.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++                }
+                 this.field_177239_a.func_189540_a(this, p_189546_1_, p_189546_2_, p_189546_3_, p_189546_4_);
+             }
+ 
+@@ -473,5 +502,94 @@
              {
                  return this.field_177239_a.func_193383_a(p_193401_1_, this, p_193401_2_, p_193401_3_);
              }
