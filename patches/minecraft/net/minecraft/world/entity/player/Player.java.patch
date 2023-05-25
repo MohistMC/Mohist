@@ -827,7 +827,7 @@
     public boolean m_36356_(ItemStack p_36357_) {
        return this.f_36093_.m_36054_(p_36357_);
     }
-@@ -1722,26 +_,34 @@
+@@ -1722,13 +_,20 @@
  
     protected void m_36328_() {
        if (this.f_36109_ + 20L < this.f_19853_.m_46467_()) {
@@ -846,30 +846,31 @@
        }
  
     }
++
++   // Mohist start
++   public AtomicBoolean spawnEntityFromShoulder = new AtomicBoolean(true);
  
     private void m_36370_(CompoundTag p_36371_) {
-+      spawnEntityFromShoulder(p_36371_);
-+   }
-+
-+   private boolean spawnEntityFromShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
        if (!this.f_19853_.f_46443_ && !p_36371_.m_128456_()) {
--         EntityType.m_20642_(p_36371_, this.f_19853_).ifPresent((p_276001_) -> {
-+         return EntityType.m_20642_(p_36371_, this.f_19853_).map((p_276001_) -> {
-             if (p_276001_ instanceof TamableAnimal) {
-                ((TamableAnimal)p_276001_).m_21816_(this.f_19820_);
+@@ -1738,11 +_,17 @@
              }
  
              p_276001_.m_6034_(this.m_20185_(), this.m_20186_() + (double)0.7F, this.m_20189_());
 -            ((ServerLevel)this.f_19853_).m_8847_(p_276001_);
--         });
-+            return ((ServerLevel)this.f_19853_).addWithUUID(p_276001_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBukkit
-+         }).orElse(true); // CraftBukkit
++            boolean canAdd = ((ServerLevel)this.f_19853_).m_8847_(p_276001_);
++            spawnEntityFromShoulder.set(canAdd);
+          });
        }
--
-+      return true; // CraftBukkit
++   }
+ 
++   private boolean spawnEntityFromShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
++      m_36370_(p_36371_);
++      return spawnEntityFromShoulder.getAndSet(true);
     }
++   // Mohist end
  
     public abstract boolean m_5833_();
+ 
 @@ -1765,7 +_,11 @@
     }
  
