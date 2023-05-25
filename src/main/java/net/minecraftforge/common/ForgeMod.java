@@ -470,7 +470,7 @@ public class ForgeMod
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 
-        //EventDispatcherRegistry.init();
+        EventDispatcherRegistry.init();
     }
 
     public void preInit(FMLCommonSetupEvent evt)

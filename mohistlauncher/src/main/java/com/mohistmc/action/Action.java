@@ -1,6 +1,6 @@
 /*
  * MohistMC
- * Copyright (C) 2018-2022.
+ * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ public abstract class Action {
     THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
      */
     protected void mute() throws Exception {
-        File out = new File(libPath + "com/mohistmc/installation/installationLogs.txt");
+        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
         if (!out.exists()) {
             out.getParentFile().mkdirs();
             out.createNewFile();
