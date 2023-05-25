@@ -6,18 +6,21 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
+import org.bukkit.craftbukkit.v1_19_R3.block.sign.CraftSignSide;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<T> implements Sign {
 
-    // Lazily initialized only if requested:
-    private String[] originalLines = null;
-    private String[] lines = null;
+    private final CraftSignSide front;
 
     public CraftSign(World world, final T tileEntity) {
         super(world, tileEntity);
+        this.front = new CraftSignSide(this.getSnapshot());
     }
 
     public static void openSign(Sign sign, Player player) {
@@ -33,25 +36,17 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
 
     @Override
     public String[] getLines() {
-        if (lines == null) {
-            // Lazy initialization:
-            SignBlockEntity sign = this.getSnapshot();
-            lines = new String[sign.messages.length];
-            System.arraycopy(revertComponents(sign.messages), 0, lines, 0, lines.length);
-            originalLines = new String[lines.length];
-            System.arraycopy(lines, 0, originalLines, 0, originalLines.length);
-        }
-        return lines;
+        return front.getLines();
     }
 
     @Override
     public String getLine(int index) throws IndexOutOfBoundsException {
-        return getLines()[index];
+        return front.getLine(index);
     }
 
     @Override
     public void setLine(int index, String line) throws IndexOutOfBoundsException {
-        getLines()[index] = line;
+        front.setLine(index, line);
     }
 
     @Override
@@ -66,37 +61,36 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
 
     @Override
     public boolean isGlowingText() {
-        return getSnapshot().hasGlowingText();
+        return front.isGlowingText();
     }
 
     @Override
     public void setGlowingText(boolean glowing) {
-        getSnapshot().setHasGlowingText(glowing);
+        front.setGlowingText(glowing);
+    }
+
+    @NotNull
+    @Override
+    public SignSide getSide(Side side) {
+        Preconditions.checkArgument(side != null, "side == null");
+
+        return front;
     }
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getSnapshot().getColor().getId());
+        return front.getColor();
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getSnapshot().setColor(net.minecraft.world.item.DyeColor.byId(color.getWoolData()));
+        front.setColor(color);
     }
 
     @Override
     public void applyTo(T sign) {
+        front.applyLegacyStringToSignSide();
         super.applyTo(sign);
-
-        if (lines != null) {
-            for (int i = 0; i < lines.length; i++) {
-                String line = (lines[i] == null) ? "" : lines[i];
-                if (line.equals(originalLines[i])) {
-                    continue; // The line contents are still the same, skip.
-                }
-                sign.setMessage(i, CraftChatMessage.fromString(line)[0]);
-            }
-        }
     }
 
     public static Component[] sanitizeLines(String[] lines) {
