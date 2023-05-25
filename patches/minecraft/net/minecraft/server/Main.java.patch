@@ -127,8 +127,7 @@
 +            return;
 +         }
           LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
--         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
-+         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess(s, LevelStem.f_63971_);
+          LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {

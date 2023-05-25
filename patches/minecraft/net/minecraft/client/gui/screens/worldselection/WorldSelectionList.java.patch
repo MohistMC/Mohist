@@ -24,42 +24,6 @@
           if (this.f_101693_.f_91066_.m_231828_().m_231551_() || p_101729_) {
              RenderSystem.m_157456_(0, WorldSelectionList.f_101648_);
              GuiComponent.m_93172_(p_101721_, p_101724_, p_101723_, p_101724_ + 32, p_101723_ + 32, -1601138544);
-@@ -383,7 +_,7 @@
-                   if (p_101736_) {
-                      String s2 = this.f_101695_.m_78358_();
- 
--                     try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().m_78260_(s2)) {
-+                     try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().createAccess(s2, LevelStem.f_63971_)) {
-                         EditWorldScreen.m_101258_(levelstoragesource$levelstorageaccess);
-                      } catch (IOException ioexception) {
-                         SystemToast.m_94852_(this.f_101693_, s2);
-@@ -431,7 +_,7 @@
-          LevelStorageSource levelstoragesource = this.f_101693_.m_91392_();
-          String s = this.f_101695_.m_78358_();
- 
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s)) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess(s, LevelStem.f_63971_)) {
-             levelstoragesource$levelstorageaccess.m_78311_();
-          } catch (IOException ioexception) {
-             SystemToast.m_94866_(this.f_101693_, s);
-@@ -446,7 +_,7 @@
-          String s = this.f_101695_.m_78358_();
- 
-          try {
--            LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().m_78260_(s);
-+            LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().createAccess(s, LevelStem.f_63971_);
-             this.f_101693_.m_91152_(new EditWorldScreen((p_233244_) -> {
-                try {
-                   levelstoragesource$levelstorageaccess.close();
-@@ -471,7 +_,7 @@
-       public void m_101743_() {
-          this.m_101745_();
- 
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().m_78260_(this.f_101695_.m_78358_())) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_101693_.m_91392_().createAccess(this.f_101695_.m_78358_(), LevelStem.f_63971_)) {
-             Pair<LevelSettings, WorldCreationContext> pair = this.f_101693_.m_231466_().m_246225_(levelstoragesource$levelstorageaccess);
-             LevelSettings levelsettings = pair.getFirst();
-             WorldCreationContext worldcreationcontext = pair.getSecond();
 @@ -545,6 +_,21 @@
  
        public boolean m_214209_() {

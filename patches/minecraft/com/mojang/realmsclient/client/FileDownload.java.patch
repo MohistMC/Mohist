@@ -8,12 +8,3 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -291,7 +_,7 @@
-             p_86993_.delete();
-          }
- 
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_86994_.m_78260_(s)) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_86994_.createAccess(s, LevelStem.f_63971_)) {
-             levelstoragesource$levelstorageaccess.m_78297_(s.trim());
-             Path path = levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78178_);
-             m_86987_(path.toFile());

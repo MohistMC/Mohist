@@ -986,7 +986,7 @@ public final class CraftServer implements Server {
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
-            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
+            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

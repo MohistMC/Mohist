@@ -25,15 +25,6 @@
                 }
  
              }, Component.m_237115_("dataPack.validation.failed"), CommonComponents.f_237098_, Component.m_237115_("dataPack.validation.back"), Component.m_237115_("dataPack.validation.reset")));
-@@ -418,7 +_,7 @@
-       String s = this.f_267389_.m_275837_();
- 
-       try {
--         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().m_78260_(s);
-+         LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().createAccess(s, LevelStem.f_63971_);
-          if (this.f_100831_ == null) {
-             return Optional.of(levelstoragesource$levelstorageaccess);
-          }
 @@ -482,6 +_,7 @@
        if (path != null) {
           if (this.f_100832_ == null) {

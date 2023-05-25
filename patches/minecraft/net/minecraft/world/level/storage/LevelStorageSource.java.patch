@@ -24,18 +24,16 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -297,8 +_,8 @@
+@@ -297,7 +_,7 @@
        return this.f_78195_;
     }
  
 -   public LevelStorageSource.LevelStorageAccess m_78260_(String p_78261_) throws IOException {
--      return new LevelStorageSource.LevelStorageAccess(p_78261_);
-+   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> dimensionType) throws IOException {
-+      return new LevelStorageSource.LevelStorageAccess(name, dimensionType);
++   public LevelStorageAccess m_78260_(String p_78261_) throws IOException {
+       return new LevelStorageSource.LevelStorageAccess(p_78261_);
     }
  
-    public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
-@@ -343,11 +_,15 @@
+@@ -343,7 +_,7 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -43,16 +41,7 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
-+      // CraftBukkit start
-+      public final ResourceKey<LevelStem> dimensionType;
  
--      public LevelStorageAccess(String p_78276_) throws IOException {
-+      public LevelStorageAccess(String p_78276_, ResourceKey<LevelStem> dimensionType) throws IOException {
-+         this.dimensionType = dimensionType;
-+         // CraftBukkit end
-          this.f_78272_ = p_78276_;
-          this.f_230867_ = new LevelStorageSource.LevelDirectory(LevelStorageSource.this.f_78194_.resolve(p_78276_));
-          this.f_78270_ = DirectoryLock.m_13640_(this.f_230867_.f_230850_());
 @@ -388,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
        }

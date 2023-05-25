@@ -41,24 +41,6 @@
     }
  
     @Nullable
-@@ -192,7 +_,7 @@
-       this.f_96722_ = this.m_142416_(Button.m_253074_(Component.m_237115_("menu.resetdemo"), (p_232770_) -> {
-          LevelStorageSource levelstoragesource = this.f_96541_.m_91392_();
- 
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_("Demo_World")) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.createAccess("Demo_World", LevelStem.f_63971_)) {
-             LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
-             if (levelsummary != null) {
-                this.f_96541_.m_91152_(new ConfirmScreen(this::m_96777_, Component.m_237115_("selectWorld.deleteQuestion"), Component.m_237110_("selectWorld.deleteWarning", levelsummary.m_78361_()), Component.m_237115_("selectWorld.deleteButton"), CommonComponents.f_130656_));
-@@ -209,7 +_,7 @@
-    private boolean m_96792_() {
-       try {
-          boolean flag;
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().m_78260_("Demo_World")) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().createAccess("Demo_World", LevelStem.f_63971_)) {
-             flag = levelstoragesource$levelstorageaccess.m_78308_() != null;
-          }
- 
 @@ -245,6 +_,7 @@
              this.f_232768_.m_232790_(p_96739_, i);
           }
@@ -91,12 +73,3 @@
  
        }
     }
-@@ -309,7 +_,7 @@
- 
-    private void m_96777_(boolean p_96778_) {
-       if (p_96778_) {
--         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().m_78260_("Demo_World")) {
-+         try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.f_96541_.m_91392_().createAccess("Demo_World", LevelStem.f_63971_)) {
-             levelstoragesource$levelstorageaccess.m_78311_();
-          } catch (IOException ioexception) {
-             SystemToast.m_94866_(this.f_96541_, "Demo_World");

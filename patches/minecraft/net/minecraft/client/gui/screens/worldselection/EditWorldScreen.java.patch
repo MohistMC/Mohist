@@ -8,12 +8,3 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.LevelSummary;
-@@ -125,7 +_,7 @@
-    public static void m_101260_(LevelStorageSource p_101261_, String p_101262_) {
-       boolean flag = false;
- 
--      try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_101261_.m_78260_(p_101262_)) {
-+      try (LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = p_101261_.createAccess(p_101262_, LevelStem.f_63971_)) {
-          flag = true;
-          m_101258_(levelstoragesource$levelstorageaccess);
-       } catch (IOException ioexception) {
