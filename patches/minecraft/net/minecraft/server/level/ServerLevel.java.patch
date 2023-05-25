@@ -157,14 +157,14 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
 +         // CraftBukkit start
-+         long j = this.f_46442_.m_6792_() + 24000L;
-+         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, j - j % 24000L, this.m_46468_()));
++         long j = this.m_46468_() + 24000L;
++         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, j - j % 24000L, this.m_46468_()) - this.m_46468_());
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
 -            long j = this.f_46442_.m_6792_() + 24000L;
 -            this.m_8615_(j - j % 24000L);
 +            getCraftServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+               this.m_8615_(event.getSkipAmount());
++               this.m_8615_(this.m_46468_() + event.getSkipAmount());
 +            }
           }
  
