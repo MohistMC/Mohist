@@ -316,21 +316,20 @@
        p_8648_.m_146867_();
        ProfilerFiller profilerfiller = this.m_46473_();
        ++p_8648_.f_19797_;
-@@ -659,7 +_,7 @@
-          return BuiltInRegistries.f_256780_.m_7981_(p_8648_.m_6095_()).toString();
+@@ -660,6 +_,7 @@
        });
        profilerfiller.m_6174_("tickNonPassenger");
--      p_8648_.m_8119_();
+       p_8648_.m_8119_();
 +      p_8648_.postTick(); // CraftBukkit
        this.m_46473_().m_7238_();
  
        for(Entity entity : p_8648_.m_20197_()) {
-@@ -678,7 +_,8 @@
+@@ -678,7 +_,9 @@
                 return BuiltInRegistries.f_256780_.m_7981_(p_8664_.m_6095_()).toString();
              });
              profilerfiller.m_6174_("tickPassenger");
--            p_8664_.m_6083_();
 +            if (p_8664_.canUpdate())
+             p_8664_.m_6083_();
 +            p_8664_.postTick(); // CraftBukkit
              profilerfiller.m_7238_();
  
