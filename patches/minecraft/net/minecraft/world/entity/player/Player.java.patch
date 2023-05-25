@@ -347,17 +347,21 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -880,28 +_,38 @@
+@@ -880,28 +_,42 @@
        }
     }
  
 +   // Mohist start
 +   protected boolean damageEntity0(DamageSource damagesource, float f) { // void -> boolean
-+      return false; // super.damageEntity0(damagesource, f);
++      return super.damageEntity0(damagesource, f);
 +   }
 +   // Mohist end
 +
     protected void m_6475_(DamageSource p_36312_, float p_36313_) {
++      if (true) {
++         super.damageEntity0(p_36312_, p_36313_);
++         return;
++      }
        if (!this.m_6673_(p_36312_)) {
 +         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
 +         if (p_36313_ <= 0) return;
@@ -823,7 +827,7 @@
     public boolean m_36356_(ItemStack p_36357_) {
        return this.f_36093_.m_36054_(p_36357_);
     }
-@@ -1722,26 +_,30 @@
+@@ -1722,26 +_,34 @@
  
     protected void m_36328_() {
        if (this.f_36109_ + 20L < this.f_19853_.m_46467_()) {
@@ -843,7 +847,10 @@
  
     }
  
--   private void m_36370_(CompoundTag p_36371_) {
+    private void m_36370_(CompoundTag p_36371_) {
++      spawnEntityFromShoulder(p_36371_);
++   }
++
 +   private boolean spawnEntityFromShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
        if (!this.f_19853_.f_46443_ && !p_36371_.m_128456_()) {
 -         EntityType.m_20642_(p_36371_, this.f_19853_).ifPresent((p_276001_) -> {
