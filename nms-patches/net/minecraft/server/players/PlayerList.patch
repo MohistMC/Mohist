@@ -32,7 +32,6 @@
 -    public EntityPlayer respawn(EntityPlayer entityplayer, boolean flag) {
 +    public EntityPlayer respawn(EntityPlayer entityplayer, WorldServer worldserver, boolean flag, Location location, boolean avoidSuffocation, RespawnReason reason) {
 +        entityplayer.stopRiding(); // CraftBukkit
-+        entityplayer.stopRiding(); // CraftBukkit
          this.players.remove(entityplayer);
          entityplayer.getLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
          BlockPosition blockposition = entityplayer.getRespawnPosition();

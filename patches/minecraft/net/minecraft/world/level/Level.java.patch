@@ -132,6 +132,20 @@
        this.f_46446_ = p_270692_;
        this.f_46442_ = p_270739_;
        this.f_204147_ = p_270240_;
+@@ -125,11 +_,11 @@
+       if (dimensiontype.f_63859_() != 1.0D) {
+          this.f_46447_ = new WorldBorder() {
+             public double m_6347_() {
+-               return super.m_6347_() / dimensiontype.f_63859_();
++               return super.m_6347_(); // CraftBukkit
+             }
+ 
+             public double m_6345_() {
+-               return super.m_6345_() / dimensiontype.f_63859_();
++               return super.m_6345_(); // CraftBukkit
+             }
+          };
+       } else {
 @@ -142,6 +_,43 @@
        this.f_220350_ = new CollectingNeighborUpdater(this, p_270466_);
        this.f_268710_ = p_270200_;

@@ -9,7 +9,15 @@
     }
  
     private long m_11008_() {
-@@ -145,7 +_,7 @@
+@@ -138,14 +_,14 @@
+          gameprofilecache$gameprofileinfo.m_11029_(this.m_11008_());
+          optional = Optional.of(gameprofilecache$gameprofileinfo.m_11028_());
+       } else {
+-         optional = m_10993_(this.f_10968_, s);
++         optional = m_10993_(this.f_10968_, p_10997_);  // Spigot - use correct case for offline players
+          if (optional.isPresent()) {
+             this.m_10991_(optional.get());
+             flag = false;
           }
        }
  

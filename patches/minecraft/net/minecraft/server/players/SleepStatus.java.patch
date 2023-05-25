@@ -7,7 +7,7 @@
 -      int i = (int)p_144006_.stream().filter(Player::m_36317_).count();
 -      return i >= this.m_144010_(p_144005_);
 +      // CraftBukkit start
-+      int i = (int) p_144006_.stream().filter((eh) -> eh.m_36317_() || eh.fauxSleeping).count();
++      int i = (int) p_144006_.stream().filter((eh) -> { return eh.m_36317_() || eh.fauxSleeping; }).count();
 +      boolean anyDeepSleep = p_144006_.stream().anyMatch(Player::m_36317_);
 +      return anyDeepSleep && i >= this.m_144010_(p_144005_);
 +      // CraftBukkit end

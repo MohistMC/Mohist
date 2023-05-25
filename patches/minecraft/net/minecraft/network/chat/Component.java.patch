@@ -25,7 +25,7 @@
  import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
  
 -public interface Component extends Message, FormattedText {
-+public interface Component extends Message, FormattedText, Iterable<Component> {
++public interface Component extends Message, FormattedText, Iterable<Component> { // CraftBukkit
 +
 +   // CraftBukkit start
 +   default Stream<Component> stream() {

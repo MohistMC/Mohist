@@ -49,8 +49,8 @@
 +          MohistServerListPingEvent event = new MohistServerListPingEvent(f_10083_, MinecraftServer.getServer());
 +          Bukkit.getPluginManager().callEvent(event);
 +
-+         MinecraftServer server = MinecraftServer.getServer();
-+         final Object[] players = event.getPlayers();
++          MinecraftServer server = MinecraftServer.getServer();
++          final Object[] players = event.getPlayers();
 +
 +          java.util.List<GameProfile> profiles = new java.util.ArrayList<GameProfile>(players.length);
 +          for (Object player : players) {

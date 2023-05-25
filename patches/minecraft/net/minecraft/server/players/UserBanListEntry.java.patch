@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/UserBanListEntry.java
 +++ b/net/minecraft/server/players/UserBanListEntry.java
-@@ -35,19 +_,28 @@
+@@ -35,19 +_,27 @@
     }
  
     private static GameProfile m_11445_(JsonObject p_11446_) {
@@ -19,7 +19,7 @@
 -            return null;
           }
  
-          return new GameProfile(uuid, p_11446_.get("name").getAsString());
+-         return new GameProfile(uuid, p_11446_.get("name").getAsString());
 +      }
 +      if (p_11446_.has("name")) {
 +         name = p_11446_.get("name").getAsString();

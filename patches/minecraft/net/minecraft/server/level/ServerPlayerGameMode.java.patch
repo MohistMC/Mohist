@@ -174,7 +174,7 @@
              this.f_9249_ = false;
              if (!Objects.equals(this.f_9251_, p_215120_)) {
 -               f_9246_.warn("Mismatch in destroy block pos: {} {}", this.f_9251_, p_215120_);
-+               f_9246_.debug("Mismatch in destroy block pos: {} {}", this.f_9251_, p_215120_);
++               f_9246_.debug("Mismatch in destroy block pos: {} {}", this.f_9251_, p_215120_); // CraftBukkit - SPIGOT-5457 sent by client when interact event cancelled
                 this.f_9244_.m_6801_(this.f_9245_.m_19879_(), this.f_9251_, -1);
                 this.m_215125_(p_215120_, true, p_215124_, "aborted mismatched destroying");
              }

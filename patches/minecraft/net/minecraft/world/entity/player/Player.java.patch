@@ -347,7 +347,7 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -880,28 +_,42 @@
+@@ -880,22 +_,35 @@
        }
     }
  
@@ -385,13 +385,6 @@
              if (f2 < 3.4028235E37F) {
                 this.m_36222_(Stats.f_12931_, Math.round(f2 * 10.0F));
              }
- 
-          }
-       }
-+      return;
-    }
- 
-    protected boolean m_6046_() {
 @@ -948,6 +_,8 @@
  
           return InteractionResult.PASS;
