@@ -9,15 +9,19 @@
     private final DataFixer f_230346_;
     private ResourceManager f_230347_;
     private final Path f_230348_;
-@@ -106,7 +_,7 @@
+@@ -106,6 +_,12 @@
        this.f_230345_.clear();
     }
  
--   private Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
-+   public Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
++   // Mohist start Fix modernfix mod
++   public Optional<StructureTemplate> loadFromResource0(ResourceLocation p_230428_) {
++      return m_230427_(p_230428_);
++   }
++   // Mohist end
++
+    private Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
        ResourceLocation resourcelocation = new ResourceLocation(p_230428_.m_135827_(), "structures/" + p_230428_.m_135815_() + ".nbt");
        return this.m_230372_(() -> {
-          return this.f_230347_.m_215595_(resourcelocation);
 @@ -131,7 +_,7 @@
        return this.m_230394_(Paths.get("gameteststructures"), "minecraft", ".snbt");
     }
