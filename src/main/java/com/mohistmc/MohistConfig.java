@@ -117,7 +117,7 @@ public class MohistConfig {
         return config.getInt(path, config.getInt(path));
     }
 
-    private static <T> List getList(String path, T def) {
+    private static <T> List<?> getList(String path, T def) {
         config.addDefault(path, def);
         return config.getList(path, config.getList(path));
     }

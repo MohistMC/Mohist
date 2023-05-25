@@ -18,6 +18,7 @@
 
 package com.mohistmc.util.pluginmanager;
 
+import com.mohistmc.MohistMC;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -50,7 +51,7 @@ public class Control {
             jar.close();
             return pdf;
         } catch (InvalidDescriptionException | IOException ioe) {
-            ioe.printStackTrace();
+            MohistMC.LOGGER.error(ioe);
         }
 
         return null;
@@ -62,7 +63,7 @@ public class Control {
             p.onLoad();
             return p;
         } catch (Exception e) {
-            e.printStackTrace();
+            MohistMC.LOGGER.error(e);
         }
         return null;
     }

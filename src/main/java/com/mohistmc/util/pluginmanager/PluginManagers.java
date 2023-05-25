@@ -19,7 +19,6 @@
 package com.mohistmc.util.pluginmanager;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.i18n.i18n;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;

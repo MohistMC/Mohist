@@ -18,9 +18,6 @@
 
 package com.mohistmc.inventory;
 
-import java.util.List;
-import javax.annotation.Nullable;
-
 import net.minecraft.world.Container;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
@@ -39,6 +36,9 @@ import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class CraftCustomInventory implements InventoryHolder {
 

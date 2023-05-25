@@ -15,11 +15,6 @@ public class MohistModsThrowableProjectile extends CraftThrowableProjectile {
         this.entityName = EntityAPI.entityName(entity);
     }
 
-    @Override
-    public ThrowableItemProjectile getHandle() {
-        return (ThrowableItemProjectile) this.entity;
-    }
-
 
     @Override
     public EntityType getType() {

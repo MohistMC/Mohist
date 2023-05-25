@@ -24,11 +24,6 @@ public class MohistModsMonster extends CraftMonster {
 
 
     @Override
-    public Monster getHandle() {
-        return (Monster) entity;
-    }
-
-    @Override
     public EntityType getType() {
         return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_MONSTER);
     }

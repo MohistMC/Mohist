@@ -51,7 +51,7 @@ public class CooldownAPI {
         if (cooldown != null) {
             long now = System.currentTimeMillis();
             long cooldownTime = cooldown.start;
-            double r = (now - cooldownTime) / 1000;
+            double r = (double) (now - cooldownTime) / 1000;
             f = (r - cooldown.timeInSeconds) * -1;
         }
         return f;

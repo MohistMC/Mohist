@@ -16,11 +16,6 @@ public class MohistModsMinecartContainer extends CraftMinecartContainer {
     }
 
     @Override
-    public AbstractMinecartContainer getHandle() {
-        return (AbstractMinecartContainer) this.entity;
-    }
-
-    @Override
     public EntityType getType() {
         return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_MINECART_CONTAINER);
     }

@@ -22,12 +22,6 @@ public class MohistModsAnimals extends CraftAnimals {
         this.entityName = EntityAPI.entityName(entity);
     }
 
-
-    @Override
-    public Animal getHandle() {
-        return (Animal) entity;
-    }
-
     @Override
     public EntityType getType() {
         return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_ANIMAL);

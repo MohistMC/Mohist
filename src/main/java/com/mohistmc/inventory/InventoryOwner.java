@@ -54,8 +54,8 @@ public class InventoryOwner {
         org.bukkit.block.BlockState state = block.getState();
         if (state instanceof InventoryHolder) {
             return (InventoryHolder) state;
-        } else if (state instanceof CraftBlockEntityState) {
-            BlockEntity te = ((CraftBlockEntityState) state).getTileEntity();
+        } else if (state instanceof CraftBlockEntityState<? extends BlockEntity> blockEntityState) {
+            BlockEntity te = blockEntityState.getTileEntity();
             if (te instanceof Container container) {
                 return new CraftCustomInventory(container);
             }

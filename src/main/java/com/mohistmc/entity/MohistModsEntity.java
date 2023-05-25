@@ -15,11 +15,6 @@ public class MohistModsEntity extends CraftEntity {
     }
 
     @Override
-    public net.minecraft.world.entity.Entity getHandle() {
-        return this.entity;
-    }
-
-    @Override
     public String toString() {
         return "MohistModsEntity{" + entityName + '}';
     }

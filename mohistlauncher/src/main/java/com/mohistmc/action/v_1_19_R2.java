@@ -159,7 +159,7 @@ public class v_1_19_R2 {
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
-                if (infoLines.size() > 0) {
+                if (!infoLines.isEmpty()) {
                     storedServerMD5 = infoLines.get(0);
                 }
                 if (infoLines.size() > 1) {

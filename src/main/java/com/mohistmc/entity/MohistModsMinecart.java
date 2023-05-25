@@ -17,11 +17,6 @@ public class MohistModsMinecart extends CraftMinecart {
         this.entityName = EntityAPI.entityName(entity);
     }
 
-    @Override
-    public AbstractMinecart getHandle() {
-        return (AbstractMinecart) this.entity;
-    }
-
 
     @NotNull
     @Override

@@ -143,7 +143,7 @@ public class ForgeInjectBukkit {
 
     public static void addEnumParticle() {
         var registry = ForgeRegistries.PARTICLE_TYPES;
-        for (ParticleType particleType : ForgeRegistries.PARTICLE_TYPES) {
+        for (ParticleType<?> particleType : ForgeRegistries.PARTICLE_TYPES) {
             ResourceLocation resourceLocation = registry.getKey(particleType);
             String name = normalizeName(resourceLocation.toString());
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {

@@ -18,6 +18,7 @@
 
 package com.mohistmc.command;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.util.ZipUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -62,8 +63,7 @@ public class BackupWorldCommand extends Command {
                     ZipUtil.zipFolder(Paths.get("./" + args[0]), zip.toPath());
                     sender.sendMessage("The world has been successfully saved!");
                 } catch (Exception e) {
-                    sender.sendMessage("Failed to save world or this world doesn't exists.");
-                    e.printStackTrace();
+                    MohistMC.LOGGER.error("Failed to save world or this world doesn't exists.", e);
                 }
             }).start();
         }

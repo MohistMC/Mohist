@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public class RAMGraph extends JComponent {
-    public static final LinkedList<GraphData> DATA = new LinkedList<GraphData>() {
+    public static final LinkedList<GraphData> DATA = new LinkedList<>() {
         @Override
         public boolean add(GraphData data) {
             if (size() >= 348) {

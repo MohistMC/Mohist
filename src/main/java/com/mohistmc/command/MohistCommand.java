@@ -92,7 +92,7 @@ public class MohistCommand extends Command {
                 }
                 Player player = Bukkit.getPlayer(args[1]);
                 if (player != null) {
-                    sender.sendMessage(ChatColor.GREEN + "" + PlayerAPI.getModSize(player) + " " + PlayerAPI.getModlist(player));
+                    sender.sendMessage(ChatColor.GREEN + String.valueOf(PlayerAPI.getModSize(player)) + " " + PlayerAPI.getModlist(player));
                 } else {
                     sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
                 }

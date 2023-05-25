@@ -56,8 +56,7 @@ public class JarTool {
 
     public static File getFile() {
 
-        String path = JarTool.class.getProtectionDomain().getCodeSource()
-                .getLocation().getFile();
+        String path = JarTool.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         path = java.net.URLDecoder.decode(path, StandardCharsets.UTF_8);
         return new File(path);
     }

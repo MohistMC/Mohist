@@ -58,7 +58,7 @@ public class BlockEventDispatcher {
         BlockState state = event.getState();
         // CraftBukkit start - fire BlockBreakEvent
         org.bukkit.block.Block bblock = CraftBlock.at(level, pos);
-        BlockBreakEvent bukkitEvent = null;
+        BlockBreakEvent bukkitEvent;
         if (player instanceof final ServerPlayer serverPlayer) {
             if (level instanceof final ServerLevel serverLevel) {
                 // Sword + Creative mode pre-cancel

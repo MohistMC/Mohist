@@ -194,7 +194,7 @@ public class BootstrapLauncher {
 
         var legacyClasspath = System.getProperty("legacyClassPath", System.getProperty("java.class.path"));
         Objects.requireNonNull(legacyClasspath, "Missing legacyClassPath, cannot bootstrap");
-        if (legacyClasspath.length() == 0) {
+        if (legacyClasspath.isEmpty()) {
             return List.of();
         } else {
             return Arrays.asList(legacyClasspath.split(File.pathSeparator));

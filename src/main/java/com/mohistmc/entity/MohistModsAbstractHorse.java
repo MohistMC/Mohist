@@ -23,11 +23,6 @@ public class MohistModsAbstractHorse extends CraftAbstractHorse {
     }
 
     @Override
-    public AbstractHorse getHandle() {
-        return (AbstractHorse) entity;
-    }
-
-    @Override
     public EntityType getType() {
         return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_HORSE);
     }
