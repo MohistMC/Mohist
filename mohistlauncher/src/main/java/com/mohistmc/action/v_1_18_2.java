@@ -195,7 +195,7 @@ public class v_1_18_2 {
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
                         stringToUrl(new ArrayList<>(Arrays.asList(
-                                libPath + "net/minecraftforge/binarypatcher/1.0.12/binarypatcher-1.0.12.jar",
+                                libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
                                 libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
                                 libPath + "com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
                                 libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
