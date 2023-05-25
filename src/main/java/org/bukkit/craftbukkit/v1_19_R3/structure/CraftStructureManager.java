@@ -60,7 +60,7 @@ public class CraftStructureManager implements StructureManager {
         Optional<StructureTemplate> structure = structureManager.structureRepository.get(minecraftKey);
         structure = structure == null ? Optional.empty() : structure;
         structure = structure.isPresent() ? structure : structureManager.loadFromGenerated(minecraftKey);
-        structure = structure.isPresent() ? structure : structureManager.loadFromResource(minecraftKey);
+        structure = structure.isPresent() ? structure : structureManager.loadFromResource0(minecraftKey);
 
         if (register) {
             structureManager.structureRepository.put(minecraftKey, structure);
