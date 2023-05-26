@@ -333,14 +333,14 @@
        })) {
 -         this.field_73068_P = false;
 +         // CraftBukkit start
-+         long l = this.field_72986_A.func_76073_f() + 24000L;
-+         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (l - l % 24000L) - this.func_72820_D());
++         long l = this.func_72820_D() + 24000L;
++         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, l - l % 24000L, this.func_72820_D()) - this.func_72820_D());
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
 -            this.func_241114_a_(l - l % 24000L);
 +            getCBServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+               this.func_241114_a_(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, this.func_72820_D() + event.getSkipAmount(), this.func_72820_D()));
++               this.func_241114_a_(this.func_72820_D() + event.getSkipAmount());
 +            }
           }
  
