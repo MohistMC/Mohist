@@ -1489,7 +1489,7 @@
  
     public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
 +      // CraftBukkit end
-+      return m_20984_(p_20985_, p_20986_, p_20987_, p_20988_); // CraftBukkit
++      return randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN).orElse(false);
 +   }
 +
 +   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
