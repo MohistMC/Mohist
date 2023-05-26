@@ -158,7 +158,7 @@
 +                  }
 +                  CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
 +
-+                  EnchantItemEvent event = new EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), f_39450_.getLocation().getBlock(), item, this.f_39446_[i], enchants, i);
++                  EnchantItemEvent event = new EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), f_39450_.getLocation().getBlock(), item, this.f_39446_[p_39466_], enchants, p_39466_);
 +                  Bukkit.getPluginManager().callEvent(event);
 +
 +                  int level = event.getExpLevelCost();
