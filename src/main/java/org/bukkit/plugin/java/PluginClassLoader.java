@@ -119,6 +119,13 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
         } catch (ClassNotFoundException ex) {
         }
 
+        if (checkLibraries && libraryLoader != null) {
+            try {
+                return libraryLoader.loadClass(name);
+            } catch (ClassNotFoundException ex) {
+            }
+        }
+
         if (checkGlobal) {
             // This ignores the libraries of other plugins, unless they are transitive dependencies.
             Class<?> result = loader.getClassByName(name, resolve, description);

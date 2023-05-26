@@ -1,128 +1,88 @@
 // CHECKSTYLE:OFF
 package org.bukkit.plugin.java;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import com.mohistmc.MohistMC;
+import com.mohistmc.remapper.v2.RemappingURLClassLoader;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.impl.DefaultServiceLocator;
-import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactResult;
-import org.eclipse.aether.resolution.DependencyRequest;
-import org.eclipse.aether.resolution.DependencyResolutionException;
-import org.eclipse.aether.resolution.DependencyResult;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.transfer.AbstractTransferListener;
-import org.eclipse.aether.transfer.TransferCancelledException;
-import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class LibraryLoader
-{
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-    private final Logger logger;
-    private final RepositorySystem repository;
-    private final DefaultRepositorySystemSession session;
-    private final List<RemoteRepository> repositories;
+class LibraryLoader {
 
-    public LibraryLoader(@NotNull Logger logger)
-    {
-        this.logger = logger;
-
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
-        locator.addService( TransporterFactory.class, HttpTransporterFactory.class );
-
-        this.repository = locator.getService( RepositorySystem.class );
-        this.session = MavenRepositorySystemUtils.newSession();
-
-        session.setChecksumPolicy( RepositoryPolicy.CHECKSUM_POLICY_FAIL );
-        session.setLocalRepositoryManager( repository.newLocalRepositoryManager( session, new LocalRepository( "libraries" ) ) );
-        session.setTransferListener( new AbstractTransferListener()
-        {
-            @Override
-            public void transferStarted(@NotNull TransferEvent event) throws TransferCancelledException
-            {
-                logger.log( Level.INFO, "Downloading {0}", event.getResource().getRepositoryUrl() + event.getResource().getResourceName() );
-            }
-        } );
-        session.setReadOnly();
-
-        this.repositories = repository.newResolutionRepositories( session, Arrays.asList( new RemoteRepository.Builder( "central", "default", "https://repo.maven.apache.org/maven2" ).build() ) );
+    public LibraryLoader() {
     }
 
     @Nullable
-    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc)
-    {
-        if ( desc.getLibraries().isEmpty() )
-        {
+    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc) {
+        if (desc.getLibraries().isEmpty()) {
             return null;
         }
-        logger.log( Level.INFO, "[{0}] Loading {1} libraries... please wait", new Object[]
-        {
-            desc.getName(), desc.getLibraries().size()
-        } );
+        MohistMC.LOGGER.info("[{}] Loading {} libraries... please wait", desc.getName(), desc.getLibraries().size());
 
         List<Dependency> dependencies = new ArrayList<>();
-        for ( String library : desc.getLibraries() )
-        {
-            Artifact artifact = new DefaultArtifact( library );
-            Dependency dependency = new Dependency( artifact, null );
+        for (String libraries : desc.getLibraries()) {
+            String[] args = libraries.split(":");
+            if (args.length > 1) {
+                Dependency dependency = new Dependency(args[0], args[1], args[2]);
+                dependencies.add(dependency);
+            }
 
-            dependencies.add( dependency );
         }
 
-        DependencyResult result;
-        try
-        {
-            result = repository.resolveDependencies( session, new DependencyRequest( new CollectRequest( (Dependency) null, dependencies, repositories ), null ) );
-        } catch ( DependencyResolutionException ex )
-        {
-            throw new RuntimeException( "Error resolving libraries", ex );
+        List<File> libraries = new ArrayList<>();
+
+        for (Dependency dependency : dependencies) {
+            String group = dependency.group().replaceAll("\\.", "/");
+            String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
+            String mavenUrl = "https://repo.maven.apache.org/maven2/%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
+
+            File file = new File(new File("libraries", "spigot-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
+
+            if (file.exists()) {
+                MohistMC.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
+                libraries.add(file);
+                continue;
+            }
+
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+                InputStream inputStream = new URL(mavenUrl).openStream();
+                try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                    byte[] buffer = new byte[8 * 1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                libraries.add(file);
+            } catch (IOException e) {
+                MohistMC.LOGGER.error(e);
+            }
         }
 
         List<URL> jarFiles = new ArrayList<>();
-        for ( ArtifactResult artifact : result.getArtifactResults() )
-        {
-            File file = artifact.getArtifact().getFile();
-
-            URL url;
-            try
-            {
-                url = file.toURI().toURL();
-            } catch ( MalformedURLException ex )
-            {
-                throw new AssertionError( ex );
+        for (File file : libraries) {
+            try {
+                jarFiles.add(file.toURI().toURL());
+                MohistMC.LOGGER.info("[{}] Loaded libraries {}", desc.getName(), file);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
             }
-
-            jarFiles.add( url );
-            logger.log( Level.INFO, "[{0}] Loaded library {1}", new Object[]
-            {
-                desc.getName(), file
-            } );
         }
 
-        URLClassLoader loader = new URLClassLoader( jarFiles.toArray( new URL[ jarFiles.size() ] ), getClass().getClassLoader() );
-
-        return loader;
+        return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
     }
+
+    public record Dependency(String group, String name, String version) {}
 }

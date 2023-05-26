@@ -170,7 +170,6 @@ def sharedDeps = {
     installer 'net.minecraftforge:unsafe:0.2.+'
     installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
     installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
-    installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
     installer 'net.jodah:typetools:0.8.3'
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
@@ -182,9 +181,22 @@ def sharedDeps = {
 
     // bukkit
     installer 'org.yaml:snakeyaml:1.33'
+    // LibraryLoader start
+    installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
+    installer 'org.apache.maven:maven-builder-support:3.8.5'
+    installer 'org.apache.maven:maven-model:3.8.5'
+    installer 'org.apache.maven:maven-model-builder:3.8.5'
+    installer 'org.apache.maven:maven-repository-metadata:3.8.5'
     installer 'org.apache.maven:maven-resolver-provider:3.8.5'
+
+    installer 'org.apache.maven.resolver:maven-resolver-api:1.7.3'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3'
+    installer 'org.apache.maven.resolver:maven-resolver-impl:1.7.3'
+    installer 'org.apache.maven.resolver:maven-resolver-spi:1.7.3'
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
+    installer 'org.apache.maven.resolver:maven-resolver-util:1.7.3'
+    installer 'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.5'
+    // LibraryLoader end
     installer 'org.joml:joml:1.10.5' // 1.19.4
     compileOnly 'org.jetbrains:annotations:21.0.1'
 
