@@ -15,7 +15,7 @@
        ItemStack itemstack = p_28514_.m_32055_();
 -      if (this.m_7252_(itemstack)) {
 +      //if (this.canHoldItem(itemstack)) {
-+      if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, entityitem, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
           int i = itemstack.m_41613_();
           if (i > 1) {
              this.m_28605_(itemstack.m_41620_(i - 1));
