@@ -136,7 +136,7 @@ public class BlockEventDispatcher {
             // Update any tile entity data for this block
             BlockEntity tileentity = event.getLevel().getBlockEntity(event.getPos());
             if (tileentity != null) {
-                serverPlayer.connection.send(Objects.requireNonNull(tileentity.getUpdatePacket()));
+                serverPlayer.connection.send(tileentity.getUpdatePacket());
             }
             // CraftBukkit end
 
