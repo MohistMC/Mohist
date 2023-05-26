@@ -27,12 +27,13 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -145,7 +_,15 @@
+@@ -145,7 +_,16 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.event.server.MapInitializeEvent;
++import org.bukkit.event.world.TimeSkipEvent;
  import org.slf4j.Logger;
 +import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
@@ -102,17 +103,30 @@
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
-@@ -251,8 +_,8 @@
+@@ -250,12 +_,20 @@
+       this.m_184096_();
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
++         // CraftBukkit start
++         long j = this.m_46468_() + 24000L;
++         TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, j - j % 24000L, this.m_46468_()) - this.m_46468_());
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
 -            long j = this.f_46442_.m_6792_() + 24000L;
 -            this.m_8615_(j - j % 24000L);
-+            long j = this.m_46468_() + 24000L;
-+            this.m_8615_(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, j - j % 24000L, this.m_46468_()));
++            getCraftServer().getPluginManager().callEvent(event);
++            if (!event.isCancelled()) {
++               this.m_8615_(this.m_46468_() + event.getSkipAmount());
++            }
           }
  
-          this.m_8804_();
+-         this.m_8804_();
++         if (!event.isCancelled()) {
++            this.m_8804_();
++         }
++         // CraftBukkit end
+          if (this.m_46469_().m_46207_(GameRules.f_46150_) && this.m_46471_()) {
+             this.m_184097_();
+          }
 @@ -281,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
@@ -174,6 +188,14 @@
        }
  
     }
+@@ -641,6 +_,7 @@
+       });
+       profilerfiller.m_6174_("tickNonPassenger");
+       p_8648_.m_8119_();
++      p_8648_.postTick(); // CraftBukkit
+       this.m_46473_().m_7238_();
+ 
+       for(Entity entity : p_8648_.m_20197_()) {
 @@ -656,10 +_,12 @@
              ++p_8664_.f_19797_;
              ProfilerFiller profilerfiller = this.m_46473_();
