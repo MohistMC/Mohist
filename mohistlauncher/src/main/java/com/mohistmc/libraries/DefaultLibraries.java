@@ -52,7 +52,6 @@ public class DefaultLibraries {
         Set<File> defaultLibs = new LinkedHashSet<>();
         AtomicLong allSize = new AtomicLong(); // global
         for (File lib : getDefaultLibs().keySet()) {
-            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             v_1_19_R2.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
@@ -61,6 +60,7 @@ public class DefaultLibraries {
                 currentSize.addAndGet(lib.length());
                 continue;
             }
+            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             defaultLibs.add(lib);
         }
         for (File lib : defaultLibs) {
