@@ -29,7 +29,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -118,9 +_,37 @@
+@@ -118,9 +_,38 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -42,6 +42,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftPortalEvent;
@@ -104,7 +105,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -232,13 +_,72 @@
+@@ -232,13 +_,88 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -142,6 +143,22 @@
 +         bukkitEntity = CraftEntity.getEntity(f_19853_.getCraftServer(), this);
 +      }
 +      return bukkitEntity;
++   }
++
++   public void resetBukkitEntity() {
++      CraftEntity temp = getBukkitEntity();
++
++      this.bukkitEntity = null;
++      getBukkitEntity();
++
++      if (bukkitEntity instanceof CraftPlayer player) {
++         player.setFirstPlayed(((CraftPlayer) temp).getFirstPlayed());
++      }
++
++   }
++
++   public void setBukkitEntity(CraftEntity bukkitEntity) {
++      this.bukkitEntity = bukkitEntity;
 +   }
 +
 +   @Override
@@ -898,25 +915,22 @@
     protected boolean m_269011_() {
        return true;
     }
-@@ -1908,6 +_,7 @@
-       }
-    }
- 
-+   // Mohist TODO
-    protected void m_20157_() {
-       if (this.f_19853_ instanceof ServerLevel) {
-          int i = this.m_6078_();
-@@ -1920,7 +_,13 @@
+@@ -1916,11 +_,17 @@
+             MinecraftServer minecraftserver = serverlevel.m_7654_();
+             ResourceKey<Level> resourcekey = this.f_19853_.m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
+             ServerLevel serverlevel1 = minecraftserver.m_129880_(resourcekey);
+-            if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
++            if (true && !this.m_20159_() && this.f_19818_++ >= i) {
                 this.f_19853_.m_46473_().m_6180_("portal");
                 this.f_19818_ = i;
                 this.m_20091_();
 -               this.m_5489_(serverlevel1);
 +               // CraftBukkit start
-+               //if (this instanceof ServerPlayer) {
-+               //   ((ServerPlayer) this).changeDimension(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
-+               //} else {
++               if (this instanceof ServerPlayer) {
++                  ((ServerPlayer) this).changeDimension(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
++               } else {
 +                  this.m_5489_(serverlevel1);
-+               //}
++               }
 +               // CraftBukkit end
                 this.f_19853_.m_46473_().m_7238_();
              }
@@ -1124,27 +1138,22 @@
           }
        } else {
           return null;
-@@ -2334,17 +_,31 @@
+@@ -2334,8 +_,14 @@
  
     @Nullable
     protected PortalInfo m_7937_(ServerLevel p_19923_) {
--      boolean flag = this.f_19853_.m_46472_() == Level.f_46430_ && p_19923_.m_46472_() == Level.f_46428_;
--      boolean flag1 = p_19923_.m_46472_() == Level.f_46430_;
 +      // CraftBukkit start
 +      if (p_19923_ == null) {
 +         return null;
 +      }
-+      boolean flag = this.f_19853_.getTypeKey() == LevelStem.f_63973_ && p_19923_.getTypeKey() == LevelStem.f_63971_;
-+      boolean flag1 = p_19923_.getTypeKey() == LevelStem.f_63973_;
+       boolean flag = this.f_19853_.m_46472_() == Level.f_46430_ && p_19923_.m_46472_() == Level.f_46428_;
+       boolean flag1 = p_19923_.m_46472_() == Level.f_46430_;
 +      // CraftBukkit end
 +
        if (!flag && !flag1) {
--         boolean flag2 = p_19923_.m_46472_() == Level.f_46429_;
--         if (this.f_19853_.m_46472_() != Level.f_46429_ && !flag2) {
-+         boolean flag2 = p_19923_.getTypeKey() == LevelStem.f_63972_;
-+         if (this.f_19853_.getTypeKey() != LevelStem.f_63972_ && !flag2) {
-             return null;
-          } else {
+          boolean flag2 = p_19923_.m_46472_() == Level.f_46429_;
+          if (this.f_19853_.m_46472_() != Level.f_46429_ && !flag2) {
+@@ -2344,7 +_,15 @@
              WorldBorder worldborder = p_19923_.m_6857_();
              double d0 = DimensionType.m_63908_(this.f_19853_.m_6042_(), p_19923_.m_6042_());
              BlockPos blockpos1 = worldborder.m_187569_(this.m_20185_() * d0, this.m_20186_(), this.m_20189_() * d0);
@@ -1177,7 +1186,7 @@
 -
 -         return new PortalInfo(new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D), this.m_20184_(), this.m_146908_(), this.m_146909_());
 +         // CraftBukkit start
-+         CraftPortalEvent event = callPortalEvent(this, p_19923_, new PositionImpl(f_19826_.m_123341_() + 0.5D, f_19826_.m_123342_(), f_19826_.m_123343_() + 0.5D), PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
++         CraftPortalEvent event = callPortalEvent(this, p_19923_, new PositionImpl(blockpos.m_123341_() + 0.5D, blockpos.m_123342_(), blockpos.m_123343_() + 0.5D), PlayerTeleportEvent.TeleportCause.END_PORTAL, 0, 0);
 +         if (event == null) {
 +            return null;
 +         }

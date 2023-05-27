@@ -20,8 +20,9 @@
        this.m_129997_(true);
        this.m_129999_(true);
        this.m_129793_();
+-      this.m_130006_();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.m_130006_();
++      this.loadLevel(null);
        GameProfile gameprofile = this.m_236731_();
        String s = this.m_129910_().m_5462_();
        this.m_129989_(gameprofile != null ? gameprofile.getName() + " - " + s : s);

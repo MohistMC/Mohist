@@ -20,8 +20,9 @@
     public boolean m_7038_() {
        this.m_129823_(new PlayerList(this, this.m_247573_(), this.f_129745_, 1) {
        });
+-      this.m_130006_();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.m_130006_();
++      this.loadLevel(null);
        ServerLevel serverlevel = this.m_129783_();
        serverlevel.m_8733_(this.f_177588_, 0.0F);
        int i = 20000000;

@@ -59,15 +59,4 @@ public class EntityEventDispatcher {
             }
         }
     }
-
-    @SubscribeEvent(receiveCanceled = true)
-    public void changeTargetEvent(EntityTeleportEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverplayer) {
-            CraftPlayer player = serverplayer.getBukkitEntity();
-            org.bukkit.Location location = player.getLocation();
-            PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
-            Bukkit.getPluginManager().callEvent(teleEvent);
-            event.setCanceled(teleEvent.isCancelled());
-        }
-    }
 }
