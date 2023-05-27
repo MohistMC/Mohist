@@ -125,37 +125,4 @@ public class BlockEventDispatcher {
             event.setCanceled(CraftEventFactory.handleBlockGrowEvent(serverLevel, event.getPos(), event.getState()));
         }
     }
-
-    @SubscribeEvent(receiveCanceled = true)
-    public void onRightClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        Player player = event.getEntity();
-        if (player instanceof final ServerPlayer serverPlayer) {
-            // CraftBukkit start - fire PlayerInteractEvent
-            CraftEventFactory.callPlayerInteractEvent(serverPlayer, Action.LEFT_CLICK_BLOCK,
-                    event.getPos(), event.getFace(), serverPlayer.getInventory().getSelected(), InteractionHand.MAIN_HAND);
-            // Update any tile entity data for this block
-            BlockEntity tileentity = event.getLevel().getBlockEntity(event.getPos());
-            if (tileentity != null) {
-                serverPlayer.connection.send(tileentity.getUpdatePacket());
-            }
-            // CraftBukkit end
-
-            // CraftBukkit start
-            org.bukkit.event.player.PlayerInteractEvent bukkitEvent = CraftEventFactory.callPlayerInteractEvent(serverPlayer,
-                    Action.LEFT_CLICK_BLOCK, event.getPos(), event.getFace(),
-                    serverPlayer.getInventory().getSelected(), InteractionHand.MAIN_HAND);
-            if (bukkitEvent.isCancelled() || event.isCanceled()) {
-                // Let the client know the block still exists
-                serverPlayer.connection.send(new ClientboundBlockUpdatePacket(event.getLevel().getMinecraftWorld(), event.getPos()));
-                // Update any tile entity data for this block
-                BlockEntity tileentity1 = event.getLevel().getBlockEntity(event.getPos());
-                if (tileentity1 != null) {
-                    serverPlayer.connection.send(tileentity.getUpdatePacket());
-                }
-                event.setCancellationResult(InteractionResult.FAIL);
-                event.setCanceled(true);
-            }
-            // CraftBukkit end
-        }
-    }
 }
