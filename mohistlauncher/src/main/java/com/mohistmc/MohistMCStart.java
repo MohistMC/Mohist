@@ -22,10 +22,11 @@ import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
 import com.mohistmc.util.i18n.i18n;
+import cpw.mods.bootstraplauncher.BootstrapLauncher;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
