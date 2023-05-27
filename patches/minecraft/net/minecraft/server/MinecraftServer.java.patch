@@ -789,7 +789,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -684,8 +_,17 @@
+@@ -684,12 +_,19 @@
              if (this.f_236721_.f_214336_() != null) {
                 this.f_236721_.f_214336_().m_196559_();
              }
@@ -804,10 +804,13 @@
 +            }
 +            // CraftBukkit end
              this.m_6988_();
-+			Runtime.getRuntime().halt(0);
           }
  
        }
+-
+    }
+ 
+    private static CrashReport m_206568_(Throwable p_206569_) {
 @@ -715,8 +_,14 @@
     }
  
