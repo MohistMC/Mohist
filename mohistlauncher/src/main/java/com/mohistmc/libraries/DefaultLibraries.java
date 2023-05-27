@@ -51,7 +51,7 @@ public class DefaultLibraries {
         Set<File> defaultLibs = new LinkedHashSet<>();
         AtomicLong allSize = new AtomicLong(); // global
         for (File lib : getDefaultLibs().keySet()) {
-            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
+
             v_1_19.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
                 continue;
@@ -60,13 +60,14 @@ public class DefaultLibraries {
                 currentSize.addAndGet(lib.length());
                 continue;
             }
+            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             defaultLibs.add(lib);
         }
         for (File lib : defaultLibs) {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round(currentSize.get() * 100 / allSize.get()) + "%"); //Global percentage
+            System.out.println(i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
