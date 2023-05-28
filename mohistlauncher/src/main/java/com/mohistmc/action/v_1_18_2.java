@@ -84,6 +84,7 @@ public class v_1_18_2 {
         }
 
         private void install() throws Exception {
+            if (!checkDependencies()) return;
             System.out.println(i18n.get("installation.start"));
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
