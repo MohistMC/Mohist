@@ -909,7 +909,7 @@
              Entity entity = p_9928_.m_134681_(serverlevel);
              if (entity != null) {
 -               this.f_9743_.m_8999_(serverlevel, entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
-+               this.f_9743_.m_8999_(serverlevel, entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_()); // CraftBukkit // Mohist TODO
++               this.f_9743_.teleportTo(serverlevel, entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_(), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.SPECTATE); // CraftBukkit
                 return;
              }
           }
