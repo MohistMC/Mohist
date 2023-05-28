@@ -156,4 +156,26 @@ public abstract class Action {
         }
     }
 
+    public boolean checkDependencies() throws IOException {
+        if (installInfo.exists()) {
+            String jarmd = MD5Util.getMd5(JarTool.getFile());
+            List<String> lines = Files.readAllLines(installInfo.toPath());
+            return lines.size() < 2 || !jarmd.equals(lines.get(1));
+        }
+        return true;
+    }
+
+    protected static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for(File f : files) {
+                if (f.isDirectory())
+                    deleteFolder(f);
+                else
+                    f.delete();
+            }
+        }
+        folder.delete();
+    }
+
 }
