@@ -9,7 +9,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -28,18 +_,37 @@
+@@ -28,18 +_,39 @@
  import net.minecraft.world.level.material.Material;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -18,6 +18,8 @@
 +import org.bukkit.craftbukkit.v1_18_R2.util.DummyGeneratorAccess;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
++
++import java.util.concurrent.atomic.AtomicReference;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
 -   private final Fluid f_40687_;
@@ -89,24 +91,35 @@
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
                       CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -97,8 +_,12 @@
- 
+@@ -98,7 +_,19 @@
     public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
--
-    public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
-+           return emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null, null, null);
-+}
+ 
++   // Mohist start
++   private AtomicReference<Direction> mohist$direction = new AtomicReference<>(null);
++   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>(null);
++   private AtomicReference<ItemStack> mohist$itemstack = new AtomicReference<>(null);
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
++      mohist$direction.set(enumdirection);
++      mohist$clickedPos.set(clicked);
++      mohist$itemstack.set(itemstack);
++      return m_142073_(p_150716_, p_150717_, p_150718_, p_150719_);
++   }
+    public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
 +      // CraftBukkit end
        if (!(this.f_40687_ instanceof FlowingFluid)) {
           return false;
        } else {
-@@ -107,8 +_,18 @@
+@@ -107,8 +_,23 @@
           Material material = blockstate.m_60767_();
           boolean flag = blockstate.m_60722_(this.f_40687_);
           boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
++         // Mohist start - handle bukkit added field
++         Direction enumdirection = mohist$direction.getAndSet(null);
++         BlockPos clicked = mohist$clickedPos.getAndSet(null);
++         ItemStack itemstack = mohist$itemstack.getAndSet(null);
++         // Mohist end
 +         // CraftBukkit start
 +         if (flag1 && p_150716_ != null) {
 +            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerLevel ) p_150717_, p_150716_, p_150718_, clicked, enumdirection, itemstack);
