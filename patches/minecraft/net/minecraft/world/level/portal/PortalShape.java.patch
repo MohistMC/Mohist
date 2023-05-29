@@ -115,17 +115,20 @@
        return new Vec3(d2, d4, d3);
     }
  
-+   private static AtomicReference<CraftPortalEvent> mohist$portalInfo = new AtomicReference<>();
++   private static AtomicReference<CraftPortalEvent> mohist$portalInfo = new AtomicReference<>(null);
 +
     public static PortalInfo m_257966_(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
        BlockPos blockpos = p_259931_.f_124348_;
        BlockState blockstate = p_259301_.m_8055_(blockpos);
-@@ -216,7 +_,12 @@
+@@ -216,7 +_,15 @@
        boolean flag = direction$axis == Direction.Axis.X;
        Vec3 vec31 = new Vec3((double)blockpos.m_123341_() + (flag ? d2 : d4), (double)blockpos.m_123342_() + d3, (double)blockpos.m_123343_() + (flag ? d4 : d2));
        Vec3 vec32 = m_257963_(vec31, p_259301_, p_259166_, entitydimensions);
 -      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
-+      return new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_, p_259301_, mohist$portalInfo.get());
++      PortalInfo portalInfo = new PortalInfo(vec32, vec3, p_259853_ + (float)i, p_259667_);
++      portalInfo.setWorld(p_259301_);
++      portalInfo.setPortalEventInfo(mohist$portalInfo.getAndSet(null));
++      return portalInfo;
 +   }
 +
 +   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, CraftPortalEvent portalEventInfo) { // CraftBukkit

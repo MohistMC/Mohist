@@ -1059,7 +1059,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2296,14 +_,44 @@
+@@ -2296,14 +_,45 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -1089,7 +1089,8 @@
           this.f_19853_.m_46473_().m_6180_("reposition");
 -         PortalInfo portalinfo = this.m_7937_(p_20118_);
 +         PositionImpl location = mohist$postion.get();
-+         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_20118_, this::m_7937_) : new PortalInfo(new Vec3(location.m_7096_(), location.m_7098_(), location.m_7094_()), Vec3.f_82478_, this.f_19857_, this.f_19858_, p_20118_, null); // CraftBukkit
++         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_20118_, this::m_7937_) : new PortalInfo(new Vec3(location.m_7096_(), location.m_7098_(), location.m_7094_()), Vec3.f_82478_, this.f_19857_, this.f_19858_);
++         portalinfo.setWorld(p_20118_);
           if (portalinfo == null) {
              return null;
           } else {
@@ -1179,7 +1180,7 @@
              }).orElse((PortalInfo)null);
           }
        } else {
-@@ -2369,8 +_,12 @@
+@@ -2369,8 +_,15 @@
           } else {
              blockpos = p_19923_.m_5452_(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p_19923_.m_220360_());
           }
@@ -1190,7 +1191,10 @@
 +         if (event == null) {
 +            return null;
 +         }
-+         return new PortalInfo(new Vec3(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ()), this.m_20184_(), this.m_146908_(), this.m_146909_(), ((CraftWorld) event.getTo().getWorld()).getHandle(), event);
++         PortalInfo portalInfo = new PortalInfo(new Vec3(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ()), this.m_20184_(), this.m_146908_(), this.m_146909_());;
++         portalInfo.setWorld(((CraftWorld) event.getTo().getWorld()).getHandle());
++         portalInfo.setPortalEventInfo(event);
++         return portalInfo;
        }
     }
  
