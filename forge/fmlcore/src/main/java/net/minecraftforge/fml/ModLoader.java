@@ -26,10 +26,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -89,6 +91,7 @@ public class ModLoader
     private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
+    private final Set<IModLoadingState> completedStates = new HashSet<>();
     private static ModList modList;
 
     private ModLoader()
@@ -207,6 +210,7 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
         state.inlineRunnable().ifPresent(a->a.accept(this.modList));
         state.buildTransition(syncExecutor, parallelExecutor).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+        completedStates.add(state);
     }
 
     private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
@@ -217,6 +221,7 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
         state.inlineRunnable().ifPresent(a->a.accept(this.modList));
         state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+        completedStates.add(state);
     }
 
     private void waitForTransition(final IModLoadingState state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker, final CompletableFuture<Void> transition) {
@@ -300,6 +305,11 @@ public class ModLoader
      */
     public static boolean isLoadingStateValid() {
         return get().loadingStateValid;
+    }
+
+    public boolean hasCompletedState(final String stateName) {
+        IModLoadingState state = stateManager.findState(stateName);
+        return completedStates.contains(state);
     }
 
     public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
