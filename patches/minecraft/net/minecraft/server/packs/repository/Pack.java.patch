@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
+@@ -19,7 +_,7 @@
+ public class Pack {
+    private static final Logger f_10399_ = LogUtils.getLogger();
+    private final String f_10401_;
+-   private final Pack.ResourcesSupplier f_244124_;
++   public final Pack.ResourcesSupplier f_244124_;
+    private final Component f_10403_;
+    private final Component f_10404_;
+    private final PackCompatibility f_10405_;
 @@ -27,6 +_,7 @@
     private final Pack.Position f_10406_;
     private final boolean f_10407_;

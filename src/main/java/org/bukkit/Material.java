@@ -10926,6 +10926,16 @@ public enum Material implements Keyed, Translatable {
         return Bukkit.getUnsafe().getItemTranslationKey(this);
     }
 
+    /**
+     * Gets if the Material is enabled by the features in a world.
+     *
+     * @param world the world to check
+     * @return true if this material can be used in this World.
+     */
+    public boolean isEnabledByFeature(@NotNull World world) {
+        return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
+    }
+
     // use a normalize() function to ensure it is accessible after a round-trip
     public static String normalizeName(String name) {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");

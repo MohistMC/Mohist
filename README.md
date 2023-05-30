@@ -27,8 +27,8 @@ Progress
 
 - [x] Rectify Forge([**9abfcbc90**](https://github.com/MinecraftForge/MinecraftForge/commit/9abfcbc90))
 - [ ] Start patch
-  * [x] Bukkit([**01d577f5**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/01d577f5))
-  * [ ] CraftBukkit([**d9324b4bc**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/d9324b4bc))
+  * [x] Bukkit([**9f15450b**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/9f15450b))
+  * [ ] CraftBukkit([**dbc70bed5**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/dbc70bed5))
   * [ ] Spigot ([**7d7b241e**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/d1bd3bd2))
     * [x] Bukkit-Patches 
     * [ ] CraftBukkit-Patches (98%) - (029/030/091)
@@ -48,7 +48,6 @@ Upstream Projects
 * [**Purpur**](https://github.com/PurpurMC/Purpur.git) - plugin support.
 * [**Pufferfish**](https://github.com/pufferfish-gg/Pufferfish.git) - plugin support.
 * [**Mirai**](https://github.com/etil2jz/Mirai.git) - plugin support.
-* [**Arclight**](https://github.com/IzzelAliz/Arclight.git) - Remapper support.
 
 A Special Thanks To:
 -------------
