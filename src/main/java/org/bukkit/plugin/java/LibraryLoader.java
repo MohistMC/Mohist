@@ -2,7 +2,7 @@
 package org.bukkit.plugin.java;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.remapper.v2.RemappingURLClassLoader;
+import com.mohistmc.mohistremap.proxy.DelegateURLClassLoder;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +81,7 @@ class LibraryLoader {
             }
         }
 
-        return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
+        return new DelegateURLClassLoder(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
     }
 
     public record Dependency(String group, String name, String version) {}

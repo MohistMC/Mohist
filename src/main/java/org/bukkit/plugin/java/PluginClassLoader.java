@@ -1,31 +1,34 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteStreams;
-import com.mohistmc.remapper.McVersion;
-import com.mohistmc.remapper.v2.ClassLoaderRemapper;
-import com.mohistmc.remapper.v2.MohistRemapper;
-import com.mohistmc.remapper.v2.RemappingClassLoader;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
-
+import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-import io.izzel.tools.product.Product2;
+import com.mohistmc.mohistremap.ClassLoaderContext;
+import com.mohistmc.mohistremap.model.ClassMapping;
+import com.mohistmc.mohistremap.utils.RemapUtils;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
@@ -35,8 +38,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
-public final class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
-    public JavaPlugin getPlugin() { return plugin; } // Spigot
+final class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
     private final PluginDescriptionFile description;
@@ -50,12 +52,12 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    public JavaPlugin getPlugin() { return plugin; } // Spigot
+    private final Set<Package> packageCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     static {
         ClassLoader.registerAsParallelCapable();
     }
-
-    private ClassLoaderRemapper remapper;
 
     PluginClassLoader(@NotNull final JavaPluginLoader loader, @Nullable final ClassLoader parent, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file, @Nullable ClassLoader libraryLoader) throws IOException, InvalidPluginException, MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
@@ -152,75 +154,51 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
                 return result;
             }
         }
-
-        throw new ClassNotFoundException(name);
+        return findClass(name);
     }
 
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {
-        return findClass(name, true);
-    }
-
-    Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
-        if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) {
-            throw new ClassNotFoundException(name);
-        }
-        Class<?> result = classes.get(name);
-
-        if (result == null) {
-            String path = name.replace('.', '/').concat(".class");
-            URL url = this.findResource(path);
-            JarEntry entry = jar.getJarEntry(path);
-
-            if (url != null && entry != null) {
-
-                URLConnection connection;
-                Callable<byte[]> byteSource;
-                try {
-                    connection = url.openConnection();
-                    connection.connect();
-                    byteSource = () -> {
-                        try (InputStream is = connection.getInputStream()) {
-                            byte[] classBytes = ByteStreams.toByteArray(is);
-                            classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
-                            classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
-
-                            return classBytes;
-                        }
-                    };
-                } catch (IOException e) {
-                    throw new ClassNotFoundException(name, e);
+        ClassLoaderContext.put(this);
+        Class<?> result;
+        try {
+            if (RemapUtils.needRemap(name.replace('/', '.'))) {
+                ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
+                if(remappedClassMapping == null){
+                    throw new ClassNotFoundException(name.replace('/','.'));
                 }
+                String remappedClass = remappedClassMapping.getMcpName();
+                return Class.forName(remappedClass);
+            }
+            if (name.startsWith("org.bukkit.")) {
+                throw new ClassNotFoundException(name);
+            }
+            result = classes.get(name);
+            synchronized (name.intern()) {
+                if (result == null) {
 
-                Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+                    if (result == null) {
+                        result = remappedFindClass(name);
+                    }
 
-                int dot = name.lastIndexOf('.');
-                if (dot != -1) {
-                    String pkgName = name.substring(0, dot);
-                    if (getPackage(pkgName) == null) {
+                    if (result != null) {
+                        loader.setClass(name, result);
+                    }
+
+                    if (result == null) {
                         try {
-                            if (manifest != null) {
-                                definePackage(pkgName, manifest, this.url);
-                            } else {
-                                definePackage(pkgName, null, null, null, null, null, null, null);
-                            }
-                        } catch (IllegalArgumentException ex) {
-                            if (getPackage(pkgName) == null) {
-                                throw new IllegalStateException("Cannot find package " + pkgName);
-                            }
+                            result = MinecraftServer.getServer().getClass().getClassLoader().loadClass(name);
+                        } catch (Throwable throwable) {
+                            throw new ClassNotFoundException(name, throwable);
                         }
                     }
+
+                    loader.setClass(name, result);
+                    classes.put(name, result);
                 }
-
-                result = defineClass(name, classBytes._1, 0, classBytes._1.length, classBytes._2);
             }
-
-            if (result == null) {
-                result = super.findClass(name);
-            }
-
-            loader.setClass(name, result);
-            classes.put(name, result);
+        } finally {
+            ClassLoaderContext.pop();
         }
         return result;
     }
@@ -252,14 +230,90 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
         javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
     }
 
-    @Override
-    public ClassLoaderRemapper getRemapper() {
-        if (remapper == null) {
-            MohistRemapper.init(McVersion.v1_19_4);
-            remapper = MohistRemapper.createClassLoaderRemapper(this);
+    private Class<?> remappedFindClass(String name) {
+        Class<?> result = null;
+
+        try {
+            // Load the resource to the name
+            String path = name.replace('.', '/').concat(".class");
+            URL url = this.findResource(path);
+            if (url != null) {
+                InputStream stream = url.openStream();
+                if (stream != null) {
+                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
+                    bytecode = RemapUtils.remapFindClass(bytecode);
+
+                    bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
+
+                    bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
+
+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                    URL jarURL = jarURLConnection.getJarFileURL();
+
+                    final Manifest manifest = jarURLConnection.getManifest();
+                    fixPackage(manifest, url, name);
+
+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    if (result != null) {
+                        // Resolve it - sets the class loader of the class
+                        this.resolveClass(result);
+                    }
+                }
+            }
+        } catch (Exception t) {
+            t.printStackTrace();
         }
-        return remapper;
+
+        return result;
     }
 
+    // Mohist start: add entry point for asm or mixin
+    private byte[] modifyByteCode(String className, byte[] bytes) {
+        return bytes;
+    }
+    //Mohist end
 
+    private void fixPackage(Manifest manifest, URL url, String name) {
+        int dot = name.lastIndexOf('.');
+        if (dot != -1) {
+            String pkgName = name.substring(0, dot);
+            Package pkg = getPackage(pkgName);
+            if (pkg == null) {
+                try {
+                    if (manifest != null) {
+                        pkg = definePackage(pkgName, manifest, url);
+                    } else {
+                        pkg = definePackage(pkgName, null, null, null, null, null, null, null);
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+            if (pkg != null && manifest != null) {
+                if (!packageCache.contains(pkg)) {
+                    Attributes attributes = manifest.getMainAttributes();
+                    if (attributes != null) {
+                        try {
+                            try {
+                                Object versionInfo = MohistDynamEnum.getField(pkg, Package.class.getDeclaredField("versionInfo"));
+                                if (versionInfo != null) {
+                                    Class<?> Package$VersionInfo = Class.forName("java.lang.Package$VersionInfo");
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE), Package$VersionInfo.getDeclaredField("implTitle"));
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION), Package$VersionInfo.getDeclaredField("implVersion"));
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR), Package$VersionInfo.getDeclaredField("implVendor"));
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_TITLE), Package$VersionInfo.getDeclaredField("specTitle"));
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VERSION), Package$VersionInfo.getDeclaredField("specVersion"));
+                                    MohistDynamEnum.setField(versionInfo, attributes.getValue(Attributes.Name.SPECIFICATION_VENDOR), Package$VersionInfo.getDeclaredField("specVendor"));
+                                }
+                            } catch (Exception ignored) {
+                            }
+                        } finally {
+                            packageCache.add(pkg);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

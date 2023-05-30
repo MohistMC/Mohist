@@ -10,6 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.mohistremap.utils.RemapUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -388,6 +389,7 @@ public final class CraftServer implements Server {
 
     public void loadPlugins() {
         pluginManager.registerInterface(JavaPluginLoader.class);
+        RemapUtils.init();
 
         File pluginFolder = (File) console.options.valueOf("plugins");
 
