@@ -1148,7 +1148,7 @@
        ServerLevel serverlevel = this.f_9743_.m_183503_();
        final Entity entity = p_9866_.m_179603_(serverlevel);
        this.f_9743_.m_9243_();
-@@ -1216,12 +_,40 @@
+@@ -1216,11 +_,38 @@
              return;
           }
  
@@ -1188,11 +1188,9 @@
 +                  }
 +                  // CraftBukkit end
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
-+                  if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, entity.m_20182_(), p_143679_) != null) return;
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
-                      if (interactionresult.m_19080_()) {
-@@ -1232,18 +_,26 @@
+@@ -1232,18 +_,28 @@
                 }
  
                 public void m_142299_(InteractionHand p_143677_) {
@@ -1203,6 +1201,8 @@
                 public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
 -                  this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
 +                  this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
++                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
++                     if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
                       return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
 -                  });
 +                  }, new PlayerInteractAtEntityEvent(getCraftPlayer(), entity.getBukkitEntity(), new org.bukkit.util.Vector(p_143683_.f_82479_, p_143683_.f_82480_, p_143683_.f_82481_), (p_143682_ == p_143682_.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND)); // CraftBukkit
