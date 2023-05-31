@@ -1,0 +1,14 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSetEntityDataPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSetEntityDataPacket.java
+@@ -37,6 +_,11 @@
+       m_252763_(this.f_133144_, p_133158_);
+    }
+ 
++   // Fix plugin ModelEngine
++   public int a() {
++      return f_133143_;
++   }
++
+    public void m_5797_(ClientGamePacketListener p_133155_) {
+       p_133155_.m_6455_(this);
+    }

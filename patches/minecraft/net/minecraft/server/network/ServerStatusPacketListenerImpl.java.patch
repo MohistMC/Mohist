@@ -9,13 +9,12 @@
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
-@@ -8,16 +_,29 @@
+@@ -8,16 +_,28 @@
  import net.minecraft.network.protocol.status.ServerStatusPacketListener;
  import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
  import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerPlayer;
-+import net.minecraftforge.network.ServerStatusPing;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 +
@@ -80,9 +79,9 @@
 +                 Optional.of(new ServerStatus.Version(server.m_130001_() + " " + server.m_7630_(), SharedConstants.m_183709_().m_132495_())),
 +                 (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
 +                 server.m_214005_(),
-+                 server.m_129928_().forgeData()
++                 Optional.of(new net.minecraftforge.network.ServerStatusPing())
 +         );
-+         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping, this.statusCache));
++         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping));
 +         // CraftBukkit end
        }
     }
