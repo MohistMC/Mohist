@@ -26,6 +26,7 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * on both logical sides.
+ * @apiNote If the spawned entity is a mob, and {@linkplain Mob#finalizeSpawn the spawn was finalized}, the spawn type is available via {@link Mob#getSpawnType()}
  **/
 @Cancelable
 public class EntityJoinLevelEvent extends EntityEvent
