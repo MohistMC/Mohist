@@ -311,6 +311,9 @@ public class CraftBlock implements Block {
     }
 
     public static Direction blockFaceToNotch(BlockFace face) {
+        if (face == null) {
+            return null;
+        }
         switch (face) {
             case DOWN:
                 return Direction.DOWN;
