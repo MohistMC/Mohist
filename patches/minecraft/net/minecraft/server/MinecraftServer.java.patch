@@ -250,7 +250,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -326,59 +_,164 @@
+@@ -326,59 +_,163 @@
     protected void m_7044_() {
     }
  
@@ -439,13 +439,12 @@
 +            Level.craftWorldData(gen, org.bukkit.World.Environment.getEnvironment(dimension), biomeProvider); // Mohist
 +            world = new ServerLevel(this, this.f_129738_, worldSession, iworlddataserver, worldKey, lS, worldloadlistener, flag, j, ImmutableList.of(), true);
 +         }
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post( new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(worldKey)));
-+
 +
 +         worlddata.m_7955_(this.m_130001_(), this.m_183471_().m_184597_());
 +         this.initWorld(world, worlddata, f_129749_, worldoptions);
 +
 +         this.f_129762_.put(world.m_46472_(), world);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post( new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(worldKey)));
 +         this.m_6846_().m_184209_(world);
 +
 +         if (worlddata.m_6587_() != null) {

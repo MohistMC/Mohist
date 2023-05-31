@@ -32,10 +32,11 @@
     private boolean m_222375_(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_) {
        BlockState blockstate = p_222377_.m_8055_(p_222378_);
        TagKey<Block> tagkey = p_222376_.m_222277_();
-@@ -104,6 +_,12 @@
+@@ -103,7 +_,12 @@
+             BlockState blockstate1 = p_222377_.m_8055_(blockpos);
              if (blockstate1.m_204336_(tagkey)) {
                 BlockState blockstate2 = Blocks.f_220855_.m_49966_();
-                p_222377_.m_7731_(blockpos, blockstate2, 3);
+-               p_222377_.m_7731_(blockpos, blockstate2, 3);
 +               // CraftBukkit start - Call BlockSpreadEvent
 +               if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
 +                  return false;
