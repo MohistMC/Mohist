@@ -55,7 +55,7 @@
 +
 +            if (hatching) {
 +               for (int i1 = 0; i1 < i; ++i1) {
-+                  Entity entity = f_19853_.getWorld().createEntity(new org.bukkit.Location(f_19853_.getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
++                  Chicken entity = (Chicken) f_19853_.getWorld().createEntity(new org.bukkit.Location(f_19853_.getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
 +                  if (entity != null) {
 +                     if (entity.getBukkitEntity() instanceof Ageable) {
 +                        ((Ageable) entity.getBukkitEntity()).setBaby();
