@@ -473,42 +473,51 @@
        int i = p_9862_.m_134013_();
        if (Inventory.m_36045_(i) || i == 40) {
           List<String> list = Lists.newArrayList();
-@@ -751,7 +_,7 @@
+@@ -751,6 +_,8 @@
     private void m_9812_(List<FilteredText> p_9813_, int p_9814_) {
        ItemStack itemstack = this.f_9743_.m_150109_().m_8020_(p_9814_);
        if (itemstack.m_150930_(Items.f_42614_)) {
--         this.m_143634_(p_9813_, UnaryOperator.identity(), itemstack);
-+         this.updateBookPages(p_9813_, UnaryOperator.identity(), itemstack.m_41777_(), p_9814_, itemstack); // CraftBukkit
++         mohist$slot.set(p_9814_);
++         mohist$handItem.set(itemstack);
+          this.m_143634_(p_9813_, UnaryOperator.identity(), itemstack);
        }
     }
- 
-@@ -772,14 +_,14 @@
+@@ -771,12 +_,23 @@
+             itemstack1.m_41700_("filtered_title", StringTag.m_129297_(p_215209_.m_243113_()));
              itemstack1.m_41700_("title", StringTag.m_129297_(p_215209_.f_215168_()));
           }
- 
--         this.m_143634_(p_215210_, (p_238206_) -> {
-+         this.updateBookPages(p_215210_, (p_238206_) -> {
+-
++         mohist$slot.set(p_215211_);
++         mohist$handItem.set(itemstack);
+          this.m_143634_(p_215210_, (p_238206_) -> {
              return Component.Serializer.m_130703_(Component.m_237113_(p_238206_));
--         }, itemstack1);
+          }, itemstack1);
 -         this.f_9743_.m_150109_().m_6836_(p_215211_, itemstack1);
-+         }, itemstack1, p_215211_, itemstack); // CraftBukkit
 +         this.f_9743_.m_150109_().m_6836_(p_215211_, itemstack); // CraftBukkit - event factory updates the hand book
        }
++   }
++
++   // Mohist start
++   private AtomicInteger mohist$slot = new AtomicInteger(-1);
++   private AtomicReference<ItemStack> mohist$handItem = new AtomicReference<>(null);
++
++   private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_, int slot, ItemStack handItem) { // CraftBukkit
++      mohist$slot.set(slot);
++      mohist$handItem.set(handItem);
++      m_143634_(p_143635_, p_143636_, p_143637_);
     }
  
--   private void m_143634_(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
-+   private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_, int slot, ItemStack handItem) { // CraftBukkit
-       ListTag listtag = new ListTag();
-       if (this.f_9743_.m_143387_()) {
-          p_143635_.stream().map((p_238209_) -> {
-@@ -804,6 +_,7 @@
+    private void m_143634_(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
+@@ -804,7 +_,9 @@
        }
  
        p_143637_.m_41700_("pages", listtag);
-+      CraftEventFactory.handleEditBookEvent(f_9743_, slot, handItem, p_143637_); // CraftBukkit
++      CraftEventFactory.handleEditBookEvent(f_9743_, mohist$slot.getAndSet(-1), mohist$handItem.getAndSet(null), p_143637_); // CraftBukkit
     }
++   // Mohist end
  
     public void m_7548_(ServerboundEntityTagQuery p_9864_) {
+       PacketUtils.m_131359_(p_9864_, this, this.f_9743_.m_9236_());
 @@ -833,7 +_,7 @@
           this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_player_movement"));
        } else {

@@ -12,7 +12,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
-@@ -37,24 +_,52 @@
+@@ -37,33 +_,65 @@
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
@@ -65,8 +65,11 @@
 +            })).put(resourcelocation, recipe);
              builder.put(resourcelocation, recipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-@@ -64,6 +_,10 @@
+-            f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
++            f_44006_.debug("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+          }
+       }
+ 
        this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
           return p_44033_.getValue().build();
        }));

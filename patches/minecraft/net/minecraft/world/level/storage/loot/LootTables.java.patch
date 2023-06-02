@@ -8,7 +8,7 @@
     private final PredicateManager f_79191_;
  
     public LootTables(PredicateManager p_79194_) {
-@@ -37,7 +_,8 @@
+@@ -37,10 +_,11 @@
  
        p_79214_.forEach((p_79198_, p_79199_) -> {
           try {
@@ -17,7 +17,11 @@
 +            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(f_79189_, p_79198_, p_79199_, res == null || !res.m_215506_().equals(net.minecraft.server.packs.repository.BuiltInPackSource.f_243761_), this);
              builder.put(p_79198_, loottable);
           } catch (Exception exception) {
-             f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);
+-            f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);
++            f_79188_.debug("Couldn't parse loot table {}", p_79198_, exception);
+          }
+ 
+       });
 @@ -54,6 +_,11 @@
           f_79188_.warn("Found validation problem in {}: {}", p_79211_, p_79212_);
        });
