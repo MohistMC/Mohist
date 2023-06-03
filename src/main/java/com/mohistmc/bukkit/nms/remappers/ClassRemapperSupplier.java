@@ -16,18 +16,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy.asm;
+package com.mohistmc.bukkit.nms.remappers;
 
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 /**
  *
  * @author pyz
- * @date 2019/7/15 8:52 PM
+ * @date 2019/7/2 11:24 PM
  */
-public class ProxyClassWriter {
-
-    public static byte[] remapClass(byte[] code) {
-        return RemapUtils.remapFindClass(code);
+public interface ClassRemapperSupplier {
+    default ClassRemapper getClassRemapper( ClassVisitor cv) {
+        return new ClassRemapper(cv, (Remapper) this);
     }
 }

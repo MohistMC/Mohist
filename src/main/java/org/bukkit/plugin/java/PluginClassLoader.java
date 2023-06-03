@@ -19,14 +19,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-import com.mohistmc.mohistremap.ClassLoaderContext;
-import com.mohistmc.mohistremap.model.ClassMapping;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.ClassLoaderContext;
+import com.mohistmc.bukkit.nms.model.ClassMapping;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import net.md_5.specialsource.repo.RuntimeRepo;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.plugin.InvalidPluginException;

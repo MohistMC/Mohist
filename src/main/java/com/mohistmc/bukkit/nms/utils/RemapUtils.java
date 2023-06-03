@@ -16,17 +16,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.utils;
+package com.mohistmc.bukkit.nms.utils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mohistmc.mohistremap.model.ClassMapping;
-import com.mohistmc.mohistremap.remappers.ClassRemapperSupplier;
-import com.mohistmc.mohistremap.remappers.MohistJarMapping;
-import com.mohistmc.mohistremap.remappers.MohistJarRemapper;
-import com.mohistmc.mohistremap.remappers.MohistSuperClassRemapper;
-import com.mohistmc.mohistremap.remappers.ReflectMethodRemapper;
-import com.mohistmc.mohistremap.remappers.ReflectRemapper;
+import com.mohistmc.bukkit.nms.model.ClassMapping;
+import com.mohistmc.bukkit.nms.remappers.ClassRemapperSupplier;
+import com.mohistmc.bukkit.nms.remappers.MohistJarMapping;
+import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
+import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
+import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
+import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -80,7 +80,7 @@ public class RemapUtils {
         ReflectMethodRemapper.init();
 
         try {
-            Class.forName("com.mohistmc.mohistremap.proxy.ProxyMethodHandlesLookup");
+            Class.forName("com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup");
         } catch (ClassNotFoundException e) {
             e.fillInStackTrace();
         }

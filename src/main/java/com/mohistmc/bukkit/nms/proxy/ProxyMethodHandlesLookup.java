@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.bukkit.nms.proxy;
 
-import com.mohistmc.mohistremap.remappers.ReflectMethodRemapper;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

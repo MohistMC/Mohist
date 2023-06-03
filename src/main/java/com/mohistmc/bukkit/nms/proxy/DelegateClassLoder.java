@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.bukkit.nms.proxy;
 
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.security.ProtectionDomain;
 import net.md_5.specialsource.repo.RuntimeRepo;
 

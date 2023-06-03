@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap;
+package com.mohistmc.bukkit.nms;
 
 import java.util.LinkedList;
 

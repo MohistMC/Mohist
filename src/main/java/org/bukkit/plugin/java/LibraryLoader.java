@@ -2,7 +2,7 @@
 package org.bukkit.plugin.java;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.mohistremap.proxy.DelegateURLClassLoder;
+import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

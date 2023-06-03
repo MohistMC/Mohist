@@ -16,11 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.bukkit.nms.proxy;
 
 import com.mohistmc.dynamicenum.MohistDynamEnum;
-import com.mohistmc.mohistremap.model.ClassMapping;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.model.ClassMapping;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;

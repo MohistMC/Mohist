@@ -16,15 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.bukkit.nms.remappers;
 
 import com.google.common.collect.Maps;
-import com.mohistmc.mohistremap.proxy.DelegateClassLoder;
-import com.mohistmc.mohistremap.proxy.DelegateURLClassLoder;
-import com.mohistmc.mohistremap.utils.ASMUtils;
+import com.mohistmc.bukkit.nms.proxy.DelegateClassLoder;
+import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
+import com.mohistmc.bukkit.nms.utils.ASMUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ListIterator;
 import java.util.Map;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

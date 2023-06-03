@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.bukkit.nms.remappers;
 
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

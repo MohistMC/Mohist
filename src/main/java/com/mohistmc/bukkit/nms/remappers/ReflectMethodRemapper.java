@@ -16,14 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.remappers;
+package com.mohistmc.bukkit.nms.remappers;
 
 import com.google.common.collect.Maps;
-import com.mohistmc.mohistremap.model.MethodRedirectRule;
-import com.mohistmc.mohistremap.proxy.ProxyClass;
-import com.mohistmc.mohistremap.proxy.ProxyMethodHandlesLookup;
-import com.mohistmc.mohistremap.proxy.asm.ProxyClassWriter;
-import com.mohistmc.mohistremap.utils.ASMUtils;
+import com.mohistmc.bukkit.nms.model.MethodRedirectRule;
+import com.mohistmc.bukkit.nms.proxy.ProxyClass;
+import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
+import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
+import com.mohistmc.bukkit.nms.utils.ASMUtils;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;

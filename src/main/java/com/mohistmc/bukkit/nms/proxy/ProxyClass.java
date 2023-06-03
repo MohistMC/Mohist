@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohistremap.proxy;
+package com.mohistmc.bukkit.nms.proxy;
 
 
-import com.mohistmc.mohistremap.utils.ASMUtils;
-import com.mohistmc.mohistremap.utils.ReflectionUtils;
-import com.mohistmc.mohistremap.utils.RemapUtils;
+import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import com.mohistmc.bukkit.nms.utils.ReflectionUtils;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
