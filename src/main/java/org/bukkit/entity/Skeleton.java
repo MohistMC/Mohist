@@ -62,6 +62,7 @@ public interface Skeleton extends AbstractSkeleton {
         /**
          * Stray skeleton. Generally found in ice biomes. Shoots tipped arrows.
          */
-        STRAY;
+        STRAY,
+        FORGE_MODS;
     }
 }

@@ -187,6 +187,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         if (entity instanceof net.minecraft.world.entity.monster.Stray) { return new CraftStray(server, (net.minecraft.world.entity.monster.Stray) entity); }
                         else if (entity instanceof net.minecraft.world.entity.monster.WitherSkeleton) { return new CraftWitherSkeleton(server, (net.minecraft.world.entity.monster.WitherSkeleton) entity); }
                         else if (entity instanceof net.minecraft.world.entity.monster.Skeleton){ return new CraftSkeleton(server, (net.minecraft.world.entity.monster.Skeleton) entity); }
+                        else { return new MohistModsSkeleton(server, (net.minecraft.world.entity.monster.AbstractSkeleton) entity); }
                     }
                     else if (entity instanceof net.minecraft.world.entity.monster.Blaze) { return new CraftBlaze(server, (net.minecraft.world.entity.monster.Blaze) entity); }
                     else if (entity instanceof net.minecraft.world.entity.monster.Witch) { return new CraftWitch(server, (net.minecraft.world.entity.monster.Witch) entity); }
@@ -328,11 +329,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             else if (entity instanceof Display.ItemDisplay) { return new CraftItemDisplay(server, (Display.ItemDisplay) entity); }
             else if (entity instanceof Display.TextDisplay) { return new CraftTextDisplay(server, (Display.TextDisplay) entity); }
             else { return new CraftDisplay(server, (Display) entity); }
+        } else if (entity instanceof AbstractMinecart) {
+            return new MohistModsMinecart(server, (AbstractMinecart) entity);
+        } else if (entity instanceof AbstractMinecartContainer) {
+            return new MohistModsMinecartContainer(server, (AbstractMinecartContainer) entity);
         }
-        else if (entity instanceof Projectile) { return new MohistModsProjectileEntity(server, (Projectile) entity);
-        } else  { return new MohistModsEntity(server, entity); }
-        // CHECKSTYLE:ON
-        throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
+        return new MohistModsEntity(server, entity);
     }
 
     @Override
