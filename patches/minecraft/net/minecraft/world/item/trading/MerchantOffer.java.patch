@@ -41,8 +41,11 @@
     public MerchantOffer(CompoundTag p_45351_) {
        this.f_45310_ = ItemStack.m_41712_(p_45351_.m_128469_("buy"));
        this.f_45311_ = ItemStack.m_41712_(p_45351_.m_128469_("buyB"));
-@@ -75,7 +_,7 @@
+@@ -73,9 +_,10 @@
+ 
+    public ItemStack m_45358_() {
        int i = this.f_45310_.m_41613_();
++      if (i <= 0) return ItemStack.f_41583_; // CraftBukkit - SPIGOT-5476
        ItemStack itemstack = this.f_45310_.m_41777_();
        int j = Math.max(0, Mth.m_14143_((float)(i * this.f_45317_) * this.f_45318_));
 -      itemstack.m_41764_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41720_().m_41459_()));
@@ -59,3 +62,16 @@
              itemstack.m_41721_(itemstack.m_41773_());
           }
  
+@@ -191,7 +_,11 @@
+       if (!this.m_45355_(p_45362_, p_45363_)) {
+          return false;
+       } else {
+-         p_45362_.m_41774_(this.m_45358_().m_41613_());
++         // CraftBukkit start
++         if (!this.m_45358_().m_41619_()) {
++            p_45362_.m_41774_(this.m_45358_().m_41613_());
++         }
++         // CraftBukkit end
+          if (!this.m_45364_().m_41619_()) {
+             p_45363_.m_41774_(this.m_45364_().m_41613_());
+          }
