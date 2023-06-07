@@ -157,6 +157,15 @@
     }
  
     protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
+@@ -489,7 +_,7 @@
+       return this.f_21355_ == null ? this.m_7582_() : this.f_21355_;
+    }
+ 
+-   protected ResourceLocation m_7582_() {
++   public ResourceLocation m_7582_() {
+       return super.m_5743_();
+    }
+ 
 @@ -513,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();

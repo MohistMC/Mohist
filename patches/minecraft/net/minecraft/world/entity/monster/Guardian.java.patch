@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/entity/monster/Guardian.java
 @@ -62,6 +_,7 @@
     @Nullable
-    protected RandomStrollGoal f_32806_;
+    public RandomStrollGoal f_32806_;
  
 +   public Guardian.GuardianAttackGoal guardianAttackGoal; // CraftBukkit - add field
     public Guardian(EntityType<? extends Guardian> p_32810_, Level p_32811_) {

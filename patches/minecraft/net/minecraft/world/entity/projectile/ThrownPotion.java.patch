@@ -111,7 +111,7 @@
                    }
                 }
              }
-@@ -184,7 +_,14 @@
+@@ -184,23 +_,42 @@
           areaeffectcloud.m_19714_(compoundtag.m_128451_("CustomPotionColor"));
        }
  
@@ -126,8 +126,11 @@
 +      // CraftBukkit end
     }
  
-    private boolean m_37553_() {
-@@ -194,13 +_,25 @@
+-   private boolean m_37553_() {
++   public boolean m_37553_() {
+       return this.m_7846_().m_150930_(Items.f_42739_);
+    }
+ 
     private void m_150192_(BlockPos p_150193_) {
        BlockState blockstate = this.f_19853_.m_8055_(p_150193_);
        if (blockstate.m_204336_(BlockTags.f_13076_)) {

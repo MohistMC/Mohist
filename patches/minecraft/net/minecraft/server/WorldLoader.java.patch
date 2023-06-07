@@ -9,3 +9,12 @@
           RegistryAccess.Frozen registryaccess$frozen = layeredregistryaccess1.m_246035_(RegistryLayer.DIMENSIONS);
           RegistryAccess.Frozen registryaccess$frozen1 = RegistryDataLoader.m_247207_(closeableresourcemanager, registryaccess$frozen, RegistryDataLoader.f_244547_);
           WorldDataConfiguration worlddataconfiguration = pair.getFirst();
+@@ -54,7 +_,7 @@
+       return RegistryDataLoader.m_247207_(p_251529_, registryaccess$frozen, p_249516_);
+    }
+ 
+-   private static LayeredRegistryAccess<RegistryLayer> m_245736_(ResourceManager p_249913_, LayeredRegistryAccess<RegistryLayer> p_252077_, RegistryLayer p_250346_, List<RegistryDataLoader.RegistryData<?>> p_250589_) {
++   public static LayeredRegistryAccess<RegistryLayer> m_245736_(ResourceManager p_249913_, LayeredRegistryAccess<RegistryLayer> p_252077_, RegistryLayer p_250346_, List<RegistryDataLoader.RegistryData<?>> p_250589_) {
+       RegistryAccess.Frozen registryaccess$frozen = m_246152_(p_249913_, p_252077_, p_250346_, p_250589_);
+       return p_252077_.m_247705_(p_250346_, registryaccess$frozen);
+    }

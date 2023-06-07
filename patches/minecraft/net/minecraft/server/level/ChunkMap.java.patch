@@ -127,6 +127,15 @@
              }
  
              return levelchunk;
+@@ -784,7 +_,7 @@
+       }
+    }
+ 
+-   private boolean m_140258_(ChunkAccess p_140259_) {
++   public boolean m_140258_(ChunkAccess p_140259_) {
+       this.f_140138_.m_63796_(p_140259_.m_7697_());
+       if (!p_140259_.m_6344_()) {
+          return false;
 @@ -806,6 +_,7 @@
  
              this.f_140133_.m_46473_().m_6174_("chunkSave");

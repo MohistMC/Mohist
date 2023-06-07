@@ -571,10 +571,11 @@
  
     }
  
-@@ -802,6 +_,20 @@
+@@ -802,7 +_,21 @@
        }
     }
  
+-   private void m_9209_(ServerLevel p_9210_) {
 +   @Override
 +   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel worldserver, BlockPos blockposition, boolean flag, WorldBorder worldborder, int searchRadius, boolean canCreatePortal, int createRadius) {
 +      Optional<BlockUtil.FoundRectangle> optional = super.getExitPortal(worldserver, blockposition, flag, worldborder, searchRadius, canCreatePortal, createRadius);
@@ -589,9 +590,10 @@
 +      return optional1;
 +   }
 +
-    private void m_9209_(ServerLevel p_9210_) {
++   public void m_9209_(ServerLevel p_9210_) {
        ResourceKey<Level> resourcekey = p_9210_.m_46472_();
        ResourceKey<Level> resourcekey1 = this.f_19853_.m_46472_();
+       CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
 @@ -830,6 +_,9 @@
     }
  

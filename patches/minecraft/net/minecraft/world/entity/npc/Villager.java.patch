@@ -104,7 +104,14 @@
        this.m_35428_(MemoryModuleType.f_26359_);
        this.m_35428_(MemoryModuleType.f_26360_);
        this.m_35428_(MemoryModuleType.f_26361_);
-@@ -668,7 +_,8 @@
+@@ -662,13 +_,14 @@
+       return VillagerData.m_35582_(i) && this.f_35362_ >= VillagerData.m_35577_(i);
+    }
+ 
+-   private void m_35528_() {
++   public void m_35528_() {
+       this.m_34375_(this.m_7141_().m_35561_(this.m_7141_().m_35576_() + 1));
+       this.m_7604_();
     }
  
     protected Component m_5677_() {

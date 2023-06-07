@@ -67,6 +67,15 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
+@@ -87,7 +_,7 @@
+    protected final NeighborUpdater f_220350_;
+    private final List<TickingBlockEntity> f_151503_ = Lists.newArrayList();
+    private boolean f_151504_;
+-   private final Thread f_46423_;
++   public final Thread f_46423_;
+    private final boolean f_46424_;
+    private int f_46425_;
+    protected int f_46435_ = RandomSource.m_216327_().m_188502_();
 @@ -102,17 +_,61 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
