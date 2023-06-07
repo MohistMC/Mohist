@@ -11,7 +11,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -20,10 +_,12 @@
+@@ -20,6 +_,7 @@
  import net.minecraft.core.particles.ParticleOptions;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
@@ -19,11 +19,6 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ChunkHolder;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.util.Mth;
 @@ -34,6 +_,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -130,12 +125,11 @@
        this.f_46446_ = p_220355_;
        this.f_46442_ = p_220352_;
        this.f_204147_ = p_220354_;
-@@ -133,6 +_,43 @@
+@@ -133,6 +_,42 @@
        this.f_46420_ = new BiomeManager(this, p_220358_);
        this.f_46424_ = p_220357_;
        this.f_220350_ = new CollectingNeighborUpdater(this, p_220359_);
 +      // CraftBukkit start
-+      m_6857_().world = (ServerLevel) this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +
@@ -526,7 +520,7 @@
 +
 +            // CraftBukkit start
 +            iblockdata1.m_60762_(this, blockposition, k, j - 1); // Don't call an event for the old block to limit event spam
-+            CraftWorld world = ((ServerLevel) this).getWorld();
++            CraftWorld world = this.getWorld();
 +            if (world != null) {
 +               BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(blockposition.m_123341_(), blockposition.m_123342_(), blockposition.m_123343_()), CraftBlockData.fromData(iblockdata));
 +               this.getCraftServer().getPluginManager().callEvent(event);
