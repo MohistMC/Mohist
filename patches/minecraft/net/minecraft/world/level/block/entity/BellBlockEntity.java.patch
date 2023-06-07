@@ -8,15 +8,6 @@
  
  public class BellBlockEntity extends BlockEntity {
     private static final int f_155164_ = 50;
-@@ -33,7 +_,7 @@
-    public boolean f_58814_;
-    public Direction f_58815_;
-    private List<LivingEntity> f_58817_;
--   private boolean f_58818_;
-+   public boolean f_58818_;
-    private int f_58819_;
- 
-    public BellBlockEntity(BlockPos p_155173_, BlockState p_155174_) {
 @@ -128,9 +_,12 @@
     }
  

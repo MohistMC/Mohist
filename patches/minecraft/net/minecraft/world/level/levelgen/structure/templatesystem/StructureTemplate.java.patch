@@ -25,18 +25,14 @@
  
  public class StructureTemplate {
     public static final String f_163789_ = "palette";
-@@ -63,8 +_,9 @@
+@@ -63,6 +_,7 @@
     public static final String f_163797_ = "blockPos";
     public static final String f_163798_ = "nbt";
     public static final String f_163799_ = "size";
--   private final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
--   private final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
 +   static final int CHUNK_SIZE = 16;
-+   public final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
-+   public final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
+    public final List<StructureTemplate.Palette> f_74482_ = Lists.newArrayList();
+    public final List<StructureTemplate.StructureEntityInfo> f_74483_ = Lists.newArrayList();
     private Vec3i f_74484_ = Vec3i.f_123288_;
-    private String f_74485_ = "?";
- 
 @@ -80,6 +_,11 @@
        return this.f_74485_;
     }

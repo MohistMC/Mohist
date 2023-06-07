@@ -8,16 +8,7 @@
  import net.minecraft.world.phys.Vec3;
  import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
-@@ -88,13 +_,14 @@
-    private final VibrationListener.VibrationListenerConfig f_238787_;
-    private final DynamicGameEventListener<Allay.JukeboxListener> f_238563_;
-    private final SimpleContainer f_218303_ = new SimpleContainer(1);
--   private @Nullable BlockPos f_238682_;
--   private long f_238791_;
-+   public @Nullable BlockPos f_238682_;
-+   public long f_238791_;
-    private float f_218304_;
-    private float f_218305_;
+@@ -95,6 +_,7 @@
     private float f_238687_;
     private float f_238541_;
     private float f_238552_;
