@@ -1,5 +1,28 @@
 --- a/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/net/minecraft/world/level/block/ComposterBlock.java
+@@ -17,6 +_,7 @@
+ import net.minecraft.world.SimpleContainer;
+ import net.minecraft.world.WorldlyContainer;
+ import net.minecraft.world.WorldlyContainerHolder;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -234,6 +_,14 @@
+       }
+    }
+ 
++   public static BlockState insertItem(BlockState p_51930_, ServerLevel p_51931_, ItemStack p_51932_, BlockPos p_51933_, Entity entity) { // CraftBukkit
++      return m_51929_(p_51930_, p_51931_, p_51932_, p_51933_);
++   }
++
++   public static BlockState extractProduce(BlockState p_51999_, Level p_52000_, BlockPos p_52001_, Entity entity) {
++      return m_51998_(p_51999_, p_52000_, p_52001_);
++   }
++
+    public static BlockState m_51998_(BlockState p_51999_, Level p_52000_, BlockPos p_52001_) {
+       if (!p_52000_.f_46443_) {
+          float f = 0.7F;
 @@ -306,7 +_,7 @@
        }
     }

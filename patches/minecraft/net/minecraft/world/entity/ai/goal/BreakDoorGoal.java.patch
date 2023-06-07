@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.block.Block;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
+ 
+ public class BreakDoorGoal extends DoorInteractGoal {
+    private static final int f_148080_ = 240;
 @@ -30,7 +_,7 @@
     public boolean m_8036_() {
        if (!super.m_8036_()) {
@@ -9,3 +17,16 @@
           return false;
        } else {
           return this.m_25094_(this.f_25189_.f_19853_.m_46791_()) && !this.m_25200_();
+@@ -68,6 +_,12 @@
+       }
+ 
+       if (this.f_25082_ == this.m_25100_() && this.m_25094_(this.f_25189_.f_19853_.m_46791_())) {
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityBreakDoorEvent(this.f_25189_, this.f_25190_).isCancelled()) {
++            this.m_8056_();
++            return;
++         }
++         // CraftBukkit end
+          this.f_25189_.f_19853_.m_7471_(this.f_25190_, false);
+          this.f_25189_.f_19853_.m_46796_(1021, this.f_25190_, 0);
+          this.f_25189_.f_19853_.m_46796_(2001, this.f_25190_, Block.m_49956_(this.f_25189_.f_19853_.m_8055_(this.f_25190_)));

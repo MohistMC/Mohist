@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/entity/ai/goal/PanicGoal.java
++++ b/net/minecraft/world/entity/ai/goal/PanicGoal.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.PathfinderMob;
+ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+ import net.minecraft.world.level.BlockGetter;
+@@ -73,6 +_,12 @@
+    }
+ 
+    public boolean m_8045_() {
++      // CraftBukkit start - introduce a temporary timeout hack until this is fixed properly
++      if ((this.f_25684_.f_19797_ - this.f_25684_.m_21213_()) > 100) {
++         this.f_25684_.m_6703_((LivingEntity) null);
++         return false;
++      }
++      // CraftBukkit end
+       return !this.f_25684_.m_21573_().m_26571_();
+    }
+ 
+@@ -81,6 +_,6 @@
+       BlockPos blockpos = p_198174_.m_20183_();
+       return !p_198173_.m_8055_(blockpos).m_60812_(p_198173_, blockpos).m_83281_() ? null : BlockPos.m_121930_(p_198174_.m_20183_(), p_198175_, 1, (p_196649_) -> {
+          return p_198173_.m_6425_(p_196649_).m_205070_(FluidTags.f_13131_);
+-      }).orElse((BlockPos)null);
++      }).orElse(null);
+    }
+ }

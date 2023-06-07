@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/entity/ai/behavior/GoToWantedItem.java
++++ b/net/minecraft/world/entity/ai/behavior/GoToWantedItem.java
+@@ -3,10 +_,13 @@
+ import com.google.common.collect.ImmutableMap;
+ import java.util.function.Predicate;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
+ import net.minecraft.world.entity.item.ItemEntity;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
+ 
+ public class GoToWantedItem<E extends LivingEntity> extends Behavior<E> {
+    private final Predicate<E> f_23136_;
+@@ -31,6 +_,25 @@
+    }
+ 
+    protected void m_6735_(ServerLevel p_23152_, E p_23153_, long p_23154_) {
++      // CraftBukkit start
++      if (p_23153_ instanceof net.minecraft.world.entity.animal.allay.Allay) {
++         Entity target = this.m_23155_(p_23153_);
++         org.bukkit.event.entity.EntityTargetEvent event = CraftEventFactory.callEntityTargetEvent(p_23153_, target, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++
++         if (event.isCancelled()) {
++            return;
++         }
++
++         target = (event.getTarget() == null) ? null : ((CraftEntity) event.getTarget()).getHandle();
++         if (target instanceof ItemEntity item) {
++            p_23153_.m_6274_().m_21886_(MemoryModuleType.f_26332_, java.util.Optional.of(item));
++            BehaviorUtils.m_22590_(p_23153_, target, this.f_23138_, 0);
++         } else {
++            p_23153_.m_6274_().m_21936_(MemoryModuleType.f_26332_);
++         }
++         return;
++      }
++      // CraftBukkit end
+       BehaviorUtils.m_22590_(p_23153_, this.m_23155_(p_23153_), this.f_23138_, 0);
+    }
+ 

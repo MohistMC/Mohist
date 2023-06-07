@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/entity/ai/behavior/BabyFollowAdult.java
++++ b/net/minecraft/world/entity/ai/behavior/BabyFollowAdult.java
+@@ -8,6 +_,10 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+ 
+ public class BabyFollowAdult<E extends AgeableMob> extends Behavior<E> {
+    private final UniformInt f_22468_;
+@@ -35,7 +_,17 @@
+    }
+ 
+    protected void m_6735_(ServerLevel p_147426_, E p_147427_, long p_147428_) {
+-      BehaviorUtils.m_22590_(p_147427_, this.m_147429_(p_147427_), this.f_22469_.apply(p_147427_), this.f_22468_.m_142739_() - 1);
++      // CraftBukkit start
++      EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_147427_, this.m_147429_(p_147427_), EntityTargetEvent.TargetReason.FOLLOW_LEADER);
++      if (event.isCancelled()) {
++         return;
++      }
++      if (event.getTarget() != null) {
++         BehaviorUtils.m_22590_(p_147427_, ((CraftLivingEntity) event.getTarget()).getHandle(), this.f_22469_.apply(p_147427_), this.f_22468_.m_142739_() - 1);
++      } else {
++         p_147427_.m_6274_().m_21936_(MemoryModuleType.f_26331_);
++      }
++      // CraftBukkit end
+    }
+ 
+    private AgeableMob m_147429_(E p_147430_) {

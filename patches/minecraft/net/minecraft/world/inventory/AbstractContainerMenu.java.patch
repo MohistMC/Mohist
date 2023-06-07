@@ -138,6 +138,18 @@
        }
  
        p_38925_.m_41769_(p_38926_);
+@@ -747,6 +_,11 @@
+    }
+ 
+    public ItemStack m_142621_() {
++      // CraftBukkit start
++      if (this.f_150393_.m_41619_()) {
++         this.m_142503_(ItemStack.f_41583_);
++      }
++      // CraftBukkit end
+       return this.f_150393_;
+    }
+ 
 @@ -793,7 +_,21 @@
     }
  

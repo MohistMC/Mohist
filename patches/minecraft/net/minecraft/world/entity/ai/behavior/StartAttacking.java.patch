@@ -1,12 +1,36 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
-@@ -46,7 +_,11 @@
+@@ -5,10 +_,14 @@
+ import java.util.function.Function;
+ import java.util.function.Predicate;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
++import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class StartAttacking<E extends Mob> extends Behavior<E> {
+    private final Predicate<E> f_24190_;
+@@ -46,7 +_,20 @@
     }
  
     public static <E extends Mob> void m_24213_(E p_24214_, LivingEntity p_24215_) {
 -      p_24214_.m_6274_().m_21879_(MemoryModuleType.f_26372_, p_24215_);
 -      p_24214_.m_6274_().m_21936_(MemoryModuleType.f_26326_);
 +      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_24214_, p_24215_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
++      // CraftBukkit start
++      EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_24214_, p_24215_, (p_24215_ instanceof ServerPlayer) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++      event.setCancelled(changeTargetEvent.isCanceled());
++      if (event.isCancelled()) {
++         return;
++      }
++      LivingEntity entityliving = (event.getTarget() != null) ? ((CraftLivingEntity) event.getTarget()).getHandle() : null;
++      changeTargetEvent.setNewTarget(entityliving);
++      // CraftBukkit end
 +      if(!changeTargetEvent.isCanceled()) {
 +         p_24214_.m_6274_().m_21879_(MemoryModuleType.f_26372_, changeTargetEvent.getNewTarget());
 +         p_24214_.m_6274_().m_21936_(MemoryModuleType.f_26326_);

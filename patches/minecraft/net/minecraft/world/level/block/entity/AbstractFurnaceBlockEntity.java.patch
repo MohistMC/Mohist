@@ -162,6 +162,17 @@
        }
     }
  
+@@ -462,6 +_,10 @@
+    public void m_8015_(Player p_58396_) {
+    }
+ 
++   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
++      m_155003_(p_155004_);
++   }
++
+    public void m_155003_(ServerPlayer p_155004_) {
+       List<Recipe<?>> list = this.m_154995_(p_155004_.m_9236_(), p_155004_.m_20182_());
+       p_155004_.m_7281_(list);
 @@ -497,4 +_,67 @@
        }
  
