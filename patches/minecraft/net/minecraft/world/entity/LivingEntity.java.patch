@@ -511,7 +511,7 @@
        float f = this.m_21223_();
        if (f > 0.0F) {
 -         this.m_21153_(f + p_21116_);
-+         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason0.getAndSet(RegainReason.CUSTOM));
++         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), p_21116_, regainReason0.getAndSet(RegainReason.CUSTOM));
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
