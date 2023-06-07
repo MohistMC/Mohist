@@ -24,6 +24,11 @@ import com.mohistmc.bukkit.nms.proxy.ProxyClass;
 import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.MethodRemapper;
+import org.objectweb.asm.commons.Remapper;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -35,11 +40,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.MethodRemapper;
-import org.objectweb.asm.commons.Remapper;
 
 /**
  *

@@ -22,9 +22,6 @@ import com.google.common.collect.Maps;
 import com.mohistmc.bukkit.nms.proxy.DelegateClassLoder;
 import com.mohistmc.bukkit.nms.proxy.DelegateURLClassLoder;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -32,6 +29,10 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 public class MohistSuperClassRemapper {
     public static Map<String, Class<?>> defineClass = Maps.newHashMap();
 

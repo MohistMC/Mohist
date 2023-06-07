@@ -20,6 +20,14 @@ package com.mohistmc.bukkit.nms.remappers;
 
 import com.google.common.collect.BiMap;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.NodeType;
+import net.md_5.specialsource.provider.InheritanceProvider;
+import net.md_5.specialsource.transformer.MappingTransformer;
+import net.md_5.specialsource.transformer.MavenShade;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.Remapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -30,13 +38,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import net.md_5.specialsource.InheritanceMap;
-import net.md_5.specialsource.NodeType;
-import net.md_5.specialsource.provider.InheritanceProvider;
-import net.md_5.specialsource.transformer.MappingTransformer;
-import net.md_5.specialsource.transformer.MavenShade;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Remapper;
 
 /**
  *

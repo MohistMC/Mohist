@@ -19,11 +19,12 @@
 package com.mohistmc.bukkit.nms.remappers;
 
 import com.mohistmc.bukkit.nms.ClassLoaderContext;
-import java.io.IOException;
-import java.io.InputStream;
 import net.md_5.specialsource.repo.CachingRepo;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *

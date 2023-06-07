@@ -27,15 +27,6 @@ import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
 import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.transformer.MavenShade;
@@ -45,6 +36,15 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
