@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/item/HangingEntityItem.java
++++ b/net/minecraft/world/item/HangingEntityItem.java
+@@ -14,6 +_,10 @@
+ import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.craftbukkit.v1_19_R1.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
++import org.bukkit.event.hanging.HangingPlaceEvent;
+ 
+ public class HangingEntityItem extends Item {
+    private final EntityType<? extends HangingEntity> f_41322_;
+@@ -58,6 +_,19 @@
+ 
+          if (hangingentity.m_7088_()) {
+             if (!level.f_46443_) {
++               // CraftBukkit start - fire HangingPlaceEvent
++               org.bukkit.entity.Player who = (p_41331_.m_43723_() == null) ? null : (org.bukkit.entity.Player) p_41331_.m_43723_().getBukkitEntity();
++               org.bukkit.block.Block blockClicked = level.getWorld().getBlockAt(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
++               org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(p_41331_.m_43724_());
++
++               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) ((HangingEntity) hangingentity).getBukkitEntity(), who, blockClicked, blockFace, hand, CraftItemStack.asBukkitCopy(itemstack));
++               level.getCraftServer().getPluginManager().callEvent(event);
++
++               if (event.isCancelled()) {
++                  return InteractionResult.FAIL;
++               }
++               // CraftBukkit end
+                hangingentity.m_7084_();
+                level.m_220400_(player, GameEvent.f_157810_, hangingentity.m_20182_());
+                level.m_7967_(hangingentity);

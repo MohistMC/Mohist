@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -20,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
+ 
+ public class CropBlock extends BushBlock implements BonemealableBlock {
+    public static final int f_153107_ = 7;
 @@ -64,12 +_,25 @@
     }
  
@@ -10,6 +18,7 @@
           if (i < this.m_7419_()) {
              float f = m_52272_(this, p_221051_, p_221052_);
 -            if (p_221053_.m_188503_((int)(25.0F / f) + 1) == 0) {
+-               p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
 +            // Spigot start
 +            int modifier;
 +            if (this == Blocks.f_50444_) {
@@ -22,11 +31,20 @@
 +               modifier = p_221051_.spigotConfig.wheatModifier;
 +            }
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188503_((int)((100.0F / modifier) * (25.0F / f)) + 1) == 0)) {
-                p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
++               CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.m_52289_(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }
           }
        }
+@@ -83,7 +_,7 @@
+          i = j;
+       }
+ 
+-      p_52264_.m_7731_(p_52265_, this.m_52289_(i), 2);
++      CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.m_52289_(i), 2); // CraftBukkit
+    }
+ 
+    protected int m_7125_(Level p_52262_) {
 @@ -98,9 +_,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
@@ -44,7 +62,7 @@
  
     public void m_7892_(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
 -      if (p_52280_ instanceof Ravager && p_52278_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_)) {
++      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_) && !CraftEventFactory.callEntityChangeBlockEvent(p_52280_, p_52279_, Blocks.f_50016_.m_49966_(), !p_52278_.m_46469_().m_46207_(GameRules.f_46132_)).isCancelled()) { // CraftBukkit
           p_52278_.m_46953_(p_52279_, true, p_52280_);
        }
  

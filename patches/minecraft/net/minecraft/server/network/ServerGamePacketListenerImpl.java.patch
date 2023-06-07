@@ -32,7 +32,7 @@
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.effect.MobEffects;
-@@ -178,11 +_,28 @@
+@@ -178,11 +_,29 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.apache.commons.lang3.StringUtils;
@@ -47,6 +47,7 @@
 +import org.bukkit.event.player.PlayerChatEvent;
 +import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 +import org.bukkit.event.player.PlayerKickEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, TickablePacketListener, ServerGamePacketListener {
@@ -183,12 +184,16 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
-@@ -980,6 +_,10 @@
+@@ -980,6 +_,14 @@
        this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
     }
  
 +   public void teleport(Location to) {
 +      m_143617_(to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch(), Collections.emptySet(), true);
++   }
++
++   public boolean teleport(double d0, double d1, double d2, float f, float f1, Set<ClientboundPlayerPositionPacket.RelativeArgument> set, boolean flag, PlayerTeleportEvent.TeleportCause cause) { // CraftBukkit - Return event status
++      return false;
 +   }
 +
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {

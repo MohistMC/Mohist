@@ -29,16 +29,18 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -116,14 +_,22 @@
+@@ -116,14 +_,24 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_19_R1.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
++import org.bukkit.event.entity.EntityTeleportEvent;
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity {
@@ -1043,6 +1045,62 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
+@@ -3015,6 +_,12 @@
+       return this.f_20937_;
+    }
+ 
++   private AtomicReference<org.bukkit.event.player.PlayerTeleportEvent.TeleportCause> tpCause = new AtomicReference<>(org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
++   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      tpCause.set(cause);
++      return Optional.of(m_20984_(p_20985_, p_20986_, p_20987_, p_20988_));
++   }
++
+    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
+       double d0 = this.m_20185_();
+       double d1 = this.m_20186_();
+@@ -3038,15 +_,39 @@
+          }
+ 
+          if (flag1) {
+-            this.m_6021_(p_20985_, d3, p_20987_);
++            //this.teleportTo(p_20985_, d3, p_20987_);
++            // first set position, to check if the place to teleport is valid
++            this.m_6034_(p_20985_, d3, p_20987_);
+             if (level.m_45786_(this) && !level.m_46855_(this.m_20191_())) {
+                flag = true;
+             }
+-         }
++            // now revert and call event if the teleport place is valid
++            this.m_6034_(d0, d1, d2);
++         }
++
++         if (flag) {
++            if (!(this instanceof ServerPlayer)) {
++               EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), p_20985_, d3, p_20987_));
++               this.f_19853_.getCraftServer().getPluginManager().callEvent(teleport);
++               if (!teleport.isCancelled()) {
++                  Location to = teleport.getTo();
++                  this.m_6021_(to.getX(), to.getY(), to.getZ());
++               } else {
++                  return false;
++               }
++            } else {
++               // player teleport event is called in the underlining code
++               if (((ServerPlayer) this).f_8906_.teleport(p_20985_, d3, p_20987_, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), false, tpCause.get())) {
++                  return false;
++               }
++            }
++         }
++         // CraftBukkit end
+       }
+ 
+       if (!flag) {
+-         this.m_6021_(d0, d1, d2);
++         //this.teleportTo(d0, d1, d2);
++         // this.enderTeleportTo(d3, d4, d5); // CraftBukkit - already set the location back
+          return false;
+       } else {
+          if (p_20988_) {
 @@ -3115,8 +_,8 @@
        }
  
