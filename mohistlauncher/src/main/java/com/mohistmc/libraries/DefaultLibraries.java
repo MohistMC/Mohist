@@ -19,7 +19,7 @@
 package com.mohistmc.libraries;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.action.v_1_19_R2;
+import com.mohistmc.action.v_1_20;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
@@ -52,7 +52,7 @@ public class DefaultLibraries {
         Set<File> defaultLibs = new LinkedHashSet<>();
         AtomicLong allSize = new AtomicLong(); // global
         for (File lib : getDefaultLibs().keySet()) {
-            v_1_19_R2.loadedLibsPaths.add(lib.getAbsolutePath());
+            v_1_20.loadedLibsPaths.add(lib.getAbsolutePath());
             allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;

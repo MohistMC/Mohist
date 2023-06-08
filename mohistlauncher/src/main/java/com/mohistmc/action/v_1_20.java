@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_19_R2 {
+public class v_1_20 {
 
     public static final List<String> loadedLibsPaths = new ArrayList<>();
 
