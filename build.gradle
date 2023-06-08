@@ -186,7 +186,7 @@ def sharedDeps = {
     // bukkit
     installer 'org.yaml:snakeyaml:2.0'
     // LibraryLoader start
-    installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
+    installer "org.apache.maven:maven-artifact:3.9.2"
     installer 'org.apache.maven:maven-builder-support:3.9.2'
     installer 'org.apache.maven:maven-model:3.9.2'
     installer 'org.apache.maven:maven-model-builder:3.9.2'
