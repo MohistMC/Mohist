@@ -82,7 +82,7 @@ import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.boss.CraftDragonBattle;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.generator.strucutre.CraftStructure;
+import org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R1.metadata.BlockMetadataStore;
 import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataContainer;

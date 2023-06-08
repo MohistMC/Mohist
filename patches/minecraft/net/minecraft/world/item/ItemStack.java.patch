@@ -376,8 +376,8 @@
 +               // SPIGOT-4678
 +               if (this.f_41589_ instanceof SignItem && SignItem.openSign != null) {
 +                  try {
-+                     if (world.m_7702_(blockpos) instanceof SignBlockEntity tileentitysign) {
-+                        if (world.m_8055_(blockpos).m_60734_() instanceof SignBlock blocksign) {
++                     if (world.m_7702_(SignItem.openSign) instanceof SignBlockEntity tileentitysign) {
++                        if (world.m_8055_(SignItem.openSign).m_60734_() instanceof SignBlock blocksign) {
 +                           blocksign.m_276926_(player, tileentitysign, true);
 +                        }
 +                     }

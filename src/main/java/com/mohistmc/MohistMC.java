@@ -1,5 +1,6 @@
 package com.mohistmc;
 
+import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.i18n.i18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,5 +24,6 @@ public class MohistMC {
         i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
         //TODO: do something when mod loading
         LOGGER.info("Mohist loading.....");
+        EventDispatcherRegistry.init();
     }
 }

@@ -75,7 +75,7 @@ public class BrandingControl
     }
 
     public static String getServerBranding() {
-        return ForgeSnapshotsMod.BRANDING_ID;
+        return "mohist";
     }
 
     public static ResourceManagerReloadListener resourceManagerReloadListener() {

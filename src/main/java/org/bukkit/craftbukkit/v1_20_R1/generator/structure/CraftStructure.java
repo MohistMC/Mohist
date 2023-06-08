@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_20_R1.generator.strucutre;
+package org.bukkit.craftbukkit.v1_20_R1.generator.structure;
 
 import net.minecraft.core.registries.Registries;
 import org.bukkit.NamespacedKey;
