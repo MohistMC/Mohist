@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
+@@ -2,6 +_,8 @@
+ 
+ import com.mojang.logging.LogUtils;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
++
++import java.util.Arrays;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+@@ -26,6 +_,8 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ import org.slf4j.Logger;
+ 
+ public class BrushableBlockEntity extends BlockEntity {
 @@ -40,12 +_,12 @@
     private int f_276531_;
     private long f_276679_;
@@ -16,3 +34,15 @@
  
     public BrushableBlockEntity(BlockPos p_277558_, BlockState p_278093_) {
        super(BlockEntityType.f_271323_, p_277558_, p_278093_);
+@@ -141,7 +_,10 @@
+             double d5 = (double)blockpos.m_123343_() + 0.5D * d1 + d2;
+             ItemEntity itementity = new ItemEntity(this.f_58857_, d3, d4, d5, this.f_276563_.m_41620_(this.f_58857_.f_46441_.m_188503_(21) + 10));
+             itementity.m_20256_(Vec3.f_82478_);
+-            this.f_58857_.m_7967_(itementity);
++            // CraftBukkit start
++            org.bukkit.block.Block bblock = CraftBlock.at(this.f_58857_, this.f_58858_);
++            CraftEventFactory.handleBlockDropItemEvent(bblock, bblock.getState(), (ServerPlayer) p_278006_, Arrays.asList(itementity));
++            // CraftBukkit end
+             this.f_276563_ = ItemStack.f_41583_;
+          }
+ 

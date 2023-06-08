@@ -142,7 +142,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        this.m_11289_(p_11263_);
-@@ -197,7 +_,10 @@
+@@ -197,20 +_,71 @@
           mutablecomponent = Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
        }
  
@@ -154,8 +154,11 @@
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
        ServerStatus serverstatus = this.f_11195_.m_129928_();
        if (serverstatus != null) {
-@@ -207,10 +_,58 @@
-       p_11263_.f_8906_.m_9829_(ClientboundPlayerInfoUpdatePacket.m_247122_(this.f_11196_));
+          p_11263_.m_215109_(serverstatus);
+       }
+ 
+-      p_11263_.f_8906_.m_9829_(ClientboundPlayerInfoUpdatePacket.m_247122_(this.f_11196_));
++      // p_11263_.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // CraftBukkit - replaced with loop below
        this.f_11196_.add(p_11263_);
        this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
 -      this.m_11268_(ClientboundPlayerInfoUpdatePacket.m_247122_(List.of(p_11263_)));
