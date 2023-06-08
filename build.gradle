@@ -16,8 +16,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.6,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.6,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -311,9 +311,6 @@ def sharedFmlonlyForge = { Project prj ->
                 keyStore = jarsigner.keystore
                 inputFile = t.archiveFile.get().asFile
                 outputFile = t.archiveFile.get().asFile
-                doFirst {
-                    prj.logger.lifecycle('Signing: ' + inputFile)
-                }
             }
             t.finalizedBy(signTask)
         }
