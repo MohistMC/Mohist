@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/entity/ItemBasedSteering.java
++++ b/net/minecraft/world/entity/ItemBasedSteering.java
+@@ -12,8 +_,9 @@
+    private final SynchedEntityData f_20837_;
+    private final EntityDataAccessor<Integer> f_20838_;
+    private final EntityDataAccessor<Boolean> f_20839_;
+-   private boolean f_20834_;
+-   private int f_20835_;
++   public boolean f_20834_;
++   public int f_20835_;
++   public int boostTimeTotal;
+ 
+    public ItemBasedSteering(SynchedEntityData p_20841_, EntityDataAccessor<Integer> p_20842_, EntityDataAccessor<Boolean> p_20843_) {
+       this.f_20837_ = p_20841_;
+@@ -48,7 +_,7 @@
+       return this.f_20834_ ? 1.0F + 1.15F * Mth.m_14031_((float)this.f_20835_ / (float)this.m_274397_() * (float)Math.PI) : 1.0F;
+    }
+ 
+-   private int m_274397_() {
++   public int m_274397_() {
+       return this.f_20837_.m_135370_(this.f_20838_);
+    }
+ 
+@@ -67,4 +_,12 @@
+    public boolean m_20851_() {
+       return this.f_20837_.m_135370_(this.f_20839_);
+    }
++
++   // CraftBukkit add setBoostTicks(int)
++   public void setBoostTicks(int ticks) {
++      this.f_20834_ = true;
++      this.f_20835_ = 0;
++      this.f_20837_.m_135381_(this.f_20838_, ticks);
++   }
++   // CraftBukkit end
+ }

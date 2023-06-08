@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/level/block/BambooSaplingBlock.java
++++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
+@@ -8,7 +_,6 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+-import net.minecraft.world.item.SwordItem;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+@@ -34,7 +_,7 @@
+    }
+ 
+    public void m_213898_(BlockState p_220753_, ServerLevel p_220754_, BlockPos p_220755_, RandomSource p_220756_) {
+-      if (p_220756_.m_188503_(3) == 0 && p_220754_.m_46859_(p_220755_.m_7494_()) && p_220754_.m_45524_(p_220755_.m_7494_(), 0) >= 9) {
++      if (p_220756_.m_188501_() < (p_220754_.spigotConfig.bambooModifier / (100.0f * 3)) && p_220754_.m_46859_(p_220755_.m_7494_()) && p_220754_.m_45524_(p_220755_.m_7494_(), 0) >= 9) { // Spigot - SPIGOT-7159: Better modifier resolution
+          this.m_48972_(p_220754_, p_220755_);
+       }
+ 
+@@ -73,10 +_,10 @@
+    }
+ 
+    public float m_5880_(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {
+-      return p_48982_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
++      return p_48982_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
+    }
+ 
+    protected void m_48972_(Level p_48973_, BlockPos p_48974_) {
+-      p_48973_.m_7731_(p_48974_.m_7494_(), Blocks.f_50571_.m_49966_().m_61124_(BambooStalkBlock.f_260716_, BambooLeaves.SMALL), 3);
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_48973_, p_48974_, p_48974_.m_7494_(), Blocks.f_50571_.m_49966_().m_61124_(BambooStalkBlock.f_260716_, BambooLeaves.SMALL), 3); // CraftBukkit - BlockSpreadEvent
+    }
+ }

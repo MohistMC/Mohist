@@ -3,9 +3,10 @@
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/jdk-17.0.5+8-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
-[![](https://img.shields.io/badge/Gradle-7.5.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/7.5.1/release-notes.html)
+[![](https://img.shields.io/badge/jdk-17.0.7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
+[![](https://img.shields.io/badge/Gradle-8.1.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.1.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 [![](https://img.shields.io/discord/311256119005937665.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/mohistmc)
@@ -17,12 +18,22 @@
 |---------|-------------|-----------|---------------------|----------------------|
 | 1.20    | WIP         | Poor      | Zero                | Zero                 |
 | 1.19.4  | WIP         | Poor      | Zero                | Zero                 |
+| 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
+| 1.18.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.16.5  | Active      | Good      | Better than plugins | Good                 |
 | 1.12.2  | End Of Life | High      | Very good           | Very good            |
 | 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
 
 Progress
 ------
+
+- [x] Rectify Forge([**658e614dc**](https://github.com/MinecraftForge/MinecraftForge/commit/658e614dc))
+- [ ] Start patch
+    * [x] Bukkit([**3635fe1a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/3635fe1a))
+    * [ ] CraftBukkit([**863dacb7a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/863dacb7a00f2d5d641a93951885620cbb7eb36d))
+    * [ ] Spigot ([**7d7b241e**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/d1bd3bd2))
+        * [x] Bukkit-Patches
+        * [ ] CraftBukkit-Patches (98%) - (029/030/091)
 
 - [ ] Sleep
 

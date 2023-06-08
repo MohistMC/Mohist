@@ -1,0 +1,80 @@
+--- a/net/minecraft/world/entity/monster/Ravager.java
++++ b/net/minecraft/world/entity/monster/Ravager.java
+@@ -28,7 +_,6 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.raid.Raider;
+ import net.minecraft.world.entity.vehicle.Boat;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelReader;
+ import net.minecraft.world.level.block.Block;
+@@ -139,19 +_,19 @@
+             this.m_21051_(Attributes.f_22279_).m_22100_(Mth.m_14139_(0.1D, d1, d0));
+          }
+ 
+-         if (this.f_19862_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (this.f_19862_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+             boolean flag = false;
+             AABB aabb = this.m_20191_().m_82400_(0.2D);
+ 
+             for(BlockPos blockpos : BlockPos.m_121976_(Mth.m_14107_(aabb.f_82288_), Mth.m_14107_(aabb.f_82289_), Mth.m_14107_(aabb.f_82290_), Mth.m_14107_(aabb.f_82291_), Mth.m_14107_(aabb.f_82292_), Mth.m_14107_(aabb.f_82293_))) {
+-               BlockState blockstate = this.m_9236_().m_8055_(blockpos);
++               BlockState blockstate = this.f_19853_.m_8055_(blockpos);
+                Block block = blockstate.m_60734_();
+-               if (block instanceof LeavesBlock) {
+-                  flag = this.m_9236_().m_46953_(blockpos, true, this) || flag;
++               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_()).isCancelled()) { // CraftBukkit
++                  flag = this.f_19853_.m_46953_(blockpos, true, this) || flag;
+                }
+             }
+ 
+-            if (!flag && this.m_20096_()) {
++            if (!flag && this.f_19861_) {
+                this.m_6135_();
+             }
+          }
+@@ -184,7 +_,7 @@
+          double d0 = this.m_20185_() - (double)this.m_20205_() * Math.sin((double)(this.f_20883_ * ((float)Math.PI / 180F))) + (this.f_19796_.m_188500_() * 0.6D - 0.3D);
+          double d1 = this.m_20186_() + (double)this.m_20206_() - 0.3D;
+          double d2 = this.m_20189_() + (double)this.m_20205_() * Math.cos((double)(this.f_20883_ * ((float)Math.PI / 180F))) + (this.f_19796_.m_188500_() * 0.6D - 0.3D);
+-         this.m_9236_().m_7106_(ParticleTypes.f_123811_, d0, d1, d2, 0.4980392156862745D, 0.5137254901960784D, 0.5725490196078431D);
++         this.f_19853_.m_7106_(ParticleTypes.f_123811_, d0, d1, d2, 0.4980392156862745D, 0.5137254901960784D, 0.5725490196078431D);
+       }
+ 
+    }
+@@ -202,7 +_,7 @@
+          if (this.f_19796_.m_188500_() < 0.5D) {
+             this.f_33321_ = 40;
+             this.m_5496_(SoundEvents.f_12362_, 1.0F, 1.0F);
+-            this.m_9236_().m_7605_(this, (byte)39);
++            this.f_19853_.m_7605_(this, (byte)39);
+             p_33361_.m_7334_(this);
+          } else {
+             this.m_33339_(p_33361_);
+@@ -215,7 +_,7 @@
+ 
+    private void m_33368_() {
+       if (this.m_6084_()) {
+-         for(LivingEntity livingentity : this.m_9236_().m_6443_(LivingEntity.class, this.m_20191_().m_82400_(4.0D), f_33319_)) {
++         for(LivingEntity livingentity : this.f_19853_.m_6443_(LivingEntity.class, this.m_20191_().m_82400_(4.0D), f_33319_)) {
+             if (!(livingentity instanceof AbstractIllager)) {
+                livingentity.m_6469_(this.m_269291_().m_269333_(this), 6.0F);
+             }
+@@ -229,7 +_,7 @@
+             double d0 = this.f_19796_.m_188583_() * 0.2D;
+             double d1 = this.f_19796_.m_188583_() * 0.2D;
+             double d2 = this.f_19796_.m_188583_() * 0.2D;
+-            this.m_9236_().m_7106_(ParticleTypes.f_123759_, vec3.f_82479_, vec3.f_82480_, vec3.f_82481_, d0, d1, d2);
++            this.f_19853_.m_7106_(ParticleTypes.f_123759_, vec3.f_82479_, vec3.f_82480_, vec3.f_82481_, d0, d1, d2);
+          }
+ 
+          this.m_146850_(GameEvent.f_223709_);
+@@ -269,7 +_,7 @@
+ 
+    public boolean m_7327_(Entity p_33328_) {
+       this.f_33320_ = 10;
+-      this.m_9236_().m_7605_(this, (byte)4);
++      this.f_19853_.m_7605_(this, (byte)4);
+       this.m_5496_(SoundEvents.f_12357_, 1.0F, 1.0F);
+       return super.m_7327_(p_33328_);
+    }

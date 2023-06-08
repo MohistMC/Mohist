@@ -1,0 +1,65 @@
+--- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
++++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
+@@ -11,6 +_,7 @@
+ import java.util.List;
+ import java.util.UUID;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.BiConsumer;
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
+@@ -195,7 +_,7 @@
+    }
+ 
+    protected void m_121281_() throws CommandSyntaxException {
+-      this.f_121189_ = true;
++      this.f_121189_ = !overridePermissions.getAndSet(false);
+       this.f_121176_ = this::m_121322_;
+       if (!this.f_121201_.canRead()) {
+          throw f_121193_.createWithContext(this.f_121201_);
+@@ -243,6 +_,14 @@
+       }
+    }
+ 
++   // Mohist start
++   protected AtomicBoolean overridePermissions = new AtomicBoolean(false);
++   protected void parseSelector(boolean overridePermissions) throws CommandSyntaxException {
++      this.overridePermissions.set(overridePermissions);
++      m_121281_();
++   }
++   // Mohist end
++
+    protected void m_121304_() throws CommandSyntaxException {
+       if (this.f_121201_.canRead()) {
+          this.f_121176_ = this::m_121309_;
+@@ -459,6 +_,9 @@
+          }
+ 
+          this.f_121201_.skip();
++         EntitySelector forgeSelector = net.minecraftforge.common.command.EntitySelectorManager.parseSelector(this);
++         if (forgeSelector != null)
++            return forgeSelector;
+          this.m_121281_();
+       } else {
+          this.m_121304_();
+@@ -468,12 +_,20 @@
+       return this.m_121230_();
+    }
+ 
++   // Mohist start
++   public EntitySelector parse(boolean overridePermissions) throws CommandSyntaxException {
++      this.overridePermissions.set(overridePermissions);
++      return this.m_121377_();
++   }
++   // Mohist end
++
+    private static void m_121247_(SuggestionsBuilder p_121248_) {
+       p_121248_.suggest("@p", Component.m_237115_("argument.entity.selector.nearestPlayer"));
+       p_121248_.suggest("@a", Component.m_237115_("argument.entity.selector.allPlayers"));
+       p_121248_.suggest("@r", Component.m_237115_("argument.entity.selector.randomPlayer"));
+       p_121248_.suggest("@s", Component.m_237115_("argument.entity.selector.self"));
+       p_121248_.suggest("@e", Component.m_237115_("argument.entity.selector.allEntities"));
++      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
+    }
+ 
+    private CompletableFuture<Suggestions> m_121286_(SuggestionsBuilder p_121287_, Consumer<SuggestionsBuilder> p_121288_) {

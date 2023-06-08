@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/entity/monster/Vex.java
++++ b/net/minecraft/world/entity/monster/Vex.java
+@@ -52,8 +_,8 @@
+    Mob f_33980_;
+    @Nullable
+    private BlockPos f_33981_;
+-   private boolean f_33978_;
+-   private int f_33979_;
++   public boolean f_33978_;
++   public int f_33979_;
+ 
+    public Vex(EntityType<? extends Vex> p_33984_, Level p_33985_) {
+       super(p_33984_, p_33985_);
+@@ -280,7 +_,7 @@
+       }
+ 
+       public void m_8056_() {
+-         Vex.this.m_6710_(Vex.this.f_33980_.m_5448_());
++         Vex.this.setTarget(Vex.this.f_33980_.m_5448_(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true); // CraftBukkit
+          super.m_8056_();
+       }
+    }
+@@ -336,7 +_,7 @@
+ 
+          for(int i = 0; i < 3; ++i) {
+             BlockPos blockpos1 = blockpos.m_7918_(Vex.this.f_19796_.m_188503_(15) - 7, Vex.this.f_19796_.m_188503_(11) - 5, Vex.this.f_19796_.m_188503_(15) - 7);
+-            if (Vex.this.m_9236_().m_46859_(blockpos1)) {
++            if (Vex.this.f_19853_.m_46859_(blockpos1)) {
+                Vex.this.f_21342_.m_6849_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_() + 0.5D, (double)blockpos1.m_123343_() + 0.5D, 0.25D);
+                if (Vex.this.m_5448_() == null) {
+                   Vex.this.m_21563_().m_24950_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_() + 0.5D, (double)blockpos1.m_123343_() + 0.5D, 180.0F, 20.0F);

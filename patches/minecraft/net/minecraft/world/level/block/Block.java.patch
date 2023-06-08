@@ -1,0 +1,232 @@
+--- a/net/minecraft/world/level/block/Block.java
++++ b/net/minecraft/world/level/block/Block.java
+@@ -53,6 +_,7 @@
+ import net.minecraft.world.level.block.state.StateDefinition;
+ import net.minecraft.world.level.block.state.properties.Property;
+ import net.minecraft.world.level.gameevent.GameEvent;
++import net.minecraft.world.level.storage.loot.LootContext;
+ import net.minecraft.world.level.storage.loot.LootParams;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+ import net.minecraft.world.phys.Vec3;
+@@ -61,10 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
+ 
+-public class Block extends BlockBehaviour implements ItemLike {
++public class Block extends BlockBehaviour implements ItemLike, net.minecraftforge.common.extensions.IForgeBlock {
+    private static final Logger f_49790_ = LogUtils.getLogger();
+    private final Holder.Reference<Block> f_204296_ = BuiltInRegistries.f_256975_.m_203693_(this);
+-   public static final IdMapper<BlockState> f_49791_ = new IdMapper<>();
++   @Deprecated //Forge: Do not use, use GameRegistry
++   public static final IdMapper<BlockState> f_49791_ = net.minecraftforge.registries.GameData.getBlockStateIDMap();
+    private static final LoadingCache<VoxelShape, Boolean> f_49785_ = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
+       public Boolean load(VoxelShape p_49972_) {
+          return !Shapes.m_83157_(Shapes.m_83144_(), p_49972_, BooleanOp.f_82687_);
+@@ -77,6 +_,7 @@
+    public static final int f_152397_ = 16;
+    public static final int f_152398_ = 32;
+    public static final int f_152399_ = 64;
++   public static final int UPDATE_SUPPRESS_LIGHT = 128;
+    public static final int f_152401_ = 4;
+    public static final int f_152402_ = 3;
+    public static final int f_152388_ = 11;
+@@ -176,7 +_,7 @@
+             f_49790_.error("Block classes should end with Block and {} doesn't.", (Object)s);
+          }
+       }
+-
++      initClient();
+    }
+ 
+    public static boolean m_152463_(BlockState p_152464_) {
+@@ -191,6 +_,8 @@
+       BlockState blockstate = p_152446_.m_8055_(p_152449_);
+       if (p_152445_.m_60719_(blockstate, p_152448_)) {
+          return false;
++      } else if (p_152445_.supportsExternalFaceHiding() && blockstate.hidesNeighborFace(p_152446_, p_152449_, p_152445_, p_152448_.m_122424_())) {
++         return false;
+       } else if (blockstate.m_60815_()) {
+          Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
+          Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = f_49789_.get();
+@@ -313,20 +_,27 @@
+    }
+ 
+    private static void m_152440_(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
+-      if (!p_152441_.f_46443_ && !p_152443_.m_41619_() && p_152441_.m_46469_().m_46207_(GameRules.f_46136_)) {
++      if (!p_152441_.f_46443_ && !p_152443_.m_41619_() && p_152441_.m_46469_().m_46207_(GameRules.f_46136_) && !p_152441_.restoringBlockSnapshots) {
+          ItemEntity itementity = p_152442_.get();
+          itementity.m_32060_();
+-         p_152441_.m_7967_(itementity);
++         // CraftBukkit start
++         if (p_152441_.captureDrops != null) {
++            p_152441_.captureDrops.add(itementity);
++         } else {
++            p_152441_.m_7967_(itementity);
++         }
++         // CraftBukkit end
+       }
+    }
+ 
+    public void m_49805_(ServerLevel p_49806_, BlockPos p_49807_, int p_49808_) {
+-      if (p_49806_.m_46469_().m_46207_(GameRules.f_46136_)) {
++      if (p_49806_.m_46469_().m_46207_(GameRules.f_46136_) && !p_49806_.restoringBlockSnapshots) {
+          ExperienceOrb.m_147082_(p_49806_, Vec3.m_82512_(p_49807_), p_49808_);
+       }
+ 
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public float m_7325_() {
+       return this.f_60444_;
+    }
+@@ -344,7 +_,7 @@
+ 
+    public void m_6240_(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
+       p_49828_.m_36246_(Stats.f_12949_.m_12902_(this));
+-      p_49828_.m_36399_(0.005F);
++      p_49828_.causeFoodExhaustion(0.005F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED); // CraftBukkit - EntityExhaustionEvent
+       m_49881_(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_);
+    }
+ 
+@@ -373,8 +_,10 @@
+ 
+    public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
+       p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
++      p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
+       return new ItemStack(this);
+    }
+@@ -407,6 +_,7 @@
+    public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public boolean m_6903_(Explosion p_49826_) {
+       return true;
+    }
+@@ -442,6 +_,7 @@
+       return p_152456_.m_61124_(p_152457_, p_152455_.m_61143_(p_152457_));
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
+    public SoundType m_49962_(BlockState p_49963_) {
+       return this.f_60446_;
+    }
+@@ -451,7 +_,7 @@
+          this.f_49788_ = Item.m_41439_(this);
+       }
+ 
+-      return this.f_49788_;
++      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(this.f_49788_).get(); // Forge: Vanilla caches the items, update with registry replacements.
+    }
+ 
+    public boolean m_49967_() {
+@@ -473,20 +_,92 @@
+       return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
+    }
+ 
++   /* ======================================== FORGE START =====================================*/
++   private Object renderProperties;
++
++   /*
++      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++      Call RenderProperties.get instead
++    */
++   public Object getRenderPropertiesInternal() {
++      return renderProperties;
++   }
++
++   private void initClient() {
++      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
++         initializeClient(properties -> {
++            if (properties == this)
++               throw new IllegalStateException("Don't extend IBlockRenderProperties in your block, use an anonymous class instead.");
++            this.renderProperties = properties;
++         });
++      }
++   }
++
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientBlockExtensions> consumer) {
++   }
++
++   @Override
++   public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, net.minecraftforge.common.IPlantable plantable) {
++      BlockState plant = plantable.getPlant(world, pos.m_121945_(facing));
++      net.minecraftforge.common.PlantType type = plantable.getPlantType(world, pos.m_121945_(facing));
++
++      if (plant.m_60734_() == Blocks.f_50128_)
++         return state.m_60713_(Blocks.f_50128_) || state.m_204336_(BlockTags.f_13029_);
++
++      if (plant.m_60734_() == Blocks.f_50130_ && this == Blocks.f_50130_)
++         return true;
++
++      if (plantable instanceof BushBlock && ((BushBlock)plantable).m_6266_(state, world, pos))
++         return true;
++
++      if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {
++         return state.m_204336_(BlockTags.f_13029_) || this == Blocks.f_50352_ || this instanceof GlazedTerracottaBlock;
++      } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
++         return this == Blocks.f_50135_;
++      } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
++         return state.m_60713_(Blocks.f_50093_);
++      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
++         return state.m_60783_(world, pos, Direction.UP);
++      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
++         return state.m_204336_(BlockTags.f_144274_) || this == Blocks.f_50093_;
++      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
++         return (state.m_60713_(Blocks.f_49990_) || state.m_60734_() instanceof IceBlock) && world.m_6425_(pos.m_121945_(facing)).m_76178_();
++      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {
++         boolean isBeach = state.m_204336_(BlockTags.f_144274_) || state.m_204336_(BlockTags.f_13029_);
++         boolean hasWater = false;
++         for (Direction face : Direction.Plane.HORIZONTAL) {
++            BlockState adjacentBlockState = world.m_8055_(pos.m_121945_(face));
++            var adjacentFluidState = world.m_6425_(pos.m_121945_(face));
++            hasWater = hasWater || adjacentBlockState.m_60713_(Blocks.f_50449_) || adjacentFluidState.m_205070_(net.minecraft.tags.FluidTags.f_13131_);
++            if (hasWater)
++               break; //No point continuing.
++         }
++         return isBeach && hasWater;
++      }
++      return false;
++   }
++
++   /* ========================================= FORGE END ======================================*/
++
+    /** @deprecated */
+    @Deprecated
+    public Holder.Reference<Block> m_204297_() {
+       return this.f_204296_;
+    }
+ 
+-   protected void m_220822_(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
++   protected int tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
+       if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_220825_) == 0) {
+          int i = p_220826_.m_214085_(p_220823_.f_46441_);
+          if (i > 0) {
+-            this.m_49805_(p_220823_, p_220824_, i);
++            return i;
+          }
+       }
++      return 0;
++   }
+ 
++   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
++      return 0;
+    }
+ 
+    public static final class BlockStatePairKey {
+@@ -517,4 +_,10 @@
+          return 31 * i + this.f_49982_.hashCode();
+       }
+    }
++
++   // Spigot start
++   public static float range(float min, float value, float max) {
++      return value < min ? min : Math.min(value, max); // Mohist
++   }
++   // Spigot end
+ }

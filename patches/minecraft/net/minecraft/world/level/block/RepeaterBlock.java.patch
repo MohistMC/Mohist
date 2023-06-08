@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/RepeaterBlock.java
++++ b/net/minecraft/world/level/block/RepeaterBlock.java
+@@ -51,7 +_,7 @@
+    }
+ 
+    public boolean m_7346_(LevelReader p_55805_, BlockPos p_55806_, BlockState p_55807_) {
+-      return this.m_276835_(p_55805_, p_55806_, p_55807_) > 0;
++      return this.getAlternateSignal(p_55805_, p_55806_, p_55807_) > 0;
+    }
+ 
+    protected boolean m_276978_() {

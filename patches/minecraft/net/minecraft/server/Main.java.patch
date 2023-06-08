@@ -1,0 +1,243 @@
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.server;
+ 
++import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+ import com.mojang.datafixers.DataFixer;
+@@ -10,13 +_,17 @@
+ import java.awt.GraphicsEnvironment;
+ import java.io.File;
+ import java.io.IOException;
++import java.io.InputStreamReader;
+ import java.io.UncheckedIOException;
+ import java.net.Proxy;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
++import java.util.Arrays;
++import java.util.Objects;
+ import java.util.Optional;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.BooleanSupplier;
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
+@@ -39,7 +_,10 @@
+ import net.minecraft.server.dedicated.DedicatedServerProperties;
+ import net.minecraft.server.dedicated.DedicatedServerSettings;
+ import net.minecraft.server.level.progress.LoggerChunkProgressListener;
++import net.minecraft.server.packs.PackType;
++import net.minecraft.server.packs.repository.FolderRepositorySource;
+ import net.minecraft.server.packs.repository.PackRepository;
++import net.minecraft.server.packs.repository.PackSource;
+ import net.minecraft.server.packs.repository.ServerPacksSource;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.datafix.DataFixers;
+@@ -47,11 +_,13 @@
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
+ import net.minecraft.util.worldupdate.WorldUpgrader;
+ import net.minecraft.world.flag.FeatureFlags;
++import net.minecraft.world.level.DataPackConfig;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.LevelSettings;
+ import net.minecraft.world.level.WorldDataConfiguration;
+ import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.levelgen.WorldDimensions;
++import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+ import net.minecraft.world.level.storage.LevelResource;
+@@ -59,6 +_,7 @@
+ import net.minecraft.world.level.storage.LevelSummary;
+ import net.minecraft.world.level.storage.PrimaryLevelData;
+ import net.minecraft.world.level.storage.WorldData;
++import org.bukkit.configuration.file.YamlConfiguration;
+ import org.slf4j.Logger;
+ 
+ public class Main {
+@@ -84,6 +_,48 @@
+       OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
+       OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
+       OptionSpec<String> optionspec15 = optionparser.nonOptions();
++      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
++      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
++      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
++      boolean gametestEnabled = Boolean.getBoolean("forge.gameTestServer");
++      if (gametestEnabled) {
++         spawnPosOpt = optionparser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new net.minecraftforge.gametest.BlockPosValueConverter()).defaultsTo(new net.minecraft.core.BlockPos(0, 60, 0));
++      } else {
++          spawnPosOpt = null;
++      }
++
++      optionparser.acceptsAll(Arrays.asList("b", "bukkit-settings"), "File for bukkit settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("bukkit.yml"))
++              .describedAs("Yml file");
++
++      optionparser.acceptsAll(Arrays.asList("C", "commands-settings"), "File for command settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("commands.yml"))
++              .describedAs("Yml file");
++
++      optionparser.acceptsAll(Arrays.asList("P", "plugins"), "Plugin directory to use")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("plugins"))
++              .describedAs("Plugin directory");
++
++      // Spigot Start
++      optionparser.acceptsAll(Arrays.asList("S", "spigot-settings"), "File for spigot settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("spigot.yml"))
++              .describedAs("Yml file");
++      // Spigot End
++      // Mohist Start
++      optionparser.acceptsAll(Arrays.asList("M", "mohist-settings"), "File for mohist settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("mohist-config","mohist.yml"))
++              .describedAs("Yml file");
++      // Mohist End
+ 
+       try {
+          OptionSet optionset = optionparser.parse(p_129699_);
+@@ -91,6 +_,13 @@
+             optionparser.printHelpOn(System.err);
+             return;
+          }
++         Path path2 = Paths.get("eula.txt");
++         Eula eula = new Eula(path2);
++
++         if (!eula.m_135944_()) {
++            f_129670_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++            return;
++         }
+ 
+          Path path = optionset.valueOf(optionspec14);
+          if (path != null) {
+@@ -106,25 +_,37 @@
+          Bootstrap.m_135889_();
+          Util.m_137584_();
+          Path path1 = Paths.get("server.properties");
++         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
+          DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);
+          dedicatedserversettings.m_139780_();
+-         Path path2 = Paths.get("eula.txt");
+-         Eula eula = new Eula(path2);
+          if (optionset.has(optionspec1)) {
++            // CraftBukkit start - SPIGOT-5761: Create bukkit.yml and commands.yml if not present
++            File configFile = (File) optionset.valueOf("bukkit-settings");
++            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
++            configuration.options().copyDefaults(true);
++            configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
++            configuration.save(configFile);
++
++            File commandFile = (File) optionset.valueOf("commands-settings");
++            YamlConfiguration commandsConfiguration = YamlConfiguration.loadConfiguration(commandFile);
++            commandsConfiguration.options().copyDefaults(true);
++            commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration( new InputStreamReader(Main.class.getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
++            commandsConfiguration.save(commandFile);
++            // CraftBukkit end
+             f_129670_.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
+             return;
+          }
+ 
+-         if (!eula.m_135944_()) {
+-            f_129670_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+-            return;
+-         }
+-
+          File file1 = new File(optionset.valueOf(optionspec9));
+          Services services = Services.m_214344_(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
+          String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.m_139777_().f_139741_);
++         if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
++            f_129670_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
++            return;
++         }
+          LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
+          LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_289864_(s);
++         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
+          LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
+          if (levelsummary != null) {
+             if (levelsummary.m_193020_()) {
+@@ -145,11 +_,13 @@
+ 
+          PackRepository packrepository = ServerPacksSource.m_245786_(levelstoragesource$levelstorageaccess.m_78283_(LevelResource.f_78180_));
+ 
++         AtomicReference<WorldLoader.DataLoadContext> worldLoader = new AtomicReference<>();
+          WorldStem worldstem;
+          try {
+             WorldLoader.InitConfig worldloader$initconfig = m_245383_(dedicatedserversettings.m_139777_(), levelstoragesource$levelstorageaccess, flag, packrepository);
+             worldstem = Util.m_214679_((p_248086_) -> {
+                return WorldLoader.m_214362_(worldloader$initconfig, (p_248079_) -> {
++                  worldLoader.set(p_248079_);
+                   Registry<LevelStem> registry = p_248079_.f_243759_().m_175515_(Registries.f_256862_);
+                   DynamicOps<Tag> dynamicops = RegistryOps.m_255058_(NbtOps.f_128958_, p_248079_.f_244104_());
+                   Pair<WorldData, WorldDimensions.Complete> pair = levelstoragesource$levelstorageaccess.m_246049_(dynamicops, p_248079_.f_244127_(), registry, p_248079_.f_244104_().m_211816_());
+@@ -170,6 +_,8 @@
+                         worlddimensions = dedicatedserverproperties.m_246483_(p_248079_.f_244104_());
+                      }
+ 
++                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
++                     worlddimensions = WorldDimensions.f_243810_.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.f_243810_.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(f_129670_::error).orElse(worlddimensions);
+                      WorldDimensions.Complete worlddimensions$complete = worlddimensions.m_245300_(registry);
+                      Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_248079_.f_244104_().m_211816_());
+                      return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.f_244634_(), lifecycle), worlddimensions$complete.m_245593_());
+@@ -190,22 +_,38 @@
+ 
+          WorldData worlddata = worldstem.f_206895_();
+          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_236710_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
++            MinecraftServer dedicatedserver1;
++            if (gametestEnabled) {
++               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
++               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
++               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
++               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
++            } else {
++               // Mohist start - fix mixin
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
++               MinecraftServer.options = optionset;
++               MinecraftServer.worldLoader = worldLoader.get();
++              // MinecraftServer.worldLoader = config.get();
++               // Mohist end
++            }
+             dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
+             dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
+             dedicatedserver1.m_129975_(optionset.has(optionspec2));
+             dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
+             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-               dedicatedserver1.m_139667_();
++            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
++               //dedicatedServer.showGui();
+             }
+ 
+             return dedicatedserver1;
+          });
+          Thread thread = new Thread("Server Shutdown Thread") {
+             public void run() {
++               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
++               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
+                dedicatedserver.m_7570_(true);
++               org.apache.logging.log4j.LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
+             }
+          };
+          thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
+@@ -241,7 +_,7 @@
+       return new WorldLoader.InitConfig(worldloader$packconfig, Commands.CommandSelection.DEDICATED, p_248563_.f_139711_);
+    }
+ 
+-   private static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
++   public static void m_195488_(LevelStorageSource.LevelStorageAccess p_195489_, DataFixer p_195490_, boolean p_195491_, BooleanSupplier p_195492_, Registry<LevelStem> p_250443_) {
+       f_129670_.info("Forcing world upgrade!");
+       WorldUpgrader worldupgrader = new WorldUpgrader(p_195489_, p_195490_, p_250443_, p_195491_);
+       Component component = null;

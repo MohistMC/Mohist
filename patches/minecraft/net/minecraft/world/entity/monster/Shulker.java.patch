@@ -1,0 +1,192 @@
+--- a/net/minecraft/world/entity/monster/Shulker.java
++++ b/net/minecraft/world/entity/monster/Shulker.java
+@@ -55,6 +_,8 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
++import org.bukkit.event.entity.EntityTeleportEvent;
+ import org.joml.Vector3f;
+ import org.joml.Vector3fc;
+ 
+@@ -159,7 +_,7 @@
+ 
+    public void m_8119_() {
+       super.m_8119_();
+-      if (!this.m_9236_().f_46443_ && !this.m_20159_() && !this.m_149785_(this.m_20183_(), this.m_33461_())) {
++      if (!this.f_19853_.f_46443_ && !this.m_20159_() && !this.m_149785_(this.m_20183_(), this.m_33461_())) {
+          this.m_149807_();
+       }
+ 
+@@ -167,7 +_,7 @@
+          this.m_149809_();
+       }
+ 
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          if (this.f_33399_ > 0) {
+             --this.f_33399_;
+          } else {
+@@ -221,7 +_,7 @@
+       Direction direction = this.m_33461_().m_122424_();
+       float f2 = f - f1;
+       if (!(f2 <= 0.0F)) {
+-         for(Entity entity : this.m_9236_().m_6249_(this, m_149793_(direction, f1, f).m_82386_(this.m_20185_() - 0.5D, this.m_20186_(), this.m_20189_() - 0.5D), EntitySelector.f_20408_.and((p_149771_) -> {
++         for(Entity entity : this.f_19853_.m_6249_(this, m_149793_(direction, f1, f).m_82386_(this.m_20185_() - 0.5D, this.m_20186_(), this.m_20189_() - 0.5D), EntitySelector.f_20408_.and((p_149771_) -> {
+             return !p_149771_.m_20365_(this);
+          }))) {
+             if (!(entity instanceof Shulker) && !entity.f_19794_) {
+@@ -248,7 +_,7 @@
+    }
+ 
+    public boolean m_7998_(Entity p_149773_, boolean p_149774_) {
+-      if (this.m_9236_().m_5776_()) {
++      if (this.f_19853_.m_5776_()) {
+          this.f_149764_ = null;
+          this.f_33399_ = 0;
+       }
+@@ -259,7 +_,7 @@
+ 
+    public void m_8127_() {
+       super.m_8127_();
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          this.f_149764_ = this.m_20183_();
+       }
+ 
+@@ -304,7 +_,7 @@
+          if (!blockpos1.equals(blockpos)) {
+             this.f_19804_.m_135381_(f_33401_, (byte)0);
+             this.f_19812_ = true;
+-            if (this.m_9236_().f_46443_ && !this.m_20159_() && !blockpos1.equals(this.f_149764_)) {
++            if (this.f_19853_.f_46443_ && !this.m_20159_() && !blockpos1.equals(this.f_149764_)) {
+                this.f_149764_ = blockpos;
+                this.f_33399_ = 6;
+                this.f_19790_ = this.m_20185_();
+@@ -332,17 +_,17 @@
+          return false;
+       } else {
+          Direction direction = p_149787_.m_122424_();
+-         if (!this.m_9236_().m_46578_(p_149786_.m_121945_(p_149787_), this, direction)) {
++         if (!this.f_19853_.m_46578_(p_149786_.m_121945_(p_149787_), this, direction)) {
+             return false;
+          } else {
+             AABB aabb = m_149790_(direction, 1.0F).m_82338_(p_149786_).m_82406_(1.0E-6D);
+-            return this.m_9236_().m_45756_(this, aabb);
++            return this.f_19853_.m_45756_(this, aabb);
+          }
+       }
+    }
+ 
+    private boolean m_149812_(BlockPos p_149813_) {
+-      BlockState blockstate = this.m_9236_().m_8055_(p_149813_);
++      BlockState blockstate = this.f_19853_.m_8055_(p_149813_);
+       if (blockstate.m_60795_()) {
+          return false;
+       } else {
+@@ -357,14 +_,21 @@
+ 
+          for(int i = 0; i < 5; ++i) {
+             BlockPos blockpos1 = blockpos.m_7918_(Mth.m_216287_(this.f_19796_, -8, 8), Mth.m_216287_(this.f_19796_, -8, 8), Mth.m_216287_(this.f_19796_, -8, 8));
+-            if (blockpos1.m_123342_() > this.m_9236_().m_141937_() && this.m_9236_().m_46859_(blockpos1) && this.m_9236_().m_6857_().m_61937_(blockpos1) && this.m_9236_().m_45756_(this, (new AABB(blockpos1)).m_82406_(1.0E-6D))) {
++            if (blockpos1.m_123342_() > this.f_19853_.m_141937_() && this.f_19853_.m_46859_(blockpos1) && this.f_19853_.m_6857_().m_61937_(blockpos1) && this.f_19853_.m_45756_(this, (new AABB(blockpos1)).m_82406_(1.0E-6D))) {
+                Direction direction = this.m_149810_(blockpos1);
+                if (direction != null) {
++                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_());
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), CraftLocation.toBukkit(blockpos1, this.f_19853_.getWorld()));
++                  if (event.isCanceled() || teleport.isCancelled()) direction = null;
++                  blockpos1 = BlockPos.m_274561_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
++               }
++
++               if (direction != null) {
+                   this.m_19877_();
+                   this.m_149788_(direction);
+                   this.m_5496_(SoundEvents.f_12418_, 1.0F, 1.0F);
+                   this.m_6034_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_(), (double)blockpos1.m_123343_() + 0.5D);
+-                  this.m_9236_().m_220407_(GameEvent.f_238175_, blockpos, GameEvent.Context.m_223717_(this));
++                  this.f_19853_.m_220407_(GameEvent.f_238175_, blockpos, GameEvent.Context.m_223717_(this));
+                   this.f_19804_.m_135381_(f_33401_, (byte)0);
+                   this.m_6710_((LivingEntity)null);
+                   return true;
+@@ -416,16 +_,15 @@
+       Vec3 vec3 = this.m_20182_();
+       AABB aabb = this.m_20191_();
+       if (!this.m_33468_() && this.m_33460_()) {
+-         int i = this.m_9236_().m_142425_(EntityType.f_20521_, aabb.m_82400_(8.0D), Entity::m_6084_).size();
++         int i = this.f_19853_.m_142425_(EntityType.f_20521_, aabb.m_82400_(8.0D), Entity::m_6084_).size();
+          float f = (float)(i - 1) / 5.0F;
+-         if (!(this.m_9236_().f_46441_.m_188501_() < f)) {
+-            Shulker shulker = EntityType.f_20521_.m_20615_(this.m_9236_());
++         if (!(this.f_19853_.f_46441_.m_188501_() < f)) {
++            Shulker shulker = EntityType.f_20521_.m_20615_(this.f_19853_);
+             if (shulker != null) {
+                shulker.m_28464_(this.m_28554_());
+                shulker.m_20219_(vec3);
+-               this.m_9236_().m_7967_(shulker);
++               this.f_19853_.addFreshEntity(shulker, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - the mysteries of life
+             }
+-
+          }
+       }
+    }
+@@ -438,7 +_,7 @@
+       return this.f_19804_.m_135370_(f_33392_);
+    }
+ 
+-   private void m_149788_(Direction p_149789_) {
++   public void m_149788_(Direction p_149789_) {
+       this.f_19804_.m_135381_(f_33392_, p_149789_);
+    }
+ 
+@@ -450,12 +_,12 @@
+       super.m_7350_(p_33434_);
+    }
+ 
+-   private int m_33463_() {
++   public int m_33463_() {
+       return this.f_19804_.m_135370_(f_33401_);
+    }
+ 
+-   void m_33418_(int p_33419_) {
+-      if (!this.m_9236_().f_46443_) {
++   public void m_33418_(int p_33419_) {
++      if (!this.f_19853_.f_46443_) {
+          this.m_21051_(Attributes.f_22284_).m_22130_(f_33395_);
+          if (p_33419_ == 0) {
+             this.m_21051_(Attributes.f_22284_).m_22125_(f_33395_);
+@@ -539,7 +_,7 @@
+       public boolean m_8036_() {
+          LivingEntity livingentity = Shulker.this.m_5448_();
+          if (livingentity != null && livingentity.m_6084_()) {
+-            return Shulker.this.m_9236_().m_46791_() != Difficulty.PEACEFUL;
++            return Shulker.this.f_19853_.m_46791_() != Difficulty.PEACEFUL;
+          } else {
+             return false;
+          }
+@@ -559,7 +_,7 @@
+       }
+ 
+       public void m_8037_() {
+-         if (Shulker.this.m_9236_().m_46791_() != Difficulty.PEACEFUL) {
++         if (Shulker.this.f_19853_.m_46791_() != Difficulty.PEACEFUL) {
+             --this.f_33483_;
+             LivingEntity livingentity = Shulker.this.m_5448_();
+             if (livingentity != null) {
+@@ -568,7 +_,7 @@
+                if (d0 < 400.0D) {
+                   if (this.f_33483_ <= 0) {
+                      this.f_33483_ = 20 + Shulker.this.f_19796_.m_188503_(10) * 20 / 2;
+-                     Shulker.this.m_9236_().m_7967_(new ShulkerBullet(Shulker.this.m_9236_(), Shulker.this, livingentity, Shulker.this.m_33461_().m_122434_()));
++                     Shulker.this.f_19853_.m_7967_(new ShulkerBullet(Shulker.this.f_19853_, Shulker.this, livingentity, Shulker.this.m_33461_().m_122434_()));
+                      Shulker.this.m_5496_(SoundEvents.f_12417_, 2.0F, (Shulker.this.f_19796_.m_188501_() - Shulker.this.f_19796_.m_188501_()) * 0.2F + 1.0F);
+                   }
+                } else {
+@@ -645,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return Shulker.this.m_9236_().m_46791_() == Difficulty.PEACEFUL ? false : super.m_8036_();
++         return Shulker.this.f_19853_.m_46791_() == Difficulty.PEACEFUL ? false : super.m_8036_();
+       }
+ 
+       protected AABB m_7255_(double p_33508_) {

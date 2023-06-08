@@ -1,0 +1,67 @@
+--- a/net/minecraft/world/entity/animal/Dolphin.java
++++ b/net/minecraft/world/entity/animal/Dolphin.java
+@@ -68,6 +_,13 @@
+    static final TargetingConditions f_28311_ = TargetingConditions.m_148353_().m_26883_(10.0D).m_148355_();
+    public static final int f_148892_ = 4800;
+    private static final int f_148893_ = 2400;
++
++   // CraftBukkit start - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++   @Override
++   public int getDefaultMaxAirSupply() {
++      return f_148892_;
++   }
++   // CraftBukkit end
+    public static final Predicate<ItemEntity> f_28309_ = (p_289436_) -> {
+       return !p_289436_.m_32063_() && p_289436_.m_6084_() && p_289436_.m_20069_();
+    };
+@@ -178,7 +_,7 @@
+    }
+ 
+    public int m_6062_() {
+-      return 4800;
++      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
+    }
+ 
+    protected int m_7305_(int p_28389_) {
+@@ -214,6 +_,12 @@
+       if (this.m_6844_(EquipmentSlot.MAINHAND).m_41619_()) {
+          ItemStack itemstack = p_28357_.m_32055_();
+          if (this.m_7252_(itemstack)) {
++            // CraftBukkit start - call EntityPickupItemEvent
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
++               return;
++            }
++            itemstack = entityitem.m_32055_(); // update ItemStack from event
++            // CraftBukkit end
+             this.m_21053_(p_28357_);
+             this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
+             this.m_21508_(EquipmentSlot.MAINHAND);
+@@ -356,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return this.f_28399_.m_28377_() && this.f_28399_.m_20146_() >= 100;
++         return this.f_28399_.m_28377_() && this.f_28399_.m_20146_() >= 100 && this.f_28399_.f_19853_.getWorld().canGenerateStructures(); // MC-151364, SPIGOT-5494: hangs if generate-structures=false
+       }
+ 
+       public boolean m_8045_() {
+@@ -445,7 +_,7 @@
+       }
+ 
+       public void m_8056_() {
+-         this.f_28411_.m_147207_(new MobEffectInstance(MobEffects.f_19593_, 100), this.f_28409_);
++         this.f_28411_.addEffect(new MobEffectInstance(MobEffects.f_19593_, 100), this.f_28409_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
+       }
+ 
+       public void m_8041_() {
+@@ -461,8 +_,8 @@
+             this.f_28409_.m_21573_().m_5624_(this.f_28411_, this.f_28410_);
+          }
+ 
+-         if (this.f_28411_.m_6069_() && this.f_28411_.m_9236_().f_46441_.m_188503_(6) == 0) {
+-            this.f_28411_.m_147207_(new MobEffectInstance(MobEffects.f_19593_, 100), this.f_28409_);
++         if (this.f_28411_.m_6069_() && this.f_28411_.f_19853_.f_46441_.m_188503_(6) == 0) {
++            this.f_28411_.addEffect(new MobEffectInstance(MobEffects.f_19593_, 100), this.f_28409_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
+          }
+ 
+       }

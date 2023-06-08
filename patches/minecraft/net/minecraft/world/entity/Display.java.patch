@@ -1,0 +1,92 @@
+--- a/net/minecraft/world/entity/Display.java
++++ b/net/minecraft/world/entity/Display.java
+@@ -4,9 +_,12 @@
+ import com.mojang.logging.LogUtils;
+ import com.mojang.math.Transformation;
+ import com.mojang.serialization.Codec;
++import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+ import it.unimi.dsi.fastutil.ints.IntSet;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Optional;
++import java.util.Set;
+ import java.util.function.IntFunction;
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+@@ -302,7 +_,7 @@
+       this.f_19804_.m_135381_(f_268593_, p_270345_.m_269016_());
+    }
+ 
+-   private Display.BillboardConstraints m_269218_() {
++   public Display.BillboardConstraints m_269218_() {
+       return Display.BillboardConstraints.f_268544_.apply(this.f_19804_.m_135370_(f_268593_));
+    }
+ 
+@@ -316,7 +_,7 @@
+       return i != -1 ? Brightness.m_269373_(i) : null;
+    }
+ 
+-   private int m_269041_() {
++   public int m_269041_() {
+       return this.f_19804_.m_135370_(f_268599_);
+    }
+ 
+@@ -484,11 +_,11 @@
+ 
+       }
+ 
+-      private BlockState m_269134_() {
++      public BlockState m_269134_() {
+          return this.f_19804_.m_135370_(f_268543_);
+       }
+ 
+-      private void m_269329_(BlockState p_270267_) {
++      public void m_269329_(BlockState p_270267_) {
+          this.f_19804_.m_135381_(f_268543_, p_270267_);
+       }
+ 
+@@ -590,7 +_,7 @@
+ 
+       }
+ 
+-      ItemStack m_269568_() {
++      public ItemStack m_269568_() {
+          return this.f_19804_.m_135370_(f_268455_);
+       }
+ 
+@@ -602,7 +_,7 @@
+          this.f_19804_.m_135381_(f_268601_, p_270370_.m_269462_());
+       }
+ 
+-      private ItemDisplayContext m_269386_() {
++      public ItemDisplayContext m_269386_() {
+          return ItemDisplayContext.f_268648_.apply(this.f_19804_.m_135370_(f_268601_));
+       }
+ 
+@@ -705,7 +_,7 @@
+ 
+       }
+ 
+-      private Component m_269000_() {
++      public Component m_269000_() {
+          return this.f_19804_.m_135370_(f_268542_);
+       }
+ 
+@@ -713,7 +_,7 @@
+          this.f_19804_.m_135381_(f_268542_, p_270902_);
+       }
+ 
+-      private int m_269517_() {
++      public int m_269517_() {
+          return this.f_19804_.m_135370_(f_268476_);
+       }
+ 
+@@ -737,7 +_,7 @@
+          this.f_19804_.m_135381_(f_268494_, p_270241_);
+       }
+ 
+-      private byte m_269327_() {
++      public byte m_269327_() {
+          return this.f_19804_.m_135370_(f_268636_);
+       }
+ 

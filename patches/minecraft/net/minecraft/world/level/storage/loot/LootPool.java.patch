@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/storage/loot/LootPool.java
++++ b/net/minecraft/world/level/storage/loot/LootPool.java
+@@ -112,6 +_,19 @@
+       this.f_79028_.m_6169_(p_79052_.m_79365_(".rolls"));
+       this.f_79029_.m_6169_(p_79052_.m_79365_(".bonusRolls"));
+    }
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() { this.isFrozen = true; }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootPool after being frozen!");
++   }
++   public NumberProvider getRolls()      { return this.f_79028_; }
++   public NumberProvider getBonusRolls() { return this.f_79029_; }
++   public void setRolls     (NumberProvider v){ checkFrozen(); this.f_79028_ = v; }
++   public void setBonusRolls(NumberProvider v){ checkFrozen(); this.f_79029_ = v; }
++   //======================== FORGE END ===============================================
+ 
+    public static LootPool.Builder m_79043_() {
+       return new LootPool.Builder();
+@@ -123,6 +_,7 @@
+       private final List<LootItemFunction> f_79069_ = Lists.newArrayList();
+       private NumberProvider f_79070_ = ConstantValue.m_165692_(1.0F);
+       private NumberProvider f_79071_ = ConstantValue.m_165692_(0.0F);
++      private String name;
+ 
+       public LootPool.Builder m_165133_(NumberProvider p_165134_) {
+          this.f_79070_ = p_165134_;

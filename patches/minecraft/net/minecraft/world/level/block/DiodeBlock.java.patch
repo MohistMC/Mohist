@@ -1,0 +1,83 @@
+--- a/net/minecraft/world/level/block/DiodeBlock.java
++++ b/net/minecraft/world/level/block/DiodeBlock.java
+@@ -10,7 +_,6 @@
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelReader;
+-import net.minecraft.world.level.SignalGetter;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import net.minecraft.world.ticks.TickPriority;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ 
+ public abstract class DiodeBlock extends HorizontalDirectionalBlock {
+    protected static final VoxelShape f_52495_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
+@@ -41,8 +_,18 @@
+          boolean flag = p_221065_.m_61143_(f_52496_);
+          boolean flag1 = this.m_7320_(p_221066_, p_221067_, p_221065_);
+          if (flag && !flag1) {
++            // CraftBukkit start
++            if (CraftEventFactory.callRedstoneChange(p_221066_, p_221067_, 15, 0).getNewCurrent() != 0) {
++               return;
++            }
++            // CraftBukkit end
+             p_221066_.m_7731_(p_221067_, p_221065_.m_61124_(f_52496_, Boolean.valueOf(false)), 2);
+          } else if (!flag) {
++            // CraftBukkit start
++            if (CraftEventFactory.callRedstoneChange(p_221066_, p_221067_, 0, 15).getNewCurrent() != 15) {
++               return;
++            }
++            // CraftBukkit end
+             p_221066_.m_7731_(p_221067_, p_221065_.m_61124_(f_52496_, Boolean.valueOf(true)), 2);
+             if (!flag1) {
+                p_221066_.m_186464_(p_221067_, this, this.m_6112_(p_221065_), TickPriority.VERY_HIGH);
+@@ -117,12 +_,24 @@
+       }
+    }
+ 
+-   protected int m_276835_(SignalGetter p_277358_, BlockPos p_277763_, BlockState p_277604_) {
+-      Direction direction = p_277604_.m_61143_(f_54117_);
++   protected int getAlternateSignal(LevelReader p_52548_, BlockPos p_52549_, BlockState p_52550_) {
++      Direction direction = p_52550_.m_61143_(f_54117_);
+       Direction direction1 = direction.m_122427_();
+       Direction direction2 = direction.m_122428_();
+-      boolean flag = this.m_276978_();
+-      return Math.max(p_277358_.m_277094_(p_277763_.m_121945_(direction1), direction1, flag), p_277358_.m_277094_(p_277763_.m_121945_(direction2), direction2, flag));
++      return Math.max(this.getAlternateSignalAt(p_52548_, p_52549_.m_121945_(direction1), direction1), this.getAlternateSignalAt(p_52548_, p_52549_.m_121945_(direction2), direction2));
++   }
++
++   protected int getAlternateSignalAt(LevelReader p_52552_, BlockPos p_52553_, Direction p_52554_) {
++      BlockState blockstate = p_52552_.m_8055_(p_52553_);
++      if (this.isAlternateInput(blockstate)) {
++         if (blockstate.m_60713_(Blocks.f_50330_)) {
++            return 15;
++         } else {
++            return blockstate.m_60713_(Blocks.f_50088_) ? blockstate.m_61143_(RedStoneWireBlock.f_55500_) : p_52552_.m_277075_(p_52553_, p_52554_);
++         }
++      } else {
++         return 0;
++      }
+    }
+ 
+    public boolean m_7899_(BlockState p_52572_) {
+@@ -154,12 +_,14 @@
+    protected void m_52580_(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
+       Direction direction = p_52583_.m_61143_(f_54117_);
+       BlockPos blockpos = p_52582_.m_121945_(direction.m_122424_());
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_52581_, p_52582_, p_52581_.m_8055_(p_52582_), java.util.EnumSet.of(direction.m_122424_()), false).isCanceled())
++         return;
+       p_52581_.m_46586_(blockpos, this, p_52582_);
+       p_52581_.m_46590_(blockpos, this, direction);
+    }
+ 
+-   protected boolean m_276978_() {
+-      return false;
++   protected boolean isAlternateInput(BlockState p_52585_) {
++      return p_52585_.m_60803_();
+    }
+ 
+    protected int m_5968_(BlockGetter p_52541_, BlockPos p_52542_, BlockState p_52543_) {

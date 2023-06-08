@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
++++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
+ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
+ import net.minecraft.world.level.block.state.properties.DirectionProperty;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class CarvedPumpkinBlock extends HorizontalDirectionalBlock {
+    public static final DirectionProperty f_51367_ = HorizontalDirectionalBlock.f_54117_;
+@@ -72,9 +_,14 @@
+    }
+ 
+    private static void m_245952_(Level p_249110_, BlockPattern.BlockPatternMatch p_251293_, Entity p_251251_, BlockPos p_251189_) {
+-      m_245585_(p_249110_, p_251293_);
++      //clearPatternBlocks(p_249110_, p_251293_);
+       p_251251_.m_7678_((double)p_251189_.m_123341_() + 0.5D, (double)p_251189_.m_123342_() + 0.05D, (double)p_251189_.m_123343_() + 0.5D, 0.0F, 0.0F);
+-      p_249110_.m_7967_(p_251251_);
++      // CraftBukkit start
++      if (!p_249110_.addFreshEntity(p_251251_, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++         return;
++      }
++      m_245585_(p_249110_, p_251293_); // CraftBukkit - from above
++      // CraftBukkit end
+ 
+       for(ServerPlayer serverplayer : p_249110_.m_45976_(ServerPlayer.class, p_251251_.m_20191_().m_82400_(5.0D))) {
+          CriteriaTriggers.f_10580_.m_68256_(serverplayer, p_251251_);

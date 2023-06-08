@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/flag/FeatureFlags.java
++++ b/net/minecraft/world/flag/FeatureFlags.java
+@@ -8,6 +_,7 @@
+ public class FeatureFlags {
+    public static final FeatureFlag f_244571_;
+    public static final FeatureFlag f_244112_;
++   public static final FeatureFlag UPDATE_1_20;
+    public static final FeatureFlagRegistry f_244280_;
+    public static final Codec<FeatureFlagSet> f_244298_;
+    public static final FeatureFlagSet f_244377_;
+@@ -33,6 +_,7 @@
+       FeatureFlagRegistry.Builder featureflagregistry$builder = new FeatureFlagRegistry.Builder("main");
+       f_244571_ = featureflagregistry$builder.m_246015_("vanilla");
+       f_244112_ = featureflagregistry$builder.m_246015_("bundle");
++      UPDATE_1_20 = featureflagregistry$builder.m_246015_("update_1_20");
+       f_244280_ = featureflagregistry$builder.m_245707_();
+       f_244298_ = f_244280_.m_245213_();
+       f_244377_ = FeatureFlagSet.m_247091_(f_244571_);

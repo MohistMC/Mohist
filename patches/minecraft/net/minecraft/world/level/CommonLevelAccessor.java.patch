@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/CommonLevelAccessor.java
++++ b/net/minecraft/world/level/CommonLevelAccessor.java
+@@ -4,6 +_,7 @@
+ import java.util.Optional;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.RegistryAccess;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.entity.BlockEntityType;
+@@ -27,4 +_,6 @@
+    default BlockPos m_5452_(Heightmap.Types p_45831_, BlockPos p_45832_) {
+       return LevelReader.super.m_5452_(p_45831_, p_45832_);
+    }
++
++   RegistryAccess m_9598_(); // CraftBukkit
+ }

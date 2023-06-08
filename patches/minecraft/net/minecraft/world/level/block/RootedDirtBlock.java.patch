@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/RootedDirtBlock.java
++++ b/net/minecraft/world/level/block/RootedDirtBlock.java
+@@ -22,6 +_,6 @@
+    }
+ 
+    public void m_214148_(ServerLevel p_221974_, RandomSource p_221975_, BlockPos p_221976_, BlockState p_221977_) {
+-      p_221974_.m_46597_(p_221976_.m_7495_(), Blocks.f_152548_.m_49966_());
++      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_221974_, p_221976_, p_221976_.m_7495_(), Blocks.f_152548_.m_49966_()); // CraftBukkit
+    }
+ }

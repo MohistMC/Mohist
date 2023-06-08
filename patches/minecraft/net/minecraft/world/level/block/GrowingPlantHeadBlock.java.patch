@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
++++ b/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
+@@ -35,10 +_,22 @@
+    }
+ 
+    public void m_213898_(BlockState p_221350_, ServerLevel p_221351_, BlockPos p_221352_, RandomSource p_221353_) {
+-      if (p_221350_.m_61143_(f_53924_) < 25 && p_221353_.m_188500_() < this.f_53925_) {
++      // Spigot start
++      int modifier;
++      if (this == Blocks.f_50575_) {
++         modifier = p_221351_.spigotConfig.kelpModifier;
++      } else if (this == Blocks.f_50704_) {
++         modifier = p_221351_.spigotConfig.twistingVinesModifier;
++      } else if (this == Blocks.f_50702_) {
++         modifier = p_221351_.spigotConfig.weepingVinesModifier;
++      } else {
++         modifier = p_221351_.spigotConfig.caveVinesModifier;
++      }
++      if (p_221350_.m_61143_(f_53924_) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221351_, p_221352_.m_121945_(this.f_53859_), p_221351_.m_8055_(p_221352_.m_121945_(this.f_53859_)),p_221353_.m_188500_() < ((modifier / 100.0D) * this.f_53925_))) { // Spigot - SPIGOT-7159: Better modifier resolution
+          BlockPos blockpos = p_221352_.m_121945_(this.f_53859_);
+          if (this.m_5971_(p_221351_.m_8055_(blockpos))) {
+-            p_221351_.m_46597_(blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_));
++            org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_221351_, p_221352_, blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_)); // CraftBukkit
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221351_, blockpos, p_221351_.m_8055_(blockpos));
+          }
+       }
+ 

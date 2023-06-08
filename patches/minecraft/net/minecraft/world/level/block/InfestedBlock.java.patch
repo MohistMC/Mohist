@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/InfestedBlock.java
++++ b/net/minecraft/world/level/block/InfestedBlock.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.Property;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class InfestedBlock extends Block {
+    private final Block f_54174_;
+@@ -39,7 +_,7 @@
+       Silverfish silverfish = EntityType.f_20523_.m_20615_(p_54181_);
+       if (silverfish != null) {
+          silverfish.m_7678_((double)p_54182_.m_123341_() + 0.5D, (double)p_54182_.m_123342_(), (double)p_54182_.m_123343_() + 0.5D, 0.0F, 0.0F);
+-         p_54181_.m_7967_(silverfish);
++         p_54181_.addFreshEntity(silverfish, CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK); // CraftBukkit - add SpawnReason
+          silverfish.m_21373_();
+       }
+ 

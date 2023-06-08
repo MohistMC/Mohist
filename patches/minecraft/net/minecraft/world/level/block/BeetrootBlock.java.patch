@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/BeetrootBlock.java
++++ b/net/minecraft/world/level/block/BeetrootBlock.java
+@@ -24,7 +_,7 @@
+       super(p_49661_);
+    }
+ 
+-   protected IntegerProperty m_7959_() {
++   public IntegerProperty m_7959_() {
+       return f_49657_;
+    }
+ 

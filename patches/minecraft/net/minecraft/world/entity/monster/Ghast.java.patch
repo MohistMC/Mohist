@@ -1,0 +1,40 @@
+--- a/net/minecraft/world/entity/monster/Ghast.java
++++ b/net/minecraft/world/entity/monster/Ghast.java
+@@ -46,8 +_,8 @@
+       this.f_21345_.m_25352_(5, new Ghast.RandomFloatAroundGoal(this));
+       this.f_21345_.m_25352_(7, new Ghast.GhastLookGoal(this));
+       this.f_21345_.m_25352_(7, new Ghast.GhastShootFireballGoal(this));
+-      this.f_21346_.m_25352_(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (p_289460_) -> {
+-         return Math.abs(p_289460_.m_20186_() - this.m_20186_()) <= 4.0D;
++      this.f_21346_.m_25352_(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (p_275993_) -> {
++         return Math.abs(p_275993_.m_20186_() - this.m_20186_()) <= 4.0D;
+       }));
+    }
+ 
+@@ -204,7 +_,7 @@
+ 
+          for(int i = 1; i < p_32772_; ++i) {
+             aabb = aabb.m_82383_(p_32771_);
+-            if (!this.f_32765_.m_9236_().m_45756_(this.f_32765_, aabb)) {
++            if (!this.f_32765_.f_19853_.m_45756_(this.f_32765_, aabb)) {
+                return false;
+             }
+          }
+@@ -242,7 +_,7 @@
+          if (livingentity != null) {
+             double d0 = 64.0D;
+             if (livingentity.m_20280_(this.f_32774_) < 4096.0D && this.f_32774_.m_142582_(livingentity)) {
+-               Level level = this.f_32774_.m_9236_();
++               Level level = this.f_32774_.f_19853_;
+                ++this.f_32773_;
+                if (this.f_32773_ == 10 && !this.f_32774_.m_20067_()) {
+                   level.m_5898_((Player)null, 1015, this.f_32774_.m_20183_(), 0);
+@@ -259,6 +_,8 @@
+                   }
+ 
+                   LargeFireball largefireball = new LargeFireball(level, this.f_32774_, d2, d3, d4, this.f_32774_.m_32751_());
++                  // CraftBukkit - set bukkitYield when setting explosionpower
++                  largefireball.bukkitYield = largefireball.f_37197_ = this.f_32774_.m_32751_();
+                   largefireball.m_6034_(this.f_32774_.m_20185_() + vec3.f_82479_ * 4.0D, this.f_32774_.m_20227_(0.5D) + 0.5D, largefireball.m_20189_() + vec3.f_82481_ * 4.0D);
+                   level.m_7967_(largefireball);
+                   this.f_32773_ = -40;

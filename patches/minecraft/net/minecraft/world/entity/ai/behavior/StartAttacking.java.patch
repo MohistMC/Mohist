@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
++++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
+@@ -3,10 +_,15 @@
+ import java.util.Optional;
+ import java.util.function.Function;
+ import java.util.function.Predicate;
++
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class StartAttacking {
+    public static <E extends Mob> BehaviorControl<E> m_257710_(Function<E, Optional<? extends LivingEntity>> p_259868_) {
+@@ -30,7 +_,22 @@
+                      if (!p_258774_.m_6779_(livingentity)) {
+                         return false;
+                      } else {
+-                        p_258778_.m_257512_(livingentity);
++                        net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_258774_, livingentity, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
++                        if (changeTargetEvent.isCanceled())
++                           return false;
++                        // CraftBukkit start
++                        EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258774_, livingentity, (livingentity instanceof ServerPlayer) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++                        if (event.isCancelled()) {
++                           return false;
++                        }
++                        if (event.getTarget() == null) {
++                           p_258779_.m_257971_();
++                           return true;
++                        }
++                        changeTargetEvent.setNewTarget(((CraftLivingEntity) event.getTarget()).getHandle()); // Mohist
++                        // CraftBukkit end
++
++                        p_258778_.m_257512_(changeTargetEvent.getNewTarget());
+                         p_258779_.m_257971_();
+                         return true;
+                      }

@@ -1,0 +1,134 @@
+--- a/net/minecraft/world/level/storage/loot/LootTable.java
++++ b/net/minecraft/world/level/storage/loot/LootTable.java
+@@ -13,9 +_,9 @@
+ import java.lang.reflect.Type;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.BiFunction;
+ import java.util.function.Consumer;
+-import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+@@ -30,6 +_,10 @@
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+ import org.apache.commons.lang3.ArrayUtils;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.event.world.LootGenerateEvent;
++import org.jetbrains.annotations.Nullable;
+ import org.slf4j.Logger;
+ 
+ public class LootTable {
+@@ -39,14 +_,14 @@
+    final LootContextParamSet f_79108_;
+    @Nullable
+    final ResourceLocation f_286958_;
+-   final LootPool[] f_79109_;
++   private final List<LootPool> f_79109_;
+    final LootItemFunction[] f_79110_;
+    private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
+ 
+    LootTable(LootContextParamSet p_287716_, @Nullable ResourceLocation p_287737_, LootPool[] p_287700_, LootItemFunction[] p_287663_) {
+       this.f_79108_ = p_287716_;
+       this.f_286958_ = p_287737_;
+-      this.f_79109_ = p_287700_;
++      this.f_79109_ = Lists.newArrayList(p_287700_);
+       this.f_79110_ = p_287663_;
+       this.f_79111_ = LootItemFunctions.m_80770_(p_287663_);
+    }
+@@ -98,6 +_,7 @@
+       this.m_287190_(p_287704_, m_246283_(p_287704_.m_287182_(), p_287617_));
+    }
+ 
++   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
+    public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
+       this.m_79131_(p_79149_, m_246283_(p_79149_.m_78952_(), p_79150_));
+    }
+@@ -109,10 +_,10 @@
+    public ObjectArrayList<ItemStack> m_287195_(LootParams p_287616_) {
+       return this.m_230922_((new LootContext.Builder(p_287616_)).m_287259_(this.f_286958_));
+    }
+-
+-   private ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
++   public ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
+       ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
+       this.m_79148_(p_230923_, objectarraylist::add);
++      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
+       return objectarraylist;
+    }
+ 
+@@ -121,8 +_,8 @@
+    }
+ 
+    public void m_79136_(ValidationContext p_79137_) {
+-      for(int i = 0; i < this.f_79109_.length; ++i) {
+-         this.f_79109_[i].m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
++      for(int i = 0; i < this.f_79109_.size(); ++i) {
++         this.f_79109_.get(i).m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
+       }
+ 
+       for(int j = 0; j < this.f_79110_.length; ++j) {
+@@ -131,10 +_,24 @@
+ 
+    }
+ 
++   public AtomicBoolean isPlugin = new AtomicBoolean(false);
++   public void fillInventory(Container p_287662_, LootParams p_287743_, long p_287585_, boolean plugin) {
++      isPlugin.set(plugin);
++      m_287188_(p_287662_, p_287743_, p_287585_);
++   }
++
+    public void m_287188_(Container p_287662_, LootParams p_287743_, long p_287585_) {
+       LootContext lootcontext = (new LootContext.Builder(p_287743_)).m_78965_(p_287585_).m_287259_(this.f_286958_);
+       ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(lootcontext);
+       RandomSource randomsource = lootcontext.m_230907_();
++
++      // CraftBukkit start
++      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
++      if (event.isCancelled()) {
++         return;
++      }
++      objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++      // CraftBukkit end
+       List<Integer> list = this.m_230919_(p_287662_, randomsource);
+       this.m_230924_(objectarraylist, list.size(), randomsource);
+ 
+@@ -205,6 +_,26 @@
+       return new LootTable.Builder();
+    }
+ 
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() {
++      this.isFrozen = true;
++      this.f_79109_.forEach(LootPool::freeze);
++   }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
++   }
++
++   private ResourceLocation lootTableId;
++   public void setLootTableId(final ResourceLocation id) {
++      if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
++      this.lootTableId = java.util.Objects.requireNonNull(id);
++   }
++   public ResourceLocation getLootTableId() { return this.lootTableId; }
++   //======================== FORGE END ===============================================
++
+    public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
+       private final List<LootPool> f_79156_ = Lists.newArrayList();
+       private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
+@@ -278,7 +_,7 @@
+             jsonobject.addProperty("random_sequence", p_79177_.f_286958_.toString());
+          }
+ 
+-         if (p_79177_.f_79109_.length > 0) {
++         if (!p_79177_.f_79109_.isEmpty()) {
+             jsonobject.add("pools", p_79179_.serialize(p_79177_.f_79109_));
+          }
+ 

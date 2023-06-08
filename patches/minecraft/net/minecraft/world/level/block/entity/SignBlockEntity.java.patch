@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
+@@ -34,7 +_,7 @@
+    private static final int f_243840_ = 90;
+    private static final int f_243968_ = 10;
+    @Nullable
+-   private UUID f_59722_;
++   public UUID f_59722_;
+    private SignText f_276598_ = this.m_277006_();
+    private SignText f_276476_ = this.m_277006_();
+    private boolean f_276544_;
+@@ -277,5 +_,10 @@
+          p_277656_.m_155713_((UUID)null);
+       }
+ 
++   }
++
++   @Override
++   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
++      return new net.minecraft.world.phys.AABB(this.m_58899_(), this.m_58899_().m_7918_(1, 1, 1));
+    }
+ }

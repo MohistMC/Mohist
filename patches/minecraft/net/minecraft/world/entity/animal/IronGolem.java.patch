@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/entity/animal/IronGolem.java
++++ b/net/minecraft/world/entity/animal/IronGolem.java
+@@ -7,6 +_,8 @@
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.particles.BlockParticleOption;
++import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+@@ -14,6 +_,7 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
++import net.minecraft.util.Mth;
+ import net.minecraft.util.TimeUtil;
+ import net.minecraft.util.valueproviders.UniformInt;
+ import net.minecraft.world.InteractionHand;
+@@ -96,7 +_,7 @@
+ 
+    protected void m_7324_(Entity p_28839_) {
+       if (p_28839_ instanceof Enemy && !(p_28839_ instanceof Creeper) && this.m_217043_().m_188503_(20) == 0) {
+-         this.m_6710_((LivingEntity)p_28839_);
++         this.setTarget((LivingEntity)p_28839_, org.bukkit.event.entity.EntityTargetLivingEntityEvent.TargetReason.COLLISION, true); // CraftBukkit - set reason
+       }
+ 
+       super.m_7324_(p_28839_);

@@ -1,0 +1,266 @@
+--- a/net/minecraft/server/level/ChunkMap.java
++++ b/net/minecraft/server/level/ChunkMap.java
+@@ -5,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Queues;
+ import com.google.common.collect.Sets;
++import com.google.common.util.concurrent.AtomicDouble;
+ import com.google.gson.JsonElement;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.util.Either;
+@@ -40,6 +_,7 @@
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.CompletionException;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Consumer;
+@@ -75,7 +_,6 @@
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.ai.village.poi.PoiManager;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.chunk.ChunkAccess;
+@@ -101,6 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
+ import org.apache.commons.lang3.mutable.MutableObject;
++import org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator;
+ import org.slf4j.Logger;
+ 
+ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
+@@ -131,7 +_,7 @@
+    private final ChunkTaskPriorityQueueSorter f_140141_;
+    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
+    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140143_;
+-   private final ChunkProgressListener f_140144_;
++   public final ChunkProgressListener f_140144_;
+    private final ChunkStatusUpdateListener f_143031_;
+    public final ChunkMap.DistanceManager f_140145_;
+    private final AtomicInteger f_140146_ = new AtomicInteger();
+@@ -144,6 +_,27 @@
+    private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
+    int f_140126_;
+ 
++   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++
++      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
++
++      @Override
++      public void execute(Runnable runnable) {
++         queue.add(runnable);
++      }
++
++      @Override
++      public void run() {
++         Runnable task;
++         while ((task = queue.poll()) != null) {
++            task.run();
++         }
++      }
++   };
++   // CraftBukkit end
++
+    public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
+       super(p_214837_.m_197394_(p_214836_.m_46472_()).resolve("region"), p_214838_, p_214848_);
+       this.f_214833_ = p_214839_;
+@@ -151,6 +_,11 @@
+       this.f_182284_ = path.getFileName().toString();
+       this.f_140133_ = p_214836_;
+       this.f_140136_ = p_214843_;
++      // CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
++      if (p_214843_ instanceof CustomChunkGenerator) {
++         p_214843_ = ((CustomChunkGenerator) p_214843_).getDelegate();
++      }
++      // CraftBukkit end
+       RegistryAccess registryaccess = p_214836_.m_9598_();
+       long i = p_214836_.m_7328_();
+       if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
+@@ -398,6 +_,7 @@
+             this.f_140140_ = true;
+          }
+ 
++         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.f_140133_, p_140177_, p_140180_, p_140178_, p_140179_);
+          return p_140179_;
+       }
+    }
+@@ -503,6 +_,7 @@
+             if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
+                if (p_203002_ instanceof LevelChunk) {
+                   ((LevelChunk)p_203002_).m_62913_(false);
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(p_203002_));
+                }
+ 
+                this.m_140258_(p_203002_);
+@@ -685,7 +_,21 @@
+ 
+    private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+       if (!p_143066_.isEmpty()) {
+-         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
++         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
++         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter((entity) -> {
++            boolean needsRemoval = false;
++            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            return !needsRemoval;
++         }));
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -713,8 +_,14 @@
+             levelchunk.m_62952_();
+             if (this.f_140132_.add(chunkpos.m_45588_())) {
+                levelchunk.m_62913_(true);
++               try {
++               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
+                levelchunk.m_156369_();
+                levelchunk.m_187958_(this.f_140133_);
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
++               } finally {
++                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
++               }
+             }
+ 
+             return levelchunk;
+@@ -797,7 +_,7 @@
+       }
+    }
+ 
+-   private boolean m_140258_(ChunkAccess p_140259_) {
++   public boolean m_140258_(ChunkAccess p_140259_) {
+       this.f_140138_.m_63796_(p_140259_.m_7697_());
+       if (!p_140259_.m_6344_()) {
+          return false;
+@@ -819,6 +_,7 @@
+ 
+             this.f_140133_.m_46473_().m_6174_("chunkSave");
+             CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
+             this.m_63502_(chunkpos, compoundtag);
+             this.m_140229_(chunkpos, chunkstatus.m_62494_());
+             return true;
+@@ -889,6 +_,7 @@
+ 
+          if (!p_183759_ && p_183758_) {
+             p_183755_.m_9088_(p_183756_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
+          }
+ 
+       }
+@@ -946,20 +_,34 @@
+ 
+    private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
+       return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
+-         return p_214907_.map(this::m_214947_);
++         return p_214907_.map((nbttagcompound) -> upgradeChunkTag(nbttagcompound, p_214964_)); // CraftBukkit
+       }, Util.m_183991_());
+    }
+ 
+-   private CompoundTag m_214947_(CompoundTag p_214948_) {
+-      return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
++   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
++      return this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), chunkcoordintpair, f_140133_);
++   }
++   // Mohist start - fix mixin
++   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
++   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
++      reducedRange0.set(reducedRange);
++      return m_183879_(p_183880_);
+    }
+ 
+    boolean m_183879_(ChunkPos p_183880_) {
++      int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;
++      chunkRange = Math.min(chunkRange, 8);
++
++      double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++      // Spigot end
++      // Mohist end
+       long i = p_183880_.m_45588_();
+       if (!this.f_140145_.m_140847_(i)) {
+          return false;
+       } else {
+          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
++            this.mobSpawnRange.set(blockRange);
+             if (this.m_183751_(serverplayer, p_183880_)) {
+                return true;
+             }
+@@ -986,14 +_,22 @@
+       }
+    }
+ 
++   // Mohist start - fix mixin
++   public AtomicDouble mobSpawnRange = new AtomicDouble(16384.0D);
+    private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
+       if (p_183752_.m_5833_()) {
+          return false;
+       } else {
+          double d0 = m_140226_(p_183753_, p_183752_);
+-         return d0 < 16384.0D;
++         return d0 < mobSpawnRange.getAndSet(16384.0D);
+       }
+    }
++
++   private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot
++      mobSpawnRange.set(range);
++      return m_183751_(p_183752_, p_183753_);
++   }
++   // Mohist end
+ 
+    private boolean m_140329_(ServerPlayer p_140330_) {
+       return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
+@@ -1132,9 +_,10 @@
+    }
+ 
+    protected void m_140199_(Entity p_140200_) {
+-      if (!(p_140200_ instanceof EnderDragonPart)) {
++      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
+          EntityType<?> entitytype = p_140200_.m_6095_();
+          int i = entitytype.m_20681_() * 16;
++         i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_140200_, i); // Spigot
+          if (i != 0) {
+             int j = entitytype.m_20682_();
+             if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
+@@ -1282,6 +_,7 @@
+          }
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.f_140133_);
+    }
+ 
+    protected PoiManager m_140424_() {
+@@ -1324,7 +_,7 @@
+       public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
+ 
+       public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
+-         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
++         this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_, f_140475_); // CraftBukkit
+          this.f_140472_ = p_140478_;
+          this.f_140473_ = p_140479_;
+          this.f_140474_ = SectionPos.m_235861_(p_140478_);
+@@ -1378,6 +_,12 @@
+             double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
+             double d2 = d0 * d0;
+             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
++
++            // CraftBukkit start - respect vanish API
++            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
++               flag = false;
++            }
++            // CraftBukkit end
+             if (flag) {
+                if (this.f_140475_.add(p_140498_.f_8906_)) {
+                   this.f_140471_.m_8541_(p_140498_);

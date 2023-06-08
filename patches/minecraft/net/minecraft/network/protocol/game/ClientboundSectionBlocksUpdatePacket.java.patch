@@ -1,0 +1,17 @@
+--- a/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.java
+@@ -31,6 +_,14 @@
+ 
+    }
+ 
++   // CraftBukkit start - Add constructor
++   public ClientboundSectionBlocksUpdatePacket(SectionPos sectionposition, ShortSet shortset, net.minecraft.world.level.block.state.BlockState[] states) {
++      this.f_132980_ = sectionposition;
++      this.f_132981_ = shortset.toShortArray();
++      this.f_132982_ = states;
++   }
++   // CraftBukkit end
++
+    public ClientboundSectionBlocksUpdatePacket(FriendlyByteBuf p_179196_) {
+       this.f_132980_ = SectionPos.m_123184_(p_179196_.readLong());
+       int i = p_179196_.m_130242_();

@@ -1,0 +1,113 @@
+--- a/net/minecraft/world/entity/decoration/ItemFrame.java
++++ b/net/minecraft/world/entity/decoration/ItemFrame.java
+@@ -39,12 +_,13 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.Validate;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ import org.slf4j.Logger;
+ 
+ public class ItemFrame extends HangingEntity {
+    private static final Logger f_31756_ = LogUtils.getLogger();
+-   private static final EntityDataAccessor<ItemStack> f_31757_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135033_);
+-   private static final EntityDataAccessor<Integer> f_31758_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135028_);
++   public static final EntityDataAccessor<ItemStack> f_31757_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135033_);
++   public static final EntityDataAccessor<Integer> f_31758_ = SynchedEntityData.m_135353_(ItemFrame.class, EntityDataSerializers.f_135028_);
+    public static final int f_149619_ = 8;
+    public float f_31754_ = 1.0F;
+    public boolean f_31755_;
+@@ -71,7 +_,7 @@
+       this.m_20088_().m_135372_(f_31758_, 0);
+    }
+ 
+-   protected void m_6022_(Direction p_31793_) {
++   public void m_6022_(Direction p_31793_) {
+       Validate.notNull(p_31793_);
+       this.f_31699_ = p_31793_;
+       if (p_31793_.m_122434_().m_122479_()) {
+@@ -116,14 +_,45 @@
+       }
+    }
+ 
++   // CraftBukkit start - break out BB calc into own method
++   public static AABB calculateBoundingBox(@Nullable Entity entity, BlockPos blockPosition, Direction direction, int width, int height) {
++      double d0 = 0.46875D;
++      double d1 = (double) blockPosition.m_123341_() + 0.5D - (double) direction.m_122429_() * 0.46875D;
++      double d2 = (double) blockPosition.m_123342_() + 0.5D - (double) direction.m_122430_() * 0.46875D;
++      double d3 = (double) blockPosition.m_123343_() + 0.5D - (double) direction.m_122431_() * 0.46875D;
++      if (entity != null) {
++         entity.m_20343_(d1, d2, d3);
++      }
++      double d4 = (double) width;
++      double d5 = (double) height;
++      double d6 = (double) width;
++      Direction.Axis direction$axis = direction.m_122434_();
++      switch (direction$axis) {
++         case X:
++            d4 = 1.0D;
++            break;
++         case Y:
++            d5 = 1.0D;
++            break;
++         case Z:
++            d6 = 1.0D;
++      }
++
++      d4 /= 32.0D;
++      d5 /= 32.0D;
++      d6 /= 32.0D;
++      return new AABB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6);
++   }
++   // CraftBukkit end
++
+    public boolean m_7088_() {
+       if (this.f_31755_) {
+          return true;
+-      } else if (!this.m_9236_().m_45786_(this)) {
++      } else if (!this.f_19853_.m_45786_(this)) {
+          return false;
+       } else {
+-         BlockState blockstate = this.m_9236_().m_8055_(this.f_31698_.m_121945_(this.f_31699_.m_122424_()));
+-         return blockstate.m_280296_() || this.f_31699_.m_122434_().m_122479_() && DiodeBlock.m_52586_(blockstate) ? this.m_9236_().m_6249_(this, this.m_20191_(), f_31697_).isEmpty() : false;
++         BlockState blockstate = this.f_19853_.m_8055_(this.f_31698_.m_121945_(this.f_31699_.m_122424_()));
++         return blockstate.m_280296_() || this.f_31699_.m_122434_().m_122479_() && DiodeBlock.m_52586_(blockstate) ? this.f_19853_.m_6249_(this, this.m_20191_(), f_31697_).isEmpty() : false;
+       }
+    }
+ 
+@@ -157,6 +_,11 @@
+          return false;
+       } else if (!p_31776_.m_269533_(DamageTypeTags.f_268415_) && !this.m_31822_().m_41619_()) {
+          if (!this.m_9236_().f_46443_) {
++            // CraftBukkit start - fire EntityDamageEvent
++            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31776_, p_31777_, false) || this.m_213877_()) {
++               return true;
++            }
++            // CraftBukkit end
+             this.m_31802_(p_31776_.m_7639_(), false);
+             this.m_146852_(GameEvent.f_157792_, p_31776_.m_7639_());
+             this.m_5496_(this.m_142544_(), 1.0F, 1.0F);
+@@ -287,6 +_,24 @@
+ 
+       if (p_31791_ && this.f_31698_ != null) {
+          this.m_9236_().m_46717_(this.f_31698_, Blocks.f_50016_);
++      }
++
++   }
++
++   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
++      if (!p_31790_.m_41619_()) {
++         p_31790_ = p_31790_.m_41777_();
++         p_31790_.m_41764_(1);
++         p_31790_.m_41636_(this);
++      }
++
++      this.m_20088_().m_135381_(f_31757_, p_31790_);
++      if (!p_31790_.m_41619_() && playSound) { // CraftBukkit
++         this.m_5496_(this.m_142546_(), 1.0F, 1.0F);
++      }
++
++      if (p_31791_ && this.f_31698_ != null) {
++         this.f_19853_.m_46717_(this.f_31698_, Blocks.f_50016_);
+       }
+ 
+    }

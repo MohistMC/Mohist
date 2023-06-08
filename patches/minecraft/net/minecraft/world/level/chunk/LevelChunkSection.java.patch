@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/level/chunk/LevelChunkSection.java
++++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
+@@ -2,6 +_,7 @@
+ 
+ import java.util.function.Predicate;
+ import net.minecraft.core.Holder;
++import net.minecraft.core.QuartPos;
+ import net.minecraft.core.Registry;
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.world.level.biome.Biome;
+@@ -22,9 +_,10 @@
+    private short f_62970_;
+    private short f_62971_;
+    private final PalettedContainer<BlockState> f_62972_;
+-   private PalettedContainerRO<Holder<Biome>> f_187995_;
++   // CraftBukkit start - read/write
++   private PalettedContainer<Holder<Biome>> f_187995_;
+ 
+-   public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainerRO<Holder<Biome>> p_281695_) {
++   public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainer<Holder<Biome>> p_281695_) {
+       this.f_62972_ = p_282846_;
+       this.f_187995_ = p_281695_;
+       this.m_63018_();
+@@ -192,4 +_,10 @@
+ 
+       this.f_187995_ = palettedcontainer;
+    }
++
++   // CraftBukkit start
++   public void setBiome(int i, int j, int k, Holder<Biome> biome) {
++      this.f_187995_.m_156470_(i, j, k, biome);
++   }
++   // CraftBukkit end
+ }

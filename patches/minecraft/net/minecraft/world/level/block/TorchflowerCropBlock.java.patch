@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/TorchflowerCropBlock.java
++++ b/net/minecraft/world/level/block/TorchflowerCropBlock.java
+@@ -34,7 +_,7 @@
+       return f_271128_[this.m_52305_(p_272748_)];
+    }
+ 
+-   protected IntegerProperty m_7959_() {
++   public IntegerProperty m_7959_() {
+       return f_271086_;
+    }
+ 

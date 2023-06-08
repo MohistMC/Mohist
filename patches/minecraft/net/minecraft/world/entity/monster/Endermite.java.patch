@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/monster/Endermite.java
++++ b/net/minecraft/world/entity/monster/Endermite.java
+@@ -39,7 +_,7 @@
+ 
+    protected void m_8099_() {
+       this.f_21345_.m_25352_(1, new FloatGoal(this));
+-      this.f_21345_.m_25352_(1, new ClimbOnTopOfPowderSnowGoal(this, this.m_9236_()));
++      this.f_21345_.m_25352_(1, new ClimbOnTopOfPowderSnowGoal(this, this.f_19853_));
+       this.f_21345_.m_25352_(2, new MeleeAttackGoal(this, 1.0D, false));
+       this.f_21345_.m_25352_(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+       this.f_21345_.m_25352_(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
+@@ -102,9 +_,9 @@
+ 
+    public void m_8107_() {
+       super.m_8107_();
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          for(int i = 0; i < 2; ++i) {
+-            this.m_9236_().m_7106_(ParticleTypes.f_123760_, this.m_20208_(0.5D), this.m_20187_(), this.m_20262_(0.5D), (this.f_19796_.m_188500_() - 0.5D) * 2.0D, -this.f_19796_.m_188500_(), (this.f_19796_.m_188500_() - 0.5D) * 2.0D);
++            this.f_19853_.m_7106_(ParticleTypes.f_123760_, this.m_20208_(0.5D), this.m_20187_(), this.m_20262_(0.5D), (this.f_19796_.m_188500_() - 0.5D) * 2.0D, -this.f_19796_.m_188500_(), (this.f_19796_.m_188500_() - 0.5D) * 2.0D);
+          }
+       } else {
+          if (!this.m_21532_()) {

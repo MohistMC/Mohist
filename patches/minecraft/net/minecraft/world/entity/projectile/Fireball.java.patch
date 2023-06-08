@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/entity/projectile/Fireball.java
++++ b/net/minecraft/world/entity/projectile/Fireball.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity.projectile;
+ 
++import net.minecraft.Util;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+@@ -32,7 +_,7 @@
+ 
+    }
+ 
+-   protected ItemStack m_37018_() {
++   public ItemStack m_37018_() {
+       return this.m_20088_().m_135370_(f_36987_);
+    }
+ 
+@@ -57,6 +_,6 @@
+    public void m_7378_(CompoundTag p_37009_) {
+       super.m_7378_(p_37009_);
+       ItemStack itemstack = ItemStack.m_41712_(p_37009_.m_128469_("Item"));
+-      this.m_37010_(itemstack);
++      if (!itemstack.m_41619_()) this.m_37010_(itemstack); // CraftBukkit - SPIGOT-5474 probably came from bugged earlier versions
+    }
+ }

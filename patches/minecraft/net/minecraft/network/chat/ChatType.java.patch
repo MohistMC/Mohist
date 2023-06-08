@@ -1,0 +1,26 @@
+--- a/net/minecraft/network/chat/ChatType.java
++++ b/net/minecraft/network/chat/ChatType.java
+@@ -2,6 +_,7 @@
+ 
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
++import java.util.List;
+ import java.util.Optional;
+ import javax.annotation.Nullable;
+ import net.minecraft.commands.CommandSourceStack;
+@@ -26,6 +_,7 @@
+    public static final ResourceKey<ChatType> f_241694_ = m_237023_("team_msg_command_incoming");
+    public static final ResourceKey<ChatType> f_241626_ = m_237023_("team_msg_command_outgoing");
+    public static final ResourceKey<ChatType> f_237009_ = m_237023_("emote_command");
++   public static final ResourceKey<ChatType> RAW = m_237023_("raw"); // CraftBukkit
+ 
+    private static ResourceKey<ChatType> m_237023_(String p_237024_) {
+       return ResourceKey.m_135785_(Registries.f_256873_, new ResourceLocation(p_237024_));
+@@ -39,6 +_,7 @@
+       p_256390_.m_255272_(f_241694_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.text"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+       p_256390_.m_255272_(f_241626_, new ChatType(ChatTypeDecoration.m_239094_("chat.type.team.sent"), ChatTypeDecoration.m_239222_("chat.type.text.narrate")));
+       p_256390_.m_255272_(f_237009_, new ChatType(ChatTypeDecoration.m_239222_("chat.type.emote"), ChatTypeDecoration.m_239222_("chat.type.emote")));
++      p_256390_.m_255272_(RAW, new ChatType(new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_), new ChatTypeDecoration("%s", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.f_131099_))); // CraftBukkit
+    }
+ 
+    public static ChatType.Bound m_240980_(ResourceKey<ChatType> p_241279_, Entity p_241483_) {

@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
++++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.level.NoiseColumn;
+ import net.minecraft.world.level.StructureManager;
+ import net.minecraft.world.level.biome.BiomeManager;
++import net.minecraft.world.level.biome.BiomeSource;
+ import net.minecraft.world.level.biome.FixedBiomeSource;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -36,6 +_,13 @@
+       super(new FixedBiomeSource(p_256337_.m_204921_()), Util.m_143827_(p_256337_::m_226294_));
+       this.f_64165_ = p_256337_;
+    }
++
++   // CraftBukkit start
++   public FlatLevelSource(FlatLevelGeneratorSettings p_256337_, BiomeSource biomeSource) {
++      super(biomeSource, Util.m_143827_(p_256337_::m_226294_));
++      this.f_64165_ = p_256337_;
++   }
++   // CraftBukkit end
+ 
+    public ChunkGeneratorStructureState m_255169_(HolderLookup<StructureSet> p_256602_, RandomState p_255830_, long p_256355_) {
+       Stream<Holder<StructureSet>> stream = this.f_64165_.m_209810_().map(HolderSet::m_203614_).orElseGet(() -> {

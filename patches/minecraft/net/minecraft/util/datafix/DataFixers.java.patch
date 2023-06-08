@@ -1,0 +1,28 @@
+--- a/net/minecraft/util/datafix/DataFixers.java
++++ b/net/minecraft/util/datafix/DataFixers.java
+@@ -396,6 +_,14 @@
+       Schema schema44 = p_14514_.addSchema(1456, f_14509_);
+       p_14514_.addFixer(new EntityItemFrameDirectionFix(schema44, false));
+       Schema schema45 = p_14514_.addSchema(1458, f_14509_);
++      // CraftBukkit start
++      p_14514_.addFixer(new com.mojang.datafixers.DataFix(schema45, false) {
++         @Override
++         protected com.mojang.datafixers.TypeRewriteRule makeRule() {
++            return this.fixTypeEverywhereTyped("Player CustomName", this.getInputSchema().getType(References.f_16772_), (typed) -> typed.update(DSL.remainderFinder(), EntityCustomNameToComponentFix::m_15407_));
++         }
++      });
++      // CraftBukkit end
+       p_14514_.addFixer(new EntityCustomNameToComponentFix(schema45, false));
+       p_14514_.addFixer(new ItemCustomNameToComponentFix(schema45, false));
+       p_14514_.addFixer(new BlockEntityCustomNameToComponentFix(schema45, false));
+@@ -437,8 +_,8 @@
+       p_14514_.addFixer(BlockRenameFix.m_14914_(schema57, "Rename kelp/kelptop", m_14524_(ImmutableMap.of("minecraft:kelp_top", "minecraft:kelp", "minecraft:kelp", "minecraft:kelp_plant"))));
+       p_14514_.addFixer(ItemRenameFix.m_16003_(schema57, "Rename kelptop", m_14517_("minecraft:kelp_top", "minecraft:kelp")));
+       p_14514_.addFixer(new NamedEntityFix(schema57, false, "Command block block entity custom name fix", References.f_16781_, "minecraft:command_block") {
+-         protected Typed<?> m_7504_(Typed<?> p_14541_) {
+-            return p_14541_.update(DSL.remainderFinder(), EntityCustomNameToComponentFix::m_15407_);
++         protected Typed<?> m_7504_(Typed<?> p_14549_) {
++            return p_14549_.update(DSL.remainderFinder(), EntityCustomNameToComponentFix::m_15407_);
+          }
+       });
+       p_14514_.addFixer(new NamedEntityFix(schema57, false, "Command block minecart custom name fix", References.f_16786_, "minecraft:commandblock_minecart") {

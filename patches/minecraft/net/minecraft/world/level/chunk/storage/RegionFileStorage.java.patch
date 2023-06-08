@@ -1,0 +1,72 @@
+--- a/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
++++ b/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
+@@ -5,6 +_,8 @@
+ import java.io.DataOutputStream;
+ import java.io.IOException;
+ import java.nio.file.Path;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.FileUtil;
+ import net.minecraft.nbt.CompoundTag;
+@@ -25,6 +_,8 @@
+       this.f_63701_ = p_196955_;
+    }
+ 
++   private AtomicBoolean mohist$existingOnly = new AtomicBoolean(true);
++
+    private RegionFile m_63711_(ChunkPos p_63712_) throws IOException {
+       long i = ChunkPos.m_45589_(p_63712_.m_45610_(), p_63712_.m_45612_());
+       RegionFile regionfile = this.f_63699_.getAndMoveToFirst(i);
+@@ -37,24 +_,38 @@
+ 
+          FileUtil.m_257659_(this.f_63700_);
+          Path path = this.f_63700_.resolve("r." + p_63712_.m_45610_() + "." + p_63712_.m_45612_() + ".mca");
++         if (mohist$existingOnly.get() && !java.nio.file.Files.exists(path)) return null; // CraftBukkit
+          RegionFile regionfile1 = new RegionFile(path, this.f_63700_, this.f_63701_);
+          this.f_63699_.putAndMoveToFirst(i, regionfile1);
+          return regionfile1;
+       }
+    }
+ 
++   private RegionFile getRegionFile(ChunkPos p_63712_, boolean existingOnly) throws IOException { // CraftBukkit
++      mohist$existingOnly.set(existingOnly);
++      return m_63711_(p_63712_);
++   }
++
+    @Nullable
+    public CompoundTag m_63706_(ChunkPos p_63707_) throws IOException {
+-      RegionFile regionfile = this.m_63711_(p_63707_);
+-
++      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
++      RegionFile regionfile = this.getRegionFile(p_63707_, true);
++      if (regionfile == null) {
++         return null;
++      }
++      // CraftBukkit end
+       try (DataInputStream datainputstream = regionfile.m_63645_(p_63707_)) {
+          return datainputstream == null ? null : NbtIo.m_128928_(datainputstream);
+       }
+    }
+ 
+    public void m_196956_(ChunkPos p_196957_, StreamTagVisitor p_196958_) throws IOException {
+-      RegionFile regionfile = this.m_63711_(p_196957_);
+-
++      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
++      RegionFile regionfile = this.getRegionFile(p_196957_, true);
++      if (regionfile == null) {
++         return;
++      }
++      // CraftBukkit end
+       try (DataInputStream datainputstream = regionfile.m_63645_(p_196957_)) {
+          if (datainputstream != null) {
+             NbtIo.m_197509_(datainputstream, p_196958_);
+@@ -64,7 +_,7 @@
+    }
+ 
+    protected void m_63708_(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {
+-      RegionFile regionfile = this.m_63711_(p_63709_);
++      RegionFile regionfile = this.getRegionFile(p_63709_, false);
+       if (p_63710_ == null) {
+          regionfile.m_156613_(p_63709_);
+       } else {

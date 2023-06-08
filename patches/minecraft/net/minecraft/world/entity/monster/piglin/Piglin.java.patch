@@ -1,0 +1,181 @@
+--- a/net/minecraft/world/entity/monster/piglin/Piglin.java
++++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -2,14 +_,22 @@
+ 
+ import com.google.common.collect.ImmutableList;
+ import com.mojang.serialization.Dynamic;
++import java.util.HashSet;
+ import java.util.List;
++import java.util.Set;
+ import java.util.UUID;
++import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.Registry;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.ListTag;
++import net.minecraft.nbt.StringTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+@@ -44,6 +_,8 @@
+ import net.minecraft.world.entity.npc.InventoryCarrier;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.projectile.Projectile;
++import net.minecraft.world.flag.FeatureFlags;
++import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.ProjectileWeaponItem;
+@@ -75,6 +_,11 @@
+    protected static final ImmutableList<SensorType<? extends Sensor<? super Piglin>>> f_34680_ = ImmutableList.of(SensorType.f_26811_, SensorType.f_26812_, SensorType.f_26810_, SensorType.f_26814_, SensorType.f_26819_);
+    protected static final ImmutableList<MemoryModuleType<?>> f_34672_ = ImmutableList.of(MemoryModuleType.f_26371_, MemoryModuleType.f_26379_, MemoryModuleType.f_148204_, MemoryModuleType.f_148205_, MemoryModuleType.f_26368_, MemoryModuleType.f_148206_, MemoryModuleType.f_26347_, MemoryModuleType.f_26346_, MemoryModuleType.f_26332_, MemoryModuleType.f_217781_, MemoryModuleType.f_26381_, MemoryModuleType.f_26382_, MemoryModuleType.f_26370_, MemoryModuleType.f_26326_, MemoryModuleType.f_26372_, MemoryModuleType.f_26373_, MemoryModuleType.f_26374_, MemoryModuleType.f_26377_, MemoryModuleType.f_26334_, MemoryModuleType.f_26335_, MemoryModuleType.f_26383_, MemoryModuleType.f_26336_, MemoryModuleType.f_26337_, MemoryModuleType.f_26339_, MemoryModuleType.f_26338_, MemoryModuleType.f_26341_, MemoryModuleType.f_26342_, MemoryModuleType.f_26340_, MemoryModuleType.f_26344_, MemoryModuleType.f_26333_, MemoryModuleType.f_26351_, MemoryModuleType.f_26376_, MemoryModuleType.f_26352_, MemoryModuleType.f_26353_, MemoryModuleType.f_26343_, MemoryModuleType.f_26345_, MemoryModuleType.f_26354_, MemoryModuleType.f_26355_, MemoryModuleType.f_26356_);
+ 
++   // CraftBukkit start - Custom bartering and interest list
++   public Set<Item> allowedBarterItems = new HashSet<>();
++   public Set<Item> interestItems = new HashSet<>();
++   // CraftBukkit end
++
+    public Piglin(EntityType<? extends AbstractPiglin> p_34683_, Level p_34684_) {
+       super(p_34683_, p_34684_);
+       this.f_21364_ = 5;
+@@ -91,6 +_,14 @@
+       }
+ 
+       this.m_252802_(p_34751_);
++      // CraftBukkit start
++      ListTag barterList = new ListTag();
++      allowedBarterItems.stream().map(BuiltInRegistries.f_257033_::m_7981_).map( ResourceLocation::toString).map( StringTag::m_129297_).forEach(barterList::add);
++      p_34751_.m_128365_("Bukkit.BarterList", barterList);
++      ListTag interestList = new ListTag();
++      interestItems.stream().map(BuiltInRegistries.f_257033_::m_7981_).map(ResourceLocation::toString).map(StringTag::m_129297_).forEach(interestList::add);
++      p_34751_.m_128365_("Bukkit.InterestList", interestList);
++      // CraftBukkit end
+    }
+ 
+    public void m_7378_(CompoundTag p_34725_) {
+@@ -98,6 +_,10 @@
+       this.m_6863_(p_34725_.m_128471_("IsBaby"));
+       this.m_34791_(p_34725_.m_128471_("CannotHunt"));
+       this.m_253224_(p_34725_);
++      // CraftBukkit start
++      this.allowedBarterItems = p_34725_.m_128437_("Bukkit.BarterList", 8).stream().map(net.minecraft.nbt.Tag::m_7916_).map(ResourceLocation::m_135820_).map(BuiltInRegistries.f_257033_::m_7745_).collect(Collectors.toCollection(HashSet::new));
++      this.interestItems = p_34725_.m_128437_("Bukkit.InterestList", 8).stream().map(net.minecraft.nbt.Tag::m_7916_).map(ResourceLocation::m_135820_).map(BuiltInRegistries.f_257033_::m_7745_).collect(Collectors.toCollection(HashSet::new));
++      // CraftBukkit end
+    }
+ 
+    @VisibleForDebug
+@@ -107,12 +_,15 @@
+ 
+    protected void m_7472_(DamageSource p_34697_, int p_34698_, boolean p_34699_) {
+       super.m_7472_(p_34697_, p_34698_, p_34699_);
+-      Entity entity = p_34697_.m_7639_();
+-      if (entity instanceof Creeper creeper) {
+-         if (creeper.m_32313_()) {
+-            ItemStack itemstack = new ItemStack(Items.f_260451_);
+-            creeper.m_32314_();
+-            this.m_19983_(itemstack);
++      if (this.m_9236_().m_246046_().m_245372_(FeatureFlags.UPDATE_1_20)) {
++         Entity entity = p_34697_.m_7639_();
++         if (entity instanceof Creeper) {
++            Creeper creeper = (Creeper)entity;
++            if (creeper.m_32313_()) {
++               ItemStack itemstack = new ItemStack(Items.f_260451_);
++               creeper.m_32314_();
++               this.m_19983_(itemstack);
++            }
+          }
+       }
+ 
+@@ -208,7 +_,7 @@
+       InteractionResult interactionresult = super.m_6071_(p_34745_, p_34746_);
+       if (interactionresult.m_19077_()) {
+          return interactionresult;
+-      } else if (!this.m_9236_().f_46443_) {
++      } else if (!this.f_19853_.f_46443_) {
+          return PiglinAi.m_34846_(this, p_34745_, p_34746_);
+       } else {
+          boolean flag = PiglinAi.m_34909_(this, p_34745_.m_21120_(p_34746_)) && this.m_6389_() != PiglinArmPose.ADMIRING_ITEM;
+@@ -227,7 +_,7 @@
+ 
+    public void m_6863_(boolean p_34729_) {
+       this.m_20088_().m_135381_(f_34673_, p_34729_);
+-      if (!this.m_9236_().f_46443_) {
++      if (!this.f_19853_.f_46443_) {
+          AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
+          attributeinstance.m_22130_(f_34677_);
+          if (p_34729_) {
+@@ -250,9 +_,9 @@
+    }
+ 
+    protected void m_8024_() {
+-      this.m_9236_().m_46473_().m_6180_("piglinBrain");
+-      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
+-      this.m_9236_().m_46473_().m_7238_();
++      this.f_19853_.m_46473_().m_6180_("piglinBrain");
++      this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
++      this.f_19853_.m_46473_().m_7238_();
+       PiglinAi.m_34898_(this);
+       super.m_8024_();
+    }
+@@ -293,7 +_,7 @@
+       } else if (this.m_34773_()) {
+          return PiglinArmPose.CROSSBOW_CHARGE;
+       } else {
+-         return this.m_5912_() && this.m_21055_(Items.f_42717_) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
++         return this.m_5912_() && this.m_21093_(is -> is.m_41720_() instanceof net.minecraft.world.item.CrossbowItem) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
+       }
+    }
+ 
+@@ -307,7 +_,7 @@
+ 
+    public boolean m_6469_(DamageSource p_34694_, float p_34695_) {
+       boolean flag = super.m_6469_(p_34694_, p_34695_);
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          return false;
+       } else {
+          if (flag && p_34694_.m_7639_() instanceof LivingEntity) {
+@@ -335,7 +_,7 @@
+    }
+ 
+    protected void m_34785_(ItemStack p_34786_) {
+-      if (p_34786_.m_150930_(PiglinAi.f_34794_)) {
++      if (p_34786_.isPiglinCurrency() || allowedBarterItems.contains(p_34786_.m_41720_())) { // CraftBukkit - Changes to accept custom payment items
+          this.m_8061_(EquipmentSlot.OFFHAND, p_34786_);
+          this.m_21508_(EquipmentSlot.OFFHAND);
+       } else {
+@@ -345,7 +_,7 @@
+    }
+ 
+    public boolean m_7243_(ItemStack p_34777_) {
+-      return this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
++      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
+    }
+ 
+    protected boolean m_34787_(ItemStack p_34788_) {
+@@ -358,8 +_,8 @@
+       if (EnchantmentHelper.m_44920_(p_34713_)) {
+          return false;
+       } else {
+-         boolean flag = PiglinAi.m_149965_(p_34712_) || p_34712_.m_150930_(Items.f_42717_);
+-         boolean flag1 = PiglinAi.m_149965_(p_34713_) || p_34713_.m_150930_(Items.f_42717_);
++         boolean flag = PiglinAi.isLovedItem(p_34712_, this) || p_34712_.m_150930_(Items.f_42717_);
++         boolean flag1 = PiglinAi.isLovedItem(p_34713_, this) || p_34713_.m_150930_(Items.f_42717_);
+          if (flag && !flag1) {
+             return true;
+          } else if (!flag && flag1) {
+@@ -389,7 +_,7 @@
+    }
+ 
+    protected SoundEvent m_7515_() {
+-      return this.m_9236_().f_46443_ ? null : PiglinAi.m_34947_(this).orElse((SoundEvent)null);
++      return this.f_19853_.f_46443_ ? null : PiglinAi.m_34947_(this).orElse((SoundEvent)null);
+    }
+ 
+    protected SoundEvent m_7975_(DamageSource p_34767_) {

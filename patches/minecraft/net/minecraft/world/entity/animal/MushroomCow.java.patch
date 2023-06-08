@@ -1,0 +1,133 @@
+--- a/net/minecraft/world/entity/animal/MushroomCow.java
++++ b/net/minecraft/world/entity/animal/MushroomCow.java
+@@ -25,7 +_,6 @@
+ import net.minecraft.world.entity.LightningBolt;
+ import net.minecraft.world.entity.MobSpawnType;
+ import net.minecraft.world.entity.Shearable;
+-import net.minecraft.world.entity.VariantHolder;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -40,8 +_,12 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import org.apache.commons.lang3.tuple.Pair;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityDropItemEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
+ 
+-public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
++public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
+    private static final EntityDataAccessor<String> f_28908_ = SynchedEntityData.m_135353_(MushroomCow.class, EntityDataSerializers.f_135030_);
+    private static final int f_148934_ = 1024;
+    @Nullable
+@@ -102,11 +_,16 @@
+          }
+ 
+          this.m_5496_(soundevent, 1.0F, 1.0F);
+-         return InteractionResult.m_19078_(this.m_9236_().f_46443_);
+-      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
++         return InteractionResult.m_19078_(this.f_19853_.f_46443_);
++      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared // Mohist TODO
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_28941_, this, itemstack, p_28942_)) {
++            return InteractionResult.PASS;
++         }
++         // CraftBukkit end
+          this.m_5851_(SoundSource.PLAYERS);
+          this.m_146852_(GameEvent.f_157781_, p_28941_);
+-         if (!this.m_9236_().f_46443_) {
++         if (!this.f_19853_.f_46443_) {
+             itemstack.m_41622_(1, p_28941_, (p_28927_) -> {
+                p_28927_.m_21190_(p_28942_);
+             });
+@@ -144,13 +_,23 @@
+       }
+    }
+ 
++   @Override
++   public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
++      this.m_146852_(GameEvent.f_157781_, player);
++      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++   }
++
+    public void m_5851_(SoundSource p_28924_) {
++      shearInternal(p_28924_).forEach(s -> this.m_9236_().m_7967_(new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
++   }
++
++   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
+       this.m_9236_().m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
+       if (!this.m_9236_().m_5776_()) {
+          Cow cow = EntityType.f_20557_.m_20615_(this.m_9236_());
+          if (cow != null) {
+-            ((ServerLevel)this.m_9236_()).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+-            this.m_146870_();
++            ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
++            // this.discard(); // CraftBukkit - moved down
+             cow.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
+             cow.m_21153_(this.m_21223_());
+             cow.f_20883_ = this.f_20883_;
+@@ -164,13 +_,31 @@
+             }
+ 
+             cow.m_20331_(this.m_20147_());
+-            this.m_9236_().m_7967_(cow);
+-
++            // CraftBukkit start
++            if (CraftEventFactory.callEntityTransformEvent(this, cow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++               return java.util.Collections.emptyList();
++            }
++            this.f_19853_.addFreshEntity(cow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
++
++            this.m_146870_(); // CraftBukkit - from above
++            // CraftBukkit end
++
++            java.util.List<ItemStack> items = new java.util.ArrayList<>();
+             for(int i = 0; i < 5; ++i) {
+-               this.m_9236_().m_7967_(new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28554_().f_28961_.m_60734_())));
++               // CraftBukkit start
++               ItemEntity entityitem = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28554_().f_28961_.m_60734_()));
++               EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) entityitem.getBukkitEntity());
++               Bukkit.getPluginManager().callEvent(event);
++               if (event.isCancelled()) {
++                  continue;
++               }
++               // CraftBukkit end
++               items.add(new ItemStack(this.m_28554_().f_28961_.m_60734_()));
+             }
++            return items;
+          }
+       }
++      return java.util.Collections.emptyList();
+ 
+    }
+ 
+@@ -183,6 +_,7 @@
+       p_28944_.m_128359_("Type", this.m_28554_().m_7912_());
+       if (this.f_28909_ != null) {
+          p_28944_.m_128405_("EffectId", MobEffect.m_19459_(this.f_28909_));
++         net.minecraftforge.common.ForgeHooks.saveMobEffect(p_28944_, "forge:effect_id", this.f_28909_);
+          p_28944_.m_128405_("EffectDuration", this.f_28910_);
+       }
+ 
+@@ -193,6 +_,7 @@
+       this.m_28464_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
+       if (p_28936_.m_128425_("EffectId", 99)) {
+          this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128451_("EffectId"));
++         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
+       }
+ 
+       if (p_28936_.m_128425_("EffectDuration", 99)) {
+@@ -235,6 +_,11 @@
+       }
+ 
+       return mushroomcow$mushroomtype2;
++   }
++
++   @Override
++   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
++      return m_6220_();
+    }
+ 
+    public static enum MushroomType implements StringRepresentable {

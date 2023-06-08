@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/level/block/StemBlock.java
++++ b/net/minecraft/world/level/block/StemBlock.java
+@@ -19,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ 
+ public class StemBlock extends BushBlock implements BonemealableBlock {
+    public static final int f_154724_ = 7;
+@@ -44,22 +_,27 @@
+    }
+ 
+    public void m_213898_(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
++      if (!p_222539_.isAreaLoaded(p_222540_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_222539_.m_45524_(p_222540_, 0) >= 9) {
+          float f = CropBlock.m_52272_(this, p_222539_, p_222540_);
+-         if (p_222541_.m_188503_((int)(25.0F / f) + 1) == 0) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.m_188501_() < ((this == Blocks.f_50189_ ? p_222539_.spigotConfig.pumpkinModifier : p_222539_.spigotConfig.melonModifier) / (100.0f * (Math.floor((25.0F / f) + 1)))))) { // Spigot - SPIGOT-7159: Better modifier resolution
+             int i = p_222538_.m_61143_(f_57013_);
+             if (i < 7) {
+-               p_222538_ = p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1));
+-               p_222539_.m_7731_(p_222540_, p_222538_, 2);
++               CraftEventFactory.handleBlockGrowEvent(p_222539_, p_222540_, p_222538_, 2); // CraftBukkit
+             } else {
+                Direction direction = Direction.Plane.HORIZONTAL.m_235690_(p_222541_);
+                BlockPos blockpos = p_222540_.m_121945_(direction);
+                BlockState blockstate = p_222539_.m_8055_(blockpos.m_7495_());
+-               if (p_222539_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
+-                  p_222539_.m_46597_(blockpos, this.f_57015_.m_49966_());
++               if (p_222539_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.m_7495_(), Direction.UP, this.f_57015_) || blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
++                  // CraftBukkit start
++                  if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, this.f_57015_.m_49966_())) {
++                     return;
++                  }
++                  // CraftBukkit end
+                   p_222539_.m_46597_(p_222540_, this.f_57015_.m_7810_().m_49966_().m_61124_(HorizontalDirectionalBlock.f_54117_, direction));
+                }
+             }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
+          }
+ 
+       }
+@@ -80,7 +_,7 @@
+    public void m_214148_(ServerLevel p_222528_, RandomSource p_222529_, BlockPos p_222530_, BlockState p_222531_) {
+       int i = Math.min(7, p_222531_.m_61143_(f_57013_) + Mth.m_216271_(p_222528_.f_46441_, 2, 5));
+       BlockState blockstate = p_222531_.m_61124_(f_57013_, Integer.valueOf(i));
+-      p_222528_.m_7731_(p_222530_, blockstate, 2);
++      CraftEventFactory.handleBlockGrowEvent(p_222528_, p_222530_, blockstate, 2); // CraftBukkit
+       if (i == 7) {
+          blockstate.m_222972_(p_222528_, p_222530_, p_222528_.f_46441_);
+       }
+@@ -93,5 +_,11 @@
+ 
+    public StemGrownBlock m_57056_() {
+       return this.f_57015_;
++   }
++
++   //FORGE START
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
+    }
+ }

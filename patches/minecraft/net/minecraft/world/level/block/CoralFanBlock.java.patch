@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/CoralFanBlock.java
++++ b/net/minecraft/world/level/block/CoralFanBlock.java
+@@ -24,6 +_,11 @@
+ 
+    public void m_213897_(BlockState p_221025_, ServerLevel p_221026_, BlockPos p_221027_, RandomSource p_221028_) {
+       if (!m_49186_(p_221025_, p_221026_, p_221027_)) {
++         // CraftBukkit start
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221026_, p_221027_, this.f_52149_.m_49966_().m_61124_(f_49158_, false)).isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
+          p_221026_.m_7731_(p_221027_, this.f_52149_.m_49966_().m_61124_(f_49158_, Boolean.valueOf(false)), 2);
+       }
+ 

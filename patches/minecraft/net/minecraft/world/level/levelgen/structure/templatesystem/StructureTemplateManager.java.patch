@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
++++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
+@@ -112,6 +_,12 @@
+       this.f_230345_.clear();
+    }
+ 
++   // Mohist start Fix modernfix mod
++   public Optional<StructureTemplate> loadFromResource0(ResourceLocation p_230428_) {
++      return m_230427_(p_230428_);
++   }
++   // Mohist end
++
+    public Optional<StructureTemplate> m_230427_(ResourceLocation p_230428_) {
+       ResourceLocation resourcelocation = f_244413_.m_245698_(p_230428_);
+       return this.m_230372_(() -> {

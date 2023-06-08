@@ -1,0 +1,49 @@
+--- a/net/minecraft/world/entity/monster/Zoglin.java
++++ b/net/minecraft/world/entity/monster/Zoglin.java
+@@ -129,7 +_,7 @@
+          return false;
+       } else {
+          this.f_34199_ = 10;
+-         this.m_9236_().m_7605_(this, (byte)4);
++         this.f_19853_.m_7605_(this, (byte)4);
+          this.m_5496_(SoundEvents.f_12594_, 1.0F, this.m_6100_());
+          return HoglinBase.m_34642_(this, (LivingEntity)p_34207_);
+       }
+@@ -152,7 +_,7 @@
+ 
+    public boolean m_6469_(DamageSource p_34214_, float p_34215_) {
+       boolean flag = super.m_6469_(p_34214_, p_34215_);
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          return false;
+       } else if (flag && p_34214_.m_7639_() instanceof LivingEntity) {
+          LivingEntity livingentity = (LivingEntity)p_34214_.m_7639_();
+@@ -187,15 +_,15 @@
+    }
+ 
+    protected void m_8024_() {
+-      this.m_9236_().m_46473_().m_6180_("zoglinBrain");
+-      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
+-      this.m_9236_().m_46473_().m_7238_();
++      this.f_19853_.m_46473_().m_6180_("zoglinBrain");
++      this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
++      this.f_19853_.m_46473_().m_7238_();
+       this.m_34248_();
+    }
+ 
+    public void m_6863_(boolean p_34227_) {
+       this.m_20088_().m_135381_(f_34201_, p_34227_);
+-      if (!this.m_9236_().f_46443_ && p_34227_) {
++      if (!this.f_19853_.f_46443_ && p_34227_) {
+          this.m_21051_(Attributes.f_22281_).m_22100_(0.5D);
+       }
+ 
+@@ -228,7 +_,7 @@
+    }
+ 
+    protected SoundEvent m_7515_() {
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          return null;
+       } else {
+          return this.f_20939_.m_21874_(MemoryModuleType.f_26372_) ? SoundEvents.f_12593_ : SoundEvents.f_12592_;

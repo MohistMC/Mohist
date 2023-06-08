@@ -1,0 +1,170 @@
+--- a/net/minecraft/world/level/block/entity/LecternBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/LecternBlockEntity.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.world.level.block.entity;
+ 
++import java.util.ArrayList;
++import java.util.Arrays;
+ import javax.annotation.Nullable;
+ import net.minecraft.commands.CommandSource;
+ import net.minecraft.commands.CommandSourceStack;
+@@ -25,12 +_,22 @@
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
++import java.util.List;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_20_R1.command.CraftBlockCommandSender;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
++
++public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider, CommandSource {
+    public static final int f_155617_ = 0;
+    public static final int f_155618_ = 1;
+    public static final int f_155619_ = 0;
+    public static final int f_155620_ = 1;
+-   private final Container f_59525_ = new Container() {
++   public final Container f_59525_ = new LecternInventory();
++
++   public class LecternInventory implements Container {
+       public int m_6643_() {
+          return 1;
+       }
+@@ -67,11 +_,19 @@
+          }
+       }
+ 
++      // CraftBukkit start
+       public void m_6836_(int p_59585_, ItemStack p_59586_) {
++         if (p_59585_ == 0) {
++            LecternBlockEntity.this.m_59536_(p_59586_);
++            if (LecternBlockEntity.this.m_58904_() != null) {
++               LecternBlock.m_269306_(null, LecternBlockEntity.this.m_58904_(), LecternBlockEntity.this.m_58899_(), LecternBlockEntity.this.m_58900_(), LecternBlockEntity.this.m_59567_());
++            }
++         }
+       }
++      // CraftBukkit end
+ 
+       public int m_6893_() {
+-         return 1;
++         return maxStack; // CraftBukkit
+       }
+ 
+       public void m_6596_() {
+@@ -86,8 +_,51 @@
+          return false;
+       }
+ 
++      public List<HumanEntity> transaction = new ArrayList<>();
++      private int maxStack = 1;
++
++      @Override
++      public List<ItemStack> getContents() {
++         return Arrays.asList(f_59527_);
++      }
++
++      @Override
++      public void onOpen(CraftHumanEntity who) {
++         transaction.add(who);
++      }
++
++      @Override
++      public void onClose(CraftHumanEntity who) {
++         transaction.remove(who);
++      }
++
++      @Override
++      public List<HumanEntity> getViewers() {
++         return transaction;
++      }
++
++      @Override
++      public InventoryHolder getOwner() {
++         return (org.bukkit.block.Lectern) LecternBlockEntity.this.getOwner();
++      }
++
++      @Override
++      public void setMaxStackSize(int size) {
++         maxStack = size;
++      }
++
++      @Override
++      public Location getLocation() {
++         if (f_58857_ == null) return null;
++         return CraftLocation.toBukkit(f_58858_, f_58857_.getWorld());
++      }
++
+       public void m_6211_() {
+       }
++
++      public LecternBlockEntity getLectern() {
++         return LecternBlockEntity.this;
++      }
+    };
+    private final ContainerData f_59526_ = new ContainerData() {
+       public int m_6413_(int p_59600_) {
+@@ -138,12 +_,12 @@
+       this.m_6596_();
+    }
+ 
+-   void m_59532_(int p_59533_) {
++   public void m_59532_(int p_59533_) {
+       int i = Mth.m_14045_(p_59533_, 0, this.f_59529_ - 1);
+       if (i != this.f_59528_) {
+          this.f_59528_ = i;
+          this.m_6596_();
+-         LecternBlock.m_54488_(this.m_58904_(), this.m_58899_(), this.m_58900_());
++         if (this.f_58857_ != null) LecternBlock.m_54488_(this.m_58904_(), this.m_58899_(), this.m_58900_()); // CraftBukkit
+       }
+ 
+    }
+@@ -177,7 +_,7 @@
+       }
+ 
+       Vec3 vec3 = Vec3.m_82512_(this.f_58858_);
+-      return new CommandSourceStack(CommandSource.f_80164_, vec3, Vec2.f_82462_, (ServerLevel)this.f_58857_, 2, s, component, this.f_58857_.m_7654_(), p_59535_);
++      return new CommandSourceStack(this, vec3, Vec2.f_82462_, (ServerLevel)this.f_58857_, 2, s, component, this.f_58857_.m_7654_(), p_59535_);
+    }
+ 
+    public boolean m_6326_() {
+@@ -210,10 +_,36 @@
+    }
+ 
+    public AbstractContainerMenu m_7208_(int p_59562_, Inventory p_59563_, Player p_59564_) {
+-      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_);
++      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_, p_59563_); // CraftBukkit
+    }
+ 
+    public Component m_5446_() {
+       return Component.m_237115_("container.lectern");
+    }
++
++   // CraftBukkit start
++   @Override
++   public void m_213846_(Component ichatbasecomponent) {
++   }
++
++   @Override
++   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new CraftBlockCommandSender(wrapper, this);
++   }
++
++   @Override
++   public boolean m_6999_() {
++      return false;
++   }
++
++   @Override
++   public boolean m_7028_() {
++      return false;
++   }
++
++   @Override
++   public boolean m_6102_() {
++      return false;
++   }
++   // CraftBukkit end
+ }

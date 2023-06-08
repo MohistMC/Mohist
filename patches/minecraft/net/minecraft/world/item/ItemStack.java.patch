@@ -1,0 +1,665 @@
+--- a/net/minecraft/world/item/ItemStack.java
++++ b/net/minecraft/world/item/ItemStack.java
+@@ -6,6 +_,7 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Codec;
++import com.mojang.serialization.Dynamic;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.text.DecimalFormat;
+ import java.text.DecimalFormatSymbols;
+@@ -15,6 +_,7 @@
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Optional;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Consumer;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
+@@ -25,12 +_,14 @@
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.commands.arguments.blocks.BlockStateParser;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.core.registries.Registries;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.ListTag;
++import net.minecraft.nbt.NbtOps;
+ import net.minecraft.nbt.Tag;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+@@ -38,12 +_,17 @@
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.chat.Style;
++import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
++import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.RandomSource;
++import net.minecraft.util.datafix.fixes.References;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.InteractionResultHolder;
+@@ -70,17 +_,37 @@
+ import net.minecraft.world.item.enchantment.Enchantments;
+ import net.minecraft.world.level.ItemLike;
+ import net.minecraft.world.level.Level;
+-import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.*;
++import net.minecraft.world.level.block.entity.BlockEntity;
++import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
++import net.minecraft.world.level.block.entity.SignBlockEntity;
++import net.minecraft.world.level.block.entity.SkullBlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
++import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.Location;
++import org.bukkit.TreeType;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
++import org.bukkit.event.block.BlockFertilizeEvent;
++import org.bukkit.event.player.PlayerItemDamageEvent;
++import org.bukkit.event.world.StructureGrowEvent;
+ import org.slf4j.Logger;
+ 
+-public final class ItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
+    public static final Codec<ItemStack> f_41582_ = RecordCodecBuilder.create((p_258963_) -> {
+       return p_258963_.group(BuiltInRegistries.f_257033_.m_194605_().fieldOf("id").forGetter(ItemStack::m_41720_), Codec.INT.fieldOf("Count").forGetter(ItemStack::m_41613_), CompoundTag.f_128325_.optionalFieldOf("tag").forGetter((p_281115_) -> {
+          return Optional.ofNullable(p_281115_.m_41783_());
+       })).apply(p_258963_, ItemStack::new);
+    });
++   @org.jetbrains.annotations.Nullable
++   private net.minecraft.core.Holder.Reference<Item> delegate;
++   private CompoundTag capNBT;
++
+    private static final Logger f_41585_ = LogUtils.getLogger();
+    public static final ItemStack f_41583_ = new ItemStack((Void)null);
+    public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
+@@ -104,7 +_,6 @@
+    private int f_41588_;
+    /** @deprecated */
+    @Deprecated
+-   @Nullable
+    private Item f_41589_;
+    @Nullable
+    private CompoundTag f_41590_;
+@@ -136,32 +_,68 @@
+       this(p_220155_.m_203334_(), p_220156_);
+    }
+ 
+-   public ItemStack(ItemLike p_41601_, int p_41602_) {
+-      this.f_41589_ = p_41601_.m_5456_();
+-      this.f_41587_ = p_41602_;
+-      if (this.f_41589_.m_41465_()) {
++   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
++   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
++      super(ItemStack.class, true);
++      this.capNBT = p_41606_;
++      this.f_41589_ = p_41604_.m_5456_();
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.m_5456_());
++      this.f_41587_ = p_41605_;
++      this.forgeInit();
++      if (this.f_41589_.isDamageable(this)) {
+          this.m_41721_(this.m_41773_());
+       }
+ 
+    }
+ 
+    private ItemStack(@Nullable Void p_282703_) {
++      super(ItemStack.class, true);
+       this.f_41589_ = null;
+-   }
+-
+-   private ItemStack(CompoundTag p_41608_) {
+-      this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
+-      this.f_41587_ = p_41608_.m_128445_("Count");
+-      if (p_41608_.m_128425_("tag", 10)) {
+-         this.f_41590_ = p_41608_.m_128469_("tag");
++      this.delegate = null;
++   }
++
++   // Called to run this stack through the data converter to handle older storage methods and serialized items
++   public void convertStack(int version) {
++      if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
++         CompoundTag savedStack = new CompoundTag();
++         this.m_41739_(savedStack);
++         savedStack = (CompoundTag) MinecraftServer.getServer().m_129933_().update(References.f_16782_, new Dynamic(NbtOps.f_128958_, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
++         this.load(savedStack);
++      }
++   }
++
++   // Mohist start fix 'Bigger Stacks' mod mixin
++   // CraftBukkit start - break into own method
++   private void load(CompoundTag compound) {
++      this.loadNbt(compound);
++   }
++
++   private CompoundTag loadNbt(CompoundTag compound) {
++      this.capNBT = compound.m_128441_("ForgeCaps") ? compound.m_128469_("ForgeCaps") : null;
++      Item rawItem =
++      this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(compound.m_128461_("id")));
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
++      this.f_41587_ = compound.m_128445_("Count");
++      if (compound.m_128425_("tag", 10)) {
++         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
++         this.f_41590_ = compound.m_128469_("tag").m_6426_();
+          this.m_41720_().m_142312_(this.f_41590_);
++         // CraftBukkit end
+       }
+ 
+-      if (this.m_41720_().m_41465_()) {
++      this.forgeInit();
++      if (this.m_41720_().isDamageable(this)) {
+          this.m_41721_(this.m_41773_());
+       }
++      return compound;
++   }
+ 
++   private ItemStack(CompoundTag p_41608_) {
++      super(ItemStack.class, true);
++      CompoundTag c = this.loadNbt(p_41608_);
++      this.f_41587_ = c.m_128445_("Count");
+    }
++   // Mohist end
+ 
+    public static ItemStack m_41712_(CompoundTag p_41713_) {
+       try {
+@@ -173,7 +_,7 @@
+    }
+ 
+    public boolean m_41619_() {
+-      return this == f_41583_ || this.f_41589_ == Items.f_41852_ || this.f_41587_ <= 0;
++      return this == f_41583_ || this.f_41587_ <= 0 || this.delegate.get() == Items.f_41852_;
+    }
+ 
+    public boolean m_246617_(FeatureFlagSet p_250869_) {
+@@ -198,7 +_,7 @@
+    }
+ 
+    public Item m_41720_() {
+-      return this.m_41619_() ? Items.f_41852_ : this.f_41589_;
++      return this.m_41619_() ? Items.f_41852_ : this.delegate.get();
+    }
+ 
+    public Holder<Item> m_220173_() {
+@@ -226,18 +_,214 @@
+    }
+ 
+    public InteractionResult m_41661_(UseOnContext p_41662_) {
++      if (!p_41662_.m_43725_().f_46443_) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
++      return onItemUse(p_41662_, (c) -> m_41720_().m_6225_(p_41662_));
++   }
++
++   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>();
++
++
++   public InteractionResult useOn(UseOnContext p_41662_, InteractionHand enumhand) {  // CraftBukkit - add hand
++      mohist$hand.set(enumhand);
++      return m_41661_(p_41662_);
++   }
++
++   public InteractionResult onItemUseFirst(UseOnContext p_41662_) {
++      return onItemUse(p_41662_, (c) -> m_41720_().onItemUseFirst(this, p_41662_));
++   }
++
++   private InteractionResult onItemUse(UseOnContext p_41662_, java.util.function.Function<UseOnContext, InteractionResult> callback) {
+       Player player = p_41662_.m_43723_();
+       BlockPos blockpos = p_41662_.m_8083_();
+       BlockInWorld blockinworld = new BlockInWorld(p_41662_.m_43725_(), blockpos, false);
+       if (player != null && !player.m_150110_().f_35938_ && !this.m_204121_(p_41662_.m_43725_().m_9598_().m_175515_(Registries.f_256747_), blockinworld)) {
+          return InteractionResult.PASS;
+       } else {
++         // CraftBukkit start - handle all block place event logic here
++         CompoundTag oldData = this.getTagClone();
++         int oldCount = this.m_41613_();
++         ServerLevel world = (ServerLevel) p_41662_.m_43725_();
++         if (!(this.m_41720_() instanceof BucketItem || this.m_41720_() instanceof SolidBucketItem)) { // if not bucket
++            world.captureBlockStates = true;
++            // special case bonemeal
++            if (this.m_41720_() == Items.f_42499_) {
++               world.captureTreeGeneration = true;
++            }
++         }
+          Item item = this.m_41720_();
+-         InteractionResult interactionresult = item.m_6225_(p_41662_);
++         InteractionResult interactionresult = callback.apply(p_41662_);
++         CompoundTag newData = this.getTagClone();
++         int newCount = this.m_41613_();
++         this.m_41764_(oldCount);
++         this.setTagClone(oldData);
++         world.captureBlockStates = false;
++         if (interactionresult.m_19077_() && world.captureTreeGeneration && world.capturedBlockStates.size() > 0) {
++            world.captureTreeGeneration = false;
++            Location location = CraftLocation.toBukkit(blockpos, world.getWorld());
++            TreeType treeType = SaplingBlock.treeType;
++            List<CraftBlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
++            world.capturedBlockStates.clear();
++            StructureGrowEvent structureEvent = null;
++            if (treeType != null) {
++               boolean isBonemeal = m_41720_() == Items.f_42499_;
++               structureEvent = new StructureGrowEvent(location, treeType, isBonemeal, (org.bukkit.entity.Player) player.getBukkitEntity(), (List<org.bukkit.block.BlockState>) (List<? extends org.bukkit.block.BlockState>) blocks);
++               org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
++            }
++
++            BlockFertilizeEvent fertilizeEvent = new BlockFertilizeEvent(CraftBlock.at(world, blockpos), (org.bukkit.entity.Player) player.getBukkitEntity(), (List<org.bukkit.block.BlockState>) (List<? extends org.bukkit.block.BlockState>) blocks);
++            fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
++            org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
++
++            if (!fertilizeEvent.isCancelled()) {
++               // Change the stack to its new contents if it hasn't been tampered with.
++               if (this.m_41613_() == oldCount && Objects.equals(this.f_41590_, oldData)) {
++                  this.m_41751_(newData);
++                  this.m_41764_(newCount);
++               }
++               for (CraftBlockState blockstate : blocks) {
++                  world.m_7731_(blockstate.getPosition(), blockstate.getHandle(), blockstate.getFlag()); // SPIGOT-7248 - manual update to avoid physics where appropriate
++               }
++               player.m_36246_(Stats.f_12982_.m_12902_(item)); // SPIGOT-7236 - award stat
++            }
++
++            SignItem.openSign = null; // SPIGOT-6758 - Reset on early return
++            return interactionresult;
++         }
++         world.captureTreeGeneration = false;
++
+          if (player != null && interactionresult.m_146666_()) {
+-            player.m_36246_(Stats.f_12982_.m_12902_(item));
++            org.bukkit.event.block.BlockPlaceEvent placeEvent = null;
++            List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
++            world.capturedBlockStates.clear();
++            // Mohist start - handle enum hand
++            var enumhand = mohist$hand.get();
++            enumhand = enumhand == null ? p_41662_.m_43724_() : enumhand;
++            InteractionHand finalHand = enumhand;
++            // Mohist end
++            if (blocks.size() > 1) {
++               placeEvent = CraftEventFactory.callBlockMultiPlaceEvent(world, player, finalHand, blocks, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++            } else if (blocks.size() == 1) {
++               placeEvent = CraftEventFactory.callBlockPlaceEvent(world, player, finalHand, blocks.get(0), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++            }
++
++            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
++               interactionresult = InteractionResult.FAIL; // cancel placement
++
++               // PAIL: Remove this when MC-99075 fixed
++               placeEvent.getPlayer().updateInventory();
++               // revert back all captured blocks
++               world.preventPoiUpdated = true; // CraftBukkit - SPIGOT-5710
++               for (org.bukkit.block.BlockState blockstate : blocks) {
++                  blockstate.update(true, false);
++               }
++               world.preventPoiUpdated = false;
++
++               // Brute force all possible updates
++               BlockPos placedPos = ((CraftBlock) placeEvent.getBlock()).getPosition();
++               for (Direction dir : Direction.values()) {
++                  ((ServerPlayer) player).f_8906_.m_9829_(new ClientboundBlockUpdatePacket(world, placedPos.m_121945_(dir)));
++               }
++               SignItem.openSign = null; // SPIGOT-6758 - Reset on early return
++            } else {
++               // Change the stack to its new contents if it hasn't been tampered with.
++               if (this.m_41613_() == oldCount && Objects.equals(this.f_41590_, oldData)) {
++                  this.m_41751_(newData);
++                  this.m_41764_(newCount);
++               }
++
++               for (Map.Entry<BlockPos, BlockEntity> e : world.capturedTileEntities.entrySet()) {
++                  world.m_151523_(e.getValue());
++               }
++
++               for (org.bukkit.block.BlockState blockstate : blocks) {
++                  int updateFlag = ((CraftBlockState) blockstate).getFlag();
++                  BlockState oldBlock = ((CraftBlockState) blockstate).getHandle();
++                  BlockPos newblockposition = ((CraftBlockState) blockstate).getPosition();
++                  BlockState block = world.m_8055_(newblockposition);
++
++                  if (!(block.m_60734_() instanceof BaseEntityBlock)) { // Containers get placed automatically
++                     block.m_60734_().m_6807_(block, world, newblockposition, oldBlock, true);
++                  }
++
++                  world.notifyAndUpdatePhysics(newblockposition, null, oldBlock, block, world.m_8055_(newblockposition), updateFlag, 512); // send null chunk as chunk.k() returns false by this point
++               }
++
++               // Special case juke boxes as they update their tile entity. Copied from ItemRecord.
++               // PAIL: checkme on updates.
++               if (this.f_41589_ instanceof RecordItem) {
++                  BlockEntity tileentity = world.m_7702_(blockpos);
++
++                  if (tileentity instanceof JukeboxBlockEntity) {
++                     JukeboxBlockEntity tileentityjukebox = (JukeboxBlockEntity) tileentity;
++
++                     // There can only be one
++                     ItemStack record = this.m_41777_();
++                     if (!record.m_41619_()) {
++                        record.m_41764_(1);
++                     }
++
++                     tileentityjukebox.m_272287_(record);
++                     world.m_220407_(GameEvent.f_157792_, blockpos, GameEvent.Context.m_223719_(player, world.m_8055_(blockpos)));
++                  }
++
++                  this.m_41774_(1);
++                  player.m_36220_(Stats.f_12965_);
++               }
++
++               if (this.f_41589_ == Items.f_42679_) { // Special case skulls to allow wither spawns to be cancelled
++                  BlockPos bp = blockpos;
++                  if (!world.m_8055_(blockpos).m_247087_()) {
++                     if (!world.m_8055_(blockpos).m_280296_()) {
++                        bp = null;
++                     } else {
++                        bp = bp.m_121945_(p_41662_.m_43719_());
++                     }
++                  }
++                  if (bp != null) {
++                     BlockEntity te = world.m_7702_(bp);
++                     if (te instanceof SkullBlockEntity) {
++                        WitherSkullBlock.m_58255_(world, bp, (SkullBlockEntity) te);
++                     }
++                  }
++               }
++
++               // SPIGOT-4678
++               if (this.f_41589_ instanceof SignItem && SignItem.openSign != null) {
++                  try {
++                     if (world.m_7702_(blockpos) instanceof SignBlockEntity tileentitysign) {
++                        if (world.m_8055_(blockpos).m_60734_() instanceof SignBlock blocksign) {
++                           blocksign.m_276926_(player, tileentitysign, true);
++                        }
++                     }
++                  } finally {
++                     SignItem.openSign = null;
++                  }
++               }
++
++               // SPIGOT-7315: Moved from BlockBed#setPlacedBy
++               if (placeEvent != null && this.f_41589_ instanceof BedItem) {
++                  BlockPos position = ((CraftBlock) placeEvent.getBlock()).getPosition();
++                  BlockState blockData =  world.m_8055_(position);
++
++                  if (blockData.m_60734_() instanceof BedBlock) {
++                     world.m_6289_(position, Blocks.f_50016_);
++                     blockData.m_60701_(world, position, 3);
++                  }
++               }
++
++               // SPIGOT-1288 - play sound stripped from ItemBlock
++               if (this.f_41589_ instanceof BlockItem) {
++                  SoundType soundeffecttype = ((BlockItem) this.f_41589_).m_40614_().m_49962_(null);
++                  world.m_5594_(player, blockpos, soundeffecttype.m_56777_(), SoundSource.BLOCKS, (soundeffecttype.m_56773_() + 1.0F) / 2.0F, soundeffecttype.m_56774_() * 0.8F);
++               }
++
++               player.m_36246_(Stats.f_12982_.m_12902_(item));
++            }
+          }
+ 
++         world.capturedTileEntities.clear();
++         world.capturedBlockStates.clear();
++         // CraftBukkit end
+          return interactionresult;
+       }
+    }
+@@ -262,11 +_,15 @@
+          p_41740_.m_128365_("tag", this.f_41590_.m_6426_());
+       }
+ 
++      CompoundTag cnbt = this.serializeCaps();
++      if (cnbt != null && !cnbt.m_128456_()) {
++         p_41740_.m_128365_("ForgeCaps", cnbt);
++      }
+       return p_41740_;
+    }
+ 
+    public int m_41741_() {
+-      return this.m_41720_().m_41459_();
++      return this.m_41720_().getMaxStackSize(this);
+    }
+ 
+    public boolean m_41753_() {
+@@ -274,7 +_,7 @@
+    }
+ 
+    public boolean m_41763_() {
+-      if (!this.m_41619_() && this.m_41720_().m_41462_() > 0) {
++      if (!this.m_41619_() && this.m_41720_().isDamageable(this)) {
+          CompoundTag compoundtag = this.m_41783_();
+          return compoundtag == null || !compoundtag.m_128471_("Unbreakable");
+       } else {
+@@ -283,19 +_,19 @@
+    }
+ 
+    public boolean m_41768_() {
+-      return this.m_41763_() && this.m_41773_() > 0;
++      return this.m_41763_() && m_41720_().isDamaged(this);
+    }
+ 
+    public int m_41773_() {
+-      return this.f_41590_ == null ? 0 : this.f_41590_.m_128451_("Damage");
++      return this.m_41720_().getDamage(this);
+    }
+ 
+    public void m_41721_(int p_41722_) {
+-      this.m_41784_().m_128405_("Damage", Math.max(0, p_41722_));
++      this.m_41720_().setDamage(this, p_41722_);
+    }
+ 
+    public int m_41776_() {
+-      return this.m_41720_().m_41462_();
++      return this.m_41720_().getMaxDamage(this);
+    }
+ 
+    public boolean m_220157_(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
+@@ -313,6 +_,21 @@
+             }
+ 
+             p_220158_ -= j;
++            // CraftBukkit start
++            if (p_220160_ != null) {
++               PlayerItemDamageEvent event = new PlayerItemDamageEvent(p_220160_.getBukkitEntity(), CraftItemStack.asCraftMirror(this), p_220158_);
++               event.getPlayer().getServer().getPluginManager().callEvent(event);
++
++               if (p_220158_ != event.getDamage() || event.isCancelled()) {
++                  event.getPlayer().updateInventory();
++               }
++               if (event.isCancelled()) {
++                  return false;
++               }
++
++               p_220158_ = event.getDamage();
++            }
++            // CraftBukkit end
+             if (p_220158_ <= 0) {
+                return false;
+             }
+@@ -331,9 +_,15 @@
+    public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
+       if (!p_41624_.m_9236_().f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {
+          if (this.m_41763_()) {
++            p_41623_ = this.m_41720_().damageItem(this, p_41623_, p_41624_, p_41625_);
+             if (this.m_220157_(p_41623_, p_41624_.m_217043_(), p_41624_ instanceof ServerPlayer ? (ServerPlayer)p_41624_ : null)) {
+                p_41625_.accept(p_41624_);
+                Item item = this.m_41720_();
++               // CraftBukkit start - Check for item breaking
++               if (this.f_41587_ == 1 && p_41624_ instanceof Player) {
++                  CraftEventFactory.callPlayerItemBreakEvent((Player) p_41624_, this);
++               }
++               // CraftBukkit end
+                this.m_41774_(1);
+                if (p_41624_ instanceof Player) {
+                   ((Player)p_41624_).m_36246_(Stats.f_12983_.m_12902_(item));
+@@ -383,7 +_,7 @@
+    }
+ 
+    public boolean m_41735_(BlockState p_41736_) {
+-      return this.m_41720_().m_8096_(p_41736_);
++      return this.m_41720_().isCorrectToolForDrops(this, p_41736_);
+    }
+ 
+    public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
+@@ -394,7 +_,7 @@
+       if (this.m_41619_()) {
+          return f_41583_;
+       } else {
+-         ItemStack itemstack = new ItemStack(this.m_41720_(), this.f_41587_);
++         ItemStack itemstack = new ItemStack(this.m_41720_(), this.f_41587_, this.serializeCaps());
+          itemstack.m_41754_(this.m_41612_());
+          if (this.f_41590_ != null) {
+             itemstack.f_41590_ = this.f_41590_.m_6426_();
+@@ -430,7 +_,7 @@
+       if (!p_150943_.m_150930_(p_150944_.m_41720_())) {
+          return false;
+       } else {
+-         return p_150943_.m_41619_() && p_150944_.m_41619_() ? true : Objects.equals(p_150943_.f_41590_, p_150944_.f_41590_);
++         return p_150943_.m_41619_() && p_150944_.m_41619_() ? true : Objects.equals(p_150943_.f_41590_, p_150944_.f_41590_) && p_150943_.areCapsCompatible(p_150944_);
+       }
+    }
+ 
+@@ -483,6 +_,17 @@
+       return this.f_41590_;
+    }
+ 
++   // CraftBukkit start
++   @Nullable
++   private CompoundTag getTagClone() {
++      return this.f_41590_ == null ? null : this.f_41590_.m_6426_();
++   }
++
++   private void setTagClone(@Nullable CompoundTag nbtttagcompound) {
++      this.m_41751_(nbtttagcompound == null ? null : nbtttagcompound.m_6426_());
++   }
++   // CraftBukkit end
++
+    public CompoundTag m_41784_() {
+       if (this.f_41590_ == null) {
+          this.m_41751_(new CompoundTag());
+@@ -522,7 +_,7 @@
+ 
+    public void m_41751_(@Nullable CompoundTag p_41752_) {
+       this.f_41590_ = p_41752_;
+-      if (this.m_41720_().m_41465_()) {
++      if (this.m_41720_().isDamageable(this)) {
+          this.m_41721_(this.m_41773_());
+       }
+ 
+@@ -583,7 +_,7 @@
+ 
+    public List<Component> m_41651_(@Nullable Player p_41652_, TooltipFlag p_41653_) {
+       List<Component> list = Lists.newArrayList();
+-      MutableComponent mutablecomponent = Component.m_237119_().m_7220_(this.m_41786_()).m_130940_(this.m_41791_().f_43022_);
++      MutableComponent mutablecomponent = Component.m_237119_().m_7220_(this.m_41786_()).m_130938_(this.m_41791_().getStyleModifier());
+       if (this.m_41788_()) {
+          mutablecomponent.m_130940_(ChatFormatting.ITALIC);
+       }
+@@ -730,6 +_,7 @@
+          list.add(f_243862_);
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_41652_, list, p_41653_);
+       return list;
+    }
+ 
+@@ -738,7 +_,7 @@
+    }
+ 
+    private int m_41618_() {
+-      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : 0;
++      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : this.m_41720_().getDefaultTooltipHideFlags(this);
+    }
+ 
+    public void m_41654_(ItemStack.TooltipPart p_41655_) {
+@@ -831,6 +_,12 @@
+    }
+ 
+    public void m_41742_(int p_41743_) {
++      // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
++      if (p_41743_ == 0) {
++         this.m_41749_("RepairCost");
++         return;
++      }
++      // CraftBukkit end
+       this.m_41784_().m_128405_("RepairCost", p_41743_);
+    }
+ 
+@@ -853,9 +_,10 @@
+             }
+          }
+       } else {
+-         multimap = this.m_41720_().m_7167_(p_41639_);
++         multimap = this.m_41720_().getAttributeModifiers(p_41639_, this);
+       }
+ 
++      multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_41639_, multimap);
+       return multimap;
+    }
+ 
+@@ -883,7 +_,7 @@
+ 
+       MutableComponent mutablecomponent1 = ComponentUtils.m_130748_(mutablecomponent);
+       if (!this.m_41619_()) {
+-         mutablecomponent1.m_130940_(this.m_41791_().f_43022_).m_130938_((p_220170_) -> {
++         mutablecomponent1.m_130938_(this.m_41791_().getStyleModifier()).m_130938_((p_220170_) -> {
+             return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
+          });
+       }
+@@ -935,6 +_,8 @@
+       this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
+    }
+ 
++   /** @deprecated Forge: Use {@linkplain net.minecraftforge.common.extensions.IForgeItemStack#onDestroyed(ItemEntity, net.minecraft.world.damagesource.DamageSource) damage source sensitive version} */
++   @Deprecated
+    public void m_150924_(ItemEntity p_150925_) {
+       this.m_41720_().m_142023_(p_150925_);
+    }
+@@ -943,6 +_,23 @@
+       return this.m_41720_().m_41472_();
+    }
+ 
++   // FORGE START
++   public void deserializeNBT(CompoundTag nbt) {
++      final ItemStack itemStack = ItemStack.m_41712_(nbt);
++      this.m_41751_(itemStack.m_41783_());
++      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++   }
++
++   /**
++    * Set up forge's ItemStack additions.
++    */
++   private void forgeInit() {
++      if (this.delegate != null) {
++         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
++         if (this.capNBT != null) deserializeCaps(this.capNBT);
++      }
++   }
++
+    public SoundEvent m_41615_() {
+       return this.m_41720_().m_6023_();
+    }
+@@ -950,6 +_,14 @@
+    public SoundEvent m_41616_() {
+       return this.m_41720_().m_6061_();
+    }
++
++   // CraftBukkit start
++   @Deprecated
++   public void setItem(Item item) {
++      this.f_41589_ = item;
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item);
++   }
++   // CraftBukkit end
+ 
+    public static enum TooltipPart {
+       ENCHANTMENTS,

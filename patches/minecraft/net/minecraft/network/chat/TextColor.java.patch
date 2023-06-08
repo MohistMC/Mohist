@@ -1,0 +1,40 @@
+--- a/net/minecraft/network/chat/TextColor.java
++++ b/net/minecraft/network/chat/TextColor.java
+@@ -20,7 +_,7 @@
+       });
+    }, TextColor::m_131274_);
+    private static final Map<ChatFormatting, TextColor> f_131255_ = Stream.of(ChatFormatting.values()).filter(ChatFormatting::m_126664_).collect(ImmutableMap.toImmutableMap(Function.identity(), (p_237301_) -> {
+-      return new TextColor(p_237301_.m_126665_(), p_237301_.m_126666_());
++      return new TextColor(p_237301_.m_126665_(), p_237301_.m_126666_(), p_237301_);
+    }));
+    private static final Map<String, TextColor> f_131256_ = f_131255_.values().stream().collect(ImmutableMap.toImmutableMap((p_237297_) -> {
+       return p_237297_.f_131258_;
+@@ -29,15 +_,28 @@
+    @Nullable
+    public final String f_131258_;
+ 
++   // CraftBukkit start
++   @Nullable
++   public final ChatFormatting format;
++
++   private TextColor(int p_131263_, String p_131264_, ChatFormatting format) {
++      this.f_131257_ = p_131263_;
++      this.f_131258_ = p_131264_;
++      this.format = format;
++   }
++
+    private TextColor(int p_131263_, String p_131264_) {
+       this.f_131257_ = p_131263_;
+       this.f_131258_ = p_131264_;
++      this.format = null;
+    }
+ 
+    private TextColor(int p_131261_) {
+       this.f_131257_ = p_131261_;
+       this.f_131258_ = null;
++      this.format = null;
+    }
++   // CraftBukkit end
+ 
+    public int m_131265_() {
+       return this.f_131257_;

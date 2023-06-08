@@ -1,0 +1,34 @@
+--- a/net/minecraft/server/players/UserBanListEntry.java
++++ b/net/minecraft/server/players/UserBanListEntry.java
+@@ -35,19 +_,27 @@
+    }
+ 
+    private static GameProfile m_11445_(JsonObject p_11446_) {
+-      if (p_11446_.has("uuid") && p_11446_.has("name")) {
++      // Spigot start
++      // this whole method has to be reworked to account for the fact Bukkit only accepts UUID bans and gives no way for usernames to be stored!
++      UUID uuid = null;
++      String name = null;
++      if (p_11446_.has("uuid")) {
+          String s = p_11446_.get("uuid").getAsString();
+ 
+-         UUID uuid;
+          try {
+             uuid = UUID.fromString(s);
+          } catch (Throwable throwable) {
+-            return null;
+          }
+ 
+-         return new GameProfile(uuid, p_11446_.get("name").getAsString());
++      }
++      if (p_11446_.has("name")) {
++         name = p_11446_.get("name").getAsString();
++      }
++      if (uuid != null || name != null) {
++         return new GameProfile(uuid, name);
+       } else {
+          return null;
+       }
++      // Spigot End
+    }
+ }

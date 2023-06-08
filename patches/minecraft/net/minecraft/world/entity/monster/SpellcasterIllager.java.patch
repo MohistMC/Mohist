@@ -1,0 +1,63 @@
+--- a/net/minecraft/world/entity/monster/SpellcasterIllager.java
++++ b/net/minecraft/world/entity/monster/SpellcasterIllager.java
+@@ -49,7 +_,7 @@
+    }
+ 
+    public boolean m_33736_() {
+-      if (this.m_9236_().f_46443_) {
++      if (this.f_19853_.f_46443_) {
+          return this.f_19804_.m_135370_(f_33720_) > 0;
+       } else {
+          return this.f_33719_ > 0;
+@@ -61,8 +_,8 @@
+       this.f_19804_.m_135381_(f_33720_, (byte)p_33728_.f_33747_);
+    }
+ 
+-   protected SpellcasterIllager.IllagerSpell m_33737_() {
+-      return !this.m_9236_().f_46443_ ? this.f_33721_ : SpellcasterIllager.IllagerSpell.m_33758_(this.f_19804_.m_135370_(f_33720_));
++   public SpellcasterIllager.IllagerSpell m_33737_() {
++      return !this.f_19853_.f_46443_ ? this.f_33721_ : SpellcasterIllager.IllagerSpell.m_33758_(this.f_19804_.m_135370_(f_33720_));
+    }
+ 
+    protected void m_8024_() {
+@@ -75,7 +_,7 @@
+ 
+    public void m_8119_() {
+       super.m_8119_();
+-      if (this.m_9236_().f_46443_ && this.m_33736_()) {
++      if (this.f_19853_.f_46443_ && this.m_33736_()) {
+          SpellcasterIllager.IllagerSpell spellcasterillager$illagerspell = this.m_33737_();
+          double d0 = spellcasterillager$illagerspell.f_33748_[0];
+          double d1 = spellcasterillager$illagerspell.f_33748_[1];
+@@ -83,8 +_,8 @@
+          float f = this.f_20883_ * ((float)Math.PI / 180F) + Mth.m_14089_((float)this.f_19797_ * 0.6662F) * 0.25F;
+          float f1 = Mth.m_14089_(f);
+          float f2 = Mth.m_14031_(f);
+-         this.m_9236_().m_7106_(ParticleTypes.f_123811_, this.m_20185_() + (double)f1 * 0.6D, this.m_20186_() + 1.8D, this.m_20189_() + (double)f2 * 0.6D, d0, d1, d2);
+-         this.m_9236_().m_7106_(ParticleTypes.f_123811_, this.m_20185_() - (double)f1 * 0.6D, this.m_20186_() + 1.8D, this.m_20189_() - (double)f2 * 0.6D, d0, d1, d2);
++         this.f_19853_.m_7106_(ParticleTypes.f_123811_, this.m_20185_() + (double)f1 * 0.6D, this.m_20186_() + 1.8D, this.m_20189_() + (double)f2 * 0.6D, d0, d1, d2);
++         this.f_19853_.m_7106_(ParticleTypes.f_123811_, this.m_20185_() - (double)f1 * 0.6D, this.m_20186_() + 1.8D, this.m_20189_() - (double)f2 * 0.6D, d0, d1, d2);
+       }
+ 
+    }
+@@ -95,7 +_,7 @@
+ 
+    protected abstract SoundEvent m_7894_();
+ 
+-   protected static enum IllagerSpell {
++   public static enum IllagerSpell {
+       NONE(0, 0.0D, 0.0D, 0.0D),
+       SUMMON_VEX(1, 0.7D, 0.7D, 0.8D),
+       FANGS(2, 0.4D, 0.3D, 0.35D),
+@@ -183,6 +_,11 @@
+       public void m_8037_() {
+          --this.f_33774_;
+          if (this.f_33774_ == 0) {
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.m_7269_())) {
++               return;
++            }
++            // CraftBukkit end
+             this.m_8130_();
+             SpellcasterIllager.this.m_5496_(SpellcasterIllager.this.m_7894_(), 1.0F, 1.0F);
+          }

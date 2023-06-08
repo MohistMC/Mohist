@@ -1,0 +1,110 @@
+--- a/net/minecraft/world/level/storage/PlayerDataStorage.java
++++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
+@@ -3,13 +_,17 @@
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
+ import java.io.File;
++import java.io.FileInputStream;
++import java.io.InputStream;
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.nbt.NbtIo;
+ import net.minecraft.nbt.NbtUtils;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.datafix.DataFixTypes;
+ import net.minecraft.world.entity.player.Player;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+ import org.slf4j.Logger;
+ 
+ public class PlayerDataStorage {
+@@ -24,6 +_,7 @@
+    }
+ 
+    public void m_78433_(Player p_78434_) {
++      if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
+       try {
+          CompoundTag compoundtag = p_78434_.m_20240_(new CompoundTag());
+          File file1 = File.createTempFile(p_78434_.m_20149_() + "-", ".dat", this.f_78427_);
+@@ -31,6 +_,7 @@
+          File file2 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat");
+          File file3 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat_old");
+          Util.m_137462_(file2, file1, file3);
++         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_78434_, f_78427_, p_78434_.m_20149_());
+       } catch (Exception exception) {
+          f_78426_.warn("Failed to save player data for {}", (Object)p_78434_.m_7755_().getString());
+       }
+@@ -43,17 +_,46 @@
+ 
+       try {
+          File file1 = new File(this.f_78427_, p_78436_.m_20149_() + ".dat");
++         // Spigot Start
++         boolean usingWrongFile = false;
++         if ( !file1.exists() )
++         {
++            file1 = new File( this.f_78427_, java.util.UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + p_78436_.m_6302_() ).getBytes( "UTF-8" ) ).toString() + ".dat");
++            if ( file1.exists() )
++            {
++               usingWrongFile = true;
++               org.bukkit.Bukkit.getServer().getLogger().warning( "Using offline mode UUID file for player " + p_78436_.m_6302_() + " as it is the only copy we can find." );
++            }
++         }
++         // Spigot End
+          if (file1.exists() && file1.isFile()) {
+             compoundtag = NbtIo.m_128937_(file1);
+          }
++         // Spigot Start
++         if ( usingWrongFile )
++         {
++            file1.renameTo( new File( file1.getPath() + ".offline-read" ) );
++         }
++         // Spigot End
+       } catch (Exception exception) {
+          f_78426_.warn("Failed to load player data for {}", (Object)p_78436_.m_7755_().getString());
+       }
+ 
+       if (compoundtag != null) {
++         // CraftBukkit start
++         if (p_78436_ instanceof ServerPlayer) {
++            CraftPlayer player = (CraftPlayer) p_78436_.getBukkitEntity();
++            // Only update first played if it is older than the one we have
++            long modified = new File(this.f_78427_, p_78436_.m_20148_().toString() + ".dat").lastModified();
++            if (modified < player.getFirstPlayed()) {
++               player.setFirstPlayed(modified);
++            }
++         }
++         // CraftBukkit end
+          int i = NbtUtils.m_264487_(compoundtag, -1);
+          p_78436_.m_20258_(DataFixTypes.PLAYER.m_264218_(this.f_78425_, compoundtag, i));
+       }
++      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_78436_, f_78427_, p_78436_.m_20149_());
+ 
+       return compoundtag;
+    }
+@@ -72,4 +_,26 @@
+ 
+       return astring;
+    }
++
++   public File getPlayerDataFolder() {
++      return f_78427_;
++   }
++
++   // CraftBukkit start
++   public CompoundTag getPlayerData(String s) {
++      try {
++         File file1 = new File(this.f_78427_, s + ".dat");
++         if (file1.exists()) {
++            return NbtIo.m_128939_((InputStream) (new FileInputStream(file1)));
++         }
++      } catch (Exception exception) {
++         f_78426_.warn("Failed to load player data for " + s);
++      }
++      return null;
++   }
++
++   public File getPlayerDir() {
++      return getPlayerDataFolder();
++   }
++   // CraftBukkit end
+ }

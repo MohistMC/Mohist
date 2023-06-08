@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
++++ b/net/minecraft/world/entity/ai/behavior/StopAttackingIfTargetInvalid.java
+@@ -7,6 +_,9 @@
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
+ 
+ public class StopAttackingIfTargetInvalid {
+    private static final int f_147978_ = 200;
+@@ -37,6 +_,18 @@
+                if (p_258796_.m_6779_(livingentity) && (!p_260319_ || !m_258032_(p_258796_, p_258801_.m_257828_(p_258788_))) && livingentity.m_6084_() && livingentity.m_9236_() == p_258796_.m_9236_() && !p_260357_.test(livingentity)) {
+                   return true;
+                } else {
++                  // CraftBukkit start
++                  LivingEntity old = p_258796_.m_6274_().m_21952_(MemoryModuleType.f_26372_).orElse(null);
++                  EntityTargetEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_258796_, null, (old != null && !old.m_6084_()) ? EntityTargetEvent.TargetReason.TARGET_DIED : EntityTargetEvent.TargetReason.FORGOT_TARGET);
++                  if (event.isCancelled()) {
++                     return false;
++                  }
++                  if (event.getTarget() == null) {
++                     p_258787_.m_257971_();
++                     return true;
++                  }
++                  livingentity = ((CraftLivingEntity) event.getTarget()).getHandle();
++                  // CraftBukkit end
+                   p_259568_.accept(p_258796_, livingentity);
+                   p_258787_.m_257971_();
+                   return true;

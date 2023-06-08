@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/block/entity/BellBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BellBlockEntity.java
+@@ -18,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.AABB;
+ import org.apache.commons.lang3.mutable.MutableInt;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ 
+ public class BellBlockEntity extends BlockEntity {
+    private static final int f_155164_ = 50;
+@@ -128,9 +_,12 @@
+    }
+ 
+    private static void m_155186_(Level p_155187_, BlockPos p_155188_, List<LivingEntity> p_155189_) {
+-      p_155189_.stream().filter((p_155219_) -> {
+-         return m_155196_(p_155188_, p_155219_);
+-      }).forEach(BellBlockEntity::m_58840_);
++      List<org.bukkit.entity.LivingEntity> entities = // CraftBukkit
++              p_155189_.stream().filter((p_155219_) -> {
++                 return m_155196_(p_155188_, p_155219_);
++              }).map((entity) -> (org.bukkit.entity.LivingEntity) entity.getBukkitEntity()).collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new)); // CraftBukkit
++      CraftEventFactory.handleBellResonateEvent(p_155187_, p_155188_, entities).forEach(BellBlockEntity::m_58840_);
++      // CraftBukkit end
+    }
+ 
+    private static void m_155207_(Level p_155208_, BlockPos p_155209_, List<LivingEntity> p_155210_) {

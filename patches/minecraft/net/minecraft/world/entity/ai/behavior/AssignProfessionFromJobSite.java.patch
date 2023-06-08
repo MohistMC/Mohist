@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/entity/ai/behavior/AssignProfessionFromJobSite.java
++++ b/net/minecraft/world/entity/ai/behavior/AssignProfessionFromJobSite.java
+@@ -8,6 +_,9 @@
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.npc.Villager;
+ import net.minecraft.world.entity.npc.VillagerProfession;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftVillager;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.VillagerCareerChangeEvent;
+ 
+ public class AssignProfessionFromJobSite {
+    public static BehaviorControl<Villager> m_257634_() {
+@@ -32,7 +_,13 @@
+                            return p_217125_.f_219628_().test(p_258313_);
+                         }).findFirst();
+                      }).ifPresent((p_22464_) -> {
+-                        p_258310_.m_34375_(p_258310_.m_7141_().m_35565_(p_22464_));
++                        // CraftBukkit start - Fire VillagerCareerChangeEvent where Villager gets employed
++                        VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_258310_, CraftVillager.nmsToBukkitProfession(p_22464_), VillagerCareerChangeEvent.ChangeReason.EMPLOYED);
++                        if (event.isCancelled()) {
++                           return;
++                        }
++                        p_258310_.m_34375_(p_258310_.m_7141_().m_35565_(CraftVillager.bukkitToNmsProfession(event.getProfession())));
++                        // CraftBukkit end
+                         p_258310_.m_35483_(p_258309_);
+                      });
+                      return true;

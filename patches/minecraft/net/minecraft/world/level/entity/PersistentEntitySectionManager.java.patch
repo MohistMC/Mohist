@@ -1,0 +1,169 @@
+--- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
++++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
+@@ -16,16 +_,20 @@
+ import java.util.Queue;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.function.Consumer;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.SectionPos;
++import net.minecraft.server.level.ChunkHolder;
+ import net.minecraft.server.level.FullChunkStatus;
+ import net.minecraft.util.CsvOutput;
+ import net.minecraft.util.VisibleForDebug;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.level.ChunkPos;
++import net.minecraft.world.level.chunk.storage.EntityStorage;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ import org.slf4j.Logger;
+ 
+ public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {
+@@ -51,6 +_,16 @@
+       this.f_157496_ = new LevelEntityGetterAdapter<>(this.f_157494_, this.f_157495_);
+    }
+ 
++   // CraftBukkit start - add method to get all entities in chunk
++   public List<Entity> getEntities(ChunkPos chunkPos) {
++      return f_157495_.m_156888_(chunkPos.m_45588_()).flatMap(EntitySection::m_156845_).map(entity -> (Entity) entity).collect(Collectors.toList());
++   }
++
++   public boolean isPending(long pair) {
++      return f_157498_.get(pair) == ChunkLoadStatus.PENDING;
++   }
++   // CraftBukkit end
++
+    void m_157509_(long p_157510_, EntitySection<T> p_157511_) {
+       if (p_157511_.m_156833_()) {
+          this.f_157495_.m_156897_(p_157510_);
+@@ -71,7 +_,16 @@
+       return this.m_157538_(p_157534_, false);
+    }
+ 
++   public boolean addNewEntityWithoutEvent(T entity) {
++      return this.addEntityWithoutEvent(entity, false);
++   }
++
+    private boolean m_157538_(T p_157539_, boolean p_157540_) {
++      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(entity, entity.f_19853_, p_157540_))) return false;
++      return addEntityWithoutEvent(p_157539_, p_157540_);
++   }
++
++   private boolean addEntityWithoutEvent(T p_157539_, boolean p_157540_) {
+       if (!this.m_157557_(p_157539_)) {
+          return false;
+       } else {
+@@ -103,12 +_,14 @@
+    public void m_157552_(Stream<T> p_157553_) {
+       p_157553_.forEach((p_157607_) -> {
+          this.m_157538_(p_157607_, true);
++         if (p_157607_ instanceof Entity entity) entity.onAddedToWorld();
+       });
+    }
+ 
+    public void m_157559_(Stream<T> p_157560_) {
+       p_157560_.forEach((p_157605_) -> {
+          this.m_157538_(p_157605_, false);
++         if (p_157605_ instanceof Entity entity) entity.onAddedToWorld();
+       });
+    }
+ 
+@@ -185,7 +_,16 @@
+ 
+    }
+ 
++   // Mohist start
++   private AtomicBoolean callEvent = new AtomicBoolean(false);
++   private boolean storeChunkSections(long i, Consumer<T> consumer, boolean callEvent) {
++      this.callEvent.set(callEvent);
++      return m_157512_(i, consumer);
++   }
++   // Mohist end
++
+    private boolean m_157512_(long p_157513_, Consumer<T> p_157514_) {
++      boolean callEvent = this.callEvent.getAndSet(false);
+       PersistentEntitySectionManager.ChunkLoadStatus persistententitysectionmanager$chunkloadstatus = this.f_157498_.get(p_157513_);
+       if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.PENDING) {
+          return false;
+@@ -195,6 +_,7 @@
+          }).collect(Collectors.toList());
+          if (list.isEmpty()) {
+             if (persistententitysectionmanager$chunkloadstatus == PersistentEntitySectionManager.ChunkLoadStatus.LOADED) {
++               if (callEvent) CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), ImmutableList.of()); // CraftBukkit
+                this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), ImmutableList.of()));
+             }
+ 
+@@ -203,6 +_,7 @@
+             this.m_157562_(p_157513_);
+             return false;
+          } else {
++            if (callEvent) CraftEventFactory.callEntitiesUnloadEvent(((EntityStorage) f_157493_).f_156538_, new ChunkPos(p_157513_), list.stream().map(entity -> (Entity) entity).collect(Collectors.toList())); // CraftBukkit
+             this.f_157493_.m_141971_(new ChunkEntities<>(new ChunkPos(p_157513_), list));
+             list.forEach(p_157514_);
+             return true;
+@@ -220,6 +_,7 @@
+    }
+ 
+    private boolean m_157568_(long p_157569_) {
++      this.callEvent.set(true); // Mohist
+       boolean flag = this.m_157512_(p_157569_, (p_157595_) -> {
+          p_157595_.m_142429_().forEach(this::m_157585_);
+       });
+@@ -247,8 +_,13 @@
+       while((chunkentities = this.f_157500_.poll()) != null) {
+          chunkentities.m_156792_().forEach((p_157593_) -> {
+             this.m_157538_(p_157593_, true);
++            if (p_157593_ instanceof Entity entity) entity.onAddedToWorld();
+          });
+          this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
++         // CraftBukkit start - call entity load event
++         List<Entity> entities = getEntities(chunkentities.m_156791_());
++         CraftEventFactory.callEntitiesLoadEvent(((EntityStorage) f_157493_).f_156538_, chunkentities.m_156791_(), entities);
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -304,6 +_,15 @@
+       this.f_157493_.close();
+    }
+ 
++   // CraftBukkit start - add save boolean
++   public void close(boolean save) throws IOException {
++      if (save) {
++         this.m_157561_();
++      }
++      // CraftBukkit end
++      this.f_157493_.close();
++   }
++
+    public boolean m_157550_(UUID p_157551_) {
+       return this.f_157491_.contains(p_157551_);
+    }
+@@ -349,11 +_,13 @@
+ 
+    class Callback implements EntityInLevelCallback {
+       private final T f_157609_;
++      private final Entity realEntity;
+       private long f_157610_;
+       private EntitySection<T> f_157611_;
+ 
+       Callback(T p_157614_, long p_157615_, EntitySection<T> p_157616_) {
+          this.f_157609_ = p_157614_;
++         this.realEntity = p_157614_ instanceof Entity ? (Entity) p_157614_ : null;
+          this.f_157610_ = p_157615_;
+          this.f_157611_ = p_157616_;
+       }
+@@ -370,9 +_,11 @@
+             PersistentEntitySectionManager.this.m_157509_(this.f_157610_, this.f_157611_);
+             EntitySection<T> entitysection = PersistentEntitySectionManager.this.f_157495_.m_156893_(i);
+             entitysection.m_188346_(this.f_157609_);
++            long oldSectionKey = f_157610_;
+             this.f_157611_ = entitysection;
+             this.f_157610_ = i;
+             this.m_157620_(visibility, entitysection.m_156848_());
++            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);
+          }
+ 
+       }

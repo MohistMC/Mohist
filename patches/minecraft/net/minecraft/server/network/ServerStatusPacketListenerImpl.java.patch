@@ -1,0 +1,88 @@
+--- a/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
+@@ -1,5 +_,8 @@
+ package net.minecraft.server.network;
+ 
++import com.mohistmc.api.event.MohistServerListPingEvent;
++import com.mojang.authlib.GameProfile;
++import net.minecraft.SharedConstants;
+ import net.minecraft.network.Connection;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
+@@ -8,16 +_,28 @@
+ import net.minecraft.network.protocol.status.ServerStatusPacketListener;
+ import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
+ import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.level.ServerPlayer;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
++
++import java.util.Collections;
++import java.util.Optional;
+ 
+ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
+    private static final Component f_10081_ = Component.m_237115_("multiplayer.status.request_handled");
+    private final ServerStatus f_271204_;
++   private final @org.jetbrains.annotations.Nullable String statusCache; // FORGE: cache status JSON
+    private final Connection f_10083_;
+    private boolean f_10084_;
+ 
+    public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
++      this(p_272864_, p_273586_, null);
++   }
++   public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_, @org.jetbrains.annotations.Nullable String statusCache) {
+       this.f_271204_ = p_272864_;
+       this.f_10083_ = p_273586_;
++      this.statusCache = statusCache;
+    }
+ 
+    public void m_7026_(Component p_10091_) {
+@@ -31,8 +_,45 @@
+       if (this.f_10084_) {
+          this.f_10083_.m_129507_(f_10081_);
+       } else {
+-         this.f_10084_ = true;
+-         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(this.f_271204_));
++          this.f_10084_ = true;
++          MohistServerListPingEvent event = new MohistServerListPingEvent(f_10083_, MinecraftServer.getServer());
++          Bukkit.getPluginManager().callEvent(event);
++
++          MinecraftServer server = MinecraftServer.getServer();
++          final Object[] players = event.getPlayers();
++
++          java.util.List<GameProfile> profiles = new java.util.ArrayList<GameProfile>(players.length);
++          for (Object player : players) {
++            if (player != null) {
++               ServerPlayer entityPlayer = ((ServerPlayer) player);
++               if (entityPlayer.m_184128_()) {
++                  profiles.add(entityPlayer.m_36316_());
++               } else {
++                  profiles.add(MinecraftServer.f_195496_);
++               }
++            }
++          }
++
++         // Spigot Start
++         if ( !server.m_183306_() && !profiles.isEmpty() )
++         {
++            java.util.Collections.shuffle( profiles ); // This sucks, its inefficient but we have no simple way of doing it differently
++            profiles = profiles.subList( 0, Math.min( profiles.size(), org.spigotmc.SpigotConfig.playerSample ) ); // Cap the sample to n (or less) displayed players, ie: Vanilla behaviour
++         }
++         // Spigot End
++
++         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.m_183306_()) ? Collections.emptyList() : profiles);
++
++         ServerStatus ping = new ServerStatus(
++                 CraftChatMessage.fromString(event.getMotd(), true)[0],
++                 Optional.of(playerSample),
++                 Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.m_7630_(), SharedConstants.m_183709_().m_132495_())),
++                 (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
++                 server.m_214005_(),
++                 Optional.of(new net.minecraftforge.network.ServerStatusPing())
++         );
++         this.f_10083_.m_129512_(new ClientboundStatusResponsePacket(ping));
++         // CraftBukkit end
+       }
+    }
+ 

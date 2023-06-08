@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
+@@ -96,6 +_,11 @@
+       }
+ 
+       this.f_58475_ = p_155042_.m_128437_("Patterns", 10);
++      // CraftBukkit start
++      while (this.f_58475_.size() > 20) {
++         this.f_58475_.remove(20);
++      }
++      // CraftBukkit end
+       this.f_58477_ = null;
+    }
+ 

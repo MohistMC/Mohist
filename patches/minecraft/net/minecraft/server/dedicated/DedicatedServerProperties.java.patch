@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
++++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
+@@ -102,6 +_,7 @@
+    public final boolean f_214804_ = this.m_139836_("enforce-secure-profile", true);
+    private final DedicatedServerProperties.WorldDimensionData f_244504_;
+    public final WorldOptions f_243824_;
++   public final boolean debug = this.m_139836_("debug", false); // CraftBukkit
+ 
+    public DedicatedServerProperties(Properties p_180926_) {
+       super(p_180926_);
+@@ -189,7 +_,7 @@
+       return this.f_244504_.m_247373_(p_250466_);
+    }
+ 
+-   static record WorldDimensionData(JsonObject f_244404_, String f_243780_) {
++   public static record WorldDimensionData(JsonObject f_244404_, String f_243780_) {
+       private static final Map<String, ResourceKey<WorldPreset>> f_244358_ = Map.of("default", WorldPresets.f_226437_, "largebiomes", WorldPresets.f_226439_);
+ 
+       public WorldDimensions m_247373_(RegistryAccess p_248812_) {

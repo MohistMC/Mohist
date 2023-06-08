@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/entity/monster/hoglin/HoglinBase.java
++++ b/net/minecraft/world/entity/monster/hoglin/HoglinBase.java
+@@ -13,7 +_,7 @@
+       float f1 = (float)p_34643_.m_21133_(Attributes.f_22281_);
+       float f;
+       if (!p_34643_.m_6162_() && (int)f1 > 0) {
+-         f = f1 / 2.0F + (float)p_34643_.m_9236_().f_46441_.m_188503_((int)f1);
++         f = f1 / 2.0F + (float)p_34643_.f_19853_.f_46441_.m_188503_((int)f1);
+       } else {
+          f = f1;
+       }
+@@ -36,10 +_,10 @@
+       if (!(d2 <= 0.0D)) {
+          double d3 = p_34647_.m_20185_() - p_34646_.m_20185_();
+          double d4 = p_34647_.m_20189_() - p_34646_.m_20189_();
+-         float f = (float)(p_34646_.m_9236_().f_46441_.m_188503_(21) - 10);
+-         double d5 = d2 * (double)(p_34646_.m_9236_().f_46441_.m_188501_() * 0.5F + 0.2F);
++         float f = (float)(p_34646_.f_19853_.f_46441_.m_188503_(21) - 10);
++         double d5 = d2 * (double)(p_34646_.f_19853_.f_46441_.m_188501_() * 0.5F + 0.2F);
+          Vec3 vec3 = (new Vec3(d3, 0.0D, d4)).m_82541_().m_82490_(d5).m_82524_(f);
+-         double d6 = d2 * (double)p_34646_.m_9236_().f_46441_.m_188501_() * 0.5D;
++         double d6 = d2 * (double)p_34646_.f_19853_.f_46441_.m_188501_() * 0.5D;
+          p_34647_.m_5997_(vec3.f_82479_, d6, vec3.f_82481_);
+          p_34647_.f_19864_ = true;
+       }

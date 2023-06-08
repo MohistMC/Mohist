@@ -1,0 +1,39 @@
+--- a/net/minecraft/server/ServerAdvancementManager.java
++++ b/net/minecraft/server/ServerAdvancementManager.java
+@@ -26,18 +_,35 @@
+    public static final Gson f_136022_ = (new GsonBuilder()).create();
+    public AdvancementList f_136023_ = new AdvancementList();
+    private final LootDataManager f_278379_;
++   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+ 
++   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(LootDataManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   @Deprecated
+    public ServerAdvancementManager(LootDataManager p_279237_) {
++      this(p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++   }
++
++   public ServerAdvancementManager(LootDataManager p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+       super(f_136022_, "advancements");
+       this.f_278379_ = p_279237_;
++      this.context = context;
+    }
+ 
+    protected void m_5787_(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
+       Map<ResourceLocation, Advancement.Builder> map = Maps.newHashMap();
+       p_136034_.forEach((p_278903_, p_278904_) -> {
++         // Spigot start
++         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_278903_.toString()) || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_278903_.m_135827_()))) {
++            return;
++         }
++         // Spigot end
+          try {
+             JsonObject jsonobject = GsonHelper.m_13918_(p_278904_, "advancement");
+-            Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_278903_, this.f_278379_));
++            Advancement.Builder advancement$builder = Advancement.Builder.fromJson(jsonobject, new DeserializationContext(p_278903_, this.f_278379_), this.context);
++            if (advancement$builder == null) {
++                f_136021_.debug("Skipping loading advancement {} as its conditions were not met", p_278903_);
++                return;
++            }
+             map.put(p_278903_, advancement$builder);
+          } catch (Exception exception) {
+             f_136021_.error("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());

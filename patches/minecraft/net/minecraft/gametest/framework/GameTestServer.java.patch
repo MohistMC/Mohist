@@ -1,0 +1,55 @@
+--- a/net/minecraft/gametest/framework/GameTestServer.java
++++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -18,6 +_,7 @@
+ import net.minecraft.CrashReport;
+ import net.minecraft.SystemReport;
+ import net.minecraft.Util;
++import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.LayeredRegistryAccess;
+@@ -34,6 +_,7 @@
+ import net.minecraft.server.packs.repository.PackRepository;
+ import net.minecraft.server.players.GameProfileCache;
+ import net.minecraft.server.players.PlayerList;
++import net.minecraft.util.SignatureValidator;
+ import net.minecraft.util.datafix.DataFixers;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.flag.FeatureFlags;
+@@ -49,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import net.minecraft.world.level.storage.PrimaryLevelData;
++import org.bukkit.command.CommandSender;
+ import org.slf4j.Logger;
+ 
+ public class GameTestServer extends MinecraftServer {
+@@ -105,13 +_,14 @@
+    public boolean m_7038_() {
+       this.m_129823_(new PlayerList(this, this.m_247573_(), this.f_129745_, 1) {
+       });
+-      this.m_130006_();
++      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++      this.loadLevel(null);
+       ServerLevel serverlevel = this.m_129783_();
+       serverlevel.m_8733_(this.f_177588_, 0.0F);
+       int i = 20000000;
+       serverlevel.m_8606_(20000000, 20000000, false, false);
+       f_177585_.info("Started game test server");
+-      return true;
++      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
+    }
+ 
+    public void m_5705_(BooleanSupplier p_177619_) {
+@@ -220,6 +_,11 @@
+ 
+    public boolean m_6102_() {
+       return false;
++   }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return null;
+    }
+ 
+    public boolean m_7779_(GameProfile p_177617_) {

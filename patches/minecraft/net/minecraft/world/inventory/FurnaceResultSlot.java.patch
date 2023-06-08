@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/inventory/FurnaceResultSlot.java
++++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
+@@ -38,15 +_,16 @@
+    }
+ 
+    protected void m_5845_(ItemStack p_39558_) {
+-      p_39558_.m_41678_(this.f_39539_.m_9236_(), this.f_39539_, this.f_39540_);
+-      Player player = this.f_39539_;
+-      if (player instanceof ServerPlayer serverplayer) {
+-         Container container = this.f_40218_;
+-         if (container instanceof AbstractFurnaceBlockEntity abstractfurnaceblockentity) {
+-            abstractfurnaceblockentity.m_155003_(serverplayer);
+-         }
++      p_39558_.m_41678_(this.f_39539_.f_19853_, this.f_39539_, this.f_39540_);
++      if (this.f_39539_ instanceof ServerPlayer && this.f_40218_ instanceof AbstractFurnaceBlockEntity) {
++         // Mohist start
++         ((AbstractFurnaceBlockEntity)this.f_40218_).stackAtomicReference.set(p_39558_);
++         ((AbstractFurnaceBlockEntity)this.f_40218_).amount.set(this.f_39540_);
++         ((AbstractFurnaceBlockEntity)this.f_40218_).m_155003_((ServerPlayer)this.f_39539_);
++         // Mohist end
+       }
+ 
+       this.f_39540_ = 0;
++      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
+    }
+ }

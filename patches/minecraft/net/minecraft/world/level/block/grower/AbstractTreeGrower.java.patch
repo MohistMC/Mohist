@@ -1,0 +1,93 @@
+--- a/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
++++ b/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
+@@ -4,16 +_,20 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.registries.Registries;
++import net.minecraft.data.worldgen.features.TreeFeatures;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.level.LevelAccessor;
++import net.minecraft.world.level.block.SaplingBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.chunk.ChunkGenerator;
+ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
++import org.bukkit.TreeType;
+ 
+ public abstract class AbstractTreeGrower {
++
+    @Nullable
+    protected abstract ResourceKey<ConfiguredFeature<?, ?>> m_213888_(RandomSource p_222910_, boolean p_222911_);
+ 
+@@ -23,9 +_,13 @@
+          return false;
+       } else {
+          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.m_9598_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
++         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222905_, p_222909_, p_222907_, holder);
++         holder = event.getFeature();
++         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
+          if (holder == null) {
+             return false;
+          } else {
++            setTreeType(holder); // CraftBukkit
+             ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();
+             BlockState blockstate = p_222905_.m_6425_(p_222907_).m_76188_();
+             p_222905_.m_7731_(p_222907_, blockstate, 4);
+@@ -52,4 +_,55 @@
+ 
+       return false;
+    }
++
++   // CraftBukkit start
++   protected void setTreeType(Holder<ConfiguredFeature<?, ?>> holder) {
++      ResourceKey<ConfiguredFeature<?, ?>> worldgentreeabstract = holder.m_203543_().get();
++      if (worldgentreeabstract == TreeFeatures.f_195123_ || worldgentreeabstract == TreeFeatures.f_195142_) {
++         SaplingBlock.treeType = TreeType.TREE;
++      } else if (worldgentreeabstract == TreeFeatures.f_195122_) {
++         SaplingBlock.treeType = TreeType.RED_MUSHROOM;
++      } else if (worldgentreeabstract == TreeFeatures.f_195121_) {
++         SaplingBlock.treeType = TreeType.BROWN_MUSHROOM;
++      } else if (worldgentreeabstract == TreeFeatures.f_195129_) {
++         SaplingBlock.treeType = TreeType.COCOA_TREE;
++      } else if (worldgentreeabstract == TreeFeatures.f_195131_) {
++         SaplingBlock.treeType = TreeType.SMALL_JUNGLE;
++      } else if (worldgentreeabstract == TreeFeatures.f_195128_) {
++         SaplingBlock.treeType = TreeType.TALL_REDWOOD;
++      } else if (worldgentreeabstract == TreeFeatures.f_195127_) {
++         SaplingBlock.treeType = TreeType.REDWOOD;
++      } else if (worldgentreeabstract == TreeFeatures.f_195126_) {
++         SaplingBlock.treeType = TreeType.ACACIA;
++      } else if (worldgentreeabstract == TreeFeatures.f_195125_ || worldgentreeabstract == TreeFeatures.f_195108_) {
++         SaplingBlock.treeType = TreeType.BIRCH;
++      } else if (worldgentreeabstract == TreeFeatures.f_195135_) {
++         SaplingBlock.treeType = TreeType.TALL_BIRCH;
++      } else if (worldgentreeabstract == TreeFeatures.f_195137_) {
++         SaplingBlock.treeType = TreeType.SWAMP;
++      } else if (worldgentreeabstract == TreeFeatures.f_195130_ || worldgentreeabstract == TreeFeatures.f_195111_) {
++         SaplingBlock.treeType = TreeType.BIG_TREE;
++      } else if (worldgentreeabstract == TreeFeatures.f_195138_) {
++         SaplingBlock.treeType = TreeType.JUNGLE_BUSH;
++      } else if (worldgentreeabstract == TreeFeatures.f_195124_) {
++         SaplingBlock.treeType = TreeType.DARK_OAK;
++      } else if (worldgentreeabstract == TreeFeatures.f_195133_) {
++         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
++      } else if (worldgentreeabstract == TreeFeatures.f_195134_) {
++         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
++      } else if (worldgentreeabstract == TreeFeatures.f_195132_) {
++         SaplingBlock.treeType = TreeType.JUNGLE;
++      } else if (worldgentreeabstract == TreeFeatures.f_195139_) {
++         SaplingBlock.treeType = TreeType.AZALEA;
++      } else if (worldgentreeabstract == TreeFeatures.f_236762_) {
++         SaplingBlock.treeType = TreeType.MANGROVE;
++      } else if (worldgentreeabstract == TreeFeatures.f_236763_) {
++         SaplingBlock.treeType = TreeType.TALL_MANGROVE;
++      } else if (worldgentreeabstract == TreeFeatures.f_271469_ || worldgentreeabstract == TreeFeatures.f_271485_) {
++         SaplingBlock.treeType = TreeType.CHERRY;
++      } else {
++         SaplingBlock.treeType = TreeType.CUSTOM; // Mohist - handle mod tree generator
++      }
++   }
++   // CraftBukkit end
+ }

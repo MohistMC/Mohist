@@ -1,0 +1,104 @@
+--- a/net/minecraft/world/level/block/ChestBlock.java
++++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -6,6 +_,7 @@
+ import java.util.function.BiPredicate;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++import net.md_5.bungee.api.chat.TranslatableComponent;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.network.chat.Component;
+@@ -80,27 +_,8 @@
+    };
+    private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> f_51487_ = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
+       public Optional<MenuProvider> m_6959_(final ChestBlockEntity p_51604_, final ChestBlockEntity p_51605_) {
+-         final Container container = new CompoundContainer(p_51604_, p_51605_);
+-         return Optional.of(new MenuProvider() {
+-            @Nullable
+-            public AbstractContainerMenu m_7208_(int p_51622_, Inventory p_51623_, Player p_51624_) {
+-               if (p_51604_.m_7525_(p_51624_) && p_51605_.m_7525_(p_51624_)) {
+-                  p_51604_.m_59640_(p_51623_.f_35978_);
+-                  p_51605_.m_59640_(p_51623_.f_35978_);
+-                  return ChestMenu.m_39246_(p_51622_, p_51623_, container);
+-               } else {
+-                  return null;
+-               }
+-            }
+-
+-            public Component m_5446_() {
+-               if (p_51604_.m_8077_()) {
+-                  return p_51604_.m_5446_();
+-               } else {
+-                  return (Component)(p_51605_.m_8077_() ? p_51605_.m_5446_() : Component.m_237115_("container.chestDouble"));
+-               }
+-            }
+-         });
++         final CompoundContainer container = new CompoundContainer(p_51604_, p_51605_); // Mohist TODO Container -> CompoundContainer
++         return Optional.of(new DoubleInventory(p_51604_, p_51605_, container)); // CraftBukkit
+       }
+ 
+       public Optional<MenuProvider> m_7693_(ChestBlockEntity p_51602_) {
+@@ -270,8 +_,15 @@
+ 
+    @Nullable
+    public MenuProvider m_7246_(BlockState p_51574_, Level p_51575_, BlockPos p_51576_) {
+-      return this.m_5641_(p_51574_, p_51575_, p_51576_, false).m_5649_(f_51487_).orElse((MenuProvider)null);
+-   }
++      return this.m_5641_(p_51574_, p_51575_, p_51576_, false).<Optional<MenuProvider>>m_5649_(f_51487_).orElse((MenuProvider)null);
++   }
++
++   // CraftBukkit start
++   @Nullable
++   public MenuProvider getMenuProvider(BlockState p_51574_, Level p_51575_, BlockPos p_51576_, boolean ignoreObstructions) {
++      return this.m_5641_(p_51574_, p_51575_, p_51576_, ignoreObstructions).m_5649_(f_51487_).orElse((MenuProvider) null);
++   }
++   // CraftBukkit end
+ 
+    public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> m_51517_(final LidBlockEntity p_51518_) {
+       return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {
+@@ -335,7 +_,8 @@
+    }
+ 
+    public BlockState m_6943_(BlockState p_51549_, Mirror p_51550_) {
+-      return p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
++      BlockState rotated = p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
++      return p_51550_ == Mirror.NONE ? rotated : rotated.m_61124_(f_51479_, rotated.m_61143_(f_51479_).m_61486_());  // Forge: Fixed MC-134110 Structure mirroring breaking apart double chests
+    }
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51562_) {
+@@ -353,4 +_,35 @@
+       }
+ 
+    }
++
++   // CraftBukkit start
++   public static class DoubleInventory implements MenuProvider {
++
++      private final ChestBlockEntity tileentitychest;
++      private final ChestBlockEntity tileentitychest1;
++      public final CompoundContainer inventorylargechest;
++
++      public DoubleInventory(ChestBlockEntity tileentitychest, ChestBlockEntity tileentitychest1, CompoundContainer inventorylargechest) {
++         this.tileentitychest = tileentitychest;
++         this.tileentitychest1 = tileentitychest1;
++         this.inventorylargechest = inventorylargechest;
++      }
++
++      @Nullable
++      @Override
++      public AbstractContainerMenu m_7208_(int i, net.minecraft.world.entity.player.Inventory playerinventory, net.minecraft.world.entity.player.Player entityhuman) {
++         if (this.tileentitychest.m_7525_(entityhuman) && this.tileentitychest1.m_7525_(entityhuman)) {
++            this.tileentitychest.m_59640_(playerinventory.f_35978_);
++            this.tileentitychest1.m_59640_(playerinventory.f_35978_);
++            return ChestMenu.m_39246_(i, playerinventory, this.inventorylargechest);
++         }
++         return null;
++      }
++
++      @Override
++      public net.minecraft.network.chat.Component m_5446_() {
++         return this.tileentitychest.m_8077_() ? this.tileentitychest.m_5446_() : (this.tileentitychest1.m_8077_() ? this.tileentitychest1.m_5446_() : (tileentitychest1.m_8077_() ? tileentitychest1.m_5446_() : Component.m_237115_("container.chestDouble")));
++      }
++   }
++   // CraftBukkit end
+ }

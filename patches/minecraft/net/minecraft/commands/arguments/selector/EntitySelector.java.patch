@@ -1,0 +1,28 @@
+--- a/net/minecraft/commands/arguments/selector/EntitySelector.java
++++ b/net/minecraft/commands/arguments/selector/EntitySelector.java
+@@ -11,6 +_,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.critereon.MinMaxBounds;
+ import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
+ import net.minecraft.commands.arguments.EntityArgument;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.ComponentUtils;
+@@ -49,7 +_,7 @@
+    private final String f_121120_;
+    @Nullable
+    private final UUID f_121121_;
+-   private final EntityTypeTest<Entity, ?> f_121122_;
++   private EntityTypeTest<Entity, ?> f_121122_;
+    private final boolean f_121123_;
+ 
+    public EntitySelector(int p_121125_, boolean p_121126_, boolean p_121127_, Predicate<Entity> p_121128_, MinMaxBounds.Doubles p_121129_, Function<Vec3, Vec3> p_121130_, @Nullable AABB p_121131_, BiConsumer<Vec3, List<? extends Entity>> p_121132_, boolean p_121133_, @Nullable String p_121134_, @Nullable UUID p_121135_, @Nullable EntityType<?> p_121136_, boolean p_121137_) {
+@@ -89,7 +_,7 @@
+    }
+ 
+    private void m_121168_(CommandSourceStack p_121169_) throws CommandSyntaxException {
+-      if (this.f_121123_ && !p_121169_.m_6761_(2)) {
++      if (this.f_121123_ && !net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_121169_) && !p_121169_.hasPermission(Commands.f_165684_, "minecraft.command.selector")) { // CraftBukkit
+          throw EntityArgument.f_91441_.create();
+       }
+    }

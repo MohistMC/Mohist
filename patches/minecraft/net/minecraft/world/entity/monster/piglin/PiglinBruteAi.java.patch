@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/monster/piglin/PiglinBruteAi.java
++++ b/net/minecraft/world/entity/monster/piglin/PiglinBruteAi.java
+@@ -53,7 +_,7 @@
+    }
+ 
+    protected static void m_35094_(PiglinBrute p_35095_) {
+-      GlobalPos globalpos = GlobalPos.m_122643_(p_35095_.m_9236_().m_46472_(), p_35095_.m_20183_());
++      GlobalPos globalpos = GlobalPos.m_122643_(p_35095_.f_19853_.m_46472_(), p_35095_.m_20183_());
+       p_35095_.m_6274_().m_21879_(MemoryModuleType.f_26359_, globalpos);
+    }
+ 
+@@ -125,7 +_,7 @@
+    }
+ 
+    protected static void m_35114_(PiglinBrute p_35115_) {
+-      if ((double)p_35115_.m_9236_().f_46441_.m_188501_() < 0.0125D) {
++      if ((double)p_35115_.f_19853_.f_46441_.m_188501_() < 0.0125D) {
+          m_35122_(p_35115_);
+       }
+ 

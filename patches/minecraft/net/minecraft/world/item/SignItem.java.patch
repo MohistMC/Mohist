@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/SignItem.java
++++ b/net/minecraft/world/item/SignItem.java
+@@ -12,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class SignItem extends StandingAndWallBlockItem {
++   public static BlockPos openSign; // CraftBukkit
+    public SignItem(Item.Properties p_43126_, Block p_43127_, Block p_43128_) {
+       super(p_43127_, p_43128_, p_43126_, Direction.DOWN);
+    }

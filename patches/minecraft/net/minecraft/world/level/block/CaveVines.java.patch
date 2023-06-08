@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/block/CaveVines.java
++++ b/net/minecraft/world/level/block/CaveVines.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.block;
+ 
++import java.util.Collections;
+ import java.util.function.ToIntFunction;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+@@ -17,6 +_,9 @@
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.event.player.PlayerHarvestBlockEvent;
+ 
+ public interface CaveVines {
+    VoxelShape f_152948_ = Block.m_49796_(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+@@ -24,7 +_,24 @@
+ 
+    static InteractionResult m_269473_(@Nullable Entity p_270738_, BlockState p_270772_, Level p_270721_, BlockPos p_270587_) {
+       if (p_270772_.m_61143_(f_152949_)) {
+-         Block.m_49840_(p_270721_, p_270587_, new ItemStack(Items.f_151079_, 1));
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityChangeBlockEvent(p_270738_, p_270587_, p_270772_.m_61124_(CaveVines.f_152949_, false)).isCancelled()) {
++            return InteractionResult.SUCCESS;
++         }
++
++         if (p_270738_ instanceof Player player) {
++            PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(p_270721_, p_270587_, player, net.minecraft.world.InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStack(Items.f_151079_, 1)));
++            if (event.isCancelled()) {
++               return InteractionResult.SUCCESS; // We need to return a success either way, because making it PASS or FAIL will result in a bug where cancelling while harvesting w/ block in hand places block
++            }
++            for (org.bukkit.inventory.ItemStack itemStack : event.getItemsHarvested()) {
++               Block.m_49840_(p_270721_, p_270587_, CraftItemStack.asNMSCopy(itemStack));
++            }
++         } else {
++            Block.m_49840_(p_270721_, p_270587_, new ItemStack(Items.f_151079_, 1));
++         }
++         // CraftBukkit end
++
+          float f = Mth.m_216283_(p_270721_.f_46441_, 0.8F, 1.2F);
+          p_270721_.m_5594_((Player)null, p_270587_, SoundEvents.f_144088_, SoundSource.BLOCKS, 1.0F, f);
+          BlockState blockstate = p_270772_.m_61124_(f_152949_, Boolean.valueOf(false));

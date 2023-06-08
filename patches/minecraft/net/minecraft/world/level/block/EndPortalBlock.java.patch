@@ -1,0 +1,44 @@
+--- a/net/minecraft/world/level/block/EndPortalBlock.java
++++ b/net/minecraft/world/level/block/EndPortalBlock.java
+@@ -4,6 +_,7 @@
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.item.ItemStack;
+@@ -13,11 +_,14 @@
+ import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
++import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.material.Fluid;
+ import net.minecraft.world.phys.shapes.BooleanOp;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
+ 
+ public class EndPortalBlock extends BaseEntityBlock {
+    protected static final VoxelShape f_53014_ = Block.m_49796_(0.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+@@ -39,9 +_,17 @@
+          ResourceKey<Level> resourcekey = p_53026_.m_46472_() == Level.f_46430_ ? Level.f_46428_ : Level.f_46430_;
+          ServerLevel serverlevel = ((ServerLevel)p_53026_).m_7654_().m_129880_(resourcekey);
+          if (serverlevel == null) {
++         }
++
++         // CraftBukkit start - Entity in portal
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53027_.m_123341_(), p_53027_.m_123342_(), p_53027_.m_123343_()));
++         p_53026_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (p_53028_ instanceof ServerPlayer player) {
++            player.changeDimension(serverlevel, PlayerTeleportEvent.TeleportCause.END_PORTAL);
+             return;
+          }
+-
++         // CraftBukkit end
+          p_53028_.m_5489_(serverlevel);
+       }
+ 

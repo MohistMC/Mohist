@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BrushableBlockEntity.java
+@@ -40,12 +_,12 @@
+    private int f_276531_;
+    private long f_276679_;
+    private long f_276557_;
+-   private ItemStack f_276563_ = ItemStack.f_41583_;
++   public ItemStack f_276563_ = ItemStack.f_41583_;
+    @Nullable
+    private Direction f_276638_;
+    @Nullable
+-   private ResourceLocation f_276466_;
+-   private long f_276487_;
++   public ResourceLocation f_276466_;
++   public long f_276487_;
+ 
+    public BrushableBlockEntity(BlockPos p_277558_, BlockState p_278093_) {
+       super(BlockEntityType.f_271323_, p_277558_, p_278093_);

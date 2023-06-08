@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/EndPodiumFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/EndPodiumFeature.java
+@@ -12,7 +_,7 @@
+    public static final int f_159719_ = 4;
+    public static final int f_159720_ = 1;
+    public static final float f_159721_ = 0.5F;
+-   private static final BlockPos f_65714_ = BlockPos.f_121853_;
++   public static final BlockPos f_65714_ = BlockPos.f_121853_;
+    private final boolean f_65715_;
+ 
+    public static BlockPos m_287210_(BlockPos p_287614_) {

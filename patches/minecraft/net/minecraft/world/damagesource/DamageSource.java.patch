@@ -1,0 +1,42 @@
+--- a/net/minecraft/world/damagesource/DamageSource.java
++++ b/net/minecraft/world/damagesource/DamageSource.java
+@@ -20,6 +_,39 @@
+    @Nullable
+    private final Vec3 f_268454_;
+ 
++   // CraftBukkit start
++   private boolean sweep;
++   private boolean melting;
++   private boolean poison;
++
++   public boolean isSweep() {
++      return sweep;
++   }
++
++   public DamageSource sweep() {
++      this.sweep = true;
++      return this;
++   }
++
++   public boolean isMelting() {
++      return melting;
++   }
++
++   public DamageSource melting() {
++      this.melting = true;
++      return this;
++   }
++
++   public boolean isPoison() {
++      return poison;
++   }
++
++   public DamageSource poison() {
++      this.poison = true;
++      return this;
++   }
++   // CraftBukkit end
++   
+    public String toString() {
+       return "DamageSource (" + this.m_269415_().f_268677_() + ")";
+    }
