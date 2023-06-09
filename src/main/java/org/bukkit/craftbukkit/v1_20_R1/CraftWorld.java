@@ -157,7 +157,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Block getBlockAt(int x, int y, int z) {
-        return CraftBlock.at(world, BlockPos.containing(x, y, z));
+        return CraftBlock.at(world, new BlockPos(x, y, z));
     }
 
     @Override
@@ -769,7 +769,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public double getTemperature(int x, int y, int z) {
-        BlockPos pos = BlockPos.containing(x, y, z);
+        BlockPos pos = new BlockPos(x, y, z);
         return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).value().getTemperature(pos);
     }
 
