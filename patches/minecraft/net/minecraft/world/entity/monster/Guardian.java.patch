@@ -17,80 +17,6 @@
        this.f_19804_.m_135381_(f_32807_, p_32818_);
     }
  
-@@ -131,11 +_,11 @@
-    public LivingEntity m_32856_() {
-       if (!this.m_32855_()) {
-          return null;
--      } else if (this.m_9236_().f_46443_) {
-+      } else if (this.f_19853_.f_46443_) {
-          if (this.f_32803_ != null) {
-             return this.f_32803_;
-          } else {
--            Entity entity = this.m_9236_().m_6815_(this.f_19804_.m_135370_(f_32807_));
-+            Entity entity = this.f_19853_.m_6815_(this.f_19804_.m_135370_(f_32807_));
-             if (entity instanceof LivingEntity) {
-                this.f_32803_ = (LivingEntity)entity;
-                return this.f_32803_;
-@@ -187,16 +_,16 @@
- 
-    public void m_8107_() {
-       if (this.m_6084_()) {
--         if (this.m_9236_().f_46443_) {
-+         if (this.f_19853_.f_46443_) {
-             this.f_32799_ = this.f_32798_;
-             if (!this.m_20069_()) {
-                this.f_32800_ = 2.0F;
-                Vec3 vec3 = this.m_20184_();
-                if (vec3.f_82480_ > 0.0D && this.f_32805_ && !this.m_20067_()) {
--                  this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_7868_(), this.m_5720_(), 1.0F, 1.0F, false);
-+                  this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_7868_(), this.m_5720_(), 1.0F, 1.0F, false);
-                }
- 
--               this.f_32805_ = vec3.f_82480_ < 0.0D && this.m_9236_().m_46575_(this.m_20183_().m_7495_(), this);
-+               this.f_32805_ = vec3.f_82480_ < 0.0D && this.f_19853_.m_46575_(this.m_20183_().m_7495_(), this);
-             } else if (this.m_32854_()) {
-                if (this.f_32800_ < 0.5F) {
-                   this.f_32800_ = 4.0F;
-@@ -221,7 +_,7 @@
-                Vec3 vec31 = this.m_20252_(0.0F);
- 
-                for(int i = 0; i < 2; ++i) {
--                  this.m_9236_().m_7106_(ParticleTypes.f_123795_, this.m_20208_(0.5D) - vec31.f_82479_ * 1.5D, this.m_20187_() - vec31.f_82480_ * 1.5D, this.m_20262_(0.5D) - vec31.f_82481_ * 1.5D, 0.0D, 0.0D, 0.0D);
-+                  this.f_19853_.m_7106_(ParticleTypes.f_123795_, this.m_20208_(0.5D) - vec31.f_82479_ * 1.5D, this.m_20187_() - vec31.f_82480_ * 1.5D, this.m_20262_(0.5D) - vec31.f_82481_ * 1.5D, 0.0D, 0.0D, 0.0D);
-                }
-             }
- 
-@@ -246,7 +_,7 @@
- 
-                   while(d4 < d3) {
-                      d4 += 1.8D - d5 + this.f_19796_.m_188500_() * (1.7D - d5);
--                     this.m_9236_().m_7106_(ParticleTypes.f_123795_, this.m_20185_() + d0 * d4, this.m_20188_() + d1 * d4, this.m_20189_() + d2 * d4, 0.0D, 0.0D, 0.0D);
-+                     this.f_19853_.m_7106_(ParticleTypes.f_123795_, this.m_20185_() + d0 * d4, this.m_20188_() + d1 * d4, this.m_20189_() + d2 * d4, 0.0D, 0.0D, 0.0D);
-                   }
-                }
-             }
-@@ -254,10 +_,10 @@
- 
-          if (this.m_20072_()) {
-             this.m_20301_(300);
--         } else if (this.m_20096_()) {
-+         } else if (this.f_19861_) {
-             this.m_20256_(this.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.4F), 0.5D, (double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.4F)));
-             this.m_146922_(this.f_19796_.m_188501_() * 360.0F);
--            this.m_6853_(false);
-+            this.f_19861_ = false;
-             this.f_19812_ = true;
-          }
- 
-@@ -298,7 +_,7 @@
-    }
- 
-    public boolean m_6469_(DamageSource p_32820_, float p_32821_) {
--      if (this.m_9236_().f_46443_) {
-+      if (this.f_19853_.f_46443_) {
-          return false;
-       } else {
-          if (!this.m_32854_() && !p_32820_.m_269533_(DamageTypeTags.f_268640_) && !p_32820_.m_276093_(DamageTypes.f_268440_)) {
 @@ -335,9 +_,9 @@
  
     }
@@ -103,17 +29,3 @@
        private final boolean f_32869_;
  
        public GuardianAttackGoal(Guardian p_32871_) {
-@@ -388,11 +_,11 @@
-                if (this.f_32868_ == 0) {
-                   this.f_32867_.m_32817_(livingentity.m_19879_());
-                   if (!this.f_32867_.m_20067_()) {
--                     this.f_32867_.m_9236_().m_7605_(this.f_32867_, (byte)21);
-+                     this.f_32867_.f_19853_.m_7605_(this.f_32867_, (byte)21);
-                   }
-                } else if (this.f_32868_ >= this.f_32867_.m_7552_()) {
-                   float f = 1.0F;
--                  if (this.f_32867_.m_9236_().m_46791_() == Difficulty.HARD) {
-+                  if (this.f_32867_.f_19853_.m_46791_() == Difficulty.HARD) {
-                      f += 2.0F;
-                   }
- 

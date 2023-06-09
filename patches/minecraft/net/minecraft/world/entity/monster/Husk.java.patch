@@ -1,22 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Husk.java
 +++ b/net/minecraft/world/entity/monster/Husk.java
-@@ -48,8 +_,8 @@
-    public boolean m_7327_(Entity p_32892_) {
+@@ -49,7 +_,7 @@
        boolean flag = super.m_7327_(p_32892_);
        if (flag && this.m_21205_().m_41619_() && p_32892_ instanceof LivingEntity) {
--         float f = this.m_9236_().m_6436_(this.m_20183_()).m_19056_();
+          float f = this.m_9236_().m_6436_(this.m_20183_()).m_19056_();
 -         ((LivingEntity)p_32892_).m_147207_(new MobEffectInstance(MobEffects.f_19612_, 140 * (int)f), this);
-+         float f = this.f_19853_.m_6436_(this.m_20183_()).m_19056_();
 +         ((LivingEntity)p_32892_).addEffect(new MobEffectInstance(MobEffects.f_19612_, 140 * (int)f), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
        }
  
        return flag;
-@@ -62,7 +_,7 @@
-    protected void m_7595_() {
-       this.m_34310_(EntityType.f_20501_);
-       if (!this.m_20067_()) {
--         this.m_9236_().m_5898_((Player)null, 1041, this.m_20183_(), 0);
-+         this.f_19853_.m_5898_((Player)null, 1041, this.m_20183_(), 0);
-       }
- 
-    }

@@ -70,59 +70,6 @@
     }
  
     @VisibleForDebug
-@@ -107,12 +_,15 @@
- 
-    protected void m_7472_(DamageSource p_34697_, int p_34698_, boolean p_34699_) {
-       super.m_7472_(p_34697_, p_34698_, p_34699_);
--      Entity entity = p_34697_.m_7639_();
--      if (entity instanceof Creeper creeper) {
--         if (creeper.m_32313_()) {
--            ItemStack itemstack = new ItemStack(Items.f_260451_);
--            creeper.m_32314_();
--            this.m_19983_(itemstack);
-+      if (this.m_9236_().m_246046_().m_245372_(FeatureFlags.UPDATE_1_20)) {
-+         Entity entity = p_34697_.m_7639_();
-+         if (entity instanceof Creeper) {
-+            Creeper creeper = (Creeper)entity;
-+            if (creeper.m_32313_()) {
-+               ItemStack itemstack = new ItemStack(Items.f_260451_);
-+               creeper.m_32314_();
-+               this.m_19983_(itemstack);
-+            }
-          }
-       }
- 
-@@ -208,7 +_,7 @@
-       InteractionResult interactionresult = super.m_6071_(p_34745_, p_34746_);
-       if (interactionresult.m_19077_()) {
-          return interactionresult;
--      } else if (!this.m_9236_().f_46443_) {
-+      } else if (!this.f_19853_.f_46443_) {
-          return PiglinAi.m_34846_(this, p_34745_, p_34746_);
-       } else {
-          boolean flag = PiglinAi.m_34909_(this, p_34745_.m_21120_(p_34746_)) && this.m_6389_() != PiglinArmPose.ADMIRING_ITEM;
-@@ -227,7 +_,7 @@
- 
-    public void m_6863_(boolean p_34729_) {
-       this.m_20088_().m_135381_(f_34673_, p_34729_);
--      if (!this.m_9236_().f_46443_) {
-+      if (!this.f_19853_.f_46443_) {
-          AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
-          attributeinstance.m_22130_(f_34677_);
-          if (p_34729_) {
-@@ -250,9 +_,9 @@
-    }
- 
-    protected void m_8024_() {
--      this.m_9236_().m_46473_().m_6180_("piglinBrain");
--      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
--      this.m_9236_().m_46473_().m_7238_();
-+      this.f_19853_.m_46473_().m_6180_("piglinBrain");
-+      this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
-+      this.f_19853_.m_46473_().m_7238_();
-       PiglinAi.m_34898_(this);
-       super.m_8024_();
-    }
 @@ -293,7 +_,7 @@
        } else if (this.m_34773_()) {
           return PiglinArmPose.CROSSBOW_CHARGE;
@@ -132,15 +79,6 @@
        }
     }
  
-@@ -307,7 +_,7 @@
- 
-    public boolean m_6469_(DamageSource p_34694_, float p_34695_) {
-       boolean flag = super.m_6469_(p_34694_, p_34695_);
--      if (this.m_9236_().f_46443_) {
-+      if (this.f_19853_.f_46443_) {
-          return false;
-       } else {
-          if (flag && p_34694_.m_7639_() instanceof LivingEntity) {
 @@ -335,7 +_,7 @@
     }
  
@@ -155,7 +93,7 @@
  
     public boolean m_7243_(ItemStack p_34777_) {
 -      return this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
-+      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
++      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
     }
  
     protected boolean m_34787_(ItemStack p_34788_) {
@@ -165,17 +103,8 @@
        } else {
 -         boolean flag = PiglinAi.m_149965_(p_34712_) || p_34712_.m_150930_(Items.f_42717_);
 -         boolean flag1 = PiglinAi.m_149965_(p_34713_) || p_34713_.m_150930_(Items.f_42717_);
-+         boolean flag = PiglinAi.isLovedItem(p_34712_, this) || p_34712_.m_150930_(Items.f_42717_);
-+         boolean flag1 = PiglinAi.isLovedItem(p_34713_, this) || p_34713_.m_150930_(Items.f_42717_);
++         boolean flag = PiglinAi.isLovedItem(p_34712_, this) || p_34712_.m_150930_(Items.f_42717_); // CraftBukkit
++         boolean flag1 = PiglinAi.isLovedItem(p_34713_, this) || p_34713_.m_150930_(Items.f_42717_); // CraftBukkit
           if (flag && !flag1) {
              return true;
           } else if (!flag && flag1) {
-@@ -389,7 +_,7 @@
-    }
- 
-    protected SoundEvent m_7515_() {
--      return this.m_9236_().f_46443_ ? null : PiglinAi.m_34947_(this).orElse((SoundEvent)null);
-+      return this.f_19853_.f_46443_ ? null : PiglinAi.m_34947_(this).orElse((SoundEvent)null);
-    }
- 
-    protected SoundEvent m_7975_(DamageSource p_34767_) {

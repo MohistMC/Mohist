@@ -69,14 +69,7 @@
        this.f_34266_ = p_34279_;
        this.m_20088_().m_135381_(f_34261_, true);
     }
-@@ -244,16 +_,21 @@
-    protected void m_7595_() {
-       this.m_34310_(EntityType.f_20562_);
-       if (!this.m_20067_()) {
--         this.m_9236_().m_5898_((Player)null, 1040, this.m_20183_(), 0);
-+         this.f_19853_.m_5898_((Player)null, 1040, this.m_20183_(), 0);
-       }
- 
+@@ -250,10 +_,15 @@
     }
  
     protected void m_34310_(EntityType<? extends Zombie> p_34311_) {
@@ -93,18 +86,7 @@
        }
  
     }
-@@ -265,20 +_,23 @@
-    public boolean m_6469_(DamageSource p_34288_, float p_34289_) {
-       if (!super.m_6469_(p_34288_, p_34289_)) {
-          return false;
--      } else if (!(this.m_9236_() instanceof ServerLevel)) {
-+      } else if (!(this.f_19853_ instanceof ServerLevel)) {
-          return false;
-       } else {
--         ServerLevel serverlevel = (ServerLevel)this.m_9236_();
-+         ServerLevel serverlevel = (ServerLevel)this.f_19853_;
-          LivingEntity livingentity = this.m_5448_();
-          if (livingentity == null && p_34288_.m_7639_() instanceof LivingEntity) {
+@@ -274,11 +_,15 @@
              livingentity = (LivingEntity)p_34288_.m_7639_();
           }
  
@@ -113,26 +95,22 @@
              int j = Mth.m_14107_(this.m_20186_());
              int k = Mth.m_14107_(this.m_20189_());
 -            Zombie zombie = new Zombie(this.m_9236_());
-+         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, f_19853_, i, j, k, livingentity, this.m_21051_(Attributes.f_22287_).m_22135_());
++         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, m_9236_(), i, j, k, livingentity, this.m_21051_(Attributes.f_22287_).m_22135_());
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
-+            livingentity != null && this.f_19853_.m_46791_() == Difficulty.HARD && (double)this.f_19796_.m_188501_() < this.m_21051_(Attributes.f_22287_).m_22135_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46134_)) {
-+            Zombie zombie = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.f_20501_.m_20615_(this.f_19853_);
++            livingentity != null && this.m_9236_().m_46791_() == Difficulty.HARD && (double)this.f_19796_.m_188501_() < this.m_21051_(Attributes.f_22287_).m_22135_() && this.m_9236_()
++                    .m_46469_().m_46207_(GameRules.f_46134_)) {
++            Zombie zombie = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.f_20501_.m_20615_(this.m_9236_());
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.m_216271_(this.f_19796_, 7, 40) * Mth.m_216271_(this.f_19796_, -1, 1);
-@@ -287,12 +_,13 @@
-                BlockPos blockpos = new BlockPos(i1, j1, k1);
-                EntityType<?> entitytype = zombie.m_6095_();
-                SpawnPlacements.Type spawnplacements$type = SpawnPlacements.m_21752_(entitytype);
--               if (NaturalSpawner.m_47051_(spawnplacements$type, this.m_9236_(), blockpos, entitytype) && SpawnPlacements.m_217074_(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.m_9236_().f_46441_)) {
-+               if (NaturalSpawner.m_47051_(spawnplacements$type, this.f_19853_, blockpos, entitytype) && SpawnPlacements.m_217074_(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.f_19853_.f_46441_)) {
+@@ -290,9 +_,10 @@
+                if (NaturalSpawner.m_47051_(spawnplacements$type, this.m_9236_(), blockpos, entitytype) && SpawnPlacements.m_217074_(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.m_9236_().f_46441_)) {
                    zombie.m_6034_((double)i1, (double)j1, (double)k1);
--                  if (!this.m_9236_().m_45914_((double)i1, (double)j1, (double)k1, 7.0D) && this.m_9236_().m_45784_(zombie) && this.m_9236_().m_45786_(zombie) && !this.m_9236_().m_46855_(zombie.m_20191_())) {
+                   if (!this.m_9236_().m_45914_((double)i1, (double)j1, (double)k1, 7.0D) && this.m_9236_().m_45784_(zombie) && this.m_9236_().m_45786_(zombie) && !this.m_9236_().m_46855_(zombie.m_20191_())) {
 -                     zombie.m_6710_(livingentity);
 -                     zombie.m_6518_(serverlevel, this.m_9236_().m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
 -                     serverlevel.m_47205_(zombie);
-+                  if (!this.f_19853_.m_45914_((double)i1, (double)j1, (double)k1, 7.0D) && this.f_19853_.m_45784_(zombie) && this.f_19853_.m_45786_(zombie) && !this.f_19853_.m_46855_(zombie.m_20191_())) {
 +                     if (livingentity != null)
 +                     zombie.setTarget(livingentity, EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
 +                     zombie.m_6518_(serverlevel, this.f_19853_.m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
@@ -140,12 +118,9 @@
                       this.m_21051_(Attributes.f_22287_).m_22125_(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
                       zombie.m_21051_(Attributes.f_22287_).m_22125_(new AttributeModifier("Zombie reinforcement callee charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
                       break;
-@@ -308,9 +_,16 @@
-    public boolean m_7327_(Entity p_34276_) {
-       boolean flag = super.m_7327_(p_34276_);
+@@ -310,7 +_,14 @@
        if (flag) {
--         float f = this.m_9236_().m_6436_(this.m_20183_()).m_19056_();
-+         float f = this.f_19853_.m_6436_(this.m_20183_()).m_19056_();
+          float f = this.m_9236_().m_6436_(this.m_20183_()).m_19056_();
           if (this.m_21205_().m_41619_() && this.m_6060_() && this.f_19796_.m_188501_() < f * 0.3F) {
 -            p_34276_.m_20254_(2 * (int)f);
 +            // CraftBukkit start
@@ -159,15 +134,6 @@
           }
        }
  
-@@ -343,7 +_,7 @@
- 
-    protected void m_213945_(RandomSource p_219165_, DifficultyInstance p_219166_) {
-       super.m_213945_(p_219165_, p_219166_);
--      if (p_219165_.m_188501_() < (this.m_9236_().m_46791_() == Difficulty.HARD ? 0.05F : 0.01F)) {
-+      if (p_219165_.m_188501_() < (this.f_19853_.m_46791_() == Difficulty.HARD ? 0.05F : 0.01F)) {
-          int i = p_219165_.m_188503_(3);
-          if (i == 0) {
-             this.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42383_));
 @@ -375,7 +_,7 @@
  
     public boolean m_214076_(ServerLevel p_219160_, LivingEntity p_219161_) {
@@ -181,7 +147,7 @@
              zombievillager.m_34391_(villager.m_35517_().m_262795_(NbtOps.f_128958_));
              zombievillager.m_34411_(villager.m_6616_().m_45388_());
              zombievillager.m_34373_(villager.m_7809_());
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
              if (!this.m_20067_()) {
                 p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
              }
@@ -208,14 +174,7 @@
     protected float m_6431_(Pose p_34313_, EntityDimensions p_34314_) {
        return this.m_6162_() ? 0.93F : 1.74F;
     }
-@@ -432,13 +_,13 @@
-                      this.m_20329_(chicken);
-                   }
-                } else if ((double)randomsource.m_188501_() < 0.05D) {
--                  Chicken chicken1 = EntityType.f_20555_.m_20615_(this.m_9236_());
-+                  Chicken chicken1 = EntityType.f_20555_.m_20615_(this.f_19853_);
-                   if (chicken1 != null) {
-                      chicken1.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F);
+@@ -438,7 +_,7 @@
                       chicken1.m_6518_(p_34297_, p_34298_, MobSpawnType.JOCKEY, (SpawnGroupData)null, (CompoundTag)null);
                       chicken1.m_28273_(true);
                       this.m_20329_(chicken1);

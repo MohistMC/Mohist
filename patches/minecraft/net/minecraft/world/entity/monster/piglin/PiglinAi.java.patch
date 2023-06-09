@@ -88,15 +88,6 @@
                 m_34952_(p_34868_, itemstack1);
              } else {
                 m_34860_(p_34868_, Collections.singletonList(itemstack1));
-@@ -345,7 +_,7 @@
-       if (p_34812_.m_6095_() != EntityType.f_20456_) {
-          return false;
-       } else {
--         return RandomSource.m_216335_(p_34811_.m_9236_().m_46467_()).m_188501_() < 0.1F;
-+         return RandomSource.m_216335_(p_34811_.f_19853_.m_46467_()).m_188501_() < 0.1F;
-       }
-    }
- 
 @@ -356,7 +_,7 @@
           return false;
        } else if (m_35024_(p_34858_) && p_34858_.m_6274_().m_21874_(MemoryModuleType.f_26372_)) {
@@ -119,26 +110,6 @@
     protected static boolean m_149965_(ItemStack p_149966_) {
        return p_149966_.m_204117_(ItemTags.f_13151_);
     }
-@@ -428,14 +_,14 @@
-    }
- 
-    public static void m_34873_(Player p_34874_, boolean p_34875_) {
--      List<Piglin> list = p_34874_.m_9236_().m_45976_(Piglin.class, p_34874_.m_20191_().m_82400_(16.0D));
-+      List<Piglin> list = p_34874_.f_19853_.m_45976_(Piglin.class, p_34874_.m_20191_().m_82400_(16.0D));
-       list.stream().filter(PiglinAi::m_34942_).filter((p_34881_) -> {
-          return !p_34875_ || BehaviorUtils.m_22667_(p_34881_, p_34874_);
--      }).forEach((p_289467_) -> {
--         if (p_289467_.m_9236_().m_46469_().m_46207_(GameRules.f_46127_)) {
--            m_34944_(p_289467_, p_34874_);
-+      }).forEach((p_269951_) -> {
-+         if (p_269951_.f_19853_.m_46469_().m_46207_(GameRules.f_46127_)) {
-+            m_34944_(p_269951_, p_34874_);
-          } else {
--            m_34924_(p_289467_, p_34874_);
-+            m_34924_(p_269951_, p_34874_);
-          }
- 
-       });
 @@ -455,7 +_,7 @@
     }
  
@@ -148,26 +119,6 @@
     }
  
     protected static void m_34837_(Piglin p_34838_, LivingEntity p_34839_) {
-@@ -472,8 +_,8 @@
-             brain.m_21882_(MemoryModuleType.f_26339_, true, 400L);
-          }
- 
--         m_34986_(p_34838_).ifPresent((p_289470_) -> {
--            if (p_289470_.m_6095_() != p_34839_.m_6095_()) {
-+         m_34986_(p_34838_).ifPresent((p_275123_) -> {
-+            if (p_275123_.m_6095_() != p_34839_.m_6095_()) {
-                brain.m_21936_(MemoryModuleType.f_26383_);
-             }
- 
-@@ -497,7 +_,7 @@
-       if (!p_34827_.m_6274_().m_21954_(Activity.f_37991_)) {
-          if (Sensor.m_182377_(p_34827_, p_34828_)) {
-             if (!BehaviorUtils.m_22598_(p_34827_, p_34828_, 4.0D)) {
--               if (p_34828_.m_6095_() == EntityType.f_20532_ && p_34827_.m_9236_().m_46469_().m_46207_(GameRules.f_46127_)) {
-+               if (p_34828_.m_6095_() == EntityType.f_20532_ && p_34827_.f_19853_.m_46469_().m_46207_(GameRules.f_46127_)) {
-                   m_34944_(p_34827_, p_34828_);
-                   m_34824_(p_34827_);
-                } else {
 @@ -550,7 +_,7 @@
     public static boolean m_34808_(LivingEntity p_34809_) {
        for(ItemStack itemstack : p_34809_.m_6168_()) {
@@ -177,51 +128,6 @@
              return true;
           }
        }
-@@ -565,15 +_,15 @@
- 
-    private static BehaviorControl<LivingEntity> m_257528_() {
-       SetEntityLookTargetSometimes.Ticker setentitylooktargetsometimes$ticker = new SetEntityLookTargetSometimes.Ticker(f_34796_);
--      return CopyMemoryWithExpiry.m_257819_((p_289472_) -> {
--         return p_289472_.m_6162_() && setentitylooktargetsometimes$ticker.m_257976_(p_289472_.m_9236_().f_46441_);
-+      return CopyMemoryWithExpiry.m_257819_((p_269953_) -> {
-+         return p_269953_.m_6162_() && setentitylooktargetsometimes$ticker.m_257976_(p_269953_.f_19853_.f_46441_);
-       }, MemoryModuleType.f_26344_, MemoryModuleType.f_26376_, f_34797_);
-    }
- 
-    protected static void m_34895_(AbstractPiglin p_34896_, LivingEntity p_34897_) {
--      m_34960_(p_34896_).forEach((p_289474_) -> {
--         if (p_34897_.m_6095_() != EntityType.f_20456_ || p_289474_.m_7121_() && ((Hoglin)p_34897_).m_34555_()) {
--            m_34962_(p_289474_, p_34897_);
-+      m_34960_(p_34896_).forEach((p_275125_) -> {
-+         if (p_34897_.m_6095_() != EntityType.f_20456_ || p_275125_.m_7121_() && ((Hoglin)p_34897_).m_34555_()) {
-+            m_34962_(p_275125_, p_34897_);
-          }
-       });
-    }
-@@ -594,7 +_,7 @@
-             m_34922_(p_34925_);
-          }
- 
--         if (p_34926_.m_6095_() == EntityType.f_20532_ && p_34925_.m_9236_().m_46469_().m_46207_(GameRules.f_46127_)) {
-+         if (p_34926_.m_6095_() == EntityType.f_20532_ && p_34925_.f_19853_.m_46469_().m_46207_(GameRules.f_46127_)) {
-             p_34925_.m_6274_().m_21882_(MemoryModuleType.f_26335_, true, 600L);
-          }
- 
-@@ -677,12 +_,12 @@
-       p_34968_.m_6274_().m_21936_(MemoryModuleType.f_26334_);
-       p_34968_.m_6274_().m_21936_(MemoryModuleType.f_26372_);
-       p_34968_.m_6274_().m_21936_(MemoryModuleType.f_26370_);
--      p_34968_.m_6274_().m_21882_(MemoryModuleType.f_26383_, p_34969_, (long)f_34798_.m_214085_(p_34968_.m_9236_().f_46441_));
-+      p_34968_.m_6274_().m_21882_(MemoryModuleType.f_26383_, p_34969_, (long)f_34798_.m_214085_(p_34968_.f_19853_.f_46441_));
-       m_34922_(p_34968_);
-    }
- 
-    protected static void m_34922_(AbstractPiglin p_34923_) {
--      p_34923_.m_6274_().m_21882_(MemoryModuleType.f_26340_, true, (long)f_34795_.m_214085_(p_34923_.m_9236_().f_46441_));
-+      p_34923_.m_6274_().m_21882_(MemoryModuleType.f_26340_, true, (long)f_34795_.m_214085_(p_34923_.f_19853_.f_46441_));
-    }
- 
-    private static void m_35014_(Piglin p_35015_) {
 @@ -703,7 +_,7 @@
     }
  

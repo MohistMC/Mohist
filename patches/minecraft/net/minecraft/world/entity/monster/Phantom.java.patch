@@ -1,37 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Phantom.java
 +++ b/net/minecraft/world/entity/monster/Phantom.java
-@@ -110,19 +_,19 @@
- 
-    public void m_8119_() {
-       super.m_8119_();
--      if (this.m_9236_().f_46443_) {
-+      if (this.f_19853_.f_46443_) {
-          float f = Mth.m_14089_((float)(this.m_149736_() + this.f_19797_) * 7.448451F * ((float)Math.PI / 180F) + (float)Math.PI);
-          float f1 = Mth.m_14089_((float)(this.m_149736_() + this.f_19797_ + 1) * 7.448451F * ((float)Math.PI / 180F) + (float)Math.PI);
-          if (f > 0.0F && f1 <= 0.0F) {
--            this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12230_, this.m_5720_(), 0.95F + this.f_19796_.m_188501_() * 0.05F, 0.95F + this.f_19796_.m_188501_() * 0.05F, false);
-+            this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12230_, this.m_5720_(), 0.95F + this.f_19796_.m_188501_() * 0.05F, 0.95F + this.f_19796_.m_188501_() * 0.05F, false);
-          }
- 
-          int i = this.m_33172_();
-          float f2 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F)) * (1.3F + 0.21F * (float)i);
-          float f3 = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)) * (1.3F + 0.21F * (float)i);
-          float f4 = (0.3F + f * 0.45F) * ((float)i * 0.2F + 1.0F);
--         this.m_9236_().m_7106_(ParticleTypes.f_123757_, this.m_20185_() + (double)f2, this.m_20186_() + (double)f4, this.m_20189_() + (double)f3, 0.0D, 0.0D, 0.0D);
--         this.m_9236_().m_7106_(ParticleTypes.f_123757_, this.m_20185_() - (double)f2, this.m_20186_() + (double)f4, this.m_20189_() - (double)f3, 0.0D, 0.0D, 0.0D);
-+         this.f_19853_.m_7106_(ParticleTypes.f_123757_, this.m_20185_() + (double)f2, this.m_20186_() + (double)f4, this.m_20189_() + (double)f3, 0.0D, 0.0D, 0.0D);
-+         this.f_19853_.m_7106_(ParticleTypes.f_123757_, this.m_20185_() - (double)f2, this.m_20186_() + (double)f4, this.m_20189_() - (double)f3, 0.0D, 0.0D, 0.0D);
-       }
- 
-    }
-@@ -220,13 +_,13 @@
-             return false;
-          } else {
-             this.f_33193_ = m_186073_(60);
--            List<Player> list = Phantom.this.m_9236_().m_45955_(this.f_33192_, Phantom.this, Phantom.this.m_20191_().m_82377_(16.0D, 64.0D, 16.0D));
-+            List<Player> list = Phantom.this.f_19853_.m_45955_(this.f_33192_, Phantom.this, Phantom.this.m_20191_().m_82377_(16.0D, 64.0D, 16.0D));
-             if (!list.isEmpty()) {
-                list.sort(Comparator.<Entity, Double>comparing(Entity::m_20186_).reversed());
+@@ -226,7 +_,7 @@
  
                 for(Player player : list) {
                    if (Phantom.this.m_21040_(player, TargetingConditions.f_26872_)) {
@@ -40,56 +9,3 @@
                       return true;
                    }
                 }
-@@ -257,7 +_,7 @@
-       }
- 
-       public void m_8041_() {
--         Phantom.this.f_33098_ = Phantom.this.m_9236_().m_5452_(Heightmap.Types.MOTION_BLOCKING, Phantom.this.f_33098_).m_6630_(10 + Phantom.this.f_19796_.m_188503_(20));
-+         Phantom.this.f_33098_ = Phantom.this.f_19853_.m_5452_(Heightmap.Types.MOTION_BLOCKING, Phantom.this.f_33098_).m_6630_(10 + Phantom.this.f_19796_.m_188503_(20));
-       }
- 
-       public void m_8037_() {
-@@ -275,8 +_,8 @@
- 
-       private void m_33212_() {
-          Phantom.this.f_33098_ = Phantom.this.m_5448_().m_20183_().m_6630_(20 + Phantom.this.f_19796_.m_188503_(20));
--         if (Phantom.this.f_33098_.m_123342_() < Phantom.this.m_9236_().m_5736_()) {
--            Phantom.this.f_33098_ = new BlockPos(Phantom.this.f_33098_.m_123341_(), Phantom.this.m_9236_().m_5736_() + 1, Phantom.this.f_33098_.m_123343_());
-+         if (Phantom.this.f_33098_.m_123342_() < Phantom.this.f_19853_.m_5736_()) {
-+            Phantom.this.f_33098_ = new BlockPos(Phantom.this.f_33098_.m_123341_(), Phantom.this.f_19853_.m_5736_() + 1, Phantom.this.f_33098_.m_123343_());
-          }
- 
-       }
-@@ -332,12 +_,12 @@
-             this.m_33231_();
-          }
- 
--         if (Phantom.this.f_33097_.f_82480_ < Phantom.this.m_20186_() && !Phantom.this.m_9236_().m_46859_(Phantom.this.m_20183_().m_6625_(1))) {
-+         if (Phantom.this.f_33097_.f_82480_ < Phantom.this.m_20186_() && !Phantom.this.f_19853_.m_46859_(Phantom.this.m_20183_().m_6625_(1))) {
-             this.f_33221_ = Math.max(1.0F, this.f_33221_);
-             this.m_33231_();
-          }
- 
--         if (Phantom.this.f_33097_.f_82480_ > Phantom.this.m_20186_() && !Phantom.this.m_9236_().m_46859_(Phantom.this.m_20183_().m_6630_(1))) {
-+         if (Phantom.this.f_33097_.f_82480_ > Phantom.this.m_20186_() && !Phantom.this.f_19853_.m_46859_(Phantom.this.m_20183_().m_6630_(1))) {
-             this.f_33221_ = Math.min(-1.0F, this.f_33221_);
-             this.m_33231_();
-          }
-@@ -449,7 +_,7 @@
-             } else {
-                if (Phantom.this.f_19797_ > this.f_199897_) {
-                   this.f_199897_ = Phantom.this.f_19797_ + 20;
--                  List<Cat> list = Phantom.this.m_9236_().m_6443_(Cat.class, Phantom.this.m_20191_().m_82400_(16.0D), EntitySelector.f_20402_);
-+                  List<Cat> list = Phantom.this.f_19853_.m_6443_(Cat.class, Phantom.this.m_20191_().m_82400_(16.0D), EntitySelector.f_20402_);
- 
-                   for(Cat cat : list) {
-                      cat.m_28167_();
-@@ -479,7 +_,7 @@
-                Phantom.this.m_7327_(livingentity);
-                Phantom.this.f_33096_ = Phantom.AttackPhase.CIRCLE;
-                if (!Phantom.this.m_20067_()) {
--                  Phantom.this.m_9236_().m_46796_(1039, Phantom.this.m_20183_(), 0);
-+                  Phantom.this.f_19853_.m_46796_(1039, Phantom.this.m_20183_(), 0);
-                }
-             } else if (Phantom.this.f_19862_ || Phantom.this.f_20916_ > 0) {
-                Phantom.this.f_33096_ = Phantom.AttackPhase.CIRCLE;

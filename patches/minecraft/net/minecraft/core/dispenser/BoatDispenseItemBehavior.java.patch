@@ -16,23 +16,16 @@
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
     private final DefaultDispenseItemBehavior f_123368_ = new DefaultDispenseItemBehavior();
-@@ -28,27 +_,55 @@
-    public ItemStack m_7498_(BlockSource p_123375_, ItemStack p_123376_) {
-       Direction direction = p_123375_.m_6414_().m_61143_(DispenserBlock.f_52659_);
-       Level level = p_123375_.m_7727_();
--      double d0 = 0.5625D + (double)EntityType.f_20552_.m_20678_() / 2.0D;
-+      double d0 = 0.5625D + (double) EntityType.f_20552_.m_20678_() / 2.0D;
-       double d1 = p_123375_.m_7096_() + (double)direction.m_122429_() * d0;
+@@ -33,22 +_,49 @@
        double d2 = p_123375_.m_7098_() + (double)((float)direction.m_122430_() * 1.125F);
        double d3 = p_123375_.m_7094_() + (double)direction.m_122431_() * d0;
-+
        BlockPos blockpos = p_123375_.m_7961_().m_121945_(direction);
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.m_41620_(1);
 +      org.bukkit.block.Block block = level.getWorld().getBlockAt(p_123375_.m_7961_().m_123341_(), p_123375_.m_7961_().m_123342_(), p_123375_.m_7961_().m_123343_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
-+      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d1, d2, d3));
++      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2));
 +      if (!DispenserBlock.eventFired) {
 +         level.getCraftServer().getPluginManager().callEvent(event);
 +      }

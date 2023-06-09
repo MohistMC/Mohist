@@ -1,44 +1,14 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-@@ -80,7 +_,7 @@
-          return false;
-       } else {
-          this.f_34483_ = 10;
--         this.m_9236_().m_7605_(this, (byte)4);
-+         this.f_19853_.m_7605_(this, (byte)4);
-          this.m_5496_(SoundEvents.f_11958_, 1.0F, this.m_6100_());
-          HoglinAi.m_34579_(this, (LivingEntity)p_34491_);
-          return HoglinBase.m_34642_(this, (LivingEntity)p_34491_);
-@@ -96,7 +_,7 @@
- 
-    public boolean m_6469_(DamageSource p_34503_, float p_34504_) {
-       boolean flag = super.m_6469_(p_34503_, p_34504_);
--      if (this.m_9236_().f_46443_) {
-+      if (this.f_19853_.f_46443_) {
-          return false;
-       } else {
-          if (flag && p_34503_.m_7639_() instanceof LivingEntity) {
-@@ -120,15 +_,15 @@
-    }
- 
-    protected void m_8024_() {
--      this.m_9236_().m_46473_().m_6180_("hoglinBrain");
--      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
--      this.m_9236_().m_46473_().m_7238_();
-+      this.f_19853_.m_46473_().m_6180_("hoglinBrain");
-+      this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
-+      this.f_19853_.m_46473_().m_7238_();
+@@ -126,7 +_,7 @@
        HoglinAi.m_34577_(this);
        if (this.m_34554_()) {
           ++this.f_34484_;
 -         if (this.f_34484_ > 300) {
 +         if (this.f_34484_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20500_, (timer) -> this.f_34484_ = timer)) {
              this.m_219179_(SoundEvents.f_11959_);
--            this.m_34531_((ServerLevel)this.m_9236_());
-+            this.m_34531_((ServerLevel)this.f_19853_);
+             this.m_34531_((ServerLevel)this.m_9236_());
           }
-       } else {
-          this.f_34484_ = 0;
 @@ -219,6 +_,7 @@
        Zoglin zoglin = this.m_21406_(EntityType.f_20500_, true);
        if (zoglin != null) {
@@ -47,7 +17,7 @@
        }
  
     }
-@@ -260,12 +_,12 @@
+@@ -260,7 +_,7 @@
        this.m_20088_().m_135381_(f_34482_, p_34565_);
     }
  
@@ -56,18 +26,3 @@
        return this.m_20088_().m_135370_(f_34482_);
     }
  
-    public boolean m_34554_() {
--      return !this.m_9236_().m_6042_().m_63960_() && !this.m_34557_() && !this.m_21525_();
-+      return !this.f_19853_.m_6042_().m_63960_() && !this.m_34557_() && !this.m_21525_();
-    }
- 
-    private void m_34566_(boolean p_34567_) {
-@@ -295,7 +_,7 @@
-    }
- 
-    protected SoundEvent m_7515_() {
--      return this.m_9236_().f_46443_ ? null : HoglinAi.m_34593_(this).orElse((SoundEvent)null);
-+      return this.f_19853_.f_46443_ ? null : HoglinAi.m_34593_(this).orElse((SoundEvent)null);
-    }
- 
-    protected SoundEvent m_7975_(DamageSource p_34548_) {

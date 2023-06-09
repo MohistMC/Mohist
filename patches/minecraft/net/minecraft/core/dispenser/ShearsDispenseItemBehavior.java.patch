@@ -7,7 +7,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.BlockSource;
  import net.minecraft.server.level.ServerLevel;
-@@ -13,20 +_,49 @@
+@@ -13,18 +_,47 @@
  import net.minecraft.world.entity.Shearable;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -24,16 +24,14 @@
  
  public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
     protected ItemStack m_7498_(BlockSource p_123580_, ItemStack p_123581_) {
--      ServerLevel serverlevel = p_123580_.m_7727_();
--      if (!serverlevel.m_5776_()) {
-+      Level level = p_123580_.m_7727_();
+       ServerLevel serverlevel = p_123580_.m_7727_();
 +      // CraftBukkit start
-+      org.bukkit.block.Block bukkitBlock = level.getWorld().getBlockAt(p_123580_.m_7961_().m_123341_(), p_123580_.m_7961_().m_123342_(), p_123580_.m_7961_().m_123343_());
++      org.bukkit.block.Block bukkitBlock = serverlevel.getWorld().getBlockAt(p_123580_.m_7961_().m_123341_(), p_123580_.m_7961_().m_123342_(), p_123580_.m_7961_().m_123343_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123581_);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
 +      if (!DispenserBlock.eventFired) {
-+         level.getCraftServer().getPluginManager().callEvent(event);
++         serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +      }
 +
 +      if (event.isCancelled()) {
@@ -51,16 +49,12 @@
 +      }
 +      // CraftBukkit end
 +
-+      if (!level.m_5776_()) {
+       if (!serverlevel.m_5776_()) {
           BlockPos blockpos = p_123580_.m_7961_().m_121945_(p_123580_.m_6414_().m_61143_(DispenserBlock.f_52659_));
--         this.m_123573_(m_123576_(serverlevel, blockpos) || m_123582_(serverlevel, blockpos));
--         if (this.m_123570_() && p_123581_.m_220157_(1, serverlevel.m_213780_(), (ServerPlayer)null)) {
 +         bukkitBlockAndcraftItem(bukkitBlock, craftItem); // Mohist
-+         this.m_123573_(m_123576_((ServerLevel)level, blockpos) || m_123582_((ServerLevel)level, blockpos));
-+         if (this.m_123570_() && p_123581_.m_220157_(1, level.m_213780_(), (ServerPlayer)null)) {
+          this.m_123573_(m_123576_(serverlevel, blockpos) || m_123582_(serverlevel, blockpos));
+          if (this.m_123570_() && p_123581_.m_220157_(1, serverlevel.m_213780_(), (ServerPlayer)null)) {
              p_123581_.m_41764_(0);
-          }
-       }
 @@ -56,6 +_,11 @@
        for(LivingEntity livingentity : p_123583_.m_6443_(LivingEntity.class, new AABB(p_123584_), EntitySelector.f_20408_)) {
           if (livingentity instanceof Shearable shearable) {

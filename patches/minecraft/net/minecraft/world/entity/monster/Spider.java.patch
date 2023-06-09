@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Spider.java
 +++ b/net/minecraft/world/entity/monster/Spider.java
-@@ -77,7 +_,7 @@
- 
-    public void m_8119_() {
-       super.m_8119_();
--      if (!this.m_9236_().f_46443_) {
-+      if (!this.f_19853_.f_46443_) {
-          this.m_33819_(this.f_19862_);
-       }
- 
 @@ -119,7 +_,12 @@
     }
  
@@ -23,15 +14,6 @@
     }
  
     public boolean m_33816_() {
-@@ -142,7 +_,7 @@
-       p_33793_ = super.m_6518_(p_33790_, p_33791_, p_33792_, p_33793_, p_33794_);
-       RandomSource randomsource = p_33790_.m_213780_();
-       if (randomsource.m_188503_(100) == 0) {
--         Skeleton skeleton = EntityType.f_20524_.m_20615_(this.m_9236_());
-+         Skeleton skeleton = EntityType.f_20524_.m_20615_(this.f_19853_);
-          if (skeleton != null) {
-             skeleton.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F);
-             skeleton.m_6518_(p_33790_, p_33791_, p_33792_, (SpawnGroupData)null, (CompoundTag)null);
 @@ -160,7 +_,7 @@
        if (p_33793_ instanceof Spider.SpiderEffectsGroupData spider$spidereffectsgroupdata) {
           MobEffect mobeffect = spider$spidereffectsgroupdata.f_33827_;

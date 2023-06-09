@@ -21,23 +21,8 @@
  
  public class Slime extends Mob implements Enemy {
     private static final EntityDataAccessor<Integer> f_33582_ = SynchedEntityData.m_135353_(Slime.class, EntityDataSerializers.f_135028_);
-@@ -62,8 +_,8 @@
-       this.f_21345_.m_25352_(2, new Slime.SlimeAttackGoal(this));
-       this.f_21345_.m_25352_(3, new Slime.SlimeRandomDirectionGoal(this));
-       this.f_21345_.m_25352_(5, new Slime.SlimeKeepOnJumpingGoal(this));
--      this.f_21346_.m_25352_(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (p_289461_) -> {
--         return Math.abs(p_289461_.m_20186_() - this.m_20186_()) <= 4.0D;
-+      this.f_21346_.m_25352_(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, (p_275994_) -> {
-+         return Math.abs(p_275994_.m_20186_() - this.m_20186_()) <= 4.0D;
-       }));
-       this.f_21346_.m_25352_(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
-    }
-@@ -121,24 +_,26 @@
-       this.f_33584_ += (this.f_33581_ - this.f_33584_) * 0.5F;
-       this.f_33585_ = this.f_33584_;
-       super.m_8119_();
--      if (this.m_20096_() && !this.f_33583_) {
-+      if (this.f_19861_ && !this.f_33583_) {
+@@ -124,6 +_,8 @@
+       if (this.m_20096_() && !this.f_33583_) {
           int i = this.m_33632_();
  
 +         // Forge: Don't spawn particles if it's handled by the implementation itself
@@ -45,33 +30,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
              float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
-             float f2 = Mth.m_14031_(f) * (float)i * 0.5F * f1;
-             float f3 = Mth.m_14089_(f) * (float)i * 0.5F * f1;
--            this.m_9236_().m_7106_(this.m_6300_(), this.m_20185_() + (double)f2, this.m_20186_(), this.m_20189_() + (double)f3, 0.0D, 0.0D, 0.0D);
-+            this.f_19853_.m_7106_(this.m_6300_(), this.m_20185_() + (double)f2, this.m_20186_(), this.m_20189_() + (double)f3, 0.0D, 0.0D, 0.0D);
-          }
- 
-          this.m_5496_(this.m_7905_(), this.m_6121_(), ((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.2F + 1.0F) / 0.8F);
-          this.f_33581_ = -0.5F;
--      } else if (!this.m_20096_() && this.f_33583_) {
-+      } else if (!this.f_19861_ && this.f_33583_) {
-          this.f_33581_ = 1.0F;
-       }
- 
--      this.f_33583_ = this.m_20096_();
-+      this.f_33583_ = this.f_19861_;
-       this.m_7480_();
-    }
- 
-@@ -177,17 +_,30 @@
- 
-    public void m_142687_(Entity.RemovalReason p_149847_) {
-       int i = this.m_33632_();
--      if (!this.m_9236_().f_46443_ && i > 1 && this.m_21224_()) {
-+      if (!this.f_19853_.f_46443_ && i > 1 && this.m_21224_()) {
-          Component component = this.m_7770_();
-          boolean flag = this.m_21525_();
-          float f = (float)i / 4.0F;
+@@ -184,6 +_,19 @@
           int j = i / 2;
           int k = 2 + this.f_19796_.m_188503_(3);
  
@@ -91,11 +50,6 @@
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
--            Slime slime = this.m_6095_().m_20615_(this.m_9236_());
-+            Slime slime = this.m_6095_().m_20615_(this.f_19853_);
-             if (slime != null) {
-                if (this.m_21532_()) {
-                   slime.m_21530_();
 @@ -198,9 +_,18 @@
                 slime.m_20331_(this.m_20147_());
                 slime.m_7839_(j, true);
@@ -116,25 +70,16 @@
        }
  
        super.m_142687_(p_149847_);
-@@ -320,6 +_,12 @@
+@@ -319,6 +_,12 @@
+    public EntityDimensions m_6972_(Pose p_33597_) {
        return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
     }
- 
++
 +   /**
 +    * Called when the slime spawns particles on landing, see onUpdate.
 +    * Return true to prevent the spawning of the default particles.
 +    */
 +   protected boolean spawnCustomParticles() { return false; }
-+
+ 
     static class SlimeAttackGoal extends Goal {
        private final Slime f_33645_;
-       private int f_33646_;
-@@ -489,7 +_,7 @@
-       }
- 
-       public boolean m_8036_() {
--         return this.f_33675_.m_5448_() == null && (this.f_33675_.m_20096_() || this.f_33675_.m_20069_() || this.f_33675_.m_20077_() || this.f_33675_.m_21023_(MobEffects.f_19620_)) && this.f_33675_.m_21566_() instanceof Slime.SlimeMoveControl;
-+         return this.f_33675_.m_5448_() == null && (this.f_33675_.f_19861_ || this.f_33675_.m_20069_() || this.f_33675_.m_20077_() || this.f_33675_.m_21023_(MobEffects.f_19620_)) && this.f_33675_.m_21566_() instanceof Slime.SlimeMoveControl;
-       }
- 
-       public void m_8037_() {

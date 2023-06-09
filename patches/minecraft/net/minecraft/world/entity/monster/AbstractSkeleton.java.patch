@@ -22,8 +22,7 @@
        double d1 = p_32141_.m_20227_(0.3333333333333333D) - abstractarrow.m_20186_();
        double d2 = p_32141_.m_20189_() - this.m_20189_();
        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
--      abstractarrow.m_6686_(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.m_9236_().m_46791_().m_19028_() * 4));
-+      abstractarrow.m_6686_(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.f_19853_.m_46791_().m_19028_() * 4));
+       abstractarrow.m_6686_(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.m_9236_().m_46791_().m_19028_() * 4));
 +      // CraftBukkit start
 +      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityShootBowEvent(this, this.m_21205_(), null, abstractarrow, net.minecraft.world.InteractionHand.MAIN_HAND, 0.8F, true);
 +      if (event.isCancelled()) {

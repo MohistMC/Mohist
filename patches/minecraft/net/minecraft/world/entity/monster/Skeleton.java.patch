@@ -1,15 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -42,7 +_,7 @@
-    }
- 
-    public void m_8119_() {
--      if (!this.m_9236_().f_46443_ && this.m_6084_() && !this.m_21525_()) {
-+      if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
-          if (this.f_146808_) {
-             if (this.m_149839_()) {
-                --this.f_149828_;
-@@ -77,15 +_,15 @@
+@@ -77,13 +_,13 @@
  
     }
  
@@ -23,8 +14,5 @@
 -      this.m_21406_(EntityType.f_20481_, true);
 +      this.convertTo(EntityType.f_20481_, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); // CraftBukkit - add spawn and transform reasons
        if (!this.m_20067_()) {
--         this.m_9236_().m_5898_((Player)null, 1048, this.m_20183_(), 0);
-+         this.f_19853_.m_5898_((Player)null, 1048, this.m_20183_(), 0);
+          this.m_9236_().m_5898_((Player)null, 1048, this.m_20183_(), 0);
        }
- 
-    }

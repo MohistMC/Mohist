@@ -10,7 +10,7 @@
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> f_32268_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135028_);
-@@ -196,15 +_,25 @@
+@@ -196,9 +_,19 @@
  
     public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.m_8038_(p_32286_, p_32287_);
@@ -30,29 +30,13 @@
     protected InteractionResult m_6071_(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.m_21120_(p_32302_);
        if (itemstack.m_204117_(ItemTags.f_262757_)) {
-          SoundEvent soundevent = itemstack.m_150930_(Items.f_42613_) ? SoundEvents.f_11874_ : SoundEvents.f_11942_;
--         this.m_9236_().m_6263_(p_32301_, this.m_20185_(), this.m_20186_(), this.m_20189_(), soundevent, this.m_5720_(), 1.0F, this.f_19796_.m_188501_() * 0.4F + 0.8F);
--         if (!this.m_9236_().f_46443_) {
-+         this.f_19853_.m_6263_(p_32301_, this.m_20185_(), this.m_20186_(), this.m_20189_(), soundevent, this.m_5720_(), 1.0F, this.f_19796_.m_188501_() * 0.4F + 0.8F);
-+         if (!this.f_19853_.f_46443_) {
-             this.m_32312_();
-             if (!itemstack.m_41763_()) {
-                itemstack.m_41774_(1);
-@@ -215,19 +_,27 @@
-             }
-          }
- 
--         return InteractionResult.m_19078_(this.m_9236_().f_46443_);
-+         return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-       } else {
-          return super.m_6071_(p_32301_, p_32302_);
+@@ -221,13 +_,21 @@
        }
     }
  
 -   private void m_32315_() {
--      if (!this.m_9236_().f_46443_) {
 +   public void m_32315_() {
-+      if (!this.f_19853_.f_46443_) {
+       if (!this.m_9236_().f_46443_) {
           float f = this.m_7090_() ? 2.0F : 1.0F;
 -         this.f_20890_ = true;
 -         this.m_9236_().m_254849_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)this.f_32272_ * f, Level.ExplosionInteraction.MOB);
@@ -60,10 +44,10 @@
 -         this.m_32316_();
 +         // CraftBukkit start
 +         ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), this.f_32272_ * f, false);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
 +            this.f_20890_ = true;
-+            this.f_19853_.m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +            this.m_146870_();
 +            this.m_32316_();
 +         } else {
@@ -73,12 +57,10 @@
        }
  
     }
-@@ -235,7 +_,8 @@
-    private void m_32316_() {
+@@ -236,6 +_,7 @@
        Collection<MobEffectInstance> collection = this.m_21220_();
        if (!collection.isEmpty()) {
--         AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.m_9236_(), this.m_20185_(), this.m_20186_(), this.m_20189_());
-+         AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.f_19853_, this.m_20185_(), this.m_20186_(), this.m_20189_());
+          AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.m_9236_(), this.m_20185_(), this.m_20186_(), this.m_20189_());
 +         areaeffectcloud.m_19718_(this); // CraftBukkit
           areaeffectcloud.m_19712_(2.5F);
           areaeffectcloud.m_19732_(-0.5F);
@@ -88,7 +70,7 @@
           }
  
 -         this.m_9236_().m_7967_(areaeffectcloud);
-+         this.f_19853_.addFreshEntity(areaeffectcloud, CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
++         this.m_9236_().addFreshEntity(areaeffectcloud, CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
        }
  
     }

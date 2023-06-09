@@ -20,12 +20,3 @@
           super.m_8056_();
        }
     }
-@@ -336,7 +_,7 @@
- 
-          for(int i = 0; i < 3; ++i) {
-             BlockPos blockpos1 = blockpos.m_7918_(Vex.this.f_19796_.m_188503_(15) - 7, Vex.this.f_19796_.m_188503_(11) - 5, Vex.this.f_19796_.m_188503_(15) - 7);
--            if (Vex.this.m_9236_().m_46859_(blockpos1)) {
-+            if (Vex.this.f_19853_.m_46859_(blockpos1)) {
-                Vex.this.f_21342_.m_6849_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_() + 0.5D, (double)blockpos1.m_123343_() + 0.5D, 0.25D);
-                if (Vex.this.m_5448_() == null) {
-                   Vex.this.m_21563_().m_24950_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_() + 0.5D, (double)blockpos1.m_123343_() + 0.5D, 180.0F, 20.0F);

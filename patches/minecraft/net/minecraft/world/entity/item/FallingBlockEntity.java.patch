@@ -45,58 +45,24 @@
        return fallingblockentity;
     }
  
-@@ -117,49 +_,56 @@
-          }
- 
-          this.m_6478_(MoverType.SELF, this.m_20184_());
--         if (!this.m_9236_().f_46443_) {
-+         if (!this.f_19853_.f_46443_) {
+@@ -120,11 +_,11 @@
+          if (!this.m_9236_().f_46443_) {
              BlockPos blockpos = this.m_20183_();
              boolean flag = this.f_31946_.m_60734_() instanceof ConcretePowderBlock;
 -            boolean flag1 = flag && this.m_9236_().m_6425_(blockpos).m_205070_(FluidTags.f_13131_);
-+            boolean flag1 = flag && this.f_31946_.canBeHydrated(this.f_19853_, blockpos, this.f_19853_.m_6425_(blockpos), blockpos);
++            boolean flag1 = flag && this.f_31946_.canBeHydrated(this.m_9236_(), blockpos, this.m_9236_().m_6425_(blockpos), blockpos);
              double d0 = this.m_20184_().m_82556_();
              if (flag && d0 > 1.0D) {
--               BlockHitResult blockhitresult = this.m_9236_().m_45547_(new ClipContext(new Vec3(this.f_19854_, this.f_19855_, this.f_19856_), this.m_20182_(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
+                BlockHitResult blockhitresult = this.m_9236_().m_45547_(new ClipContext(new Vec3(this.f_19854_, this.f_19855_, this.f_19856_), this.m_20182_(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
 -               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.m_9236_().m_6425_(blockhitresult.m_82425_()).m_205070_(FluidTags.f_13131_)) {
-+               BlockHitResult blockhitresult = this.f_19853_.m_45547_(new ClipContext(new Vec3(this.f_19854_, this.f_19855_, this.f_19856_), this.m_20182_(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
-+               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.f_31946_.canBeHydrated(this.f_19853_, blockpos, this.f_19853_.m_6425_(blockhitresult.m_82425_()), blockhitresult.m_82425_())) {
++               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.f_31946_.canBeHydrated(this.m_9236_(), blockpos, this.m_9236_().m_6425_(blockhitresult.m_82425_()), blockhitresult.m_82425_())) {
                    blockpos = blockhitresult.m_82425_();
                    flag1 = true;
                 }
-             }
- 
--            if (!this.m_20096_() && !flag1) {
--               if (!this.m_9236_().f_46443_ && (this.f_31942_ > 100 && (blockpos.m_123342_() <= this.m_9236_().m_141937_() || blockpos.m_123342_() > this.m_9236_().m_151558_()) || this.f_31942_ > 600)) {
--                  if (this.f_31943_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46137_)) {
-+            if (!this.f_19861_ && !flag1) {
-+               if (!this.f_19853_.f_46443_ && (this.f_31942_ > 100 && (blockpos.m_123342_() <= this.f_19853_.m_141937_() || blockpos.m_123342_() > this.f_19853_.m_151558_()) || this.f_31942_ > 600)) {
-+                  if (this.f_31943_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
-                      this.m_19998_(block);
-                   }
- 
-                   this.m_146870_();
-                }
-             } else {
--               BlockState blockstate = this.m_9236_().m_8055_(blockpos);
-+               BlockState blockstate = this.f_19853_.m_8055_(blockpos);
-                this.m_20256_(this.m_20184_().m_82542_(0.7D, -0.5D, 0.7D));
-                if (!blockstate.m_60713_(Blocks.f_50110_)) {
-                   if (!this.f_31947_) {
--                     boolean flag2 = blockstate.m_60629_(new DirectionalPlaceContext(this.m_9236_(), blockpos, Direction.DOWN, ItemStack.f_41583_, Direction.UP));
--                     boolean flag3 = FallingBlock.m_53241_(this.m_9236_().m_8055_(blockpos.m_7495_())) && (!flag || !flag1);
--                     boolean flag4 = this.f_31946_.m_60710_(this.m_9236_(), blockpos) && !flag3;
-+                     boolean flag2 = blockstate.m_60629_(new DirectionalPlaceContext(this.f_19853_, blockpos, Direction.DOWN, ItemStack.f_41583_, Direction.UP));
-+                     boolean flag3 = FallingBlock.m_53241_(this.f_19853_.m_8055_(blockpos.m_7495_())) && (!flag || !flag1);
-+                     boolean flag4 = this.f_31946_.m_60710_(this.f_19853_, blockpos) && !flag3;
-                      if (flag2 && flag4) {
--                        if (this.f_31946_.m_61138_(BlockStateProperties.f_61362_) && this.m_9236_().m_6425_(blockpos).m_76152_() == Fluids.f_76193_) {
-+                        if (this.f_31946_.m_61138_(BlockStateProperties.f_61362_) && this.f_19853_.m_6425_(blockpos).m_76152_() == Fluids.f_76193_) {
+@@ -151,6 +_,13 @@
                             this.f_31946_ = this.f_31946_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(true));
                          }
  
--                        if (this.m_9236_().m_7731_(blockpos, this.f_31946_, 3)) {
--                           ((ServerLevel)this.m_9236_()).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.m_9236_().m_8055_(blockpos)));
 +                        // CraftBukkit start
 +                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_).isCancelled()) {
 +                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
@@ -104,93 +70,16 @@
 +                        }
 +                        // CraftBukkit end
 +
-+                        if (this.f_19853_.m_7731_(blockpos, this.f_31946_, 3)) {
-+                           ((ServerLevel)this.f_19853_).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.f_19853_.m_8055_(blockpos)));
+                         if (this.m_9236_().m_7731_(blockpos, this.f_31946_, 3)) {
+                            ((ServerLevel)this.m_9236_()).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.m_9236_().m_8055_(blockpos)));
                             this.m_146870_();
-                            if (block instanceof Fallable) {
--                              ((Fallable)block).m_48792_(this.m_9236_(), blockpos, this.f_31946_, blockstate, this);
-+                              ((Fallable)block).m_48792_(this.f_19853_, blockpos, this.f_31946_, blockstate, this);
-                            }
- 
-                            if (this.f_31944_ != null && this.f_31946_.m_155947_()) {
--                              BlockEntity blockentity = this.m_9236_().m_7702_(blockpos);
-+                              BlockEntity blockentity = this.f_19853_.m_7702_(blockpos);
-                               if (blockentity != null) {
-                                  CompoundTag compoundtag = blockentity.m_187482_();
- 
-@@ -176,14 +_,14 @@
-                                  blockentity.m_6596_();
-                               }
-                            }
--                        } else if (this.f_31943_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46137_)) {
-+                        } else if (this.f_31943_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
-                            this.m_146870_();
-                            this.m_149650_(block, blockpos);
-                            this.m_19998_(block);
-                         }
-                      } else {
-                         this.m_146870_();
--                        if (this.f_31943_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46137_)) {
-+                        if (this.f_31943_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
-                            this.m_149650_(block, blockpos);
-                            this.m_19998_(block);
-                         }
-@@ -202,7 +_,7 @@
- 
-    public void m_149650_(Block p_149651_, BlockPos p_149652_) {
-       if (p_149651_ instanceof Fallable) {
--         ((Fallable)p_149651_).m_142525_(this.m_9236_(), p_149652_, this);
-+         ((Fallable)p_149651_).m_142525_(this.f_19853_, p_149652_, this);
-       }
- 
-    }
-@@ -216,19 +_,20 @@
-             return false;
-          } else {
-             Predicate<Entity> predicate = EntitySelector.f_20406_.and(EntitySelector.f_20403_);
--            Block $$8 = this.f_31946_.m_60734_();
--            DamageSource damagesource1;
--            if ($$8 instanceof Fallable) {
--               Fallable fallable = (Fallable)$$8;
--               damagesource1 = fallable.m_252932_(this);
-+            DamageSource damagesource;
-+            if (this.f_31946_.m_60734_() instanceof Fallable) {
-+               Fallable fallable = (Fallable)this.f_31946_.m_60734_();
-+               damagesource = fallable.m_252932_(this);
-             } else {
--               damagesource1 = this.m_269291_().m_269564_(this);
-+               predicate = EntitySelector.f_20408_;
-+               damagesource = this.m_269291_().m_269564_(this);
-             }
- 
--            DamageSource damagesource = damagesource1;
+@@ -228,7 +_,9 @@
+             DamageSource damagesource = damagesource1;
              float f = (float)Math.min(Mth.m_14143_((float)i * this.f_149641_), this.f_31940_);
--            this.m_9236_().m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
-+            this.f_19853_.m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
+             this.m_9236_().m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
 +               CraftEventFactory.entityDamage = this; // CraftBukkit
                 p_149649_.m_6469_(damagesource, f);
 +               CraftEventFactory.entityDamage = null; // CraftBukkit
              });
              boolean flag = this.f_31946_.m_204336_(BlockTags.f_13033_);
              if (flag && f > 0.0F && this.f_19796_.m_188501_() < 0.05F + (float)i * 0.05F) {
-@@ -256,11 +_,10 @@
-          p_31973_.m_128365_("TileEntityData", this.f_31944_);
-       }
- 
--      p_31973_.m_128379_("CancelDrop", this.f_31947_);
-    }
- 
-    protected void m_7378_(CompoundTag p_31964_) {
--      this.f_31946_ = NbtUtils.m_247651_(this.m_9236_().m_246945_(Registries.f_256747_), p_31964_.m_128469_("BlockState"));
-+      this.f_31946_ = NbtUtils.m_247651_(this.f_19853_.m_246945_(Registries.f_256747_), p_31964_.m_128469_("BlockState"));
-       this.f_31942_ = p_31964_.m_128451_("Time");
-       if (p_31964_.m_128425_("HurtEntities", 99)) {
-          this.f_31939_ = p_31964_.m_128471_("HurtEntities");
-@@ -278,7 +_,6 @@
-          this.f_31944_ = p_31964_.m_128469_("TileEntityData");
-       }
- 
--      this.f_31947_ = p_31964_.m_128471_("CancelDrop");
-       if (this.f_31946_.m_60795_()) {
-          this.f_31946_ = Blocks.f_49992_.m_49966_();
-       }

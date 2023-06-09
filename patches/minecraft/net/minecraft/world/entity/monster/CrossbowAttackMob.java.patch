@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/CrossbowAttackMob.java
 +++ b/net/minecraft/world/entity/monster/CrossbowAttackMob.java
-@@ -24,10 +_,10 @@
+@@ -24,9 +_,9 @@
     void m_5847_();
  
     default void m_32336_(LivingEntity p_32337_, float p_32338_) {
@@ -8,18 +8,7 @@
 +      InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, item -> item instanceof CrossbowItem);
        ItemStack itemstack = p_32337_.m_21120_(interactionhand);
 -      if (p_32337_.m_21055_(Items.f_42717_)) {
--         CrossbowItem.m_40887_(p_32337_.m_9236_(), p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.m_9236_().m_46791_().m_19028_() * 4));
 +      if (p_32337_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem)) {
-+         CrossbowItem.m_40887_(p_32337_.f_19853_, p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.f_19853_.m_46791_().m_19028_() * 4));
+          CrossbowItem.m_40887_(p_32337_.m_9236_(), p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.m_9236_().m_46791_().m_19028_() * 4));
        }
- 
-       this.m_5847_();
-@@ -39,7 +_,7 @@
-       double d2 = Math.sqrt(d0 * d0 + d1 * d1);
-       double d3 = p_32324_.m_20227_(0.3333333333333333D) - p_32325_.m_20186_() + d2 * (double)0.2F;
-       Vector3f vector3f = this.m_252851_(p_32323_, new Vec3(d0, d3, d1), p_32326_);
--      p_32325_.m_6686_((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_32327_, (float)(14 - p_32323_.m_9236_().m_46791_().m_19028_() * 4));
-+      p_32325_.m_6686_((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_32327_, (float)(14 - p_32323_.f_19853_.m_46791_().m_19028_() * 4));
-       p_32323_.m_5496_(SoundEvents.f_11847_, 1.0F, 1.0F / (p_32323_.m_217043_().m_188501_() * 0.4F + 0.8F));
-    }
  

@@ -8,17 +8,13 @@
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.level.Level;
-@@ -60,9 +_,10 @@
+@@ -60,7 +_,8 @@
        super.m_8024_();
        if ((this.f_19797_ + this.m_19879_()) % 1200 == 0) {
           MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.f_19599_, 6000, 2);
 -         List<ServerPlayer> list = MobEffectUtil.m_216946_((ServerLevel)this.m_9236_(), this, this.m_20182_(), 50.0D, mobeffectinstance, 1200);
--         list.forEach((p_289459_) -> {
--            p_289459_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132163_, this.m_20067_() ? 0.0F : 1.0F));
 +         LivingEntity.addEffectCause.set(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit // Mohist
-+         List<ServerPlayer> list = MobEffectUtil.addEffectToPlayersAround((ServerLevel)this.f_19853_, this, this.m_20182_(), 50.0D, mobeffectinstance, 1200, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
-+         list.forEach((p_275117_) -> {
-+            p_275117_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132163_, this.m_20067_() ? 0.0F : 1.0F));
++         List<ServerPlayer> list = MobEffectUtil.addEffectToPlayersAround((ServerLevel)this.m_9236_(), this, this.m_20182_(), 50.0D, mobeffectinstance, 1200, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+          list.forEach((p_289459_) -> {
+             p_289459_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132163_, this.m_20067_() ? 0.0F : 1.0F));
           });
-       }
- 

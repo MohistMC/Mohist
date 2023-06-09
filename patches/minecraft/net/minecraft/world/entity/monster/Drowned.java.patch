@@ -1,83 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Drowned.java
 +++ b/net/minecraft/world/entity/monster/Drowned.java
-@@ -72,7 +_,7 @@
-       this.f_21345_.m_25352_(2, new Drowned.DrownedTridentAttackGoal(this, 1.0D, 40, 10.0F));
-       this.f_21345_.m_25352_(2, new Drowned.DrownedAttackGoal(this, 1.0D, false));
-       this.f_21345_.m_25352_(5, new Drowned.DrownedGoToBeachGoal(this, 1.0D));
--      this.f_21345_.m_25352_(6, new Drowned.DrownedSwimUpGoal(this, 1.0D, this.m_9236_().m_5736_()));
-+      this.f_21345_.m_25352_(6, new Drowned.DrownedSwimUpGoal(this, 1.0D, this.f_19853_.m_5736_()));
-       this.f_21345_.m_25352_(7, new RandomStrollGoal(this, 1.0D));
-       this.f_21346_.m_25352_(1, (new HurtByTargetGoal(this, Drowned.class)).m_26044_(ZombifiedPiglin.class));
-       this.f_21346_.m_25352_(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::m_32395_));
-@@ -174,7 +_,7 @@
- 
-    public boolean m_32395_(@Nullable LivingEntity p_32396_) {
-       if (p_32396_ != null) {
--         return !this.m_9236_().m_46461_() || p_32396_.m_20069_();
-+         return !this.f_19853_.m_46461_() || p_32396_.m_20069_();
-       } else {
-          return false;
-       }
-@@ -205,7 +_,7 @@
-    }
- 
-    public void m_5844_() {
--      if (!this.m_9236_().f_46443_) {
-+      if (!this.f_19853_.f_46443_) {
-          if (this.m_21515_() && this.m_20069_() && this.m_32392_()) {
-             this.f_21344_ = this.f_32340_;
-             this.m_20282_(true);
-@@ -237,14 +_,14 @@
+@@ -237,7 +_,7 @@
     }
  
     public void m_6504_(LivingEntity p_32356_, float p_32357_) {
 -      ThrownTrident throwntrident = new ThrownTrident(this.m_9236_(), this, new ItemStack(Items.f_42713_));
-+      ThrownTrident throwntrident = new ThrownTrident(this.f_19853_, this, this.m_21120_(net.minecraft.world.entity.projectile.ProjectileUtil.m_37297_(this, Items.f_42713_))); // CraftBukkit - Use Trident in hand like skeletons (SPIGOT-7025);
++      ThrownTrident throwntrident = new ThrownTrident(this.m_9236_(), this, this.m_21120_(net.minecraft.world.entity.projectile.ProjectileUtil.m_37297_(this, Items.f_42713_))); // CraftBukkit - Use Trident in hand like skeletons (SPIGOT-7025);
        double d0 = p_32356_.m_20185_() - this.m_20185_();
        double d1 = p_32356_.m_20227_(0.3333333333333333D) - throwntrident.m_20186_();
        double d2 = p_32356_.m_20189_() - this.m_20189_();
-       double d3 = Math.sqrt(d0 * d0 + d2 * d2);
--      throwntrident.m_6686_(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.m_9236_().m_46791_().m_19028_() * 4));
-+      throwntrident.m_6686_(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.f_19853_.m_46791_().m_19028_() * 4));
-       this.m_5496_(SoundEvents.f_11821_, 1.0F, 1.0F / (this.m_217043_().m_188501_() * 0.4F + 0.8F));
--      this.m_9236_().m_7967_(throwntrident);
-+      this.f_19853_.m_7967_(throwntrident);
-    }
- 
-    public void m_32398_(boolean p_32399_) {
-@@ -277,7 +_,7 @@
-       }
- 
-       public boolean m_8036_() {
--         return super.m_8036_() && !this.f_32407_.m_9236_().m_46461_() && this.f_32407_.m_20069_() && this.f_32407_.m_20186_() >= (double)(this.f_32407_.m_9236_().m_5736_() - 3);
-+         return super.m_8036_() && !this.f_32407_.f_19853_.m_46461_() && this.f_32407_.m_20069_() && this.f_32407_.m_20186_() >= (double)(this.f_32407_.f_19853_.m_5736_() - 3);
-       }
- 
-       public boolean m_8045_() {
-@@ -311,7 +_,7 @@
-       public DrownedGoToWaterGoal(PathfinderMob p_32425_, double p_32426_) {
-          this.f_32418_ = p_32425_;
-          this.f_32422_ = p_32426_;
--         this.f_32423_ = p_32425_.m_9236_();
-+         this.f_32423_ = p_32425_.f_19853_;
-          this.m_7021_(EnumSet.of(Goal.Flag.MOVE));
-       }
- 
-@@ -390,7 +_,7 @@
-             this.f_32431_.m_7910_(f2);
-             this.f_32431_.m_20256_(this.f_32431_.m_20184_().m_82520_((double)f2 * d0 * 0.005D, (double)f2 * d1 * 0.1D, (double)f2 * d2 * 0.005D));
-          } else {
--            if (!this.f_32431_.m_20096_()) {
-+            if (!this.f_32431_.f_19861_) {
-                this.f_32431_.m_20256_(this.f_32431_.m_20184_().m_82520_(0.0D, -0.008D, 0.0D));
-             }
- 
-@@ -413,7 +_,7 @@
-       }
- 
-       public boolean m_8036_() {
--         return !this.f_32435_.m_9236_().m_46461_() && this.f_32435_.m_20069_() && this.f_32435_.m_20186_() < (double)(this.f_32437_ - 2);
-+         return !this.f_32435_.f_19853_.m_46461_() && this.f_32435_.m_20069_() && this.f_32435_.m_20186_() < (double)(this.f_32437_ - 2);
-       }
- 
-       public boolean m_8045_() {

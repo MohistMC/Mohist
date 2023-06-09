@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
 +++ b/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
-@@ -9,9 +_,9 @@
-    public static BehaviorControl<Piglin> m_257718_() {
+@@ -10,7 +_,7 @@
        return BehaviorBuilder.m_258034_((p_259197_) -> {
           return p_259197_.group(p_259197_.m_258080_(MemoryModuleType.f_26336_)).apply(p_259197_, (p_259512_) -> {
--            return (p_289481_, p_289482_, p_289483_) -> {
+             return (p_289481_, p_289482_, p_289483_) -> {
 -               if (!p_289482_.m_21206_().m_41619_() && !p_289482_.m_21206_().m_150930_(Items.f_42740_)) {
--                  PiglinAi.m_34867_(p_289482_, true);
-+            return (p_275996_, p_275997_, p_275998_) -> {
-+               if (!p_275997_.m_21206_().m_41619_() && !p_275997_.m_21206_().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
-+                  PiglinAi.m_34867_(p_275997_, true);
++               if (!p_289482_.m_21206_().m_41619_() && !p_289482_.m_21206_().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
+                   PiglinAi.m_34867_(p_289482_, true);
                    return true;
                 } else {
-                   return false;
