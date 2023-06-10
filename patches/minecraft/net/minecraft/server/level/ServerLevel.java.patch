@@ -139,14 +139,6 @@
     }
  
     /** @deprecated */
-@@ -247,6 +_,7 @@
-    @VisibleForTesting
-    public void m_287200_(@Nullable EndDragonFight p_287779_) {
-       this.f_8559_ = p_287779_;
-+      this.initCapabilities();
-    }
- 
-    public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
 @@ -274,12 +_,20 @@
        this.m_184096_();
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
