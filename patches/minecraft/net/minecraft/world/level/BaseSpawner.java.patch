@@ -36,13 +36,16 @@
     }
  
     private boolean m_151343_(Level p_151344_, BlockPos p_151345_) {
-@@ -135,12 +_,21 @@
+@@ -135,12 +_,24 @@
                          continue;
                       }
  
 -                     if (spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
 -                        ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_20183_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
 -                     }
+-                  }
+-
+-                  if (!p_151312_.m_8860_(entity)) {
 +                     // Forge: Patch in the spawn event for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
 +                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.m_6436_(entity.m_20183_()), null, compoundtag, this);
 +                     if (event != null && spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
@@ -54,9 +57,11 @@
 +                        mob.aware = false;
 +                     }
 +                     // Spigot End
-                   }
- 
--                  if (!p_151312_.m_8860_(entity)) {
++                  }
++                  // CraftBukkit start
++                  if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
++                     continue;
++                  }
 +                  p_151312_.addEntityspawnReason.set(CreatureSpawnEvent.SpawnReason.SPAWNER); // Mohist
 +                  if (!p_151312_.m_8860_(entity)) { // CraftBukkit
                       this.m_151350_(p_151312_, p_151313_);

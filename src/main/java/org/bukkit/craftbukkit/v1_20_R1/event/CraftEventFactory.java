@@ -1511,6 +1511,21 @@ public class CraftEventFactory {
         return event;
     }
 
+    /**
+     * Mob spawner event.
+     */
+    public static SpawnerSpawnEvent callSpawnerSpawnEvent(Entity spawnee, BlockPos pos) {
+        org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity entity = spawnee.getBukkitEntity();
+        BlockState state = CraftBlock.at(spawnee.level(), pos).getState();
+        if (!(state instanceof org.bukkit.block.CreatureSpawner)) {
+            state = null;
+        }
+
+        SpawnerSpawnEvent event = new SpawnerSpawnEvent(entity, (org.bukkit.block.CreatureSpawner) state);
+        entity.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
     public static EntityToggleGlideEvent callToggleGlideEvent(LivingEntity entity, boolean gliding) {
         EntityToggleGlideEvent event = new EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), gliding);
         entity.level.getCraftServer().getPluginManager().callEvent(event);
@@ -1730,25 +1745,11 @@ public class CraftEventFactory {
         EntitiesLoadEvent event = new EntitiesLoadEvent(new CraftChunk((ServerLevel ) world, coords.x, coords.z), bukkitEntities);
         Bukkit.getPluginManager().callEvent(event);
     }
+
     public static void callEntitiesUnloadEvent(Level world, ChunkPos coords, List<Entity> entities) {
         List<org.bukkit.entity.Entity> bukkitEntities = Collections.unmodifiableList(entities.stream().map(Entity::getBukkitEntity).collect(Collectors.toList()));
         EntitiesUnloadEvent event = new EntitiesUnloadEvent(new CraftChunk((ServerLevel ) world, coords.x, coords.z), bukkitEntities);
         Bukkit.getPluginManager().callEvent(event);
-    }
-
-    /**
-     * Mob spawner event.
-     */
-    public static SpawnerSpawnEvent callSpawnerSpawnEvent(Entity spawnee, BlockPos pos) {
-        CraftEntity entity = spawnee.getBukkitEntity();
-        BlockState state = entity.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
-        if (!(state instanceof org.bukkit.block.CreatureSpawner)) {
-            state = null;
-        }
-
-        SpawnerSpawnEvent event = new SpawnerSpawnEvent(entity, (org.bukkit.block.CreatureSpawner) state);
-        entity.getServer().getPluginManager().callEvent(event);
-        return event;
     }
 
     public static boolean callTNTPrimeEvent(Level world, BlockPos pos, TNTPrimeEvent.PrimeCause cause, Entity causingEntity, BlockPos causePosition) {
