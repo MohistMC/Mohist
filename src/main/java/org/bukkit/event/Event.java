@@ -1,5 +1,6 @@
 package org.bukkit.event;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,15 @@ public abstract class Event {
      */
     public Event(boolean isAsync) {
         this.async = isAsync;
+    }
+
+    public boolean callEvent() {
+        Bukkit.getPluginManager().callEvent(this);
+        if (this instanceof Cancellable) {
+            return !((Cancellable)this).isCancelled();
+        } else {
+            return true;
+        }
     }
 
     /**
