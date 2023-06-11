@@ -22,7 +22,7 @@
     public SmithingMenu(int p_40245_, Inventory p_40246_) {
        this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);
     }
-@@ -81,7 +_,7 @@
+@@ -81,14 +_,16 @@
     public void m_6640_() {
        List<SmithingRecipe> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
        if (list.isEmpty()) {
@@ -31,10 +31,10 @@
        } else {
           SmithingRecipe smithingrecipe = list.get(0);
           ItemStack itemstack = smithingrecipe.m_5874_(this.f_39769_, this.f_40241_.m_9598_());
-@@ -89,6 +_,9 @@
+          if (itemstack.m_246617_(this.f_40241_.m_246046_())) {
              this.f_40242_ = smithingrecipe;
              this.f_39768_.m_6029_(smithingrecipe);
-             this.f_39768_.m_6836_(0, itemstack);
+-            this.f_39768_.m_6836_(0, itemstack);
 +			// CraftBukkit start
 +         	CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
 +         	// CraftBukkit end
