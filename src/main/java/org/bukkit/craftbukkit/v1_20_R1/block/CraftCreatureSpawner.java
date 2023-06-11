@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import org.bukkit.World;
@@ -20,7 +21,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     public EntityType getSpawnedType() {
         SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
-            return EntityType.PIG; // TODO: Change API contract to nullable?
+            return null;
         }
 
         Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.by(spawnData.getEntityToSpawn());
@@ -29,9 +30,12 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
 
     @Override
     public void setSpawnedType(EntityType entityType) {
-        if (entityType == null || entityType.getName() == null) {
-            throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
+        if (entityType == null) {
+            this.getSnapshot().getSpawner().spawnPotentials = SimpleWeightedRandomList.empty(); // need clear the spawnPotentials to avoid nextSpawnData being replaced later
+            this.getSnapshot().getSpawner().nextSpawnData = null;
+            return;
         }
+        Preconditions.checkArgument(entityType != EntityType.UNKNOWN, "Can't spawn EntityType %s from mob spawners!", entityType);
 
         RandomSource rand = (this.isPlaced()) ? this.getWorldHandle().getRandom() : RandomSource.create();
         this.getSnapshot().setEntityId(net.minecraft.world.entity.EntityType.byString(entityType.getName()).get(), rand);
@@ -41,11 +45,11 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     public String getCreatureTypeName() {
         SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
-            return ""; // TODO: Change API contract to nullable?
+            return null;
         }
 
         Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.by(spawnData.getEntityToSpawn());
-        return (type.isEmpty()) ? "" : net.minecraft.world.entity.EntityType.getKey(type.get()).getPath();
+        return type.map(entityTypes -> net.minecraft.world.entity.EntityType.getKey(entityTypes).getPath()).orElse(null);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         // Verify input
         EntityType type = EntityType.fromName(creatureType);
         if (type == null) {
+            setSpawnedType(null);
             return;
         }
         setSpawnedType(type);

@@ -1,7 +1,7 @@
 package org.bukkit.block;
 
 import org.bukkit.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a captured state of a creature spawner.
@@ -13,34 +13,34 @@ public interface CreatureSpawner extends TileState {
      *
      * @return The creature type.
      */
-    @NotNull
+    @Nullable
     public EntityType getSpawnedType();
 
     /**
-     * Set the spawner's creature type.
+     * Set the spawner's creature type or null if it not set.
      *
      * @param creatureType The creature type.
      */
-    public void setSpawnedType(@NotNull EntityType creatureType);
+    public void setSpawnedType(@Nullable EntityType creatureType);
 
     /**
      * Set the spawner mob type.
      *
-     * @param creatureType The creature type's name.
+     * @param creatureType The creature type's name or null if it not set.
      * @deprecated magic value, use
      * {@link #setSpawnedType(org.bukkit.entity.EntityType)}.
      */
     @Deprecated
-    public void setCreatureTypeByName(@NotNull String creatureType);
+    public void setCreatureTypeByName(@Nullable String creatureType);
 
     /**
      * Get the spawner's creature type.
      *
-     * @return The creature type's name.
+     * @return The creature type's name or null if it not set.
      * @deprecated magic value, use {@link #getSpawnedType()}.
      */
     @Deprecated
-    @NotNull
+    @Nullable
     public String getCreatureTypeName();
 
     /**
@@ -69,6 +69,7 @@ public interface CreatureSpawner extends TileState {
      * It will choose a random number between {@link #getMinSpawnDelay()}
      * and {@link #getMaxSpawnDelay()} for its next {@link #getDelay()}.
      *
+     * <br>
      * Default value is 200 ticks.
      *
      * @return the minimum spawn delay amount
@@ -93,6 +94,7 @@ public interface CreatureSpawner extends TileState {
      * This value <b>must</b> be greater than 0 and less than or equal to
      * {@link #getMaxSpawnDelay()}.
      *
+     * <br>
      * Default value is 800 ticks.
      *
      * @return the maximum spawn delay amount

@@ -20,8 +20,9 @@
     private static final Logger f_45441_ = LogUtils.getLogger();
     private static final int f_151303_ = 1;
 -   private int f_45442_ = 20;
+-   private SimpleWeightedRandomList<SpawnData> f_45443_ = SimpleWeightedRandomList.m_185864_();
 +   public int f_45442_ = 20;
-    private SimpleWeightedRandomList<SpawnData> f_45443_ = SimpleWeightedRandomList.m_185864_();
++   public SimpleWeightedRandomList<SpawnData> f_45443_ = SimpleWeightedRandomList.m_185864_();
     @Nullable
 -   private SpawnData f_45444_;
 +   public SpawnData f_45444_;

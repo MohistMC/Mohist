@@ -61,7 +61,14 @@
     private final Map<UUID, ServerPlayer> f_11197_ = Maps.newHashMap();
     private final UserBanList f_11198_ = new UserBanList(f_11189_);
     private final IpBanList f_11199_ = new IpBanList(f_11190_);
-@@ -132,8 +_,16 @@
+@@ -126,14 +_,22 @@
+    private boolean f_11205_;
+    private final LayeredRegistryAccess<RegistryLayer> f_243858_;
+    private final RegistryAccess.Frozen f_256838_;
+-   protected final int f_11193_;
++   public int f_11193_;
+    private int f_11207_;
+    private int f_184208_;
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
