@@ -164,7 +164,7 @@ public class ActivationRange
     public static boolean checkEntityImmunities(Entity entity)
     {
         // quick checks.
-        if ( entity.wasTouchingWater || entity.remainingFireTicks > 0 )
+        if ( entity.wasTouchingWater || entity.getRemainingFireTicks() > 0 )
         {
             return true;
         }

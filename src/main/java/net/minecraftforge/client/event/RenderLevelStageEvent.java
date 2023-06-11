@@ -201,6 +201,11 @@ public class RenderLevelStageEvent extends Event
          * Called within a fabulous graphics target.
          */
         public static final Stage AFTER_WEATHER = register("after_weather", null);
+        /**
+         * Use this to render after everything in the level has been rendered.
+         * Called after {@link LevelRenderer#renderLevel(PoseStack, float, long, boolean, Camera, GameRenderer, LightTexture, Matrix4f)} finishes.
+         */
+        public static final Stage AFTER_LEVEL = register("after_level", null);
 
         private final String name;
 
