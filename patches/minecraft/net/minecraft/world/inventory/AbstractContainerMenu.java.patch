@@ -163,7 +163,7 @@
  
                 int k1 = this.m_142621_().m_41613_();
  
-+               Map<Integer, ItemStack> draggedSlots = new HashMap<Integer, ItemStack>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
++               Map<Integer, ItemStack> draggedSlots = new HashMap<>(); // CraftBukkit - Store slots from drag in map (raw slot id -> new stack)
                 for(Slot slot1 : this.f_38847_) {
                    ItemStack itemstack1 = this.m_142621_();
                    if (slot1 != null && m_38899_(slot1, itemstack1, true) && slot1.m_5857_(itemstack1) && (this.f_38845_ == 2 || itemstack1.m_41613_() >= this.f_38847_.size()) && this.m_5622_(slot1)) {
@@ -178,8 +178,8 @@
 -               itemstack2.m_41764_(k1);
 -               this.m_142503_(itemstack2);
 +
-+                     // slot1.set(itemstack2);
-+                     draggedSlots.put(slot1.f_40219_, itemstack2); // CraftBukkit - Put in map instead of setting
++                     // slot1.setByPlayer(itemstack2.copyWithCount(l));
++                     draggedSlots.put(slot1.f_40219_, itemstack2.m_255036_(l)); // CraftBukkit - Put in map instead of setting
 +                  }
 +               }
 +
@@ -197,7 +197,7 @@
 +               this.m_142503_(CraftItemStack.asNMSCopy(newcursor));
 +
 +               InventoryDragEvent event = new InventoryDragEvent(view, (newcursor.getType() != org.bukkit.Material.AIR ? newcursor : null), CraftItemStack.asBukkitCopy(oldCursor), this.f_38845_ == 1, eventmap);
-+               p_150434_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++               p_150434_.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
 +               // Whether or not a change was made to the inventory that requires an update.
 +               boolean needsUpdate = event.getResult() != Result.DEFAULT;
@@ -249,11 +249,11 @@
  
              slot7.m_6654_();
 +            // CraftBukkit start - Make sure the client has the right slot contents
-+            if (p_150434_ instanceof ServerPlayer && slot7.m_6641_() != 64) {
-+               ((ServerPlayer) p_150434_).f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), slot7.f_40219_, slot7.m_7993_()));
++            if (p_150434_ instanceof ServerPlayer serverPlayer && slot7.m_6641_() != 64) {
++               serverPlayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), slot7.f_40219_, slot7.m_7993_()));
 +               // Updating a crafting inventory makes the client reset the result slot, have to send it again
 +               if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
-+                  ((ServerPlayer) p_150434_).f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
++                  serverPlayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
 +               }
 +            }
 +            // CraftBukkit end
