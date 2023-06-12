@@ -1,9 +1,9 @@
 <div align="center">
-  <h1>Mohist 1.20</h1>
+  <h1>Mohist 1.20.1</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.1)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
 [![](https://img.shields.io/badge/Forge-1.20--46.0.14-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.html)
 [![](https://img.shields.io/badge/jdk-17.0.7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
@@ -17,7 +17,7 @@
 
 | Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
 |---------|-------------|-----------|---------------------|----------------------|
-| 1.20    | WIP         | Poor      | Zero                | Zero                 |
+| 1.20.1  | WIP         | Poor      | Zero                | Zero                 |
 | 1.19.4  | WIP         | Poor      | Zero                | Zero                 |
 | 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.18.2  | WIP         | Poor      | Zero                | Zero                 |

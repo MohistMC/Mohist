@@ -11,10 +11,10 @@
     private PacketListener f_129470_;
     private Component f_129471_;
     private boolean f_129472_;
-@@ -84,6 +_,13 @@
-    private float f_129477_;
-    private int f_129478_;
+@@ -86,6 +_,13 @@
     private boolean f_129479_;
+    @Nullable
+    private volatile Component f_290021_;
 +   private java.util.function.Consumer<Connection> activationHandler;
 +   public String hostname = ""; // CraftBukkit - add field
 +   // Spigot Start
@@ -25,7 +25,7 @@
  
     public Connection(PacketFlow p_129482_) {
        this.f_129466_ = p_129482_;
-@@ -93,7 +_,10 @@
+@@ -95,7 +_,10 @@
        super.channelActive(p_129525_);
        this.f_129468_ = p_129525_.channel();
        this.f_129469_ = this.f_129468_.remoteAddress();
@@ -37,7 +37,7 @@
        try {
           this.m_129498_(ConnectionProtocol.HANDSHAKING);
        } catch (Throwable throwable) {
-@@ -193,7 +_,7 @@
+@@ -199,7 +_,7 @@
           }
  
           f_129465_.debug("Disabled auto read");
@@ -46,30 +46,34 @@
        }
  
        if (this.f_129468_.eventLoop().inEventLoop()) {
-@@ -279,8 +_,11 @@
-    }
- 
-    public void m_129507_(Component p_129508_) {
+@@ -288,9 +_,11 @@
+       if (this.f_129468_ == null) {
+          this.f_290021_ = p_129508_;
+       }
+-
 +      // Spigot Start
 +      this.preparing = false;
 +      // Spigot End
-       if (this.f_129468_.isOpen()) {
+       if (this.m_129536_()) {
 -         this.f_129468_.close().awaitUninterruptibly();
 +         this.f_129468_.close(); // We can't wait as this may be called from an event loop.
           this.f_129471_ = p_129508_;
        }
  
-@@ -299,7 +_,9 @@
+@@ -309,9 +_,11 @@
     }
  
     public static Connection m_178300_(InetSocketAddress p_178301_, boolean p_178302_) {
+-      Connection connection = new Connection(PacketFlow.CLIENTBOUND);
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_178301_.getAddress());
-       final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
++      final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
+       ChannelFuture channelfuture = m_290025_(p_178301_, p_178302_, connection);
+       channelfuture.syncUninterruptibly();
 +      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
-       Class<? extends SocketChannel> oclass;
-       LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
-       if (Epoll.isAvailable() && p_178302_) {
-@@ -332,6 +_,7 @@
+       return connection;
+    }
+ 
+@@ -347,6 +_,7 @@
  
     public static Connection m_129493_(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
@@ -77,7 +81,7 @@
        (new Bootstrap()).group(f_129464_.m_13971_()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
              ChannelPipeline channelpipeline = p_129557_.pipeline();
-@@ -411,6 +_,7 @@
+@@ -426,6 +_,7 @@
              } else if (this.m_129538_() != null) {
                 this.m_129538_().m_7026_(Component.m_237115_("multiplayer.disconnect.generic"));
              }
@@ -85,7 +89,7 @@
           }
  
        }
-@@ -424,6 +_,14 @@
+@@ -439,6 +_,14 @@
        return this.f_129477_;
     }
  
@@ -100,7 +104,7 @@
     static class PacketHolder {
        final Packet<?> f_129558_;
        @Nullable
-@@ -434,4 +_,11 @@
+@@ -449,4 +_,11 @@
           this.f_129559_ = p_243266_;
        }
     }
