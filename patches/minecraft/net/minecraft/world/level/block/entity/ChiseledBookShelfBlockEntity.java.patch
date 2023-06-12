@@ -29,6 +29,15 @@
  
     public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
        super(BlockEntityType.f_244310_, p_249541_, p_251752_);
+@@ -91,7 +_,7 @@
+    public void m_6836_(int p_256610_, ItemStack p_255789_) {
+       if (p_255789_.m_204117_(ItemTags.f_244646_)) {
+          this.f_260576_.set(p_256610_, p_255789_);
+-         this.m_261204_(p_256610_);
++         if (f_58857_ != null) this.m_261204_(p_256610_); // CraftBukkit - SPIGOT-7381: check for null world
+       }
+ 
+    }
 @@ -107,7 +_,7 @@
     }
  

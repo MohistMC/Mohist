@@ -261,6 +261,18 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public enum DamageCause {
 
         /**
+         * Damage caused by /kill command
+         * <p>
+         * Damage: {@link Float#MAX_VALUE}
+         */
+        KILL,
+        /**
+         * Damage caused by the World Border
+         * <p>
+         * Damage: {@link WorldBorder#getDamageAmount()}
+         */
+        WORLD_BORDER,
+        /**
          * Damage caused when an entity contacts a block such as a Cactus,
          * Dripstone (Stalagmite) or Berry Bush.
          * <p>
@@ -356,7 +368,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
          * Damage caused by committing suicide.
          * <p>
          * <b>Note:</b> This is currently only used by plugins, default commands
-         * like /minecraft:kill use {@link #VOID} to damage players.
+         * like /minecraft:kill use {@link #KILL} to damage players.
          * <p>
          * Damage: variable
          */
