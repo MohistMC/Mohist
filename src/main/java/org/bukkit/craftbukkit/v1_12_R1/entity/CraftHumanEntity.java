@@ -23,12 +23,12 @@ import net.minecraft.tileentity.TileEntityDropper;
 import net.minecraft.tileentity.TileEntityEnchantmentTable;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IInteractionObject;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -365,7 +365,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             container.setWorld(getHandle().world);
             container.setPos(pos);
         }
-        getHandle().displayGui((TileEntityLockable) container);
+        getHandle().displayGui((IInteractionObject) container);
 
         if (force) {
             getHandle().openContainer.checkReachable = false;
