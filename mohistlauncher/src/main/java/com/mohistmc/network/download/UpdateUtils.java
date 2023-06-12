@@ -51,10 +51,10 @@ public class UpdateUtils {
         System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
 
         try {
-            JsonElement root = JsonParser.parseReader(new InputStreamReader(getInput("https://mohistmc.com/api/1.20/latest")));
+            JsonElement root = JsonParser.parseReader(new InputStreamReader(getInput("https://mohistmc.com/api/1.20.1/latest")));
 
             String jar_sha = MohistMCStart.getVersion();
-            String build_number = "1.20-" + root.getAsJsonObject().get("number").toString();
+            String build_number = "1.20.1-" + root.getAsJsonObject().get("number").toString();
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timeinmillis").toString())));
 
             if (jar_sha.equals(build_number))

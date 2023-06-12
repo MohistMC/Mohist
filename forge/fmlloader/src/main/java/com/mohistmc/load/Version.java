@@ -15,6 +15,6 @@ public class Version {
             }
         } catch (Throwable ignored) {
         }
-        return "1.20";
+        return "1.20.1";
     }
 }
