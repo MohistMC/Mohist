@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R1.persistence;
 
-import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Map;
 
 /**
  * A child class of the persistent data container that recalls if it has been

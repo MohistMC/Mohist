@@ -1,11 +1,12 @@
 package org.bukkit.util;
 
 import com.google.common.base.Preconditions;
-import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import java.util.Objects;
 
 /**
  * Represents an arbitrary affine transformation.

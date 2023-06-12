@@ -1,8 +1,9 @@
 package org.bukkit.block.data.type;
 
-import java.util.Set;
 import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Interface to the 'has_bottle_0', 'has_bottle_1', 'has_bottle_2' flags on a

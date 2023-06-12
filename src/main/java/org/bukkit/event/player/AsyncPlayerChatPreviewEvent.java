@@ -1,10 +1,11 @@
 package org.bukkit.event.player;
 
-import java.util.Set;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Used to format chat for chat preview. If this event is used, then the result

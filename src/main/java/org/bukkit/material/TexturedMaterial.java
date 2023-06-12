@@ -1,7 +1,8 @@
 package org.bukkit.material;
 
-import java.util.List;
 import org.bukkit.Material;
+
+import java.util.List;
 
 /**
  * Represents textured materials like steps and smooth bricks

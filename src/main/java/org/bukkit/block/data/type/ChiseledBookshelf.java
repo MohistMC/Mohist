@@ -1,8 +1,9 @@
 package org.bukkit.block.data.type;
 
-import java.util.Set;
 import org.bukkit.block.data.Directional;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Interface to the 'slot_0_occupied', 'slow_1_occupied' ... 'slot_5_occupied'

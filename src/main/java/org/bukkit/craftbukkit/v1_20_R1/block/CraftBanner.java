@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.AbstractBannerBlock;
@@ -12,6 +10,9 @@ import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implements Banner {
 

@@ -1,11 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
+import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +11,13 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 public final class CraftMapView implements MapView {
 
@@ -32,14 +34,11 @@ public final class CraftMapView implements MapView {
     @Override
     public int getId() {
         String text = worldMap.id;
-        if (text.startsWith("map_")) {
-            try {
-                return Integer.parseInt(text.substring("map_".length()));
-            } catch (NumberFormatException ex) {
-                throw new IllegalStateException("Map has non-numeric ID");
-            }
-        } else {
-            throw new IllegalStateException("Map has invalid ID");
+        Preconditions.checkState(text.startsWith("map_"), "Map has a invalid ID");
+        try {
+            return Integer.parseInt(text.substring("map_".length()));
+        } catch (NumberFormatException ex) {
+            throw new IllegalStateException("Map has non-numeric ID");
         }
     }
 

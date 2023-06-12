@@ -1,7 +1,8 @@
 package org.bukkit.potion;
 
-import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * Represents a brewer that can create {@link PotionEffect}s.

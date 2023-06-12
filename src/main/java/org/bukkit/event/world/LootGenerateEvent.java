@@ -1,7 +1,5 @@
 package org.bukkit.event.world;
 
-import java.util.Collection;
-import java.util.List;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
@@ -13,6 +11,9 @@ import org.bukkit.loot.LootContext;
 import org.bukkit.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Called when a {@link LootTable} is generated in the world for an

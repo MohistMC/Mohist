@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.monster.Zombie;
@@ -9,7 +8,6 @@ import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
@@ -17,6 +15,8 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+
+import java.util.Locale;
 
 public class CraftVillager extends CraftAbstractVillager implements Villager {
 
@@ -53,7 +53,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public void setProfession(Profession profession) {
-        Validate.notNull(profession);
+        Preconditions.checkArgument(profession != null, "Profession cannot be null");
         getHandle().setVillagerData(getHandle().getVillagerData().setProfession(CraftVillager.bukkitToNmsProfession(profession)));
     }
 
@@ -64,7 +64,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public void setVillagerType(Type type) {
-        Validate.notNull(type);
+        Preconditions.checkArgument(type != null, "Type cannot be null");
         getHandle().setVillagerData(getHandle().getVillagerData().setType(BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
@@ -75,7 +75,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public void setVillagerLevel(int level) {
-        Preconditions.checkArgument(1 <= level && level <= 5, "level must be between [1, 5]");
+        Preconditions.checkArgument(1 <= level && level <= 5, "level (%s) must be between [1, 5]", level);
 
         getHandle().setVillagerData(getHandle().getVillagerData().setLevel(level));
     }
@@ -87,7 +87,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public void setVillagerExperience(int experience) {
-        Preconditions.checkArgument(experience >= 0, "Experience must be positive");
+        Preconditions.checkArgument(experience >= 0, "Experience (%s) must be positive", experience);
 
         getHandle().setVillagerXp(experience);
     }

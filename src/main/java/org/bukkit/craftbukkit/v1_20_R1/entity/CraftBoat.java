@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.stream.Collectors;
 import org.bukkit.TreeSpecies;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+
+import java.util.stream.Collectors;
 
 public class CraftBoat extends CraftVehicle implements Boat {
 

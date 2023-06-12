@@ -1,12 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.Locale;
-import java.util.UUID;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
@@ -14,6 +11,8 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
+
+import java.util.Locale;
 
 public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
@@ -43,7 +42,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public void setVillagerProfession(Villager.Profession profession) {
-        Validate.notNull(profession);
+        Preconditions.checkArgument(profession != null, "Villager.Profession cannot be null");
         getHandle().setVillagerData(getHandle().getVillagerData().setProfession(BuiltInRegistries.VILLAGER_PROFESSION.get(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
     }
 
@@ -54,7 +53,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public void setVillagerType(Villager.Type type) {
-        Validate.notNull(type);
+        Preconditions.checkArgument(type != null, "Villager.Type cannot be null");
         getHandle().setVillagerData(getHandle().getVillagerData().setType(BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
@@ -78,7 +77,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
             getHandle().conversionStarter = null;
             getHandle().removeEffect(MobEffects.DAMAGE_BOOST, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
         } else {
-            getHandle().startConverting((UUID) null, time);
+            getHandle().startConverting(null, time);
         }
     }
 

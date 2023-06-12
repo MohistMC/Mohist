@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.StringTag;
@@ -14,6 +13,8 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaMap extends CraftMetaItem implements MapMeta {

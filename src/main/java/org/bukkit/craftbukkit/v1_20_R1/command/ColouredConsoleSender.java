@@ -1,11 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R1.command;
 
-import java.awt.Color;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
@@ -13,6 +7,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Attribute;
+
+import java.awt.Color;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
     private final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);

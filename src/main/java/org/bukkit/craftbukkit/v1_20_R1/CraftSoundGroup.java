@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
-import java.util.HashMap;
 import net.minecraft.world.level.block.SoundType;
 import org.bukkit.Sound;
 import org.bukkit.SoundGroup;
+
+import java.util.HashMap;
 
 public class CraftSoundGroup implements SoundGroup {
 

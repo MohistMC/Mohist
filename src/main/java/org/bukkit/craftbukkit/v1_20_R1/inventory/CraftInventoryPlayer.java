@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.server.level.ServerPlayer;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -174,7 +173,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public void setHeldItemSlot(int slot) {
-        Validate.isTrue(slot >= 0 && slot < net.minecraft.world.entity.player.Inventory.getSelectionSize(), "Slot is not between 0 and 8 inclusive");
+        Preconditions.checkArgument(slot >= 0 && slot < net.minecraft.world.entity.player.Inventory.getSelectionSize(), "Slot (%s) is not between 0 and %s inclusive", slot, net.minecraft.world.entity.player.Inventory.getSelectionSize() - 1);
         this.getInventory().selected = slot;
         ((CraftPlayer) this.getHolder()).getHandle().connection.send(new ClientboundSetCarriedItemPacket(slot));
     }
@@ -248,7 +247,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         if (items == null) {
             items = new ItemStack[length];
         }
-        Preconditions.checkArgument(items.length <= length, "items.length must be < %s", length);
+        Preconditions.checkArgument(items.length <= length, "items.length must be <= %s", length);
 
         for (int i = 0; i < length; i++) {
             if (i >= items.length) {

@@ -10,21 +10,16 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.ServicesKeySet;
 import com.mojang.authlib.yggdrasil.ServicesKeyType;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import org.bukkit.craftbukkit.v1_20_R1.configuration.ConfigSerializationUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.apache.commons.io.IOUtils;
-import org.bukkit.craftbukkit.v1_20_R1.configuration.ConfigSerializationUtil;
 
 final class CraftProfileProperty {
 

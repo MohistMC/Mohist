@@ -1,9 +1,10 @@
 package org.bukkit.permissions;
 
-import java.util.Set;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /**
  * Represents an object that may be assigned permissions

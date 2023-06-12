@@ -1,9 +1,10 @@
 package org.bukkit.map;
 
-import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 
 /**
  * Represents a bitmap font drawable to a map.

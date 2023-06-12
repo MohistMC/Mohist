@@ -1,11 +1,12 @@
 package org.bukkit.inventory.meta.trim;
 
 import com.google.common.base.Preconditions;
-import java.util.Objects;
 import org.bukkit.MinecraftExperimental;
 import org.bukkit.inventory.meta.ArmorMeta;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * Represents an armor trim that may be applied to an item.

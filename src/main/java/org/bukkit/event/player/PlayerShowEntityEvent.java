@@ -1,6 +1,5 @@
 package org.bukkit.event.player;
 
-import org.bukkit.Warning;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

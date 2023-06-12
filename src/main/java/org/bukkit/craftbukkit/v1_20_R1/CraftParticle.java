@@ -3,9 +3,6 @@ package org.bukkit.craftbukkit.v1_20_R1;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustColorTransitionOptions;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -34,6 +31,9 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.joml.Vector3f;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum CraftParticle {
 

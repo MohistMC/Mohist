@@ -1,8 +1,9 @@
 package org.bukkit.util;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class StringUtil {
 

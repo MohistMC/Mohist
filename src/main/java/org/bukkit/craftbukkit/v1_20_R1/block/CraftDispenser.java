@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
-import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.World;

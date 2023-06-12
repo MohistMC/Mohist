@@ -8,21 +8,6 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -35,7 +20,13 @@ import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.*;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.DistanceManager;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.Ticket;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.SortedArraySet;
@@ -47,13 +38,12 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -129,6 +119,22 @@ import org.bukkit.util.StructureSearchResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CraftWorld extends CraftRegionAccessor implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
@@ -471,14 +477,17 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public org.bukkit.entity.Item dropItem(Location loc, ItemStack item, Consumer<org.bukkit.entity.Item> function) {
-        Validate.notNull(item, "Cannot drop a Null item.");
+        Preconditions.checkArgument(loc != null, "Location cannot be null");
+        Preconditions.checkArgument(item != null, "ItemStack cannot be null");
+
         ItemEntity entity = new ItemEntity(world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
+        org.bukkit.entity.Item itemEntity = (org.bukkit.entity.Item) entity.getBukkitEntity();
         entity.pickupDelay = 10;
         if (function != null) {
-            function.accept((org.bukkit.entity.Item) entity.getBukkitEntity());
+            function.accept(itemEntity);
         }
         world.addFreshEntity(entity, SpawnReason.CUSTOM);
-        return (org.bukkit.entity.Item) entity.getBukkitEntity();
+        return itemEntity;
     }
 
     @Override
@@ -488,13 +497,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item, Consumer<org.bukkit.entity.Item> function) {
+        Preconditions.checkArgument(loc != null, "Location cannot be null");
+        Preconditions.checkArgument(item != null, "ItemStack cannot be null");
+
         double xs = (world.random.nextFloat() * 0.5F) + 0.25D;
         double ys = (world.random.nextFloat() * 0.5F) + 0.25D;
         double zs = (world.random.nextFloat() * 0.5F) + 0.25D;
-        loc = loc.clone();
-        loc.setX(loc.getX() + xs);
-        loc.setY(loc.getY() + ys);
-        loc.setZ(loc.getZ() + zs);
+        loc = loc.clone().add(xs, ys, zs);
         return dropItem(loc, item, function);
     }
 
@@ -505,9 +514,9 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public <T extends AbstractArrow> T spawnArrow(Location loc, Vector velocity, float speed, float spread, Class<T> clazz) {
-        Validate.notNull(loc, "Can not spawn arrow with a null location");
-        Validate.notNull(velocity, "Can not spawn arrow with a null velocity");
-        Validate.notNull(clazz, "Can not spawn an arrow with no class");
+        Preconditions.checkArgument(loc != null, "Location cannot be null");
+        Preconditions.checkArgument(velocity != null, "Vector cannot be null");
+        Preconditions.checkArgument(clazz != null, "clazz Entity for the arrow cannot be null");
 
         net.minecraft.world.entity.projectile.AbstractArrow arrow;
         if (TippedArrow.class.isAssignableFrom(clazz)) {
@@ -529,17 +538,21 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public LightningStrike strikeLightning(Location loc) {
-        net.minecraft.world.entity.LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
-        lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-        world.strikeLightning(lightning, LightningStrikeEvent.Cause.CUSTOM);
-        return (LightningStrike) lightning.getBukkitEntity();
+        return strikeLightning0(loc, false);
     }
 
     @Override
     public LightningStrike strikeLightningEffect(Location loc) {
+
+        return strikeLightning0(loc, true);
+    }
+
+    private LightningStrike strikeLightning0(Location loc, boolean isVisual) {
+        Preconditions.checkArgument(loc != null, "Location cannot be null");
+
         net.minecraft.world.entity.LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
         lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-        lightning.setVisualOnly(true);
+        lightning.setVisualOnly(isVisual);
         world.strikeLightning(lightning, LightningStrikeEvent.Cause.CUSTOM);
         return (LightningStrike) lightning.getBukkitEntity();
     }
@@ -807,8 +820,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z, Predicate<Entity> filter) {
-        Validate.notNull(location, "Location is null!");
-        Validate.isTrue(this.equals(location.getWorld()), "Location is from different world!");
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(this.equals(location.getWorld()), "Location cannot be in a different world");
 
         BoundingBox aabb = BoundingBox.of(location, x, y, z);
         return this.getNearbyEntities(aabb, filter);
@@ -821,7 +834,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<Entity> filter) {
-        Validate.notNull(boundingBox, "Bounding box is null!");
+        Preconditions.checkArgument(boundingBox != null, "BoundingBox cannot be null");
 
         AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
         List<net.minecraft.world.entity.Entity> entityList = getHandle().getEntities((net.minecraft.world.entity.Entity) null, bb, Predicates.alwaysTrue());
@@ -854,14 +867,14 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize, Predicate<Entity> filter) {
-        Validate.notNull(start, "Start location is null!");
-        Validate.isTrue(this.equals(start.getWorld()), "Start location is from different world!");
+        Preconditions.checkArgument(start != null, "Location start cannot be null");
+        Preconditions.checkArgument(this.equals(start.getWorld()), "Location start cannot be in a different world");
         start.checkFinite();
 
-        Validate.notNull(direction, "Direction is null!");
+        Preconditions.checkArgument(direction != null, "Vector direction cannot be null");
         direction.checkFinite();
 
-        Validate.isTrue(direction.lengthSquared() > 0, "Direction's magnitude is 0!");
+        Preconditions.checkArgument(direction.lengthSquared() > 0, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
 
         if (maxDistance < 0.0D) {
             return null;
@@ -906,15 +919,15 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode, boolean ignorePassableBlocks) {
-        Validate.notNull(start, "Start location is null!");
-        Validate.isTrue(this.equals(start.getWorld()), "Start location is from different world!");
+        Preconditions.checkArgument(start != null, "Location start cannot be null");
+        Preconditions.checkArgument(this.equals(start.getWorld()), "Location start cannot be in a different world");
         start.checkFinite();
 
-        Validate.notNull(direction, "Direction is null!");
+        Preconditions.checkArgument(direction != null, "Vector direction cannot be null");
         direction.checkFinite();
 
-        Validate.isTrue(direction.lengthSquared() > 0, "Direction's magnitude is 0!");
-        Validate.notNull(fluidCollisionMode, "Fluid collision mode is null!");
+        Preconditions.checkArgument(direction.lengthSquared() > 0, "Direction's magnitude (%s) need to be greater than 0", direction.lengthSquared());
+        Preconditions.checkArgument(fluidCollisionMode != null, "FluidCollisionMode cannot be null");
 
         if (maxDistance < 0.0D) {
             return null;
@@ -1099,10 +1112,11 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public <T> void playEffect(Location loc, Effect effect, T data, int radius) {
         if (data != null) {
-            Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(data.getClass()), "Wrong kind of data for this effect!");
+            Preconditions.checkArgument(effect.getData() != null, "Effect.%s does not have a valid Data", effect);
+            Preconditions.checkArgument(effect.getData().isAssignableFrom(data.getClass()), "%s data cannot be used for the %s effect", data.getClass().getName(), effect);
         } else {
             // Special case: the axis is optional for ELECTRIC_SPARK
-            Validate.isTrue(effect.getData() == null || effect == Effect.ELECTRIC_SPARK, "Wrong kind of data for this effect!");
+            Preconditions.checkArgument(effect.getData() == null || effect == Effect.ELECTRIC_SPARK, "Wrong kind of data for the %s effect", effect);
         }
 
         int datavalue = CraftEffect.getDataValue(effect, data);
@@ -1111,9 +1125,9 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void playEffect(Location location, Effect effect, int data, int radius) {
-        Validate.notNull(location, "Location cannot be null");
-        Validate.notNull(effect, "Effect cannot be null");
-        Validate.notNull(location.getWorld(), "World cannot be null");
+        Preconditions.checkArgument(effect != null, "Effect cannot be null");
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(location.getWorld() != null, "World of Location cannot be null");
         int packetData = effect.getId();
         ClientboundLevelEventPacket packet = new ClientboundLevelEventPacket(packetData, CraftLocation.toBlockPosition(location), data, false);
         int distance;
@@ -1132,15 +1146,15 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public FallingBlock spawnFallingBlock(Location location, MaterialData data) throws IllegalArgumentException {
-        Validate.notNull(data, "MaterialData cannot be null");
+        Preconditions.checkArgument(data != null, "MaterialData cannot be null");
         return spawnFallingBlock(location, data.getItemType(), data.getData());
     }
 
     @Override
     public FallingBlock spawnFallingBlock(Location location, org.bukkit.Material material, byte data) throws IllegalArgumentException {
-        Validate.notNull(location, "Location cannot be null");
-        Validate.notNull(material, "Material cannot be null");
-        Validate.isTrue(material.isBlock(), "Material must be a block");
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(material != null, "Material cannot be null");
+        Preconditions.checkArgument(material.isBlock(), "Material.%s must be a block", material);
 
         FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
@@ -1148,8 +1162,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public FallingBlock spawnFallingBlock(Location location, BlockData data) throws IllegalArgumentException {
-        Validate.notNull(location, "Location cannot be null");
-        Validate.notNull(data, "BlockData cannot be null");
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(data != null, "BlockData cannot be null");
 
         FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
@@ -1391,16 +1405,16 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setTicksPerSpawns(SpawnCategory spawnCategory, int ticksPerCategorySpawn) {
-        Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
-        Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
+        Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+        Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
 
         world.ticksPerSpawnCategory.put(spawnCategory, (long) ticksPerCategorySpawn);
     }
 
     @Override
     public long getTicksPerSpawns(SpawnCategory spawnCategory) {
-        Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
-        Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
+        Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+        Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
 
         return world.ticksPerSpawnCategory.getLong(spawnCategory);
     }
@@ -1499,8 +1513,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public int getSpawnLimit(SpawnCategory spawnCategory) {
-        Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
-        Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
+        Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+        Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
 
         int limit = spawnCategoryLimit.getOrDefault(spawnCategory, -1);
         if (limit < 0) {
@@ -1511,8 +1525,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public void setSpawnLimit(SpawnCategory spawnCategory, int limit) {
-        Validate.notNull(spawnCategory, "SpawnCategory cannot be null");
-        Validate.isTrue(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory." + spawnCategory + " are not supported.");
+        Preconditions.checkArgument(spawnCategory != null, "SpawnCategory cannot be null");
+        Preconditions.checkArgument(CraftSpawnCategory.isValidForLimits(spawnCategory), "SpawnCategory.%s are not supported", spawnCategory);
 
         spawnCategoryLimit.put(spawnCategory, limit);
     }
@@ -1647,26 +1661,28 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean isGameRule(String rule) {
-        Validate.isTrue(rule != null && !rule.isEmpty(), "Rule cannot be null nor empty");
+        Preconditions.checkArgument(rule != null, "String rule cannot be null");
+        Preconditions.checkArgument(!rule.isEmpty(), "String rule cannot be empty");
         return getGameRulesNMS().containsKey(rule);
     }
 
     @Override
     public <T> T getGameRuleValue(GameRule<T> rule) {
-        Validate.notNull(rule, "GameRule cannot be null");
+        Preconditions.checkArgument(rule != null, "GameRule cannot be null");
         return convert(rule, getHandle().getGameRules().getRule(getGameRulesNMS().get(rule.getName())));
     }
 
     @Override
     public <T> T getGameRuleDefault(GameRule<T> rule) {
-        Validate.notNull(rule, "GameRule cannot be null");
+        Preconditions.checkArgument(rule != null, "GameRule cannot be null");
         return convert(rule, getGameRuleDefinitions().get(rule.getName()).createRule());
     }
 
     @Override
     public <T> boolean setGameRule(GameRule<T> rule, T newValue) {
-        Validate.notNull(rule, "GameRule cannot be null");
-        Validate.notNull(newValue, "GameRule value cannot be null");
+        Preconditions.checkArgument(rule != null, "GameRule cannot be null");
+        Preconditions.checkArgument(newValue != null, "GameRule value cannot be null");
+
 
         if (!isGameRule(rule.getName())) return false;
 
@@ -1766,8 +1782,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data, boolean force) {
-        if (data != null && !particle.getDataType().isInstance(data)) {
-            throw new IllegalArgumentException("data should be " + particle.getDataType() + " got " + data.getClass());
+        if (data != null) {
+            Preconditions.checkArgument(particle.getDataType().isInstance(data), "data (%s) should be %s", data.getClass(), particle.getDataType());
         }
         // Mohist  TODO
         getHandle().sendParticles(
@@ -1903,8 +1919,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public Raid locateNearestRaid(Location location, int radius) {
-        Validate.notNull(location, "Location cannot be null");
-        Validate.isTrue(radius >= 0, "Radius cannot be negative");
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(radius >= 0, "Radius value (%s) cannot be negative", radius);
 
         net.minecraft.world.entity.raid.Raids persistentRaid = world.getRaids();
         net.minecraft.world.entity.raid.Raid raid = persistentRaid.getNearbyRaid(CraftLocation.toBlockPosition(location), radius * radius);

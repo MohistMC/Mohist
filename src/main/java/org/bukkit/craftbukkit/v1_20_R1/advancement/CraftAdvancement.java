@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.advancement;
 
-import java.util.Collection;
-import java.util.Collections;
 import net.minecraft.advancements.Advancement;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.AdvancementDisplay;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class CraftAdvancement implements org.bukkit.advancement.Advancement {
 

@@ -1,16 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R1.help;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.MultipleCommandAlias;
@@ -25,6 +18,15 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.help.HelpTopicComparator;
 import org.bukkit.help.HelpTopicFactory;
 import org.bukkit.help.IndexHelpTopic;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Standard implementation of {@link HelpMap} for CraftBukkit servers.
@@ -223,9 +225,7 @@ public class SimpleHelpMap implements HelpMap {
 
     @Override
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
-        if (!Command.class.isAssignableFrom(commandClass) && !CommandExecutor.class.isAssignableFrom(commandClass)) {
-            throw new IllegalArgumentException("commandClass must implement either Command or CommandExecutor!");
-        }
+        Preconditions.checkArgument(Command.class.isAssignableFrom(commandClass) || CommandExecutor.class.isAssignableFrom(commandClass), "commandClass (%s) must implement either Command or CommandExecutor", commandClass.getName());
         topicFactoryMap.put(commandClass, factory);
     }
 

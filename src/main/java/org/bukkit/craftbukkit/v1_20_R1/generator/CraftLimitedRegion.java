@@ -1,13 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.generator;
 
 import com.google.common.base.Preconditions;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-
-import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -32,6 +25,13 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRegion {
 
@@ -70,9 +70,7 @@ public class CraftLimitedRegion extends CraftRegionAccessor implements LimitedRe
     public WorldGenLevel getHandle() {
         WorldGenLevel handle = weakAccess.get();
 
-        if (handle == null) {
-            throw new IllegalStateException("GeneratorAccessSeed no longer present, are you using it in a different tick?");
-        }
+        Preconditions.checkState(handle != null, "GeneratorAccessSeed no longer present, are you using it in a different tick?");
 
         return handle;
     }

@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,6 +15,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
+
+import java.util.function.Predicate;
 
 /**
  * Represents a static, thread-safe snapshot of chunk of blocks

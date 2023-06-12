@@ -1,9 +1,10 @@
 package org.bukkit.material.types;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Represents the different textured blocks of mushroom.

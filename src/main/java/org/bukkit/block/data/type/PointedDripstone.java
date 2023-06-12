@@ -1,9 +1,10 @@
 package org.bukkit.block.data.type;
 
-import java.util.Set;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * 'thickness' represents the dripstone thickness.

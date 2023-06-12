@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory.util;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CraftInventoryCreator {
 

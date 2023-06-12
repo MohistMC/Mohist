@@ -1,8 +1,5 @@
 package org.bukkit.entity;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Nameable;
@@ -23,6 +20,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Represents a base entity in the world

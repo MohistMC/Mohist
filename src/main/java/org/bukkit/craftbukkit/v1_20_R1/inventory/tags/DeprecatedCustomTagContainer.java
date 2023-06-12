@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory.tags;
 
-import java.util.Objects;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.inventory.meta.tags.ItemTagAdapterContext;
 import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.persistence.PersistentDataContainer;
+
+import java.util.Objects;
 
 /**
  * The {@link DeprecatedCustomTagContainer} is a simply wrapper implementation

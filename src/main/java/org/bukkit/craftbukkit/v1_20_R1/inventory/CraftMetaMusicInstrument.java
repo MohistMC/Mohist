@@ -1,13 +1,14 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
+
+import java.util.Map;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaMusicInstrument extends CraftMetaItem implements MusicInstrumentMeta {

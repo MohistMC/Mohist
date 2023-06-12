@@ -1,9 +1,10 @@
 package org.bukkit.permissions;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the possible default values for permissions

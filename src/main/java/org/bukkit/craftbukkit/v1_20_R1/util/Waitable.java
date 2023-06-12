@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
+import com.google.common.base.Preconditions;
+
 import java.util.concurrent.ExecutionException;
 
 public abstract class Waitable<T> implements Runnable {
@@ -15,9 +17,7 @@ public abstract class Waitable<T> implements Runnable {
     @Override
     public final void run() {
         synchronized (this) {
-            if (status != Status.WAITING) {
-                throw new IllegalStateException("Invalid state " + status);
-            }
+            Preconditions.checkState(status == Status.WAITING, "Invalid state %s", status);
             status = Status.RUNNING;
         }
         try {

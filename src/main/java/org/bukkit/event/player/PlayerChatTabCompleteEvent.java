@@ -1,11 +1,12 @@
 package org.bukkit.event.player;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * Called when a player attempts to tab-complete a chat message.

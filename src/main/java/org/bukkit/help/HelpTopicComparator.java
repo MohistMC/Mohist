@@ -1,7 +1,8 @@
 package org.bukkit.help;
 
-import java.util.Comparator;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Comparator;
 
 /**
  * Used to impose a custom total ordering on help topics.

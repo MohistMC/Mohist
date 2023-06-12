@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
+import com.google.common.base.Preconditions;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.apache.commons.lang.Validate;
 
 public final class WeakCollection<T> implements Collection<T> {
     static final Object NO_VALUE = new Object();
@@ -17,7 +18,7 @@ public final class WeakCollection<T> implements Collection<T> {
 
     @Override
     public boolean add(T value) {
-        Validate.notNull(value, "Cannot add null value");
+        Preconditions.checkArgument(value != null, "Cannot add null value");
         return collection.add(new WeakReference<T>(value));
     }
 
@@ -26,7 +27,7 @@ public final class WeakCollection<T> implements Collection<T> {
         Collection<WeakReference<T>> values = this.collection;
         boolean ret = false;
         for (T value : collection) {
-            Validate.notNull(value, "Cannot add null value");
+            Preconditions.checkArgument(value != null, "Cannot add null value");
             ret |= values.add(new WeakReference<T>(value));
         }
         return ret;
@@ -103,9 +104,7 @@ public final class WeakCollection<T> implements Collection<T> {
 
             @Override
             public void remove() throws IllegalStateException {
-                if (value != NO_VALUE) {
-                    throw new IllegalStateException("No last element");
-                }
+                Preconditions.checkState(value == NO_VALUE, "No last element");
 
                 value = null;
                 it.remove();

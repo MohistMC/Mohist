@@ -1,8 +1,19 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.bukkit.nms.ClassLoaderContext;
+import com.mohistmc.bukkit.nms.model.ClassMapping;
+import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.SimplePluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,17 +33,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-
-import com.mohistmc.bukkit.nms.ClassLoaderContext;
-import com.mohistmc.bukkit.nms.model.ClassMapping;
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
-import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.server.MinecraftServer;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.SimplePluginManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

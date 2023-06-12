@@ -1,9 +1,10 @@
 package org.bukkit.scoreboard;
 
-import java.util.Set;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /**
  * A scoreboard

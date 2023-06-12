@@ -1,9 +1,6 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.mohistmc.entity.MohistModsAbstractHorse;
 import com.mohistmc.entity.MohistModsAnimals;
 import com.mohistmc.entity.MohistModsChestHorse;
@@ -14,7 +11,6 @@ import com.mohistmc.entity.MohistModsTameableEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
-import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Translatable;
 import org.bukkit.World;
@@ -27,10 +23,12 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum EntityType implements Keyed, Translatable {
 

@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
-import java.lang.ref.WeakReference;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +20,8 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 public class CraftBlockState implements org.bukkit.block.BlockState {
     protected final CraftWorld world;
@@ -79,9 +79,7 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
     }
 
     protected final void ensureNoWorldGeneration() {
-        if (isWorldGeneration()) {
-            throw new IllegalStateException("This operation is not supported during world generation!");
-        }
+        Preconditions.checkState(!isWorldGeneration(), "This operation is not supported during world generation!");
     }
 
     @Override
@@ -141,12 +139,8 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
         if ((mat == null) || (mat.getData() == null)) {
             this.data = CraftMagicNumbers.getBlock(data);
         } else {
-            if ((data.getClass() == mat.getData()) || (data.getClass() == MaterialData.class)) {
-                this.data = CraftMagicNumbers.getBlock(data);
-            } else {
-                throw new IllegalArgumentException("Provided data is not of type "
-                        + mat.getData().getName() + ", found " + data.getClass().getName());
-            }
+            Preconditions.checkArgument((data.getClass() == mat.getData()) || (data.getClass() == MaterialData.class), "Provided data is not of type %s, found %s", mat.getData().getName(), data.getClass().getName());
+            this.data = CraftMagicNumbers.getBlock(data);
         }
     }
 
@@ -321,8 +315,6 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
     }
 
     protected void requirePlaced() {
-        if (!isPlaced()) {
-            throw new IllegalStateException("The blockState must be placed to call this method");
-        }
+        Preconditions.checkState(isPlaced(), "The blockState must be placed to call this method");
     }
 }

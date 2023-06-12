@@ -1,19 +1,20 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.players.StoredUserEntry;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.server.players.UserBanListEntry;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.players.UserBanListEntry;
-import net.minecraft.server.players.UserBanList;
-import net.minecraft.server.players.StoredUserEntry;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.bukkit.Bukkit;
 
 public class CraftProfileBanList implements org.bukkit.BanList {
     private final UserBanList list;
@@ -24,7 +25,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
 
     @Override
     public org.bukkit.BanEntry getBanEntry(String target) {
-        Validate.notNull(target, "Target cannot be null");
+        Preconditions.checkArgument(target != null, "Target cannot be null");
 
         GameProfile profile = getProfile(target);
         if (profile == null) {
@@ -41,7 +42,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
 
     @Override
     public org.bukkit.BanEntry addBan(String target, String reason, Date expires, String source) {
-        Validate.notNull(target, "Ban target cannot be null");
+        Preconditions.checkArgument(target != null, "Ban target cannot be null");
 
         GameProfile profile = getProfile(target);
         if (profile == null) {
@@ -77,7 +78,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
 
     @Override
     public boolean isBanned(String target) {
-        Validate.notNull(target, "Target cannot be null");
+        Preconditions.checkArgument(target != null, "Target cannot be null");
 
         GameProfile profile = getProfile(target);
         if (profile == null) {
@@ -89,7 +90,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
 
     @Override
     public void pardon(String target) {
-        Validate.notNull(target, "Target cannot be null");
+        Preconditions.checkArgument(target != null, "Target cannot be null");
 
         GameProfile profile = getProfile(target);
         list.remove(profile);

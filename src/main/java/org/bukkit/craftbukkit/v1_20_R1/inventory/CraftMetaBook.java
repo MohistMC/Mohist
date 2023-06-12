@@ -1,11 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
-
-import java.util.*;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +18,13 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
 import org.spigotmc.ValidateUtils;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBook extends CraftMetaItem implements BookMeta {
@@ -257,16 +262,14 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
     @Override
     public String getPage(final int page) {
-        Validate.isTrue(isValidPage(page), "Invalid page number");
+        Preconditions.checkArgument(isValidPage(page), "Invalid page number (%s)", page);
         // assert: pages != null
         return convertDataToPlainPage(pages.get(page - 1));
     }
 
     @Override
     public void setPage(final int page, final String text) {
-        if (!isValidPage(page)) {
-            throw new IllegalArgumentException("Invalid page number " + page + "/" + getPageCount());
-        }
+        Preconditions.checkArgument(isValidPage(page), "Invalid page number (%s/%s)", page, getPageCount());
         // assert: pages != null
 
         String newText = validatePage(text);
@@ -381,8 +384,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         if (!super.equalsCommon(meta)) {
             return false;
         }
-        if (meta instanceof CraftMetaBook) {
-            CraftMetaBook that = (CraftMetaBook) meta;
+        if (meta instanceof CraftMetaBook that) {
 
             return (hasTitle() ? that.hasTitle() && this.title.equals(that.title) : !that.hasTitle())
                     && (hasAuthor() ? that.hasAuthor() && this.author.equals(that.author) : !that.hasAuthor())

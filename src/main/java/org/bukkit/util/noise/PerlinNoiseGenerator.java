@@ -1,8 +1,9 @@
 package org.bukkit.util.noise;
 
-import java.util.Random;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 /**
  * Generates noise using the "classic" perlin generator

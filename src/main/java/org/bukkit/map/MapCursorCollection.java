@@ -1,9 +1,10 @@
 package org.bukkit.map;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents all the map cursors on a {@link MapCanvas}. Like MapCanvas, a

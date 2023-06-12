@@ -1,13 +1,14 @@
 package org.bukkit.event.server;
 
 import com.google.common.base.Preconditions;
-import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Called when a {@link CommandSender} of any description (ie: player or

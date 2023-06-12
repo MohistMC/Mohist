@@ -10,15 +10,16 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
-import java.util.logging.Level;
 import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+import java.util.logging.Level;
 
 public class BukkitCommandWrapper implements com.mojang.brigadier.Command<CommandSourceStack>, Predicate<CommandSourceStack>, SuggestionProvider<CommandSourceStack> {
 

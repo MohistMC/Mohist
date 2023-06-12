@@ -2,11 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,6 +11,11 @@ import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaArmor extends CraftMetaItem implements ArmorMeta {

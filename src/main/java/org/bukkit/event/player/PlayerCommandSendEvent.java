@@ -1,9 +1,10 @@
 package org.bukkit.event.player;
 
-import java.util.Collection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * This event is called when the list of available server commands is sent to

@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.logging.Level;
 import net.minecraft.server.players.IpBanList;
 import net.minecraft.server.players.IpBanListEntry;
 import org.bukkit.Bukkit;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
 
 public final class CraftIpBanEntry implements org.bukkit.BanEntry {
     private final IpBanList list;

@@ -1,11 +1,12 @@
 package org.bukkit.event.entity;
 
-import java.util.List;
 import org.bukkit.entity.Piglin;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Stores all data related to the bartering interaction with a piglin.

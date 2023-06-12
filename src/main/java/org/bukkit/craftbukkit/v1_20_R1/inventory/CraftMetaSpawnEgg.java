@@ -2,10 +2,8 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.Map;
-import java.util.Set;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -13,6 +11,9 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftLegacy;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.material.MaterialData;
+
+import java.util.Map;
+import java.util.Set;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {

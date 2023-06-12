@@ -1,9 +1,5 @@
 package org.bukkit;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -13,6 +9,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * A RegionAccessor gives access to getting, modifying and spawning {@link Biome}, {@link BlockState} and {@link Entity},

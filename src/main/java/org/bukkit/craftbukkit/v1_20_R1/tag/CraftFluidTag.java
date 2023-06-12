@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R1.tag;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.tags.TagKey;
 import org.bukkit.Fluid;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CraftFluidTag extends CraftTag<net.minecraft.world.level.material.Fluid, Fluid> {
 

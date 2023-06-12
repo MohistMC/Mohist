@@ -1,9 +1,10 @@
 package org.bukkit.help;
 
-import java.util.Collection;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The HelpMap tracks all help topics registered in a Bukkit server. When the

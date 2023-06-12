@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Map;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+
+import java.util.Map;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaArmorStand extends CraftMetaItem {

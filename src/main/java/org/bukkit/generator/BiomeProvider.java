@@ -1,8 +1,9 @@
 package org.bukkit.generator;
 
-import java.util.List;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Class for providing biomes.

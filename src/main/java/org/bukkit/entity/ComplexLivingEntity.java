@@ -1,7 +1,8 @@
 package org.bukkit.entity;
 
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Represents a complex living entity - one that is made up of various smaller

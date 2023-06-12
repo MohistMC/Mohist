@@ -1,9 +1,5 @@
 package org.bukkit.entity;
 
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -38,6 +34,11 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Represents a player, connected or not

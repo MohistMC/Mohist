@@ -1,14 +1,15 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
 import com.mojang.logging.LogQueues;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jline.console.ConsoleReader;
 import org.bukkit.craftbukkit.Main;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Erase;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TerminalConsoleWriterThread extends Thread {
     private final ConsoleReader reader;

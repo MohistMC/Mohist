@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import org.bukkit.Location;
@@ -10,6 +8,9 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sniffer;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class CraftSniffer extends CraftAnimals implements Sniffer {
 

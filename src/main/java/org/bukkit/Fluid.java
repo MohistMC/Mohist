@@ -1,7 +1,8 @@
 package org.bukkit;
 
-import java.util.Locale;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 /**
  * Represents a fluid type.

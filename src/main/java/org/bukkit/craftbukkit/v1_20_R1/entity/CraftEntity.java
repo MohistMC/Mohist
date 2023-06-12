@@ -4,21 +4,33 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import com.mohistmc.entity.*;
-import net.minecraft.nbt.Tag;
+import com.mohistmc.entity.MohistModsAbstractHorse;
+import com.mohistmc.entity.MohistModsAnimals;
+import com.mohistmc.entity.MohistModsChestHorse;
+import com.mohistmc.entity.MohistModsEntity;
+import com.mohistmc.entity.MohistModsMinecart;
+import com.mohistmc.entity.MohistModsMinecartContainer;
+import com.mohistmc.entity.MohistModsSkeleton;
+import com.mohistmc.entity.MohistModsTameableEntity;
+import com.mohistmc.entity.MohistModsThrowableProjectile;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.GlowSquid;
+import net.minecraft.world.entity.Interaction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Marker;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
@@ -32,15 +44,15 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Ghast;
-import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.entity.monster.Strider;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.entity.monster.warden.Warden;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -81,6 +93,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
@@ -509,7 +525,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public void setFreezeTicks(int ticks) {
-        Preconditions.checkArgument(0 <= ticks, "Ticks cannot be less than 0");
+        Preconditions.checkArgument(0 <= ticks, "Ticks (%s) cannot be less than 0", ticks);
 
         getHandle().setTicksFrozen(ticks);
     }
@@ -575,17 +591,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public List<org.bukkit.entity.Entity> getPassengers() {
-        return Lists.newArrayList(Lists.transform(getHandle().passengers, new Function<Entity, org.bukkit.entity.Entity>() {
-            @Override
-            public org.bukkit.entity.Entity apply(Entity input) {
-                return input.getBukkitEntity();
-            }
-        }));
+        return Lists.newArrayList(Lists.transform(getHandle().passengers, (Function<Entity, org.bukkit.entity.Entity>) input -> input.getBukkitEntity()));
     }
 
     @Override
     public boolean addPassenger(org.bukkit.entity.Entity passenger) {
-        Preconditions.checkArgument(passenger != null, "passenger == null");
+        Preconditions.checkArgument(passenger != null, "Entity passenger cannot be null");
         Preconditions.checkArgument(!this.equals(passenger), "Entity cannot ride itself.");
 
         return ((CraftEntity) passenger).getHandle().startRiding(getHandle(), true);
@@ -593,7 +604,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public boolean removePassenger(org.bukkit.entity.Entity passenger) {
-        Preconditions.checkArgument(passenger != null, "passenger == null");
+        Preconditions.checkArgument(passenger != null, "Entity passenger cannot be null");
 
         ((CraftEntity) passenger).getHandle().stopRiding();
         return true;
@@ -646,9 +657,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public void setTicksLived(int value) {
-        if (value <= 0) {
-            throw new IllegalArgumentException("Age must be at least 1 tick");
-        }
+        Preconditions.checkArgument(value > 0, "Age value (%s) must be greater than 0", value);
         getHandle().tickCount = value;
     }
 

@@ -1,9 +1,10 @@
 package org.bukkit.entity;
 
-import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Represents a Piglin.

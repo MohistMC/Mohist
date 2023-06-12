@@ -2,12 +2,13 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.Map;
-import java.util.Set;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+
+import java.util.Map;
+import java.util.Set;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaEntityTag extends CraftMetaItem {

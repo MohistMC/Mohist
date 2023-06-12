@@ -2,13 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,7 +10,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,6 +63,13 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     private CraftEntityEquipment equipment;
 
@@ -90,9 +89,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void setHealth(double health) {
         health = (float) health;
-        if ((health < 0) || (health > getMaxHealth())) {
-            throw new IllegalArgumentException("Health must be between 0 and " + getMaxHealth() + "(" + health + ")");
-        }
+        Preconditions.checkArgument(health >= 0 && health <= this.getMaxHealth(), "Health value (%s) must be between 0 and %s", health, this.getMaxHealth());
 
         // during world generation, we don't want to run logic for dropping items and xp
         if (getHandle().generation && health == 0) {
@@ -126,7 +123,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void setMaxHealth(double amount) {
-        Validate.isTrue(amount > 0, "Max health must be greater than 0");
+        Preconditions.checkArgument(amount > 0, "Max health amount (%s) must be greater than 0", amount);
 
         getHandle().getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(amount);
 
@@ -459,7 +456,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             launch.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
 
-        Validate.notNull(launch, "Projectile not supported");
+        Preconditions.checkArgument(launch != null, "Projectile (%s) not supported", projectile.getName());
 
         if (velocity != null) {
             ((T) launch.getBukkitEntity()).setVelocity(velocity);
@@ -534,9 +531,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public Entity getLeashHolder() throws IllegalStateException {
-        if (!isLeashed()) {
-            throw new IllegalStateException("Entity not leashed");
-        }
+        Preconditions.checkState(isLeashed(), "Entity not leashed");
         return ((Mob) getHandle()).getLeashHolder().getBukkitEntity();
     }
 

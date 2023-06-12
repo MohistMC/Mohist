@@ -1,10 +1,11 @@
 package org.bukkit.event.world;
 
-import java.util.List;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Called when entities are unloaded.

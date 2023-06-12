@@ -1,9 +1,10 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * All supported color values for dyes and cloth

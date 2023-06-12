@@ -1,10 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -13,13 +8,19 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure;
 import org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructureType;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.trim.CraftTrimMaterial;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.trim.CraftTrimPattern;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.generator.structure.Structure;
 import org.bukkit.generator.structure.StructureType;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 

@@ -1,11 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Supplier;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -13,6 +7,13 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class CraftCrashReport implements Supplier<String> {
 

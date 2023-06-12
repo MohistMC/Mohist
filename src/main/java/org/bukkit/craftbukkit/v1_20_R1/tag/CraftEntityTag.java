@@ -1,15 +1,15 @@
 package org.bukkit.craftbukkit.v1_20_R1.tag;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
-import net.minecraft.core.registries.Registries;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CraftEntityTag extends CraftTag<net.minecraft.world.entity.EntityType<?>, EntityType> {
 

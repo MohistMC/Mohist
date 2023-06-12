@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.structure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
 import org.bukkit.structure.Palette;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftPalette implements Palette {
 

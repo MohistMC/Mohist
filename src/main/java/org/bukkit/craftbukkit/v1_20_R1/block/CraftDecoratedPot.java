@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.DecoratedPot;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CraftDecoratedPot extends CraftBlockEntityState<DecoratedPotBlockEntity> implements DecoratedPot {
 

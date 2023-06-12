@@ -1,10 +1,11 @@
 package org.bukkit.event.player;
 
-import java.net.InetAddress;
-import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+
+import java.net.InetAddress;
+import java.util.UUID;
 
 /**
  * Stores details for players attempting to log in.

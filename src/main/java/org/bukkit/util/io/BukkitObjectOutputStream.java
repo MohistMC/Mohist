@@ -1,10 +1,11 @@
 package org.bukkit.util.io;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 /**
  * This class is designed to be used in conjunction with the {@link

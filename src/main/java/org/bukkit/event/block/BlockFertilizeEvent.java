@@ -1,6 +1,5 @@
 package org.bukkit.event.block;
 
-import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -9,6 +8,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Called with the block changes resulting from a player fertilizing a given

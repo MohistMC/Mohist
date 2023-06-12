@@ -1,11 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -20,15 +15,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
@@ -67,6 +61,11 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.mohistmc.forge.ForgeInjectBukkit.normalizeName;
 
@@ -394,10 +393,9 @@ public class CraftBlock implements Block {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof CraftBlock)) {
+        if (!(o instanceof CraftBlock other)) {
             return false;
         }
-        CraftBlock other = (CraftBlock) o;
 
         return this.position.equals(other.position) && this.getWorld().equals(other.getWorld());
     }
@@ -594,15 +592,15 @@ public class CraftBlock implements Block {
 
     @Override
     public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode) {
-        Validate.notNull(start, "Start location is null!");
-        Validate.isTrue(this.getWorld().equals(start.getWorld()), "Start location is from different world!");
+        Preconditions.checkArgument(start != null, "Location start cannot be null");
+        Preconditions.checkArgument(this.getWorld().equals(start.getWorld()), "Location start cannot be a different world");
         start.checkFinite();
 
-        Validate.notNull(direction, "Direction is null!");
+        Preconditions.checkArgument(direction != null, "Vector direction cannot be null");
         direction.checkFinite();
-        Validate.isTrue(direction.lengthSquared() > 0, "Direction's magnitude is 0!");
+        Preconditions.checkArgument(direction.lengthSquared() > 0, "Direction's magnitude (%s) must be greater than 0", direction.lengthSquared());
 
-        Validate.notNull(fluidCollisionMode, "Fluid collision mode is null!");
+        Preconditions.checkArgument(fluidCollisionMode != null, "FluidCollisionMode cannot be null");
         if (maxDistance < 0.0D) {
             return null;
         }
@@ -635,7 +633,7 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean canPlace(@NotNull BlockData data) {
-        Preconditions.checkArgument(data != null, "Provided block data is null!");
+        Preconditions.checkArgument(data != null, "BlockData cannot be null");
         net.minecraft.world.level.block.state.BlockState iblockdata = ((CraftBlockData) data).getState();
         net.minecraft.world.level.Level world = this.world.getMinecraftWorld();
 

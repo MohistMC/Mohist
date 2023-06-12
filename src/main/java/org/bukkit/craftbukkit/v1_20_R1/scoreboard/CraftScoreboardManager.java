@@ -1,24 +1,25 @@
 package org.bukkit.craftbukkit.v1_20_R1.scoreboard;
 
+import com.google.common.base.Preconditions;
+import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerScoreboard;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.util.WeakCollection;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.ScoreboardManager;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
-import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerScoreboard;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import org.apache.commons.lang3.Validate;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.util.WeakCollection;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 public final class CraftScoreboardManager implements ScoreboardManager {
     private final CraftScoreboard mainScoreboard;
@@ -52,7 +53,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
 
     // CraftBukkit method
     public void setPlayerBoard(CraftPlayer player, org.bukkit.scoreboard.Scoreboard bukkitScoreboard) throws IllegalArgumentException {
-        Validate.isTrue(bukkitScoreboard instanceof CraftScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
+        Preconditions.checkArgument(bukkitScoreboard instanceof CraftScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
 
         CraftScoreboard scoreboard = (CraftScoreboard) bukkitScoreboard;
         net.minecraft.world.scores.Scoreboard oldboard = getPlayerBoard(player).getHandle();

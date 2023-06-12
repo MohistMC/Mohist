@@ -2,17 +2,11 @@ package org.bukkit.craftbukkit.v1_20_R1.legacy;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Dynamic;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.server.MinecraftServer;
@@ -30,6 +24,13 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * This class may seem unnecessarily slow and complicated/repetitive however it
@@ -346,17 +347,13 @@ public final class CraftLegacy {
                             net.minecraft.world.level.block.state.properties.Property state = states.getProperty(dataKey);
 
                             if (state == null) {
-                                if (whitelistedStates.contains(dataKey)) {
-                                    continue;
-                                }
-                                throw new IllegalStateException("No state for " + dataKey);
+                                Preconditions.checkArgument(whitelistedStates.contains(dataKey), "No state for %s", dataKey);
+                                continue;
                             }
 
                             Preconditions.checkState(!properties.getString(dataKey).isEmpty(), "Empty data string");
                             Optional opt = state.getValue(properties.getString(dataKey));
-                            if (!opt.isPresent()) {
-                                throw new IllegalStateException("No state value " + properties.getString(dataKey) + " for " + dataKey);
-                            }
+                            Preconditions.checkArgument(opt.isPresent(), "No state value %s for %s", properties.getString(dataKey), dataKey);
 
                             blockData = blockData.setValue(state, (Comparable) opt.get());
                         }

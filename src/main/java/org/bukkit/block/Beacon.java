@@ -1,12 +1,13 @@
 package org.bukkit.block;
 
-import java.util.Collection;
 import org.bukkit.Nameable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Represents a captured state of a beacon.

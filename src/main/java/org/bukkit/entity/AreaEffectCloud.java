@@ -1,6 +1,5 @@
 package org.bukkit.entity;
 
-import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.potion.PotionData;
@@ -9,6 +8,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Represents an area effect cloud which will imbue a potion effect onto

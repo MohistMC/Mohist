@@ -1,7 +1,8 @@
 package org.bukkit.conversations;
 
-import java.util.EventListener;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.EventListener;
 
 /**
  */

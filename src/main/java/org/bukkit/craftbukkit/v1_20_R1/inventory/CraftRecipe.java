@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.Preconditions;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +8,9 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.recipe.CookingBookCategory;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface CraftRecipe extends Recipe {
 
@@ -29,8 +31,8 @@ public interface CraftRecipe extends Recipe {
         }
 
         stack.getItems();
-        if (requireNotEmpty && stack.itemStacks.length == 0) {
-            throw new IllegalArgumentException("Recipe requires at least one non-air choice!");
+        if (requireNotEmpty) {
+            Preconditions.checkArgument(stack.itemStacks.length != 0, "Recipe requires at least one non-air choice");
         }
 
         return stack;

@@ -1,9 +1,10 @@
 package org.bukkit.plugin;
 
-import java.util.Collection;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Manages services and service providers. Services are an interface

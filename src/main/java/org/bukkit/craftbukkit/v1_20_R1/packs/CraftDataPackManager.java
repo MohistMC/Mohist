@@ -1,9 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.packs;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.repository.Pack;
@@ -16,6 +13,10 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.packs.DataPack;
 import org.bukkit.packs.DataPackManager;
+
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CraftDataPackManager implements DataPackManager {
 

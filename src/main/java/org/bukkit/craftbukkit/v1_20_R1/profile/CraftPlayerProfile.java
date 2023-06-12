@@ -5,17 +5,6 @@ import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +14,18 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.configuration.ConfigSerializationUtil;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @SerializableAs("PlayerProfile")
 public final class CraftPlayerProfile implements PlayerProfile {
@@ -263,9 +264,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
         if (map.containsKey("properties")) {
             for (Object propertyData : (List<?>) map.get("properties")) {
-                if (!(propertyData instanceof Map)) {
-                    throw new IllegalArgumentException("Property data (" + propertyData + ") is not a valid Map");
-                }
+                Preconditions.checkArgument(propertyData instanceof Map, "Propertu data (%s) is not a valid Map", propertyData);
                 Property property = CraftProfileProperty.deserialize((Map<?, ?>) propertyData);
                 profile.properties.put(property.getName(), property);
             }

@@ -1,10 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
-import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemFactory.*;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.Map;
-import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import org.bukkit.Color;
@@ -12,6 +9,11 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
+import java.util.Map;
+import java.util.Set;
+
+import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {

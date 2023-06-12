@@ -1,6 +1,5 @@
 package org.bukkit.help;
 
-import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -8,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * This help topic generates a list of other help topics. This class is useful

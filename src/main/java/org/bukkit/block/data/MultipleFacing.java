@@ -1,8 +1,9 @@
 package org.bukkit.block.data;
 
-import java.util.Set;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * This class encompasses the 'north', 'east', 'south', 'west', 'up', 'down'

@@ -1,9 +1,10 @@
 package org.bukkit.event.entity;
 
 import com.google.common.base.Function;
-import java.util.Map;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Called when an entity is damaged by an entity

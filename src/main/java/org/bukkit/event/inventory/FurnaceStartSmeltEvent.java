@@ -2,7 +2,6 @@ package org.bukkit.event.inventory;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.InventoryBlockStartEvent;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.ItemStack;

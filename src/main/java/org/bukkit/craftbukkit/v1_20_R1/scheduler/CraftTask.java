@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R1.scheduler;
 
-import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.function.Consumer;
 
 class CraftTask implements BukkitTask, Runnable {
 

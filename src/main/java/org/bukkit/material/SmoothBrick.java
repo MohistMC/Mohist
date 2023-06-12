@@ -1,8 +1,9 @@
 package org.bukkit.material;
 
+import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Material;
 
 /**
  * Represents the different types of smooth bricks.

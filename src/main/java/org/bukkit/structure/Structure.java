@@ -1,7 +1,5 @@
 package org.bukkit.structure;
 
-import java.util.List;
-import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.RegionAccessor;
 import org.bukkit.block.structure.Mirror;
@@ -10,6 +8,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.util.BlockVector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Represents a structure.

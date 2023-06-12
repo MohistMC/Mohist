@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TropicalFish;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CraftTropicalFish extends CraftFish implements TropicalFish {
 

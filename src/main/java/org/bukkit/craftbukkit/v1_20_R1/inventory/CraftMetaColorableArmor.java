@@ -2,14 +2,14 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.Map;
-import java.util.Set;
-
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.inventory.meta.ColorableArmorMeta;
+
+import java.util.Map;
+import java.util.Set;
 
 import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
 

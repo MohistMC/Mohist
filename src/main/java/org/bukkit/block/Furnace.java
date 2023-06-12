@@ -1,9 +1,10 @@
 package org.bukkit.block;
 
-import java.util.Map;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceInventory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Represents a captured state of a furnace.

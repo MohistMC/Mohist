@@ -5,14 +5,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.properties.Property;
+import org.bukkit.craftbukkit.v1_20_R1.util.JsonHelper;
+import org.bukkit.profile.PlayerTextures;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.craftbukkit.v1_20_R1.util.JsonHelper;
-import org.bukkit.profile.PlayerTextures;
 
 final class CraftPlayerTextures implements PlayerTextures {
 

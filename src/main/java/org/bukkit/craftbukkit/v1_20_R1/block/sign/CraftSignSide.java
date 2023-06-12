@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.block.sign;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import org.bukkit.DyeColor;
 import org.bukkit.block.sign.SignSide;

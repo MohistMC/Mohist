@@ -10,42 +10,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -76,6 +49,34 @@ import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.spigotmc.ValidateUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Children must include the following:
@@ -179,7 +180,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
 
         public static ItemMeta deserialize(Map<String, Object> map) throws Throwable {
-            Validate.notNull(map, "Cannot deserialize null map");
+            Preconditions.checkArgument(map != null, "Cannot deserialize null map");
 
             String type = getString(map, TYPE_FIELD, false);
             Constructor<? extends CraftMetaItem> constructor = constructorMap.get(type);
@@ -794,7 +795,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public int getEnchantLevel(Enchantment ench) {
-        Validate.notNull(ench, "Enchantment cannot be null");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
         Integer level = hasEnchants() ? enchantments.get(ench) : null;
         if (level == null) {
             return 0;
@@ -809,7 +810,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
-        Validate.notNull(ench, "Enchantment cannot be null");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
         if (enchantments == null) {
             enchantments = new LinkedHashMap<Enchantment, Integer>(4);
         }
@@ -823,7 +824,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public boolean removeEnchant(Enchantment ench) {
-        Validate.notNull(ench, "Enchantment cannot be null");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
         return hasEnchants() && enchantments.remove(ench) != null;
     }
 
@@ -1329,9 +1330,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         for (Object object : addFrom) {
             if (!(object instanceof String)) {
-                if (object != null) {
-                    throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
-                }
+                Preconditions.checkArgument(object == null, "%s cannot contain non-string %s", addFrom, object.getClass().getName());
 
                 addTo.add(CraftChatMessage.toJSON(Component.empty()));
             } else {

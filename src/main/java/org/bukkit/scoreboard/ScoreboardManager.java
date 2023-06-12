@@ -1,7 +1,8 @@
 package org.bukkit.scoreboard;
 
-import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Manager of Scoreboards

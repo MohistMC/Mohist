@@ -1,13 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.*;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.Item;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -19,6 +17,12 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
+
+import java.util.Map;
+
+import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.ENCHANTMENTS;
+import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.ENCHANTMENTS_ID;
+import static org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -176,7 +180,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public void addUnsafeEnchantment(Enchantment ench, int level) {
-        Validate.notNull(ench, "Cannot add null enchantment");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
 
         if (!makeTag(handle)) {
             return;
@@ -221,7 +225,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getEnchantmentLevel(Enchantment ench) {
-        Validate.notNull(ench, "Cannot find null enchantment");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
         if (handle == null) {
             return 0;
         }
@@ -230,7 +234,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int removeEnchantment(Enchantment ench) {
-        Validate.notNull(ench, "Cannot remove null enchantment");
+        Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
 
         ListTag list = getEnchantmentList(handle), listCopy;
         if (list == null) {

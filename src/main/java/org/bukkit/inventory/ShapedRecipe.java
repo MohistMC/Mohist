@@ -1,15 +1,16 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a shaped (ie normal) crafting recipe.

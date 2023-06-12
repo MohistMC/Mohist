@@ -1,6 +1,5 @@
 package org.bukkit.event.world;
 
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
@@ -9,6 +8,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Event that is called when an organic structure attempts to grow (Sapling {@literal ->}

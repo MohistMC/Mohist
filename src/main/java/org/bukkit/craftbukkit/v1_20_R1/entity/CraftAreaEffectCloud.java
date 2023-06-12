@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_20_R1.CraftParticle;
@@ -17,6 +16,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.List;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
@@ -203,7 +204,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public void setBasePotionData(PotionData data) {
-        Validate.notNull(data, "PotionData cannot be null");
+        Preconditions.checkArgument(data != null, "PotionData cannot be null");
         getHandle().setPotionType(CraftPotionUtil.fromBukkit(data));
     }
 
@@ -220,10 +221,10 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public void setSource(ProjectileSource shooter) {
-        if (shooter instanceof CraftLivingEntity) {
-            getHandle().setOwner((net.minecraft.world.entity.LivingEntity) ((CraftLivingEntity) shooter).getHandle());
+        if (shooter instanceof CraftLivingEntity craftLivingEntity) {
+            getHandle().setOwner(craftLivingEntity.getHandle());
         } else {
-            getHandle().setOwner((net.minecraft.world.entity.LivingEntity) null);
+            getHandle().setOwner(null);
         }
     }
 }

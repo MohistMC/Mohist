@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R1.tag;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CraftBlockTag extends CraftTag<Block, Material> {
 

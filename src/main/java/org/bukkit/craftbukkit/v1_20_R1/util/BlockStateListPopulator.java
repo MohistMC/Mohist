@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
-import java.util.*;
-import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +12,14 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class BlockStateListPopulator extends DummyGeneratorAccess {
     private final LevelAccessor world;

@@ -1,11 +1,12 @@
 package org.bukkit.event.entity;
 
 import com.google.common.base.Function;
-import java.util.Map;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Called when an entity is damaged by a block

@@ -1,13 +1,15 @@
 package org.bukkit.craftbukkit.v1_20_R1.map;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.util.Arrays;
+import com.google.common.base.Preconditions;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
 import org.bukkit.map.MapFont.CharacterSprite;
 import org.bukkit.map.MapPalette;
+
+import java.awt.Color;
+import java.awt.Image;
+import java.util.Arrays;
 
 public class CraftMapCanvas implements MapCanvas {
 
@@ -102,9 +104,7 @@ public class CraftMapCanvas implements MapCanvas {
     public void drawText(int x, int y, MapFont font, String text) {
         int xStart = x;
         byte color = MapPalette.DARK_GRAY;
-        if (!font.isValid(text)) {
-            throw new IllegalArgumentException("text contains invalid characters");
-        }
+        Preconditions.checkArgument(font.isValid(text), "text (%s) contains invalid characters", text);
 
         for (int i = 0; i < text.length(); ++i) {
             char ch = text.charAt(i);
@@ -114,15 +114,13 @@ public class CraftMapCanvas implements MapCanvas {
                 continue;
             } else if (ch == '\u00A7') {
                 int j = text.indexOf(';', i);
-                if (j >= 0) {
-                    try {
-                        color = Byte.parseByte(text.substring(i + 1, j));
-                        i = j;
-                        continue;
-                    } catch (NumberFormatException ex) {
-                    }
+                Preconditions.checkArgument(j >= 0, "text (%s) unterminated color string", text);
+                try {
+                    color = Byte.parseByte(text.substring(i + 1, j));
+                    i = j;
+                    continue;
+                } catch (NumberFormatException ex) {
                 }
-                throw new IllegalArgumentException("Text contains unterminated color string");
             }
 
             CharacterSprite sprite = font.getChar(text.charAt(i));

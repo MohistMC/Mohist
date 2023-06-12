@@ -1,10 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
 import com.google.common.base.Preconditions;
-
 import com.google.common.base.Predicate;
-import java.util.*;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -12,13 +9,22 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Interaction;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.EyeOfEnder;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
-import net.minecraft.world.entity.vehicle.*;
+import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.MinecartChest;
+import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
+import net.minecraft.world.entity.vehicle.MinecartFurnace;
+import net.minecraft.world.entity.vehicle.MinecartHopper;
+import net.minecraft.world.entity.vehicle.MinecartSpawner;
+import net.minecraft.world.entity.vehicle.MinecartTNT;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChorusFlowerBlock;
@@ -183,6 +189,12 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public abstract class CraftRegionAccessor implements RegionAccessor {
 
@@ -554,9 +566,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @SuppressWarnings("unchecked")
     public net.minecraft.world.entity.Entity createEntity(Location location, Class<? extends Entity> clazz, boolean randomizeData) throws IllegalArgumentException {
-        if (location == null || clazz == null) {
-            throw new IllegalArgumentException("Location or entity class cannot be null");
-        }
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(clazz != null, "Entity class cannot be null");
 
         net.minecraft.world.entity.Entity entity = null;
         net.minecraft.world.level.Level world = getHandle().getMinecraftWorld();
@@ -767,11 +778,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
                 entity = net.minecraft.world.entity.EntityType.WITHER.create(world);
             } else if (ComplexLivingEntity.class.isAssignableFrom(clazz)) {
                 if (EnderDragon.class.isAssignableFrom(clazz)) {
-                    if (isNormalWorld()) {
-                        entity = net.minecraft.world.entity.EntityType.ENDER_DRAGON.create(getHandle().getMinecraftWorld());
-                    } else {
-                        throw new IllegalArgumentException("Cannot spawn entity " + clazz.getName() + " during world generation");
-                    }
+                    Preconditions.checkArgument(this.isNormalWorld(), "Cannot spawn entity %s during world generation", clazz.getName());
+                    entity = net.minecraft.world.entity.EntityType.ENDER_DRAGON.create(getHandle().getMinecraftWorld());
                 }
             } else if (Ambient.class.isAssignableFrom(clazz)) {
                 if (Bat.class.isAssignableFrom(clazz)) {

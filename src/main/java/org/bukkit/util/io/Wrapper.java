@@ -1,11 +1,12 @@
 package org.bukkit.util.io;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.Serializable;
-import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
+import java.util.Map;
 
 final class Wrapper<T extends Map<String, ?> & Serializable> implements Serializable {
     private static final long serialVersionUID = -986209235411767547L;

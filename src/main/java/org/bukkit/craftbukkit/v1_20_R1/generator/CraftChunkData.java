@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.generator;
 
-import java.lang.ref.WeakReference;
+import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -15,6 +15,8 @@ import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.material.MaterialData;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Data to be used for the block types and data in a newly generated chunk.
@@ -37,9 +39,7 @@ public final class CraftChunkData implements ChunkGenerator.ChunkData {
     public ChunkAccess getHandle() {
         ChunkAccess access = weakChunk.get();
 
-        if (access == null) {
-            throw new IllegalStateException("ChunkAccess no longer present, are you using it in a different tick?");
-        }
+        Preconditions.checkState(access != null, "IChunkAccess no longer present, are you using it in a different tick?");
 
         return access;
     }

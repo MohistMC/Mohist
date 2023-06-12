@@ -1,13 +1,14 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
-import java.util.UUID;
-import org.apache.commons.lang3.Validate;
+import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryAbstractHorse;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Horse;
 import org.bukkit.inventory.AbstractHorseInventory;
+
+import java.util.UUID;
 
 public abstract class CraftAbstractHorse extends CraftAnimals implements AbstractHorse {
 
@@ -32,8 +33,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public void setDomestication(int value) {
-        Validate.isTrue(value >= 0, "Domestication cannot be less than zero");
-        Validate.isTrue(value <= getMaxDomestication(), "Domestication cannot be greater than the max domestication");
+        Preconditions.checkArgument(value >= 0 && value <= this.getMaxDomestication(), "Domestication level (%s) need to be between %s and %s (max domestication)", value, 0, this.getMaxDomestication());
         getHandle().setTemper(value);
     }
 
@@ -44,7 +44,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public void setMaxDomestication(int value) {
-        Validate.isTrue(value > 0, "Max domestication cannot be zero or less");
+        Preconditions.checkArgument(value > 0, "Max domestication (%s) cannot be zero or less", value);
         getHandle().maxDomestication = value;
     }
 
@@ -55,7 +55,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public void setJumpStrength(double strength) {
-        Validate.isTrue(strength >= 0, "Jump strength cannot be less than zero");
+        Preconditions.checkArgument(strength >= 0, "Jump strength (%s) cannot be less than zero", strength);
         getHandle().getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH).setBaseValue(strength);
     }
 

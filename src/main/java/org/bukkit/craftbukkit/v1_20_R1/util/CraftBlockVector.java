@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.util;
 
-import net.minecraft.core.Vec3i;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import org.bukkit.util.BlockVector;
 
 public final class CraftBlockVector {
