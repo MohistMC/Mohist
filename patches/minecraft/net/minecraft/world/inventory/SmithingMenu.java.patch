@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/inventory/SmithingMenu.java
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
-@@ -11,6 +_,10 @@
+@@ -11,6 +_,11 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventorySmithing;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventorySmithingNew;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
  
  public class SmithingMenu extends ItemCombinerMenu {
@@ -35,9 +36,9 @@
              this.f_40242_ = smithingrecipe;
              this.f_39768_.m_6029_(smithingrecipe);
 -            this.f_39768_.m_6836_(0, itemstack);
-+			// CraftBukkit start
-+         	CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
-+         	// CraftBukkit end
++            // CraftBukkit start
++            CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
++            // CraftBukkit end
           }
        }
  
@@ -53,7 +54,7 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventory inventory = new CraftInventorySmithing(f_39770_.getLocation(), this.f_39769_, this.f_39768_);
++      CraftInventory inventory = new CraftInventorySmithingNew(f_39770_.getLocation(), this.f_39769_, this.f_39768_);
 +      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
