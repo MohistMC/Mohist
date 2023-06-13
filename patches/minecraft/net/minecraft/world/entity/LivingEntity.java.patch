@@ -467,7 +467,7 @@
           return false;
        } else if (p_21016_.m_19384_() && this.m_21023_(MobEffects.f_19607_)) {
           return false;
-@@ -999,45 +_,69 @@
+@@ -999,45 +_,78 @@
  
           this.f_20891_ = 0;
           float f = p_21017_;
@@ -512,16 +512,25 @@
  
 -            this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
 +            // CraftBukkit start
-+            if (!this.damageEntity0(p_21016_, p_21017_ - this.f_20898_)) {
-+               return false;
++            if (this instanceof Player) {
++               this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
++            } else {
++               if (!this.damageEntity0(p_21016_, p_21017_ - this.f_20898_)) {
++                  return false;
++               }
 +            }
 +            // CraftBukkit end
              this.f_20898_ = p_21017_;
              flag1 = false;
           } else {
 +            // CraftBukkit start
-+            if (!this.damageEntity0(p_21016_, f)) {
-+               return false;
++            if (this instanceof Player) {
++               this.m_6475_(p_21016_, p_21017_);
++            } else {
++               if (!this.damageEntity0(p_21016_, p_21017_)) {
++                  return false;
++               }
++               // CraftBukkit end
 +            }
              this.f_20898_ = p_21017_;
 -            this.f_19802_ = 20;
