@@ -399,7 +399,7 @@
 +
 +               // SPIGOT-1288 - play sound stripped from ItemBlock
 +               if (this.f_41589_ instanceof BlockItem) {
-+                  SoundType soundeffecttype = ((BlockItem) this.f_41589_).m_40614_().m_49962_(null);
++                  SoundType soundeffecttype = ((BlockItem) this.f_41589_).m_40614_().m_49966_().m_60827_(); // TODO: not strictly correct, however currently only affects decorated pots
 +                  world.m_5594_(player, blockpos, soundeffecttype.m_56777_(), SoundSource.BLOCKS, (soundeffecttype.m_56773_() + 1.0F) / 2.0F, soundeffecttype.m_56774_() * 0.8F);
 +               }
 +
