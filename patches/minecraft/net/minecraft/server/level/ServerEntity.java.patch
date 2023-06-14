@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
+@@ -7,6 +_,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Set;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Consumer;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientboundAddMobPacket;
 @@ -22,6 +_,7 @@
  import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
  import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
@@ -136,7 +144,7 @@
           this.f_8510_.f_19864_ = false;
        }
  
-@@ -189,16 +_,21 @@
+@@ -189,16 +_,28 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
        p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_142049_()));
@@ -144,14 +152,22 @@
     }
  
     public void m_8541_(ServerPlayer p_8542_) {
--      this.m_8536_(p_8542_.f_8906_::m_141995_);
-+      this.sendPairingData(p_8542_.f_8906_::m_141995_, p_8542_); // CraftBukkit - add player
++      mohist$entityplayer.set(p_8542_);
+       this.m_8536_(p_8542_.f_8906_::m_141995_);
        this.f_8510_.m_6457_(p_8542_);
-+      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
-    }
- 
+-   }
+-
 -   public void m_8536_(Consumer<Packet<?>> p_8537_) {
-+    public void sendPairingData(Consumer<Packet<?>> p_8537_, ServerPlayer entityplayer) { // CraftBukkit - add player
++      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
++   }
++
++
++   public AtomicReference<ServerPlayer> mohist$entityplayer = new AtomicReference<>(null);
++   public void sendPairingData(Consumer<Packet<?>> p_8537_, ServerPlayer entityplayer) { // CraftBukkit - add player
++      mohist$entityplayer.set(entityplayer);
++      m_8536_(p_8537_);
++   }
++    public void m_8536_(Consumer<Packet<?>> p_8537_) {
        if (this.f_8510_.m_146910_()) {
 -         f_8508_.warn("Fetching packet for removed entity {}", (Object)this.f_8510_);
 +         // CraftBukkit start - Remove useless error spam, just return
@@ -167,7 +183,7 @@
           Collection<AttributeInstance> collection = ((LivingEntity)this.f_8510_).m_21204_().m_22170_();
 +
 +         // CraftBukkit start - If sending own attributes send scaled health instead of current maximum health
-+         if (this.f_8510_.m_142049_() == entityplayer.m_142049_()) {
++         if (mohist$entityplayer.get() != null && this.f_8510_.m_142049_() == mohist$entityplayer.getAndSet(null).m_142049_()) {
 +            ((ServerPlayer) this.f_8510_).getBukkitEntity().injectScaledMaxHealth(collection, false);
 +         }
 +         // CraftBukkit end
