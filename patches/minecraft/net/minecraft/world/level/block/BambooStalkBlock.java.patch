@@ -68,7 +68,7 @@
        int j = (p_261759_ < 11 || !(p_261633_.m_188501_() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
 -      p_262076_.m_7731_(p_262109_.m_7494_(), this.m_49966_().m_61124_(f_260603_, Integer.valueOf(i)).m_61124_(f_260716_, bambooleaves).m_61124_(f_260694_, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.m_7494_(), this.m_49966_().m_61124_(f_260603_, j).m_61124_(f_260716_, bambooleaves).m_61124_(f_260694_, j), 3)) {
++      if (org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.m_7494_(), this.m_49966_().m_61124_(f_260603_, i).m_61124_(f_260716_, bambooleaves).m_61124_(f_260694_, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_262076_.m_7731_(p_262109_.m_7495_(), blockstate.m_61124_(f_260716_, BambooLeaves.SMALL), 3);
 +            p_262076_.m_7731_(blockpos, blockstate1.m_61124_(f_260716_, BambooLeaves.NONE), 3);
