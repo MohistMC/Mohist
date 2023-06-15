@@ -39,17 +39,12 @@
                 this.f_19853_.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this, blockstate));
              }
           }
-@@ -130,7 +_,12 @@
+@@ -130,7 +_,7 @@
  
     protected InteractionResult m_6071_(Player p_29920_, InteractionHand p_29921_) {
        ItemStack itemstack = p_29920_.m_21120_(p_29921_);
 -      if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
 +      if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
-+         // CraftBukkit start
-+         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_29920_, this, itemstack, p_29921_)) {
-+            return InteractionResult.PASS;
-+         }
-+         // CraftBukkit end
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_29920_);
           if (!this.f_19853_.f_46443_) {

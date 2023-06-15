@@ -14,17 +14,12 @@
     private static final EntityDataAccessor<String> f_28908_ = SynchedEntityData.m_135353_(MushroomCow.class, EntityDataSerializers.f_135030_);
     private static final int f_148934_ = 1024;
     @Nullable
-@@ -103,7 +_,12 @@
+@@ -103,7 +_,7 @@
  
           this.m_5496_(soundevent, 1.0F, 1.0F);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
 -      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
 +      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared // Mohist TODO
-+         // CraftBukkit start
-+         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_28941_, this, itemstack, p_28942_)) {
-+            return InteractionResult.PASS;
-+         }
-+         // CraftBukkit end
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
           if (!this.f_19853_.f_46443_) {
