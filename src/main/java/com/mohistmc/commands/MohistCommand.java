@@ -16,10 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.command;
+package com.mohistmc.commands;
 
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.plugins.itemedit.ItemCommand;
 import net.minecraft.DetectedVersion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;

@@ -11,6 +11,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.plugins.MohistPlugin;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -420,7 +421,6 @@ public final class CraftServer implements Server {
     public void loadPlugins() {
         pluginManager.registerInterface(JavaPluginLoader.class);
         RemapUtils.init();
-
         File pluginFolder = (File) console.options.valueOf("plugins");
 
         if (pluginFolder.exists()) {
@@ -454,6 +454,7 @@ public final class CraftServer implements Server {
         }
 
         if (type == PluginLoadOrder.POSTWORLD) {
+            MohistPlugin.init(this);
             // Spigot start - Allow vanilla commands to be forced to be the main command
             setVanillaCommands(true);
             commandMap.setFallbackCommands();
@@ -1101,6 +1102,7 @@ public final class CraftServer implements Server {
             worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
         }
 
+        net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider);
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences());
 

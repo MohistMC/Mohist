@@ -1,11 +1,12 @@
 package com.mohistmc;
 
 import com.google.common.base.Throwables;
-import com.mohistmc.command.BackupWorldCommand;
-import com.mohistmc.command.DumpCommand;
-import com.mohistmc.command.GetPluginListCommand;
-import com.mohistmc.command.MohistCommand;
-import com.mohistmc.command.PluginCommand;
+import com.mohistmc.commands.BackupWorldCommand;
+import com.mohistmc.commands.DumpCommand;
+import com.mohistmc.commands.GetPluginListCommand;
+import com.mohistmc.commands.MohistCommand;
+import com.mohistmc.commands.PluginCommand;
+import com.mohistmc.plugins.MohistPlugin;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -68,6 +69,8 @@ public class MohistConfig {
         commands.put("dump", new DumpCommand("dump"));
         commands.put("plugin", new PluginCommand("plugin"));
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
+
+        MohistPlugin.registerCommands(commands);
 
         version = getInt("config-version", 1);
         set("config-version", 1);

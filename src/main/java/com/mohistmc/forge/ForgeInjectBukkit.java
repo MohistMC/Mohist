@@ -189,6 +189,8 @@ public class ForgeInjectBukkit {
         }
     }
 
+
+    // TODO Get mods type?
     public static WorldType addEnumWorldType(String name) {
         WorldType worldType = MohistDynamEnum.addEnum0(WorldType.class, name, new Class[]{String.class}, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");

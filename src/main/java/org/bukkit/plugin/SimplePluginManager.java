@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.plugins.MohistPlugin;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -604,6 +605,7 @@ public final class SimplePluginManager implements PluginManager {
                 server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
             }
         }
+        MohistPlugin.registerListener(event);
     }
 
     @Override

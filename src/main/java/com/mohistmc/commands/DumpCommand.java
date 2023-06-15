@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.command;
+package com.mohistmc.commands;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ChatComponentAPI;
