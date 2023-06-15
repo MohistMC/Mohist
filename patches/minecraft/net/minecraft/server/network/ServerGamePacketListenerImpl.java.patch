@@ -1774,7 +1774,7 @@
 +
 +   private void handleCommand(String s) {
 +      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
-+      this.f_9744_.info(this.f_9743_.m_6302_() + " issued server command: " + s);
++      f_9744_.info(this.f_9743_.m_6302_() + " issued server command: " + s);
 +
 +      CraftPlayer player = this.getCraftPlayer();
 +
