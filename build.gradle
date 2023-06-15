@@ -36,8 +36,8 @@ ext {
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '6.0.3'
-    MODLAUNCHER_VERSION = '10.0.8'
-    SECUREJARHANDLER_VERSION = '2.1.6'
+    MODLAUNCHER_VERSION = '10.0.9'
+    SECUREJARHANDLER_VERSION = '2.1.9'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
     ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
@@ -58,8 +58,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.20.1-47.0.1'
-    FORGE_VERSION = '47.0.1'
+    VERSION = '1.20.1-47.0.2'
+    FORGE_VERSION = '47.0.2'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -242,6 +242,8 @@ def sharedDeps = {
     installer 'com.mojang:brigadier:1.1.8'
     installer 'com.github.oshi:oshi-core:6.4.0'
 
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
 
     installer 'io.netty:netty-buffer:4.1.82.Final'
     installer 'io.netty:netty-codec:4.1.82.Final'

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
+@@ -3,6 +_,7 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.logging.LogUtils;
+ import java.util.List;
++import java.util.Objects;
+ import java.util.UUID;
+ import java.util.function.UnaryOperator;
+ import javax.annotation.Nullable;
 @@ -17,6 +_,7 @@
  import net.minecraft.network.chat.Style;
  import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -54,7 +62,7 @@
        for(int i = 0; i < p_277744_.size(); ++i) {
           FilteredText filteredtext = p_277744_.get(i);
           Style style = p_277359_.m_277138_(i, p_277396_.m_143387_()).m_7383_();
-@@ -167,6 +_,27 @@
+@@ -167,6 +_,29 @@
           }
        }
  
@@ -62,20 +70,22 @@
 +      org.bukkit.entity.Player player = ((ServerPlayer) p_277396_).getBukkitEntity();
 +      String[] lines = new String[4];
 +
-+      for (int j = 0; j < p_277744_.size(); ++j) {
-+         lines[j] = CraftChatMessage.fromComponent(p_277359_.m_277138_(j, p_277396_.m_143387_()));
++      for (int i = 0; i < p_277744_.size(); ++i) {
++         lines[i] = CraftChatMessage.fromComponent(p_277359_.m_277138_(i, p_277396_.m_143387_()));
 +      }
 +
-+      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.f_58857_, this.f_58858_), player, lines, (front) ? Side.FRONT : Side.BACK);
++      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.f_58857_, this.f_58858_), player, lines.clone(), (front) ? Side.FRONT : Side.BACK);
 +      p_277396_.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
-+      if (!event.isCancelled()) {
-+         Component[] components = org.bukkit.craftbukkit.v1_20_R1.block.CraftSign.sanitizeLines(event.getLines());
-+         for (int j = 0; j < components.length; j++) {
-+            p_277359_ = p_277359_.m_276913_(j, components[j]);
++      if (event.isCancelled()) {
++         return originalText;
++      }
++
++      Component[] components = org.bukkit.craftbukkit.v1_20_R1.block.CraftSign.sanitizeLines(event.getLines());
++      for (int i = 0; i < components.length; i++) {
++         if (!Objects.equals(lines[i], event.getLine(i))) {
++            p_277359_ = p_277359_.m_276913_(i, components[i]);
 +         }
-+      } else {
-+         p_277359_ = originalText;
 +      }
 +      // CraftBukkit end
 +

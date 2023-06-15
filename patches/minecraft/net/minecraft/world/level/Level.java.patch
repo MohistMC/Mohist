@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -3,8 +_,10 @@
+@@ -1,10 +_,13 @@
+ package net.minecraft.world.level;
+ 
  import com.google.common.collect.Lists;
++import com.mohistmc.forge.ForgeInjectBukkit;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
 +import java.util.HashMap;
@@ -47,11 +50,12 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,16 @@
+@@ -69,8 +_,17 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState;
@@ -65,7 +69,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,17 +_,61 @@
+@@ -101,17 +_,67 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -124,6 +128,12 @@
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
++      }
++      if (generator == null && p_270739_ != null) { // Mohist - Fix Advanced Rocketry assembler crash
++         generator = getCraftServer().getGenerator(p_270683_.m_211136_().m_135827_());
++      }
++      if (environment == null) {
++         environment = ForgeInjectBukkit.environment.get(getTypeKey());
 +      }
 +      // CraftBukkit end
        this.f_46446_ = p_270692_;

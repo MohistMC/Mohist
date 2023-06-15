@@ -109,7 +109,7 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
 
         for (int i = 0; i < 4; i++) {
             if (i < lines.length && lines[i] != null) {
-                components[i] = Component.literal("").append(CraftChatMessage.fromString(lines[i])[0]); // SPIGOT-7372: Vanilla wants a literal first
+                components[i] = CraftChatMessage.fromString(lines[i])[0];
             } else {
                 components[i] = Component.empty();
             }

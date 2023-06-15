@@ -77,6 +77,24 @@
           return false;
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
+@@ -246,7 +_,7 @@
+       super.m_8024_();
+    }
+ 
+-   protected boolean m_32529_() {
++   public boolean m_32529_() {
+       if (!this.m_9236_().m_5776_() && this.m_6084_()) {
+          double d0 = this.m_20185_() + (this.f_19796_.m_188500_() - 0.5D) * 64.0D;
+          double d1 = this.m_20186_() + (double)(this.f_19796_.m_188503_(64) - 32);
+@@ -257,7 +_,7 @@
+       }
+    }
+ 
+-   boolean m_32500_(Entity p_32501_) {
++   public boolean m_32500_(Entity p_32501_) {
+       Vec3 vec3 = new Vec3(this.m_20185_() - p_32501_.m_20185_(), this.m_20227_(0.5D) - p_32501_.m_20188_(), this.m_20189_() - p_32501_.m_20189_());
+       vec3 = vec3.m_82541_();
+       double d0 = 16.0D;
 @@ -278,8 +_,10 @@
        boolean flag = blockstate.m_280555_();
        boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
