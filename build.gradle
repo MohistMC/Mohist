@@ -434,7 +434,7 @@ def sharedFmlonlyForge = { Project prj ->
 
     def MODULE_PATH = getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
     def tokens = [
-            TASK:          prj.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+            TASK:          'forgeserver',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
             FORGE_VERSION: FORGE_VERSION,
             MC_VERSION:    MC_VERSION,
@@ -1063,7 +1063,7 @@ project(':mohist') {
                 ]
         def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
-                TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+                TASK         : 'forgeserver',
                 MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
                 FORGE_VERSION: FORGE_VERSION,
                 MC_VERSION   : MC_VERSION,
