@@ -242,9 +242,6 @@ def sharedDeps = {
     installer 'com.mojang:brigadier:1.1.8'
     installer 'com.github.oshi:oshi-core:6.4.0'
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-
     installer 'io.netty:netty-buffer:4.1.82.Final'
     installer 'io.netty:netty-codec:4.1.82.Final'
     installer 'io.netty:netty-common:4.1.82.Final'

@@ -9,8 +9,6 @@ import lombok.Getter;
  * @date 2023/6/14 19:53:09
  */
 
-@AllArgsConstructor
-@Getter
 public enum MessageI18N {
 
     WORLDMANAGE_PREFIX(MohistMC.i18n.get("worldmanage.prefix")),
@@ -23,6 +21,14 @@ public enum MessageI18N {
     WORLDMANAGE_GUI_TITLE_1(MohistMC.i18n.get("worldmanage.gui.title1")),
     WORLDMANAGE_GUI_CLOSE(MohistMC.i18n.get("worldmanage.gui.close"));
 
-    final String key;
+    public final String key;
+
+    MessageI18N(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
+    }
 
 }
