@@ -46,3 +46,11 @@
              this.f_276563_ = ItemStack.f_41583_;
           }
  
+@@ -211,6 +_,7 @@
+    }
+ 
+    public void m_142466_(CompoundTag p_277597_) {
++      super.m_142466_(p_277597_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
+       if (!this.m_276996_(p_277597_) && p_277597_.m_128441_("item")) {
+          this.f_276563_ = ItemStack.m_41712_(p_277597_.m_128469_("item"));
+       }

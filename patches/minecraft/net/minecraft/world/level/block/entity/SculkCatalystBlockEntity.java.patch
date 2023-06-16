@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
+@@ -38,6 +_,7 @@
+    }
+ 
+    public void m_142466_(CompoundTag p_222787_) {
++      super.m_142466_(p_222787_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
+       this.f_279609_.f_279632_.m_222269_(p_222787_);
+    }
+ 

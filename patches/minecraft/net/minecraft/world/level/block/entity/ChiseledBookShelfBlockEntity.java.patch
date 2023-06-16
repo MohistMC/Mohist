@@ -29,6 +29,14 @@
  
     public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
        super(BlockEntityType.f_244310_, p_249541_, p_251752_);
+@@ -44,6 +_,7 @@
+    }
+ 
+    public void m_142466_(CompoundTag p_249911_) {
++      super.m_142466_(p_249911_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
+       this.f_260576_.clear();
+       ContainerHelper.m_18980_(p_249911_, this.f_260576_);
+       this.f_262317_ = p_249911_.m_128451_("last_interacted_slot");
 @@ -91,7 +_,7 @@
     public void m_6836_(int p_256610_, ItemStack p_255789_) {
        if (p_255789_.m_204117_(ItemTags.f_244646_)) {
