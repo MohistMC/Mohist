@@ -29,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+@Getter
 @ToString
 @AllArgsConstructor
 public enum DownloadSource {
@@ -38,7 +39,6 @@ public enum DownloadSource {
     GITHUB("https://mavenmirror.mohistmc.com/");
 
     public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
-    @Getter
     final
     String url;
 
@@ -46,7 +46,7 @@ public enum DownloadSource {
         String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url) == 520) return GITHUB;
+                if (isDown(me.url) != 200) return GITHUB;
                 return me;
             }
         }

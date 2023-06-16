@@ -483,7 +483,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 }
 
-project(':forge') {
+project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
@@ -784,7 +784,7 @@ project(':forge') {
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
         doFirst {
-            def forge_client = project(':forge').patcher.runs.forge_client
+            def forge_client = project(':mohist').patcher.runs.forge_client
             json = [
                 _comment_: comment,
                 id: id,
@@ -1176,7 +1176,7 @@ project(':forge') {
 //evaluationDependsOnChildren()
 task setup() {  //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
     dependsOn ':clean:extractMapped'
-    dependsOn ':forge:extractMapped'
+    dependsOn ':mohist:extractMapped'
 }
 
 project.gradle.startParameter.excludedTaskNames.add(':clean:genPatches')

@@ -16,13 +16,13 @@ include 'lowcodelanguage'
 
 include ':mcp'
 include ':clean'
-include ':forge'
+include ':mohist'
 
 include 'mohistlauncher'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
-project(":forge").projectDir = file("projects/forge")
+project(":mohist").projectDir = file("projects/mohist")
 
 project(":fmlloader").projectDir = file("forge/fmlloader")
 project(":fmlcore").projectDir = file("forge/fmlcore")
