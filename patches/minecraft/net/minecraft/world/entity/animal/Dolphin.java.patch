@@ -31,7 +31,7 @@
 +            if (org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
 +               return;
 +            }
-+            itemstack = entityitem.m_32055_(); // update ItemStack from event
++            itemstack = p_28357_.m_32055_(); // update ItemStack from event
 +            // CraftBukkit end
              this.m_21053_(p_28357_);
              this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
