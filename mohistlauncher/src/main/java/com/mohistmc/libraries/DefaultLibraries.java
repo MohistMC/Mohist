@@ -29,6 +29,7 @@ import com.mohistmc.util.MD5Util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -39,7 +40,15 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
     public static final HashMap<String, String> fail = new HashMap<>();
-    public static final String MAVENURL = DownloadSource.get().getUrl();
+    public static final String MAVENURL;
+
+    static {
+        try {
+            MAVENURL = DownloadSource.get().getUrl();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static String libUrl(File lib) {
         return MAVENURL + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
