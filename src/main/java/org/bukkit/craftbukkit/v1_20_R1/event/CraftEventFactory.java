@@ -1296,6 +1296,11 @@ public class CraftEventFactory {
             hitEntity = ((EntityHitResult) position).getEntity().getBukkitEntity();
         }
 
+        // Mohist start - Fix ClassCastException MohistModsEntity -> org.bukkit.entity.Projectile
+        if (!(entity.getBukkitEntity() instanceof Projectile))
+            return null;
+        // Mohist end
+
         ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity(), hitEntity, hitBlock, hitFace);
         entity.level.getCraftServer().getPluginManager().callEvent(event);
         return event;
