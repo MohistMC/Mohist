@@ -1,7 +1,6 @@
 package com.mohistmc.plugins.world.listener;
 
 import com.mohistmc.plugins.MessageI18N;
-import com.mohistmc.plugins.MohistPlugin;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 import org.bukkit.Bukkit;

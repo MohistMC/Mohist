@@ -1,8 +1,6 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistMC;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * @author Mgazul by MohistMC
