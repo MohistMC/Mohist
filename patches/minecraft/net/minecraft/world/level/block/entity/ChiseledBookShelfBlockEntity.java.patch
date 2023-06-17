@@ -37,6 +37,15 @@
        this.f_260576_.clear();
        ContainerHelper.m_18980_(p_249911_, this.f_260576_);
        this.f_262317_ = p_249911_.m_128451_("last_interacted_slot");
+@@ -78,7 +_,7 @@
+       ItemStack itemstack = Objects.requireNonNullElse(this.f_260576_.get(p_255828_), ItemStack.f_41583_);
+       this.f_260576_.set(p_255828_, ItemStack.f_41583_);
+       if (!itemstack.m_41619_()) {
+-         this.m_261204_(p_255828_);
++         if (f_58857_ != null) this.m_261204_(p_255828_); // CraftBukkit - SPIGOT-7381: check for null world
+       }
+ 
+       return itemstack;
 @@ -91,7 +_,7 @@
     public void m_6836_(int p_256610_, ItemStack p_255789_) {
        if (p_255789_.m_204117_(ItemTags.f_244646_)) {

@@ -25,7 +25,7 @@
  
           if (hitresult.m_6662_() == HitResult.Type.BLOCK) {
 +            // CraftBukkit start - Boat placement
-+            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresult.m_82425_(), hitresult.m_82434_(), itemstack, p_40624_);
++            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresult.m_82425_(), hitresult.m_82434_(), itemstack, false, p_40624_, hitresult.m_82450_());
 +
 +            if (event.isCancelled()) {
 +               return InteractionResultHolder.m_19098_(itemstack);

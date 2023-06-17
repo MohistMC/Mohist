@@ -888,7 +888,7 @@
 +            if (f_9743_.f_8941_.firedInteract && f_9743_.f_8941_.interactPosition.equals(movingobjectpositionblock.m_82425_()) && f_9743_.f_8941_.interactHand == interactionhand && ItemStack.m_150942_(f_9743_.f_8941_.interactItemStack, itemstack)) {
 +               cancelled = f_9743_.f_8941_.interactResult;
 +            } else {
-+               org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(f_9743_, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.m_82425_(), movingobjectpositionblock.m_82434_(), itemstack, true, interactionhand);
++               org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(f_9743_, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.m_82425_(), movingobjectpositionblock.m_82434_(), itemstack, true, interactionhand, movingobjectpositionblock.m_82450_());
 +               cancelled = event.useItemInHand() == Event.Result.DENY;
 +            }
 +            f_9743_.f_8941_.firedInteract = false;
