@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit.v1_19_R3.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.Locale;
+
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.monster.Zombie;
@@ -9,8 +11,10 @@ import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
@@ -129,10 +133,10 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT));
+        return BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getNamespace().equals(NamespacedKey.MINECRAFT) ? Profession.valueOf(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).getPath().toUpperCase(Locale.ROOT)) : Profession.valueOf(ForgeInjectBukkit.normalizeName(BuiltInRegistries.VILLAGER_PROFESSION.getKey(nms).toString()));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+        return !ForgeInjectBukkit.profession.containsKey(bukkit) ? BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey())) : ForgeRegistries.VILLAGER_PROFESSIONS.getValue(ForgeInjectBukkit.profession.get(bukkit));
     }
 }
