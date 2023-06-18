@@ -13,6 +13,7 @@ import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
@@ -227,6 +228,10 @@ public class ActivationRange
     {
         // Never safe to skip fireworks or entities not yet added to chunk
         if ( entity instanceof FireworkRocketEntity ) {
+            return true;
+        }
+
+        if ( entity instanceof ItemEntity) {
             return true;
         }
 

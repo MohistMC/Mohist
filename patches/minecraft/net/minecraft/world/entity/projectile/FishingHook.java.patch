@@ -123,7 +123,7 @@
        }
  
     }
-@@ -403,15 +_,30 @@
+@@ -403,26 +_,54 @@
        Player player = this.m_37168_();
        if (!this.m_9236_().f_46443_ && player != null && !this.m_37136_(player)) {
           int i = 0;
@@ -155,6 +155,31 @@
              CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, list);
  
              for(ItemStack itemstack : list) {
+                ItemEntity itementity = new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20186_(), this.m_20189_(), itemstack);
++               // CraftBukkit start
++               PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) player.getBukkitEntity(), itementity.getBukkitEntity(), (FishHook) this.getBukkitEntity(), PlayerFishEvent.State.CAUGHT_FISH);
++               playerFishEvent.setExpToDrop(this.f_19796_.m_188503_(6) + 1);
++               this.m_9236_().getCraftServer().getPluginManager().callEvent(playerFishEvent);
++
++               if (playerFishEvent.isCancelled()) {
++                  return 0;
++               }
++               // CraftBukkit end
+                double d0 = player.m_20185_() - this.m_20185_();
+                double d1 = player.m_20186_() - this.m_20186_();
+                double d2 = player.m_20189_() - this.m_20189_();
+                double d3 = 0.1D;
+                itementity.m_20334_(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
+                this.m_9236_().m_7967_(itementity);
+-               player.m_9236_().m_7967_(new ExperienceOrb(player.m_9236_(), player.m_20185_(), player.m_20186_() + 0.5D, player.m_20189_() + 0.5D, this.f_19796_.m_188503_(6) + 1));
++               // CraftBukkit start - this.random.nextInt(6) + 1 -> playerFishEvent.getExpToDrop()
++               if (playerFishEvent.getExpToDrop() > 0) {
++                  player.m_9236_().m_7967_(new ExperienceOrb(player.m_9236_(), player.m_20185_(), player.m_20186_() + 0.5D, player.m_20189_() + 0.5D, this.f_19796_.m_188503_(6) + 1));
++               }
++               // CraftBukkit end
+                if (itemstack.m_204117_(ItemTags.f_13156_)) {
+                   player.m_36222_(Stats.f_12939_, 1);
+                }
 @@ -432,11 +_,28 @@
           }
  

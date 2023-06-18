@@ -18,24 +18,14 @@
 
 package com.mohistmc.eventhandler.dispatcher;
 
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 
 public class ItemEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
     public void onItemExpireEvent(ItemExpireEvent event) {
-        if (Bukkit.getServer() instanceof CraftServer) {
-            // CraftBukkit start - fire ItemDespawnEvent
-            ItemEntity entity = event.getEntity();
-            if (CraftEventFactory.callItemDespawnEvent(entity).isCancelled()) {
-                entity.age = 0;
-            }
-            // CraftBukkit end
-        }
+        event.setCanceled(CraftEventFactory.callItemDespawnEvent(event.getEntity()).isCancelled());
     }
 }

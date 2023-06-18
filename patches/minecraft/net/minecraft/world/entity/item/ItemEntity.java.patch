@@ -24,7 +24,7 @@
  
  public class ItemEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<ItemStack> f_31984_ = SynchedEntityData.m_135353_(ItemEntity.class, EntityDataSerializers.f_135033_);
-@@ -38,10 +_,15 @@
+@@ -38,10 +_,14 @@
     public int f_31986_;
     private int f_31987_ = 5;
     @Nullable
@@ -38,7 +38,6 @@
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
 +   public int lifespan = ItemEntity.f_149659_;
-+   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
@@ -46,7 +45,7 @@
        this.m_6034_(p_149664_, p_149665_, p_149666_);
        this.m_20334_(p_149668_, p_149669_, p_149670_);
        this.m_32045_(p_149667_);
-+      this.lifespan = (p_149667_.m_41720_() == null ? f_19853_.spigotConfig.itemDespawnRate : p_149667_.getEntityLifespan(p_149663_)); // Spigot // Mohist move to
++      this.lifespan = (p_149667_.m_41720_() == null ? ItemEntity.f_149659_ : p_149667_.getEntityLifespan(p_149663_));
     }
  
     private ItemEntity(ItemEntity p_31994_) {
@@ -58,7 +57,7 @@
     }
  
     public boolean m_213854_() {
-@@ -94,19 +_,27 @@
+@@ -94,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -66,20 +65,7 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-          super.m_8119_();
--         if (this.f_31986_ > 0 && this.f_31986_ != 32767) {
--            --this.f_31986_;
--         }
-+         // CraftBukkit start - Use wall time for pickup and despawn timers
-+         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+         if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
-+         this.f_31986_ = Math.max(0, this.f_31986_); // Paper - don't go below 0
-+         if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
-+         this.lastTick = MinecraftServer.currentTick;
-+         // CraftBukkit end
- 
-          this.f_19854_ = this.m_20185_();
-          this.f_19855_ = this.m_20186_();
+@@ -107,6 +_,9 @@
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
@@ -99,33 +85,13 @@
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
-@@ -146,9 +_,11 @@
-             this.m_32069_();
-          }
- 
--         if (this.f_31985_ != -32768) {
--            ++this.f_31985_;
-+         /* CraftBukkit start - moved up
-+         if (this.age != -32768) {
-+            ++this.age;
-          }
-+         // CraftBukkit end */
- 
-          this.f_19812_ |= this.m_20073_();
-          if (!this.m_9236_().f_46443_) {
-@@ -158,7 +_,22 @@
+@@ -158,7 +_,16 @@
              }
           }
  
 -         if (!this.m_9236_().f_46443_ && this.f_31985_ >= 6000) {
 +         ItemStack item = this.m_32055_();
 +         if (!this.m_9236_().f_46443_ && this.f_31985_ >= lifespan) {
-+            // CraftBukkit start - fire ItemDespawnEvent
-+            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+               this.f_31985_ = 0;
-+               return;
-+            }
-+            // CraftBukkit end
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) {
 +                this.m_146870_();
@@ -137,35 +103,6 @@
              this.m_146870_();
           }
  
-@@ -169,6 +_,28 @@
-       return this.m_216986_(0.999999F);
-    }
- 
-+   // Spigot start - copied from above
-+   @Override
-+   public void inactiveTick() {
-+      // CraftBukkit start - Use wall time for pickup and despawn timers
-+      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+      if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
-+      if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
-+      this.lastTick = MinecraftServer.currentTick;
-+      // CraftBukkit end
-+
-+      if (!this.m_9236_().f_46443_ && this.f_31985_ >= this.m_9236_().spigotConfig.itemDespawnRate) { // Spigot
-+         // CraftBukkit start - fire ItemDespawnEvent
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+            this.f_31985_ = 0;
-+            return;
-+         }
-+         // CraftBukkit end
-+         this.m_146870_();
-+      }
-+   }
-+   // Spigot end
-+
-    private void m_32067_() {
-       Vec3 vec3 = this.m_20184_();
-       this.m_20334_(vec3.f_82479_ * (double)0.99F, vec3.f_82480_ + (double)(vec3.f_82480_ < (double)0.06F ? 5.0E-4F : 0.0F), vec3.f_82481_ * (double)0.99F);
 @@ -181,7 +_,9 @@
  
     private void m_32069_() {
@@ -177,15 +114,6 @@
              return p_186268_ != this && p_186268_.m_32070_();
           })) {
              if (itementity.m_32070_()) {
-@@ -204,7 +_,7 @@
-       ItemStack itemstack = this.m_32055_();
-       ItemStack itemstack1 = p_32016_.m_32055_();
-       if (Objects.equals(this.f_265881_, p_32016_.f_265881_) && m_32026_(itemstack, itemstack1)) {
--         if (itemstack1.m_41613_() < itemstack.m_41613_()) {
-+         if (true || itemstack1.m_41613_() < itemstack.m_41613_()) { // Spigot
-             m_32017_(this, itemstack, p_32016_, itemstack1);
-          } else {
-             m_32017_(p_32016_, itemstack1, this, itemstack);
 @@ -220,6 +_,8 @@
           return false;
        } else if (p_32028_.m_41782_() ^ p_32027_.m_41782_()) {
@@ -304,19 +232,17 @@
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
                 this.m_146870_();
-@@ -343,9 +_,9 @@
+@@ -343,8 +_,8 @@
     }
  
     @Nullable
 -   public Entity m_5489_(ServerLevel p_32042_) {
 -      Entity entity = super.m_5489_(p_32042_);
--      if (!this.m_9236_().f_46443_ && entity instanceof ItemEntity) {
 +   public Entity changeDimension(ServerLevel p_32042_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      Entity entity = super.changeDimension(p_32042_, teleporter);
-+      if (!this.f_19853_.f_46443_ && entity instanceof ItemEntity) {
+       if (!this.m_9236_().f_46443_ && entity instanceof ItemEntity) {
           ((ItemEntity)entity).m_32069_();
        }
- 
 @@ -357,7 +_,9 @@
     }
  
