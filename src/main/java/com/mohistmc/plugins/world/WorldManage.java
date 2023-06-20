@@ -18,8 +18,8 @@ public class WorldManage {
         ConfigByWorlds.loadWorlds();
         ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName);
         if (Bukkit.getAllowNether()) {
-            ConfigByWorlds.addWorld("world_the_end");
-            ConfigByWorlds.addWorld("world_nether");
+            ConfigByWorlds.addWorld("DIM1");
+            ConfigByWorlds.addWorld("DIM-1");
         }
     }
 

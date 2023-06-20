@@ -1,6 +1,11 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -10,9 +_,11 @@
+@@ -6,13 +_,16 @@
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
++import com.mohistmc.forge.ForgeInjectBukkit;
+ import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.datafixers.DataFixer;
@@ -62,11 +67,9 @@
  import net.minecraft.util.profiling.EmptyProfileResults;
  import net.minecraft.util.profiling.ProfileResults;
  import net.minecraft.util.profiling.ProfilerFiller;
-@@ -136,26 +_,33 @@
- import net.minecraft.world.level.WorldDataConfiguration;
- import net.minecraft.world.level.biome.BiomeManager;
+@@ -138,10 +_,12 @@
  import net.minecraft.world.level.block.Block;
--import net.minecraft.world.level.border.BorderChangeListener;
+ import net.minecraft.world.level.border.BorderChangeListener;
  import net.minecraft.world.level.border.WorldBorder;
 +import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.dimension.LevelStem;
@@ -77,9 +80,7 @@
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import net.minecraft.world.level.storage.CommandStorage;
--import net.minecraft.world.level.storage.DerivedLevelData;
- import net.minecraft.world.level.storage.DimensionDataStorage;
- import net.minecraft.world.level.storage.LevelData;
+@@ -151,11 +_,19 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.level.storage.PlayerDataStorage;
@@ -90,6 +91,7 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R1.util.LazyPlayerSet;
@@ -215,233 +217,63 @@
  
     private void m_129841_(DimensionDataStorage p_129842_) {
        p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
-@@ -297,17 +_,14 @@
- 
-    protected abstract boolean m_7038_() throws IOException;
- 
--   protected void m_130006_() {
-+   protected void loadLevel(String s) { // CraftBukkit
-       if (!JvmProfiler.f_185340_.m_183608_()) {
-       }
- 
-       boolean flag = false;
-       ProfiledDuration profiledduration = JvmProfiler.f_185340_.m_183494_();
--      this.f_129749_.m_7955_(this.getServerModName(), this.m_183471_().m_184597_());
--      ChunkProgressListener chunkprogresslistener = this.f_129756_.m_9620_(11);
--      this.m_129815_(chunkprogresslistener);
--      this.m_7044_();
--      this.m_129940_(chunkprogresslistener);
+@@ -334,12 +_,27 @@
+       long j = BiomeManager.m_47877_(i);
+       List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
+       LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
++      // Mohist start
++      String over_name = serverleveldata.m_5462_();
++      org.bukkit.generator.ChunkGenerator over_gen = this.server.getGenerator(over_name);
++      org.bukkit.generator.BiomeProvider over_biomeProvider = this.server.getBiomeProvider(over_name);
++      World.Environment over_environment = World.Environment.NORMAL;
 +
-+      loadWorld0(s); // CraftBukkit
-       if (profiledduration != null) {
-          profiledduration.m_185413_();
-       }
-@@ -325,61 +_,163 @@
-    protected void m_7044_() {
-    }
- 
--   protected void m_129815_(ChunkProgressListener p_129816_) {
--      ServerLevelData serverleveldata = this.f_129749_.m_5996_();
--      boolean flag = this.f_129749_.m_7513_();
--      Registry<LevelStem> registry = this.f_244176_.m_247579_().m_175515_(Registries.f_256862_);
--      WorldOptions worldoptions = this.f_129749_.m_246337_();
--      long i = worldoptions.m_245499_();
--      long j = BiomeManager.m_47877_(i);
--      List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
--      LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
--      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
--      this.f_129762_.put(Level.f_46428_, serverlevel);
--      DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
--      this.m_129841_(dimensiondatastorage);
--      this.f_129732_ = new CommandStorage(dimensiondatastorage);
--      WorldBorder worldborder = serverlevel.m_6857_();
--      if (!serverleveldata.m_6535_()) {
--         try {
--            m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
--            serverleveldata.m_5555_(true);
--            if (flag) {
--               this.m_129847_(this.f_129749_);
--            }
--         } catch (Throwable throwable1) {
--            CrashReport crashreport = CrashReport.m_127521_(throwable1, "Exception initializing level");
-+   private void loadWorld0(String s){
-+      LevelStorageSource.LevelStorageAccess worldSession = this.f_129744_;
-+
-+      Registry<LevelStem> dimensions = this.f_244176_.m_247579_().m_175515_(Registries.f_256862_);
-+      for (LevelStem lS : dimensions) {
-+         ResourceKey<LevelStem> dimensionKey = dimensions.m_7854_(lS).orElse( net.minecraft.world.level.dimension.LevelStem.f_63971_);
-+
-+         ServerLevel world;
-+         int dimension = 0;
-+
-+         if (dimensionKey == LevelStem.f_63972_) {
-+            if (m_7079_()) {
-+               dimension = -1;
-+            } else {
-+               continue;
-+            }
-+         } else if (dimensionKey == LevelStem.f_63973_) {
-+            if (server.getAllowEnd()) {
-+               dimension = 1;
-+            } else {
-+               continue;
-+            }
-+         } else if (dimensionKey != LevelStem.f_63971_) {
-+            dimension = -999;
-+         }
-+
-+         String worldType = (dimension == -999) ? dimensionKey.m_135782_().m_135827_() + "_" + dimensionKey.m_135782_().m_135815_() : org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
-+         String name = (dimensionKey == LevelStem.f_63971_) ? s : s + "_" + worldType;
-+         if (dimension != 0) {
-+            File newWorld = DimensionType.getStorageFolder(new File(name).toPath(), dimensionKey).toFile();
-+            File oldWorld = DimensionType.getStorageFolder(new File(s).toPath(), dimensionKey).toFile();
-+            File oldLevelDat = new File(new File(s), "level.dat"); // The data folders exist on first run as they are created in the PersistentCollection constructor above, but the level.dat won't
-+
-+            if (!newWorld.isDirectory() && oldWorld.isDirectory() && oldLevelDat.isFile()) {
-+               MinecraftServer.f_129750_.info("---- Migration of old " + worldType + " folder required ----");
-+               MinecraftServer.f_129750_.info(  "Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-+               MinecraftServer.f_129750_.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
-+               MinecraftServer.f_129750_.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
-+
-+               if (newWorld.exists()) {
-+                  MinecraftServer.f_129750_.warn("A file or folder already exists at " + newWorld + "!");
-+                  MinecraftServer.f_129750_.info("---- Migration of old " + worldType + " folder failed ----");
-+               } else if (newWorld.getParentFile().mkdirs()) {
-+                  if (oldWorld.renameTo(newWorld)) {
-+                     MinecraftServer.f_129750_.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
-+                     // Migrate world data too.
-+                     try {
-+                        com.google.common.io.Files.copy(oldLevelDat, new File(new File(name), "level.dat"));
-+                        org.apache.commons.io.FileUtils.copyDirectory(new File(new File(s), "data"), new File(new File(name), "data"));
-+                     } catch (IOException exception) {
-+                        MinecraftServer.f_129750_.warn("Unable to migrate world data.");
-+                     }
-+                     MinecraftServer.f_129750_.info("---- Migration of old " + worldType + " folder complete ----");
-+                  } else {
-+                     MinecraftServer.f_129750_.warn("Could not move folder " + oldWorld + " to " + newWorld + "!");
-+                     MinecraftServer.f_129750_.info("---- Migration of old " + worldType + " folder failed ----");
-+                  }
-+               } else {
-+                  MinecraftServer.f_129750_.warn("Could not create path for " + newWorld + "!");
-+                  MinecraftServer.f_129750_.info("---- Migration of old " + worldType + " folder failed ----");
-+               }
-+            }
- 
-             try {
--               serverlevel.m_6026_(crashreport);
--            } catch (Throwable throwable) {
-+               worldSession = LevelStorageSource.m_78242_(server.getWorldContainer().toPath()).m_78260_(name);
-+            } catch (IOException ex) {
-+               throw new RuntimeException(ex);
-             }
--
--            throw new ReportedException(crashreport);
--         }
--
--         serverleveldata.m_5555_(true);
--      }
--
--      this.m_6846_().m_184209_(serverlevel);
--      if (this.f_129749_.m_6587_() != null) {
--         this.m_129901_().m_136295_(this.f_129749_.m_6587_());
--      }
--
--      RandomSequences randomsequences = serverlevel.m_288231_();
--
--      for(Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.m_6579_()) {
--         ResourceKey<LevelStem> resourcekey = entry.getKey();
--         if (resourcekey != LevelStem.f_63971_) {
--            ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
--            DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
--            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
--            worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
--            this.f_129762_.put(resourcekey1, serverlevel1);
--         }
--      }
--
--      worldborder.m_61931_(serverleveldata.m_5813_());
-+         }
-+
-+         org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
-+         org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(name);
-+
-+         PrimaryLevelData worlddata;
-+         WorldLoader.DataLoadContext worldloader_a = this.worldLoader;
-+         Registry<LevelStem> iregistry = worldloader_a.f_243759_().m_175515_(Registries.f_256862_);
-+         DynamicOps<Tag> dynamicops = RegistryOps.m_255058_(NbtOps.f_128958_, worldloader_a.f_244104_());
-+         Pair<WorldData, WorldDimensions.Complete> pair = worldSession.m_246049_(dynamicops, worldloader_a.f_244127_(), iregistry, worldloader_a.f_244104_().m_211816_());
-+
-+         if (pair != null) {
-+            worlddata = (PrimaryLevelData) pair.getFirst();
-+         } else {
-+            LevelSettings worldsettings;
-+            WorldOptions worldoptions;
-+            WorldDimensions LevelStems;
-+
-+            DedicatedServerProperties dedicatedserverproperties = ((DedicatedServer) this).m_7913_();
-+
-+            worldsettings = new LevelSettings(dedicatedserverproperties.f_139741_, dedicatedserverproperties.f_139740_, dedicatedserverproperties.f_139752_, dedicatedserverproperties.f_139739_, false, new GameRules(), worldloader_a.f_244127_());
-+            worldoptions = options.has("bonusChest") ? dedicatedserverproperties.f_243824_.m_247325_(true) : dedicatedserverproperties.f_243824_;
-+            LevelStems = dedicatedserverproperties.m_246483_(worldloader_a.f_244104_());
-+
-+            WorldDimensions.Complete LevelStems_b = LevelStems.m_245300_(iregistry);
-+            Lifecycle lifecycle = LevelStems_b.m_245945_().add(worldloader_a.f_244104_().m_211816_());
-+
-+            worlddata = new PrimaryLevelData(worldsettings, worldoptions, LevelStems_b.f_244634_(), lifecycle);
-+         }
-+         worlddata.checkName( name); // CraftBukkit - Migration did not rewrite the level.dat; This forces 1.8 to take the last loaded world as respawn (in this case the end)
-+         if (options.has("forceUpgrade")) {
-+            net.minecraft.server.Main.m_195488_(worldSession, DataFixers.m_14512_(), options.has("eraseCache"), () -> {
-+               return true;
-+            }, iregistry);
-+         }
-+
-+         PrimaryLevelData iworlddataserver = worlddata;
-+         boolean flag = worlddata.m_7513_();
-+         WorldOptions worldoptions = worlddata.m_246337_();
-+         long i = worldoptions.m_245499_();
-+         long j = BiomeManager.m_47877_(i);
-+         List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(iworlddataserver));
-+         LevelStem levelStem = (LevelStem) dimensions.m_6246_(dimensionKey);
-+
-+         org.bukkit.generator.WorldInfo worldInfo = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo(iworlddataserver, worldSession, org.bukkit.World.Environment.getEnvironment(dimension), lS.f_63975_().m_203334_());
-+         if (biomeProvider == null && gen != null) {
-+            biomeProvider = gen.getDefaultBiomeProvider(worldInfo);
-+         }
-+
-+         ResourceKey<Level> worldKey = ResourceKey.m_135785_(Registries.f_256858_, dimensionKey.m_135782_());
-+
-+         if (dimensionKey == net.minecraft.world.level.dimension.LevelStem.f_63971_) {
-+            this.f_129749_ = worlddata;
-+            this.f_129749_.m_5458_(((DedicatedServer) this).m_7913_().f_139740_); // From DedicatedServer.init
-+
-+            ChunkProgressListener worldloadlistener = this.f_129756_.m_9620_(11);
-+            Level.craftWorldData(gen, org.bukkit.World.Environment.getEnvironment(dimension), biomeProvider); // Mohist
-+            world = new ServerLevel(this, this.f_129738_, worldSession, iworlddataserver, worldKey, levelStem, worldloadlistener, flag, j, list, true, (RandomSequences)null);
-+            DimensionDataStorage worldpersistentdata = world.m_8895_();
-+            this.m_129841_(worldpersistentdata);
-+            this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R1.scoreboard.CraftScoreboardManager(this, world.m_6188_());
-+            this.f_129732_ = new CommandStorage(worldpersistentdata);
-+         } else {
-+            ChunkProgressListener worldloadlistener = this.f_129756_.m_9620_(11);
-+            Level.craftWorldData(gen, org.bukkit.World.Environment.getEnvironment(dimension), biomeProvider); // Mohist
-+            world = new ServerLevel(this, this.f_129738_, worldSession, iworlddataserver, worldKey, lS, worldloadlistener, flag, j, ImmutableList.of(), true, (RandomSequences)null);
-+         }
-+
-+         worlddata.m_7955_(this.getServerModName(), this.m_183471_().m_184597_());
-+         this.initWorld(world, worlddata, f_129749_, worldoptions);
-+
-+         this.f_129762_.put(world.m_46472_(), world);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post( new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(worldKey)));
-+         this.m_6846_().m_184209_(world);
-+
-+         if (worlddata.m_6587_() != null) {
-+            this.m_129901_().m_136295_(worlddata.m_6587_());
-+         }
++      org.bukkit.generator.WorldInfo over_worldInfo = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo(serverleveldata, this.f_129744_, over_environment, levelstem.f_63975_().m_203334_());
++      if (over_biomeProvider == null && over_gen != null) {
++         over_biomeProvider = over_gen.getDefaultBiomeProvider(over_worldInfo);
 +      }
-+      this.m_7044_();
-+      for (ServerLevel worldserver : this.m_129785_()) {
-+         this.prepareLevels(worldserver.m_7726_().f_8325_.f_140144_, worldserver);
++
++      Level.craftWorldData(over_gen, over_environment, over_biomeProvider);
++      // Mohist end
+       ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
++      this.initWorld(serverlevel, serverleveldata, f_129749_, worldoptions); // CraftBukkit
+       this.f_129762_.put(Level.f_46428_, serverlevel);
+       DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
+       this.m_129841_(dimensiondatastorage);
+       this.f_129732_ = new CommandStorage(dimensiondatastorage);
+       WorldBorder worldborder = serverlevel.m_6857_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
+       if (!serverleveldata.m_6535_()) {
+          try {
+             m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
+@@ -373,13 +_,38 @@
+          if (resourcekey != LevelStem.f_63971_) {
+             ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
+             DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
++
++            // Mohist start
++            String name = derivedleveldata.m_5462_(); // TODO
++            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(over_name);
++            org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(over_name);
++            World.Environment environment = ForgeInjectBukkit.environment.get(resourcekey);
++
++            org.bukkit.generator.WorldInfo worldInfo = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo(serverleveldata, this.f_129744_, environment, levelstem.f_63975_().m_203334_());
++            if (biomeProvider == null && gen != null) {
++               biomeProvider = gen.getDefaultBiomeProvider(worldInfo);
++            }
++
++            Level.craftWorldData(gen, environment, biomeProvider);
++            // Mohist end
+             ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
++            this.initWorld(serverlevel1, derivedleveldata, f_129749_, worldoptions); // CraftBukkit
+             worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
+             this.f_129762_.put(resourcekey1, serverlevel1);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(resourcekey)));
+          }
+       }
+ 
+       worldborder.m_61931_(serverleveldata.m_5813_());
++
++      for (ServerLevel worldserver : this.m_129785_()) { // TODO Mohist
 +         worldserver.f_143244_.m_157506_(); // SPIGOT-6526: Load pending entities so they are available to the API
 +         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
 +      }
@@ -476,7 +308,7 @@
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
              BlockPos blockpos = chunkpos.m_45615_();
-@@ -442,22 +_,55 @@
+@@ -442,22 +_,63 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -516,8 +348,16 @@
 +   }
 +   // CraftBukkit end
 +
++   public AtomicReference<ServerLevel> prepareLevels$serverlevel = new AtomicReference<>(this.m_129783_());
++
 +   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel serverlevel) {
++      prepareLevels$serverlevel.set(serverlevel);
++      m_129940_(p_129941_);
++   }
++
++   public void m_129940_(ChunkProgressListener p_129941_) {
 +      this.forceTicks = true;
++      ServerLevel serverlevel = prepareLevels$serverlevel.getAndSet(this.m_129783_());
        f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
        BlockPos blockpos = serverlevel.m_220360_();
        p_129941_.m_7647_(new ChunkPos(blockpos));
