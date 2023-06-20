@@ -243,11 +243,9 @@
        if (!this.m_9236_().f_46443_ && entity instanceof ItemEntity) {
           ((ItemEntity)entity).m_32069_();
        }
-@@ -357,7 +_,9 @@
-    }
+@@ -358,6 +_,7 @@
  
     public void m_32045_(ItemStack p_32046_) {
-+      com.google.common.base.Preconditions.checkArgument(!p_32046_.m_41619_(), "Cannot drop air"); // CraftBukkit
        this.m_20088_().m_135381_(f_31984_, p_32046_);
 +      this.m_20088_().markDirty(ItemEntity.f_31984_); // CraftBukkit - SPIGOT-4591, must mark dirty
     }
