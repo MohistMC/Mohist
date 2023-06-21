@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -778,6 +780,18 @@ public class ForgeHooks
         return newGameType;
     }
 
+    private static final ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<>();
+    private static LootTableContext getLootTableContext()
+    {
+        LootTableContext ctx = lootContext.get().peek();
+
+        if (ctx == null)
+            throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
+
+        return ctx;
+    }
+
+
     public static TriFunction<ResourceLocation, JsonElement, ResourceManager, Optional<LootTable>> getLootTableDeserializer(Gson gson, String directory)
     {
         return (location, data, resourceManager) -> {
@@ -797,9 +811,17 @@ public class ForgeHooks
 
     public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom)
     {
+        Deque<LootTableContext> que = lootContext.get();
+        if (que == null)
+        {
+            que = Queues.newArrayDeque();
+            lootContext.set(que);
+        }
+
         LootTable ret;
         try
         {
+            que.push(new LootTableContext(name, custom));
             ret = gson.fromJson(data, LootTable.class);
             ret.setLootTableId(name);
         }
@@ -807,6 +829,11 @@ public class ForgeHooks
         {
             throw e;
         }
+        finally
+        {
+            que.pop();
+        }
+
 
         if (!custom)
             ret = ForgeEventFactory.loadLootTable(name, ret);
@@ -815,6 +842,39 @@ public class ForgeHooks
            ret.freeze();
 
         return ret;
+    }
+
+    private static class LootTableContext
+    {
+        public final ResourceLocation name;
+        public final boolean vanilla;
+        public final boolean custom;
+        public int poolCount = 0;
+
+        private LootTableContext(ResourceLocation name, boolean custom)
+        {
+            this.name = name;
+            this.custom = custom;
+            this.vanilla = "minecraft".equals(this.name.getNamespace());
+        }
+    }
+
+    public static String readPoolName(JsonObject json)
+    {
+        LootTableContext ctx = getLootTableContext();
+
+        if (json.has("name"))
+            return GsonHelper.getAsString(json, "name");
+
+        if (ctx.custom)
+            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
+
+        ctx.poolCount++;
+
+        if (!ctx.vanilla)
+            throw new JsonParseException("Loot Table \"" + ctx.name.toString() + "\" Missing `name` entry for pool #" + (ctx.poolCount - 1));
+
+        return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
     }
 
     /**
