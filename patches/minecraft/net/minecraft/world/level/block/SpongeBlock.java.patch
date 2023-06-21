@@ -1,19 +1,102 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -38,6 +_,7 @@
+@@ -8,6 +_,11 @@
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.material.FluidState;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator;
++import org.bukkit.event.block.SpongeAbsorbEvent;
++
++import java.util.List;
+ 
+ public class SpongeBlock extends Block {
+    public static final int f_154689_ = 6;
+@@ -38,7 +_,9 @@
     }
  
     private boolean m_56807_(Level p_56808_, BlockPos p_56809_) {
+-      return BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
 +      BlockState spongeState = p_56808_.m_8055_(p_56809_);
-       return BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
++      BlockStateListPopulator blockList = new BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
++      BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
           for(Direction direction : f_276425_) {
              p_277492_.accept(p_277519_.m_121945_(direction));
-@@ -49,7 +_,7 @@
+          }
+@@ -47,15 +_,17 @@
+          if (p_279054_.equals(p_56809_)) {
+             return true;
           } else {
-             BlockState blockstate = p_56808_.m_8055_(p_279054_);
-             FluidState fluidstate = p_56808_.m_6425_(p_279054_);
+-            BlockState blockstate = p_56808_.m_8055_(p_279054_);
+-            FluidState fluidstate = p_56808_.m_6425_(p_279054_);
 -            if (!fluidstate.m_205070_(FluidTags.f_13131_)) {
++            // CraftBukkit start
++            BlockState blockstate = blockList.m_8055_(p_279054_);
++            FluidState fluidstate = blockList.m_6425_(p_279054_);
++            // CraftBukkit end
 +            if (!spongeState.canBeHydrated(p_56808_, p_56809_, fluidstate, p_279054_)) {
                 return false;
              } else {
                 Block block = blockstate.m_60734_();
+                if (block instanceof BucketPickup) {
+                   BucketPickup bucketpickup = (BucketPickup)block;
+-                  if (!bucketpickup.m_142598_(p_56808_, p_279054_, blockstate).m_41619_()) {
++                  if (!bucketpickup.m_142598_(blockList, p_279054_, blockstate).m_41619_()) { // CraftBukkit
+                      return true;
+                   }
+                }
+@@ -67,14 +_,50 @@
+                      return false;
+                   }
+ 
+-                  BlockEntity blockentity = blockstate.m_155947_() ? p_56808_.m_7702_(p_279054_) : null;
+-                  m_49892_(blockstate, p_56808_, p_279054_, blockentity);
+-                  p_56808_.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
++                  // CraftBukkit start
++                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? p_56808_.getBlockEntity(p_279054_) : null;
++                  // dropResources(blockstate, p_56808_, p_279054_, blockentity);
++                  blockList.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
+                }
+ 
+                return true;
+             }
+          }
+-      }) > 1;
++      });
++      // CraftBukkit start
++      List<CraftBlockState> blocks = blockList.getList(); // Is a clone
++      if (!blocks.isEmpty()) {
++         final org.bukkit.block.Block bblock = p_56808_.getWorld().getBlockAt(p_56809_.m_123341_(), p_56809_.m_123342_(), p_56809_.m_123343_());
++
++         SpongeAbsorbEvent event = new SpongeAbsorbEvent(bblock, (List<org.bukkit.block.BlockState>) (List) blocks);
++         p_56808_.getCraftServer().getPluginManager().callEvent(event);
++
++         if (event.isCancelled()) {
++            return false;
++         }
++
++         for (CraftBlockState block : blocks) {
++            BlockPos blockposition1 = block.getPosition();
++            BlockState iblockdata = p_56808_.m_8055_(blockposition1);
++            FluidState fluid = p_56808_.m_6425_(blockposition1);
++
++            if (fluid.m_205070_(FluidTags.f_13131_)) {
++               if (iblockdata.m_60734_() instanceof BucketPickup && !((BucketPickup) iblockdata.m_60734_()).m_142598_(blockList, blockposition1, iblockdata).m_41619_()) {
++                  // NOP
++               } else if (iblockdata.m_60734_() instanceof LiquidBlock) {
++                  // NOP
++               } else if (iblockdata.m_60713_(Blocks.f_50575_) || iblockdata.m_60713_(Blocks.f_50576_) || iblockdata.m_60713_(Blocks.f_50037_) || iblockdata.m_60713_(Blocks.f_50038_)) {
++                  BlockEntity tileentity = iblockdata.m_155947_() ? p_56808_.m_7702_(blockposition1) : null;
++
++                  m_49892_(iblockdata, p_56808_, blockposition1, tileentity);
++               }
++            }
++            p_56808_.m_7731_(blockposition1, block.getHandle(), block.getFlag());
++         }
++
++         return true;
++      }
++      return false;
++      // CraftBukkit end
+    }
+ }
