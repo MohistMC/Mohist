@@ -13,7 +13,7 @@
  
     public MinecartTNT(EntityType<? extends MinecartTNT> p_38649_, Level p_38650_) {
        super(p_38649_, p_38650_);
-@@ -90,18 +_,26 @@
+@@ -90,7 +_,7 @@
        return Items.f_42693_;
     }
  
@@ -22,11 +22,7 @@
        this.m_257440_((DamageSource)null, p_38689_);
     }
  
-    protected void m_257440_(@Nullable DamageSource p_259539_, double p_260287_) {
--      if (!this.m_9236_().f_46443_) {
-+      if (!this.f_19853_.f_46443_) {
-          double d0 = Math.sqrt(p_260287_);
-          if (d0 > 5.0D) {
+@@ -101,7 +_,15 @@
              d0 = 5.0D;
           }
  

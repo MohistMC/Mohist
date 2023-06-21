@@ -213,9 +213,8 @@
 +      double d0 = this.m_20096_() ? this.m_7097_() : getMaxSpeedAirLateral();
        Vec3 vec3 = this.m_20184_();
        this.m_20334_(Mth.m_14008_(vec3.f_82479_, -d0, d0), vec3.f_82480_, Mth.m_14008_(vec3.f_82481_, -d0, d0));
--      if (this.m_20096_()) {
+       if (this.m_20096_()) {
 -         this.m_20256_(this.m_20184_().m_82490_(0.5D));
-+      if (this.f_19861_) {
 +         // CraftBukkit start - replace magic numbers with our variables
 +         this.m_20256_(new Vec3(this.m_20184_().f_82479_ * this.derailedX, this.m_20184_().f_82480_ * this.derailedY, this.m_20184_().f_82481_ * this.derailedZ));
 +         // CraftBukkit end
@@ -229,9 +228,8 @@
        }
  
        this.m_6478_(MoverType.SELF, this.m_20184_());
--      if (!this.m_20096_()) {
+       if (!this.m_20096_()) {
 -         this.m_20256_(this.m_20184_().m_82490_(0.95D));
-+      if (!this.f_19861_) {
 +         // CraftBukkit start - replace magic numbers with our variables
 +         this.m_20256_(new Vec3(this.m_20184_().f_82479_ * this.flyingX, this.m_20184_().f_82480_ * this.flyingY, this.m_20184_().f_82481_ * this.flyingZ));
 +         // CraftBukkit end

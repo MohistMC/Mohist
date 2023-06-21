@@ -38,7 +38,7 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -49,22 +_,31 @@
+@@ -49,9 +_,18 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -58,13 +58,7 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-             builder.put(resourcelocation, recipe);
-          } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
--            f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-+            f_44006_.debug("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
-          }
-       }
- 
+@@ -64,7 +_,7 @@
        this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
           return p_44033_.getValue().build();
        }));
