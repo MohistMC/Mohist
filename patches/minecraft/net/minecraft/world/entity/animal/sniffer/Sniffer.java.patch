@@ -61,6 +61,15 @@
        return !this.m_272223_() && !this.m_278663_() && !this.m_6162_() && !this.m_20069_() && this.m_20096_() && !this.m_20159_() && this.m_271898_(this.m_284345_().m_7495_());
     }
  
+@@ -277,7 +_,7 @@
+             }
+ 
+             if (this.f_19797_ % 10 == 0) {
+-               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.m_60827_().m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
++               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.getSoundType(m_9236_(), blockpos.m_7495_(), this).m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
+             }
+          }
+       }
 @@ -289,14 +_,14 @@
        return this;
     }

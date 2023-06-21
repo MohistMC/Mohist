@@ -5,8 +5,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import org.slf4j.Logger;
 

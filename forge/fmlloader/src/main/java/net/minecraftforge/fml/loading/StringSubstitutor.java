@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.loading;
 
 import com.google.common.collect.ImmutableMap;
-import com.mohistmc.load.Version;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -18,8 +17,7 @@ public class StringSubstitutor
 {
     private static final Map<String,String> globals = ImmutableMap.of(
             "mcVersion", FMLLoader.versionInfo().mcVersion(),
-            "forgeVersion", FMLLoader.versionInfo().forgeVersion(),
-            "mohistVersion", Version.get("mohist")
+            "forgeVersion", FMLLoader.versionInfo().forgeVersion()
     );
 
     public static String replace(final String in, final ModFile file) {

@@ -5,8 +5,9 @@
 
 package net.minecraftforge.fml.loading.targets;
 
-import com.google.common.base.Strings;
 import cpw.mods.jarhandling.SecureJar;
+import cpw.mods.modlauncher.api.ServiceRunner;
+import net.minecraftforge.fml.loading.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,7 +19,6 @@ import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import net.minecraftforge.fml.loading.FileUtils;
 
 public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     @Override public String getNaming() { return "mcp"; }
@@ -50,6 +50,7 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     @Override
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         super.preLaunch(arguments, layer);
+
         if (getDist().isDedicatedServer())
             return arguments;
 
@@ -81,16 +82,16 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected List<Path> getFmlStuff(String[] classpath) {
         // We also want the FML things, fmlcore, javafmllanguage, mclanguage, I don't like hard coding these, but hey whatever works for now.
         return Arrays.stream(classpath)
-                .filter(e -> FileUtils.matchFileName(e, "fmlcore", "javafmllanguage", "lowcodelanguage", "mclanguage"))
+            .filter(e -> FileUtils.matchFileName(e, "fmlcore", "javafmllanguage", "lowcodelanguage", "mclanguage"))
             .map(Paths::get)
             .toList();
     }
 
     protected static Path findJarOnClasspath(String[] classpath, String match) {
         return Paths.get(Arrays.stream(classpath)
-                .filter(e -> FileUtils.matchFileName(e, match))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
+            .filter(e -> FileUtils.matchFileName(e, match))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
     }
 
     protected BiPredicate<String, String> getMcFilter(Path extra, List<Path> minecraft, Stream.Builder<List<Path>> mods) {
@@ -127,4 +128,12 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         // Generate a time-based random number, to mimic how n.m.client.Main works
         return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
     }
+
+    @Override
+    protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
+        var args = preLaunch(arguments, gameLayer);
+        return ()->devService(args, gameLayer);
+    }
+
+    abstract void devService(final String[] arguments, final ModuleLayer gameLayer) throws Throwable;
 }

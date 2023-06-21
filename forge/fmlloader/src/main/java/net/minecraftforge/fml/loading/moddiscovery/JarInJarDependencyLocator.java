@@ -46,7 +46,6 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
         final List<IModFile> sources = Lists.newArrayList();
         loadedMods.forEach(sources::add);
 
-
         final List<IModFile> dependenciesToLoad = JarSelector.detectAndSelect(sources, this::loadResourceFromModFile, this::loadModFileFrom, this::identifyMod, this::exception);
 
         if (dependenciesToLoad.isEmpty())
@@ -98,9 +97,9 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
     {
 
         final List<EarlyLoadingException.ExceptionData> errors = failedDependencies.stream()
-                .filter(entry -> !entry.sources().isEmpty()) //Should never be the case, but just to be sure
-                .map(this::buildExceptionData)
-                .toList();
+               .filter(entry -> !entry.sources().isEmpty()) //Should never be the case, but just to be sure
+               .map(this::buildExceptionData)
+               .toList();
 
         return new EarlyLoadingException(failedDependencies.size() + " Dependency restrictions were not met.", null, errors);
     }
@@ -112,10 +111,10 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
                 getErrorTranslationKey(entry),
                 entry.identifier().group() + ":" + entry.identifier().artifact(),
                 entry.sources()
-                        .stream()
-                        .flatMap(this::getModWithVersionRangeStream)
-                        .map(this::formatError)
-                        .collect(Collectors.joining(", "))
+                     .stream()
+                     .flatMap(this::getModWithVersionRangeStream)
+                     .map(this::formatError)
+                     .collect(Collectors.joining(", "))
         );
     }
 
@@ -123,18 +122,18 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
     private String getErrorTranslationKey(final JarSelector.ResolutionFailureInformation<IModFile> entry)
     {
         return entry.failureReason() == JarSelector.FailureReason.VERSION_RESOLUTION_FAILED ?
-                "fml.dependencyloading.conflictingdependencies" :
-                "fml.dependencyloading.mismatchedcontaineddependencies";
+                       "fml.dependencyloading.conflictingdependencies" :
+                       "fml.dependencyloading.mismatchedcontaineddependencies";
     }
 
     @NotNull
     private Stream<ModWithVersionRange> getModWithVersionRangeStream(final JarSelector.SourceWithRequestedVersionRange<IModFile> file)
     {
         return file.sources()
-                .stream()
-                .map(IModFile::getModFileInfo)
-                .flatMap(modFileInfo -> modFileInfo.getMods().stream())
-                .map(modInfo -> new ModWithVersionRange(modInfo, file.requestedVersionRange(), file.includedVersion()));
+                   .stream()
+                   .map(IModFile::getModFileInfo)
+                   .flatMap(modFileInfo -> modFileInfo.getMods().stream())
+                   .map(modInfo -> new ModWithVersionRange(modInfo, file.requestedVersionRange(), file.includedVersion()));
     }
 
     @NotNull

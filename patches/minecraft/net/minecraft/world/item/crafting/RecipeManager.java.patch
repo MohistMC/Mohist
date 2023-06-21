@@ -12,6 +12,14 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
++import net.minecraftforge.registries.ForgeRegistries;
+ import org.slf4j.Logger;
+ 
+ public class RecipeManager extends SimpleJsonResourceReloadListener {
 @@ -37,9 +_,17 @@
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
@@ -118,7 +126,7 @@
 +
 +   public void clearRecipes() {
 +      this.f_44007_ = Maps.newHashMap();
-+      for (RecipeType<?> recipeType : BuiltInRegistries.f_256990_) {
++      for (RecipeType<?> recipeType : ForgeRegistries.RECIPE_TYPES) {
 +         this.f_44007_.put(recipeType, ImmutableMap.of());
 +      }
 +      this.f_199900_ = new HashMap<>();

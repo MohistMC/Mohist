@@ -54,13 +54,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-jar {
-    from(rootProject.file('server_files/mods.txt')) {
-        filter(ReplaceTokens, tokens: [VERSION: JenkinsNumber.info()])
-        rename { 'mods.txt' }
-    }
-}
-
 ext {
     MANIFESTS = [
         '/': [

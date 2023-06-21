@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ClasspathLocatorUtils {
-
+    
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {

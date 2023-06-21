@@ -62,9 +62,9 @@ public enum FMLPaths
             if (path.isDirectory && !Files.isDirectory(path.absolutePath))
             {
                 try {
-                    Files.createDirectories(path.absolutePath);
+                   Files.createDirectories(path.absolutePath);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                   throw new RuntimeException(e);
                 }
             }
             if (LOGGER.isDebugEnabled(CORE))

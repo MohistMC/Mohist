@@ -478,7 +478,7 @@
     protected void m_20101_() {
        AABB aabb = this.m_20191_();
        BlockPos blockpos = BlockPos.m_274561_(aabb.f_82288_ + 1.0E-7D, aabb.f_82289_ + 1.0E-7D, aabb.f_82290_ + 1.0E-7D);
-@@ -1033,14 +_,15 @@
+@@ -1033,19 +_,20 @@
        return !blockstate.m_204336_(BlockTags.f_144271_) && !blockstate.m_204336_(BlockTags.f_276549_) ? p_278049_ : blockpos;
     }
  
@@ -497,6 +497,12 @@
 +   protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
 +      SoundType soundtype = p_283110_.getSoundType(this.f_19853_, pos, this);
        this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.05F, soundtype.m_56774_() * 0.8F);
+    }
+ 
+    protected void m_7355_(BlockPos p_20135_, BlockState p_20136_) {
+-      SoundType soundtype = p_20136_.m_60827_();
++      SoundType soundtype = p_20136_.getSoundType(this.f_19853_, p_20135_, this);
+       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
     }
  
 @@ -1176,19 +_,22 @@

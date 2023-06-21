@@ -5,12 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.mojang.logging.LogUtils;
 import java.io.File;
-import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileUtils
