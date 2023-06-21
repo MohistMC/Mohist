@@ -30,7 +30,7 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -49,15 +_,24 @@
+@@ -49,22 +_,31 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -57,6 +57,14 @@
           }
        }
  
+       this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
+          return p_44033_.getValue().build();
+       }));
+-      this.f_199900_ = builder.build();
++      this.f_199900_ = Maps.newHashMap(builder.build()); // CraftBukkit
+       f_44006_.info("Loaded {} recipes", (int)map.size());
+    }
+ 
 @@ -141,11 +_,17 @@
        });
     }
@@ -76,24 +84,38 @@
     }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
-@@ -189,4 +_,33 @@
+@@ -189,4 +_,47 @@
     public interface CachedCheck<C extends Container, T extends Recipe<C>> {
        Optional<T> m_213657_(C p_220280_, Level p_220281_);
     }
 +
 +   // CraftBukkit start
 +   public void addRecipe(Recipe<?> irecipe) {
++      if (this.f_44007_ instanceof ImmutableMap) {
++         this.f_44007_ = new HashMap<>(f_44007_);
++      }
++      if (this.f_199900_ instanceof ImmutableMap) {
++         this.f_199900_ = new HashMap<>(f_199900_);
++      }
 +      Map<ResourceLocation, Recipe<?>> map = this.f_44007_.get(irecipe.m_6671_());
-+      if (f_199900_.containsKey(irecipe.m_6423_()) || map.containsKey(irecipe.m_6423_())) {
++      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> map0;
++      if (!(map instanceof Object2ObjectLinkedOpenHashMap)) {
++         Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> hashMap = new Object2ObjectLinkedOpenHashMap<>();
++         hashMap.putAll(map);
++         this.f_44007_.put(irecipe.m_6671_(), hashMap);
++         map0 = hashMap;
++      } else {
++         map0 = ((Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>) map);
++      }
++
++      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
 +      } else {
-+         map.put(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
-+         f_199900_.put(irecipe.m_6423_(), irecipe);
++         map0.putAndMoveToFirst(irecipe.m_6423_(), irecipe);
++         this.f_199900_.put(irecipe.m_6423_(), irecipe);
 +      }
 +   }
-+   // CraftBukkit end
 +
-+   // CraftBukkit start
 +   public void clearRecipes() {
 +      this.f_44007_ = Maps.newHashMap();
 +      for (RecipeType<?> recipeType : BuiltInRegistries.f_256990_) {
