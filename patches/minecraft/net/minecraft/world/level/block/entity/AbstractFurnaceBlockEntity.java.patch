@@ -9,10 +9,11 @@
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
-@@ -44,6 +_,16 @@
+@@ -44,6 +_,17 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
@@ -34,11 +35,17 @@
     protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
     public int f_58316_;
     int f_58317_;
-@@ -107,8 +_,10 @@
+@@ -103,12 +_,16 @@
+    };
+    private final Object2IntOpenHashMap<ResourceLocation> f_58320_ = new Object2IntOpenHashMap<>();
+    private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> f_222691_;
++   protected static BlockPos worldPosition$mohist;
+ 
     protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
        super(p_154991_, p_154992_, p_154993_);
        this.f_222691_ = RecipeManager.m_220267_((RecipeType)p_154994_);
 +      this.recipeType = p_154994_;
++      worldPosition$mohist = p_154992_;
     }
  
 +   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated
@@ -71,7 +78,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -249,28 +_,51 @@
+@@ -249,28 +_,53 @@
           }
  
           int i = p_155017_.m_6893_();
@@ -126,7 +133,9 @@
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_222692_(p_155014_, p_155017_);
 -               if (m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
-+               if (p_155017_.burn(p_155017_.f_58857_, p_155017_.f_58858_, p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) { // CraftBukkit
++               burn$world.set(p_155017_.f_58857_);
++               burn$blockposition.set(p_155017_.f_58858_);
++               if (p_155017_.m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) { // CraftBukkit
                    p_155017_.m_6029_(recipe);
                 }
  
@@ -155,13 +164,18 @@
              }
           }
        } else {
-@@ -317,15 +_,34 @@
+@@ -317,15 +_,39 @@
        }
     }
  
 -   private static boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
 -      if (p_266780_ != null && m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
-+   private boolean burn(Level world, BlockPos blockposition, RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
++   // Mohist start - Fix compatibility with ImprovableSkills mod
++   public static AtomicReference<Level> burn$world  = new AtomicReference<>(null);
++   public static AtomicReference<BlockPos> burn$blockposition  = new AtomicReference<>(null);
++   // Mohist end
++
++   private boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
 +      if (p_266780_ != null && this.m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
           ItemStack itemstack = p_267073_.get(0);
 -         ItemStack itemstack1 = p_266780_.m_8043_(p_266740_);
@@ -176,8 +190,8 @@
 +         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
 +         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
 +
-+         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(world, blockposition), source, result);
-+         world.getCraftServer().getPluginManager().callEvent(furnaceSmeltEvent);
++         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(burn$world.getAndSet(null), burn$blockposition.getAndSet(null)), source, result);
++         Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
 +
 +         if (furnaceSmeltEvent.isCancelled()) {
 +            return false;
@@ -226,7 +240,7 @@
        }
     }
  
-@@ -450,42 +_,56 @@
+@@ -450,21 +_,20 @@
        return null;
     }
  
@@ -234,13 +248,13 @@
 +   public void awardUsedRecipes(Player p_58396_) {
     }
  
--   public void m_155003_(ServerPlayer p_155004_) {
--      List<Recipe<?>> list = this.m_154995_(p_155004_.m_284548_(), p_155004_.m_20182_());
 +   // Mohist start - Fix Minecraft Comes Alive mod mixin (MixinAbstractFurnaceBlockEntity)
-+   public AtomicReference<ItemStack> stackAtomicReference = new AtomicReference<>(null);
-+   public AtomicInteger amount = new AtomicInteger(0);
-+   public void m_155003_(ServerPlayer p_155004_) { // CraftBukkit
-+      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_284548_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, stackAtomicReference.getAndSet(null), amount.getAndSet(0)); // CraftBukkit
++   public static AtomicReference<ItemStack> stackAtomicReference = new AtomicReference<>(null);
++   public static AtomicReference<ServerPlayer> createExperience$entityhuman = new AtomicReference<>(null);
++   public static AtomicInteger amount = new AtomicInteger(0);
+    public void m_155003_(ServerPlayer p_155004_) {
++      createExperience$entityhuman.set(p_155004_);
+       List<Recipe<?>> list = this.m_154995_(p_155004_.m_284548_(), p_155004_.m_20182_());
        p_155004_.m_7281_(list);
 -
 -      for(Recipe<?> recipe : list) {
@@ -254,39 +268,17 @@
 +   // Mohist end
  
     public List<Recipe<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
-+      // CraftBukkit start
-+      return this.getRecipesToAwardAndPopExperience(p_154996_, p_154997_, this.f_58858_, null, null, 0);
-+   }
-+
-+   public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_, BlockPos blockposition, ServerPlayer entityplayer, ItemStack itemstack, int amount) {
-+      // CraftBukkit end
        List<Recipe<?>> list = Lists.newArrayList();
- 
-       for(Object2IntMap.Entry<ResourceLocation> entry : this.f_58320_.object2IntEntrySet()) {
-          p_154996_.m_7465_().m_44043_(entry.getKey()).ifPresent((p_155023_) -> {
-             list.add(p_155023_);
--            m_154998_(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).m_43750_());
-+            createExperience(p_154996_, p_154997_, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).m_43750_(), blockposition, entityplayer, itemstack, amount); // CraftBukkit
-          });
-       }
- 
-       return list;
-    }
- 
--   private static void m_154998_(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
-+   private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_, BlockPos blockposition, Player entityhuman, ItemStack itemstack, int amount) { // CraftBukkit
-       int i = Mth.m_14143_((float)p_155001_ * p_155002_);
-       float f = Mth.m_14187_((float)p_155001_ * p_155002_);
-       if (f != 0.0F && Math.random() < (double)f) {
+@@ -486,6 +_,17 @@
           ++i;
        }
  
 +      // CraftBukkit start - fire FurnaceExtractEvent / BlockExpEvent
 +      BlockExpEvent event;
-+      if (amount != 0) {
-+         event = new FurnaceExtractEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
++      if (amount.getAndSet(0) != 0) {
++         event = new FurnaceExtractEvent((org.bukkit.entity.Player) createExperience$entityhuman.getAndSet(null).getBukkitEntity(), CraftBlock.at(p_154999_, worldPosition$mohist), org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers.getMaterial(stackAtomicReference.getAndSet(null).m_41720_()), amount.getAndSet(0), i);
 +      } else {
-+         event = new BlockExpEvent(CraftBlock.at(p_154999_, blockposition), i);
++         event = new BlockExpEvent(CraftBlock.at(p_154999_, worldPosition$mohist), i);
 +      }
 +      p_154999_.getCraftServer().getPluginManager().callEvent(event);
 +      i = event.getExpToDrop();

@@ -11,8 +11,8 @@
           Container container = this.f_40218_;
           if (container instanceof AbstractFurnaceBlockEntity abstractfurnaceblockentity) {
 +            // Mohist start
-+            abstractfurnaceblockentity.stackAtomicReference.set(p_39558_);
-+            abstractfurnaceblockentity.amount.set(this.f_39540_);
++            AbstractFurnaceBlockEntity.stackAtomicReference.set(p_39558_);
++            AbstractFurnaceBlockEntity.amount.set(this.f_39540_);
              abstractfurnaceblockentity.m_155003_(serverplayer);
 +            // Mohist end
           }
