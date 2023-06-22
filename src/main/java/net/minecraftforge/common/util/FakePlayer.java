@@ -85,6 +85,10 @@ public class FakePlayer extends ServerPlayer
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
+    public com.mohistmc.entity.CraftFakePlayer getBukkitEntity() {
+        return (com.mohistmc.entity.CraftFakePlayer) super.getBukkitEntity();
+    }
+
     @Override public void displayClientMessage(Component chatComponent, boolean actionBar) { }
     @Override public void awardStat(Stat stat, int amount) { }
     @Override public boolean isInvulnerableTo(DamageSource source) { return true; }
