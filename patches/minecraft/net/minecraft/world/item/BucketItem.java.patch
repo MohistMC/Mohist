@@ -77,13 +77,16 @@
                       if (!p_40703_.f_46443_) {
                          CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack1);
                       }
-@@ -71,8 +_,8 @@
+@@ -71,8 +_,11 @@
                 return InteractionResultHolder.m_19100_(itemstack);
              } else {
                 BlockState blockstate = p_40703_.m_8055_(blockpos);
 -               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
 -               if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
++               mohist$direction.set(blockhitresult.m_82434_());
++               mohist$clickedPos.set(blockpos);
++               mohist$hand.set(p_40705_);
 +               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack)) {
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
@@ -98,9 +101,9 @@
 +      return this.emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null, null, null, InteractionHand.MAIN_HAND);
 +   }
 +
-+   private AtomicReference<Direction> mohist$direction = new AtomicReference<>();
-+   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>();
-+   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>();
++   private AtomicReference<Direction> mohist$direction = new AtomicReference<>(null);
++   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>(null);
++   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>(null);
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, Direction enumdirection, BlockPos clicked, @Nullable ItemStack container, InteractionHand enumhand) {
 +      mohist$direction.set(enumdirection);
@@ -113,18 +116,15 @@
        if (!(this.f_40687_ instanceof FlowingFluid)) {
           return false;
        } else {
-@@ -105,8 +_,30 @@
+@@ -105,8 +_,27 @@
           Block block = blockstate.m_60734_();
           boolean flag = blockstate.m_60722_(this.f_40687_);
           boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
 +         java.util.Optional<net.minecraftforge.fluids.FluidStack> containedFluidStack = java.util.Optional.ofNullable(container).flatMap(net.minecraftforge.fluids.FluidUtil::getFluidContained);
 +         // Mohist start - handle bukkit added field
-+         Direction enumdirection = mohist$direction.get();
-+         enumdirection = enumdirection == null ? p_150719_.m_82434_() : enumdirection;
-+         BlockPos clicked = mohist$clickedPos.get();
-+         clicked = clicked == null ? p_150719_.m_82425_() : clicked;
-+         InteractionHand enumhand = mohist$hand.get();
-+         enumhand = enumhand == null ? p_150716_.m_7655_() : enumhand;
++         Direction enumdirection = mohist$direction.getAndSet(null);
++         BlockPos clicked = mohist$clickedPos.getAndSet(null);
++         InteractionHand enumhand = mohist$hand.getAndSet(null);
 +         // Mohist end
 +         // CraftBukkit start
 +         if (flag1 && p_150716_ != null) {
