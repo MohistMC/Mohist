@@ -281,9 +281,9 @@ public abstract class PotionEffectType implements Keyed {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final Map<Integer, PotionEffectType> byId = new HashMap<>();
-    private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
-    private static final Map<NamespacedKey, PotionEffectType> byKey = new HashMap<NamespacedKey, PotionEffectType>();
+    public static PotionEffectType[] byId = new PotionEffectType[34];
+    private static final Map<String, PotionEffectType> byName = new HashMap<>();
+    private static final Map<NamespacedKey, PotionEffectType> byKey = new HashMap<>();
     // will break on updates.
     private static boolean acceptingNew = true;
 
@@ -309,7 +309,9 @@ public abstract class PotionEffectType implements Keyed {
     @Deprecated
     @Nullable
     public static PotionEffectType getById(int id) {
-        return byId.get(id);
+        if (id >= byId.length || id < 0)
+            return null;
+        return byId[id];
     }
 
     /**
@@ -332,14 +334,14 @@ public abstract class PotionEffectType implements Keyed {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(@NotNull PotionEffectType type) {
-        if (byId.get(type.id) != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH)) || byKey.containsKey(type.key)) {
+        if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH)) || byKey.containsKey(type.key)) {
             throw new IllegalArgumentException("Cannot set already-set type");
         } else if (!acceptingNew) {
             throw new IllegalStateException(
                     "No longer accepting new potion effect types (can only be done by the server implementation)");
         }
 
-        byId.put(type.id, type);
+        byId[type.id] = type;
         byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
         byKey.put(type.key, type);
     }
@@ -359,11 +361,8 @@ public abstract class PotionEffectType implements Keyed {
      */
     @NotNull
     public static PotionEffectType[] values() {
-        int maxId = 0;
-        for (int id : byId.keySet()) {
-            maxId = Math.max(maxId, id);
-        }
-        PotionEffectType[] result = new PotionEffectType[maxId + 1];
-        return byId.values().toArray(result);
+        int from = byId[0] == null ? 1 : 0;
+        int to = byId[byId.length - 1] == null ? byId.length - 1 : byId.length;
+        return Arrays.copyOfRange(byId, from, to);
     }
 }

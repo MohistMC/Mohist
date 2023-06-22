@@ -215,9 +215,7 @@ public class RemapUtils {
 
             try {
                 globalInheritanceMap.load(reader, inverseClassMap);
-            } catch (IOException ex) {
-                ex.fillInStackTrace();
-                throw new RuntimeException(ex);
+            } catch (IOException ignored) {
             }
             System.out.println("Loaded inheritance map of " + globalInheritanceMap.size() + " classes");
         }
