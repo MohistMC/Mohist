@@ -61,15 +61,6 @@
        if (this.f_9253_) {
           BlockState blockstate = this.f_9244_.m_8055_(this.f_9254_);
           if (blockstate.m_60795_()) {
-@@ -110,7 +_,7 @@
- 
-    private float m_9276_(BlockState p_9277_, BlockPos p_9278_, int p_9279_) {
-       int i = this.f_9252_ - p_9279_;
--      float f = p_9277_.m_60625_(this.f_9245_, this.f_9245_.m_9236_(), p_9278_) * (float)(i + 1);
-+      float f = p_9277_.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9278_) * (float)(i + 1);
-       int j = (int)(f * 10.0F);
-       if (j != this.f_9256_) {
-          this.f_9244_.m_6801_(this.f_9245_.m_19879_(), p_9278_, j);
 @@ -124,7 +_,11 @@
     }
  

@@ -91,7 +91,7 @@
 +      if (event.isCancelled()) {
 +         return;
 +      }
-+      objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++      // objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
 +      // CraftBukkit end
        List<Integer> list = this.m_230919_(p_287662_, randomsource);
        this.m_230924_(objectarraylist, list.size(), randomsource);

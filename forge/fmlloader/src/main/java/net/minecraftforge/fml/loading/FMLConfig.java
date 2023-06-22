@@ -28,7 +28,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 public class FMLConfig
 {
     public enum ConfigValue {
-        SPLASHSCREEN("splashscreen", Boolean.TRUE, "should we show the early splashscreen"),
+        EARLY_WINDOW_CONTROL("earlyWindowControl", Boolean.TRUE, "Should we control the window. Disabling this disables new GL features and can be bad for mods that rely on them."),
         MAX_THREADS("maxThreads", -1, "Max threads for early initialization parallelism,  -1 is based on processor count", FMLConfig::maxThreads),
         VERSION_CHECK("versionCheck", Boolean.TRUE, "Enable forge global version checking"),
         DEFAULT_CONFIG_PATH("defaultConfigPath", "defaultconfigs", "Default config path for servers"),
@@ -63,6 +63,7 @@ public class FMLConfig
             } else {
                 spec.define(this.entry, this.defaultValue);
             }
+            commentedConfig.add(this.entry, this.defaultValue);
             commentedConfig.setComment(this.entry, this.comment);
         }
         @SuppressWarnings("unchecked")
