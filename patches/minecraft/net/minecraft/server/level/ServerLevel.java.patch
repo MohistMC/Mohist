@@ -666,7 +666,7 @@
     }
  
     public LevelEntityGetter<Entity> m_142646_() {
-@@ -1475,16 +_,48 @@
+@@ -1475,13 +_,14 @@
              ServerLevel.this.f_143246_.add(mob);
           }
  
@@ -683,40 +683,6 @@
        }
  
        public void m_141981_(Entity p_143375_) {
-+         // Spigot start
-+         if ( p_143375_ instanceof Player )
-+         {
-+            com.google.common.collect.Streams.stream( ServerLevel.this.m_7654_().m_129785_() ).map( ServerLevel::m_8895_ ).forEach( (worldData) ->
-+            {
-+               for (Object o : worldData.f_78144_.values() )
-+               {
-+                  if ( o instanceof MapItemSavedData )
-+                  {
-+                     MapItemSavedData map = (MapItemSavedData) o;
-+                     map.f_77896_.remove( (Player) p_143375_ );
-+                     for (Iterator<MapItemSavedData.HoldingPlayer> iter = map.f_77893_.iterator(); iter.hasNext(); )
-+                     {
-+                        if ( iter.next().f_77959_ == p_143375_ )
-+                        {
-+                           map.f_77894_.remove(p_143375_.m_7755_().getString()); // Paper
-+                           iter.remove();
-+                        }
-+                     }
-+                  }
-+               }
-+            } );
-+         }
-+         // Spigot end
-+         // Spigot Start
-+         if (p_143375_.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder && (!(p_143375_ instanceof ServerPlayer) || p_143375_.m_146911_() != Entity.RemovalReason.KILLED)) { // SPIGOT-6876: closeInventory clears death message
-+            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) p_143375_.getBukkitEntity()).getInventory().getViewers())) {
-+               h.closeInventory();
-+            }
-+         }
-+         // Spigot End
-          ServerLevel.this.m_7726_().m_8443_(p_143375_);
-          if (p_143375_ instanceof ServerPlayer serverplayer) {
-             ServerLevel.this.f_8546_.remove(serverplayer);
 @@ -1500,17 +_,49 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
