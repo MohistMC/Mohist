@@ -99,4 +99,8 @@ public final class CraftRaid implements Raid {
             }
         }).collect(ImmutableList.toImmutableList());
     }
+
+    public net.minecraft.world.entity.raid.Raid getHandle() {
+        return handle;
+    }
 }

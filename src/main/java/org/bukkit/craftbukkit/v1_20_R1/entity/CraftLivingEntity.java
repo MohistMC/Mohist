@@ -309,6 +309,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     @Override
+    public int getNoActionTicks() {
+        return getHandle().getNoActionTime();
+    }
+
+    @Override
+    public void setNoActionTicks(int ticks) {
+        Preconditions.checkArgument(ticks >= 0, "ticks must be >= 0");
+        getHandle().setNoActionTime(ticks);
+    }
+
+    @Override
     public net.minecraft.world.entity.LivingEntity getHandle() {
         return (net.minecraft.world.entity.LivingEntity) entity;
     }
