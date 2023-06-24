@@ -124,16 +124,19 @@
              return false;
           } else {
              return this.f_32583_.m_217043_().m_188503_(m_186073_(20)) == 0;
-@@ -570,12 +_,13 @@
-          Vec3 vec31 = new Vec3((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
+@@ -571,11 +_,14 @@
           BlockHitResult blockhitresult = level.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.f_32583_));
           boolean flag = blockhitresult.m_82425_().equals(blockpos);
--         if (blockstate.m_204336_(BlockTags.f_13046_) && flag) {
-+         // CraftBukkit start - Pickup event
-+         if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32583_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
-             level.m_7471_(blockpos, false);
-             level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
-             this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());
+          if (blockstate.m_204336_(BlockTags.f_13046_) && flag) {
+-            level.m_7471_(blockpos, false);
+-            level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
+-            this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());
++            // CraftBukkit start - Pickup event
++            if (!org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32583_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++               level.m_7471_(blockpos, false);
++               level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
++               this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());
++            }
           }
 -
 +         // CraftBukkit end
