@@ -59,15 +59,15 @@
           return false;
        } else {
 -         if (!this.m_9236_().f_46443_) {
-+         // CraftBukkit start
++         // CraftBukkit start - Only stop pollinating if entity was damaged
 +         boolean result = super.m_6469_(p_27762_, p_27763_);
 +         if (result && !this.m_9236_().f_46443_) {
++            // CraftBukkit end
              this.f_27699_.m_28087_();
           }
  
 -         return super.m_6469_(p_27762_, p_27763_);
-+         return result;
-+         // CraftBukkit end
++         return result; // CraftBukkit
        }
     }
  
@@ -97,7 +97,7 @@
                    }
  
 -                  if (blockstate1 != null) {
-+                  if (blockstate1 != null && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1).isCancelled()) { // CraftBukkit
++                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
                       Bee.this.m_9236_().m_46796_(2005, blockpos, 0);
                       Bee.this.m_9236_().m_46597_(blockpos, blockstate1);
                       Bee.this.m_27871_();

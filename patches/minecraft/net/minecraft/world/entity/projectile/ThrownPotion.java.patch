@@ -136,14 +136,14 @@
        if (blockstate.m_204336_(BlockTags.f_13076_)) {
 -         this.m_9236_().m_7471_(p_150193_, false);
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.f_50016_.m_49966_()).isCancelled()) {
++         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.f_50016_.m_49966_())) {
 +            this.m_9236_().m_7471_(p_150193_, false);
 +         }
 +         // CraftBukkit end
        } else if (AbstractCandleBlock.m_151933_(blockstate)) {
 -         AbstractCandleBlock.m_151899_((Player)null, blockstate, this.m_9236_(), p_150193_);
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(AbstractCandleBlock.f_151895_, false)).isCancelled()) {
++         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(AbstractCandleBlock.f_151895_, false))) {
 +            AbstractCandleBlock.m_151899_((Player) null, blockstate, this.m_9236_(), p_150193_);
 +         }
 +         // CraftBukkit end
@@ -152,7 +152,7 @@
 -         CampfireBlock.m_152749_(this.m_19749_(), this.m_9236_(), p_150193_, blockstate);
 -         this.m_9236_().m_46597_(p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, Boolean.valueOf(false)));
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, false)).isCancelled()) {
++         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, false))) {
 +            this.m_9236_().m_5898_((Player) null, 1009, p_150193_, 0);
 +            CampfireBlock.m_152749_(this.m_19749_(), this.m_9236_(), p_150193_, blockstate);
 +            this.m_9236_().m_46597_(p_150193_, blockstate.m_61124_(CampfireBlock.f_51227_, Boolean.valueOf(false)));

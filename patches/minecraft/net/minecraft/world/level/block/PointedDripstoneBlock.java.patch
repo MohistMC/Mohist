@@ -38,7 +38,7 @@
        BlockPos blockpos = p_154044_.m_82425_();
        if (!p_154042_.f_46443_ && p_154045_.m_142265_(p_154042_, blockpos) && p_154045_ instanceof ThrownTrident && p_154045_.m_20184_().m_82553_() > 0.6D) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(p_154045_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(p_154045_, blockpos, Blocks.f_50016_.m_49966_())) {
 +            return;
 +         }
 +         // CraftBukkit end

@@ -35,17 +35,7 @@ public class CraftRabbit extends CraftAnimals implements Rabbit {
 
     @Override
     public void setRabbitType(Type type) {
-        net.minecraft.world.entity.animal.Rabbit entity = getHandle();
-        if (getRabbitType() == Type.THE_KILLER_BUNNY) {
-            // Reset goals and target finders.
-            Level world = ((CraftWorld) this.getWorld()).getHandle();
-            entity.goalSelector = new GoalSelector(world.getProfilerSupplier());
-            entity.targetSelector = new GoalSelector(world.getProfilerSupplier());
-            entity.registerGoals();
-            entity.setSpeedModifier(0.0D);
-        }
-
-        entity.setVariant(net.minecraft.world.entity.animal.Rabbit.Variant.values()[type.ordinal()]);
+        getHandle().setVariant(net.minecraft.world.entity.animal.Rabbit.Variant.values()[type.ordinal()]);
     }
 
     private static class CraftMagicMapping {

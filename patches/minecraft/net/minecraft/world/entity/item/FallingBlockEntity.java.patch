@@ -38,7 +38,7 @@
 +   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
        FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.m_123341_() + 0.5D, (double)p_201973_.m_123342_(), (double)p_201973_.m_123343_() + 0.5D, p_201974_.m_61138_(BlockStateProperties.f_61362_) ? p_201974_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(false)) : p_201974_);
-+      if (CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_()).isCancelled()) return fallingblockentity; // CraftBukkit
++      if (!CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_())) return fallingblockentity; // CraftBukkit
        p_201972_.m_7731_(p_201973_, p_201974_.m_60819_().m_76188_(), 3);
 -      p_201972_.m_7967_(fallingblockentity);
 +      p_201972_.addFreshEntity(fallingblockentity, spawnReason); // CraftBukkit
@@ -64,7 +64,7 @@
                          }
  
 +                        // CraftBukkit start
-+                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_).isCancelled()) {
++                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_)) {
 +                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }

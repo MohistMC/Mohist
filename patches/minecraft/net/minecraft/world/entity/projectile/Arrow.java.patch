@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
+@@ -26,7 +_,7 @@
+    private static final int f_150129_ = -1;
+    private static final EntityDataAccessor<Integer> f_36854_ = SynchedEntityData.m_135353_(Arrow.class, EntityDataSerializers.f_135028_);
+    private static final byte f_150130_ = 0;
+-   private Potion f_36855_ = Potions.f_43598_;
++   public Potion f_36855_ = Potions.f_43598_;
+    public final Set<MobEffectInstance> f_36852_ = Sets.newHashSet();
+    private boolean f_36853_;
+ 
+@@ -71,7 +_,7 @@
+       return compoundtag != null && compoundtag.m_128425_("CustomPotionColor", 99) ? compoundtag.m_128451_("CustomPotionColor") : -1;
+    }
+ 
+-   private void m_36890_() {
++   public void m_36890_() {
+       this.f_36853_ = false;
+       if (this.f_36855_ == Potions.f_43598_ && this.f_36852_.isEmpty()) {
+          this.f_19804_.m_135381_(f_36854_, -1);
 @@ -128,7 +_,7 @@
        return this.f_19804_.m_135370_(f_36854_);
     }
@@ -27,27 +45,3 @@
           }
        }
  
-@@ -223,4 +_,23 @@
-       }
- 
-    }
-+
-+   // CraftBukkit start accessor methods
-+   public void refreshEffects() {
-+      this.m_20088_().m_135381_(f_36854_, PotionUtils.m_43564_((Collection) PotionUtils.m_43561_(this.f_36855_, (Collection) this.f_36852_)));
-+   }
-+
-+   public String getPotionType() {
-+      return BuiltInRegistries.f_256980_.m_7981_(this.f_36855_).toString();
-+   }
-+
-+   public void setPotionType(String string) {
-+      this.f_36855_ = BuiltInRegistries.f_256980_.m_7745_(new net.minecraft.resources.ResourceLocation(string));
-+      this.m_20088_().m_135381_(f_36854_, PotionUtils.m_43564_((Collection) PotionUtils.m_43561_(this.f_36855_, (Collection) this.f_36852_)));
-+   }
-+
-+   public boolean isTipped() {
-+      return !(this.f_36852_.isEmpty() && this.f_36855_ == Potions.f_43598_);
-+   }
-+   // CraftBukkit end
- }

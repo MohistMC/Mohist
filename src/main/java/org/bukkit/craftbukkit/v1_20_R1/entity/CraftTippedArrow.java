@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Color;
@@ -52,14 +54,14 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
             getHandle().effects.remove(existing);
         }
         getHandle().addEffect(CraftPotionUtil.fromBukkit(effect));
-        getHandle().refreshEffects();
+        getHandle().updateColor();
         return true;
     }
 
     @Override
     public void clearCustomEffects() {
         getHandle().effects.clear();
-        getHandle().refreshEffects();
+        getHandle().updateColor();
     }
 
     @Override
@@ -99,19 +101,19 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
             return false;
         }
         getHandle().effects.remove(existing);
-        getHandle().refreshEffects();
+        getHandle().updateColor();
         return true;
     }
 
     @Override
     public void setBasePotionData(PotionData data) {
         Preconditions.checkArgument(data != null, "PotionData cannot be null");
-        getHandle().setPotionType(CraftPotionUtil.fromBukkit(data));
+        this.getHandle().potion = BuiltInRegistries.POTION.get(new ResourceLocation(CraftPotionUtil.fromBukkit(data)));
     }
 
     @Override
     public PotionData getBasePotionData() {
-        return CraftPotionUtil.toBukkit(getHandle().getPotionType());
+        return CraftPotionUtil.toBukkit(BuiltInRegistries.POTION.getKey(this.getHandle().potion).toString());
     }
 
     @Override

@@ -80,7 +80,7 @@
           if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
 -            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            // CraftBukkit start
-+            if (CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled() || !CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
++            if (!CraftEventFactory.callEntityChangeBlockEvent(p_57432_, blockpos, Blocks.f_50016_.m_49966_()) || !CraftEventFactory.callTNTPrimeEvent(p_57429_, blockpos, TNTPrimeEvent.PrimeCause.PROJECTILE, p_57432_, null)) {
 +               return;
 +            }
 +            // CraftBukkit end

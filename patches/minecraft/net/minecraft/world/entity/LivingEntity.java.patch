@@ -589,7 +589,7 @@
              if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {
-@@ -1071,30 +_,57 @@
+@@ -1071,26 +_,44 @@
           if (p_21016_.m_269533_(DamageTypeTags.f_268419_) && this.m_6095_().m_204039_(EntityTypeTags.f_144295_)) {
              p_21017_ *= 5.0F;
           }
@@ -639,19 +639,6 @@
              this.m_142642_(p_21016_, p_21017_);
              p_21017_ *= 0.75F;
           }
- 
-+         // CraftBukkit start
-+         if (this instanceof Animal) {
-+            ((Animal) this).m_27594_();
-+            if (this instanceof TamableAnimal) {
-+               ((TamableAnimal) this).m_21839_(false);
-+            }
-+         }
-+         // CraftBukkit end
-+
-          Entity entity1 = p_21016_.m_7639_();
-          if (entity1 != null) {
-             if (entity1 instanceof LivingEntity) {
 @@ -1108,11 +_,10 @@
                 Player player1 = (Player)entity1;
                 this.f_20889_ = 100;
@@ -808,13 +795,14 @@
     }
  
     protected void m_5907_() {
-@@ -1357,7 +_,8 @@
+@@ -1357,7 +_,9 @@
  
     protected void m_21226_() {
        if (this.m_9236_() instanceof ServerLevel && !this.m_217046_() && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_))) {
 -         ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), this.m_213860_());
 +         int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.m_213860_());
 +         ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), reward);
++         this.expToDrop = 0;
        }
  
     }

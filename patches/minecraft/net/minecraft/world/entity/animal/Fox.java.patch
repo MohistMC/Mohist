@@ -112,7 +112,7 @@
        private void m_148928_(BlockState p_148929_) {
           int i = p_148929_.m_61143_(SweetBerryBushBlock.f_57244_);
 +         // CraftBukkit start - call EntityChangeBlockEvent
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1)).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1))) {
 +            return;
 +         }
 +         // CraftBukkit end

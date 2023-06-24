@@ -196,20 +196,12 @@
     }
  
     public Holder<Item> m_220173_() {
-@@ -226,18 +_,214 @@
+@@ -226,18 +_,204 @@
     }
  
     public InteractionResult m_41661_(UseOnContext p_41662_) {
 +      if (!p_41662_.m_43725_().f_46443_) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
 +      return onItemUse(p_41662_, (c) -> m_41720_().m_6225_(p_41662_));
-+   }
-+
-+   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>();
-+
-+
-+   public InteractionResult useOn(UseOnContext p_41662_, InteractionHand enumhand) {  // CraftBukkit - add hand
-+      mohist$hand.set(enumhand);
-+      return m_41661_(p_41662_);
 +   }
 +
 +   public InteractionResult onItemUseFirst(UseOnContext p_41662_) {
@@ -282,14 +274,12 @@
 +            List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            // Mohist start - handle enum hand
-+            var enumhand = mohist$hand.get();
-+            enumhand = enumhand == null ? p_41662_.m_43724_() : enumhand;
-+            InteractionHand finalHand = enumhand;
++            InteractionHand enumhand = p_41662_.m_43724_();
 +            // Mohist end
 +            if (blocks.size() > 1) {
-+               placeEvent = CraftEventFactory.callBlockMultiPlaceEvent(world, player, finalHand, blocks, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               placeEvent = CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +            } else if (blocks.size() == 1) {
-+               placeEvent = CraftEventFactory.callBlockPlaceEvent(world, player, finalHand, blocks.get(0), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               placeEvent = CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +            }
 +
 +            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {

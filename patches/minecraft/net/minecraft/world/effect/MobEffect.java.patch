@@ -9,10 +9,11 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.ai.attributes.Attribute;
-@@ -16,8 +_,11 @@
+@@ -16,8 +_,12 @@
  import net.minecraft.world.entity.ai.attributes.AttributeMap;
  import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  import net.minecraft.world.entity.player.Player;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -30,7 +31,7 @@
     }
  
     public Optional<MobEffectInstance.FactorData> m_216881_() {
-@@ -52,25 +_,39 @@
+@@ -52,25 +_,37 @@
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
        if (this == MobEffects.f_19605_) {
           if (p_19467_.m_21223_() < p_19467_.m_21233_()) {
@@ -54,14 +55,12 @@
 +            // CraftBukkit start
 +            Player entityhuman = (Player) p_19467_;
 +            int oldFoodLevel = entityhuman.m_36324_().f_38696_;
-+
 +            org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, p_19468_ + 1 + oldFoodLevel);
-+
 +            if (!event.isCancelled()) {
 +               entityhuman.m_36324_().m_38707_(event.getFoodLevel() - oldFoodLevel, 1.0F);
 +            }
 +
-+            ((ServerPlayer) entityhuman).f_8906_.m_9829_(new ClientboundSetHealthPacket(((ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), entityhuman.m_36324_().f_38696_, entityhuman.m_36324_().f_38697_));
++            ((CraftPlayer) entityhuman.getBukkitEntity()).sendHealthUpdate();
 +            // CraftBukkit end
           }
        } else if ((this != MobEffects.f_19601_ || p_19467_.m_21222_()) && (this != MobEffects.f_19602_ || !p_19467_.m_21222_())) {

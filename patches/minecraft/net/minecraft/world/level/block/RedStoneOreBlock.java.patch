@@ -55,7 +55,7 @@
        m_55454_(p_55494_, p_55495_);
        if (!p_55493_.m_61143_(f_55450_)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.m_61124_(f_55450_, true)).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.m_61124_(f_55450_, true))) {
 +            return;
 +         }
 +         // CraftBukkit end

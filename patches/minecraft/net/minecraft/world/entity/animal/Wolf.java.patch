@@ -9,42 +9,30 @@
  
  public class Wolf extends TamableAnimal implements NeutralMob {
     private static final EntityDataAccessor<Boolean> f_30358_ = SynchedEntityData.m_135353_(Wolf.class, EntityDataSerializers.f_135035_);
-@@ -123,6 +_,24 @@
-       return Mob.m_21552_().m_22268_(Attributes.f_22279_, (double)0.3F).m_22268_(Attributes.f_22276_, 8.0D).m_22268_(Attributes.f_22281_, 2.0D);
-    }
- 
-+   // CraftBukkit - add overriden version
-+   @Override
-+   public boolean setTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fire) {
-+      if (!super.setTarget(entityliving, reason, fire)) {
-+         return false;
-+      }
-+      entityliving = m_5448_();
-+      /* // PAIL
-+        if (entityliving == null) {
-+            this.setAngry(false);
-+        } else if (!this.isTamed()) {
-+            this.setAngry(true);
-+        }
-+        */
-+      return true;
-+   }
-+   // CraftBukkit end
-+
-    protected void m_8097_() {
-       super.m_8097_();
-       this.f_19804_.m_135372_(f_30358_, false);
-@@ -283,8 +_,8 @@
+@@ -283,15 +_,19 @@
           return false;
        } else {
           Entity entity = p_30386_.m_7639_();
 -         if (!this.m_9236_().f_46443_) {
 -            this.m_21839_(false);
-+         if (!this.f_19853_.f_46443_) {
-+            // this.setOrderedToSit(false); // CraftBukkit - moved into EntityLiving.damageEntity(DamageSource, float)
-          }
+-         }
++         // CraftBukkit - move diff down
  
           if (entity != null && !(entity instanceof Player) && !(entity instanceof AbstractArrow)) {
+             p_30387_ = (p_30387_ + 1.0F) / 2.0F;
+          }
+ 
+-         return super.m_6469_(p_30386_, p_30387_);
++         // CraftBukkit start
++         boolean result = super.m_6469_(p_30386_, p_30387_);
++         if (!this.m_9236_().f_46443_ && result) {
++            this.m_21839_(false);
++         }
++         return result;
++         // CraftBukkit end
+       }
+    }
+ 
 @@ -308,7 +_,7 @@
        super.m_7105_(p_30443_);
        if (p_30443_) {

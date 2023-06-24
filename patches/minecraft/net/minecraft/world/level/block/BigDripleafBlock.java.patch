@@ -78,7 +78,7 @@
 -   private static void m_152277_(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
 +   private static boolean setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_, @Nullable Entity entity) {
 +      if (entity != null) {
-+         if (CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_)).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_))) {
 +            return false;
 +         }
 +      }

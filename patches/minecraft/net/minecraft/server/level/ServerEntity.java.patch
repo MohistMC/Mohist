@@ -141,17 +141,12 @@
           if (!collection.isEmpty()) {
              p_289563_.accept(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), collection));
           }
-@@ -266,6 +_,20 @@
+@@ -266,6 +_,15 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.f_8510_.m_19879_(), list));
           }
 +         ((LivingEntity) this.f_8510_).m_21315_(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
 +      }
-+
-+      // CraftBukkit start - Fix for nonsensical head yaw
-+      this.f_8519_ = Mth.m_14143_(this.f_8510_.m_6080_() * 256.0F / 360.0F);
-+      p_289563_.accept(new ClientboundRotateHeadPacket(this.f_8510_, (byte) f_8519_));
-+      // CraftBukkit end
 +
 +      if (this.f_8510_ instanceof LivingEntity) {
 +         LivingEntity livingentity = (LivingEntity)this.f_8510_;

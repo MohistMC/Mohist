@@ -94,7 +94,7 @@
 -                        if (m_31491_(blockstate)) {
 +                        if (blockstate.canEntityDestroy(this.m_9236_(), blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, blockstate)) {
 +                           // CraftBukkit start
-+                           if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++                           if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.f_50016_.m_49966_())) {
 +                              continue;
 +                           }
 +                           // CraftBukkit end

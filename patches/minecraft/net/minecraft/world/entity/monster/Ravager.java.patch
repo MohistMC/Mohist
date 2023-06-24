@@ -8,7 +8,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelReader;
  import net.minecraft.world.level.block.Block;
-@@ -139,14 +_,14 @@
+@@ -139,7 +_,7 @@
              this.m_21051_(Attributes.f_22279_).m_22100_(Mth.m_14139_(0.1D, d1, d0));
           }
  
@@ -17,11 +17,15 @@
              boolean flag = false;
              AABB aabb = this.m_20191_().m_82400_(0.2D);
  
-             for(BlockPos blockpos : BlockPos.m_121976_(Mth.m_14107_(aabb.f_82288_), Mth.m_14107_(aabb.f_82289_), Mth.m_14107_(aabb.f_82290_), Mth.m_14107_(aabb.f_82291_), Mth.m_14107_(aabb.f_82292_), Mth.m_14107_(aabb.f_82293_))) {
+@@ -147,6 +_,11 @@
                 BlockState blockstate = this.m_9236_().m_8055_(blockpos);
                 Block block = blockstate.m_60734_();
--               if (block instanceof LeavesBlock) {
-+               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_()).isCancelled()) { // CraftBukkit
+                if (block instanceof LeavesBlock) {
++                  // CraftBukkit start
++                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
++                     continue;
++                  }
++                  // CraftBukkit end
                    flag = this.m_9236_().m_46953_(blockpos, true, this) || flag;
                 }
              }

@@ -18,7 +18,7 @@
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -42,21 +_,42 @@
+@@ -42,19 +_,47 @@
  
     protected void m_6532_(HitResult p_37488_) {
        super.m_6532_(p_37488_);
@@ -40,12 +40,13 @@
 -                  chicken.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F);
 -                  this.m_9236_().m_7967_(chicken);
 +            // CraftBukkit start
-+            if (!hatching) {
-+               i = 0;
-+            }
 +            org.bukkit.entity.EntityType hatchingType = org.bukkit.entity.EntityType.CHICKEN;
 +
 +            Entity shooter = this.m_19749_();
++            if (!hatching) {
++               i = 0;
++            }
++
 +            if (shooter instanceof ServerPlayer) {
 +               PlayerEggThrowEvent event = new PlayerEggThrowEvent((org.bukkit.entity.Player) shooter.getBukkitEntity(), (org.bukkit.entity.Egg) this.getBukkitEntity(), hatching, i, hatchingType);
 +               this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
@@ -53,20 +54,24 @@
 +               i = event.getNumHatches();
 +               hatching = event.isHatching();
 +               hatchingType = event.getHatchingType();
++               // If hatching is set to false, ensure child count is 0
++               if (!hatching) {
++                  i = 0;
++               }
 +            }
++            // CraftBukkit end
 +
 +            if (hatching) {
 +               for (int i1 = 0; i1 < i; ++i1) {
 +                  Chicken entity = (Chicken) f_19853_.getWorld().createEntity(new org.bukkit.Location(m_9236_().getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
 +                  if (entity != null) {
++                     // CraftBukkit start
 +                     if (entity.getBukkitEntity() instanceof Ageable) {
 +                        ((Ageable) entity.getBukkitEntity()).setBaby();
 +                     }
 +                     f_19853_.getWorld().addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                     // CraftBukkit end
 +                  }
                 }
              }
-+            // CraftBukkit end
           }
- 
-          this.m_9236_().m_7605_(this, (byte)3);

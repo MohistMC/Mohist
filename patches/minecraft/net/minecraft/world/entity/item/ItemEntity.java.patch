@@ -15,10 +15,11 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
-@@ -28,6 +_,8 @@
+@@ -28,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
  
@@ -123,7 +124,7 @@
        } else {
           return !p_32028_.m_41782_() || p_32028_.m_41783_().equals(p_32027_.m_41783_());
        }
-@@ -234,10 +_,11 @@
+@@ -234,10 +_,15 @@
  
     private static void m_32022_(ItemEntity p_32023_, ItemStack p_32024_, ItemStack p_32025_) {
        ItemStack itemstack = m_32029_(p_32024_, p_32025_, 64);
@@ -132,7 +133,11 @@
     }
  
     private static void m_32017_(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
-+      if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_).isCancelled()) return; // CraftBukkit
++      // CraftBukkit start
++      if (!CraftEventFactory.callItemMergeEvent(p_32020_, p_32018_)) {
++         return;
++      }
++      // CraftBukkit end
        m_32022_(p_32018_, p_32019_, p_32021_);
        p_32018_.f_31986_ = Math.max(p_32018_.f_31986_, p_32020_.f_31986_);
        p_32018_.f_31985_ = Math.min(p_32018_.f_31985_, p_32020_.f_31985_);
@@ -141,7 +146,7 @@
           return true;
        } else {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_32013_, p_32014_)) {
++         if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_32013_, p_32014_)) {
 +            return false;
 +         }
 +         // CraftBukkit end
@@ -243,14 +248,6 @@
        if (!this.m_9236_().f_46443_ && entity instanceof ItemEntity) {
           ((ItemEntity)entity).m_32069_();
        }
-@@ -358,6 +_,7 @@
- 
-    public void m_32045_(ItemStack p_32046_) {
-       this.m_20088_().m_135381_(f_31984_, p_32046_);
-+      this.m_20088_().markDirty(ItemEntity.f_31984_); // CraftBukkit - SPIGOT-4591, must mark dirty
-    }
- 
-    public void m_7350_(EntityDataAccessor<?> p_32036_) {
 @@ -410,7 +_,7 @@
  
     public void m_32065_() {

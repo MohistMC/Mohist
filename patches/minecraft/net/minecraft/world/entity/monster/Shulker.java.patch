@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -55,6 +_,8 @@
+@@ -55,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  import org.joml.Vector3f;
@@ -14,9 +15,9 @@
                 Direction direction = this.m_149810_(blockpos1);
                 if (direction != null) {
 +                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_());
-+                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), CraftLocation.toBukkit(blockpos1, this.f_19853_.getWorld()));
-+                  if (event.isCanceled() || teleport.isCancelled()) direction = null;
-+                  blockpos1 = BlockPos.m_274561_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
++                  EntityTeleportEvent teleportEvent = CraftEventFactory.callEntityTeleportEvent(this, event.getTargetX(), event.getTargetY(), event.getTargetZ()); // Mohist hook forge event
++                  if (event.isCanceled() || teleportEvent.isCancelled()) direction = null;
++                  blockpos1 = CraftLocation.toBlockPosition(teleportEvent.getTo()); // Mohist hook forge event
 +               }
 +
 +               if (direction != null) {

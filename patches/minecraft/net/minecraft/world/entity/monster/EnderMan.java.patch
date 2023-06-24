@@ -125,7 +125,7 @@
 -               level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
 -               this.f_32554_.m_32521_((BlockState)null);
 +            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(f_32554_, net.minecraftforge.common.util.BlockSnapshot.create(level.m_46472_(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-+               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32554_, blockpos, blockstate2).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32554_, blockpos, blockstate2)) {
 +                  level.m_7731_(blockpos, blockstate2, 3);
 +                  level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
 +                  this.f_32554_.m_32521_((BlockState) null);
@@ -156,7 +156,7 @@
           boolean flag = blockhitresult.m_82425_().equals(blockpos);
 -         if (blockstate.m_204336_(BlockTags.f_13046_) && flag) {
 +         // CraftBukkit start - Pickup event
-+         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32583_, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32583_, blockpos, Blocks.f_50016_.m_49966_())) {
              level.m_7471_(blockpos, false);
              level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
              this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());

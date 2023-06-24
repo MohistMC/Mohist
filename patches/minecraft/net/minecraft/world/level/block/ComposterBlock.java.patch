@@ -25,7 +25,7 @@
 +         // CraftBukkit start
 +         double rand = p_270284_.m_213780_().m_188500_();
 +         BlockState blockstate = addItem(p_270919_, p_270087_, DummyGeneratorAccess.INSTANCE, p_270678_, p_270253_, rand);
-+         if (p_270087_ == blockstate || CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate).isCancelled()) {
++         if (p_270087_ == blockstate || !CraftEventFactory.callEntityChangeBlockEvent(p_270919_, p_270678_, blockstate)) {
 +            return p_270087_;
 +         }
 +         blockstate = addItem(p_270919_, p_270087_, p_270284_, p_270678_, p_270253_, rand);
@@ -41,7 +41,7 @@
 +      // CraftBukkit start
 +      if (p_270467_ != null && !(p_270467_ instanceof Player)) {
 +         BlockState iblockdata1 = m_269590_(p_270467_, p_51999_, DummyGeneratorAccess.INSTANCE, p_52001_);
-+         if (CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(p_270467_, p_52001_, iblockdata1)) {
 +            return p_51999_;
 +         }
 +      }
@@ -123,3 +123,21 @@
        private final BlockState f_52037_;
        private final LevelAccessor f_52038_;
        private final BlockPos f_52039_;
+@@ -404,8 +_,15 @@
+       }
+ 
+       public void m_6596_() {
+-         ComposterBlock.m_269590_((Entity)null, this.f_52037_, this.f_52038_, this.f_52039_);
+-         this.f_52040_ = true;
++         // CraftBukkit start - allow putting items back (eg cancelled InventoryMoveItemEvent)
++         if (this.m_7983_()) {
++            ComposterBlock.m_269590_((Entity) null, this.f_52037_, this.f_52038_, this.f_52039_);
++            this.f_52040_ = true;
++         } else {
++            this.f_52038_.m_7731_(this.f_52039_, this.f_52037_, 3);
++            this.f_52040_ = false;
++         }
++         // CraftBukkit end
+       }
+    }
+ }

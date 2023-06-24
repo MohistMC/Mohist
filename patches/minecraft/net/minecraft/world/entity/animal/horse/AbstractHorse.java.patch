@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -75,6 +_,7 @@
+@@ -75,6 +_,8 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, OwnableEntity, PlayerRideableJumping, Saddleable {
@@ -103,7 +104,7 @@
  
        if (p_30565_.m_128425_("SaddleItem", 10)) {
           ItemStack itemstack = ItemStack.m_41712_(p_30565_.m_128469_("SaddleItem"));
-@@ -924,6 +_,18 @@
+@@ -924,6 +_,17 @@
     }
  
     public void m_7199_(int p_30574_) {
@@ -114,8 +115,7 @@
 +      } else {
 +         power = 0.4F + 0.4F * (float) p_30574_ / 90.0F;
 +      }
-+      org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callHorseJumpEvent(this, power);
-+      if (event.isCancelled()) {
++      if (!CraftEventFactory.callHorseJumpEvent(this, power)) {
 +         return;
 +      }
 +      // CraftBukkit end

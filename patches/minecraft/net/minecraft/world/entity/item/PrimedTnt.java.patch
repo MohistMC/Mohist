@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/entity/item/PrimedTnt.java
 +++ b/net/minecraft/world/entity/item/PrimedTnt.java
-@@ -14,12 +_,15 @@
+@@ -14,12 +_,16 @@
  import net.minecraft.world.entity.Pose;
  import net.minecraft.world.entity.TraceableEntity;
  import net.minecraft.world.level.Level;
++import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class PrimedTnt extends Entity implements TraceableEntity {
@@ -39,15 +40,14 @@
        } else {
           this.m_20073_();
           if (this.m_9236_().f_46443_) {
-@@ -78,8 +_,14 @@
+@@ -78,8 +_,13 @@
     }
  
     protected void m_32103_() {
 -      float f = 4.0F;
 -      this.m_9236_().m_254849_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), 4.0F, Level.ExplosionInteraction.TNT);
 +      // CraftBukkit start
-+      ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
-+      this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
++      ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
 +
 +      if (!event.isCancelled()) {
 +         this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);

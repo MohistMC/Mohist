@@ -45,7 +45,7 @@
 +            return;
 +         }
 +
-+         if (CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.f_50493_.m_49966_()).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(p_153230_, p_153229_, Blocks.f_50493_.m_49966_())) {
 +            return;
 +         }
 +         // CraftBukkit end

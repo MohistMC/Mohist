@@ -23,7 +23,7 @@
        if (p_270772_.m_61143_(f_152949_)) {
 -         Block.m_49840_(p_270721_, p_270587_, new ItemStack(Items.f_151079_, 1));
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(p_270738_, p_270587_, p_270772_.m_61124_(CaveVines.f_152949_, false)).isCancelled()) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(p_270738_, p_270587_, p_270772_.m_61124_(CaveVines.f_152949_, false))) {
 +            return InteractionResult.SUCCESS;
 +         }
 +
