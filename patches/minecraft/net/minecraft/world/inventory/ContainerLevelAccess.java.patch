@@ -33,11 +33,11 @@
 +
 +   // CraftBukkit start
 +   default Level getWorld() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++     return this.m_6721_((level, blockpos) -> level).orElse(null); // Mohist
 +   }
 +
 +   default BlockPos getPosition() {
-+      throw new UnsupportedOperationException("Not supported yet.");
++      return this.m_6721_((level, blockpos) -> blockpos).orElse(null); // Mohist
 +   }
 +
 +   default org.bukkit.Location getLocation() {
