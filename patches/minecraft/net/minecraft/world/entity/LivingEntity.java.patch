@@ -383,7 +383,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -908,25 +_,67 @@
+@@ -908,25 +_,64 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -424,8 +424,7 @@
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
              return true;
-          } else if (mobeffectinstance.m_19558_(p_147208_)) {
-+            // CraftBukkit start
+-         } else if (mobeffectinstance.m_19558_(p_147208_)) {
 +         } else if (override) {
 +            mobeffectinstance.m_19558_(p_147208_);
              this.m_141973_(mobeffectinstance, true, p_147209_);
@@ -435,9 +434,7 @@
              return false;
           }
        }
--   }
-+      return false;
-+   }
+    }
 +
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
 +      addEffectCause.set(cause);
