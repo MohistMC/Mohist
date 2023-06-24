@@ -383,7 +383,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -835,18 +_,36 @@
+@@ -835,18 +_,35 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -417,7 +417,6 @@
 +      return m_8872_(entity);
 +   }
 +   // Mohist end
-+
 +
 +   // Mohist start
     public boolean m_8860_(Entity p_8861_) {

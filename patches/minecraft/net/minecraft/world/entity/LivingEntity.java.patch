@@ -53,7 +53,7 @@
  import net.minecraft.world.level.storage.loot.LootParams;
  import net.minecraft.world.level.storage.loot.LootTable;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-@@ -117,14 +_,29 @@
+@@ -117,14 +_,30 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
@@ -71,6 +71,7 @@
 +import org.bukkit.event.entity.EntityTeleportEvent;
 +import org.bukkit.event.player.PlayerItemConsumeEvent;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class LivingEntity extends Entity implements Attackable {
 +public abstract class LivingEntity extends Entity implements Attackable, net.minecraftforge.common.extensions.IForgeLivingEntity {
@@ -382,7 +383,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -908,25 +_,63 @@
+@@ -908,25 +_,67 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -394,6 +395,7 @@
 +   // Mohist start
 +   public static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
++      boolean isAsync = AsyncCatcher.catchAsync();
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
 +         return true;
@@ -410,9 +412,12 @@
 +            override = new MobEffectInstance(mobeffectinstance).m_19558_(p_147208_);
 +         }
 +
-+         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
-+         if (event.isCancelled()) {
-+            return false;
++         if (!isAsync) {
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
++            if (event.isCancelled()) {
++               return false;
++            }
++            override = event.isOverride();
 +         }
 +         // CraftBukkit end
           if (mobeffectinstance == null) {
@@ -421,7 +426,7 @@
              return true;
           } else if (mobeffectinstance.m_19558_(p_147208_)) {
 +            // CraftBukkit start
-+         } else if (event.isOverride()) {
++         } else if (override) {
 +            mobeffectinstance.m_19558_(p_147208_);
              this.m_141973_(mobeffectinstance, true, p_147209_);
 +            // CraftBukkit end

@@ -80,7 +80,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,15 +_,64 @@
+@@ -176,15 +_,65 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -94,6 +94,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
@@ -1307,7 +1308,7 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1492,14 +_,14 @@
+@@ -1492,7 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.f_9743_.f_8944_) {
                 this.f_9743_.f_8944_ = false;
@@ -1316,14 +1317,6 @@
                 CriteriaTriggers.f_10588_.m_19757_(this.f_9743_, Level.f_46430_, Level.f_46428_);
              } else {
                 if (this.f_9743_.m_21223_() > 0.0F) {
-                   return;
-                }
- 
--               this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, false);
-+               this.f_9743_ = this.f_9745_.m_6846_().respawn(this.f_9743_, false, PlayerRespawnEvent.RespawnReason.DEATH);
-                if (this.f_9745_.m_7035_()) {
-                   this.f_9743_.m_143403_(GameType.SPECTATOR);
-                   this.f_9743_.m_9236_().m_46469_().m_46170_(GameRules.f_46146_).m_46246_(false, this.f_9745_);
 @@ -1514,14 +_,18 @@
  
     public void m_7951_(ServerboundContainerClosePacket p_9858_) {
@@ -1345,7 +1338,7 @@
              this.f_9743_.f_36096_.m_150429_();
           } else if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
-@@ -1532,7 +_,274 @@
+@@ -1532,7 +_,279 @@
              } else {
                 boolean flag = p_9856_.m_182741_() != this.f_9743_.f_36096_.m_182424_();
                 this.f_9743_.f_36096_.m_150443_();
@@ -1357,6 +1350,11 @@
 +               }
 +
 +               InventoryView inventory = this.f_9743_.f_36096_.getBukkitView();
++               if(inventory == null)
++               {
++                  inventory = new CraftInventoryView(this.f_9743_.getBukkitEntity(), Bukkit.createInventory(this.f_9743_.getBukkitEntity(), InventoryType.CHEST), this.f_9743_.f_36096_);
++                  this.f_9743_.f_36096_.setBukkitView(inventory);
++               }
 +               InventoryType.SlotType type = inventory.getSlotType(p_9856_.m_133962_());
 +
 +               InventoryClickEvent event;
