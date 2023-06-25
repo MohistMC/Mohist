@@ -8,8 +8,10 @@ import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 import com.mohistmc.plugins.world.utils.WorldsGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -101,7 +103,6 @@ public class WorldsCommands extends Command {
                 }
             }
             //加载世界
-            /*
             if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
                 String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 try {
@@ -123,7 +124,6 @@ public class WorldsCommands extends Command {
                     }
                 }
             }
-            */
             if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
                 String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 if (Bukkit.getWorld(worldName) == null) {
