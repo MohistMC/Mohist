@@ -588,7 +588,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public String getName() {
-        return world.serverLevelData.getLevelName();
+        world.serverLevelData.checkName(world.name);
+        return world.name;
     }
 
     @Override

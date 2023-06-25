@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/storage/DerivedLevelData.java
++++ b/net/minecraft/world/level/storage/DerivedLevelData.java
+@@ -48,6 +_,14 @@
+       return this.f_78076_.m_5462_();
+    }
+ 
++   // CraftBukkit start - Check if the name stored in NBT is the correct one
++   public void checkName(String name) {
++      if (!this.f_78076_.m_5462_().equals(name)) {
++         this.f_78076_.checkName(name);
++      }
++   }
++   // CraftBukkit end
++
+    public int m_6537_() {
+       return this.f_78077_.m_6537_();
+    }

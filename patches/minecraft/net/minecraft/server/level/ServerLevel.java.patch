@@ -9,7 +9,15 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -20,6 +_,7 @@
+@@ -14,12 +_,15 @@
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+ import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
++
++import java.io.File;
+ import java.io.IOException;
+ import java.io.Writer;
+ import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.ArrayList;
  import java.util.Comparator;
@@ -41,6 +49,14 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.entity.npc.Npc;
  import net.minecraft.world.entity.player.Player;
+@@ -125,6 +_,7 @@
+ import net.minecraft.world.level.chunk.LevelChunkSection;
+ import net.minecraft.world.level.chunk.storage.EntityStorage;
+ import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
++import net.minecraft.world.level.dimension.DimensionType;
+ import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.dimension.end.EndDragonFight;
+ import net.minecraft.world.level.entity.EntityPersistentStorage;
 @@ -146,8 +_,10 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
@@ -78,7 +94,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -188,14 +_,37 @@
+@@ -188,14 +_,40 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -94,6 +110,7 @@
 +   public PrimaryLevelData serverLevelDataCB;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++   public final String name;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.f_8547_.m_62227_(x, z, false);
@@ -108,7 +125,9 @@
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
 +      this.pvpMode = p_214999_.m_129799_();
 +      convertable = p_215001_;
-+      uuid = WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
++      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
++      uuid = WorldUUID.getUUID(worldFile);
++      name = worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.serverLevelDataCB = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
@@ -126,16 +145,14 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,12 @@
+@@ -240,6 +_,10 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
-+      this.initCapabilities();
-+      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
-+      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +      m_6857_().world = this;
 +      serverLevelDataCB.setWorld(this);
++      this.initCapabilities();
     }
  
     /** @deprecated */

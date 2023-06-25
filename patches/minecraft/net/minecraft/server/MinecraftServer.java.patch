@@ -1,18 +1,16 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -6,13 +_,16 @@
+@@ -6,13 +_,14 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
 +import com.mohistmc.forge.ForgeInjectBukkit;
++import com.mohistmc.forge.MohistDerivedWorldInfo;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
  import com.mojang.datafixers.DataFixer;
-+import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-+import com.mojang.serialization.DynamicOps;
-+import com.mojang.serialization.Lifecycle;
  import it.unimi.dsi.fastutil.longs.LongIterator;
 -import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  import java.awt.image.BufferedImage;
@@ -37,49 +35,6 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -61,6 +_,8 @@
- import net.minecraft.core.registries.Registries;
- import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
- import net.minecraft.gametest.framework.GameTestTicker;
-+import net.minecraft.nbt.NbtOps;
-+import net.minecraft.nbt.Tag;
- import net.minecraft.network.chat.ChatDecorator;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
-@@ -68,9 +_,12 @@
- import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
- import net.minecraft.network.protocol.status.ServerStatus;
- import net.minecraft.obfuscate.DontObfuscate;
-+import net.minecraft.resources.RegistryOps;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.bossevents.CustomBossEvents;
-+import net.minecraft.server.dedicated.DedicatedServer;
-+import net.minecraft.server.dedicated.DedicatedServerProperties;
- import net.minecraft.server.level.DemoMode;
- import net.minecraft.server.level.PlayerRespawnLogic;
- import net.minecraft.server.level.ServerChunkCache;
-@@ -102,6 +_,7 @@
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.SignatureValidator;
- import net.minecraft.util.Unit;
-+import net.minecraft.util.datafix.DataFixers;
- import net.minecraft.util.profiling.EmptyProfileResults;
- import net.minecraft.util.profiling.ProfileResults;
- import net.minecraft.util.profiling.ProfilerFiller;
-@@ -138,10 +_,12 @@
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.border.BorderChangeListener;
- import net.minecraft.world.level.border.WorldBorder;
-+import net.minecraft.world.level.dimension.DimensionType;
- import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.Heightmap;
- import net.minecraft.world.level.levelgen.PatrolSpawner;
- import net.minecraft.world.level.levelgen.PhantomSpawner;
-+import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
- import net.minecraft.world.level.storage.CommandStorage;
 @@ -151,11 +_,19 @@
  import net.minecraft.world.level.storage.LevelResource;
  import net.minecraft.world.level.storage.LevelStorageSource;
@@ -225,23 +180,9 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -334,12 +_,27 @@
-       long j = BiomeManager.m_47877_(i);
+@@ -335,11 +_,13 @@
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
-+      // Mohist start
-+      String over_name = serverleveldata.m_5462_();
-+      org.bukkit.generator.ChunkGenerator over_gen = this.server.getGenerator(over_name);
-+      org.bukkit.generator.BiomeProvider over_biomeProvider = this.server.getBiomeProvider(over_name);
-+      World.Environment over_environment = World.Environment.NORMAL;
-+
-+      org.bukkit.generator.WorldInfo over_worldInfo = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo(serverleveldata, this.f_129744_, over_environment, levelstem.f_63975_().m_203334_());
-+      if (over_biomeProvider == null && over_gen != null) {
-+         over_biomeProvider = over_gen.getDefaultBiomeProvider(over_worldInfo);
-+      }
-+
-+      Level.craftWorldData(over_gen, over_environment, over_biomeProvider);
-+      // Mohist end
        ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
 +      this.initWorld(serverlevel, serverleveldata, f_129749_, worldoptions); // CraftBukkit
        this.f_129762_.put(Level.f_46428_, serverlevel);
@@ -253,24 +194,9 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
-@@ -373,13 +_,39 @@
-          if (resourcekey != LevelStem.f_63971_) {
+@@ -374,12 +_,24 @@
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
-+
-+            // Mohist start
-+            String name = derivedleveldata.m_5462_(); // TODO
-+            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(over_name);
-+            org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(over_name);
-+            World.Environment environment = ForgeInjectBukkit.environment.get(resourcekey);
-+
-+            org.bukkit.generator.WorldInfo worldInfo = new org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo(serverleveldata, this.f_129744_, environment, levelstem.f_63975_().m_203334_());
-+            if (biomeProvider == null && gen != null) {
-+               biomeProvider = gen.getDefaultBiomeProvider(worldInfo);
-+            }
-+
-+            Level.craftWorldData(gen, environment, biomeProvider);
-+            // Mohist end
              ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
 +            this.initWorld(serverlevel1, derivedleveldata, f_129749_, worldoptions); // CraftBukkit
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
@@ -786,23 +712,17 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
-@@ -935,6 +_,22 @@
+@@ -935,6 +_,16 @@
        return this.f_129762_.get(p_129881_);
     }
  
 +   // CraftBukkit start
 +   public void addLevel(ServerLevel level) {
-+      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
-+      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
-+      newLevels.put(level.m_46472_(), level);
-+      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++      this.f_129762_.put(level.m_46472_(), level); // Mohist
 +   }
 +
 +   public void removeLevel(ServerLevel level) {
-+      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
-+      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
-+      newLevels.remove(level.m_46472_());
-+      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++      this.f_129762_.remove(level.m_46472_()); // Mohist
 +   }
 +    // CraftBukkit end
 +
