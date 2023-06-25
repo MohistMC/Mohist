@@ -243,7 +243,7 @@ public class WorldsCommands extends Command {
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds info " + MohistMC.i18n.get("worldmanage.command.info"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds addinfo <Name> " + MohistMC.i18n.get("worldmanage.command.addinfo"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds setname <Name> " + MohistMC.i18n.get("worldmanage.command.setname"));
-        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds setspawn 设" + MohistMC.i18n.get("worldmanage.command.setspawn"));
+        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds setspawn " + MohistMC.i18n.get("worldmanage.command.setspawn"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds gui " + MohistMC.i18n.get("worldmanage.command.gui"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds difficulty <0-3>  " + MohistMC.i18n.get("worldmanage.command.difficulty"));
     }
