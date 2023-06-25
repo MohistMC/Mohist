@@ -1,6 +1,12 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -13,6 +_,7 @@
+@@ -8,11 +_,13 @@
+ import com.mojang.serialization.Dynamic;
+ import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
++import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.List;
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
@@ -318,7 +324,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,15 +_,54 @@
+@@ -563,15 +_,60 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -341,22 +347,29 @@
 +      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
 +      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
 +
-+      if (!keepInventory) {
-+         for (ItemStack item : this.m_150109_().getContents()) {
-+            if (!item.m_41619_() && !EnchantmentHelper.m_44924_(item)) {
-+               loot.add(CraftItemStack.asCraftMirror(item));
-+            }
-+         }
++      Inventory copyInv;
++      if (keepInventory) {
++         copyInv = this.m_150109_();
++      } else {
++         copyInv = new Inventory(this);
++         copyInv.m_36006_(this.m_150109_());
 +      }
-+      // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
-+      this.m_7625_(p_9035_, this.f_20889_ > 0);
-+      for (org.bukkit.inventory.ItemStack item : this.drops) {
-+         loot.add(item);
-+      }
-+      this.drops.clear(); // SPIGOT-5188: make sure to clear
++
++      this.m_6668_(p_9035_);
++
 +      Component defaultMessage = this.m_21231_().m_19293_();
 +      String deathmessage = defaultMessage.getString();
++      Collection<ItemEntity> drops = this.captureDrops(null);
++      if (drops != null) {
++         for (ItemEntity entity : drops) {
++            CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(entity.m_32055_());
++            loot.add(craftItemStack);
++         }
++      }
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
++      if (!keepInventory) {
++         this.m_150109_().m_36006_(copyInv);
++      }
 +      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
 +
 +      // SPIGOT-943 - only call if they have an inventory open
@@ -365,7 +378,6 @@
 +      }
 +
 +      String deathMessage = event.getDeathMessage();
-+
 +      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
 +         Component ichatbasecomponent;
 +         if (deathMessage.equals(deathmessage)) {

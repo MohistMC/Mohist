@@ -18,14 +18,25 @@
 
 package com.mohistmc.eventhandler.dispatcher;
 
+import io.izzel.tools.collection.XmapList;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class EntityEventDispatcher {
 
@@ -53,6 +64,32 @@ public class EntityEventDispatcher {
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(receiveCanceled = true)
+    public void onLivingDeath(LivingDropsEvent event) {
+        if (event.getEntity() instanceof ServerPlayer) {
+            return;
+        }
+        LivingEntity livingEntity = event.getEntity();
+        Collection<ItemEntity> drops = event.getDrops();
+        if (!(drops instanceof ArrayList)) {
+            drops = new ArrayList<>(drops);
+        }
+        List<ItemStack> itemStackList = XmapList.create((List<ItemEntity>) drops, ItemStack.class, (ItemEntity entity) -> CraftItemStack.asCraftMirror(entity.getItem()),  itemStack -> {
+                    ItemEntity itemEntity = new ItemEntity(livingEntity.level(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), CraftItemStack.asNMSCopy(itemStack));
+                    itemEntity.setDefaultPickUpDelay();
+                    return itemEntity;
+                });
+
+        CraftLivingEntity craftLivingEntity = livingEntity.getBukkitLivingEntity();
+        EntityDeathEvent eventCB = new EntityDeathEvent(craftLivingEntity, itemStackList, livingEntity.getExpReward());
+        Bukkit.getPluginManager().callEvent(eventCB);
+
+        livingEntity.expToDrop = eventCB.getDroppedExp();
+        if (drops.isEmpty()) {
+            event.setCanceled(true);
         }
     }
 }

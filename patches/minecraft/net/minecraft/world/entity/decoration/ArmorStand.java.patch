@@ -1,12 +1,28 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -36,12 +_,15 @@
- import net.minecraft.world.item.Items;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LightLayer;
--import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.gameevent.GameEvent;
+@@ -1,8 +_,13 @@
+ package net.minecraft.world.entity.decoration;
+ 
++import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.List;
+ import java.util.function.Predicate;
++import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
++
++import com.google.common.collect.Lists;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.Rotations;
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.Pose;
++import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.projectile.AbstractArrow;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+@@ -42,6 +_,10 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -113,48 +129,7 @@
                       }
  
                       return true;
-@@ -485,18 +_,18 @@
-          itemstack.m_41714_(this.m_7770_());
-       }
- 
--      Block.m_49840_(this.m_9236_(), this.m_20183_(), itemstack);
-+      drops.add(CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
-       this.m_31653_(p_31647_);
-    }
- 
-    private void m_31653_(DamageSource p_31654_) {
-       this.m_31566_();
--      this.m_6668_(p_31654_);
-+      // this.dropAllDeathLoot(p_31654_);
- 
-       for(int i = 0; i < this.f_31538_.size(); ++i) {
-          ItemStack itemstack = this.f_31538_.get(i);
-          if (!itemstack.m_41619_()) {
--            Block.m_49840_(this.m_9236_(), this.m_20183_().m_7494_(), itemstack);
-+            drops.add(CraftItemStack.asBukkitCopy(itemstack)); // CraftBukkit - add to drops
-             this.f_31538_.set(i, ItemStack.f_41583_);
-          }
-       }
-@@ -504,15 +_,15 @@
-       for(int j = 0; j < this.f_31539_.size(); ++j) {
-          ItemStack itemstack1 = this.f_31539_.get(j);
-          if (!itemstack1.m_41619_()) {
--            Block.m_49840_(this.m_9236_(), this.m_20183_().m_7494_(), itemstack1);
-+            drops.add(CraftItemStack.asBukkitCopy(itemstack1)); // CraftBukkit - add to drops
-             this.f_31539_.set(j, ItemStack.f_41583_);
-          }
-       }
--
-+      this.m_6668_(p_31654_); // CraftBukkit - moved from above
-    }
- 
-    private void m_31566_() {
--      this.m_9236_().m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_11681_, this.m_5720_(), 1.0F, 1.0F);
-+      this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_11681_, this.m_5720_(), 1.0F, 1.0F);
-    }
- 
-    protected float m_5632_(float p_31644_, float p_31645_) {
-@@ -592,7 +_,15 @@
+@@ -592,7 +_,24 @@
        return this.m_31666_();
     }
  
@@ -166,6 +141,15 @@
 +   // CraftBukkit end
 +
     public void m_6074_() {
++      Collection<ItemEntity> captureDrops = this.captureDrops(null);
++      List<org.bukkit.inventory.ItemStack> drops;
++      if (captureDrops == null) {
++         drops = new ArrayList<>();
++      } else if (captureDrops instanceof List) {
++         drops = Lists.transform((List<ItemEntity>) captureDrops, e -> CraftItemStack.asCraftMirror(e.m_32055_()));
++      } else {
++         drops = captureDrops.stream().map(ItemEntity::m_32055_).map(CraftItemStack::asCraftMirror).collect(Collectors.toList());
++      }
 +      CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
        this.m_142687_(Entity.RemovalReason.KILLED);
        this.m_146850_(GameEvent.f_223707_);

@@ -53,13 +53,14 @@
  import net.minecraft.world.level.storage.loot.LootParams;
  import net.minecraft.world.level.storage.loot.LootTable;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-@@ -117,14 +_,30 @@
+@@ -117,14 +_,31 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import net.minecraftforge.common.ForgeHooks;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
@@ -94,14 +95,13 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -226,11 +_,34 @@
+@@ -226,11 +_,33 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
     private boolean f_217034_;
 +   // CraftBukkit start
 +   public int expToDrop;
 +   public boolean forceDrops;
-+   public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +   public CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public Set<UUID> collidableExemptions = new HashSet<>();
@@ -760,7 +760,7 @@
                 this.m_9236_().m_7967_(itementity);
              }
           }
-@@ -1335,21 +_,27 @@
+@@ -1335,12 +_,9 @@
  
     protected void m_6668_(DamageSource p_21192_) {
        Entity entity = p_21192_.m_7639_();
@@ -771,22 +771,14 @@
 -         i = 0;
 -      }
 +
-+      this.m_5907_(); // CraftBukkit - from below
 +      int i = net.minecraftforge.common.ForgeHooks.getLootingLevel(this, entity, p_21192_);
 +      this.captureDrops(new java.util.ArrayList<>());
  
        boolean flag = this.f_20889_ > 0;
        if (this.m_6125_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_)) {
-          this.m_7625_(p_21192_, flag);
-          this.m_7472_(p_21192_, i, flag);
-       }
-+      // CraftBukkit start - Call death event
-+      CraftEventFactory.callEntityDeathEvent(this, this.drops);
-+      this.drops = new ArrayList<>();
-+      // CraftBukkit end
+@@ -1350,6 +_,10 @@
  
--      this.m_5907_();
-+      // this.dropEquipment(); // CraftBukkit - moved up
+       this.m_5907_();
        this.m_21226_();
 +
 +      Collection<ItemEntity> drops = captureDrops(null);
@@ -1739,7 +1731,7 @@
        Equipable equipable = Equipable.m_269088_(p_147234_);
        return equipable != null ? equipable.m_40402_() : EquipmentSlot.MAINHAND;
     }
-@@ -3334,4 +_,15 @@
+@@ -3334,4 +_,17 @@
  
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
     }
@@ -1753,5 +1745,7 @@
 +         return 0;
 +      }
 +   }
++
++   public CraftLivingEntity getBukkitLivingEntity() { return (CraftLivingEntity) super.getBukkitEntity(); }
 +   // CraftBukkit end
  }
