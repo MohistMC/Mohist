@@ -137,18 +137,17 @@
        }
  
     }
-@@ -353,7 +_,13 @@
+@@ -353,7 +_,12 @@
           if (blockentity != null && blockentity != p_156374_) {
              blockentity.m_7651_();
           }
 -
-+         else {
-+            System.out.println("Attempted to place a tile entity (" + blockentity + ") at " + blockentity.m_58899_().m_123341_() + "," + blockentity.m_58899_().m_123342_() + "," + blockentity.m_58899_().m_123343_()
-+                    + " (" + m_8055_(blockpos) + ") where there was no entity tile!");
-+            System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
-+            new Exception().printStackTrace();
-+            // CraftBukkit end
-+         }
++      } else {
++         System.out.println("Attempted to place a tile entity (" + p_156374_ + ") at " + p_156374_.m_58899_().m_123341_() + "," + p_156374_.m_58899_().m_123342_() + "," + p_156374_.m_58899_().m_123343_()
++                 + " (" + m_8055_(blockpos) + ") where there was no entity tile!");
++         System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
++         new Exception().printStackTrace();
++         // CraftBukkit end
        }
     }
  
