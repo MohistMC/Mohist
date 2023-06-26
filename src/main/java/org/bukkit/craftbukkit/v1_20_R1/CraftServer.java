@@ -12,6 +12,7 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MohistPlugin;
+import com.mohistmc.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -311,7 +312,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
+        this.serverVersion = MohistMC.version;
         this.structureManager = new CraftStructureManager(console.getStructureManager());
         this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
@@ -1001,7 +1002,7 @@ public final class CraftServer implements Server {
     public World createWorld(WorldCreator creator) {
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
         Validate.notNull(creator, "Creator may not be null");
-
+        Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
@@ -1111,6 +1112,7 @@ public final class CraftServer implements Server {
             name = strings[strings.length - 1];
         }
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+            Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
 
@@ -1122,7 +1124,9 @@ public final class CraftServer implements Server {
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
-        return internal.getWorld();
+        World world1 = internal.getWorld();
+        Level2LevelStem.reloadAndInit(world1);
+        return world1;
     }
 
     @Override
@@ -1170,6 +1174,7 @@ public final class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
+        Level2LevelStem.plugin_worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         console.removeLevel(handle);
         return true;
     }
@@ -1179,6 +1184,7 @@ public final class CraftServer implements Server {
             return;
         }
         this.worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
+        Level2LevelStem.plugin_worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
     }
 
     public DedicatedServer getServer() {

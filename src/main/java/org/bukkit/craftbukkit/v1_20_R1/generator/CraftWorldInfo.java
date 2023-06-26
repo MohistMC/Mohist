@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.generator;
 
+import com.mohistmc.util.Level2LevelStem;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -21,7 +22,7 @@ public class CraftWorldInfo implements WorldInfo {
 
     public CraftWorldInfo(ServerLevelData serverLevelDataCB, LevelStorageSource.LevelStorageAccess session, World.Environment environment, DimensionType dimensionManager) {
         this.name = serverLevelDataCB.getLevelName();
-        this.uuid = WorldUUID.getUUID(session.levelDirectory.path().toFile());
+        this.uuid = WorldUUID.getUUID(Level2LevelStem.checkPath(session.levelDirectory.path()).toFile());
         this.environment = environment;
         this.seed = ((PrimaryLevelData) serverLevelDataCB).worldGenOptions().seed();
         this.minHeight = dimensionManager.minY();

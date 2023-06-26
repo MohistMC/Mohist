@@ -102,28 +102,6 @@ public class WorldsCommands extends Command {
                     player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "§cYou can't delete this world!");
                 }
             }
-            //加载世界
-            if (args.length == 2 && args[0].equalsIgnoreCase("import")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
-                try {
-                    World w = Bukkit.getWorld(worldName);
-                    player.teleport(w.getSpawnLocation());
-                    player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "这个世界已经存在。 已将你传送.");
-                } catch (Exception e3) {
-                    File loadWorld = new File(worldName); // TODO forge and bukkit world file path?
-                    if (loadWorld.exists()) {
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "加载世界中.");
-                        World w = Bukkit.createWorld(new WorldCreator(worldName));
-                        Location location = Bukkit.getWorld(worldName).getSpawnLocation();
-                        player.teleport(location);
-                        ConfigByWorlds.addWorld(worldName);
-                        ConfigByWorlds.addSpawn(location);
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "这个世界已被加载.");
-                    } else {
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "找不到你要加载的世界文件.");
-                    }
-                }
-            }
             if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
                 String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 if (Bukkit.getWorld(worldName) == null) {
@@ -230,7 +208,7 @@ public class WorldsCommands extends Command {
         return list;
     }
 
-    private final List<String> params = Arrays.asList("create", "delete", "tp", "unload", "import", "info", "addinfo", "setname", "setspawn", "gui", "difficulty");
+    private final List<String> params = Arrays.asList("create", "delete", "tp", "unload", "info", "addinfo", "setname", "setspawn", "gui", "difficulty");
 
 
     private void sendHelp(CommandSender player) {
@@ -238,7 +216,6 @@ public class WorldsCommands extends Command {
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds delete <Name> " + MohistMC.i18n.get("worldmanage.command.delete"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds tp <Name> " + MohistMC.i18n.get("worldmanage.command.tp"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds tp <Player> <Name> " + MohistMC.i18n.get("worldmanage.command.tp0"));
-        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds import <Name> " + MohistMC.i18n.get("worldmanage.command.unload"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds unload <Name> " + MohistMC.i18n.get("worldmanage.command.import"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds info " + MohistMC.i18n.get("worldmanage.command.info"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds addinfo <Name> " + MohistMC.i18n.get("worldmanage.command.addinfo"));

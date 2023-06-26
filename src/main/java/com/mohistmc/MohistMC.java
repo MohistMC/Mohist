@@ -16,6 +16,7 @@ public class MohistMC {
     public static final String NAME = "Mohist";
     public static Logger LOGGER = LogManager.getLogger();
     public static i18n i18n;
+    public static String version;
 
     public MohistMC() {
         String mohist_lang = MohistConfig.yml.getString("mohist.lang", "xx_XX");
@@ -24,6 +25,7 @@ public class MohistMC {
         i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
         //TODO: do something when mod loading
         LOGGER.info("Mohist loading.....");
+        version = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
         EventDispatcherRegistry.init();
     }
 }
