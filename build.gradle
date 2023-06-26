@@ -1113,6 +1113,10 @@ project(':mohist') {
             rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
+        from(project(':mohistplugins').tasks.jar.outputs) {
+            rename { 'data/mohistplugins-' + MC_VERSION + '.jar' }
+        }
+
         from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
             into ""
         }

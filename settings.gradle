@@ -19,6 +19,7 @@ include ':clean'
 include ':mohist'
 
 include 'mohistlauncher'
+include 'mohistplugins'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")

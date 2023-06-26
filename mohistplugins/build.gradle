@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.mohistmc'
+version = '1.20.1'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi' }
+}
+
+dependencies {
+    implementation(project(':mohist'))
+    compileOnly 'me.clip:placeholderapi:2.11.3'
+}
+
+test {
+    useJUnitPlatform()
+}

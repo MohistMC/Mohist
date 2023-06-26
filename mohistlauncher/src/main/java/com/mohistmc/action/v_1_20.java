@@ -6,8 +6,12 @@ import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +50,7 @@ public class v_1_20 {
         public final File javafmllanguage;
         public final File mclanguage;
         public final File lowcodelanguage;
+        public final File mohistplugin;
         public final File mojmap;
         public final File mc_unpacked;
         public final File mergedMapping;
@@ -57,10 +62,11 @@ public class v_1_20 {
             this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
             this.mojmap = new File(otherStart + "-mappings.txt");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
-
+            libPath();
             install();
         }
 
@@ -76,6 +82,7 @@ public class v_1_20 {
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(mohistplugin, "data/mohistplugins-1.20.1.jar");
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
@@ -203,6 +210,21 @@ public class v_1_20 {
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);
+        }
+
+        protected void libPath() throws Exception {
+            File out = new File(libPath + "com/mohistmc/cache", "libPath.txt");
+            if (!out.exists()) {
+                out.getParentFile().mkdirs();
+                out.createNewFile();
+            }
+            fileWriterMethod(out.getPath(), libPath);
+        }
+
+        public static void fileWriterMethod(String filepath, String content) throws IOException {
+            try (FileWriter fileWriter = new FileWriter(filepath)) {
+                fileWriter.append(content);
+            }
         }
     }
 }
