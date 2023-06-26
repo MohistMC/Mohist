@@ -14,7 +14,7 @@
        if (!p_43131_.f_46443_ && !flag && p_43132_ != null) {
 -         p_43132_.m_7739_((SignBlockEntity)p_43131_.m_7702_(p_43130_));
 +         // CraftBukkit start - SPIGOT-4678
-+         // p_43132_.openTextEdit((SignBlockEntity)p_43131_.getBlockEntity(p_43130_));
++         p_43132_.m_7739_((SignBlockEntity)p_43131_.m_7702_(p_43130_)); // Mohist
 +         SignItem.openSign = p_43130_;
 +         // CraftBukkit end
        }

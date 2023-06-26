@@ -46,7 +46,7 @@
 +            f_59720_[i] = org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage.fromString(s)[0];
 +            continue;
 +         }
-+                    // CraftBukkit end
++         // CraftBukkit end
           Component component = this.m_155711_(s);
           this.f_59720_[i] = component;
           String s1 = f_155694_[i];
@@ -70,17 +70,18 @@
     }
  
     public DyeColor m_59753_() {
-@@ -243,6 +_,31 @@
+@@ -243,6 +_,32 @@
  
     private void m_155728_() {
        this.m_6596_();
 -      this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3);
-+      if (this.f_58857_ != null) this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3);
+-   }
++      if (this.f_58857_ != null) this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3); // CraftBukkit - skip notify if world is null (SPIGOT-5122)
 +   }
 +
++   // CraftBukkit start
 +   @Override
 +   public void m_213846_(Component p_230797_) {
-+
 +   }
 +
 +   @Override
@@ -101,5 +102,6 @@
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new CraftBlockCommandSender(wrapper, this);
-    }
++   }
++   // CraftBukkit end
  }
