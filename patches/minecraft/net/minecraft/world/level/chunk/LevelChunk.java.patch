@@ -137,6 +137,21 @@
        }
  
     }
+@@ -353,7 +_,13 @@
+          if (blockentity != null && blockentity != p_156374_) {
+             blockentity.m_7651_();
+          }
+-
++         else {
++            System.out.println("Attempted to place a tile entity (" + blockentity + ") at " + blockentity.m_58899_().m_123341_() + "," + blockentity.m_58899_().m_123342_() + "," + blockentity.m_58899_().m_123343_()
++                    + " (" + m_8055_(blockpos) + ") where there was no entity tile!");
++            System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
++            new Exception().printStackTrace();
++            // CraftBukkit end
++         }
+       }
+    }
+ 
 @@ -361,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
@@ -165,19 +180,6 @@
           if (blockentity != null) {
              Level level = this.f_62776_;
              if (level instanceof ServerLevel) {
-@@ -386,6 +_,12 @@
-             }
- 
-             blockentity.m_7651_();
-+         }else {
-+            System.out.println("Attempted to place a tile entity (" + blockentity + ") at " + blockentity.m_58899_().m_123341_() + "," + blockentity.m_58899_().m_123342_() + "," + blockentity.m_58899_().m_123343_()
-+                    + " (" + m_8055_(p_62919_) + ") where there was no entity tile!");
-+            System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
-+            new Exception().printStackTrace();
-+            // CraftBukkit end
-          }
-       }
- 
 @@ -424,6 +_,60 @@
  
     }
