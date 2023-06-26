@@ -5,7 +5,7 @@ import net.minecraft.server.MinecraftServer;
 public class AsyncCatcher
 {
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
 
     public static void catchOp(String reason)
     {
