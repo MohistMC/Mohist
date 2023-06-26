@@ -144,7 +144,7 @@
 +         generator = getCraftServer().getGenerator(worldName);
 +      }
 +      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment.get(getTypeKey());
++         environment = ForgeInjectBukkit.environment0.get(p_270683_);
 +      }
 +      if (biomeProvider == null) {
 +         biomeProvider = getCraftServer().getBiomeProvider(worldName);

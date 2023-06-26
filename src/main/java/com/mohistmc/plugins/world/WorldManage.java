@@ -17,10 +17,6 @@ public class WorldManage {
         ConfigByWorlds.createFile();
         ConfigByWorlds.loadWorlds();
         ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName);
-        if (Bukkit.getAllowNether()) {
-            ConfigByWorlds.addWorld("DIM1");
-            ConfigByWorlds.addWorld("DIM-1");
-        }
     }
 
 

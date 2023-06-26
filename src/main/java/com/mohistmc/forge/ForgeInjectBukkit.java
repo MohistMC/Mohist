@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -53,6 +54,13 @@ public class ForgeInjectBukkit {
                     .put(LevelStem.OVERWORLD, World.Environment.NORMAL)
                     .put(LevelStem.NETHER, World.Environment.NETHER)
                     .put(LevelStem.END, World.Environment.THE_END)
+                    .build());
+
+    public static BiMap<ResourceKey<Level>, World.Environment> environment0 =
+            HashBiMap.create(ImmutableMap.<ResourceKey<Level>, World.Environment>builder()
+                    .put(Level.OVERWORLD, World.Environment.NORMAL)
+                    .put(Level.NETHER, World.Environment.NETHER)
+                    .put(Level.END, World.Environment.THE_END)
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
