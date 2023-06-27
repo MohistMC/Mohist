@@ -14,12 +14,14 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -202,6 +204,7 @@ public final class PluginDescriptionFile {
         @Override
         @NotNull
         protected Yaml initialValue() {
+            DumperOptions dumperOptions = new DumperOptions();
             return new Yaml(new SafeConstructor(new LoaderOptions()) {
                 {
                     yamlConstructors.put(null, new AbstractConstruct() {
@@ -231,7 +234,7 @@ public final class PluginDescriptionFile {
                         });
                     }
                 }
-            });
+            }, new Representer(dumperOptions), dumperOptions, new PluginDescriptionResolver());
         }
     };
     String rawName = null;
