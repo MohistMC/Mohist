@@ -1470,7 +1470,6 @@ public class CraftEventFactory {
                 stat = ForgeInjectBukkit.statisticMap.get(statistic.getType());
             }
             if (stat == null) {
-                System.err.println("Unhandled statistic: " + statistic);
                 return null;
             }
             switch (stat) {
