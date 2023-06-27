@@ -25,7 +25,7 @@ public class MohistPapiHook extends PlaceholderExpansion {
             return null;
         }
         if (i.equalsIgnoreCase("world_name")) {
-            return WorldAPI.getDate(p.getWorld(), WorldDate.NAME);
+            return WorldAPI.getDate(p.getWorld(), WorldDate.NAME).replace("&", "§");
         }
 
         return null;
@@ -43,6 +43,6 @@ public class MohistPapiHook extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.20.1";
     }
 }
