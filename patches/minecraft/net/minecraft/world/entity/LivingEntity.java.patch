@@ -390,7 +390,7 @@
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -963,19 +_,61 @@
+@@ -963,19 +_,56 @@
  
     }
  
@@ -430,11 +430,6 @@
 +   // Mohist end
  
     public float m_21223_() {
-+      // CraftBukkit start - Use unscaled health
-+      if (this instanceof ServerPlayer) {
-+         return (float) ((ServerPlayer) this).getBukkitEntity().getHealth();
-+      }
-+      // CraftBukkit end
        return this.f_19804_.m_135370_(f_20961_);
     }
  
