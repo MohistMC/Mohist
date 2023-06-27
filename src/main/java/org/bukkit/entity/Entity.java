@@ -599,4 +599,18 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @Override
     Spigot spigot();
     // Spigot end
+
+    // Paper start
+
+    /**
+     * Gets the latest chunk an entity is currently or was in.
+     *
+     * @return The current, or most recent chunk if the entity is invalid (which may load the chunk)
+     */
+    @NotNull
+    default Chunk getChunk() {
+        // TODO remove impl here
+        return getLocation().getChunk();
+    }
+    // Paper end
 }
