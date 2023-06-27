@@ -347,7 +347,7 @@ public class Metrics {
 
                     Map<String, Integer> pluginlist = new HashMap<>();
                     for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                        if (plugin.isEnabled()) {
+                        if (plugin.isEnabled() && !plugin.getName().equals("mohist")) {
                             pluginlist.put(plugin.getDescription().getName(), 1);
                         }
                     }

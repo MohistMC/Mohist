@@ -154,7 +154,7 @@ public class WorldsCommands extends Command {
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("difficulty")) {
                 if (WorldManage.isInteger(args[1])) {
-                    int nandu = Integer.valueOf(args[1]);
+                    int nandu = Integer.parseInt(args[1]);
                     if (nandu >= 0 && nandu < 4) {
                         if (nandu == 0) {
                             player.getWorld().setDifficulty(Difficulty.PEACEFUL);
