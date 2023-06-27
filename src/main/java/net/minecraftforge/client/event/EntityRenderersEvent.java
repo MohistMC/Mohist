@@ -143,13 +143,14 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
     {
         private final Map<EntityType<?>, EntityRenderer<?>> renderers;
         private final Map<String, EntityRenderer<? extends Player>> skinMap;
-        private final EntityModelSet entityModels = Minecraft.getInstance().getEntityModels();
+        private final EntityRendererProvider.Context context;
 
         @ApiStatus.Internal
-        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> playerRenderers)
+        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> playerRenderers, EntityRendererProvider.Context context)
         {
             this.renderers = renderers;
             this.skinMap = playerRenderers;
+            this.context = context;
         }
 
         /**
@@ -199,7 +200,15 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          */
         public EntityModelSet getEntityModels()
         {
-            return entityModels;
+            return this.context.getModelSet();
+        }
+
+        /**
+         * {@return the context for the entity renderer provider}
+         */
+        public EntityRendererProvider.Context getContext()
+        {
+            return context;
         }
     }
 

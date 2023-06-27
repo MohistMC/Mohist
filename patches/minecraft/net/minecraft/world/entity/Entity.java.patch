@@ -110,12 +110,12 @@
     public boolean f_19862_;
     public boolean f_19863_;
     public boolean f_201939_;
-@@ -181,14 +_,17 @@
+@@ -181,14 +_,16 @@
     public double f_19790_;
     public double f_19791_;
     public double f_19792_;
-+   @Deprecated // Forge - see IForgeEntity#getStepHeight
-    public float f_19793_;
+-   private float f_19793_;
++   public float f_19793_;
     public boolean f_19794_;
     protected final RandomSource f_19796_ = RandomSource.m_216327_();
     public int f_19797_;
@@ -1460,6 +1460,14 @@
  
     }
  
+@@ -3264,6 +_,7 @@
+       return false;
+    }
+ 
++   @Deprecated /** Forge: Use {@link net.minecraftforge.common.extensions.IForgeEntity#getStepHeight()} */
+    public float m_274421_() {
+       return this.f_19793_;
+    }
 @@ -3294,7 +_,7 @@
        this.f_146801_.m_142472_(p_146876_);
     }

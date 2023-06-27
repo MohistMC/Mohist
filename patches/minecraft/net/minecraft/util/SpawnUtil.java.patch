@@ -15,11 +15,13 @@
        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.m_122032_();
  
        for(int i = 0; i < p_216408_; ++i) {
-@@ -28,7 +_,7 @@
+@@ -27,8 +_,8 @@
+          if (p_216406_.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
              T t = p_216404_.m_262451_(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
              if (t != null) {
-                if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
+-               if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
 -                  p_216406_.m_47205_(t);
++               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, p_216406_, p_216405_)) {
 +                  p_216406_.addFreshEntityWithPassengers(t, reason); // CraftBukkit
                    return Optional.of(t);
                 }
