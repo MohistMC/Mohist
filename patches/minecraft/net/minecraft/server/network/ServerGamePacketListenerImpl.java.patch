@@ -1308,15 +1308,22 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1492,7 +_,7 @@
+@@ -1492,6 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.f_9743_.f_8944_) {
                 this.f_9743_.f_8944_ = false;
--               this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, true);
-+               this.f_9743_ = this.f_9745_.m_6846_().respawn(this.f_9743_, true, PlayerRespawnEvent.RespawnReason.END_PORTAL);
++               this.f_9745_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.END_PORTAL; // Mohist
+                this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, true);
                 CriteriaTriggers.f_10588_.m_19757_(this.f_9743_, Level.f_46430_, Level.f_46428_);
              } else {
-                if (this.f_9743_.m_21223_() > 0.0F) {
+@@ -1499,6 +_,7 @@
+                   return;
+                }
+ 
++               this.f_9745_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.DEATH; // Mohist
+                this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, false);
+                if (this.f_9745_.m_7035_()) {
+                   this.f_9743_.m_143403_(GameType.SPECTATOR);
 @@ -1514,14 +_,18 @@
  
     public void m_7951_(ServerboundContainerClosePacket p_9858_) {

@@ -131,6 +131,7 @@ import org.bukkit.event.player.PlayerShowEntityEvent;
 import org.bukkit.event.player.PlayerSpawnChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView.Property;
 import org.bukkit.inventory.ItemStack;
@@ -932,7 +933,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             entity.connection.teleport(to);
         } else {
             // The respawn reason should never be used if the passed location is non null.
-            server.getHandle().respawn(entity, toWorld, true, to, true, null);
+            server.getHandle().respawn(entity, toWorld, true, to, null);
         }
         return true;
     }
@@ -1816,7 +1817,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setScoreboard(Scoreboard scoreboard) {
         Preconditions.checkArgument(scoreboard != null, "Scoreboard cannot be null");
         Preconditions.checkState(getHandle().connection != null, "Cannot set scoreboard yet (invalid player connection)");
-        Preconditions.checkState(!getHandle().connection.isDisconnected(), "Cannot set scoreboard for invalid CraftPlayer (player is disconnected)");
 
         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
@@ -2081,7 +2081,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isAllowingServerListings() {
-        return  getHandle().allowsListing();
+        return getHandle().allowsListing();
     }
 
     // Spigot start
@@ -2098,7 +2098,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         {
             if ( getHealth() <= 0 && isOnline() )
             {
-                server.getServer().getPlayerList().respawn( getHandle(), false );
+
+                server.getServer().getPlayerList().respawn( getHandle(), false, PlayerRespawnEvent.RespawnReason.PLUGIN);
             }
         }
 
