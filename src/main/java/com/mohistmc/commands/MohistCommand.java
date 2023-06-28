@@ -39,12 +39,12 @@ import java.util.Locale;
 
 public class MohistCommand extends Command {
 
-    private final List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload", "version", "channels", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "item", "reload", "version", "channels", "speed");
 
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload|version]";
+        this.usageMessage = "/mohist [mods|playermods|lang|item|reload|version]";
         this.setPermission("mohist.command.mohist");
     }
 
@@ -135,24 +135,24 @@ public class MohistCommand extends Command {
                                 float speed = Float.parseFloat(args[1]);
                                 if (speed >= 0.0f && speed < 11.0f) {
                                     p.setFlySpeed(speed / 10.0f);
-                                    p.sendMessage("飞行速度已设置为 §b" + speed);
+                                    p.sendMessage("The flight speed is set to §b" + speed);
                                 }
                             } else {
                                 float speed = Float.parseFloat(args[1]);
                                 if (speed >= 0.0f && speed < 11.0f) {
                                     p.setWalkSpeed(speed / 10.0f);
-                                    p.sendMessage("行走速度已设置为 §b" + speed);
+                                    p.sendMessage("Walk speed is set to §b" + speed);
                                 }
                             }
                         }
                         if (args[0].equalsIgnoreCase("reset")) {
                             p.setFlySpeed(0.1f);
                             p.setWalkSpeed(0.2f);
-                            p.sendMessage("行走和飞行速度已恢复默认.");
+                            p.sendMessage("Walking and flying speeds have been restored to default.");
                         }
                     }
                 } else {
-                    sender.sendMessage("§c控制台无法超速行驶");
+                    sender.sendMessage("§cConsole can't overdrive");
                 }
             }
             default -> {
