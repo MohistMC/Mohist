@@ -13,11 +13,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class ConfigByWorlds
-{
-    public static File f  = new File("mohist-config", "worlds.yml");
+public class ConfigByWorlds {
+    public static File f = new File("mohist-config", "worlds.yml");
     public static FileConfiguration config = YamlConfiguration.loadConfiguration(ConfigByWorlds.f);
-    
+
     public static void addInfo(String w, String info) {
         World world = Bukkit.getWorld(w);
         if (ConfigByWorlds.f.exists()) {
@@ -27,13 +26,12 @@ public class ConfigByWorlds
                     config.set("worlds." + world.getName() + ".info", info);
                 }
                 config.save(ConfigByWorlds.f);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     public static void addname(String w, String info) {
         World world = Bukkit.getWorld(w);
         if (ConfigByWorlds.f.exists()) {
@@ -43,8 +41,7 @@ public class ConfigByWorlds
                     config.set("worlds." + world.getName() + ".name", info);
                 }
                 config.save(ConfigByWorlds.f);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -59,13 +56,12 @@ public class ConfigByWorlds
                     config.set("worlds." + world.getName() + ".difficulty", nandu);
                 }
                 config.save(ConfigByWorlds.f);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     public static void addWorld(String w) {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
@@ -75,35 +71,32 @@ public class ConfigByWorlds
                     if (config.getString("worlds." + world.getName()) == null) {
                         config.set("worlds." + world.getName() + ".seed", world.getSeed());
                         config.set("worlds." + world.getName() + ".environment", world.getEnvironment().name());
-                        config.set("worlds." + world.getName() + ".name",world.getName());
-                        config.set("worlds." + world.getName() + ".info","-/-");
-                        config.set("worlds." + world.getName() + ".difficulty", "EASY");
+                        config.set("worlds." + world.getName() + ".name", world.getName());
+                        config.set("worlds." + world.getName() + ".info", "-/-");
+                        config.set("worlds." + world.getName() + ".difficulty", world.getDifficulty().name());
                     }
                     config.save(ConfigByWorlds.f);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
     }
-    
+
     public static void createFile() {
         try {
             if (!ConfigByWorlds.f.exists()) {
                 try {
                     config.save(f);
-                }
-                catch (IOException var4) {
+                } catch (IOException var4) {
                     var4.printStackTrace();
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public static void loadWorlds() {
         try {
             config.load(ConfigByWorlds.f);
@@ -122,16 +115,16 @@ public class ConfigByWorlds
                         if (config.get("worlds." + w + ".difficulty") != null) {
                             difficulty = config.getString("worlds." + w + ".difficulty");
                         }
-                        new WorldCreator(w).seed(seed).environment(World.Environment.valueOf(environment)).createWorld().setDifficulty(Difficulty.valueOf(difficulty));
+                        World world = new WorldCreator(w).seed(seed).environment(World.Environment.valueOf(environment)).createWorld();
+                        world.setDifficulty(Difficulty.valueOf(difficulty));
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public static void removeWorld(String w) {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
@@ -142,8 +135,7 @@ public class ConfigByWorlds
                         config.set("worlds." + world.getName(), null);
                         config.save(ConfigByWorlds.f);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -163,8 +155,7 @@ public class ConfigByWorlds
                     config.set("worlds." + world.getName() + ".spawn.pitch", location.getPitch());
                 }
                 config.save(ConfigByWorlds.f);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -181,12 +172,11 @@ public class ConfigByWorlds
                     double z = config.getDouble("worlds." + world.getName() + ".spawn.z");
                     double yaw = config.getDouble("worlds." + world.getName() + ".spawn.yaw");
                     double pitch = config.getDouble("worlds." + world.getName() + ".spawn.pitch");
-                    player.teleport(new Location(world, x, y, z, (float)yaw, (float)pitch));
+                    player.teleport(new Location(world, x, y, z, (float) yaw, (float) pitch));
                 } else {
                     player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

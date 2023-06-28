@@ -30,7 +30,7 @@ public class WorldsGUI {
                 FileConfiguration config = ConfigByWorlds.config;
                 config.load(ConfigByWorlds.f);
                 if (ConfigByWorlds.f.exists() && config.getConfigurationSection("worlds.") != null) {
-                    String worldtype = w.getEnvironment().name();
+                    String worldtype = w.getEnvironment() == null ? "null" : w.getEnvironment().name();
                     String infos = "§7-/-";
                     String name1 = w.getName();
                     String difficulty = w.getDifficulty().name();
