@@ -39,12 +39,10 @@ public class InventoryClickListener {
                     if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
                         createWorld(event, p);
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.fillInStackTrace();
                 }
-            }
-            else if (event.getView().getTitle().equals(MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey())) {
+            } else if (event.getView().getTitle().equals(MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey())) {
                 event.setCancelled(true);
                 if (event.getCurrentItem() == null) {
                     return;
@@ -54,12 +52,10 @@ public class InventoryClickListener {
                     String[] splitted = toSplit.split("6");
                     if (Bukkit.getWorld(splitted[1]) != null) {
                         ConfigByWorlds.getSpawn(splitted[1], p);
-                    }
-                    else {
+                    } else {
                         WorldsCommands.worldNotExists(p, splitted[1]);
                     }
-                }
-                else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())) {
+                } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())) {
                     p.closeInventory();
                 }
             }

@@ -96,7 +96,7 @@ public class DumpCommand extends Command {
             String mode = args[0];
             switch (args[1].toLowerCase(Locale.ENGLISH)) {
                 case "potions" -> dumpPotions(sender, mode);
-                case "effect" ->  dumpEffect(sender, mode);
+                case "effect" -> dumpEffect(sender, mode);
                 case "particle" -> dumpParticle(sender, mode);
                 case "enchants" -> dumpEnchant(sender, mode);
                 case "cbcmds" -> dumpCBCommands(sender, mode);

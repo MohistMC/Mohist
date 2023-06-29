@@ -36,7 +36,6 @@ import java.util.Map;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
- *
  * @author pyz
  * @date 2019/7/3 10:38 PM
  */
@@ -74,7 +73,7 @@ public class MohistJarRemapper extends CustomRemapper {
 
     /**
      * Enable or disable API-only generation.
-     *
+     * <p>
      * If enabled, only symbols will be output to the remapped jar, suitable for
      * use as a library. Code and resources will be excluded.
      */

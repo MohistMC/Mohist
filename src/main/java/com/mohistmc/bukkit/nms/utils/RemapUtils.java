@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
@@ -183,7 +182,7 @@ public class RemapUtils {
         return mapping == null ? clazz.getSimpleName() : mapping.getNmsSimpleName();
     }
 
-    public static boolean needRemap(String className){
+    public static boolean needRemap(String className) {
         return className.startsWith("net.minecraft.");
     }
 

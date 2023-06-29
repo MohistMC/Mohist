@@ -2,7 +2,6 @@ package com.mohistmc.plugins.world;
 
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 
@@ -38,8 +37,7 @@ public class WorldManage {
         try {
             Integer.parseInt(value);
             return true;
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }

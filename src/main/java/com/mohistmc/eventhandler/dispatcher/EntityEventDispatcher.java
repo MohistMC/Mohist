@@ -77,11 +77,11 @@ public class EntityEventDispatcher {
         if (!(drops instanceof ArrayList)) {
             drops = new ArrayList<>(drops);
         }
-        List<ItemStack> itemStackList = XmapList.create((List<ItemEntity>) drops, ItemStack.class, (ItemEntity entity) -> CraftItemStack.asCraftMirror(entity.getItem()),  itemStack -> {
-                    ItemEntity itemEntity = new ItemEntity(livingEntity.level(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), CraftItemStack.asNMSCopy(itemStack));
-                    itemEntity.setDefaultPickUpDelay();
-                    return itemEntity;
-                });
+        List<ItemStack> itemStackList = XmapList.create((List<ItemEntity>) drops, ItemStack.class, (ItemEntity entity) -> CraftItemStack.asCraftMirror(entity.getItem()), itemStack -> {
+            ItemEntity itemEntity = new ItemEntity(livingEntity.level(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), CraftItemStack.asNMSCopy(itemStack));
+            itemEntity.setDefaultPickUpDelay();
+            return itemEntity;
+        });
 
         CraftLivingEntity craftLivingEntity = livingEntity.getBukkitLivingEntity();
         EntityDeathEvent eventCB = new EntityDeathEvent(craftLivingEntity, itemStackList, livingEntity.getExpReward());

@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 10:02 PM
  */
@@ -266,11 +265,11 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     /**
      * Load a mapping given a .csrg file
      *
-     * @param reader Mapping file reader
-     * @param inputTransformer Transformation to apply on input
+     * @param reader            Mapping file reader
+     * @param inputTransformer  Transformation to apply on input
      * @param outputTransformer Transformation to apply on output
-     * @param reverse Swap input and output mappings (after applying any
-     * input/output transformations)
+     * @param reverse           Swap input and output mappings (after applying any
+     *                          input/output transformations)
      * @throws IOException
      */
     public void loadMappings(BufferedReader reader, MappingTransformer inputTransformer, MappingTransformer outputTransformer, boolean reverse) throws IOException {

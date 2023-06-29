@@ -12,7 +12,7 @@ import java.util.Locale;
  */
 public class WorldAPI {
 
-    public static String getDate(World world, WorldDate worldDate){
+    public static String getDate(World world, WorldDate worldDate) {
         if (ConfigByWorlds.config.getString("worlds." + world.getName() + "." + worldDate.name().toLowerCase(Locale.ENGLISH)) == null) {
             switch (worldDate) {
                 case NAME -> {

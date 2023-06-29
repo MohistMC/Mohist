@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:51 PM
  */
@@ -56,7 +55,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
     public static Set<String> proxyClass = new HashSet<>(Arrays.asList(className + ";getField", className + ";getDeclaredField", className + ";getMethod", className + ";getDeclaredMethod", className + ";getSimpleName"));
     public static Set<String> Lookup = new HashSet<>(Arrays.asList(className + ";unreflect", className + ";findSpecial", className + ";findStatic", className + ";findVirtual", className + ";findGetter", className + ";findSetter", className + ";findStaticGetter", className + ";findStaticSetter", className + ";findVarHandle"));
     public static Set<String> reflect = new HashSet<>(Arrays.asList(reflectName + "Method;getName", reflectName + "Field;getName"));
-
 
 
     public static void init() {

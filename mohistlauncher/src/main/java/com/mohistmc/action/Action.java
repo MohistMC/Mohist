@@ -169,7 +169,7 @@ public abstract class Action {
     protected static void deleteFolder(File folder) {
         File[] files = folder.listFiles();
         if (files != null) {
-            for(File f : files) {
+            for (File f : files) {
                 if (f.isDirectory())
                     deleteFolder(f);
                 else

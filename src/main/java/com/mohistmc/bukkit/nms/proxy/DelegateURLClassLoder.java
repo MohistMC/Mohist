@@ -39,7 +39,6 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 8:41 PM
  */
@@ -65,8 +64,8 @@ public class DelegateURLClassLoder extends URLClassLoader {
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (RemapUtils.needRemap(name)) {
             ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
-            if(remappedClassMapping == null){
-                throw new ClassNotFoundException(name.replace('/','.'));
+            if (remappedClassMapping == null) {
+                throw new ClassNotFoundException(name.replace('/', '.'));
             }
             String remappedClass = remappedClassMapping.getMcpName();
             return Class.forName(remappedClass);

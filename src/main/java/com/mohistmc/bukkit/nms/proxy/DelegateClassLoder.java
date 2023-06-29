@@ -23,7 +23,7 @@ import net.md_5.specialsource.repo.RuntimeRepo;
 
 import java.security.ProtectionDomain;
 
-public class DelegateClassLoder extends ClassLoader{
+public class DelegateClassLoder extends ClassLoader {
 
     public static final String desc = DelegateClassLoder.class.getName().replace('.', '/');
 

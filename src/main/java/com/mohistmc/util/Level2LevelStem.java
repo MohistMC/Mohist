@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Mgazul by MohistMC
@@ -43,7 +42,7 @@ public class Level2LevelStem {
             return LevelStem.END;
         } else if (p_53026_.dimension() == Level.NETHER) {
             return LevelStem.NETHER;
-        }else  {
+        } else {
             return LevelStem.OVERWORLD;
         }
     }

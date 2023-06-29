@@ -28,7 +28,6 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 7:45 PM
  */
@@ -43,7 +42,7 @@ public class ProxyMethodHandlesLookup {
                 Class<?>[] parameterArray = type.parameterArray();
                 Class<?>[] newParameterArray = new Class<?>[parameterArray.length + 1];
                 newParameterArray[0] = clazz;
-                System.arraycopy(parameterArray, 0 , newParameterArray, 1, parameterArray.length);
+                System.arraycopy(parameterArray, 0, newParameterArray, 1, parameterArray.length);
                 MethodType newType = MethodType.methodType(type.returnType(), newParameterArray);
                 return lookup.findStatic(aClass, name, newType);
             }
@@ -74,7 +73,7 @@ public class ProxyMethodHandlesLookup {
                 Class<?>[] parameterTypes = m.getParameterTypes();
                 Class<?>[] newParameterTypes = new Class<?>[parameterTypes.length + 1];
                 newParameterTypes[0] = m.getDeclaringClass();
-                System.arraycopy(parameterTypes, 0 , newParameterTypes, 1, parameterTypes.length);
+                System.arraycopy(parameterTypes, 0, newParameterTypes, 1, parameterTypes.length);
                 return lookup.unreflect(aClass.getMethod(m.getName(), newParameterTypes));
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();

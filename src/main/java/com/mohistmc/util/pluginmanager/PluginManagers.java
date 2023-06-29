@@ -115,7 +115,7 @@ public class PluginManagers {
         if (p == null) {
             //sender.sendMessage(i18n.get("pluginscommand.noplugin", objects));
         } else {
-            File file = ((JavaPlugin)p).getFile();
+            File file = ((JavaPlugin) p).getFile();
 
             if (file == null) {
                 //sender.sendMessage(i18n.get("pluginscommand.nojar", new Object[]{p.getName()}));

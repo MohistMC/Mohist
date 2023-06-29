@@ -38,7 +38,7 @@ public class WorldsGUI {
                         infos = config.getString("worlds." + w.getName() + ".info");
                         worldtype = config.getString("worlds." + w.getName() + ".environment");
                         name1 = config.getString("worlds." + w.getName() + ".name");
-                        difficulty = config.getString( "worlds." + w.getName() + ".difficulty");
+                        difficulty = config.getString("worlds." + w.getName() + ".difficulty");
                     }
                     infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_0.getKey() + name1.replace("&", "§"));
                     infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_1.getKey() + infos.replace("&", "§"));
@@ -46,8 +46,7 @@ public class WorldsGUI {
                     infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_3.getKey() + worldtype);
                     infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             inv.setItem(pos, ItemAPI.doItem(Material.MAP, 1, "§7>> §6" + w.getName(), infoLore));
