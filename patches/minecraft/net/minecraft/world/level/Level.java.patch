@@ -75,7 +75,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,19 +_,76 @@
+@@ -101,19 +_,75 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -132,7 +132,6 @@
        this.f_46442_ = p_270739_;
 +      String worldName = MinecraftServer.getServer().f_129744_.m_197394_(p_270683_).getFileName().toFile().getName();
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(worldName); // Spigot // Mohist
-+      ((ServerLevelData)p_270739_).checkName(worldName);
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
