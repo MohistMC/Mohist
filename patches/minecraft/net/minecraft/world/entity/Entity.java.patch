@@ -832,14 +832,14 @@
     }
  
     protected boolean m_20175_(Pose p_20176_) {
-@@ -1915,8 +_,10 @@
+@@ -1915,8 +_,9 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {
           Entity entity = this.f_19824_;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.f_19824_ = null;
-          entity.m_20351_(this);
-+         if (!removePassenger.getAndSet(false)) this.f_19824_ = entity; // CraftBukkit
+-         entity.m_20351_(this);
++         if (!entity.removePassenger(this)) this.f_19824_ = entity; // CraftBukkit
        }
  
     }
@@ -852,12 +852,13 @@
                 list.add(0, p_20349_);
              } else {
                 list.add(p_20349_);
-@@ -1946,10 +_,42 @@
+@@ -1945,11 +_,39 @@
+          this.m_146852_(GameEvent.f_268500_, p_20349_);
        }
     }
- 
-+   public AtomicBoolean removePassenger = new AtomicBoolean(true);
-    protected void m_20351_(Entity p_20352_) {
+-
+-   protected void m_20351_(Entity p_20352_) {
++   protected boolean removePassenger(Entity p_20352_) {
        if (p_20352_.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
@@ -876,8 +877,7 @@
 +            CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +            Entity n = craftn == null ? null : craftn.getHandle();
 +            if (event.isCancelled() || n != orig) {
-+               removePassenger.set(false);
-+               return;
++               return false;
 +            }
 +         }
 +         // CraftBukkit end
@@ -888,8 +888,7 @@
 +            Bukkit.getPluginManager().callEvent(event);
 +         }
 +         if (event.isCancelled()) {
-+            removePassenger.set(false);
-+            return;
++            return false;
 +         }
 +         // Spigot end
           if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
@@ -899,7 +898,7 @@
           p_20352_.f_19851_ = 60;
           this.m_146852_(GameEvent.f_268533_, p_20352_);
        }
-+      removePassenger.set(true);
++      return true;
     }
  
     protected boolean m_7310_(Entity p_20354_) {
