@@ -70,6 +70,7 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Validate;
+import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -86,6 +87,8 @@ import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.WorldBorder;
+import org.bukkit.ban.IpBanList;
+import org.bukkit.ban.ProfileBanList;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -152,6 +155,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -1178,7 +1182,31 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isBanned() {
-        return server.getBanList(BanList.Type.NAME).isBanned(getName());
+        return ((ProfileBanList) server.getBanList(BanList.Type.PROFILE)).isBanned(getPlayerProfile());
+    }
+
+    @Override
+    public BanEntry<PlayerProfile> ban(String reason, Date expires, String source) {
+        return this.ban(reason, expires, source, true);
+    }
+
+    @Override
+    public BanEntry<PlayerProfile> ban(String reason, Date expires, String source, boolean kickPlayer) {
+        BanEntry<PlayerProfile> banEntry = ((ProfileBanList) server.getBanList(BanList.Type.PROFILE)).addBan(getPlayerProfile(), reason, expires, source);
+        if (kickPlayer) {
+            this.kickPlayer(reason);
+        }
+        return banEntry;
+    }
+
+    @Override
+    public BanEntry<InetSocketAddress> banIp(String reason, Date expires, String source, boolean kickPlayer) {
+        Preconditions.checkArgument(getAddress() != null, "The Address of this Player is null");
+        BanEntry<InetSocketAddress> banEntry = ((IpBanList) server.getBanList(BanList.Type.IP)).addBan(getAddress(), reason, expires, source);
+        if (kickPlayer) {
+            this.kickPlayer(reason);
+        }
+        return banEntry;
     }
 
     @Override

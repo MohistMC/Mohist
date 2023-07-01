@@ -504,8 +504,6 @@ public class CraftInventory implements Inventory {
             return InventoryType.COMPOSTER;
         } else if (inventory instanceof JukeboxBlock) {
             return InventoryType.JUKEBOX;
-        } else if (this instanceof CraftInventorySmithingNew) {
-            return InventoryType.SMITHING_NEW;
         } else {
             return InventoryType.CHEST;
         }

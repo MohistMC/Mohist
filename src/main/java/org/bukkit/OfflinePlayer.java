@@ -9,6 +9,7 @@ import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -59,11 +60,25 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
     PlayerProfile getPlayerProfile();
 
     /**
-     * Checks if this player is banned or not
+     * Checks if this player has had their profile banned.
      *
      * @return true if banned, otherwise false
      */
     public boolean isBanned();
+
+    /**
+     * Adds this user to the {@link ProfileBanList}. If a previous ban exists, this will
+     * update the entry.
+     *
+     * @param reason reason for the ban, null indicates implementation default
+     * @param expires date for the ban's expiration (unban), or null to imply
+     *     forever
+     * @param source source of the ban, null indicates implementation default
+     * @return the entry for the newly created ban, or the entry for the
+     *     (updated) previous ban
+     */
+    @Nullable
+    public BanEntry<PlayerProfile> ban(@Nullable String reason, @Nullable Date expires, @Nullable String source);
 
     /**
      * Checks if this player is whitelisted or not

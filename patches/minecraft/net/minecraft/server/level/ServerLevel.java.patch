@@ -126,7 +126,7 @@
 +   private net.minecraftforge.common.util.LevelCapabilityData capabilityData;
 +
 +   // CraftBukkit start
-+   public PrimaryLevelData serverLevelDataCB;
++   public PrimaryLevelData K;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
 +   public final String name;
@@ -148,9 +148,9 @@
 +      uuid = WorldUUID.getUUID(worldFile);
 +      name = worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
-+         this.serverLevelDataCB = (PrimaryLevelData) p_215002_;
++         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
-+         this.serverLevelDataCB = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
++         this.K = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
 +      }
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
@@ -158,7 +158,7 @@
        this.f_8549_ = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.f_63976_();
 +      // CraftBukkit start
-+      serverLevelDataCB.setWorld(this);
++      K.setWorld(this);
 +      if (biomeProvider != null) {
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
 +         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
@@ -381,10 +381,16 @@
           if (p_8644_ != null) {
              p_8644_.m_6309_(Component.m_237115_("menu.savingLevel"));
           }
-@@ -736,12 +_,13 @@
+@@ -735,13 +_,18 @@
+          } else {
              this.f_143244_.m_157554_();
           }
- 
+-
++         if (this.f_8549_ instanceof PrimaryLevelData worldInfo) {
++            worldInfo.m_7831_(this.m_6857_().m_61970_());
++            worldInfo.m_5917_(this.m_7654_().m_129901_().m_136307_());
++            this.convertable.m_78290_(this.m_7654_().m_206579_(), worldInfo, this.m_7654_().m_6846_().m_6960_());
++         }
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
     }
@@ -392,7 +398,7 @@
     private void m_8806_() {
        if (this.f_8559_ != null) {
 -         this.f_8548_.m_129910_().m_5915_(this.f_8559_.m_289745_());
-+         this.serverLevelDataCB.m_5915_(this.f_8559_.m_289745_());
++         this.K.m_5915_(this.f_8559_.m_289745_());
        }
  
        this.m_7726_().m_8483_().m_78151_();
@@ -609,7 +615,7 @@
     @Nullable
     public BlockPos m_215011_(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
 -      if (!this.f_8548_.m_129910_().m_246337_().m_247749_()) {
-+      if (!this.serverLevelDataCB.m_246337_().m_247749_()) {
++      if (!this.K.m_246337_().m_247749_()) {
           return null;
        } else {
           Optional<HolderSet.Named<Structure>> optional = this.m_9598_().m_175515_(Registries.f_256944_).m_203431_(p_215012_);
@@ -662,12 +668,12 @@
  
     public boolean m_8584_() {
 -      return this.f_8548_.m_129910_().m_5961_();
-+      return this.serverLevelDataCB.m_5961_(); // CraftBukkit
++      return this.K.m_5961_(); // CraftBukkit
     }
  
     public long m_7328_() {
 -      return this.f_8548_.m_129910_().m_246337_().m_245499_();
-+      return this.serverLevelDataCB.m_246337_().m_245499_(); // CraftBukkit
++      return this.K.m_246337_().m_245499_(); // CraftBukkit
     }
  
     @Nullable

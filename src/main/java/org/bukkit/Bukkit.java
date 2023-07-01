@@ -48,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -1208,7 +1209,10 @@ public final class Bukkit {
      * Bans the specified address from the server.
      *
      * @param address the IP address to ban
+     *
+     * @deprecated see {@link #banIP(InetSocketAddress)}
      */
+    @Deprecated
     public static void banIP(@NotNull String address) {
         server.banIP(address);
     }
@@ -1217,8 +1221,29 @@ public final class Bukkit {
      * Unbans the specified address from the server.
      *
      * @param address the IP address to unban
+     *
+     * @deprecated see {@link #unbanIP(InetSocketAddress)}
      */
+    @Deprecated
     public static void unbanIP(@NotNull String address) {
+        server.unbanIP(address);
+    }
+
+    /**
+     * Bans the specified address from the server.
+     *
+     * @param address the IP address to ban
+     */
+    public static void banIP(@NotNull InetSocketAddress address) {
+        server.banIP(address);
+    }
+
+    /**
+     * Unbans the specified address from the server.
+     *
+     * @param address the IP address to unban
+     */
+    public static void unbanIP(@NotNull InetSocketAddress address) {
         server.unbanIP(address);
     }
 
@@ -1234,15 +1259,14 @@ public final class Bukkit {
 
     /**
      * Gets a ban list for the supplied type.
-     * <p>
-     * Bans by name are no longer supported and this method will return
-     * null when trying to request them. The replacement is bans by UUID.
      *
      * @param type the type of list to fetch, cannot be null
+     * @param <T> The ban target
+     *
      * @return a ban list of the specified type
      */
     @NotNull
-    public static BanList getBanList(@NotNull BanList.Type type) {
+    public static <T extends BanList<?>> T getBanList(@NotNull BanList.Type type) {
         return server.getBanList(type);
     }
 
