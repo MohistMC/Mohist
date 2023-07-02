@@ -43,7 +43,7 @@
  import net.minecraft.world.storage.ISpawnWorldInfo;
  import net.minecraft.world.storage.IWorldInfo;
  import net.minecraft.world.storage.MapData;
-@@ -62,8 +_,15 @@
+@@ -62,8 +_,16 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -54,6 +54,7 @@
 +import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 +import org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator;
 +import org.bukkit.event.block.BlockPhysicsEvent;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class World implements IWorld, AutoCloseable {
 +public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider<World> implements IWorld, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
@@ -337,7 +338,7 @@
           try {
 +            // CraftBukkit start
 +            CraftWorld world = this.getWorld();
-+            if (world != null) {
++            if (world != null && !AsyncCatcher.catchAsync()) {
 +               BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_190524_1_.func_177958_n(), p_190524_1_.func_177956_o(), p_190524_1_.func_177952_p()), CraftBlockData.fromData(blockstate), world.getBlockAt(p_190524_3_.func_177958_n(), p_190524_3_.func_177956_o(), p_190524_3_.func_177952_p()));
 +               this.getCBServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
