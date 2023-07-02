@@ -258,11 +258,12 @@
        }
  
        return s;
-@@ -280,7 +_,6 @@
+@@ -280,7 +_,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
 -
++      Runtime.getRuntime().halt(0);
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
