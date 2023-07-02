@@ -27,7 +27,7 @@ public class ConfigByWorlds {
                 }
                 config.save(ConfigByWorlds.f);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
         }
     }
@@ -42,7 +42,7 @@ public class ConfigByWorlds {
                 }
                 config.save(ConfigByWorlds.f);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
         }
     }
@@ -57,7 +57,7 @@ public class ConfigByWorlds {
                 }
                 config.save(ConfigByWorlds.f);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
         }
     }
@@ -77,7 +77,7 @@ public class ConfigByWorlds {
                     }
                     config.save(ConfigByWorlds.f);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.fillInStackTrace();
                 }
             }
         }
@@ -89,11 +89,11 @@ public class ConfigByWorlds {
                 try {
                     config.save(f);
                 } catch (IOException var4) {
-                    var4.printStackTrace();
+                    var4.fillInStackTrace();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
@@ -102,10 +102,11 @@ public class ConfigByWorlds {
             config.load(ConfigByWorlds.f);
             if (config.getConfigurationSection("worlds.") != null) {
                 for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
-                    if (Bukkit.getWorld(w) == null && ConfigByWorlds.f.exists()) {
+                    World world = Bukkit.getWorld(w);
+                    String environment = "NORMAL";
+                    String difficulty = "EASY";
+                    if (world == null && ConfigByWorlds.f.exists()) {
                         long seed = -1L;
-                        String environment = "NORMAL";
-                        String difficulty = "EASY";
                         if (config.get("worlds." + w + ".seed") != null) {
                             seed = config.getLong("worlds." + w + ".seed");
                         }
@@ -115,13 +116,21 @@ public class ConfigByWorlds {
                         if (config.get("worlds." + w + ".difficulty") != null) {
                             difficulty = config.getString("worlds." + w + ".difficulty");
                         }
-                        World world = new WorldCreator(w).seed(seed).environment(World.Environment.valueOf(environment)).createWorld();
-                        world.setDifficulty(Difficulty.valueOf(difficulty));
+                        new WorldCreator(w).seed(seed).environment(World.Environment.valueOf(environment)).createWorld().setDifficulty(Difficulty.valueOf(difficulty));
+                    }
+                    if (world!= null) {
+                        if (config.get("worlds." + w + ".difficulty") != null) {
+                            difficulty = config.getString("worlds." + w + ".difficulty");
+                            world.setDifficulty(Difficulty.valueOf(difficulty));
+                        }
+                        if (config.get("worlds." + w + ".worldborder") != null) {
+                            world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
+                        }
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.fillInStackTrace();
         }
     }
 
@@ -136,7 +145,7 @@ public class ConfigByWorlds {
                         config.save(ConfigByWorlds.f);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.fillInStackTrace();
                 }
             }
         }
@@ -156,7 +165,7 @@ public class ConfigByWorlds {
                 }
                 config.save(ConfigByWorlds.f);
             } catch (Exception e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
         }
     }
@@ -177,8 +186,17 @@ public class ConfigByWorlds {
                     player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                e.fillInStackTrace();
             }
+        }
+    }
+
+    public static void addFlag(World world, String key, Object v) {
+        config.set("worlds." + world.getName() + "." + key, v);
+        try {
+            config.save(ConfigByWorlds.f);
+        } catch (Exception e) {
+            e.fillInStackTrace();
         }
     }
 }
