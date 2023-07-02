@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
     public static final HashMap<String, String> fail = new HashMap<>();
+    public static final AtomicLong allSize = new AtomicLong(); // global
     public static final String MAVENURL;
 
     static {
@@ -59,7 +60,6 @@ public class DefaultLibraries {
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
-        long allSize = getDefaultLibsSize(); // global
         for (File lib : libs.keySet()) {
             v_1_20.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
@@ -75,7 +75,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize) + "%")); //Global percentage
+            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
@@ -104,20 +104,9 @@ public class DefaultLibraries {
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
             temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
-        }
-        b.close();
-        return temp;
-    }
-
-    public static long getDefaultLibsSize() throws Exception {
-        AtomicLong allSize = new AtomicLong(); // global
-        BufferedReader b = new BufferedReader(new InputStreamReader(Objects.requireNonNull(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))));
-        String str;
-        while ((str = b.readLine()) != null) {
-            String[] s = str.split("\\|");
             allSize.addAndGet(Long.parseLong(s[2]));
         }
         b.close();
-        return allSize.get();
+        return temp;
     }
 }

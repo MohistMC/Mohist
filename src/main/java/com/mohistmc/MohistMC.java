@@ -24,7 +24,7 @@ public class MohistMC {
         String c = mohist_lang.split("_")[1];
         i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
         //TODO: do something when mod loading
-        LOGGER.info("Mohist loading.....");
+        LOGGER.info("Mohist mod loading.....");
         version = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
         EventDispatcherRegistry.init();
     }
