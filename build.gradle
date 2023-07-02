@@ -42,8 +42,8 @@ ext {
     ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
-    TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
-    JLINE_VERSION = '3.12.1'
+    TERMINALCONSOLEAPPENDER_VERSION = '1.4.0'
+    JLINE_VERSION = '3.21.0'
     NIGHTCONFIG_VERSION = '3.6.4'
     JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
     SLF4J_API_VERSION = '1.8.0-beta4'
@@ -178,6 +178,7 @@ def sharedDeps = {
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
+    installer "org.jline:jline-terminal-jansi:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
