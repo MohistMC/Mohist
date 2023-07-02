@@ -12,17 +12,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
-    implementation 'net.minecrell:terminalconsoleappender:1.3.0'
-
     implementation 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'com.mohistmc.yaml:yaml:0.3'
+    implementation 'com.mohistmc.yaml:yaml:0.4'
     implementation 'com.mohistmc:i18n:0.2'
-    implementation 'org.yaml:snakeyaml:1.33'
+    implementation 'org.yaml:snakeyaml:2.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
 
@@ -31,13 +27,13 @@ dependencies {
 
 shadowJar {
     dependencies {
-        include(dependency('com.mohistmc.yaml:yaml:0.3'))
-        include(dependency('org.yaml:snakeyaml:1.33'))
+        include(dependency('com.mohistmc.yaml:yaml:0.4'))
+        include(dependency('org.yaml:snakeyaml:2.0'))
         include(dependency('com.google.code.gson:gson:2.10.1'))
+        include(dependency('org.apache.commons:commons-lang3:3.12.0'))
         include(dependency('com.mohistmc:i18n:0.2'))
     }
     relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
 
 jar.dependsOn(shadowJar)
-
