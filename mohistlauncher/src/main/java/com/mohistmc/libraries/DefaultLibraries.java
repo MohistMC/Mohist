@@ -52,8 +52,7 @@ public class DefaultLibraries {
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
-        AtomicLong allSize = new AtomicLong(); // global
-        for (File lib : getDefaultLibs().keySet()) {
+        for (File lib : libs.keySet()) {
             v_1_18_2.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
