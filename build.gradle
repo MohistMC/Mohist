@@ -222,6 +222,7 @@ def sharedDeps = {
     installer 'com.mojang:datafixerupper:4.1.27'
     installer 'com.mojang:brigadier:1.0.18'
     installer 'com.github.oshi:oshi-core:5.8.5'
+    installer 'io.netty:netty-all:4.1.68.Final'
 }
 
 def sharedFmlonlyForge = { Project prj ->
