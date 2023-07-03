@@ -20,6 +20,7 @@ dependencies {
     implementation 'org.yaml:snakeyaml:2.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.guava:guava:31.1-jre'
 }
 
 shadowJar {
@@ -28,6 +29,8 @@ shadowJar {
         include(dependency('org.yaml:snakeyaml:2.0'))
         include(dependency('com.google.code.gson:gson:2.10.1'))
         include(dependency('org.apache.commons:commons-lang3:3.12.0'))
+        include(dependency('com.google.guava:guava:31.1-jre'))
+
     }
 }
 
