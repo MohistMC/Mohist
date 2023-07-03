@@ -77,16 +77,4 @@ public class UpdateUtils {
     public static String getSize(long size) {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
     }
-
-    public static long getSizeOfDirectory(File path) throws IOException {
-        return Files.walk(path.toPath()).parallel()
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .mapToLong(File::length)
-                .sum();
-    }
-
-    public static long getAllSizeOfUrl(String url) {
-        return getConn(url).getContentLength();
-    }
 }

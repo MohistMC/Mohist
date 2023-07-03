@@ -40,15 +40,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();
-    public static String MAVENURL;
-
-    static {
-        try {
-            MAVENURL = DownloadSource.get().getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final AtomicLong allSize = new AtomicLong(); // global
+    public static String MAVENURL = DownloadSource.get().getUrl();
 
     public static String libUrl(File lib) {
         return MAVENURL + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
@@ -61,7 +54,6 @@ public class DefaultLibraries {
         Set<File> defaultLibs = new LinkedHashSet<>();
         AtomicLong allSize = new AtomicLong(); // global
         for (File lib : getDefaultLibs().keySet()) {
-            allSize.addAndGet(UpdateUtils.getAllSizeOfUrl(libUrl(lib)));
             v_1_18_2.loadedLibsPaths.add(lib.getAbsolutePath());
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
@@ -76,7 +68,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(i18n.get("libraries.global.percentage") + Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%"); //Global percentage
+            System.out.println(i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
@@ -105,6 +97,7 @@ public class DefaultLibraries {
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
             temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
+            allSize.addAndGet(Long.parseLong(s[2]));
         }
         b.close();
         return temp;
