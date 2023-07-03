@@ -19,6 +19,7 @@
 package com.mohistmc.util;
 
 import com.mohistmc.config.MohistConfigUtil;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -40,9 +41,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-
-import static com.mohistmc.action.v_1_19.v_1_19.Install_1_19.yml;
-
 /**
  * @author Shawiiz_z
  * @version 0.1
@@ -53,10 +51,10 @@ public class MohistModuleManager {
     private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
     private static String MODULE_PATH = null;
 
-    public MohistModuleManager(List<String> args) throws Exception {
+    public MohistModuleManager(List<String> args) {
         this.applyLaunchArgs(args);
-        yml.set("mohist.installationfinished", false);
-        yml.save(MohistConfigUtil.mohistyml);
+        MohistConfigUtil.yml.set("mohist.installation-finished", false);
+        MohistConfigUtil.save();
     }
 
     public static void addExports(String module, String pkg, String target) {

@@ -38,14 +38,14 @@ ext {
     ASM_VERSION = '9.3'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
-    TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
-    JLINE_VERSION = '3.12.1'
+    TERMINALCONSOLEAPPENDER_VERSION = '1.4.0'
+    JLINE_VERSION = '3.21.0'
     NIGHTCONFIG_VERSION = '3.6.4'
     JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
     SLF4J_API_VERSION = '1.8.0-beta4'
     APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
     MOJANG_LOGGING_VERSION = '1.0.0'
-    LOG4J_VERSION = '2.17.0'
+    LOG4J_VERSION = '2.20.0'
     GUAVA_VERSION = '31.0.1-jre'
     GSON_VERSION = '2.8.9'
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
@@ -173,6 +173,7 @@ def sharedDeps = {
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
+    installer "org.jline:jline-terminal-jansi:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
@@ -191,7 +192,6 @@ def sharedDeps = {
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
     installer 'org.xerial:sqlite-jdbc:3.36.0.3'
     installer 'mysql:mysql-connector-java:8.0.29'
-    installer 'org.apache.logging.log4j:log4j-iostreams:2.17.1'
     installer 'net.md-5:SpecialSource:1.11.0'
 
     // spigot
@@ -199,12 +199,37 @@ def sharedDeps = {
 
     installer 'com.mohistmc.yaml:yaml:0.2'
 
-    /*
-    installer 'org.lwjgl:lwjgl:3.2.2'
-    installer 'org.lwjgl:lwjgl-glfw:3.2.2'
-    installer 'org.lwjgl:lwjgl-opengl:3.2.2'
-    installer 'org.lwjgl:lwjgl-stb:3.2.2'
-    */
+    installer 'com.google.guava:failureaccess:1.0.1'
+    installer "com.google.guava:guava:${GUAVA_VERSION}"
+    installer 'com.google.code.gson:gson:2.8.9'
+    installer 'com.mojang:authlib:3.11.49'
+    installer 'com.mojang:logging:1.0.0'
+    installer 'commons-lang:commons-lang:2.6-mohist'
+    installer 'org.slf4j:slf4j-api:2.0.6'
+
+    installer 'org.apache.logging.log4j:log4j-core:2.20.0'
+    installer 'org.apache.logging.log4j:log4j-iostreams:2.20.0'
+    installer 'org.apache.logging.log4j:log4j-api:2.20.0'
+    installer 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
+    installer 'org.apache.commons:commons-lang3:3.12.0'
+    installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    installer 'net.java.dev.jna:jna-platform:5.10.0'
+    installer 'net.java.dev.jna:jna:5.10.0'
+    installer 'it.unimi.dsi:fastutil:8.5.6'
+    installer 'commons-io:commons-io:2.11.0'
+    installer 'com.mojang:javabridge:1.2.24'
+    installer 'com.mojang:datafixerupper:5.0.28'
+    installer 'com.mojang:brigadier:1.0.18'
+    installer 'com.github.oshi:oshi-core:5.8.5'
+
+    installer 'io.netty:netty-buffer:4.1.77.Final'
+    installer 'io.netty:netty-codec:4.1.77.Final'
+    installer 'io.netty:netty-common:4.1.77.Final'
+    installer 'io.netty:netty-handler:4.1.77.Final'
+    installer 'io.netty:netty-resolver:4.1.77.Final'
+    installer 'io.netty:netty-transport:4.1.77.Final'
+    installer 'io.netty:netty-transport-classes-epoll:4.1.77.Final'
+    installer 'io.netty:netty-transport-native-unix-common:4.1.77.Final'
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -410,42 +435,6 @@ def sharedFmlonlyForge = { Project prj ->
                 "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             ]
             def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-            CLASS_PATH +=
-                    (
-                            [
-                                    "libraries/com/github/oshi/oshi-core/5.8.5/oshi-core-5.8.5.jar",
-                                    "libraries/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar",
-                                    "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-                                    "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
-                                    "libraries/com/mojang/authlib/3.11.49/authlib-3.11.49.jar",
-                                    "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
-                                    "libraries/com/mojang/datafixerupper/5.0.28/datafixerupper-5.0.28.jar",
-                                    "libraries/com/mojang/javabridge/1.2.24/javabridge-1.2.24.jar",
-                                    "libraries/com/mojang/logging/1.0.0/logging-1.0.0.jar",
-                                    "libraries/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                    "libraries/io/netty/netty-buffer/4.1.77.Final/netty-buffer-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-codec/4.1.77.Final/netty-codec-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-common/4.1.77.Final/netty-common-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-handler/4.1.77.Final/netty-handler-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-resolver/4.1.77.Final/netty-resolver-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-transport/4.1.77.Final/netty-transport-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-transport-classes-epoll/4.1.77.Final/netty-transport-classes-epoll-4.1.77.Final.jar",
-                                    "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-x86_64.jar",
-                                    "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-aarch_64.jar",
-                                    "libraries/io/netty/netty-transport-native-unix-common/4.1.77.Final/netty-transport-native-unix-common-4.1.77.Final.jar",
-                                    "libraries/it/unimi/dsi/fastutil/8.5.6/fastutil-8.5.6.jar",
-                                    "libraries/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar",
-                                    "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
-                                    "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-                                    "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
-                                    "libraries/org/apache/logging/log4j/log4j-api/2.17.0/log4j-api-2.17.0.jar",
-                                    "libraries/org/apache/logging/log4j/log4j-core/2.17.0/log4j-core-2.17.0.jar",
-                                    "libraries/org/apache/logging/log4j/log4j-slf4j18-impl/2.17.0/log4j-slf4j18-impl-2.17.0.jar",
-                                    "libraries/org/slf4j/slf4j-api/1.8.0-beta4/slf4j-api-1.8.0-beta4.jar",
-                                    "libraries/commons-lang/commons-lang/2.6-mohist/commons-lang-2.6-mohist.jar"
-                            ].findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-                    )
-
             configure(prj.installerJar) {
                 from(rootProject.file('server_files/args.txt')) {
                     filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
@@ -966,7 +955,7 @@ project(':forge') {
         }
     }
 
-    task mohistJar(type: Jar, dependsOn: [genServerBinPatches]) {
+    task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlauncher').tasks.jar]) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
@@ -981,41 +970,6 @@ project(':forge') {
                         "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
                 ]
         def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
-        CLASS_PATH +=
-                (
-                        [
-                                "libraries/com/github/oshi/oshi-core/5.8.5/oshi-core-5.8.5.jar",
-                                "libraries/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar",
-                                "libraries/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
-                                "libraries/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
-                                "libraries/com/mojang/authlib/3.11.49/authlib-3.11.49.jar",
-                                "libraries/com/mojang/brigadier/1.0.18/brigadier-1.0.18.jar",
-                                "libraries/com/mojang/datafixerupper/5.0.28/datafixerupper-5.0.28.jar",
-                                "libraries/com/mojang/javabridge/1.2.24/javabridge-1.2.24.jar",
-                                "libraries/com/mojang/logging/1.0.0/logging-1.0.0.jar",
-                                "libraries/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                "libraries/io/netty/netty-buffer/4.1.77.Final/netty-buffer-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-codec/4.1.77.Final/netty-codec-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-common/4.1.77.Final/netty-common-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-handler/4.1.77.Final/netty-handler-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-resolver/4.1.77.Final/netty-resolver-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-transport/4.1.77.Final/netty-transport-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-transport-classes-epoll/4.1.77.Final/netty-transport-classes-epoll-4.1.77.Final.jar",
-                                "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-x86_64.jar",
-                                "libraries/io/netty/netty-transport-native-epoll/4.1.77.Final/netty-transport-native-epoll-4.1.77.Final-linux-aarch_64.jar",
-                                "libraries/io/netty/netty-transport-native-unix-common/4.1.77.Final/netty-transport-native-unix-common-4.1.77.Final.jar",
-                                "libraries/it/unimi/dsi/fastutil/8.5.6/fastutil-8.5.6.jar",
-                                "libraries/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar",
-                                "libraries/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar",
-                                "libraries/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-                                "libraries/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
-                                "libraries/org/apache/logging/log4j/log4j-api/2.17.0/log4j-api-2.17.0.jar",
-                                "libraries/org/apache/logging/log4j/log4j-core/2.17.0/log4j-core-2.17.0.jar",
-                                "libraries/org/apache/logging/log4j/log4j-slf4j18-impl/2.17.0/log4j-slf4j18-impl-2.17.0.jar",
-                                "libraries/org/slf4j/slf4j-api/1.8.0-beta4/slf4j-api-1.8.0-beta4.jar",
-                                "libraries/commons-lang/commons-lang/2.6-mohist/commons-lang-2.6-mohist.jar"
-                        ].findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
-                )
         def MODULE_PATH = Util.getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
                 TASK         : project.name.equals('forge') ? 'forgeserver' : 'fmlserver',
@@ -1067,7 +1021,9 @@ project(':forge') {
             rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
-        from(project(':mohistlauncher').project.sourceSets.main.output)
+        from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
+            into ""
+        }
 
         from(rootProject.file('server_files/version.txt')) {
             filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])

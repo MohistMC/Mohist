@@ -20,18 +20,17 @@ package com.mohistmc;
 
 import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.MohistModuleManager;
-import com.mohistmc.util.i18n.i18n;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
-
 
 import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
 import static com.mohistmc.util.EulaUtil.writeInfos;
@@ -40,6 +39,7 @@ public class MohistMCStart {
 
     public static List<String> mainArgs = new ArrayList<>();
     public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
+    public static i18n i18n;
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
@@ -49,10 +49,10 @@ public class MohistMCStart {
         mainArgs.addAll(List.of(args));
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
-
         MohistConfigUtil.copyMohistConfig();
+        MohistConfigUtil.i18n();
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.bMohist("show_logo", "true")) {
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("show_logo", true)) {
             System.out.println("\n" + "\n" +
                     " __    __   ______   __  __   __   ______   ______  \n" +
                     "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
@@ -68,7 +68,7 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
         CustomLibraries.loadCustomLibs();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
             new v_1_19().run();
         }
