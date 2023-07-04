@@ -22,6 +22,15 @@
              }
           }
  
+@@ -145,7 +_,7 @@
+       for(int i1 = 0; i1 < l; ++i1) {
+          BlockPos blockpos = p_225535_3_.func_177981_b(i);
+          BlockState blockstate = p_225535_1_.func_180495_p(blockpos);
+-         if (k >= 16 || blockstate.func_177229_b(field_220266_f) == 1 || !p_225535_1_.func_175623_d(blockpos.func_177984_a())) {
++         if (k >= 16 || !blockstate.func_203425_a(Blocks.field_222405_kQ) || blockstate.func_177229_b(field_220266_f) == 1 || !p_225535_1_.func_175623_d(blockpos.func_177984_a())) { // CraftBukkit - If the BlockSpreadEvent was cancelled, we have no bamboo here
+             return;
+          }
+ 
 @@ -165,13 +_,17 @@
        BlockPos blockpos = p_220258_3_.func_177979_c(2);
        BlockState blockstate1 = p_220258_2_.func_180495_p(blockpos);
@@ -35,20 +44,20 @@
 -                  p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
 -                  p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);
 +                  // CraftBukkit start - moved down
-+                  //worldIn.setBlockState(posIn.down(), blockstate.with(PROPERTY_BAMBOO_LEAVES, BambooLeaves.SMALL), 3);
-+                  //worldIn.setBlockState(blockpos, blockstate1.with(PROPERTY_BAMBOO_LEAVES, BambooLeaves.NONE), 3);
++                  //p_220258_2_.setBlock(p_220258_3_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
++                  //p_220258_2_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
 +                  shouldUpdateOthers = true;
 +                  // CraftBukkit end
                 }
              }
           } else {
-@@ -182,6 +_,15 @@
+@@ -181,7 +_,14 @@
+ 
        int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && !blockstate1.func_203425_a(Blocks.field_222405_kQ) ? 0 : 1;
        int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
-       p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
+-      p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(),
-+              this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3)) {
++      if (CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, p_220258_3_, p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
 +            p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);
