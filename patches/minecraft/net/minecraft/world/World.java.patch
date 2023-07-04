@@ -272,7 +272,7 @@
 +
 +                  // CraftBukkit start
 +                  CraftWorld world = this.getWorld();
-+                  if (world != null) {
++                  if (world != null && !AsyncCatcher.catchAsync()) {
 +                     BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_241211_1_.func_177958_n(), p_241211_1_.func_177956_o(), p_241211_1_.func_177952_p()), CraftBlockData.fromData(p_241211_2_));
 +                     this.getCBServer().getPluginManager().callEvent(event);
 +                     if (event.isCancelled()) {
