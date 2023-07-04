@@ -110,7 +110,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         } else if (index > 35) {
             index = 8 - (index - 36);
         }
-        player.connection.send(new SSetSlotPacket(player.containerMenu.containerId, index, CraftItemStack.asNMSCopy(item)));
+        player.connection.send(new SSetSlotPacket(player.inventoryMenu.containerId, index, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override

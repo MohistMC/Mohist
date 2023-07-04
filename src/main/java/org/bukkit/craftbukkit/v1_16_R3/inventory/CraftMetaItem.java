@@ -384,12 +384,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (!getHandledTags().contains(key)) {
                 unhandledTags.put(key, tag.get(key));
             }
-            else {  // Mohist start - handle modded tags
-              if (getClass() == CraftMetaItem.class && getCraftMetaTags().contains(key)) {
-                  unhandledTags.put(key, tag.get(key));
-              }
-            }
-            // Mohist end
         }
     }
 

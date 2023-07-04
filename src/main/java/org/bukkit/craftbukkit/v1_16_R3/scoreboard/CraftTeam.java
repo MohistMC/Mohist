@@ -39,7 +39,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     @Override
     public void setDisplayName(String displayName) throws IllegalStateException {
         Validate.notNull(displayName, "Display name cannot be null");
-        Validate.isTrue(displayName.length() <= 128, "Display name '" + displayName + "' is longer than the limit of 128 characters");
+        Validate.isTrue(ChatColor.stripColor(displayName).length() <= 128, "Display name '" + displayName + "' is longer than the limit of 128 characters");
         CraftScoreboard scoreboard = checkState();
 
         team.setDisplayName(CraftChatMessage.fromString(displayName)[0]); // SPIGOT-4112: not nullable
@@ -55,7 +55,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     @Override
     public void setPrefix(String prefix) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(prefix, "Prefix cannot be null");
-        Validate.isTrue(prefix.length() <= 64, "Prefix '" + prefix + "' is longer than the limit of 64 characters");
+        Validate.isTrue(ChatColor.stripColor(prefix).length() <= 64, "Prefix '" + prefix + "' is longer than the limit of 64 characters");
         CraftScoreboard scoreboard = checkState();
 
         team.setPlayerPrefix(CraftChatMessage.fromStringOrNull(prefix));
@@ -71,7 +71,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     @Override
     public void setSuffix(String suffix) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(suffix, "Suffix cannot be null");
-        Validate.isTrue(suffix.length() <= 64, "Suffix '" + suffix + "' is longer than the limit of 64 characters");
+        Validate.isTrue(ChatColor.stripColor(suffix).length() <= 64, "Suffix '" + suffix + "' is longer than the limit of 64 characters");
         CraftScoreboard scoreboard = checkState();
 
         team.setPlayerSuffix(CraftChatMessage.fromStringOrNull(suffix));
