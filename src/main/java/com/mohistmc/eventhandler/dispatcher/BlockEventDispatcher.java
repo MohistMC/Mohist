@@ -114,11 +114,4 @@ public class BlockEventDispatcher {
             // CraftBukkit end
         }
     }
-
-    @SubscribeEvent(receiveCanceled = true)
-    public void onBlockGrow(BlockEvent.CropGrowEvent event) {
-        if (event.getLevel() instanceof final ServerLevel serverLevel) {
-            event.setCanceled(CraftEventFactory.handleBlockGrowEvent(serverLevel, event.getPos(), event.getState()));
-        }
-    }
 }
