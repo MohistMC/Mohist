@@ -323,7 +323,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_237336_b_(p_72380_1_);
        }
-@@ -293,187 +_,305 @@
+@@ -293,187 +_,313 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -579,6 +579,10 @@
 +
 +       return new ServerPlayerEntity(this.field_72400_f, serverworld, p_148545_1_, playerinteractionmanager);
     }
++
++    public ServerPlayerEntity createPlayerForUser(GameProfile profile, ServerPlayerEntity playerEntity) { // CraftBukkit - added EntityPlayer
++        return playerEntity;
++    }
  
     public ServerPlayerEntity func_232644_a_(ServerPlayerEntity p_232644_1_, boolean p_232644_2_) {
 -      this.field_72404_b.remove(p_232644_1_);
@@ -655,10 +659,10 @@
 -      }
 -
 -      return serverplayerentity;
-+      return this.respawn(p_232644_1_, this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_()), p_232644_2_, null, true);
++      return this.moveToWorld(p_232644_1_, this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_()), p_232644_2_, null, true);
 +   }
 +
-+   public ServerPlayerEntity respawn(ServerPlayerEntity p_232644_1_, ServerWorld serverWorld, boolean p_232644_2_, Location location, boolean avoidSuffocation) {
++   public ServerPlayerEntity moveToWorld(ServerPlayerEntity p_232644_1_, ServerWorld serverWorld, boolean p_232644_2_, Location location, boolean avoidSuffocation) {
 +       p_232644_1_.func_184210_p(); // CraftBukkit
 +       this.removePlayer(p_232644_1_);
 +       this.playersByName.remove(p_232644_1_.func_195047_I_().toLowerCase(java.util.Locale.ROOT)); // Spigot
@@ -666,38 +670,42 @@
 +       BlockPos blockpos = p_232644_1_.func_241140_K_();
 +       float f = p_232644_1_.func_242109_L();
 +       boolean flag = p_232644_1_.func_241142_M_();
++       ServerWorld serverworld = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
++       Optional<Vector3d> optional;
++       if (serverworld != null && blockpos != null) {
++           optional = PlayerEntity.func_242374_a(serverworld, blockpos, f, flag, p_232644_2_);
++       } else {
++           optional = Optional.empty();
++       }
 +
-+       ServerPlayerEntity serverplayerentity = p_232644_1_;
++       ServerWorld serverworld1 = serverworld != null && optional.isPresent() ? serverworld : this.field_72400_f.func_241755_D_();
++       PlayerInteractionManager playerinteractionmanager;
++       if (this.field_72400_f.func_71242_L()) {
++           playerinteractionmanager = new DemoPlayerInteractionManager(serverworld1);
++       } else {
++           playerinteractionmanager = new PlayerInteractionManager(serverworld1);
++       }
++
++       ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, serverworld1, p_232644_1_.func_146103_bH(), playerinteractionmanager);
 +       org.bukkit.World fromWorld = p_232644_1_.getBukkitEntity().getWorld();
 +       p_232644_1_.field_71136_j = false;
 +       // CraftBukkit end
-+       // Mohist TODO
-+       /*
-+       serverplayerentity.connection = p_232644_1_.connection;
-+       serverplayerentity.restoreFrom(p_232644_1_, p_232644_2_);
++       serverplayerentity.field_71135_a = p_232644_1_.field_71135_a;
++       serverplayerentity.func_193104_a(p_232644_1_, p_232644_2_);
 +       p_232644_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
-+       serverplayerentity.setId(p_232644_1_.getId());
-+       serverplayerentity.abilities = p_232644_1_.abilities;
-+       serverplayerentity.setMainArm(p_232644_1_.getMainArm());
++       serverplayerentity.func_145769_d(p_232644_1_.func_145782_y());
++       serverplayerentity.func_184819_a(p_232644_1_.func_184591_cq());
 +
-+
-+       for(String s : p_232644_1_.getTags()) {
-+           serverplayerentity.addTag(s);
++       for(String s : p_232644_1_.func_184216_O()) {
++           serverplayerentity.func_184211_a(s);
 +       }
-+       */
++
 +       boolean flag2 = false;
 +       //serverplayerentity.gatherCapsAndRevive(); // Mohist - Re-gather the invalidated capabilities, since we don't create a new ServerPlayerEntity. - net/minecraft/entity/Entity.java:295.
 +       // CraftBukkit start - fire PlayerRespawnEvent
 +       if (location == null) {
 +           boolean isBedSpawn = false;
-+           ServerWorld serverworld = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
 +           if (serverworld != null) {
-+               Optional optional;
-+               if (blockpos != null) {
-+                   optional = ServerPlayerEntity.func_242374_a(serverworld, blockpos, f, flag, p_232644_2_);
-+               } else {
-+                   optional = Optional.empty();
-+               }
 +               if (optional.isPresent()) {
 +                   BlockState blockstate = serverworld.func_180495_p(blockpos);
 +                   boolean flag1 = blockstate.func_203425_a(Blocks.field_235400_nj_);
@@ -769,8 +777,9 @@
 +           this.playersByName.put(serverplayerentity.func_195047_I_().toLowerCase(java.util.Locale.ROOT), serverplayerentity); // Spigot
 +           this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
 +       }
-+       //serverplayerentity.initMenu();
++       serverplayerentity.func_71116_b();
 +       serverplayerentity.func_70606_j(serverplayerentity.func_110143_aJ());
++       net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
 +       if (flag2) {
 +           serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double) blockpos.func_177958_n(), (double) blockpos.func_177956_o(), (double) blockpos.func_177952_p(), 1.0F, 1.0F));
 +       }
@@ -794,7 +803,6 @@
 +           this.func_72391_b(p_232644_1_);
 +       }
 +       // CraftBukkit end
-+       net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_232644_2_);
 +       return serverplayerentity;
     }
  
