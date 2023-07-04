@@ -151,6 +151,7 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -1200,9 +1201,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public BanEntry<InetSocketAddress> banIp(String reason, Date expires, String source, boolean kickPlayer) {
+    public BanEntry<InetAddress> banIp(String reason, Date expires, String source, boolean kickPlayer) {
         Preconditions.checkArgument(getAddress() != null, "The Address of this Player is null");
-        BanEntry<InetSocketAddress> banEntry = ((IpBanList) server.getBanList(BanList.Type.IP)).addBan(getAddress(), reason, expires, source);
+        BanEntry<InetAddress> banEntry = ((IpBanList) server.getBanList(BanList.Type.IP)).addBan(getAddress().getAddress(), reason, expires, source);
         if (kickPlayer) {
             this.kickPlayer(reason);
         }

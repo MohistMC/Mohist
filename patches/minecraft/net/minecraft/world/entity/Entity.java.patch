@@ -790,24 +790,26 @@
        this.m_8119_();
        if (this.m_20159_()) {
           this.m_20202_().m_7332_(this);
-@@ -1877,6 +_,7 @@
+@@ -1877,7 +_,30 @@
              }
           }
  
 +      if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_19966_, true)) return false;
           if (p_19967_ || this.m_7341_(p_19966_) && p_19966_.m_7310_(this)) {
-             if (this.m_20159_()) {
-                this.m_8127_();
-@@ -1898,7 +_,32 @@
-    }
- 
-    protected boolean m_7341_(Entity p_20339_) {
--      return !this.m_6144_() && this.f_19851_ <= 0;
-+      // CraftBukkit start
-+      boolean result = !this.m_6144_() && this.f_19851_ <= 0;
-+      if (result) {
-+         if (p_20339_.getBukkitEntity() instanceof Vehicle && this.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
-+            VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) p_20339_.getBukkitEntity(), (org.bukkit.entity.LivingEntity) this.getBukkitEntity());
++            // CraftBukkit start
++            if (p_19966_.getBukkitEntity() instanceof Vehicle && this.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
++               VehicleEnterEvent event = new VehicleEnterEvent((Vehicle) p_19966_.getBukkitEntity(), (org.bukkit.entity.LivingEntity) this.getBukkitEntity());
++               // Suppress during worldgen
++               if (this.valid) {
++                  Bukkit.getPluginManager().callEvent(event);
++               }
++               if (event.isCancelled()) {
++                  return false;
++               }
++            }
++            // CraftBukkit end
++            // Spigot start
++            org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(p_19966_.getBukkitEntity(), this.getBukkitEntity());
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
@@ -815,23 +817,10 @@
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+         }
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(p_20339_.getBukkitEntity(), this.getBukkitEntity());
-+         // Suppress during worldgen
-+         if (this.valid) {
-+            Bukkit.getPluginManager().callEvent(event);
-+         }
-+         if (event.isCancelled()) {
-+            return false;
-+         }
-+         // Spigot end
-+      }
-+      return result;
-+      // CraftBukkit end
-    }
- 
-    protected boolean m_20175_(Pose p_20176_) {
++            // Spigot end
+             if (this.m_20159_()) {
+                this.m_8127_();
+             }
 @@ -1915,8 +_,9 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {

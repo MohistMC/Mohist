@@ -38,6 +38,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Date;
@@ -203,7 +204,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     (updated) previous ban
      */
     @Nullable
-    public BanEntry<InetSocketAddress> banIp(@Nullable String reason, @Nullable Date expires, @Nullable String source, boolean kickPlayer);
+    public BanEntry<InetAddress> banIp(@Nullable String reason, @Nullable Date expires, @Nullable String source, boolean kickPlayer);
 
     /**
      * Says a message (or runs a command).
