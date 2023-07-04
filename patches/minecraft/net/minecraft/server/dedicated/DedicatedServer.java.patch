@@ -105,10 +105,6 @@
           return false;
        } else {
           this.m_129823_(new DedicatedPlayerList(this, this.m_247573_(), this.f_129745_));
-+         // CraftBukkit start
-+         server.loadPlugins();
-+         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-+         // CraftBukkit end
 +         // Spigot start
 +         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +         org.spigotmc.SpigotConfig.registerCommands();
@@ -117,6 +113,10 @@
 +         MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
 +         MohistConfig.registerCommands();
 +         // Mohist end
++         // CraftBukkit start
++         server.loadPlugins();
++         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++         // CraftBukkit end
           long i = Util.m_137569_();
           SkullBlockEntity.m_222885_(this.f_236721_, this);
           GameProfileCache.m_11004_(this.m_129797_());
