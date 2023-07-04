@@ -35,7 +35,7 @@ ext {
     MERGETOOL_VERSION = '1.1.5'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '6.0.3'
+    EVENTBUS_VERSION = '6.0.5'
     MODLAUNCHER_VERSION = '10.0.9'
     SECUREJARHANDLER_VERSION = '2.1.10'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
@@ -58,8 +58,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.20.1-47.0.35'
-    FORGE_VERSION = '47.0.35'
+    VERSION = '1.20.1-47.0.43'
+    FORGE_VERSION = '47.0.43'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -174,7 +174,7 @@ def sharedDeps = {
     installer "net.minecraftforge:mergetool:${MERGETOOL_VERSION}:api"
     installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
     installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
-    installer 'net.jodah:typetools:0.8.3'
+    installer 'net.jodah:typetools:0.6.3'
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
