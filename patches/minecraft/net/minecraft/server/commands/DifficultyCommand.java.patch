@@ -10,7 +10,7 @@
           throw f_136933_.create(p_136946_.m_19036_());
        } else {
 -         minecraftserver.m_129827_(p_136946_, true);
-+         worldServer.serverLevelDataCB.m_6166_(p_136946_); // CraftBukkit
++         worldServer.K.m_6166_(p_136946_); // CraftBukkit
           p_136945_.m_81354_(Component.m_237110_("commands.difficulty.success", p_136946_.m_19033_()), true);
           return 0;
        }

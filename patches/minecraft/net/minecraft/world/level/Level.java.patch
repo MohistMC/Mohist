@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -3,8 +_,10 @@
+@@ -1,10 +_,13 @@
+ package net.minecraft.world.level;
+ 
  import com.google.common.collect.Lists;
++import com.mohistmc.forge.ForgeInjectBukkit;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
 +import java.util.HashMap;
@@ -11,7 +14,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -20,6 +_,7 @@
+@@ -20,10 +_,12 @@
  import net.minecraft.core.particles.ParticleOptions;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
@@ -19,6 +22,11 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ChunkHolder;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.Mth;
 @@ -34,6 +_,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.boss.EnderDragonPart;
@@ -59,7 +67,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,15 +_,64 @@
+@@ -97,17 +_,78 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -114,22 +122,37 @@
  
     protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
 +      super(Level.class);
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().f_129744_.m_197394_(p_220353_).getFileName().toFile().getName()); // Spigot // Mohist
+       this.f_46446_ = p_220355_;
+       this.f_46442_ = p_220352_;
++      String worldName = MinecraftServer.getServer().f_129744_.m_197394_(p_220353_).getFileName().toFile().getName();
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(worldName); // Spigot // Mohist
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
-+      // CraftBukkit end
-       this.f_46446_ = p_220355_;
-       this.f_46442_ = p_220352_;
++      // Mohist start
++      if (generator == null && p_220352_ != null) {
++         generator = getCraftServer().getGenerator(worldName);
++      }
++      if (environment == null) {
++         environment = ForgeInjectBukkit.environment0.get(p_220353_);
++      }
++      if (biomeProvider == null) {
++         biomeProvider = getCraftServer().getBiomeProvider(worldName);
++      }
++      this.world = new CraftWorld((ServerLevel) this, generator, biomeProvider, environment);
++      // Mohist end
        this.f_204147_ = p_220354_;
-@@ -133,6 +_,42 @@
+       this.f_220349_ = p_220354_.m_203543_().orElseThrow(() -> {
+          return new IllegalArgumentException("Dimension must be registered, got " + p_220354_);
+@@ -133,6 +_,43 @@
        this.f_46420_ = new BiomeManager(this, p_220358_);
        this.f_46424_ = p_220357_;
        this.f_220350_ = new CollectingNeighborUpdater(this, p_220359_);
 +      // CraftBukkit start
++      m_6857_().world = (ServerLevel) this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +

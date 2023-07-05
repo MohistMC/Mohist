@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
++++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
+@@ -60,8 +_,8 @@
+    });
+    private static final BlockState f_64321_ = Blocks.f_50016_.m_49966_();
+    protected final BlockState f_64316_;
+-   private final Registry<NormalNoise.NoiseParameters> f_188604_;
+-   protected final Holder<NoiseGeneratorSettings> f_64318_;
++   public final Registry<NormalNoise.NoiseParameters> f_188604_;
++   public final Holder<NoiseGeneratorSettings> f_64318_;
+    private final Aquifer.FluidPicker f_188607_;
+ 
+    public NoiseBasedChunkGenerator(Registry<StructureSet> p_224206_, Registry<NormalNoise.NoiseParameters> p_224207_, BiomeSource p_224208_, Holder<NoiseGeneratorSettings> p_224209_) {

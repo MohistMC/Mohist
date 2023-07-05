@@ -25,6 +25,24 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.entity.npc.Npc;
  import net.minecraft.world.entity.player.Player;
+@@ -107,6 +_,7 @@
+ import net.minecraft.world.level.StructureManager;
+ import net.minecraft.world.level.WorldGenLevel;
+ import net.minecraft.world.level.biome.Biome;
++import net.minecraft.world.level.biome.BiomeSource;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.entity.TickingBlockEntity;
+@@ -128,7 +_,9 @@
+ import net.minecraft.world.level.gameevent.DynamicGameEventListener;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.gameevent.GameEventListener;
++import net.minecraft.world.level.levelgen.FlatLevelSource;
+ import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+ import net.minecraft.world.level.levelgen.structure.BoundingBox;
+ import net.minecraft.world.level.levelgen.structure.Structure;
+ import net.minecraft.world.level.levelgen.structure.StructureCheck;
 @@ -138,8 +_,10 @@
  import net.minecraft.world.level.portal.PortalForcer;
  import net.minecraft.world.level.saveddata.maps.MapIndex;
@@ -36,7 +54,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -147,7 +_,15 @@
+@@ -147,7 +_,16 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -44,6 +62,7 @@
 +import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R1.generator.CustomWorldChunkManager;
 +import org.bukkit.craftbukkit.v1_19_R1.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
@@ -61,7 +80,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -184,13 +_,27 @@
+@@ -184,23 +_,52 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -73,7 +92,7 @@
 +   private LevelCapabilityData capabilityData;
 +
 +   // CraftBukkit start
-+   public PrimaryLevelData serverLevelDataCB;
++   public PrimaryLevelData K;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
  
@@ -83,14 +102,31 @@
 +      convertable = p_215001_;
 +      uuid = WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
 +      if (p_215002_ instanceof PrimaryLevelData) {
-+         this.serverLevelDataCB = (PrimaryLevelData) p_215002_;
++         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
-+         this.serverLevelDataCB = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
++         this.K = MohistDerivedWorldInfo.create((DerivedLevelData)p_215002_);
 +      }
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
-@@ -200,7 +_,7 @@
+       this.f_8549_ = p_215002_;
+       ChunkGenerator chunkgenerator = p_215004_.m_63990_();
++      // CraftBukkit start
++      K.setWorld(this);
++      if (biomeProvider != null) {
++         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registry.f_122885_));
++         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
++            chunkgenerator = new NoiseBasedChunkGenerator(cga.f_207955_, cga.f_188604_, worldChunkManager, cga.f_64318_);
++         } else if (chunkgenerator instanceof FlatLevelSource cpf) {
++            // chunkgenerator = new FlatLevelSource(cpf.structureSets, cpf.settings(), worldChunkManager); TODO
++         }
++      }
++
++      if (generator != null) {
++         chunkgenerator = new org.bukkit.craftbukkit.v1_19_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
++      }
++      // CraftBukkit end
+       boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
        this.f_143244_ = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
@@ -99,14 +135,13 @@
           return p_214999_.m_129783_().m_8895_();
        });
        chunkgenerator.m_223100_(this.f_8547_.m_214994_());
-@@ -227,6 +_,10 @@
+@@ -227,6 +_,9 @@
        }
  
        this.f_143245_ = new SleepStatus();
-+      this.initCapabilities();
-+      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
-+      this.world = new CraftWorld(this, generator, biomeProvider, environment);
++      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +      m_6857_().world = this;
++      this.initCapabilities();
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
