@@ -1,10 +1,8 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,9 +_,15 @@
+@@ -1,9 +_,13 @@
  package net.minecraft.tileentity;
  
-+import co.aikar.timings.MinecraftTimings;
-+import co.aikar.timings.Timing;
 +import com.mohistmc.inventory.InventoryOwner;
 +
  import javax.annotation.Nullable;
@@ -16,7 +14,7 @@
  import net.minecraft.network.play.server.SUpdateTileEntityPacket;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.ResourceLocation;
-@@ -11,25 +_,52 @@
+@@ -11,25 +_,51 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
@@ -48,7 +46,6 @@
     private BlockState field_195045_e;
     private boolean field_222816_g;
 +   private CompoundNBT customTileData;
-+   public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Spigot
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);

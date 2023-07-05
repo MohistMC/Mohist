@@ -1,9 +1,8 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,19 +_,23 @@
+@@ -1,19 +_,22 @@
  package net.minecraft.server;
  
-+import com.destroystokyo.paper.config.PaperConfig;
  import com.google.common.collect.ImmutableSet;
 +import com.mohistmc.util.DatapackCodecUtils;
  import com.mojang.authlib.GameProfileRepository;
@@ -41,7 +40,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -71,31 +_,77 @@
+@@ -71,31 +_,60 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -68,14 +67,6 @@
 +              .ofType(File.class)
 +              .defaultsTo(new File("plugins"))
 +              .describedAs("Plugin directory");
-+			  
-+			          // Paper Start
-+        optionparser.acceptsAll(Arrays.asList("paper", "paper-settings"), "File for paper settings")
-+                .withRequiredArg()
-+                .ofType(File.class)
-+                .defaultsTo(new File("paper.yml"))
-+                .describedAs("Yml file");
-+        // Paper end
 +
 +
  
@@ -87,15 +78,6 @@
              return;
           }
  
-+
-+            // Paper start - load config files for access below if needed
-+            org.bukkit.configuration.file.YamlConfiguration bukkitConfiguration = loadConfigFile((File) optionset.valueOf("bukkit-settings"));
-+            org.bukkit.configuration.file.YamlConfiguration spigotConfiguration = loadConfigFile((File) optionset.valueOf("spigot-settings"));
-+            org.bukkit.configuration.file.YamlConfiguration paperConfiguration = loadConfigFile((File) optionset.valueOf("paper-settings"));
-+
-+            PaperConfig.init((File) optionset.valueOf("paper-settings")); // Paper
-+            // Paper end
-+
 + 		 Path path1 = Paths.get("eula.txt");
 +         ServerEula servereula = new ServerEula(path1);
 +

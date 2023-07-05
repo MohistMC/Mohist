@@ -291,7 +291,7 @@ public final class JavaPluginLoader implements PluginLoader {
                 }
             }
 
-            EventExecutor executor = new co.aikar.timings.TimedEventExecutor(new EventExecutor() { // Paper
+            EventExecutor executor = new EventExecutor() { // Paper
                 @Override
                 public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
                     try {
@@ -305,7 +305,7 @@ public final class JavaPluginLoader implements PluginLoader {
                         throw new EventException(t);
                     }
                 }
-            }, plugin, method, eventClass); // Paper
+            };
             if (false) { // Spigot - RL handles useTimings check now
                 eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
             } else {

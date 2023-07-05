@@ -22,12 +22,10 @@
           if (entityclassification != EntityClassification.MISC) {
              BlockPos blockpos = entity.func_233580_cy_();
              long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
-@@ -104,9 +_,50 @@
- 
+@@ -105,8 +_,48 @@
     public static void func_234979_a_(ServerWorld p_234979_0_, Chunk p_234979_1_, WorldEntitySpawner.EntityDensityManager p_234979_2_, boolean p_234979_3_, boolean p_234979_4_, boolean p_234979_5_) {
        p_234979_0_.func_217381_Z().func_76320_a("spawner");
-+      p_234979_0_.timings.mobSpawn.startTiming(); // Spigot
-+
+ 
 +      // CraftBukkit start - Other mob type spawn tick rate
 +      IWorldInfo worlddata = p_234979_0_.func_72912_H();
 +      boolean spawnAnimalThisTick = p_234979_0_.ticksPerAnimalSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAnimalSpawns == 0L;
@@ -36,7 +34,7 @@
 +      boolean spawnAmbientThisTick = p_234979_0_.ticksPerAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerAmbientSpawns == 0L;
 +      boolean spawnWaterAmbientThisTick = p_234979_0_.ticksPerWaterAmbientSpawns != 0L && worlddata.func_82573_f() % p_234979_0_.ticksPerWaterAmbientSpawns == 0L;
 +      // CraftBukkit end
- 
++
        for(EntityClassification entityclassification : field_234961_c_) {
 -         if ((p_234979_3_ || !entityclassification.func_75599_d()) && (p_234979_4_ || entityclassification.func_75599_d()) && (p_234979_5_ || !entityclassification.func_82705_e()) && p_234979_2_.func_234991_a_(entityclassification)) {
 +         // CraftBukkit start - Use per-world spawn limits
@@ -74,14 +72,6 @@
              func_234967_a_(entityclassification, p_234979_0_, p_234979_1_, (p_234969_1_, p_234969_2_, p_234969_3_) -> {
                 return p_234979_2_.func_234989_a_(p_234969_1_, p_234969_2_, p_234969_3_);
              }, (p_234970_1_, p_234970_2_) -> {
-@@ -115,6 +_,7 @@
-          }
-       }
- 
-+      p_234979_0_.timings.mobSpawn.stopTiming(); // Spigot
-       p_234979_0_.func_217381_Z().func_76319_b();
-    }
- 
 @@ -169,13 +_,19 @@
                          }
  

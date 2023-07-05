@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.scheduler;
 
-import co.aikar.timings.MinecraftTimings;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -284,7 +283,7 @@ public class CraftScheduler implements BukkitScheduler {
                         }
                         return false;
                     }
-                }){{this.timings= MinecraftTimings.getCancelTasksTimer();}}; // Paper
+                });
         handle(task, 0L);
         for (CraftTask taskPending = head.getNext(); taskPending != null; taskPending = taskPending.getNext()) {
             if (taskPending == task) {
@@ -324,7 +323,7 @@ public class CraftScheduler implements BukkitScheduler {
                             }
                         }
                     }
-                }){{this.timings= MinecraftTimings.getCancelTasksTimer(plugin);}}; // Paper
+                });
         handle(task, 0L);
         for (CraftTask taskPending = head.getNext(); taskPending != null; taskPending = taskPending.getNext()) {
             if (taskPending == task) {
@@ -493,11 +492,8 @@ public class CraftScheduler implements BukkitScheduler {
                 runners.remove(task.getTaskId());
             }
         }
-        MinecraftTimings.bukkitSchedulerFinishTimer.startTiming();
         pending.addAll(temp);
         temp.clear();
-        MinecraftTimings.bukkitSchedulerFinishTimer.stopTiming();
-        //debugHead = debugHead.getNextHead(currentTick); // Paper
     }
 
     protected void addTask(final CraftTask task) {
@@ -535,7 +531,6 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     void parsePending() { // Paper
-        if (!this.isAsyncScheduler) MinecraftTimings.bukkitSchedulerPendingTimer.startTiming(); // Paper
         CraftTask head = this.head;
         CraftTask task = head.getNext();
         CraftTask lastTask = head;
@@ -554,7 +549,6 @@ public class CraftScheduler implements BukkitScheduler {
             task.setNext(null);
         }
         this.head = lastTask;
-        if (!this.isAsyncScheduler) MinecraftTimings.bukkitSchedulerPendingTimer.stopTiming(); // Paper
     }
 
     private boolean isReady(final int currentTick) {

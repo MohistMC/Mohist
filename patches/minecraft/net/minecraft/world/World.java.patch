@@ -70,7 +70,7 @@
     public final Thread field_217407_c;
     private final boolean field_234916_c_;
     private int field_73008_k;
-@@ -92,8 +_,78 @@
+@@ -92,8 +_,76 @@
     private final WorldBorder field_175728_M;
     private final BiomeManager field_226689_w_;
     private final RegistryKey<World> field_73011_w;
@@ -104,8 +104,6 @@
 +   public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
 +   public boolean pehkuiExplosionFire = false; // Mohist - Fix Pehkui Startup (#1324)
 +   protected final boolean disableBukkit;
-+
-+   public final co.aikar.timings.WorldTimingsHandler timings; // Spigot
 +
 +   public CraftServer getCBServer() {
 +      return (CraftServer) Bukkit.getServer();
@@ -149,18 +147,14 @@
        this.field_72984_F = p_i241925_4_;
        this.field_72986_A = p_i241925_1_;
        this.field_234921_x_ = p_i241925_3_;
-@@ -116,6 +_,16 @@
+@@ -116,6 +_,12 @@
        this.field_217407_c = Thread.currentThread();
        this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
        this.field_234916_c_ = p_i241925_6_;
 +      // Mohist start - Fix Advanced Rocketry assembler crash
 +      if (!disableBukkit && p_i241925_1_ != null) {
-+         timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
 +         this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
 +         this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
-+      }
-+      else {
-+         this.timings = null;
 +      }
 +      // Mohist end
     }
@@ -417,11 +411,10 @@
           this.field_147484_a.addAll(p_147448_1_);
        } else {
           for(TileEntity tileentity : p_147448_1_) {
-@@ -425,24 +_,43 @@
+@@ -425,23 +_,40 @@
     public void func_217391_K() {
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("blockEntities");
-+      timings.tileEntityTick.startTiming(); // Spigot
 +      this.field_147481_N = true;// Forge: Move above remove to prevent CMEs
        if (!this.field_147483_b.isEmpty()) {
 +         this.field_147483_b.forEach(e -> e.onChunkUnloaded());
@@ -465,11 +458,9 @@
 -                     return String.valueOf((Object)TileEntityType.func_200969_a(tileentity.func_200662_C()));
 +                     return String.valueOf(tileentity.func_200662_C().getRegistryName());
                    });
-+                  tileentity.tickTimer.startTiming(); // Spigot
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();
-                   } else {
-@@ -454,35 +_,60 @@
+@@ -454,16 +_,30 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory);
@@ -481,7 +472,6 @@
                    throw new ReportedException(crashreport);
                 }
 +               finally {
-+                  tileentity.tickTimer.stopTiming(); // Spigot
 +                  net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileentity);
 +               }
              }
@@ -503,12 +493,7 @@
              }
           }
        }
- 
-+      timings.tileEntityTick.stopTiming(); // Spigot
-+      timings.tileEntityPending.startTiming(); // Spigot
-       this.field_147481_N = false;
-       iprofiler.func_219895_b("pendingBlockEntities");
-       if (!this.field_147484_a.isEmpty()) {
+@@ -474,15 +_,23 @@
           for(int i = 0; i < this.field_147484_a.size(); ++i) {
              TileEntity tileentity1 = this.field_147484_a.get(i);
              if (!tileentity1.func_145837_r()) {
@@ -534,12 +519,9 @@
                 }
              }
           }
-@@ -490,22 +_,28 @@
-          this.field_147484_a.clear();
+@@ -491,21 +_,25 @@
        }
  
-+      timings.tileEntityPending.stopTiming(); // Spigot
-+      co.aikar.timings.TimingHistory.tileEntityTicks += this.field_175730_i.size(); // Paper
        iprofiler.func_76319_b();
 +      spigotConfig.currentPrimedTnt = 0; // Spigot
     }

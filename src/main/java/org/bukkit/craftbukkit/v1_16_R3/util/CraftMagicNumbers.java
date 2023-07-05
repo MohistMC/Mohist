@@ -177,7 +177,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     // Paper start
     @Override
     public void reportTimings() {
-        co.aikar.timings.TimingsExport.reportTimings();
     }
 
     // Paper end

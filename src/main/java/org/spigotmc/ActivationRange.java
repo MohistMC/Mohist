@@ -1,6 +1,5 @@
 package org.spigotmc;
 
-import co.aikar.timings.MinecraftTimings;
 import java.util.Collection;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -110,7 +109,6 @@ public class ActivationRange
      */
     public static void activateEntities(World world)
     {
-        MinecraftTimings.entityActivationCheckTimer.startTiming();
         final int miscActivationRange = world.spigotConfig.miscActivationRange;
         final int raiderActivationRange = world.spigotConfig.raiderActivationRange;
         final int animalActivationRange = world.spigotConfig.animalActivationRange;
@@ -147,7 +145,6 @@ public class ActivationRange
                 }
             }
         }
-        MinecraftTimings.entityActivationCheckTimer.stopTiming();
     }
 
     /**

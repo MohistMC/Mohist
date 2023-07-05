@@ -650,12 +650,8 @@ public final class SimplePluginManager implements PluginManager {
             throw new IllegalPluginAccessException("Plugin attempted to register " + event + " while not enabled");
         }
 
-        executor = new co.aikar.timings.TimedEventExecutor(executor, plugin, null, event); // Paper
-        if (false) { // Spigot - RL handles useTimings check now // Paper
-            getEventListeners(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
-        } else {
-            getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
-        }
+        getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+
     }
 
     @NotNull
@@ -866,7 +862,7 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public boolean useTimings() {
-        return co.aikar.timings.Timings.isTimingsEnabled(); // Spigot
+        return false;
     }
 
     /**
@@ -875,6 +871,5 @@ public final class SimplePluginManager implements PluginManager {
      * @param use True if per event timing code should be used
      */
     public void useTimings(boolean use) {
-        co.aikar.timings.Timings.setTimingsEnabled(use); // Paper
     }
 }

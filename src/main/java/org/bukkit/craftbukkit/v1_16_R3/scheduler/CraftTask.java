@@ -1,8 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.scheduler;
 
-import co.aikar.timings.MinecraftTimings;
-import co.aikar.timings.NullTimingHandler;
-import co.aikar.timings.Timing;
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -28,7 +25,6 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
     private long nextRun;
     public final Runnable rTask; // Paper
     public final Consumer<BukkitTask> cTask; // Paper
-    public Timing timings; // Paper
     private final Plugin plugin;
     private final int id;
 
@@ -51,7 +47,6 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         this.id = id;
         this.period = CraftTask.NO_REPEATING;
         this.taskName = taskName;
-        this.timings = MinecraftTimings.getInternalTaskName(taskName);
     }
     // Paper end
 
@@ -72,7 +67,6 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         }
         this.id = id;
         this.period = period;
-        timings = task != null ? MinecraftTimings.getPluginTaskTimings(this, period) : NullTimingHandler.NULL; // Paper
     }
 
     @Override
@@ -92,14 +86,11 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
 
     @Override
     public void run() {
-        // Mohist start - fix NPC
-        if (timings != null && isSync()) timings.startTiming(); // Paper
         if (rTask != null) {
             rTask.run();
         } else {
             cTask.accept(this);
         }
-        if (timings != null && isSync()) timings.stopTiming(); // Paper // Mohist end
     }
 
     long getPeriod() {
