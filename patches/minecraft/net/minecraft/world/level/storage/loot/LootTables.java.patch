@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/storage/loot/LootTables.java
 +++ b/net/minecraft/world/level/storage/loot/LootTables.java
+@@ -17,6 +_,7 @@
+    private static final Logger f_79188_ = LogUtils.getLogger();
+    private static final Gson f_79189_ = Deserializers.m_78800_().create();
+    private Map<ResourceLocation, LootTable> f_79190_ = ImmutableMap.of();
++   public Map<LootTable, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
+    private final PredicateManager f_79191_;
+ 
+    public LootTables(PredicateManager p_79194_) {
 @@ -37,7 +_,8 @@
  
        p_79214_.forEach((p_79198_, p_79199_) -> {
@@ -10,6 +18,18 @@
              builder.put(p_79198_, loottable);
           } catch (Exception exception) {
              f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);
+@@ -54,6 +_,11 @@
+          f_79188_.warn("Found validation problem in {}: {}", p_79211_, p_79212_);
+       });
+       this.f_79190_ = immutablemap;
++      // CraftBukkit start - build a reversed registry map
++      ImmutableMap.Builder<LootTable, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
++      this.f_79190_.forEach((lootTable, key) -> lootTableToKeyBuilder.put(key, lootTable));
++      this.lootTableToKey = lootTableToKeyBuilder.build();
++      // CraftBukkit end
+    }
+ 
+    public static void m_79202_(ValidationContext p_79203_, ResourceLocation p_79204_, LootTable p_79205_) {
 @@ -66,5 +_,15 @@
  
     public Set<ResourceLocation> m_79195_() {
