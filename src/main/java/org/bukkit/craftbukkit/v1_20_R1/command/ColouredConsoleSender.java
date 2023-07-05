@@ -61,7 +61,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
                     result = result.replaceAll("(?i)" + color.toString(), "");
                 }
             }
-            LOGGER.info(message);
+            LOGGER.info(result + Ansi.ansi().reset().toString());
         }
     }
 

@@ -41,3 +41,14 @@
     Style m_7383_();
  
     ComponentContents m_214077_();
+@@ -144,6 +_,10 @@
+ 
+    static MutableComponent m_237115_(String p_237116_) {
+       return MutableComponent.m_237204_(new TranslatableContents(p_237116_, (String)null, TranslatableContents.f_237494_));
++   }
++
++   static MutableComponent a(String p_237111_, Object... p_237112_) {
++      return MutableComponent.m_237204_(new TranslatableContents(p_237111_, (String)null, p_237112_));
+    }
+ 
+    static MutableComponent m_237110_(String p_237111_, Object... p_237112_) {
