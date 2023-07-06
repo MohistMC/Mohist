@@ -34,9 +34,9 @@ public class MohistPlugin {
             try {
                 data = Files.readString(out.toPath());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                data = "libraries";
             }
-            File file = new File(data + "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
+            File file = new File(data, "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
             if (file.exists()) {
                 Plugin plugin = Control.loadPlugin(file);
                 if (plugin != null) {
