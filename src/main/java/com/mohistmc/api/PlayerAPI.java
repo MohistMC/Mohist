@@ -47,4 +47,8 @@ public class PlayerAPI {
     public static boolean isOp(EntityPlayer ep) {
         return MinecraftServer.getServerInst().getPlayerList().canSendCommands(ep.getGameProfile());
     }
+
+    public static float getAttackCooldown(Player player) {
+        return((CraftPlayer)player).getHandle().getCooledAttackStrength(0.5F);
+    }
 }

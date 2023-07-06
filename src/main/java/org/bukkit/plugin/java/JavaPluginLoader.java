@@ -1,10 +1,12 @@
 package org.bukkit.plugin.java;
 
+import co.aikar.timings.TimedEventExecutor;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ import org.bukkit.Warning.WarningState;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -35,6 +38,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.yaml.snakeyaml.error.YAMLException;
 import com.mohistmc.MohistMC;
@@ -239,6 +243,8 @@ public class JavaPluginLoader implements PluginLoader {
         Validate.notNull(plugin, "Plugin can not be null");
         Validate.notNull(listener, "Listener can not be null");
 
+        boolean useTimings = server.getPluginManager().useTimings();
+
         Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<>();
         Set<Method> methods;
         try {
@@ -292,9 +298,25 @@ public class JavaPluginLoader implements PluginLoader {
                 }
             }
 
-            EventExecutor executor = new co.aikar.timings.TimedEventExecutor(EventExecutor.create(method, eventClass), plugin, method, eventClass); // Spigot // Paper - Use factory method `EventExecutor.create()`
-            // Spigot // Paper - Use factory method `EventExecutor.create()`
-            eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
+            EventExecutor executor = new EventExecutor() {
+                public void execute(Listener listener, Event event) throws EventException {
+                    try {
+                        if (!eventClass.isAssignableFrom(event.getClass())) {
+                            return;
+                        }
+                        method.invoke(listener, event);
+                    } catch (InvocationTargetException ex) {
+                        throw new EventException(ex.getCause());
+                    } catch (Throwable t) {
+                        throw new EventException(t);
+                    }
+                }
+            };
+            if (useTimings) {
+                eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
+            } else {
+                eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
+            }
         }
         return ret;
     }

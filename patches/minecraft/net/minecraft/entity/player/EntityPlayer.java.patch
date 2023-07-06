@@ -571,27 +571,7 @@
                      }
  
                      f = f + f1;
-@@ -1232,8 +1398,17 @@
- 
-                         if (j > 0 && !p_71059_1_.func_70027_ad())
-                         {
--                            flag4 = true;
--                            p_71059_1_.func_70015_d(1);
-+                            // flag4 = true;
-+                            // targetEntity.setFire(1);
-+                            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(), 1);
-+                            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+
-+                            if (!combustEvent.isCancelled()) {
-+                                flag4 = true;
-+                                p_71059_1_.func_70015_d(combustEvent.getDuration());
-+                            }
-+                            // CraftBukkit end
-                         }
-                     }
- 
-@@ -1257,7 +1432,7 @@
+@@ -1257,7 +1423,7 @@
  
                              this.field_70159_w *= 0.6D;
                              this.field_70179_y *= 0.6D;
@@ -600,7 +580,7 @@
                          }
  
                          if (flag3)
-@@ -1268,8 +1443,10 @@
+@@ -1268,8 +1434,10 @@
                              {
                                  if (entitylivingbase != this && entitylivingbase != p_71059_1_ && !this.func_184191_r(entitylivingbase) && this.func_70068_e(entitylivingbase) < 9.0D)
                                  {
@@ -613,7 +593,7 @@
                                  }
                              }
  
-@@ -1279,11 +1456,28 @@
+@@ -1279,11 +1447,28 @@
  
                          if (p_71059_1_ instanceof EntityPlayerMP && p_71059_1_.field_70133_I)
                          {
@@ -647,7 +627,7 @@
                          }
  
                          if (flag2)
-@@ -1332,10 +1526,12 @@
+@@ -1332,10 +1517,12 @@
  
                          if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase)
                          {
@@ -660,7 +640,7 @@
                                  this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                              }
                          }
-@@ -1347,7 +1543,14 @@
+@@ -1347,7 +1534,14 @@
  
                              if (j > 0)
                              {
@@ -676,7 +656,7 @@
                              }
  
                              if (this.field_70170_p instanceof WorldServer && f5 > 2.0F)
-@@ -1357,7 +1560,8 @@
+@@ -1357,7 +1551,8 @@
                              }
                          }
  
@@ -686,7 +666,7 @@
                      }
                      else
                      {
-@@ -1367,6 +1571,11 @@
+@@ -1367,6 +1562,11 @@
                          {
                              p_71059_1_.func_70066_B();
                          }
@@ -698,7 +678,7 @@
                      }
                  }
              }
-@@ -1384,7 +1593,7 @@
+@@ -1384,7 +1584,7 @@
  
          if (this.field_70146_Z.nextFloat() < f)
          {
@@ -707,7 +687,7 @@
              this.func_184602_cy();
              this.field_70170_p.func_72960_a(this, (byte)30);
          }
-@@ -1440,9 +1649,18 @@
+@@ -1440,9 +1640,18 @@
          return this.field_146106_i;
      }
  
@@ -727,7 +707,7 @@
  
          if (!this.field_70170_p.field_72995_K)
          {
-@@ -1456,7 +1674,7 @@
+@@ -1456,7 +1665,7 @@
                  return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
              }
  
@@ -736,7 +716,7 @@
              {
                  return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
              }
-@@ -1481,11 +1699,24 @@
+@@ -1481,11 +1690,24 @@
              this.func_184210_p();
          }
  
@@ -763,7 +743,7 @@
              float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
              float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
              this.func_175139_a(enumfacing);
-@@ -1517,6 +1748,7 @@
+@@ -1517,6 +1739,7 @@
          {
              return true;
          }
@@ -771,7 +751,7 @@
          else
          {
              BlockPos blockpos = p_190774_1_.func_177972_a(p_190774_2_.func_176734_d());
-@@ -1532,13 +1764,14 @@
+@@ -1532,13 +1755,14 @@
  
      public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -790,7 +770,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1780,10 @@
+@@ -1547,6 +1771,10 @@
  
              this.func_70107_b((double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.1F), (double)((float)blockpos.func_177952_p() + 0.5F));
          }
@@ -801,7 +781,7 @@
  
          this.field_71083_bS = false;
  
-@@ -1555,6 +1792,23 @@
+@@ -1555,6 +1783,23 @@
              this.field_70170_p.func_72854_c();
          }
  
@@ -825,7 +805,7 @@
          this.field_71076_b = p_70999_1_ ? 0 : 100;
  
          if (p_70999_3_)
-@@ -1565,15 +1819,16 @@
+@@ -1565,15 +1810,16 @@
  
      private boolean func_175143_p()
      {
@@ -845,7 +825,7 @@
          {
              if (!p_180467_2_)
              {
-@@ -1588,16 +1843,17 @@
+@@ -1588,16 +1834,17 @@
          }
          else
          {
@@ -866,7 +846,7 @@
  
              switch (enumfacing)
              {
-@@ -1625,7 +1881,7 @@
+@@ -1625,7 +1872,7 @@
          return this.field_71083_bS && this.field_71076_b >= 100;
      }
  
@@ -875,7 +855,7 @@
      public int func_71060_bI()
      {
          return this.field_71076_b;
-@@ -1637,25 +1893,35 @@
+@@ -1637,25 +1884,35 @@
  
      public BlockPos func_180470_cg()
      {
@@ -913,7 +893,7 @@
          }
      }
  
-@@ -1691,11 +1957,13 @@
+@@ -1691,11 +1948,13 @@
  
          if (this.func_70051_ag())
          {
@@ -929,7 +909,7 @@
          }
      }
  
-@@ -1714,7 +1982,10 @@
+@@ -1714,7 +1973,10 @@
              this.field_70181_x = d3 * 0.6D;
              this.field_70747_aH = f;
              this.field_70143_R = 0.0F;
@@ -941,7 +921,7 @@
          }
          else
          {
-@@ -1839,6 +2110,10 @@
+@@ -1839,6 +2101,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -952,7 +932,7 @@
      }
  
      protected void func_71061_d_()
-@@ -1943,6 +2218,7 @@
+@@ -1943,6 +2209,7 @@
  
      public void func_71020_j(float p_71020_1_)
      {
@@ -960,7 +940,7 @@
          if (!this.field_71075_bZ.field_75102_a)
          {
              if (!this.field_70170_p.field_72995_K)
-@@ -2115,10 +2391,12 @@
+@@ -2115,10 +2382,12 @@
  
      protected void func_192030_dh()
      {
@@ -977,7 +957,7 @@
      }
  
      private void func_192026_k(@Nullable NBTTagCompound p_192026_1_)
-@@ -2137,6 +2415,23 @@
+@@ -2137,6 +2406,23 @@
          }
      }
  
@@ -1001,7 +981,7 @@
      @SideOnly(Side.CLIENT)
      public boolean func_98034_c(EntityPlayer p_98034_1_)
      {
-@@ -2176,7 +2471,10 @@
+@@ -2176,7 +2462,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -1013,7 +993,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2185,7 +2483,7 @@
+@@ -2185,7 +2474,7 @@
  
      public float func_70047_e()
      {
@@ -1022,7 +1002,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2368,7 +2666,7 @@
+@@ -2368,7 +2657,7 @@
          return (NBTTagCompound)this.field_70180_af.func_187225_a(field_192032_bt);
      }
  
@@ -1031,7 +1011,7 @@
      {
          this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
      }
-@@ -2378,7 +2676,7 @@
+@@ -2378,7 +2667,7 @@
          return (NBTTagCompound)this.field_70180_af.func_187225_a(field_192033_bu);
      }
  
@@ -1040,7 +1020,7 @@
      {
          this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
      }
-@@ -2421,6 +2719,168 @@
+@@ -2421,6 +2710,168 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  

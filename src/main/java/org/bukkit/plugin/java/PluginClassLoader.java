@@ -131,55 +131,26 @@ public final class PluginClassLoader extends URLClassLoader {
             synchronized (name.intern()) {
                 if (result == null) {
                     if (checkGlobal) {
-                        result = this.loader.getClassByName(name);
+                        result = loader.getClassByName(name);
                     }
+
                     if (result == null) {
-                        final String path = name.replace('.', '/').concat(".class");
-                        final JarEntry entry = this.jar.getJarEntry(path);
-                        if (entry != null) {
-                            byte[] classBytes;
-                            try (final InputStream is = this.jar.getInputStream(entry)) {
-                                classBytes = ByteStreams.toByteArray(is);
-                            }
-                            catch (final IOException ex) {
-                                throw new ClassNotFoundException(name, ex);
-                            }
-                            final int dot = name.lastIndexOf(46);
-                            if (dot != -1) {
-                                final String pkgName = name.substring(0, dot);
-                                if (this.getPackage(pkgName) == null) {
-                                    try {
-                                        if (this.manifest != null) {
-                                            this.definePackage(pkgName, this.manifest, this.url);
-                                        }
-                                        else {
-                                            this.definePackage(pkgName, null, null, null, null, null, null, null);
-                                        }
-                                    }
-                                    catch (final IllegalArgumentException ex2) {
-                                        if (this.getPackage(pkgName) == null) {
-                                            throw new IllegalStateException("Cannot find package " + pkgName);
-                                        }
-                                    }
-                                }
-                            }
-                            final CodeSigner[] signers = entry.getCodeSigners();
-                            final CodeSource source = new CodeSource(this.url, signers);
-                            result = this.defineClass(name, classBytes, 0, classBytes.length, source);
-                        }
+                        result = remappedFindClass(name);
+
                         if (result == null) {
                             result = super.findClass(name);
                         }
-                        if (result == null) {
-                            result = remappedFindClass(name);
-                        }
+
                         if (result != null) {
-                            this.loader.setClass(name, result);
+                            loader.setClass(name, result);
                         }
                     }
-                    this.classes.put(name, result);
+
+                    classes.put(name, result);
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } finally {
             ClassLoaderContext.pop();
         }
@@ -212,33 +183,56 @@ public final class PluginClassLoader extends URLClassLoader {
         javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
     }
 
-    private Class<?> remappedFindClass(String name) throws ClassNotFoundException {
+    private Class<?> remappedFindClass(String name) throws IOException {
         Class<?> result = null;
 
         try {
             // Load the resource to the name
             String path = name.replace('.', '/').concat(".class");
-            final URL url = this.findResource(path);
-            if (url != null) {
-                final InputStream stream = url.openStream();
+            JarEntry entry = this.jar.getJarEntry(path);
+            if (entry != null) {
+                InputStream stream = this.jar.getInputStream(entry);
                 if (stream != null) {
-                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                    URL jarURL = jarURLConnection.getJarFileURL();
-
-                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    bytecode = RemapUtils.remapFindClass(bytecode);
+                    byte[] classBytes = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    classBytes = RemapUtils.remapFindClass(classBytes);
 
                     fixPackage(manifest, url, name);
 
-                    final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    CodeSigner[] signers = entry.getCodeSigners();
+                    CodeSource source = new CodeSource(this.url, signers);
+
+                    result = this.defineClass(name, classBytes, 0, classBytes.length, source);
+                    if (result == null) {
+                        result = super.findClass(name);
+                    }
+
                     if (result != null) {
-                        this.resolveClass(result);
+                        loader.setClass(name, result);
+                    }
+                }
+            } else {
+                final URL url = this.findResource(path);
+                if (url != null) {
+                    final InputStream stream = url.openStream();
+                    if (stream != null) {
+                        byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                        bytecode = RemapUtils.remapFindClass(bytecode);
+                        final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        final URL jarURL = jarURLConnection.getJarFileURL();
+
+                        final Manifest manifest = jarURLConnection.getManifest();
+                        fixPackage(manifest, url, name);
+
+                        final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                        result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                        if (result != null) {
+                            this.resolveClass(result);
+                        }
                     }
                 }
             }
         } catch (Throwable t) {
-            throw new ClassNotFoundException("Failed to remap class " + name, t);
+
         }
 
         return result;
