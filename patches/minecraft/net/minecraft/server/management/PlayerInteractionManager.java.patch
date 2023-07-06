@@ -1,8 +1,9 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -1,19 +_,30 @@
+@@ -1,19 +_,31 @@
  package net.minecraft.server.management;
  
++import java.util.ArrayList;
  import java.util.Objects;
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
@@ -180,7 +181,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
-@@ -226,30 +_,48 @@
+@@ -226,30 +_,50 @@
           if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_73090_b.func_195070_dx()) {
              this.field_73092_a.func_184138_a(p_180237_1_, blockstate, blockstate, 3);
              return false;
@@ -214,9 +215,11 @@
                 }
  
 +               if (BlockEventDispatcher.isDropItems) {
++                  field_73092_a.captureDrops = new ArrayList<>();
 +                  org.bukkit.block.Block bblock = CraftBlock.at(field_73092_a, p_180237_1_);
 +                  org.bukkit.block.BlockState state = bblock.getState();
 +                  org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleBlockDropItemEvent(bblock, state, this.field_73090_b, field_73092_a.captureDrops);
++                  field_73092_a.captureDrops = null;
 +               }
 +
 +               if (flag && exp > 0)
