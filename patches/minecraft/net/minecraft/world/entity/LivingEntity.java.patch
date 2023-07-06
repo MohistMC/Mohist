@@ -460,7 +460,7 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -985,19 +_,56 @@
+@@ -985,19 +_,50 @@
  
     }
  
@@ -490,14 +490,9 @@
     }
  
     public float m_21223_() {
-+      // CraftBukkit start - Use unscaled health
-+      if (this instanceof ServerPlayer) {
-+         return (float) ((ServerPlayer) this).getBukkitEntity().getHealth();
-+      }
-+      // CraftBukkit end
        return this.f_19804_.m_135370_(f_20961_);
     }
- 
+-
     public void m_21153_(float p_21154_) {
 +      // CraftBukkit start - Handle scaled health
 +      if (this instanceof ServerPlayer) {
