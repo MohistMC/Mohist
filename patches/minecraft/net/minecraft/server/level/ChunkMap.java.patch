@@ -160,27 +160,26 @@
           }
  
        }
-@@ -946,20 +_,34 @@
+@@ -946,7 +_,7 @@
  
     private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
        return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
 -         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map((nbttagcompound) -> upgradeChunkTag(nbttagcompound, p_214964_)); // CraftBukkit
++         return p_214907_.map((nbttagcompound) -> m_214947_(nbttagcompound));
        }, Util.m_183991_());
     }
  
--   private CompoundTag m_214947_(CompoundTag p_214948_) {
--      return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
-+   private CompoundTag upgradeChunkTag(CompoundTag p_214948_, ChunkPos chunkcoordintpair) {
-+      return this.upgradeChunkTag(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_(), chunkcoordintpair, f_140133_);
-+   }
+@@ -954,12 +_,27 @@
+       return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
+    }
+ 
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
 +   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
 +      reducedRange0.set(reducedRange);
 +      return m_183879_(p_183880_);
-    }
- 
++   }
++
     boolean m_183879_(ChunkPos p_183880_) {
 +      int chunkRange = f_140133_.spigotConfig.mobSpawnRange;
 +      chunkRange = (chunkRange > f_140133_.spigotConfig.viewDistance) ? (byte) f_140133_.spigotConfig.viewDistance : chunkRange;

@@ -23,10 +23,12 @@
  import net.minecraft.world.level.levelgen.structure.LegacyStructureDataHandler;
  import net.minecraft.world.level.storage.DimensionDataStorage;
  
-@@ -35,8 +_,61 @@
-       return this.f_63495_.m_223471_(p_223452_, p_223453_);
-    }
+@@ -33,6 +_,37 @@
  
+    public boolean m_223451_(ChunkPos p_223452_, int p_223453_) {
+       return this.f_63495_.m_223471_(p_223452_, p_223453_);
++   }
++
 +   // CraftBukkit start
 +   private boolean check(ServerChunkCache cps, int x, int z) {
 +      ChunkPos pos = new ChunkPos(x, z);
@@ -56,32 +58,6 @@
 +      }
 +
 +      return false;
-+   }
-+
-+   private AtomicReference<LevelAccessor> mohist$access = new AtomicReference<>();
-+   private AtomicReference<ChunkPos> mohist$chunkPos = new AtomicReference<>();
-+
-+   public CompoundTag upgradeChunkTag(ResourceKey<Level> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_, ChunkPos pos, @Nullable LevelAccessor generatoraccess) {
-+      mohist$access.set(generatoraccess);
-+      mohist$chunkPos.set(pos);
-+      return m_188288_(p_188289_, p_188290_, p_188291_, p_188292_);
-+   }
-+
+    }
+ 
     public CompoundTag m_188288_(ResourceKey<Level> p_188289_, Supplier<DimensionDataStorage> p_188290_, CompoundTag p_188291_, Optional<ResourceKey<Codec<? extends ChunkGenerator>>> p_188292_) {
-       int i = m_63505_(p_188291_);
-+
-+      // CraftBukkit start
-+      if (i < 1466) {
-+         CompoundTag level = p_188291_.m_128469_("Level");
-+         if (level.m_128471_("TerrainPopulated") && !level.m_128471_("LightPopulated")) {
-+            ServerChunkCache cps = (mohist$access.get() == null) ? null : ((ServerLevel) mohist$access.get()).m_7726_();
-+            var pos = mohist$chunkPos.get();
-+            if (check(cps, pos.f_45578_ - 1, pos.f_45579_) && check(cps, pos.f_45578_ - 1, pos.f_45579_ - 1) && check(cps, pos.f_45578_, pos.f_45579_ - 1)) {
-+               level.m_128379_("LightPopulated", true);
-+            }
-+         }
-+      }
-+      // CraftBukkit end
-       if (i < 1493) {
-          p_188291_ = DataFixTypes.CHUNK.m_264226_(this.f_63496_, p_188291_, i, 1493);
-          if (p_188291_.m_128469_("Level").m_128471_("hasLegacyStructureData")) {
