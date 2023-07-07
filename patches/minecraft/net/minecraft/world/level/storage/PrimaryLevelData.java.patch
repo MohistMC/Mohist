@@ -60,7 +60,7 @@
 +         return;
 +      }
 +      this.world = world;
-+      world.getWorld().readBukkitValues(pdc);
++      if (world.getWorld() != null) world.getWorld().readBukkitValues(pdc);
 +      pdc = null;
 +   }
 +   // CraftBukkit end

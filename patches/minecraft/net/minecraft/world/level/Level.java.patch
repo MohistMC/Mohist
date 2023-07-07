@@ -75,7 +75,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,19 +_,75 @@
+@@ -101,19 +_,74 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -148,7 +148,6 @@
 +      if (biomeProvider == null) {
 +         biomeProvider = getCraftServer().getBiomeProvider(worldName);
 +      }
-+      this.world = new CraftWorld((ServerLevel) this, generator, biomeProvider, environment);
 +      // Mohist end
        this.f_204147_ = p_270240_;
        this.f_220349_ = p_270240_.m_203543_().orElseThrow(() -> {
@@ -172,7 +171,7 @@
        this.f_268710_ = p_270200_;
        this.f_268497_ = new DamageSources(p_270200_);
 +      // CraftBukkit start
-+      m_6857_().world = (ServerLevel) this;
++      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +
