@@ -637,15 +637,14 @@
           this.m_5810_();
           this.m_9236_().m_7605_(this, (byte)30);
        }
-@@ -1268,6 +_,13 @@
+@@ -1268,6 +_,12 @@
        return this.f_36096_ != this.f_36095_;
     }
  
-+   // Spigot
-+   public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_36203_, boolean force) {
-+      this.m_5802_(p_36203_);
-+      this.f_36110_ = 0;
-+      return Either.right(Unit.INSTANCE);
++   protected AtomicBoolean startSleepInBed_force = new AtomicBoolean(false);
++   public Player forceSleepInBed(boolean force) {
++      startSleepInBed_force.set(force);
++      return this;
 +   }
 +
     public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_36203_) {

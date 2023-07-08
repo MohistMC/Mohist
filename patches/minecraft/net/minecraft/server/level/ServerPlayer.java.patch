@@ -623,25 +623,93 @@
        ResourceKey<Level> resourcekey = p_9210_.m_46472_();
        ResourceKey<Level> resourcekey1 = this.m_9236_().m_46472_();
        CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
-@@ -830,6 +_,9 @@
+@@ -830,18 +_,23 @@
     }
  
     public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
++      boolean force = startSleepInBed_force.getAndSet(false);
 +      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_9115_);
 +      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++      Either<Player.BedSleepingProblem, Unit> bedResult = null;
 +      if (ret != null) return Either.left(ret);
        Direction direction = this.m_9236_().m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
        if (!this.m_5803_() && this.m_6084_()) {
-          if (!this.m_9236_().m_6042_().f_63858_()) {
-@@ -840,7 +_,7 @@
-             return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
+-         if (!this.m_9236_().m_6042_().f_63858_()) {
+-            return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
++         if (!this.m_9236_().m_6042_().f_63858_() || !this.m_9236_().m_6042_().f_63862_()) {
++            bedResult = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
+          } else if (!this.m_9116_(p_9115_, direction)) {
+-            return Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
++            bedResult = Either.left(Player.BedSleepingProblem.TOO_FAR_AWAY);
+          } else if (this.m_9191_(p_9115_, direction)) {
+-            return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
++            bedResult = Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
-             this.m_9158_(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true);
+-            this.m_9158_(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true);
 -            if (this.m_9236_().m_46461_()) {
+-               return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
++            this.setRespawnPosition(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true, PlayerSpawnChangeEvent.Cause.BED); // CraftBukkit
 +            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
-                return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
++               bedResult = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                 if (!this.m_7500_()) {
+                   double d0 = 8.0D;
+@@ -851,25 +_,43 @@
+                      return p_9062_.m_6935_(this);
+                   });
+                   if (!list.isEmpty()) {
+-                     return Either.left(Player.BedSleepingProblem.NOT_SAFE);
++                     bedResult = Either.left(Player.BedSleepingProblem.NOT_SAFE);
+                   }
+                }
+ 
+-               Either<Player.BedSleepingProblem, Unit> either = super.m_7720_(p_9115_).ifRight((p_9029_) -> {
+-                  this.m_36220_(Stats.f_12969_);
+-                  CriteriaTriggers.f_10583_.m_222618_(this);
+-               });
+-               if (!this.m_284548_().m_143333_()) {
+-                  this.m_5661_(Component.m_237115_("sleep.not_possible"), true);
++               if (bedResult == null) {
++                  bedResult = Either.right(Unit.INSTANCE);
+                }
+-
+-               ((ServerLevel)this.m_9236_()).m_8878_();
+-               return either;
+             }
+          }
+       } else {
+-         return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
+-      }
++         bedResult = Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
++      }
++
++      if (bedResult.left().orElse(null) == Player.BedSleepingProblem.OTHER_PROBLEM) {
++         return bedResult; // return immediately if the result is not bypassable by plugins
++      }
++
++      if (force) {
++         bedResult = Either.right(Unit.INSTANCE);
++      }
++
++      bedResult = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
++      if (bedResult.left().isPresent()) {
++         return bedResult;
++      }
++
++
++      Either<Player.BedSleepingProblem, Unit> either = super.m_7720_(p_9115_).ifRight((unit) -> {
++         this.m_36220_(Stats.f_12969_);
++         CriteriaTriggers.f_10583_.m_222618_(this);
++      });
++      if (!this.m_284548_().m_143333_()) {
++         this.m_5661_(Component.m_237115_("sleep.not_possible"), true);
++      }
++
++      ((ServerLevel) this.f_19853_).m_8878_();
++      return either;
+    }
+ 
+    public void m_5802_(BlockPos p_9190_) {
 @@ -878,6 +_,7 @@
     }
  
@@ -962,6 +1030,7 @@
 +   }
 +
     public void m_9158_(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.f_46428_ : p_9159_, p_9160_, p_9162_)) return;
 +      ServerLevel newWorld = this.f_8924_.m_129880_(p_9159_);
 +      Location newSpawn = (p_9160_ != null) ? CraftLocation.toBukkit(p_9160_, newWorld.getWorld(), p_9161_, 0) : null;
 +
@@ -983,7 +1052,6 @@
 +         p_9161_ = 0.0F;
 +      }
 +      // CraftBukkit end
-+      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.f_46428_ : p_9159_, p_9160_, p_9162_)) return;
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.f_8936_) && p_9159_.equals(this.f_8935_);
           if (p_9163_ && !flag) {

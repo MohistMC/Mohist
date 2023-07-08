@@ -431,7 +431,7 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,172 @@
+@@ -415,76 +_,173 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -457,6 +457,9 @@
 -         optional = Player.m_36130_(serverlevel, blockpos, f, flag, p_11238_);
 -      } else {
 -         optional = Optional.empty();
+-      }
+-
+-      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
 +
 +      org.bukkit.World fromWorld = p_11237_.getBukkitEntity().getWorld();
 +      p_11237_.f_8944_ = false;
@@ -484,14 +487,12 @@
 +                  f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d2.f_82481_, vec3d2.f_82479_) * 57.2957763671875 - 90.0);
 +               }
 +
-+               p_11237_.m_9158_(worldserver1.m_46472_(), blockpos, f1, flag, false);
 +               flag2 = (!flag && flag3);
 +               isBedSpawn = true;
 +               mohist$location = CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
-+            }
-+            if (blockpos != null) {
++            } else if (blockpos != null) {
 +               p_11237_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
-+               p_11237_.m_9158_(Level.f_46428_, null, 0f, false, false);
++               p_11237_.setRespawnPosition(Level.f_46428_, null, 0f, false, false, PlayerSpawnChangeEvent.Cause.RESET);
 +            }
 +         }
 +         if (mohist$location == null) {
@@ -509,10 +510,12 @@
 +         if (!p_11238_) {
 +            p_11237_.reset();
 +         }
-       }
++      }
++      else {
++         mohist$location.setWorld(worldserver1.getWorld());
++      }
 +      // CraftBukkit end
- 
--      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
++
 +      ServerLevel serverlevel1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
        ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
 +      serverplayer.getBukkitEntity().restore(p_11237_.getBukkitEntity());
