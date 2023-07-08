@@ -1,6 +1,5 @@
 package org.bukkit.event.inventory;
 
-import org.bukkit.MinecraftExperimental;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 

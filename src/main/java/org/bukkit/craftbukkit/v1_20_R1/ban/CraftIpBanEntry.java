@@ -1,14 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R1.ban;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.time.Instant;
-import java.util.Date;
-
 import com.google.common.net.InetAddresses;
 import net.minecraft.server.players.IpBanList;
 import net.minecraft.server.players.IpBanListEntry;
 import org.bukkit.BanEntry;
+
+import java.net.InetAddress;
+import java.time.Instant;
+import java.util.Date;
 
 public final class CraftIpBanEntry implements BanEntry<InetAddress> {
     private static final Date minorDate = Date.from(Instant.parse("1899-12-31T04:00:00Z"));

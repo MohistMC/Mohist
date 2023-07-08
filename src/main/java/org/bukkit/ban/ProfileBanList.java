@@ -1,11 +1,12 @@
 package org.bukkit.ban;
 
-import java.util.Date;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Date;
 
 /**
  * A {@link BanList} targeting player profile bans.

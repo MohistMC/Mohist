@@ -63,6 +63,17 @@
           return ItemDisplayContext.f_268648_.apply(this.f_19804_.m_135370_(f_268601_));
        }
  
+@@ -674,8 +_,8 @@
+       private static final byte f_268541_ = -1;
+       public static final int f_268744_ = 1073741824;
+       private static final EntityDataAccessor<Component> f_268542_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135031_);
+-      private static final EntityDataAccessor<Integer> f_268476_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
+-      private static final EntityDataAccessor<Integer> f_268494_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
++      public static final EntityDataAccessor<Integer> f_268476_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
++      public static final EntityDataAccessor<Integer> f_268494_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
+       private static final EntityDataAccessor<Byte> f_268481_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
+       private static final EntityDataAccessor<Byte> f_268636_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
+       private static final IntSet f_276462_ = IntSet.of(f_268542_.m_135015_(), f_268476_.m_135015_(), f_268494_.m_135015_(), f_268481_.m_135015_(), f_268636_.m_135015_());
 @@ -705,7 +_,7 @@
  
        }

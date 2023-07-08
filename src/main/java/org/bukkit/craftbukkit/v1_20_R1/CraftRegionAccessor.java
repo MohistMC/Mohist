@@ -42,7 +42,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;

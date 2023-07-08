@@ -261,8 +261,7 @@ final class PluginClassLoader extends URLClassLoader {
                     }
                 }
             }
-        } catch (ClassFormatError error) {
-        } catch (Exception t) {
+        } catch (IOException t) {
             t.printStackTrace();
         }
 

@@ -26,7 +26,6 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.memory.CraftMemoryKey;
 import org.bukkit.craftbukkit.v1_20_R1.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.DragonFireball;

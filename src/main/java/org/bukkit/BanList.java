@@ -1,9 +1,10 @@
 package org.bukkit;
 
-import java.util.Date;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Date;
+import java.util.Set;
 
 /**
  * A ban list, containing bans of some {@link Type}.

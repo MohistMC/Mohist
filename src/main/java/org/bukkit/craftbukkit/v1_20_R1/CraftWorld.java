@@ -77,7 +77,6 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R1.metadata.BlockMetadataStore;
 import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataTypeRegistry;
-import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
