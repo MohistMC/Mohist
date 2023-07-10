@@ -29,6 +29,10 @@ public class MohistModsInventory implements Container {
         this.owner = owner.getBukkitEntity();
     }
 
+    public AbstractContainerMenu getContainer() {
+        return container;
+    }
+
 
     @Override
     public void clearContent() {

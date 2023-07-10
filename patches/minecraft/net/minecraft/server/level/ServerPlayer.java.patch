@@ -752,7 +752,7 @@
        if (this.m_5803_()) {
           this.m_284548_().m_7726_().m_8394_(this, new ClientboundAnimatePacket(this, 2));
        }
-@@ -939,16 +_,52 @@
+@@ -939,16 +_,53 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -785,6 +785,7 @@
 +            // Mohist start - Custom Container compatible with mods
 +            if (abstractcontainermenu.getBukkitView() == null) {
 +               org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(abstractcontainermenu, this));
++               inventory.getType().setMods(true);
 +               abstractcontainermenu.bukkitView = new CraftInventoryView(this.getBukkitEntity(), inventory, abstractcontainermenu);
 +            }
 +            // Mohist end

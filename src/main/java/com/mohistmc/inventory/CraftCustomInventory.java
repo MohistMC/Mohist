@@ -57,6 +57,7 @@ public class CraftCustomInventory implements InventoryHolder {
     }
 
     @Nullable
+    @Deprecated
     public static InventoryHolder holderFromForge(IItemHandler handler) {
         if (handler == null) {
             return null;
@@ -88,6 +89,7 @@ public class CraftCustomInventory implements InventoryHolder {
     }
 
     @Nullable
+    @Deprecated
     public static Inventory inventoryFromForge(IItemHandler handler) {
         InventoryHolder holder = holderFromForge(handler);
         return holder != null ? holder.getInventory() : null;

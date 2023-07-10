@@ -206,14 +206,16 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         var c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
+        if (c == null) return;
         // Mohist start - Custom Container compatible with mods
+        c.setTitle(containerSupplier.getDisplayName());
         if (c.getBukkitView() == null) {
             org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(c, player));
+            inventory.getType().setMods(true);
             c.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, c);
         }
         c = CraftEventFactory.callInventoryOpenEvent(player, c, false);
         // Mohist end
-        if (c == null) return;
         MenuType<?> type = c.getType();
         PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
         NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);

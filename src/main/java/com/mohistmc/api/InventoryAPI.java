@@ -1,0 +1,20 @@
+package com.mohistmc.api;
+
+import com.mohistmc.inventory.MohistModsInventory;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
+import org.bukkit.inventory.Inventory;
+
+/**
+ * @author Mgazul by MohistMC
+ * @date 2023/7/11 2:39:19
+ */
+public class InventoryAPI {
+
+    public static boolean isMods(Inventory bukkit) {
+        return bukkit.getType().isMods();
+    }
+
+    public static String getModsInvName(Inventory bukkit) {
+        return ((MohistModsInventory)((CraftInventory)bukkit).getInventory()).getContainer().getClass().getSimpleName();
+    }
+}
