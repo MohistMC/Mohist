@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.mohistmc.inventory.MohistModsInventory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.Component;
@@ -41,6 +42,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
 import org.jetbrains.annotations.Nullable;
 
 public class NetworkHooks
@@ -202,8 +206,14 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         var c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
-        if (c == null)
-            return;
+        // Mohist start - Custom Container compatible with mods
+        if (c.getBukkitView() == null) {
+            org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(c, player));
+            c.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, c);
+        }
+        c = CraftEventFactory.callInventoryOpenEvent(player, c, false);
+        // Mohist end
+        if (c == null) return;
         MenuType<?> type = c.getType();
         PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
         NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);

@@ -14,7 +14,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
-@@ -22,10 +_,13 @@
+@@ -22,10 +_,12 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.protocol.Packet;
@@ -22,7 +22,6 @@
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.level.ChunkHolder;
  import net.minecraft.server.level.FullChunkStatus;
 +import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvent;
@@ -50,18 +49,11 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -65,12 +_,23 @@
- import net.minecraft.world.level.redstone.NeighborUpdater;
- import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
- import net.minecraft.world.level.storage.LevelData;
-+import net.minecraft.world.level.storage.PrimaryLevelData;
-+import net.minecraft.world.level.storage.ServerLevelData;
- import net.minecraft.world.level.storage.WritableLevelData;
+@@ -69,8 +_,16 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState;

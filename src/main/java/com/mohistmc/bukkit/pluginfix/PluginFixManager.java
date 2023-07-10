@@ -26,9 +26,6 @@ public class PluginFixManager {
         if (className.endsWith("net.ess3.nms.refl.providers.ReflServerStateProvider")) {
             return helloWorld(clazz, "u", "m_129798_");
         }
-        if (className.equals("com.sk89q.worldedit.bukkit.adapter.Refraction")) {
-            return helloWorld(clazz, "net.minecraft.nbt.ListTag", "hello.World");
-        }
         return clazz;
     }
 

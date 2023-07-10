@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/FollowOwnerGoal.java
-@@ -12,6 +_,10 @@
+@@ -12,6 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  

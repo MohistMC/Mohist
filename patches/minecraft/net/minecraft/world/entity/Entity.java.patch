@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -8,6 +_,7 @@
- import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
- import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
- import java.util.Arrays;
-+import java.util.Collection;
- import java.util.Collections;
- import java.util.HashSet;
- import java.util.List;
 @@ -15,7 +_,9 @@
  import java.util.Optional;
  import java.util.Set;
@@ -45,7 +37,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -118,9 +_,37 @@
+@@ -118,9 +_,36 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -61,7 +53,6 @@
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
