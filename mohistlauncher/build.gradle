@@ -3,12 +3,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-version '1.19.4-45.1.2'
+version '1.19.4-45.1.4'
 
 repositories {
     mavenCentral()
     maven { url 'https://maven.mohistmc.com/' }
-    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
