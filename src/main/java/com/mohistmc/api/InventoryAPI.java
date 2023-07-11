@@ -11,9 +11,6 @@ import org.bukkit.inventory.Inventory;
 public class InventoryAPI {
 
     public static boolean isMods(Inventory bukkit) {
-        if (((CraftInventory)bukkit).getInventory() instanceof MohistModsInventory) {
-            return true;
-        }
         return bukkit.getType().isMods();
     }
 

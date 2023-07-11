@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -2,10 +_,15 @@
+@@ -2,16 +_,91 @@
  
  import java.util.List;
  import net.minecraft.core.NonNullList;
@@ -10,16 +10,17 @@
  import net.minecraft.world.entity.player.StackedContents;
  import net.minecraft.world.item.ItemStack;
 +import net.minecraft.world.item.crafting.Recipe;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryType;
  
  public class TransientCraftingContainer implements CraftingContainer {
     private final NonNullList<ItemStack> f_286951_;
-@@ -13,6 +_,43 @@
+    private final int f_286956_;
     private final int f_286972_;
     private final AbstractContainerMenu f_286998_;
- 
++
 +   // CraftBukkit start - add fields
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private Recipe currentRecipe;
@@ -57,19 +58,37 @@
 +   }
 +   // Mohist end
 +
-    public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
-       this(p_287684_, p_287629_, p_287593_, NonNullList.m_122780_(p_287629_ * p_287593_, ItemStack.f_41583_));
-    }
-@@ -23,6 +_,12 @@
-       this.f_286956_ = p_287591_;
-       this.f_286972_ = p_287609_;
-    }
++   @Override
++   public int m_6893_() {
++      return this.maxStack;
++   }
++
++   public void setMaxStackSize(int size) {
++      this.maxStack = size;
++      this.resultInventory.setMaxStackSize(size);
++   }
++
++   @Override
++   public Location getLocation() {
++      return this.f_286998_ instanceof CraftingMenu ? ((CraftingMenu) this.f_286998_).f_39350_.getLocation() : this.owner.getBukkitEntity().getLocation();
++   }
++
++   @Override
++   public Recipe getCurrentRecipe() {
++      return this.currentRecipe;
++   }
++
++   @Override
++   public void setCurrentRecipe(Recipe currentRecipe) {
++      this.currentRecipe = currentRecipe;
++   }
 +
 +   public TransientCraftingContainer(AbstractContainerMenu container, int i, int j, Player player) {
 +      this(container, i, j);
 +      this.owner = player;
 +   }
 +   // CraftBukkit end
++
  
-    public int m_6643_() {
-       return this.f_286951_.size();
+    public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
+       this(p_287684_, p_287629_, p_287593_, NonNullList.m_122780_(p_287629_ * p_287593_, ItemStack.f_41583_));

@@ -42,6 +42,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
@@ -116,6 +117,7 @@ public class NetworkHooks
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());
         MCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
+        Bukkit.getMessenger().getIncomingChannels().stream().map(ResourceLocation::new).forEach(resourceLocations::add);
         MCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }
 
@@ -206,7 +208,6 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         var c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
-        if (c == null) return;
         // Mohist start - Custom Container compatible with mods
         c.setTitle(containerSupplier.getDisplayName());
         if (c.getBukkitView() == null) {
@@ -214,10 +215,11 @@ public class NetworkHooks
             inventory.getType().setMods(true);
             c.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, c);
         }
-        c = CraftEventFactory.callInventoryOpenEvent(player, c, false);
+        c = CraftEventFactory.callInventoryOpenEvent(player, c);
+        if (c == null) return;
         // Mohist end
         MenuType<?> type = c.getType();
-        PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
+        PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, c.getTitle(), output);
         NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 
         player.containerMenu = c;

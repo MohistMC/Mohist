@@ -11,19 +11,21 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
-@@ -19,6 +_,8 @@
+@@ -19,6 +_,9 @@
  import net.minecraft.ReportedException;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.registries.BuiltInRegistries;
 +import net.minecraft.network.chat.Component;
 +import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
++import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -29,6 +_,13 @@
+@@ -29,6 +_,14 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
++import net.minecraftforge.registries.ForgeRegistries;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
@@ -34,7 +36,7 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -60,6 +_,58 @@
+@@ -60,6 +_,41 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
@@ -50,38 +52,21 @@
 +   // Mohist end
 +   public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-+      if (source != null) {
-+         try {
-+            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
-+      if (destination != null) {
-+         try {
-+            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
++      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
 +   }
 +   private Component title;
 +   public Component getTitle() {
 +      // Mohist: null title -> empty title
 +      if (this.title == null) {
-+         this.title = Component.m_237113_("");
++         if (this.f_38843_ != null) {
++            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.f_38843_);
++            return Component.m_237115_(key.toString());
++         } else {
++            this.title = Component.m_237113_(this.toString());
++         }
 +      }
 +      return this.title;
 +   }
@@ -257,27 +242,7 @@
              break;
           default:
              i = p_279172_.m_41613_();
-@@ -760,6 +_,11 @@
-    }
- 
-    public ItemStack m_142621_() {
-+      // CraftBukkit start
-+      if (this.f_150393_.m_41619_()) {
-+         this.m_142503_(ItemStack.f_41583_);
-+      }
-+      // CraftBukkit end
-       return this.f_150393_;
-    }
- 
-@@ -806,7 +_,21 @@
-    }
- 
-    public int m_182425_() {
-+      // CraftBukkit start
-+      if (this.f_150393_.m_41619_()) {
-+         this.m_142503_(ItemStack.f_41583_);
-+      }
-+      // CraftBukkit end
+@@ -809,4 +_,13 @@
        this.f_182405_ = this.f_182405_ + 1 & 32767;
        return this.f_182405_;
     }

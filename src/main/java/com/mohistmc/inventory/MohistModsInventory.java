@@ -135,7 +135,11 @@ public class MohistModsInventory implements Container {
     }
 
     @Override
-    public Recipe<?> getCurrentRecipe() {
+    public Recipe getCurrentRecipe() {
         return null;
+    }
+
+    @Override
+    public void setCurrentRecipe(Recipe recipe) {
     }
 }
