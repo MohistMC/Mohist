@@ -497,6 +497,9 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public void disablePlugin(@NotNull final Plugin plugin) {
+        if (plugin.getName().equals("mohist")) {
+            return;
+        }
         if (plugin.isEnabled()) {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);

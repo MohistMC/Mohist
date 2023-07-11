@@ -11,7 +11,7 @@ public class RenderData {
 
     public RenderData() {
         this.buffer = new byte[128 * 128];
-        this.cursors = new ArrayList<MapCursor>();
+        this.cursors = new ArrayList<>();
     }
 
 }

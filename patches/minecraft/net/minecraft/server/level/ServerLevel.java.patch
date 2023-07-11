@@ -86,7 +86,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,7 +_,17 @@
+@@ -155,6 +_,15 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -100,10 +100,8 @@
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
  import org.slf4j.Logger;
-+import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-    public static final BlockPos f_8562_ = new BlockPos(100, 50, 0);
 @@ -171,7 +_,7 @@
     private final MinecraftServer f_8548_;
     public final ServerLevelData f_8549_;
@@ -636,7 +634,7 @@
     public MapItemSavedData m_7489_(String p_8785_) {
 -      return this.m_7654_().m_129783_().m_8895_().m_164858_(MapItemSavedData::m_164807_, p_8785_);
 +      // CraftBukkit start
-+      return (MapItemSavedData) this.m_7654_().m_129783_().m_8895_().m_164858_((nbttagcompound) -> {
++      return this.m_7654_().m_129783_().m_8895_().m_164858_((nbttagcompound) -> {
 +         // We only get here when the data file exists, but is not a valid map
 +         MapItemSavedData newMap = MapItemSavedData.m_164807_(nbttagcompound);
 +         newMap.id = p_8785_;

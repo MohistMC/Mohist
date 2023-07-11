@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
 +++ b/net/minecraft/world/level/saveddata/maps/MapItemSavedData.java
-@@ -8,6 +_,7 @@
+@@ -4,10 +_,13 @@
+ import com.google.common.collect.Maps;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Dynamic;
++
++import java.util.ArrayList;
+ import java.util.Collection;
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -8,7 +14,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -27,6 +_,12 @@
+@@ -27,6 +_,13 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.saveddata.SavedData;
@@ -17,11 +23,12 @@
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R1.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_20_R1.map.RenderData;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -50,6 +_,13 @@
+@@ -50,6 +_,14 @@
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
  
@@ -30,12 +37,13 @@
 +   private CraftServer server;
 +   public UUID uniqueId = null;
 +   public String id;
++   private RenderData vanillaRender = new RenderData();
 +   // CraftBukkit end
 +
     private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
        this.f_77890_ = p_164770_;
        this.f_256718_ = p_164768_;
-@@ -59,6 +_,11 @@
+@@ -59,6 +_,12 @@
        this.f_77889_ = p_164772_;
        this.f_77892_ = p_164773_;
        this.m_77762_();
@@ -43,6 +51,7 @@
 +      // CraftBukkit start
 +      mapView = new CraftMapView(this);
 +      server = (CraftServer) org.bukkit.Bukkit.getServer();
++      this.vanillaRender.buffer = f_77891_;
 +      // CraftBukkit end
     }
  
@@ -76,6 +85,14 @@
        });
        int i = p_164808_.m_128451_("xCenter");
        int j = p_164808_.m_128451_("zCenter");
+@@ -89,6 +_,7 @@
+       if (abyte.length == 16384) {
+          mapitemsaveddata.f_77891_ = abyte;
+       }
++      mapitemsaveddata.vanillaRender.buffer = abyte; // Paper
+ 
+       ListTag listtag = p_164808_.m_128437_("banners", 10);
+ 
 @@ -113,6 +_,25 @@
        ResourceLocation.f_135803_.encodeStart(NbtOps.f_128958_, this.f_77887_.m_135782_()).resultOrPartial(f_77895_::error).ifPresent((p_77954_) -> {
           p_77956_.m_128365_("dimension", p_77954_);
@@ -102,45 +119,37 @@
        p_77956_.m_128405_("xCenter", this.f_256718_);
        p_77956_.m_128405_("zCenter", this.f_256789_);
        p_77956_.m_128344_("scale", this.f_77890_);
-@@ -448,7 +_,7 @@
-          this.f_77959_ = p_77970_;
+@@ -464,24 +_,42 @@
+          return new MapItemSavedData.MapPatch(i, j, k, l, abyte);
        }
  
--      private MapItemSavedData.MapPatch m_164814_() {
-+      private MapItemSavedData.MapPatch createPatch(byte[] buffer) { // CraftBukkit
-          int i = this.f_77963_;
-          int j = this.f_77964_;
-          int k = this.f_77965_ + 1 - this.f_77963_;
-@@ -457,7 +_,7 @@
- 
-          for(int i1 = 0; i1 < k; ++i1) {
-             for(int j1 = 0; j1 < l; ++j1) {
--               abyte[i1 + j1 * k] = MapItemSavedData.this.f_77891_[i + i1 + (j + j1) * 128];
-+               abyte[i1 + j1 * k] = buffer[i + i1 + (j + j1) * 128];
-             }
-          }
- 
-@@ -467,17 +_,28 @@
++      private boolean shouldUseVanillaMap() {
++         return mapView.getRenderers().size() == 1 && mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.v1_20_R1.map.CraftMapRenderer.class;
++      }
++
        @Nullable
        Packet<?> m_164815_(int p_164816_) {
           MapItemSavedData.MapPatch mapitemsaveddata$mappatch;
-+         org.bukkit.craftbukkit.v1_20_R1.map.RenderData render = MapItemSavedData.this.mapView.render((CraftPlayer) this.f_77959_.getBukkitEntity()); // CraftBukkit
++         boolean vanillaMaps = shouldUseVanillaMap();
++         RenderData render = !vanillaMaps ? MapItemSavedData.this.mapView.render((CraftPlayer) this.f_77959_.getBukkitEntity()) : MapItemSavedData.this.vanillaRender;; // CraftBukkit
 +
           if (this.f_77962_) {
              this.f_77962_ = false;
--            mapitemsaveddata$mappatch = this.m_164814_();
-+            mapitemsaveddata$mappatch = this.createPatch(render.buffer); // CraftBukkit
++            var colors = MapItemSavedData.this.f_77891_;
++            MapItemSavedData.this.f_77891_ = render.buffer;
+             mapitemsaveddata$mappatch = this.m_164814_();
++            MapItemSavedData.this.f_77891_ = colors;
           } else {
              mapitemsaveddata$mappatch = null;
           }
  
           Collection<MapDecoration> collection;
 -         if (this.f_164813_ && this.f_77967_++ % 5 == 0) {
-+         if ((true || this.f_164813_) && this.f_77967_++ % 5 == 0) { // CraftBukkit - custom maps don't update this yet
++         if (this.f_77967_++ % 5 == 0) { // CraftBukkit - custom maps don't update this yet
              this.f_164813_ = false;
 -            collection = MapItemSavedData.this.f_77894_.values();
 +            // CraftBukkit start
-+            java.util.Collection<MapDecoration> icons = new java.util.ArrayList<MapDecoration>();
++            Collection<MapDecoration> icons = new ArrayList<>();
 +
 +            for (org.bukkit.map.MapCursor cursor : render.cursors) {
 +               if (cursor.isVisible()) {
@@ -152,3 +161,7 @@
           } else {
              collection = null;
           }
+-
+          return collection == null && mapitemsaveddata$mappatch == null ? null : new ClientboundMapItemDataPacket(p_164816_, MapItemSavedData.this.f_77890_, MapItemSavedData.this.f_77892_, collection, mapitemsaveddata$mappatch);
+       }
+ 

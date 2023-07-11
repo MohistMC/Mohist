@@ -5,11 +5,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.mohistmc.MohistMC;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -284,10 +286,41 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
     private CompoundTag internalTag;
-    final Map<String, Tag> unhandledTags = new HashMap<String, Tag>(); // Visible for testing only
+    final Map<String, Tag> unhandledTags = new HashMap<>(); // Visible for testing only
     private CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
     private int version = CraftMagicNumbers.INSTANCE.getDataVersion(); // Internal use only
+
+    private static final Set<String> EXTEND_TAGS = ImmutableSet.of(
+            "Name",
+            "Items",
+            "Schedule",
+            "map_is_scaling",
+            "map",
+            "CustomPotionEffects",
+            "Potion",
+            "CustomPotionColor",
+            "SkullOwner",
+            "SkullProfile",
+            "EntityTag",
+            "BlockEntityTag",
+            "title",
+            "author",
+            "pages",
+            "resolved",
+            "generation",
+            "Fireworks",
+            "StoredEnchantments",
+            "Explosion",
+            "Recipes",
+            "BucketVariantTag",
+            "Charged",
+            "ChargedProjectiles",
+            "Effects",
+            "LodestoneDimension",
+            "LodestonePos",
+            "LodestoneTracked"
+    );
 
     CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
@@ -298,14 +331,14 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         this.locName = meta.locName;
 
         if (meta.lore != null) {
-            this.lore = new ArrayList<String>(meta.lore);
+            this.lore = new ArrayList<>(meta.lore);
         }
 
         this.customModelData = meta.customModelData;
         this.blockData = meta.blockData;
 
-        if (meta.hasEnchants()) {
-            this.enchantments = new LinkedHashMap<Enchantment, Integer>(meta.enchantments);
+        if (meta.enchantments != null) { // Spigot
+            this.enchantments = new LinkedHashMap<>(meta.enchantments);
         }
 
         if (meta.hasAttributeModifiers()) {
@@ -325,9 +358,17 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
 
         this.version = meta.version;
+
+        CompoundTag forgeCaps = meta.getForgeCaps();
+        if (forgeCaps != null) {
+            this.forgeCaps = forgeCaps.copy();
+        }
     }
 
     CraftMetaItem(CompoundTag tag) {
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
         if (tag.contains(DISPLAY.NBT)) {
             CompoundTag display = tag.getCompound(DISPLAY.NBT);
 
@@ -341,7 +382,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
             if (display.contains(LORE.NBT)) {
                 ListTag list = display.getList(LORE.NBT, CraftMagicNumbers.NBT.TAG_STRING);
-                lore = new ArrayList<String>(list.size());
+                lore = new ArrayList<>(list.size());
                 for (int index = 0; index < list.size(); index++) {
                     String line = ValidateUtils.limit( list.getString(index), 8192 ); // Spigot
                     lore.add(line);
@@ -388,13 +429,41 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
     }
 
+    private CompoundTag forgeCaps;
+
+    public void setForgeCaps(CompoundTag forgeCaps) {
+        this.forgeCaps = forgeCaps;
+    }
+
+    public CompoundTag getForgeCaps() {
+        return forgeCaps;
+    }
+
+    public void offerUnhandledTags(CompoundTag nbt) {
+        if (getClass().equals(CraftMetaItem.class)) {
+            for (String s : nbt.getAllKeys()) {
+                if (EXTEND_TAGS.contains(s)) {
+                    this.unhandledTags.put(s, nbt.get(s));
+                }
+            }
+        }
+    }
+
+    public void setUnhandledTags(Map<String, Tag> unhandledTags) {
+        this.unhandledTags.putAll(unhandledTags);
+    }
+
+    public Map<String, Tag> getUnhandledTags() {
+        return unhandledTags;
+    }
+
     static Map<Enchantment, Integer> buildEnchantments(CompoundTag tag, ItemMetaKey key) {
         if (!tag.contains(key.NBT)) {
             return null;
         }
 
         ListTag ench = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
-        Map<Enchantment, Integer> enchantments = new LinkedHashMap<Enchantment, Integer>(ench.size());
+        Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(ench.size());
 
         for (int i = 0; i < ench.size(); i++) {
             String id = ((CompoundTag) ench.get(i)).getString(ENCHANTMENTS_ID.NBT);
@@ -473,7 +542,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         Iterable<?> lore = SerializableMeta.getObject(Iterable.class, map, LORE.BUKKIT, true);
         if (lore != null) {
-            safelyAdd(lore, this.lore = new ArrayList<String>(), true);
+            safelyAdd(lore, this.lore = new ArrayList<>(), true);
         }
 
         Integer customModelData = SerializableMeta.getObject(Integer.class, map, CUSTOM_MODEL_DATA.BUKKIT, true);
@@ -525,7 +594,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 deserializeInternal(internalTag, map);
                 Set<String> keys = internalTag.getAllKeys();
                 for (String key : keys) {
-                    if (!getHandledTags().contains(key)) {
+                    if (!forceDeserializeInternalTags(getHandledTags(), key)) {
                         unhandledTags.put(key, internalTag.get(key));
                     }
                 }
@@ -538,6 +607,19 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         if (nbtMap != null) {
             this.persistentDataContainer.putAll((CompoundTag) CraftNBTTagConfigSerializer.deserialize(nbtMap));
         }
+        if (map.containsKey("forgeCaps")) {
+            Object forgeCaps = map.get("forgeCaps");
+            try {
+                ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(forgeCaps.toString()));
+                this.forgeCaps = NbtIo.readCompressed(buf);
+            } catch (IOException e) {
+               MohistMC.LOGGER.error("Reading forge caps", e);
+            }
+        }
+    }
+
+    private boolean forceDeserializeInternalTags(Set<String> handledTags, Object key) {
+        return !(this instanceof CraftMetaItem) && handledTags.contains((String) key);
     }
 
     void deserializeInternal(CompoundTag tag, Object context) {
@@ -553,7 +635,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             return null;
         }
 
-        Map<Enchantment, Integer> enchantments = new LinkedHashMap<Enchantment, Integer>(ench.size());
+        Map<Enchantment, Integer> enchantments = new LinkedHashMap<>(ench.size());
         for (Map.Entry<?, ?> entry : ench.entrySet()) {
             // Doctor older enchants
             String enchantKey = entry.getKey().toString();
@@ -578,10 +660,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
 
         for (Object obj : mods.keySet()) {
-            if (!(obj instanceof String)) {
+            if (!(obj instanceof String attributeName)) {
                 continue;
             }
-            String attributeName = (String) obj;
             if (Strings.isNullOrEmpty(attributeName)) {
                 continue;
             }
@@ -591,10 +672,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             }
 
             for (Object o : list) {
-                if (!(o instanceof AttributeModifier)) { // this catches null
+                if (!(o instanceof AttributeModifier modifier)) { // this catches null
                     continue;
                 }
-                AttributeModifier modifier = (AttributeModifier) o;
                 Attribute attribute = EnumUtils.getEnum(Attribute.class, attributeName.toUpperCase(Locale.ROOT));
                 if (attribute == null) {
                     continue;
@@ -676,7 +756,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     static void applyEnchantments(Map<Enchantment, Integer> enchantments, CompoundTag tag, ItemMetaKey key) {
-        if (enchantments == null || enchantments.size() == 0) {
+        if (enchantments == null /*|| enchantments.size() == 0*/) { // Spigot - remove size check
             return;
         }
 
@@ -744,6 +824,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Overridden
     boolean isEmpty() {
+        if (this.getForgeCaps() != null && !this.getForgeCaps().isEmpty()) {
+            return false;
+        }
         return !(hasDisplayName() || hasLocalizedName() || hasEnchants() || (lore != null) || hasCustomModelData() || hasBlockData() || hasRepairCost() || !unhandledTags.isEmpty() || !persistentDataContainer.isEmpty() || hideFlag != 0 || isUnbreakable() || hasDamage() || hasAttributeModifiers());
     }
 
@@ -805,14 +888,14 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public Map<Enchantment, Integer> getEnchants() {
-        return hasEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.<Enchantment, Integer>of();
+        return hasEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.of();
     }
 
     @Override
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
         Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
         if (enchantments == null) {
-            enchantments = new LinkedHashMap<Enchantment, Integer>(4);
+            enchantments = new LinkedHashMap<>(4);
         }
 
         if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
@@ -825,7 +908,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Override
     public boolean removeEnchant(Enchantment ench) {
         Preconditions.checkArgument(ench != null, "Enchantment cannot be null");
-        return hasEnchants() && enchantments.remove(ench) != null;
+        // Spigot start
+        boolean b = hasEnchants() && enchantments.remove(ench) != null;
+        if (enchantments != null && enchantments.isEmpty()) {
+            this.enchantments = null;
+        }
+        return b;
+        // Spigot end
     }
 
     @Override
@@ -877,7 +966,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public List<String> getLore() {
-        return this.lore == null ? null : new ArrayList<String>(Lists.transform(this.lore, CraftChatMessage::fromJSONComponent));
+        return this.lore == null ? null : new ArrayList<>(Lists.transform(this.lore, CraftChatMessage::fromJSONComponent));
     }
 
     @Override
@@ -886,7 +975,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             this.lore = null;
         } else {
             if (this.lore == null) {
-                this.lore = new ArrayList<String>(lore.size());
+                this.lore = new ArrayList<>(lore.size());
             } else {
                 this.lore.clear();
             }
@@ -1132,6 +1221,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
      */
     @Overridden
     boolean equalsCommon(CraftMetaItem that) {
+        CompoundTag forgeCaps = that.getForgeCaps();
+        boolean ret;
+        if (this.getForgeCaps() == null)
+            ret = forgeCaps != null && forgeCaps.size() != 0;
+        else
+            ret = forgeCaps == null ? this.getForgeCaps().size() != 0 : !this.getForgeCaps().equals(forgeCaps);
+        if (ret) return false;
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasLocalizedName() ? that.hasLocalizedName() && this.locName.equals(that.locName) : !that.hasLocalizedName())
                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
@@ -1180,6 +1276,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         hash = 61 * hash + (hasDamage() ? this.damage : 0);
         hash = 61 * hash + (hasAttributeModifiers() ? this.attributeModifiers.hashCode() : 0);
         hash = 61 * hash + version;
+        hash = 61 * hash + (this.forgeCaps != null ? this.forgeCaps.hashCode() : 0);
         return hash;
     }
 
@@ -1189,12 +1286,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         try {
             CraftMetaItem clone = (CraftMetaItem) super.clone();
             if (this.lore != null) {
-                clone.lore = new ArrayList<String>(this.lore);
+                clone.lore = new ArrayList<>(this.lore);
             }
             clone.customModelData = this.customModelData;
             clone.blockData = this.blockData;
             if (this.enchantments != null) {
-                clone.enchantments = new LinkedHashMap<Enchantment, Integer>(this.enchantments);
+                clone.enchantments = new LinkedHashMap<>(this.enchantments);
             }
             if (this.hasAttributeModifiers()) {
                 clone.attributeModifiers = LinkedHashMultimap.create(this.attributeModifiers);
@@ -1204,6 +1301,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             clone.unbreakable = this.unbreakable;
             clone.damage = this.damage;
             clone.version = this.version;
+            if (this.getUnhandledTags() != null)
+                clone.setUnhandledTags(getUnhandledTags());
+
+            if (this.getForgeCaps() != null)
+                clone.setForgeCaps(this.getForgeCaps().copy());
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
@@ -1245,7 +1347,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             builder.put(REPAIR.BUKKIT, repairCost);
         }
 
-        List<String> hideFlags = new ArrayList<String>();
+        List<String> hideFlags = new ArrayList<>();
         for (ItemFlag hideFlagEnum : getItemFlags()) {
             hideFlags.add(hideFlagEnum.name());
         }
@@ -1261,7 +1363,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             builder.put(DAMAGE.BUKKIT, damage);
         }
 
-        final Map<String, Tag> internalTags = new HashMap<String, Tag>(unhandledTags);
+        final Map<String, Tag> internalTags = new HashMap<>(unhandledTags);
         serializeInternal(internalTags);
         if (!internalTags.isEmpty()) {
             CompoundTag internal = new CompoundTag();
@@ -1279,6 +1381,16 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         if (!persistentDataContainer.isEmpty()) { // Store custom tags, wrapped in their compound
             builder.put(BUKKIT_CUSTOM_TAG.BUKKIT, persistentDataContainer.serialize());
+        }
+
+        if (this.forgeCaps != null) {
+            try {
+                ByteArrayOutputStream buf = new ByteArrayOutputStream();
+                NbtIo.writeCompressed(this.forgeCaps, buf);
+                builder.put("forgeCaps", Base64.getEncoder().encodeToString(buf.toByteArray()));
+            } catch (IOException e) {
+                Logger.getLogger(CraftMetaItem.class.getName()).log(Level.SEVERE, null, e);
+            }
         }
 
         return builder;
