@@ -106,7 +106,7 @@ public class ItemsCommand extends Command {
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
         // item name and i18n name
         player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType());
-        player.sendMessage(ChatColor.GRAY + "Name(Translate) - " + ChatColor.GREEN + nmsItem.getDisplayName());
+        player.sendMessage(ChatColor.GRAY + "Name(Translate) - " + ChatColor.GREEN + nmsItem.getDisplayName().getString());
         player.sendMessage(ChatColor.GRAY + "ForgeItem - " + itemStack.getType().isForgeBlock);
         player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + itemStack.getType().isForgeItem);
         player.sendMessage(ChatColor.GRAY + "NBT(CraftBukkit) - " + ItemAPI.getNBTAsString(itemStack));
