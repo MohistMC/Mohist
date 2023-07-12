@@ -431,7 +431,7 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,173 @@
+@@ -415,76 +_,170 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -457,9 +457,6 @@
 -         optional = Player.m_36130_(serverlevel, blockpos, f, flag, p_11238_);
 -      } else {
 -         optional = Optional.empty();
--      }
--
--      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
 +
 +      org.bukkit.World fromWorld = p_11237_.getBukkitEntity().getWorld();
 +      p_11237_.f_8944_ = false;
@@ -510,12 +507,10 @@
 +         if (!p_11238_) {
 +            p_11237_.reset();
 +         }
-+      }
-+      else {
-+         mohist$location.setWorld(worldserver1.getWorld());
-+      }
+       }
 +      // CraftBukkit end
-+
+ 
+-      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
 +      ServerLevel serverlevel1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
        ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
 +      serverplayer.getBukkitEntity().restore(p_11237_.getBukkitEntity());

@@ -122,6 +122,9 @@
     private ItemStack(@Nullable Void p_282703_) {
 +      super(ItemStack.class, true);
        this.f_41589_ = null;
+-   }
+-
+-   private ItemStack(CompoundTag p_41608_) {
 +      this.delegate = null;
 +   }
 +
@@ -154,9 +157,9 @@
 +      if (this.m_41720_().isDamageable(this)) {
 +         this.m_41721_(this.m_41773_());
 +      }
-    }
- 
-    private ItemStack(CompoundTag p_41608_) {
++   }
++
++   public ItemStack(CompoundTag p_41608_) {
 +      super(ItemStack.class, true);
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
