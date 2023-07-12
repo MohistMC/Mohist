@@ -282,12 +282,11 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -323,6 +_,8 @@
+@@ -323,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
 +      if (!p_11277_.getBukkitEntity().isPersistent()) return; // CraftBukkit
-+      if (p_11277_.f_8906_ == null) return; // ? who add? Mohist TODO
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
