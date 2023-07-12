@@ -32,7 +32,7 @@ public interface CraftRecipe extends Recipe {
 
         stack.getItems();
         if (requireNotEmpty) {
-            Preconditions.checkArgument(stack.itemStacks.length != 0, "Recipe requires at least one non-air choice");
+            Preconditions.checkArgument(stack.getItems().length != 0, "Recipe requires at least one non-air choice");
         }
 
         return stack;
@@ -41,21 +41,21 @@ public interface CraftRecipe extends Recipe {
     public static RecipeChoice toBukkit(Ingredient list) {
         list.getItems();
 
-        if (list.itemStacks.length == 0) {
+        if (list.getItems().length == 0) {
             return null;
         }
 
         if (list.exact) {
-            List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.itemStacks.length);
-            for (net.minecraft.world.item.ItemStack i : list.itemStacks) {
+            List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.getItems().length);
+            for (net.minecraft.world.item.ItemStack i : list.getItems()) {
                 choices.add(CraftItemStack.asBukkitCopy(i));
             }
 
             return new RecipeChoice.ExactChoice(choices);
         } else {
 
-            List<org.bukkit.Material> choices = new ArrayList<>(list.itemStacks.length);
-            for (net.minecraft.world.item.ItemStack i : list.itemStacks) {
+            List<org.bukkit.Material> choices = new ArrayList<>(list.getItems().length);
+            for (net.minecraft.world.item.ItemStack i : list.getItems()) {
                 choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
             }
 
