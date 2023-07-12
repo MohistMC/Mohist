@@ -164,7 +164,7 @@
              }
           }
        } else {
-@@ -317,15 +_,39 @@
+@@ -317,15 +_,40 @@
        }
     }
  
@@ -189,15 +189,16 @@
 +         // CraftBukkit start - fire FurnaceSmeltEvent
 +         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
 +         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++         if (burn$world.get() != null && burn$blockposition.get() != null) {
++            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(burn$world.getAndSet(null), burn$blockposition.getAndSet(null)), source, result);
++            Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
 +
-+         FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(burn$world.getAndSet(null), burn$blockposition.getAndSet(null)), source, result);
-+         Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
++            if (furnaceSmeltEvent.isCancelled()) {
++               return false;
++            }
 +
-+         if (furnaceSmeltEvent.isCancelled()) {
-+            return false;
++            result = furnaceSmeltEvent.getResult();
 +         }
-+
-+         result = furnaceSmeltEvent.getResult();
 +         itemstack1 = CraftItemStack.asNMSCopy(result);
 +
 +         if (!itemstack1.m_41619_()) {
