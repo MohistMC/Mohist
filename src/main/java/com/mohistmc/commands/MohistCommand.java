@@ -20,7 +20,6 @@ package com.mohistmc.commands;
 
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.plugins.itemedit.ItemCommand;
 import net.minecraft.DetectedVersion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -39,12 +38,12 @@ import java.util.Locale;
 
 public class MohistCommand extends Command {
 
-    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "item", "reload", "version", "channels", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "reload", "version", "channels", "speed");
 
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|lang|item|reload|version]";
+        this.usageMessage = "/mohist [mods|playermods|lang|reload|version]";
         this.setPermission("mohist.command.mohist");
     }
 
@@ -57,10 +56,6 @@ public class MohistCommand extends Command {
                     list.add(param);
                 }
             }
-        }
-
-        if (args.length == 2 && args[0].equals("item")) {
-            list.add("info");
         }
 
         return list;
@@ -96,17 +91,6 @@ public class MohistCommand extends Command {
                     sender.sendMessage(ChatColor.GREEN + String.valueOf(PlayerAPI.getModSize(player)) + " " + PlayerAPI.getModlist(player));
                 } else {
                     sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
-                }
-            }
-            case "item" -> {
-                if (args.length == 1) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
-                    return false;
-                }
-                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))) {
-                    ItemCommand.info(sender);
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                 }
             }
             case "reload" -> {

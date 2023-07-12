@@ -4400,15 +4400,16 @@ public enum Material implements Keyed, Translatable {
     private String modName;
     private NamespacedKey keyForge;
     public boolean isForgeBlock = false;
+    public boolean isForgeItem = false;
 
     private Material(final int id) {
         this(id, 64);
     }
 
     // Mohist start - constructor used to set if the Material is a block or not
-    private Material(final int id, boolean flag) {
+    private Material(final int id, boolean isForgeBlock) {
         this(id, 64);
-        this.isForgeBlock = flag;
+        this.isForgeBlock = isForgeBlock;
     }
     // Mohist end
 
@@ -11011,12 +11012,12 @@ public enum Material implements Keyed, Translatable {
                 material.blockID = id;
                 material.isForgeBlock = true;
             }else {
-                material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
+                material = MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
             }
             BY_NAME.put(materialName, material);
             return material;
         } else { // Forge Items
-            Material material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
+            Material material = MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
             BY_NAME.put(materialName, material);
             return material;
         }
@@ -11030,13 +11031,14 @@ public enum Material implements Keyed, Translatable {
                 material.blockID = id;
                 material.isForgeBlock = true;
             }else {
-                material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, true, modName});
+                material = MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, true, modName});
             }
             BY_NAME.put(materialName, material);
             return material;
         } else { // Forge Items
-            Material material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, false, modName});
+            Material material = MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, false, modName});
             BY_NAME.put(materialName, material);
+            material.isForgeItem = true;
             return material;
         }
     }

@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.GetPluginListCommand;
+import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.plugins.MohistPlugin;
@@ -69,6 +70,7 @@ public class MohistConfig {
         commands.put("dump", new DumpCommand("dump"));
         commands.put("plugin", new PluginCommand("plugin"));
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
+        commands.put("items", new ItemsCommand("items"));
 
         MohistPlugin.registerCommands(commands);
 
