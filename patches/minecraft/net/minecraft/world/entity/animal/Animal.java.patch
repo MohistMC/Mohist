@@ -16,29 +16,22 @@
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
        super(p_27557_, p_27558_);
-@@ -67,14 +_,18 @@
- 
-    }
- 
--   public boolean m_6469_(DamageSource p_27567_, float p_27568_) {
--      if (this.m_6673_(p_27567_)) {
-+   /* CraftBukkit start
-+   // Function disabled as it has no special function anymore after
-+   // setSitting is disabled.
-+   public boolean hurt(DamageSource p_27567_, float p_27568_) {
-+      if (this.isInvulnerableTo(p_27567_)) {
+@@ -71,8 +_,13 @@
+       if (this.m_6673_(p_27567_)) {
           return false;
        } else {
 -         this.f_27554_ = 0;
 -         return super.m_6469_(p_27567_, p_27568_);
-+         this.inLove = 0;
-+         return super.hurt(p_27567_, p_27568_);
++         // CraftBukkit start
++         boolean result = super.m_6469_(p_27567_, p_27568_);
++         if (result) {
++            this.f_27554_ = 0;
++         }
++         return result;
++         // CraftBukkit end
        }
     }
-+   // CraftBukkit end */
  
-    public float m_5610_(BlockPos p_27573_, LevelReader p_27574_) {
-       return p_27574_.m_8055_(p_27573_.m_7495_()).m_60713_(Blocks.f_50440_) ? 10.0F : p_27574_.m_220419_(p_27573_);
 @@ -159,10 +_,17 @@
     }
  
