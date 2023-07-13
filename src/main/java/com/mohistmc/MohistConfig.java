@@ -141,12 +141,17 @@ public class MohistConfig {
     public static String mohist_lang;
     public static String mohist_vanilla_lang;
     public static boolean check_update;
+    public static int maximumRepairCost;
+    public static boolean enchantment_fix;
+    public static int max_enchantment_level;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
         mohist_vanilla_lang = getString("mohist.vanilla_lang", "en_us");
         check_update = getBoolean("mohist.check_update", true);
+        maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
+        enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
+        max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
     }
-
 }

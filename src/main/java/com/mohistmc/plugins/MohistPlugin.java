@@ -10,6 +10,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -53,6 +54,9 @@ public class MohistPlugin {
     public static void registerListener(Event event) {
         if (event instanceof InventoryClickEvent inventoryClickEvent) {
             InventoryClickListener.init(inventoryClickEvent);
+        }
+        if (event instanceof PrepareAnvilEvent prepareAnvilEvent) {
+            EnchantmentFix.anvilListener(prepareAnvilEvent);
         }
 
     }
