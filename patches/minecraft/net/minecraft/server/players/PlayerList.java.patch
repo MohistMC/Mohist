@@ -294,8 +294,8 @@
  
     }
  
--   public void m_11286_(ServerPlayer p_11287_) {
-+   public String remove(ServerPlayer p_11287_) { // CraftBukkit - return string
++   public String quitMessage;
+    public void m_11286_(ServerPlayer p_11287_) {
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.m_284548_();
        p_11287_.m_36220_(Stats.f_12989_);
@@ -313,11 +313,10 @@
 +      p_11287_.m_9240_(); // SPIGOT-924
 +      // CraftBukkit end
 +
-+
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -355,41 +_,94 @@
+@@ -355,6 +_,7 @@
        serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.m_8960_().m_135978_();
        this.f_11196_.remove(p_11287_);
@@ -325,15 +324,11 @@
        this.f_11195_.m_129901_().m_136305_(p_11287_);
        UUID uuid = p_11287_.m_20148_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
-       if (serverplayer == p_11287_) {
-          this.f_11197_.remove(uuid);
--         this.f_11202_.remove(uuid);
--         this.f_11203_.remove(uuid);
--      }
--
+@@ -364,32 +_,85 @@
+          this.f_11203_.remove(uuid);
+       }
+ 
 -      this.m_11268_(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_())));
-+      }
-+
 +      // CraftBukkit start
 +      ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_()));
 +      for (ServerPlayer player : f_11196_) {
@@ -347,8 +342,7 @@
 +      // This removes the scoreboard (and player reference) for the specific player in the manager
 +      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
 +      // CraftBukkit end
-+
-+      return playerQuitEvent.getQuitMessage(); // CraftBukkit
++      quitMessage = playerQuitEvent.getQuitMessage();
     }
  
 -   @Nullable
