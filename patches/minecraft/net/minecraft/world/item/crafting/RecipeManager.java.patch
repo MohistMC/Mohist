@@ -20,11 +20,12 @@
  import org.slf4j.Logger;
  
  public class RecipeManager extends SimpleJsonResourceReloadListener {
-@@ -37,9 +_,17 @@
+@@ -37,24 +_,56 @@
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
++   public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> recipesCB = ImmutableMap.of(); // CraftBukkit  // Mohist use obf name
  
 +   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
 +   @Deprecated
@@ -38,7 +39,17 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -49,9 +_,18 @@
+       this.f_44008_ = false;
++
++      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
++      Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map1 = Maps.newHashMap();
++      for (RecipeType<?> recipeType : BuiltInRegistries.f_256990_) {
++         map1.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      }
++      // CraftBukkit end
++
+       Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
+       ImmutableMap.Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -58,11 +69,23 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -64,7 +_,7 @@
++
++            // CraftBukkit start
++            (map1.computeIfAbsent(recipe.m_6671_(), (recipes) -> {
++               return new Object2ObjectLinkedOpenHashMap<>();
++               // CraftBukkit end
++            })).put(resourcelocation, recipe);
+             builder.put(resourcelocation, recipe);
+          } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
+             f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+@@ -64,7 +_,10 @@
        this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
           return p_44033_.getValue().build();
        }));
 -      this.f_199900_ = builder.build();
++      this.recipesCB = map1.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (entry1) -> {
++         return entry1.getValue(); // CraftBukkit
++      }));
 +      this.f_199900_ = Maps.newHashMap(builder.build()); // CraftBukkit
        f_44006_.info("Loaded {} recipes", (int)map.size());
     }
@@ -86,7 +109,7 @@
     }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
-@@ -189,4 +_,47 @@
+@@ -189,4 +_,58 @@
     public interface CachedCheck<C extends Container, T extends Recipe<C>> {
        Optional<T> m_213657_(C p_220280_, Level p_220281_);
     }
@@ -110,10 +133,13 @@
 +         map0 = ((Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>) map);
 +      }
 +
-+      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_())) {
++      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> craftbukkit = this.recipesCB.get(irecipe.m_6671_()); // CraftBukkit
++
++      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_()) || craftbukkit.containsKey(irecipe.m_6423_())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
 +      } else {
 +         map0.putAndMoveToFirst(irecipe.m_6423_(), irecipe);
++         craftbukkit.putAndMoveToFirst(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
 +         this.f_199900_.put(irecipe.m_6423_(), irecipe);
 +      }
 +   }
@@ -123,11 +149,19 @@
 +      for (RecipeType<?> recipeType : ForgeRegistries.RECIPE_TYPES) {
 +         this.f_44007_.put(recipeType, ImmutableMap.of());
 +      }
++
++      this.recipesCB = Maps.newHashMap();
++      for (RecipeType<?> recipeType : BuiltInRegistries.f_256990_) {
++         this.recipesCB.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
++      }
 +      this.f_199900_ = new HashMap<>();
 +   }
 +
 +   public boolean removeRecipe(ResourceLocation mcKey) {
 +      for (Map<ResourceLocation, Recipe<?>> recipes : f_44007_.values()) {
++         recipes.remove(mcKey);
++      }
++      for (Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> recipes : recipesCB.values()) {
 +         recipes.remove(mcKey);
 +      }
 +      return f_199900_.remove(mcKey) != null;
