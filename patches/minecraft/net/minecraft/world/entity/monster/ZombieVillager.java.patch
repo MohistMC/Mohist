@@ -72,13 +72,14 @@
           }
  
        } else {
-@@ -189,6 +_,13 @@
+@@ -188,7 +_,14 @@
+    }
  
     private void m_34398_(ServerLevel p_34399_) {
-       Villager villager = this.m_21406_(EntityType.f_20492_, false);
 +      // CraftBukkit start
-+      Villager entityvillager = (Villager) this.convertTo(EntityType.f_20492_, false, EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED);
-+      if (entityvillager == null) {
++      this.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED); // Mohist
+       Villager villager = this.m_21406_(EntityType.f_20492_, false);
++      if (villager == null) {
 +         ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
 +         return;
 +      }

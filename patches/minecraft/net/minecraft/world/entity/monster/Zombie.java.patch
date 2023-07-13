@@ -134,7 +134,7 @@
           }
        }
  
-@@ -375,7 +_,7 @@
+@@ -375,11 +_,12 @@
  
     public boolean m_214076_(ServerLevel p_219160_, LivingEntity p_219161_) {
        boolean flag = super.m_214076_(p_219160_, p_219161_);
@@ -143,11 +143,16 @@
           if (p_219160_.m_46791_() != Difficulty.HARD && this.f_19796_.m_188499_()) {
              return flag;
           }
+ 
++         villager.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION); // Mohist
+          ZombieVillager zombievillager = villager.m_21406_(EntityType.f_20530_, false);
+          if (zombievillager != null) {
+             zombievillager.m_6518_(p_219160_, p_219160_.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
 @@ -387,6 +_,7 @@
              zombievillager.m_34391_(villager.m_35517_().m_262795_(NbtOps.f_128958_));
              zombievillager.m_34411_(villager.m_6616_().m_45388_());
              zombievillager.m_34373_(villager.m_7809_());
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
              if (!this.m_20067_()) {
                 p_219160_.m_5898_((Player)null, 1026, this.m_20183_(), 0);
              }
@@ -155,8 +160,8 @@
        return flag;
     }
  
-+   public static ZombieVillager zombifyVillager(ServerLevel worldserver, Villager entityvillager, BlockPos blockPosition, boolean silent, SpawnReason custom) {
-+      ZombieVillager zombievillager = entityvillager.m_21406_(EntityType.f_20530_, false);
++   public static ZombieVillager zombifyVillager(ServerLevel worldserver, Villager entityvillager, BlockPos blockPosition, boolean silent, SpawnReason spawnReason) {
++      ZombieVillager zombievillager = entityvillager.convertTo(EntityType.f_20530_, false, EntityTransformEvent.TransformReason.INFECTION, spawnReason);
 +      if (zombievillager != null) {
 +         zombievillager.m_6518_(worldserver, worldserver.m_6436_(zombievillager.m_20183_()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag) null);
 +         zombievillager.m_34375_(entityvillager.m_7141_());
