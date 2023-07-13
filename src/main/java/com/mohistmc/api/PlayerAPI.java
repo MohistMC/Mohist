@@ -6,13 +6,15 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.net.SocketAddress;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerAPI {
 
     public static Map<SocketAddress, Integer> mods = new ConcurrentHashMap<>();
-    public static Map<SocketAddress, String> modlist = new ConcurrentHashMap<>();
+    public static Map<SocketAddress, List<String>> modlist = new ConcurrentHashMap<>();
 
     /**
      * Get Player ping
@@ -37,12 +39,12 @@ public class PlayerAPI {
         return mods.get(socketAddress) == null ? 0 : mods.get(socketAddress) - 2;
     }
 
-    public static String getModlist(Player player) {
+    public static List<String> getModlist(Player player) {
         SocketAddress socketAddress = getRemoteAddress(player);
-        return modlist.get(socketAddress) == null ? "null" : modlist.get(socketAddress);
+        return modlist.get(socketAddress) == null ? Collections.emptyList() : modlist.get(socketAddress);
     }
 
-    public static Boolean hasMod(Player player, String modid) {
+    public static boolean hasMod(Player player, String modid) {
         return getModlist(player).contains(modid);
     }
 

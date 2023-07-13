@@ -22,7 +22,7 @@
     private final AbstractContainerMenu f_286998_;
 +
 +   // CraftBukkit start - add fields
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<>();
 +   private Recipe currentRecipe;
 +   public Container resultInventory;
 +   public Player owner;

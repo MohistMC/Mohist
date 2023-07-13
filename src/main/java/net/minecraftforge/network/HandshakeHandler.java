@@ -6,6 +6,8 @@
 package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
+import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.plugins.PlayerModsCheck;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.core.Registry;
@@ -239,6 +241,9 @@ public class HandshakeHandler
     void handleClientModListOnServer(HandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
+        if (PlayerModsCheck.init(clientModList.getModList())) {
+            return;
+        }
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
                 .set(new ConnectionData(clientModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), clientModList.getChannels()));
@@ -249,6 +254,8 @@ public class HandshakeHandler
             c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
             return;
         }
+        PlayerAPI.mods.put(c.get().getNetworkManager().address, clientModList.getModList().size());
+        PlayerAPI.modlist.put(c.get().getNetworkManager().address, clientModList.getModList());
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
 

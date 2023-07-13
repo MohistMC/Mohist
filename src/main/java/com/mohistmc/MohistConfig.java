@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,9 +123,9 @@ public class MohistConfig {
         return config.getInt(path, config.getInt(path));
     }
 
-    private static <T> List<?> getList(String path, T def) {
-        config.addDefault(path, def);
-        return config.getList(path, config.getList(path));
+    private static <T> List getList(String path, T def) {
+        config.addDefault( path, def );
+        return (List<T>) config.getList( path, config.getList( path ) );
     }
 
     private static String getString(String path, String def) {
@@ -145,6 +146,9 @@ public class MohistConfig {
     public static boolean enchantment_fix;
     public static int max_enchantment_level;
 
+    public static boolean player_modlist_blacklist_enable;
+    public static List<String> player_modlist_blacklist;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -153,5 +157,7 @@ public class MohistConfig {
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
+        player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
+        player_modlist_blacklist = getList("player_modlist_blacklist.list", Collections.emptyList());
     }
 }
