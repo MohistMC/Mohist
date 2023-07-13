@@ -105,7 +105,7 @@ public class CraftInventoryView extends InventoryView {
         Preconditions.checkArgument(view != null, "InventoryView cannot be null");
         Preconditions.checkArgument(title != null, "Title cannot be null");
         Preconditions.checkArgument(view.getPlayer() instanceof Player, "NPCs are not currently supported for this function");
-        Preconditions.checkArgument(view.getTopInventory().getType().isCreatable(), "Only creatable inventories can have their title changed");
+        Preconditions.checkArgument(view.getTopInventory().getType().isCreatable(), "Only creatable inventories can have their title changed: " + view.getTopInventory().getType());
 
         final ServerPlayer entityPlayer = (ServerPlayer) ((CraftHumanEntity) view.getPlayer()).getHandle();
         final int containerId = entityPlayer.containerMenu.containerId;
