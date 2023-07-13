@@ -24,7 +24,7 @@
  
     protected Animal(EntityType<? extends Animal> p_27557_, Level p_27558_) {
        super(p_27557_, p_27558_);
-@@ -162,10 +_,17 @@
+@@ -162,9 +_,16 @@
     }
  
     public void m_27595_(@Nullable Player p_27596_) {
@@ -38,11 +38,10 @@
 +      // CraftBukkit end
        if (p_27596_ != null) {
           this.f_27555_ = p_27596_.m_142081_();
++         this.breedItem = p_27596_.m_150109_().m_36056_(); // CraftBukkit
        }
-+      this.breedItem = p_27596_.m_150109_().m_36056_(); // CraftBukkit
  
        this.f_19853_.m_7605_(this, (byte)18);
-    }
 @@ -208,12 +_,32 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {

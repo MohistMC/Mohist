@@ -91,7 +91,7 @@
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
                       CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -98,7 +_,23 @@
+@@ -98,7 +_,24 @@
     public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
  
@@ -106,12 +106,13 @@
 +      mohist$itemstack.set(itemstack);
 +      return emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, container);
 +   }
++
++   @Deprecated //Forge: use the ItemStack sensitive version
     public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
 +      return this.emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null);
 +   }
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {
-+      // CraftBukkit end
        if (!(this.f_40687_ instanceof FlowingFluid)) {
           return false;
        } else {
