@@ -1,4 +1,4 @@
-package org.example;
+package com.mohistmc.plugins;
 
 import com.mohistmc.api.WorldAPI;
 import com.mohistmc.plugins.world.WorldDate;

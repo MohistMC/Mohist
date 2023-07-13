@@ -1,6 +1,7 @@
 package com.mohistmc;
 
 import com.google.common.base.Throwables;
+import com.mohistmc.api.ServerAPI;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.GetPluginListCommand;
@@ -149,6 +150,9 @@ public class MohistConfig {
     public static boolean player_modlist_blacklist_enable;
     public static List<String> player_modlist_blacklist;
 
+    public static boolean server_modlist_whitelist_enable;
+    public static String server_modlist_whitelist;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -159,5 +163,7 @@ public class MohistConfig {
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
         player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
         player_modlist_blacklist = getList("player_modlist_blacklist.list", Collections.emptyList());
+        server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable" , false);
+        server_modlist_whitelist = getString("server_modlist_whitelist.list" , ServerAPI.modlists_All.toString().replace(", mohist", ""));
     }
 }

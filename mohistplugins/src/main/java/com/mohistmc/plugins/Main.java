@@ -1,4 +1,4 @@
-package org.example;
+package com.mohistmc.plugins;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
