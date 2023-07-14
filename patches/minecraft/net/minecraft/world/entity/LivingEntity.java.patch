@@ -1635,7 +1635,7 @@
  
     protected float m_6431_(Pose p_21131_, EntityDimensions p_21132_) {
 -      return super.m_6380_(p_21131_, p_21132_);
-+      return super.getEyeHeightForge(p_21131_, p_21132_);
++      return this.getEyeHeightForge(p_21131_, p_21132_);
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
