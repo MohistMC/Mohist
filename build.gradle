@@ -16,8 +16,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.6,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.6,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.11,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.11,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -58,8 +58,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.20.1-47.1.3'
-    FORGE_VERSION = '47.1.3'
+    VERSION = '1.20.1-47.1.8'
+    FORGE_VERSION = '47.1.8'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -486,7 +486,7 @@ project(':mohist') {
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
 
-    applyPatches { verbose = true }
+    applyPatches { level 'WARNING' }
 
     sourceSets {
         main {

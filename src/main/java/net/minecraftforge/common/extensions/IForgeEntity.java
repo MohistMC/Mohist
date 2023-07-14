@@ -9,7 +9,9 @@ import java.util.Collection;
 import java.util.function.BiPredicate;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
@@ -26,9 +28,11 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
@@ -423,5 +427,21 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default boolean hasCustomOutlineRendering(Player player)
     {
         return false;
+    }
+
+    default EntityDimensions getDimensionsForge(Pose pose)
+    {
+        EntityDimensions size = self().getDimensions(pose);
+        EntityEvent.Size evt = new EntityEvent.Size(self(), pose, size);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.getNewSize();
+    }
+
+    default float getEyeHeightForge(Pose pose, EntityDimensions size)
+    {
+        float eyeHeight = self().getEyeHeightAccess(pose, size);
+        EntityEvent.EyeHeight evt = new EntityEvent.EyeHeight(self(), pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.getNewEyeHeight();
     }
 }

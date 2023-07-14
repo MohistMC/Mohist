@@ -120,6 +120,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.level.AlterGroundEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.BlockEvent.BlockToolModificationEvent;
 import net.minecraftforge.event.level.BlockEvent.CreateFluidSourceEvent;
@@ -659,9 +660,20 @@ public class ForgeEventFactory
         return event.getCharge();
     }
 
+    public static ProjectileImpactEvent.ImpactResult onProjectileImpactResult(Projectile projectile, HitResult ray)
+    {
+        ProjectileImpactEvent event = new ProjectileImpactEvent(projectile, ray);
+
+        // Remove this when the event is no longer cancelable
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return ProjectileImpactEvent.ImpactResult.SKIP_ENTITY;
+
+        return event.getImpactResult();
+    }
+
     public static boolean onProjectileImpact(Projectile projectile, HitResult ray)
     {
-        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(projectile, ray));
+        return onProjectileImpactResult(projectile, ray) != ProjectileImpactEvent.ImpactResult.DEFAULT;
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table)
@@ -718,6 +730,13 @@ public class ForgeEventFactory
         return event;
     }
 
+    public static BlockState alterGround(LevelSimulatedReader level, RandomSource random, BlockPos pos, BlockState altered)
+    {
+        AlterGroundEvent event = new AlterGroundEvent(level, random, pos, altered);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewAlteredState();
+    }
+
     public static void fireChunkTicketLevelUpdated(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder)
     {
         if (oldTicketLevel != newTicketLevel)
@@ -762,20 +781,6 @@ public class ForgeEventFactory
     {
         RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment, context);
         MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions size, float eyeHeight)
-    {
-        EntityEvent.Size evt = new EntityEvent.Size(entity, pose, size, eyeHeight);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt;
-    }
-
-    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float newEyeHeight)
-    {
-        EntityEvent.Size evt = new EntityEvent.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt;
     }
 
     public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)

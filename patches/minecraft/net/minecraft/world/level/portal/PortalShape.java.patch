@@ -111,7 +111,7 @@
     public boolean m_77744_() {
        return this.m_77698_() && this.f_77689_ == this.f_77692_ * this.f_77691_;
     }
-@@ -201,6 +_,8 @@
+@@ -201,13 +_,15 @@
        return new Vec3(d2, d4, d3);
     }
  
@@ -120,6 +120,14 @@
     public static PortalInfo m_257966_(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_) {
        BlockPos blockpos = p_259931_.f_124348_;
        BlockState blockstate = p_259301_.m_8055_(blockpos);
+       Direction.Axis direction$axis = blockstate.m_61145_(BlockStateProperties.f_61364_).orElse(Direction.Axis.X);
+       double d0 = (double)p_259931_.f_124349_;
+       double d1 = (double)p_259931_.f_124350_;
+-      EntityDimensions entitydimensions = p_259166_.m_6972_(p_259166_.m_20089_());
++      EntityDimensions entitydimensions = p_259166_.getDimensionsForge(p_259166_.m_20089_());
+       int i = p_259901_ == direction$axis ? 0 : 90;
+       Vec3 vec3 = p_259901_ == direction$axis ? p_260043_ : new Vec3(p_260043_.f_82481_, p_260043_.f_82480_, -p_260043_.f_82479_);
+       double d2 = (double)entitydimensions.f_20377_ / 2.0D + (d0 - (double)entitydimensions.f_20377_) * p_259630_.m_7096_();
 @@ -216,7 +_,15 @@
        boolean flag = direction$axis == Direction.Axis.X;
        Vec3 vec31 = new Vec3((double)blockpos.m_123341_() + (flag ? d2 : d4), (double)blockpos.m_123342_() + d3, (double)blockpos.m_123343_() + (flag ? d4 : d2));
