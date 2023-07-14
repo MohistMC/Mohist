@@ -1,0 +1,67 @@
+--- a/net/minecraft/client/particle/FireworkParticles.java
++++ b/net/minecraft/client/particle/FireworkParticles.java
+@@ -172,7 +_,7 @@
+             } else {
+                for(int i = 0; i < this.f_106752_.size(); ++i) {
+                   CompoundTag compoundtag = this.f_106752_.m_128728_(i);
+-                  if (FireworkRocketItem.Shape.m_41237_(compoundtag.m_128445_("Type")) == FireworkRocketItem.Shape.LARGE_BALL) {
++                  if (FireworkRocketItem.Shape.getShape(compoundtag) == FireworkRocketItem.Shape.LARGE_BALL) {
+                      flag1 = true;
+                      break;
+                   }
+@@ -192,7 +_,7 @@
+          if (this.f_106754_ % 2 == 0 && this.f_106752_ != null && this.f_106754_ / 2 < this.f_106752_.size()) {
+             int k = this.f_106754_ / 2;
+             CompoundTag compoundtag1 = this.f_106752_.m_128728_(k);
+-            FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.m_41237_(compoundtag1.m_128445_("Type"));
++            FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.getShape(compoundtag1);
+             boolean flag4 = compoundtag1.m_128471_("Trail");
+             boolean flag2 = compoundtag1.m_128471_("Flicker");
+             int[] aint = compoundtag1.m_128465_("Colors");
+@@ -201,6 +_,10 @@
+                aint = new int[]{DyeColor.BLACK.m_41070_()};
+             }
+ 
++            var factory = net.minecraftforge.client.FireworkShapeFactoryRegistry.get(fireworkrocketitem$shape);
++            if (factory != null)
++               factory.build(this, flag4, flag2, aint, aint1);
++            else
+             switch (fireworkrocketitem$shape) {
+                case SMALL_BALL:
+                default:
+@@ -245,7 +_,7 @@
+          return minecraft.f_91063_.m_109153_().m_90583_().m_82531_(this.f_107212_, this.f_107213_, this.f_107214_) >= 256.0D;
+       }
+ 
+-      public void m_106767_(double p_106768_, double p_106769_, double p_106770_, double p_106771_, double p_106772_, double p_106773_, int[] p_106774_, int[] p_106775_, boolean p_106776_, boolean p_106777_) {
++      private void m_106767_(double p_106768_, double p_106769_, double p_106770_, double p_106771_, double p_106772_, double p_106773_, int[] p_106774_, int[] p_106775_, boolean p_106776_, boolean p_106777_) {
+          FireworkParticles.SparkParticle fireworkparticles$sparkparticle = (FireworkParticles.SparkParticle)this.f_106755_.m_107370_(ParticleTypes.f_123815_, p_106768_, p_106769_, p_106770_, p_106771_, p_106772_, p_106773_);
+          fireworkparticles$sparkparticle.m_106727_(p_106776_);
+          fireworkparticles$sparkparticle.m_106729_(p_106777_);
+@@ -258,7 +_,7 @@
+ 
+       }
+ 
+-      public void m_106778_(double p_106779_, int p_106780_, int[] p_106781_, int[] p_106782_, boolean p_106783_, boolean p_106784_) {
++      private void m_106778_(double p_106779_, int p_106780_, int[] p_106781_, int[] p_106782_, boolean p_106783_, boolean p_106784_) {
+          double d0 = this.f_107212_;
+          double d1 = this.f_107213_;
+          double d2 = this.f_107214_;
+@@ -280,7 +_,7 @@
+ 
+       }
+ 
+-      public void m_106785_(double p_106786_, double[][] p_106787_, int[] p_106788_, int[] p_106789_, boolean p_106790_, boolean p_106791_, boolean p_106792_) {
++      private void m_106785_(double p_106786_, double[][] p_106787_, int[] p_106788_, int[] p_106789_, boolean p_106790_, boolean p_106791_, boolean p_106792_) {
+          double d0 = p_106787_[0][0];
+          double d1 = p_106787_[0][1];
+          this.m_106767_(this.f_107212_, this.f_107213_, this.f_107214_, d0 * p_106786_, d1 * p_106786_, 0.0D, p_106788_, p_106789_, p_106790_, p_106791_);
+@@ -314,7 +_,7 @@
+ 
+       }
+ 
+-      public void m_106793_(int[] p_106794_, int[] p_106795_, boolean p_106796_, boolean p_106797_) {
++      private void m_106793_(int[] p_106794_, int[] p_106795_, boolean p_106796_, boolean p_106797_) {
+          double d0 = this.f_107223_.m_188583_() * 0.05D;
+          double d1 = this.f_107223_.m_188583_() * 0.05D;
+ 

@@ -125,8 +125,12 @@
        ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
        ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
        ServerLevel serverlevel1;
-@@ -170,19 +_,35 @@
-          s1 = p_11262_.m_129523_().toString();
+@@ -167,22 +_,38 @@
+       p_11263_.m_284127_(serverlevel1);
+       String s1 = "local";
+       if (p_11262_.m_129523_() != null) {
+-         s1 = p_11262_.m_129523_().toString();
++         s1 = net.minecraftforge.network.DualStackUtils.getAddressString(p_11262_.m_129523_());
        }
  
 -      f_11188_.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.m_7755_().getString(), s1, p_11263_.m_19879_(), p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_());

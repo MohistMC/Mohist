@@ -161,8 +161,8 @@
 +      for (Map<ResourceLocation, Recipe<?>> recipes : f_44007_.values()) {
 +         recipes.remove(mcKey);
 +      }
-+      for (Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> recipes : recipesCB.values()) {
-+         recipes.remove(mcKey);
++      for (Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> recipes0 : recipesCB.values()) {
++         recipes0.remove(mcKey);
 +      }
 +      return f_199900_.remove(mcKey) != null;
 +   }
