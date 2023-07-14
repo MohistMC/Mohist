@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/ai/goal/GoalSelector.java
++++ b/net/minecraft/entity/ai/goal/GoalSelector.java
+@@ -28,6 +_,10 @@
+    private final EnumSet<Goal.Flag> field_220893_f = EnumSet.noneOf(Goal.Flag.class);
+    private int field_75779_e = 3;
+ 
++   public final Set<PrioritizedGoal> getTasks() {
++      return this.field_220892_d;
++   }
++
+    public GoalSelector(Supplier<IProfiler> p_i231546_1_) {
+       this.field_75781_c = p_i231546_1_;
+    }

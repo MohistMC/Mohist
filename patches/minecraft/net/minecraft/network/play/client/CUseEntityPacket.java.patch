@@ -1,0 +1,14 @@
+--- a/net/minecraft/network/play/client/CUseEntityPacket.java
++++ b/net/minecraft/network/play/client/CUseEntityPacket.java
+@@ -19,6 +_,11 @@
+    private Hand field_186995_d;
+    private boolean field_241791_e_;
+ 
++   // Paper
++   public int getEntityId() {
++      return this.field_149567_a;
++   }
++
+    public CUseEntityPacket() {
+    }
+ 
