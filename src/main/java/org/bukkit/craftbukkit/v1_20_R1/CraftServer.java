@@ -247,6 +247,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1718,7 +1719,7 @@ public final class CraftServer implements Server {
     public void banIP(InetAddress address) {
         Preconditions.checkArgument(address != null, "Address cannot be null.");
 
-        ((CraftIpBanList) this.getBanList(BanList.Type.IP)).addBan(address, null, null, null);
+        ((CraftIpBanList) this.getBanList(BanList.Type.IP)).addBan(address, null, (Date) null, null);
     }
 
     @Override

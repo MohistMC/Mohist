@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -163,8 +164,8 @@ final class PluginClassLoader extends URLClassLoader {
         try {
             if (RemapUtils.needRemap(name.replace('/', '.'))) {
                 ClassMapping remappedClassMapping = RemapUtils.jarMapping.byNMSName.get(name);
-                if(remappedClassMapping == null){
-                    throw new ClassNotFoundException(name.replace('/','.'));
+                if (remappedClassMapping == null) {
+                    throw new ClassNotFoundException(name.replace('/', '.'));
                 }
                 String remappedClass = remappedClassMapping.getMcpName();
                 return Class.forName(remappedClass);
@@ -175,21 +176,14 @@ final class PluginClassLoader extends URLClassLoader {
             result = classes.get(name);
             synchronized (name.intern()) {
                 if (result == null) {
+                    result = remappedFindClass(name);
 
                     if (result == null) {
-                        result = remappedFindClass(name);
+                        result = super.findClass(name);
                     }
 
                     if (result != null) {
                         loader.setClass(name, result);
-                    }
-
-                    if (result == null) {
-                        try {
-                            result = MinecraftServer.getServer().getClass().getClassLoader().loadClass(name);
-                        } catch (Throwable throwable) {
-                            throw new ClassNotFoundException(name, throwable);
-                        }
                     }
 
                     loader.setClass(name, result);
@@ -235,33 +229,60 @@ final class PluginClassLoader extends URLClassLoader {
         try {
             // Load the resource to the name
             String path = name.replace('.', '/').concat(".class");
-            URL url = this.findResource(path);
-            if (url != null) {
-                InputStream stream = url.openStream();
+            JarEntry entry = this.jar.getJarEntry(path);
+            if (entry != null) {
+                InputStream stream = this.jar.getInputStream(entry);
                 if (stream != null) {
-                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
-                    bytecode = RemapUtils.remapFindClass(bytecode);
+                    byte[] classBytes = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    classBytes = RemapUtils.remapFindClass(classBytes);
 
-                    bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
+                    classBytes = modifyByteCode(name, classBytes); // Mohist: add entry point for asm or mixin
 
-                    bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
+                    classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
 
-                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                    URL jarURL = jarURLConnection.getJarFileURL();
-
-                    final Manifest manifest = jarURLConnection.getManifest();
                     fixPackage(manifest, url, name);
 
-                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    CodeSigner[] signers = entry.getCodeSigners();
+                    CodeSource source = new CodeSource(this.url, signers);
+
+                    result = this.defineClass(name, classBytes, 0, classBytes.length, source);
+                    if (result == null) {
+                        result = super.findClass(name);
+                    }
+
                     if (result != null) {
-                        // Resolve it - sets the class loader of the class
-                        this.resolveClass(result);
+                        loader.setClass(name, result);
+                    }
+                }
+            } else {
+                URL url = this.findResource(path);
+                if (url != null) {
+                    InputStream stream = url.openStream();
+                    if (stream != null) {
+                        byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                        bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
+                        bytecode = RemapUtils.remapFindClass(bytecode);
+
+                        bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
+
+                        bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
+
+                        JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        URL jarURL = jarURLConnection.getJarFileURL();
+
+                        final Manifest manifest = jarURLConnection.getManifest();
+                        fixPackage(manifest, url, name);
+
+                        CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                        result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                        if (result != null) {
+                            // Resolve it - sets the class loader of the class
+                            this.resolveClass(result);
+                        }
                     }
                 }
             }
-        } catch (IOException t) {
+        } catch (IOException | ClassNotFoundException t) {
             t.printStackTrace();
         }
 

@@ -11,6 +11,8 @@ import org.bukkit.ban.ProfileBanList;
 import org.bukkit.craftbukkit.v1_20_R1.profile.CraftPlayerProfile;
 import org.bukkit.profile.PlayerProfile;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -49,6 +51,18 @@ public class CraftProfileBanList implements ProfileBanList {
         Preconditions.checkArgument(target.getUniqueId() != null, "The PlayerProfile UUID cannot be null");
 
         return this.addBan(((CraftPlayerProfile) target).buildGameProfile(), reason, expires, source);
+    }
+
+    @Override
+    public BanEntry<PlayerProfile> addBan(PlayerProfile target, String reason, Instant expires, String source) {
+        Date date = expires != null ? Date.from(expires) : null;
+        return addBan(target, reason, date, source);
+    }
+
+    @Override
+    public BanEntry<PlayerProfile> addBan(PlayerProfile target, String reason, Duration duration, String source) {
+        Instant instant = duration != null ? Instant.now().plus(duration) : null;
+        return addBan(target, reason, instant, source);
     }
 
     @Override
