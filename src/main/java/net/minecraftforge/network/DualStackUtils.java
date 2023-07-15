@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.google.common.net.InetAddresses;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.multiplayer.resolver.ResolvedServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
@@ -18,6 +19,7 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
@@ -149,5 +151,27 @@ public class DualStackUtils
     public static void logInitialPreferences() {
         LOGGER.debug("Initial IPv4 stack preference: " + INITIAL_PREFER_IPv4_STACK);
         LOGGER.debug("Initial IPv6 addresses preference: " + INITIAL_PREFER_IPv6_ADDRESSES);
+    }
+
+    /**
+     * {@link SocketAddress#toString()} but with IPv6 address compression support
+     */
+    public static String getAddressString(final SocketAddress address) {
+        if (address instanceof final InetSocketAddress inetAddress) {
+            String formatted;
+            if (inetAddress.isUnresolved()) {
+                formatted = inetAddress.getHostName() + "/<unresolved>";
+            } else {
+                formatted = InetAddresses.toAddrString(inetAddress.getAddress());
+                if (inetAddress.getAddress() instanceof Inet6Address)
+                    formatted = '[' + formatted + ']';
+
+                formatted = '/' + formatted;
+            }
+
+            return formatted + ':' + inetAddress.getPort();
+        }
+
+        return address.toString();
     }
 }

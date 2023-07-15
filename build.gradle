@@ -16,8 +16,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.2.1'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.77,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.77,5.2.0)' apply false
 }
 
 init() //Init all our extension methods!
@@ -55,8 +55,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.4-45.1.6'
-    FORGE_VERSION = '45.1.6'
+    VERSION = '1.19.4-45.1.12'
+    FORGE_VERSION = '45.1.12'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -486,6 +486,11 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+
+
+    applyPatches {
+        level 'WARNING'
+    }
 
     sourceSets {
         main {

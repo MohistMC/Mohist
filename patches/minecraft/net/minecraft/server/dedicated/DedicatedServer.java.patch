@@ -22,6 +22,15 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
+@@ -68,6 +_,8 @@
+    private MinecraftServerGui f_139605_;
+    @Nullable
+    private final TextFilterClient f_139606_;
++   @Nullable
++   private net.minecraft.client.server.LanServerPinger dediLanPinger;
+ 
+    public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
+       super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
 @@ -79,12 +_,43 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
@@ -144,7 +153,7 @@
              Thread thread1 = new Thread(new ServerWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
              thread1.setName("Server Watchdog");
-@@ -183,12 +_,13 @@
+@@ -183,12 +_,18 @@
              thread1.start();
           }
  
@@ -155,14 +164,24 @@
           }
  
 -         return true;
++         if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
++            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.m_129916_(), String.valueOf(this.m_7448_()));
++            this.dediLanPinger.start();
++         }
++
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -263,6 +_,7 @@
+@@ -263,6 +_,12 @@
           this.f_139601_.m_7530_();
        }
  
++      if (this.dediLanPinger != null) {
++         this.dediLanPinger.interrupt();
++         this.dediLanPinger = null;
++      }
++
 +      Runtime.getRuntime().halt(0);
     }
  
@@ -239,6 +258,17 @@
 +         // CraftBukkit end
        });
        return this.f_139602_.m_11513_();
+    }
+@@ -492,6 +_,10 @@
+ 
+    public void m_7041_() {
+       super.m_7041_();
++      if (this.dediLanPinger != null) {
++         this.dediLanPinger.interrupt();
++         this.dediLanPinger = null;
++      }
+       Util.m_137580_();
+       SkullBlockEntity.m_196704_();
     }
 @@ -523,5 +_,15 @@
  
