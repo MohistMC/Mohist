@@ -130,6 +130,16 @@
        this.f_19850_ = true;
        this.f_20928_ = (float)((Math.random() + 1.0D) * (double)0.01F);
        this.m_20090_();
+@@ -239,7 +_,8 @@
+       this.f_20885_ = this.m_146908_();
+       this.m_274367_(0.6F);
+       NbtOps nbtops = NbtOps.f_128958_;
+-      this.f_20939_ = this.m_8075_(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
++      var dyn = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
++      this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dyn), dyn);
+    }
+ 
+    public Brain<?> m_6274_() {
 @@ -273,7 +_,7 @@
     }
  
@@ -247,10 +257,20 @@
        if (p_21096_.m_128425_("Health", 99)) {
           this.m_21153_(p_21096_.m_128457_("Health"));
        }
-@@ -739,9 +_,31 @@
+@@ -734,14 +_,37 @@
+       }
  
-    }
- 
+       if (p_21096_.m_128425_("Brain", 10)) {
+-         this.f_20939_ = this.m_8075_(new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain")));
+-      }
+-
+-   }
++         var dyn = new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain"));
++         this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dyn), dyn);
++      }
++
++   }
++
 +   // CraftBukkit start
 +   private boolean isTickingEffects = false;
 +   private List<ProcessableEffect> effectsToProcess = Lists.newArrayList();
@@ -272,7 +292,7 @@
 +      }
 +   }
 +    // CraftBukkit end
-+
+ 
     protected void m_21217_() {
        Iterator<MobEffect> iterator = this.f_20945_.keySet().iterator();
 -
@@ -1138,6 +1158,19 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
+@@ -1761,8 +_,10 @@
+ 
+    private void m_21312_() {
+       ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
+-      this.m_8061_(EquipmentSlot.OFFHAND, this.m_6844_(EquipmentSlot.MAINHAND));
+-      this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
++      var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
++      if (event.isCanceled()) return;
++      this.m_8061_(EquipmentSlot.OFFHAND, event.getItemSwappedToOffHand());
++      this.m_8061_(EquipmentSlot.MAINHAND, event.getItemSwappedToMainHand());
+    }
+ 
+    protected void m_6088_() {
 @@ -1862,6 +_,12 @@
  
     public abstract ItemStack m_6844_(EquipmentSlot p_21127_);

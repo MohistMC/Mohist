@@ -117,8 +117,8 @@ public interface IClientBlockExtensions
     }
 
     /**
-     * Returns true if the breaking particles created from the {@link BlockState} passed should be tinted with biome colors.
-     *
+     * Returns true if the breaking particles created from the {@link BlockState} passed should be tinted with biome colors. 
+     * 
      * @param state The state of this block
      * @param level The level the particles are spawning in
      * @param pos The position of the block

@@ -141,7 +141,7 @@ public interface IForgeGuiGraphics
      * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
      */
     default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int sliceSize, int uWidth, int vHeight, int uOffset, int vOffset,
-                                     int textureWidth, int textureHeight)
+          int textureWidth, int textureHeight)
     {
         blitNineSlicedSized(texture, x, y, width, height, sliceSize, sliceSize, uWidth, vHeight, uOffset, vOffset, textureWidth, textureHeight);
     }
@@ -150,7 +150,7 @@ public interface IForgeGuiGraphics
      * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
      */
     default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int sliceWidth, int sliceHeight, int uWidth, int vHeight,
-                                     int uOffset, int vOffset, int textureWidth, int textureHeight)
+          int uOffset, int vOffset, int textureWidth, int textureHeight)
     {
         blitNineSlicedSized(texture, x, y, width, height, sliceWidth, sliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, uOffset, vOffset, textureWidth, textureHeight);
     }
@@ -159,7 +159,7 @@ public interface IForgeGuiGraphics
      * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
      */
     default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int cornerWidth, int cornerHeight, int edgeWidth, int edgeHeight,
-                                     int uWidth, int vHeight, int uOffset, int vOffset, int textureWidth, int textureHeight)
+          int uWidth, int vHeight, int uOffset, int vOffset, int textureWidth, int textureHeight)
     {
         cornerWidth = Math.min(cornerWidth, width / 2);
         edgeWidth = Math.min(edgeWidth, width / 2);

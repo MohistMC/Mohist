@@ -87,11 +87,11 @@ public interface IForgeBlock
 
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
+     *
      * @param state The state of this block
      * @param level The level this block is in
      * @param pos The position of this block in the level, will be {@link BlockPos#ZERO} when the chunk being loaded or
      *            generated calls this to check whether it contains any light sources
-     *
      * @return The light value
      * @implNote <ul>
      *     <li>

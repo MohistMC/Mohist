@@ -9,9 +9,7 @@ import java.util.Collection;
 import java.util.function.BiPredicate;
 
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
@@ -19,7 +17,9 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
@@ -428,14 +428,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default boolean hasCustomOutlineRendering(Player player)
     {
         return false;
-    }
-
-    default EntityDimensions getDimensionsForge(Pose pose)
-    {
-        EntityDimensions size = self().getDimensions(pose);
-        EntityEvent.Size evt = new EntityEvent.Size(self(), pose, size);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.getNewSize();
     }
 
     default float getEyeHeightForge(Pose pose, EntityDimensions size)
