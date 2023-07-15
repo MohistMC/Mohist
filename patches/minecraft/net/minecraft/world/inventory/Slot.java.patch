@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/inventory/Slot.java
 +++ b/net/minecraft/world/inventory/Slot.java
+@@ -48,7 +_,11 @@
+    }
+ 
+    public ItemStack m_7993_() {
+-      return this.f_40218_.m_8020_(this.f_40217_);
++      try {
++         return this.f_40218_.m_8020_(this.f_40217_);
++      } catch (AbstractMethodError ex) {
++         return ItemStack.f_41583_;
++      }
+    }
+ 
+    public boolean m_6657_() {
 @@ -78,7 +_,7 @@
  
     @Nullable
