@@ -292,9 +292,18 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
+    @Deprecated(forRemoval = true, since = "1.20.1") // Use onInventoryTick
     default void onArmorTick(Level level, Player player)
     {
         self().getItem().onArmorTick(self(), level, player);
+    }
+
+    /**
+     * Called to tick this items in a players inventory, the indexes are the global slot index.
+     */
+    default void onInventoryTick(Level level, Player player, int slotIndex, int selectedIndex)
+    {
+        self().getItem().onInventoryTick(self(), level, player, slotIndex, selectedIndex);
     }
 
     /**
