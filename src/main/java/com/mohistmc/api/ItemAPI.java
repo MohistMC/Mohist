@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mohistmc.MohistMC;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import org.apache.logging.log4j.LogManager;
@@ -122,7 +123,8 @@ public class ItemAPI {
             ByteArrayInputStream buf = new ByteArrayInputStream(Base64Coder.decodeLines(serializeNBT));
             try {
                 return NbtIo.readCompressed(buf);
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                MohistMC.LOGGER.error("Reading nbt ", e);
             }
         }
         return null;

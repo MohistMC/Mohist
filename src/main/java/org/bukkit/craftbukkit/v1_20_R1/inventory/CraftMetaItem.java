@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.mohistmc.MohistMC;
+import com.mohistmc.api.ItemAPI;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -609,12 +610,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         }
         if (map.containsKey("forgeCaps")) {
             Object forgeCaps = map.get("forgeCaps");
-            try {
-                ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(forgeCaps.toString()));
-                this.forgeCaps = NbtIo.readCompressed(buf);
-            } catch (IOException e) {
-               MohistMC.LOGGER.error("Reading forge caps", e);
-            }
+            this.forgeCaps = ItemAPI.deserializeNbt(forgeCaps.toString());
         }
     }
 
