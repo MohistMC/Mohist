@@ -270,10 +270,6 @@ public class Unsafe {
         }
     }
 
-    public static Class<?> defineAnonymousClass(Class<?> aClass, byte[] bytes, Object[] objects) {
-        return unsafe.defineAnonymousClass(aClass, bytes, objects);
-    }
-
     public static Object allocateInstance(Class<?> aClass) throws InstantiationException {
         return unsafe.allocateInstance(aClass);
     }

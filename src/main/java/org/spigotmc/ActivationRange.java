@@ -1,6 +1,8 @@
 package org.spigotmc;
 
 import java.util.Collection;
+import java.util.List;
+
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -154,7 +156,7 @@ public class ActivationRange
      */
     private static void activateChunkEntities(Chunk chunk)
     {
-        for ( ClassInheritanceMultiMap<Entity> slice : chunk.entitySections )
+        for ( List<Entity> slice : chunk.entitySlices )
         {
             for ( Entity entity : (Collection<Entity>) slice )
             {
