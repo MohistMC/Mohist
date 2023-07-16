@@ -436,17 +436,13 @@
        for(int i = 0; i < this.field_76652_q.length; ++i) {
           ChunkSection chunksection = this.field_76652_q[i];
           if ((p_227073_4_ & 1 << i) == 0) {
-@@ -592,13 +_,23 @@
+@@ -592,13 +_,19 @@
        return this.field_76645_j;
     }
  
 +   // Mohist start
 +   public List<Entity>[] getEntitySlices() {
-+      List<Entity>[] e = new List[16];
-+      for (int l = 0; l < this.field_76645_j.length; ++l) {
-+         e[l] = new org.bukkit.craftbukkit.v1_16_R3.util.UnsafeList<>();
-+      }
-+      return e;
++      return entitySlices;
 +   }
 +   // Mohist end
 +

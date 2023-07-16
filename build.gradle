@@ -826,10 +826,10 @@ project(':mohist') {
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign publishing.publications.mavenJava
     }
-}
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << '-Xlint:-removal'
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << '-Xlint:-removal'
+    }
 }
 
 task setup() {
