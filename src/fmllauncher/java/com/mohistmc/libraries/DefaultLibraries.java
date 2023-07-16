@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
 	public static HashMap<String, String> fail = new HashMap<>();
+	public static final AtomicLong allSize = new AtomicLong(); // global
 
 	public static void run() throws Exception {
 		System.out.println(i18n.get("libraries.checking.start"));
@@ -44,10 +45,10 @@ public class DefaultLibraries {
 		AtomicLong currentSize = new AtomicLong();
 		Set<File> defaultLibs = new LinkedHashSet<>();
 		for (File lib : getDefaultLibs().keySet()) {
-			if(lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
+			if (lib.exists() && MohistConfigUtil.getString(MohistConfigUtil.mohistyml, "libraries_black_list:", "xxxxx").contains(lib.getName())) {
 				continue;
 			}
-			if(lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))) {
+			if (lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))) {
 				currentSize.addAndGet(lib.length());
 				continue;
 			}
@@ -57,17 +58,15 @@ public class DefaultLibraries {
 			lib.getParentFile().mkdirs();
 
 			String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-			System.out.println(
-					i18n.get("libraries.global.percentage") +
-							Math.round(currentSize.get() * 100 / 62557711d) + "%"); //Global percentage
+			System.out.println(i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
 			try {
 				UpdateUtils.downloadFile(u, lib, libs.get(lib));
-				if(lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar"))
+				if (lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar"))
 					new JarLoader().loadJar(lib);
 				currentSize.addAndGet(lib.length());
 				fail.remove(u.replace(url, ""));
 			} catch (Exception e) {
-				if(e.getMessage() !=null && !e.getMessage().equals("md5")) {
+				if (e.getMessage() != null && !e.getMessage().equals("md5")) {
 					System.out.println(i18n.get("file.download.nook", u));
 					lib.delete();
 				}
@@ -75,18 +74,19 @@ public class DefaultLibraries {
 			}
 		}
 		/*FINISHED | RECHECK IF A FILE FAILED*/
-		if(!fail.isEmpty()) {
+		if (!fail.isEmpty()) {
 			run();
 		} else System.out.println(i18n.get("libraries.check.end"));
 	}
 
 	public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
 		LinkedHashMap<File, String> temp = new LinkedHashMap<>();
-		BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("mohist_libraries.txt")));
+		BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt")));
 		String str;
 		while ((str = b.readLine()) != null) {
 			String[] s = str.split("\\|");
 			temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
+			allSize.addAndGet(Long.parseLong(s[2]));
 		}
 		b.close();
 		return temp;
