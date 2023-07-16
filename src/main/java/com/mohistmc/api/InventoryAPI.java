@@ -15,10 +15,10 @@ public class InventoryAPI {
     }
 
     public static String getModsInvName(Inventory bukkit) {
-        if (((CraftInventory)bukkit).getInventory() instanceof MohistModsInventory mohistModsInventory) {
+        if (((CraftInventory) bukkit).getInventory() instanceof MohistModsInventory mohistModsInventory) {
             return mohistModsInventory.getContainer().getClass().getSimpleName();
         }
         bukkit.getType().setMods(false);
-        return ((CraftInventory)bukkit).getInventory().getClass().getSimpleName();
+        return ((CraftInventory) bukkit).getInventory().getClass().getSimpleName();
     }
 }

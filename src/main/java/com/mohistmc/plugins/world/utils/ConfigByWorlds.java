@@ -116,9 +116,13 @@ public class ConfigByWorlds {
                         if (config.get("worlds." + w + ".difficulty") != null) {
                             difficulty = config.getString("worlds." + w + ".difficulty");
                         }
-                        new WorldCreator(w).seed(seed).environment(World.Environment.valueOf(environment)).createWorld().setDifficulty(Difficulty.valueOf(difficulty));
+                        WorldCreator wc = new WorldCreator(w);
+                        wc.seed(seed);
+                        wc.environment(World.Environment.valueOf(environment));
+
+                        wc.createWorld();
                     }
-                    if (world!= null) {
+                    if (world != null) {
                         if (config.get("worlds." + w + ".difficulty") != null) {
                             difficulty = config.getString("worlds." + w + ".difficulty");
                             world.setDifficulty(Difficulty.valueOf(difficulty));

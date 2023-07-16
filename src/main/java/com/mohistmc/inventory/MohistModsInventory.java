@@ -127,7 +127,8 @@ public class MohistModsInventory implements Container {
     }
 
     @Override
-    public void setMaxStackSize(int size) {}
+    public void setMaxStackSize(int size) {
+    }
 
     @Override
     public Location getLocation() {

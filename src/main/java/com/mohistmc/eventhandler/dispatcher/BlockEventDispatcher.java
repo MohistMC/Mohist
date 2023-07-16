@@ -24,8 +24,6 @@ import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.Objects;
-
 public class BlockEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
@@ -37,9 +35,8 @@ public class BlockEventDispatcher {
         if (hitResult.getType() == HitResult.Type.BLOCK) {
             if (block instanceof AbstractCandleBlock) {
                 // CraftBukkit start
-                if (CraftEventFactory.callBlockIgniteEvent(level,
-                        projectile.getOnPos(), projectile).isCancelled()) {
-                    event.setCanceled(true);
+                if (CraftEventFactory.callBlockIgniteEvent(level, projectile.getOnPos(), projectile).isCancelled()) {
+                    event.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
                 }
                 // CraftBukkit end
             }

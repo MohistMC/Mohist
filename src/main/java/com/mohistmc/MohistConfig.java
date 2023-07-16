@@ -125,8 +125,8 @@ public class MohistConfig {
     }
 
     private static <T> List getList(String path, T def) {
-        config.addDefault( path, def );
-        return (List<T>) config.getList( path, config.getList( path ) );
+        config.addDefault(path, def);
+        return (List<T>) config.getList(path, config.getList(path));
     }
 
     private static String getString(String path, String def) {
@@ -163,7 +163,7 @@ public class MohistConfig {
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
         player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
         player_modlist_blacklist = getList("player_modlist_blacklist.list", Collections.emptyList());
-        server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable" , false);
-        server_modlist_whitelist = getString("server_modlist_whitelist.list" , ServerAPI.modlists_All.toString().replace(", mohist", ""));
+        server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
+        server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
     }
 }
