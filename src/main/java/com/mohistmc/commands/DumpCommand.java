@@ -22,6 +22,8 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -48,13 +50,13 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "advancements");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -111,6 +113,7 @@ public class DumpCommand extends Command {
                 case "worldtype" -> dumpWorldType(sender, mode);
                 case "material" -> dumpMaterial(sender, mode);
                 case "channels" -> dumpChannels(sender, mode);
+                case "advancements" -> dumpAdvancements(sender, mode);
                 default -> {
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
@@ -237,6 +240,14 @@ public class DumpCommand extends Command {
             sb.append(channel).append("\n");
         }
         dump(sender, "channels", sb, mode);
+    }
+
+    private void dumpAdvancements(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (Advancement channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
+            sb.append(channel.getId()).append("\n");
+        }
+        dump(sender, "advancements", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, File file, String type) {
