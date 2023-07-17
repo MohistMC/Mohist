@@ -304,11 +304,10 @@
              Block.func_220054_a(blockstate, this, p_241212_1_, tileentity, p_241212_3_, ItemStack.field_190927_a);
           }
  
-@@ -259,6 +_,9 @@
+@@ -259,6 +_,8 @@
     }
  
     public void func_195593_d(BlockPos p_195593_1_, Block p_195593_2_) {
-+      if (captureBlockStates) { return; } // Paper - Cancel all physics during placement
 +      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_195593_1_, this.func_180495_p(p_195593_1_), java.util.EnumSet.allOf(Direction.class), false).isCanceled())
 +         return;
        this.func_190524_a(p_195593_1_.func_177976_e(), p_195593_2_, p_195593_1_);
@@ -657,16 +656,16 @@
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
        for(int i1 = i; i1 <= j; ++i1) {
-@@ -666,15 +_,21 @@
+@@ -665,16 +_,21 @@
+             }
           }
        }
- 
 +      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
 +         if (p != p_175674_1_ && p.func_174813_aQ().func_72326_a(p_175674_2_) && (p_175674_3_ == null || p_175674_3_.test(p))) {
 +            list.add(p);
 +         }
 +      }
-+
+ 
        return list;
     }
  

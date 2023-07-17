@@ -75,7 +75,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.World;
-@@ -130,6 +_,22 @@
+@@ -130,6 +_,23 @@
  import net.minecraft.world.storage.IWorldInfo;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -90,6 +90,7 @@
 +import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerLocaleChangeEvent;
 +import org.bukkit.event.player.PlayerPortalEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
@@ -436,7 +437,7 @@
           }
        }
  
-@@ -603,78 +_,127 @@
+@@ -603,78 +_,132 @@
     }
  
     private boolean func_175400_cq() {
@@ -496,6 +497,7 @@
        RegistryKey<World> registrykey = serverworld.func_234923_W_();
 -      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_) {
 +      if (registrykey == World.field_234920_i_ && server.func_234923_W_() == World.field_234918_g_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
++         this.field_184851_cj = true; // CraftBukkit - Moved down from above
           this.func_213319_R();
 -         this.func_71121_q().func_217434_e(this);
 +         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
@@ -569,6 +571,10 @@
              this.field_71146_ci = -1;
 +            func_226284_e_(false); // Paper - fix MC-10657
 +            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, registrykey, server.func_234923_W_(), serverworld.getWorld());
++            // CraftBukkit start
++            PlayerChangedWorldEvent changeEvent = new PlayerChangedWorldEvent(this.getBukkitEntity(), serverworld.getWorld());
++            this.field_70170_p.getCBServer().getPluginManager().callEvent(changeEvent);
++            // CraftBukkit end
           }
  
           return this;

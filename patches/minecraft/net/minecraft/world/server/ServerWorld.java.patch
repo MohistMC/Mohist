@@ -127,7 +127,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,9 +_,106 @@
+@@ -173,9 +_,103 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -153,9 +153,6 @@
 +            IGNORE_EMPTY_TIME_LIST.add(part);
 +         }
 +      } else IGNORE_EMPTY_TIME_LIST.add(ignoreEmptyTime);
-+
-+      field_94579_S.putTimingsType("Blocks");
-+      field_205342_P.putTimingsType("Fluids");
 +   }
 +
 +   private final boolean ignoreEmptyTimeThis;
@@ -285,28 +282,6 @@
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
        return this.func_72863_F().func_201711_g().func_202090_b().func_225526_b_(p_225604_1_, p_225604_2_, p_225604_3_);
     }
-@@ -272,17 +_,17 @@
- 
-          this.field_73018_p = this.field_73017_q;
-          if (this.field_72986_A.func_76061_m()) {
--            this.field_73017_q = (float)((double)this.field_73017_q + 0.01D);
-+            this.field_73017_q = (float) ((double) this.field_73017_q + 0.01D);
-          } else {
--            this.field_73017_q = (float)((double)this.field_73017_q - 0.01D);
-+            this.field_73017_q = (float) ((double) this.field_73017_q - 0.01D);
-          }
- 
-          this.field_73017_q = MathHelper.func_76131_a(this.field_73017_q, 0.0F, 1.0F);
-          this.field_73003_n = this.field_73004_o;
-          if (this.field_72986_A.func_76059_o()) {
--            this.field_73004_o = (float)((double)this.field_73004_o + 0.01D);
-+            this.field_73004_o = (float) ((double) this.field_73004_o + 0.01D);
-          } else {
--            this.field_73004_o = (float)((double)this.field_73004_o - 0.01D);
-+            this.field_73004_o = (float) ((double) this.field_73004_o - 0.01D);
-          }
- 
-          this.field_73004_o = MathHelper.func_76131_a(this.field_73004_o, 0.0F, 1.0F);
 @@ -296,27 +_,39 @@
           this.field_73061_a.func_184103_al().func_232642_a_(new SChangeGameStatePacket(SChangeGameStatePacket.field_241772_i_, this.field_73017_q), this.func_234923_W_());
        }
@@ -371,24 +346,15 @@
           if (this.field_241105_O_ != null) {
              this.field_241105_O_.func_186105_b();
           }
-@@ -351,19 +_,21 @@
+@@ -351,6 +_,7 @@
           this.field_217492_a = true;
           ObjectIterator<Entry<Entity>> objectiterator = this.field_217498_x.int2ObjectEntrySet().iterator();
  
 +         org.spigotmc.ActivationRange.activateEntities(this); // Spigot
           label164:
--         while(true) {
-+         while (true) {
+          while(true) {
              Entity entity1;
--            while(true) {
-+            while (true) {
-                if (!objectiterator.hasNext()) {
-                   this.field_217492_a = false;
- 
-                   Entity entity;
--                  while((entity = this.field_217499_z.poll()) != null) {
-+                  while ((entity = this.field_217499_z.poll()) != null) {
-                      this.func_217465_m(entity);
+@@ -364,6 +_,7 @@
                    }
  
                    this.func_217391_K();
@@ -414,22 +380,7 @@
              }
  
              iprofiler.func_76319_b();
-@@ -431,7 +_,7 @@
-    }
- 
-    public void func_241123_a_(boolean p_241123_1_, boolean p_241123_2_) {
--      for(ISpecialSpawner ispecialspawner : this.field_241104_N_) {
-+      for (ISpecialSpawner ispecialspawner : this.field_241104_N_) {
-          ispecialspawner.func_230253_a_(this, p_241123_1_, p_241123_2_);
-       }
- 
-@@ -454,19 +_,19 @@
-          BlockPos blockpos = this.func_175736_a(this.func_217383_a(i, 0, j, 15));
-          if (this.func_175727_C(blockpos)) {
-             DifficultyInstance difficultyinstance = this.func_175649_E(blockpos);
--            boolean flag1 = this.func_82736_K().func_223586_b(GameRules.field_223601_d) && this.field_73012_v.nextDouble() < (double)difficultyinstance.func_180168_b() * 0.01D;
-+            boolean flag1 = this.func_82736_K().func_223586_b(GameRules.field_223601_d) && this.field_73012_v.nextDouble() < (double) difficultyinstance.func_180168_b() * 0.01D;
-             if (flag1) {
+@@ -459,14 +_,14 @@
                 SkeletonHorseEntity skeletonhorseentity = EntityType.field_200742_ah.func_200721_a(this);
                 skeletonhorseentity.func_190691_p(true);
                 skeletonhorseentity.func_70873_a(0);
@@ -465,20 +416,6 @@
           }
  
           if (flag && this.func_226691_t_(blockpos3).func_201851_b() == Biome.RainType.RAIN) {
-@@ -490,11 +_,11 @@
- 
-       iprofiler.func_219895_b("tickBlocks");
-       if (p_217441_2_ > 0) {
--         for(ChunkSection chunksection : p_217441_1_.func_76587_i()) {
-+         for (ChunkSection chunksection : p_217441_1_.func_76587_i()) {
-             if (chunksection != Chunk.field_186036_a && chunksection.func_206915_b()) {
-                int k = chunksection.func_222632_g();
- 
--               for(int l = 0; l < p_217441_2_; ++l) {
-+               for (int l = 0; l < p_217441_2_; ++l) {
-                   BlockPos blockpos1 = this.func_217383_a(i, k, j, 15);
-                   iprofiler.func_76320_a("randomTick");
-                   BlockState blockstate = chunksection.func_177485_a(blockpos1.func_177958_n() - i, blockpos1.func_177956_o() - k, blockpos1.func_177952_p() - j);
 @@ -543,8 +_,8 @@
           int i = 0;
           int j = 0;
@@ -490,7 +427,7 @@
                 ++i;
              } else if (serverplayerentity.func_70608_bn()) {
                 ++j;
-@@ -561,36 +_,82 @@
+@@ -561,36 +_,83 @@
     }
  
     private void func_73051_P() {
@@ -548,16 +485,15 @@
 +
 +   // Mohist start - readd it to compat with mods
     private void func_205338_b(NextTickListEntry<Block> p_205338_1_) {
--      BlockState blockstate = this.func_180495_p(p_205338_1_.field_180282_a);
--      if (blockstate.func_203425_a(p_205338_1_.func_151351_a())) {
--         blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
-+      BlockState blockState = this.func_180495_p(p_205338_1_.field_180282_a);
-+      if (blockState.func_177230_c() == p_205338_1_.func_151351_a()) {
-+         blockState.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
+       BlockState blockstate = this.func_180495_p(p_205338_1_.field_180282_a);
+       if (blockstate.func_203425_a(p_205338_1_.func_151351_a())) {
+          blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
        }
+ 
+-   }
 +      // Mohist end
 +   }
- 
++
 +   private void tickBlock_bukkit(NextTickListEntry<Block> p_205338_1_) {
 +      // Mohist start - Partially rewrite to use ChunkMcAPI
 +      BlockPos pos = p_205338_1_.field_180282_a;
@@ -568,7 +504,7 @@
 +         }
 +      });
 +      // Mohist end
-    }
++   }
 +   // Mohist end
  
     public void func_217479_a(Entity p_217479_1_) {
@@ -624,20 +560,9 @@
                    this.func_217459_a(p_217459_2_, entity);
                 }
              }
-@@ -649,16 +_,16 @@
-       if (p_217464_1_.func_233578_ci_()) {
-          this.func_217381_Z().func_76320_a("chunkCheck");
-          int i = MathHelper.func_76128_c(p_217464_1_.func_226277_ct_() / 16.0D);
--         int j = MathHelper.func_76128_c(p_217464_1_.func_226278_cu_() / 16.0D);
-+         int j = Math.min(15, Math.max(0, MathHelper.func_76128_c(p_217464_1_.func_226278_cu_() / 16.0D))); // Paper - stay consistent with chunk add/remove behavior
-          int k = MathHelper.func_76128_c(p_217464_1_.func_226281_cx_() / 16.0D);
-          if (!p_217464_1_.field_70175_ag || p_217464_1_.field_70176_ah != i || p_217464_1_.field_70162_ai != j || p_217464_1_.field_70164_aj != k) {
-             if (p_217464_1_.field_70175_ag && this.func_217354_b(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj)) {
-                this.func_212866_a_(p_217464_1_.field_70176_ah, p_217464_1_.field_70164_aj).func_76608_a(p_217464_1_, p_217464_1_.field_70162_ai);
-             }
+@@ -658,7 +_,7 @@
  
--            if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
-+            if (!p_217464_1_.valid && !p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) { // Paper - always load chunks to register valid entities location
+             if (!p_217464_1_.func_233577_ch_() && !this.func_217354_b(i, k)) {
                 if (p_217464_1_.field_70175_ag) {
 -                  field_147491_a.warn("Entity {} left loaded chunk area", (Object)p_217464_1_);
 +                  field_147491_a.warn(com.mohistmc.util.i18n.i18n.get("serverworld.1", (Object) p_217464_1_));
@@ -661,36 +586,6 @@
        }
  
        this.func_72863_F().func_217227_h().func_212775_b();
-@@ -703,7 +_,7 @@
-       List<Entity> list = Lists.newArrayList();
-       ServerChunkProvider serverchunkprovider = this.func_72863_F();
- 
--      for(Entity entity : this.field_217498_x.values()) {
-+      for (Entity entity : this.field_217498_x.values()) {
-          if ((p_217482_1_ == null || entity.func_200600_R() == p_217482_1_) && serverchunkprovider.func_73149_a(MathHelper.func_76128_c(entity.func_226277_ct_()) >> 4, MathHelper.func_76128_c(entity.func_226281_cx_()) >> 4) && p_217482_2_.test(entity)) {
-             list.add(entity);
-          }
-@@ -715,9 +_,9 @@
-    public List<EnderDragonEntity> func_217439_j() {
-       List<EnderDragonEntity> list = Lists.newArrayList();
- 
--      for(Entity entity : this.field_217498_x.values()) {
-+      for (Entity entity : this.field_217498_x.values()) {
-          if (entity instanceof EnderDragonEntity && entity.func_70089_S()) {
--            list.add((EnderDragonEntity)entity);
-+            list.add((EnderDragonEntity) entity);
-          }
-       }
- 
-@@ -727,7 +_,7 @@
-    public List<ServerPlayerEntity> func_217490_a(Predicate<? super ServerPlayerEntity> p_217490_1_) {
-       List<ServerPlayerEntity> list = Lists.newArrayList();
- 
--      for(ServerPlayerEntity serverplayerentity : this.field_217491_A) {
-+      for (ServerPlayerEntity serverplayerentity : this.field_217491_A) {
-          if (p_217490_1_.test(serverplayerentity)) {
-             list.add(serverplayerentity);
-          }
 @@ -742,12 +_,24 @@
        return list.isEmpty() ? null : list.get(this.field_73012_v.nextInt(list.size()));
     }
@@ -718,21 +613,17 @@
     }
  
     public void func_217460_e(Entity p_217460_1_) {
-@@ -777,11 +_,12 @@
+@@ -777,9 +_,9 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217448_1_, this)))
-+         return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217448_1_, this))) return;
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
 -         field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
           entity.func_213319_R();
--         this.func_217434_e((ServerPlayerEntity)entity);
-+         this.func_217434_e((ServerPlayerEntity) entity);
+          this.func_217434_e((ServerPlayerEntity)entity);
        }
- 
-       this.field_217491_A.add(p_217448_1_);
 @@ -795,18 +_,24 @@
     }
  
@@ -764,12 +655,11 @@
              return true;
           }
        }
-@@ -816,6 +_,8 @@
+@@ -816,6 +_,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217440_1_, this)))
-+            return false;
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217440_1_, this))) return false;
           this.func_217465_m(p_217440_1_);
           return true;
        }
@@ -781,15 +671,6 @@
           return true;
        }
     }
-@@ -839,7 +_,7 @@
-          return entity;
-       } else {
-          if (this.field_217492_a) {
--            for(Entity entity1 : this.field_217499_z) {
-+            for (Entity entity1 : this.field_217499_z) {
-                if (entity1.func_110124_au().equals(p_242105_1_)) {
-                   return entity1;
-                }
 @@ -851,24 +_,41 @@
     }
  
@@ -837,7 +718,7 @@
                 }
  
                 this.field_217498_x.remove(entity.func_145782_y());
-@@ -876,80 +_,169 @@
+@@ -876,80 +_,170 @@
              }
           }
        }
@@ -861,8 +742,9 @@
 +               if (o instanceof MapData) {
 +                  MapData map = (MapData) o;
 +                  map.field_76196_g.remove((PlayerEntity) p_217484_1_);
-+                  for (Iterator<MapData.MapInfo> iter = (Iterator<MapData.MapInfo>) map.field_76196_g.iterator(); iter.hasNext(); ) {
++                  for (Iterator<MapData.MapInfo> iter = map.field_76196_g.iterator(); iter.hasNext(); ) {
 +                     if (iter.next().field_76211_a == p_217484_1_) {
++                        map.field_76203_h.remove(p_217484_1_.func_200200_C_().getString());
 +                        iter.remove();
 +                     }
 +                  }

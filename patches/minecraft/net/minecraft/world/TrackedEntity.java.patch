@@ -34,7 +34,7 @@
        this.field_219460_b = p_i50704_1_;
        this.field_219464_f = p_i50704_5_;
        this.field_219461_c = p_i50704_2_;
-@@ -75,24 +_,24 @@
+@@ -75,15 +_,14 @@
        List<Entity> list = this.field_219461_c.func_184188_bt();
        if (!list.equals(this.field_219474_p)) {
           this.field_219474_p = list;
@@ -42,33 +42,17 @@
 +         this.func_219451_a(new SSetPassengersPacket(this.field_219461_c)); // CraftBukkit
        }
  
--      if (this.field_219461_c instanceof ItemFrameEntity && this.field_219472_n % 10 == 0) {
-+      if (this.field_219461_c instanceof ItemFrameEntity /*&& this.updateCounter % 10 == 0*/) { // CraftBukkit - Moved below, should always enter this block
+       if (this.field_219461_c instanceof ItemFrameEntity && this.field_219472_n % 10 == 0) {
           ItemFrameEntity itemframeentity = (ItemFrameEntity)this.field_219461_c;
           ItemStack itemstack = itemframeentity.func_82335_i();
 -         if (itemstack.func_77973_b() instanceof FilledMapItem) {
-+         if (this.field_219472_n % 10 == 0 && itemstack.func_77973_b() instanceof FilledMapItem) { // CraftBukkit - Moved this.tickCounter % 10 logic here so item frames do not enter the other blocks
-             MapData mapdata = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
+-            MapData mapdata = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
 -
--            for(ServerPlayerEntity serverplayerentity : this.field_219460_b.func_217369_A()) {
--               mapdata.func_76191_a(serverplayerentity, itemstack);
--               IPacket<?> ipacket = ((FilledMapItem)itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
--               if (ipacket != null) {
--                  serverplayerentity.field_71135_a.func_147359_a(ipacket);
-+            if (mapdata != null) {
-+               for(ServerPlayerEntity serverplayerentity : this.tackedPlayers) {  // CraftBukkit
-+                  mapdata.func_76191_a(serverplayerentity, itemstack);
-+                  IPacket<?> ipacket = ((FilledMapItem) itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
-+                  if (ipacket != null) {
-+                     serverplayerentity.field_71135_a.func_147359_a(ipacket);
-+                  }
-                }
-             }
-          }
--
-          this.func_219457_c();
-       }
- 
++         MapData mapdata = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
++         if (mapdata != null) {
+             for(ServerPlayerEntity serverplayerentity : this.field_219460_b.func_217369_A()) {
+                mapdata.func_76191_a(serverplayerentity, itemstack);
+                IPacket<?> ipacket = ((FilledMapItem)itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
 @@ -119,6 +_,18 @@
              IPacket<?> ipacket1 = null;
              boolean flag4 = flag3 || this.field_219472_n % 60 == 0;

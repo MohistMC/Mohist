@@ -62,7 +62,7 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.fluid.Fluid;
-@@ -106,19 +_,38 @@
+@@ -106,19 +_,43 @@
  import net.minecraft.world.server.TicketType;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -86,6 +86,11 @@
 +      }
 +      return bukkitEntity;
 +   }
++
++   public void setBukkitEntity(CraftEntity bukkitEntity) {
++      this.bukkitEntity = bukkitEntity;
++   }
++
 +   @Override
 +   public CommandSender getBukkitSender(CommandSource wrapper) {
 +      return getBukkitEntity();

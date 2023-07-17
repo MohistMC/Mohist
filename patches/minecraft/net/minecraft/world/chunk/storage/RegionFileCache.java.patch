@@ -37,12 +37,3 @@
  
        Object object;
        try (DataInputStream datainputstream = regionfile.func_222666_a(p_219099_1_)) {
-@@ -58,7 +_,7 @@
-    }
- 
-    protected void func_219100_a(ChunkPos p_219100_1_, CompoundNBT p_219100_2_) throws IOException {
--      RegionFile regionfile = this.func_219098_a(p_219100_1_);
-+      RegionFile regionfile = this.loadFile(p_219100_1_, false); // CraftBukkit
- 
-       try (DataOutputStream dataoutputstream = regionfile.func_222661_c(p_219100_1_)) {
-          CompressedStreamTools.func_74800_a(p_219100_2_, dataoutputstream);

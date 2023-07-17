@@ -34,7 +34,6 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.MapDecoration;
-import net.minecraftforge.common.util.ITeleporter;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
@@ -1664,6 +1663,12 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
         STitlePacket packetReset = new STitlePacket(STitlePacket.Type.RESET, null);
         getHandle().connection.send(packetReset);
     }
+
+    public void restore(CraftPlayer player) {
+        setDisplayName(player.getDisplayName());
+        player.setHandle(getHandle());
+    }
+
 
     @Override
     public void spawnParticle(Particle particle, Location location, int count) {
