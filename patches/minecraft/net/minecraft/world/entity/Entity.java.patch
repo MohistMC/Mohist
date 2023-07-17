@@ -817,7 +817,7 @@
 +            }
 +            // CraftBukkit end
 +            // Spigot start
-+            org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(p_19966_.getBukkitEntity(), this.getBukkitEntity());
++            org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(this.getBukkitEntity(), p_19966_.getBukkitEntity());
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);

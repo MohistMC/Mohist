@@ -111,7 +111,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -188,24 +_,65 @@
+@@ -188,24 +_,67 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -169,6 +169,8 @@
 +      if (generator != null) {
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      }
++
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(p_215002_.m_5462_()); // Spigot // Mohist
 +      // CraftBukkit end
        boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();

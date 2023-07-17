@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.utils;
 
+import com.mohistmc.MohistMC;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -102,10 +103,10 @@ public class ConfigByWorlds {
             config.load(ConfigByWorlds.f);
             if (config.getConfigurationSection("worlds.") != null) {
                 for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
-                    World world = Bukkit.getWorld(w);
+
                     String environment = "NORMAL";
                     String difficulty = "EASY";
-                    if (world == null && ConfigByWorlds.f.exists()) {
+                    if (Bukkit.getWorld(w) == null && ConfigByWorlds.f.exists()) {
                         long seed = -1L;
                         if (config.get("worlds." + w + ".seed") != null) {
                             seed = config.getLong("worlds." + w + ".seed");
@@ -122,6 +123,7 @@ public class ConfigByWorlds {
 
                         wc.createWorld();
                     }
+                    World world = Bukkit.getWorld(w);
                     if (world != null) {
                         if (config.get("worlds." + w + ".difficulty") != null) {
                             difficulty = config.getString("worlds." + w + ".difficulty");
