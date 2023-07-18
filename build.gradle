@@ -58,8 +58,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.20.1-47.1.28'
-    FORGE_VERSION = '47.1.28'
+    VERSION = '1.20.1-47.1.33'
+    FORGE_VERSION = '47.1.33'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -106,7 +106,7 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-        options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-removal"// Mohist ignore compile warnings
+        options.warnings = false // Shutup deprecated for removal warnings
     }
 }
 

@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * LivingMakeBrainEvent is fired whenever a new {@link Brain} instance is created using {@link LivingEntity#makeBrain(Dynamic)}.<br>
+ * LivingMakeBrainEvent is fired whenever a new {@link net.minecraft.world.entity.ai.Brain} instance is created using {@link LivingEntity#makeBrain(Dynamic)}.<br>
  * <br>
  * To access the internal {@link BrainBuilder}, call {@link LivingMakeBrainEvent#getTypedBrainBuilder(LivingEntity)} using the downcasted {@link LivingEntity} obtained from {@link LivingEvent#getEntity()}.<br>
  * <br>

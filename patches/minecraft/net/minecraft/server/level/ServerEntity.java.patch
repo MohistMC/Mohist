@@ -53,37 +53,6 @@
           m_277180_(list, this.f_8523_).forEach((p_289307_) -> {
              if (p_289307_ instanceof ServerPlayer serverplayer1) {
                 serverplayer1.f_8906_.m_9774_(serverplayer1.m_20185_(), serverplayer1.m_20186_(), serverplayer1.m_20189_(), serverplayer1.m_146908_(), serverplayer1.m_146909_());
-@@ -90,12 +_,11 @@
- 
-       Entity $$11 = this.f_8510_;
-       if ($$11 instanceof ItemFrame itemframe) {
--         if (this.f_8521_ % 10 == 0) {
-+         if (true || this.f_8521_ % 10 == 0) { // CraftBukkit - Moved below, should always enter this block
-             ItemStack itemstack = itemframe.m_31822_();
--            if (itemstack.m_41720_() instanceof MapItem) {
--               Integer integer = MapItem.m_151131_(itemstack);
--               MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
--               if (mapitemsaveddata != null) {
-+         Integer integer = MapItem.m_151131_(itemstack);
-+         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
-+         if (mapitemsaveddata != null) {
-                   for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
-                      mapitemsaveddata.m_77918_(serverplayer, itemstack);
-                      Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
-@@ -104,11 +_,12 @@
-                      }
-                   }
-                }
--            }
- 
-             this.m_8543_();
-          }
-       }
-+
-+
- 
-       if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
-          if (this.f_8510_.m_20159_()) {
 @@ -200,7 +_,27 @@
  
        ++this.f_8521_;
