@@ -116,6 +116,7 @@ public class CraftContainer extends AbstractContainerMenu {
                     default:
                         throw new IllegalArgumentException("Unsupported custom inventory size " + inventory.getSize());
                 }
+            case CRAFTING:
             case WORKBENCH:
                 return MenuType.CRAFTING;
             case FURNACE:
@@ -153,7 +154,6 @@ public class CraftContainer extends AbstractContainerMenu {
             case SMITHING_NEW:
                 return MenuType.SMITHING;
             case CREATIVE:
-            case CRAFTING:
             case MERCHANT:
                 throw new IllegalArgumentException("Can't open a " + inventory.getType() + " inventory!");
             default:
