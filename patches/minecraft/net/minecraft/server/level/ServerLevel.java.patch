@@ -8,6 +8,15 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
+@@ -14,6 +_,8 @@
+ import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
++
++import java.io.File;
+ import java.io.IOException;
+ import java.io.Writer;
+ import java.nio.file.Files;
 @@ -87,7 +_,6 @@
  import net.minecraft.world.entity.animal.Animal;
  import net.minecraft.world.entity.animal.WaterAnimal;
@@ -53,7 +62,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,28 @@
+@@ -181,13 +_,29 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -78,7 +87,8 @@
 +      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {
 +         this.serverLevelDataCB = MohistDerivedLevelData.create(derivedLevelData);
 +      }
-+      uuid = WorldUUID.getUUID(p_203764_.f_78271_.toFile());
++      File worldFile = DimensionType.m_196975_(p_203766_, p_203764_.f_78271_).toFile();
++      uuid = WorldUUID.getUUID(worldFile);
 +      this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
        this.f_8561_ = p_203773_;
        this.f_8548_ = p_203762_;

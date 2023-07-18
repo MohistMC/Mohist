@@ -1060,9 +1060,9 @@ public final class CraftServer implements Server {
             worldKey = ResourceKey.create(net.minecraft.core.Registry.DIMENSION_REGISTRY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
         }
 
-        ServerLevel internal = (ServerLevel) new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, holder, getServer().progressListenerFactory.create(11),
-                chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true); /*, creator.environment(), generator, biomeProvider);*/
-
+        ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, holder, getServer().progressListenerFactory.create(11),
+                chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
+        internal.setGeneratorAndEnv(generator, creator.environment());
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
             return null;
         }
