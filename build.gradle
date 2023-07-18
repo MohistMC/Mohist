@@ -13,11 +13,11 @@ import static net.minecraftforge.forge.tasks.Util.*
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '2.+'
+    id 'net.minecraftforge.gradleutils' version '[2.0.13,)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.11,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.11,6.2)' apply false
+    id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
+    id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -111,7 +111,7 @@ subprojects {
 }
 
 project(':mcp') {
-    apply plugin: 'net.minecraftforge.gradle.mcp'
+    apply plugin: 'net.neoforged.gradle.mcp'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
@@ -121,7 +121,7 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'net.neoforged.gradle.patcher'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -298,114 +298,6 @@ def sharedFmlonlyForge = { Project prj ->
         changing = true
     }
 
-    prj.tasks.userdevConfig {
-        def launchPrefix = prj.name == "forge" ? "forge" : "fml"
-        getArtifacts(prj, prj.configurations.installer, true).each { key, lib -> libraries.add(lib.name) }
-        getArtifacts(prj, prj.configurations.moduleonly, true).each { key, lib ->
-            libraries.add(lib.name)
-            modules.add(lib.name)
-        }
-        for (child in prj.ext.PACKED_DEPS) {
-            libraries.add(getMavenDep(rootProject.tasks.findByPath(child)))
-        }
-        //libraries.add("${project.group}:${project.name}:${project.version}:launcher")
-        inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
-        runs {
-            server {
-                environment 'MOD_CLASSES', '{source_roots}'
-                environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                if (prj.name == 'forge') {
-                    property 'forge.enableGameTest', 'true'
-                }
-
-                args '--launchTarget', "${launchPrefix}serveruserdev"
-            }
-
-            if (prj.name == 'forge') {
-                gameTestServer {
-                    environment 'MOD_CLASSES', '{source_roots}'
-                    environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                    args '--launchTarget', "${launchPrefix}gametestserveruserdev"
-                }
-            }
-
-            data {
-                environment 'MOD_CLASSES', '{source_roots}'
-                environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                args '--launchTarget', "${launchPrefix}datauserdev"
-                args '--assetIndex', '{asset_index}'
-                args '--assetsDir', '{assets_root}'
-            }
-        }
-    }
-
-    def userdevRuns = prj.tasks.userdevConfig.runs
-    for (def run : prj.patcher.runs + userdevRuns) {
-        if (run.parents) continue // We already added this to the parent run config
-        //run.property 'bsl.debug', 'true'
-        run.main 'cpw.mods.bootstraplauncher.BootstrapLauncher'
-
-        run.args '--gameDir', '.'
-        run.args '--fml.forgeVersion', FORGE_VERSION
-        run.args '--fml.mcVersion', MC_VERSION
-        run.args '--fml.forgeGroup', prj.group
-        run.args '--fml.mcpVersion', MCP_VERSION
-
-        run.jvmArgs '-Djava.net.preferIPv6Addresses=system'
-
-        if (run.name.contains('client')) {
-            run.client true
-        } else {
-            run.client false
-        }
-
-        // SecureJarHandler bootstrap values.
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
-        // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
-        run.property 'mergeModules', 'jna-5.12.1.jar,jna-platform-5.12.1.jar'
-        if (userdevRuns.contains(run)) {
-            run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
-            run.jvmArgs '-p', '{modules}'
-        } else {
-            run.property 'legacyClassPath.file', '{runtime_classpath_file}'
-            run.jvmArgs '-p', prj.configurations.moduleonly.files.collect { it.path }.join(File.pathSeparator)
-        }
-        run.jvmArgs '--add-modules', 'ALL-MODULE-PATH'
-        // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
-        run.jvmArgs '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler'
-        run.jvmArgs '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler'
-        run.jvmArgs '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler'
-        run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
-    }
-    for (def run : prj.patcher.runs) {
-        if (run.parents) continue // We already added this to the parent run config
-        run.workingDirectory prj.file('run')
-
-        if (run.name.contains('client') || run.name.contains('data')) {
-            // Natives are loaded from the classpath now in all cases
-            // run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
-            run.args '--assetsDir', prj.downloadAssets.output
-            run.args '--assetIndex', "{asset_index}"
-        }
-
-        if (run.name.contains('client')) {
-            run.property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-            run.args '--username', 'Dev'
-            run.args '--version', prj.name
-            run.args '--uuid', '0'
-            run.args '--accessToken', '0'
-            run.args '--userType', 'mojang'
-            run.args '--versionType', 'release'
-        }
-
-        if (prj.name == 'forge') {
-            run.environment 'FORGE_SPEC', prj.SPEC_VERSION
-        }
-    }
-
     eclipse.project.resourceFilter {
         appliesTo = 'FOLDERS'
         type = 'EXCLUDE_ALL'
@@ -453,7 +345,7 @@ def sharedFmlonlyForge = { Project prj ->
 project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'net.neoforged.gradle.patcher'
 
     applyPatches { level 'WARNING' }
 
