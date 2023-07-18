@@ -4,6 +4,7 @@ import com.destroystokyo.paper.Title;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
+import com.mohistmc.MohistMC;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -1031,6 +1032,7 @@ public class CraftPlayer extends org.bukkit.craftbukkit.v1_16_R3.entity.CraftHum
 
     @Override
     public GameMode getGameMode() {
+        if (getHandle().gameMode.getGameModeForPlayer().getId() == -1) return GameMode.SURVIVAL;
         return GameMode.getByValue(getHandle().gameMode.getGameModeForPlayer().getId());
     }
 
