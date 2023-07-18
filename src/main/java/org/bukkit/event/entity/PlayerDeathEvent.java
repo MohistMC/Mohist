@@ -166,4 +166,11 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     public boolean getKeepInventory() {
         return keepInventory;
     }
+
+    private List<ItemStack> itemsToKeep = new java.util.ArrayList<>();
+
+    @NotNull
+    public List<ItemStack> getItemsToKeep() {
+        return itemsToKeep;
+    }
 }

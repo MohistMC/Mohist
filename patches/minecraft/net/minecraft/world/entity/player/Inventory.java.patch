@@ -18,7 +18,13 @@
  
  public class Inventory implements Container, Nameable {
     public static final int f_150064_ = 5;
-@@ -40,6 +_,54 @@
+@@ -35,11 +_,59 @@
+    public final NonNullList<ItemStack> f_35974_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
+    public final NonNullList<ItemStack> f_35975_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    public final NonNullList<ItemStack> f_35976_ = NonNullList.m_122780_(1, ItemStack.f_41583_);
+-   private final List<NonNullList<ItemStack>> f_35979_ = ImmutableList.of(this.f_35974_, this.f_35975_, this.f_35976_);
++   public final List<NonNullList<ItemStack>> f_35979_ = ImmutableList.of(this.f_35974_, this.f_35975_, this.f_35976_);
+    public int f_35977_;
     public final Player f_35978_;
     private int f_35981_;
  
