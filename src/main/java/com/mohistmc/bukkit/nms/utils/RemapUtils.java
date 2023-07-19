@@ -18,8 +18,6 @@
 
 package com.mohistmc.bukkit.nms.utils;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.nms.remappers.ClassRemapperSupplier;
 import com.mohistmc.bukkit.nms.remappers.MohistInheritanceMap;
@@ -29,8 +27,6 @@ import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
 import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
-import net.md_5.specialsource.InheritanceMap;
-import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -40,7 +36,6 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;

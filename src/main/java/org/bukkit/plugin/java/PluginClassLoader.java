@@ -7,7 +7,6 @@ import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
@@ -33,7 +32,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

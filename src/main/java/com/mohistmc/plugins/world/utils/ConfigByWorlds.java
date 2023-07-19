@@ -1,6 +1,5 @@
 package com.mohistmc.plugins.world.utils;
 
-import com.mohistmc.MohistMC;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;

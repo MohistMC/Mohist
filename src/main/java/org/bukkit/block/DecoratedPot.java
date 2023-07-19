@@ -1,11 +1,12 @@
 package org.bukkit.block;
 
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a captured state of a decorated pot.
