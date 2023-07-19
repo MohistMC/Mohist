@@ -85,7 +85,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,15 +_,66 @@
+@@ -176,15 +_,67 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -98,6 +98,7 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
@@ -1142,7 +1143,7 @@
           this.m_9942_(Component.m_237115_("disconnect.spam"));
        }
  
-@@ -1340,12 +_,58 @@
+@@ -1340,12 +_,61 @@
  
     public void m_7953_(ServerboundSwingPacket p_9926_) {
        PacketUtils.m_131359_(p_9926_, this, this.f_9743_.m_284548_());
@@ -1158,8 +1159,11 @@
 +
 +      double d3 = f_9743_.f_8941_.m_9290_() == GameType.CREATIVE ? 5.0D : 4.5D;
 +      // SPIGOT-5607: Only call interact event if no block or entity is being clicked. Use bukkit ray trace method, because it handles blocks and entities at the same time
-+      org.bukkit.util.RayTraceResult result = this.f_9743_.f_19853_.getWorld().rayTrace(origin, origin.getDirection(), d3, org.bukkit.FluidCollisionMode.NEVER, false, 0.1, entity -> entity != this.f_9743_.getBukkitEntity() && this.f_9743_.getBukkitEntity().canSee(entity));
-+
++      // SPIGOT-7429: Make sure to call PlayerInteractEvent for spectators and non-pickable entities
++      org.bukkit.util.RayTraceResult result = this.f_9743_.m_9236_().getWorld().rayTrace(origin, origin.getDirection(), d3, org.bukkit.FluidCollisionMode.NEVER, false, 0.1, entity -> {
++         Entity handle = ((CraftEntity) entity).getHandle();
++         return entity != this.f_9743_.getBukkitEntity() && this.f_9743_.getBukkitEntity().canSee(entity) && !handle.m_5833_() && handle.m_6087_() && !handle.m_20365_(f_9743_);
++      });
 +      if (result == null) {
 +         CraftEventFactory.callPlayerInteractEvent(this.f_9743_, Action.LEFT_CLICK_AIR, this.f_9743_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
 +      }

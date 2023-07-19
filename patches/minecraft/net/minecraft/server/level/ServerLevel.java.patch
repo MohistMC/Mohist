@@ -394,16 +394,15 @@
           if (p_8644_ != null) {
              p_8644_.m_6309_(Component.m_237115_("menu.savingLevel"));
           }
-@@ -735,13 +_,18 @@
-          } else {
+@@ -736,12 +_,18 @@
              this.f_143244_.m_157554_();
           }
--
-+         if (this.f_8549_ instanceof PrimaryLevelData worldInfo) {
-+            worldInfo.m_7831_(this.m_6857_().m_61970_());
-+            worldInfo.m_5917_(this.m_7654_().m_129901_().m_136307_());
-+            this.convertable.m_78290_(this.m_7654_().m_206579_(), worldInfo, this.m_7654_().m_6846_().m_6960_());
-+         }
+ 
++         ServerLevel worldserver1 = this;
++         K.m_7831_(worldserver1.m_6857_().m_61970_());
++         K.m_5917_(worldserver1.f_8548_.m_129901_().m_136307_());
++         this.convertable.m_78290_(this.f_8548_.m_206579_(), this.K, this.f_8548_.m_6846_().m_6960_());
++
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
     }

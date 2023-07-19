@@ -77,7 +77,7 @@
     private PlayerList f_129763_;
     private volatile boolean f_129764_ = true;
     private boolean f_129765_;
-@@ -237,17 +_,37 @@
+@@ -237,17 +_,36 @@
     private final FrameTimer f_129735_ = new FrameTimer();
     private boolean f_129736_;
     private float f_129737_;
@@ -97,7 +97,6 @@
 +   public static OptionSet options;
 +   public org.bukkit.command.ConsoleCommandSender console;
 +   public org.bukkit.command.RemoteConsoleCommandSender remoteConsole;
-+   public ConsoleReader reader;
 +   public static int currentTick = 0; // Paper - Further improve tick loop
 +   public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 +   public int autosavePeriod;
@@ -136,37 +135,13 @@
           this.f_129756_ = p_236730_;
           this.f_129744_ = p_236724_;
           this.f_129745_ = p_236724_.m_78301_();
-@@ -288,8 +_,34 @@
+@@ -288,8 +_,11 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_, holdergetter);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
--      }
 +         // CraftBukkit start
 +         this.vanillaCommandDispatcher = p_236726_.f_206893_().f_206847_;
-+
-+         // Try to see if we're actually running in a terminal, disable jline if not
-+         if (System.console() == null && System.getProperty("jline.terminal") == null) {
-+            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+            org.bukkit.craftbukkit.Main.useJline = false;
-+         }
-+      }
-+
-+      try {
-+         reader = new ConsoleReader(System.in, System.out);
-+         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
-+      } catch (Throwable e) {
-+         try {
-+            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
-+            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+            System.setProperty("user.language", "en");
-+            org.bukkit.craftbukkit.Main.useJline = false;
-+            reader = new ConsoleReader(System.in, System.out);
-+            reader.setExpandEvents(false);
-+         } catch (IOException ex) {
-+            f_129750_.warn((String) null, ex);
-+         }
-+      }
-+      // CraftBukkit end
+       }
     }
 +
  
@@ -551,7 +526,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -683,7 +_,15 @@
+@@ -683,7 +_,9 @@
              if (this.f_236721_.f_214336_() != null) {
                 this.f_236721_.f_214336_().m_196559_();
              }
@@ -559,12 +534,6 @@
 +            
 +            net.minecraftforge.server.ServerLifecycleHooks.handleServerStopped(this);
 +			org.spigotmc.WatchdogThread.doStop(); // Spigot
-+            // CraftBukkit start - Restore terminal to original settings
-+            try {
-+               reader.getTerminal().restore();
-+            } catch (Exception ignored) {
-+            }
-+            // CraftBukkit end
              this.m_6988_();
           }
  

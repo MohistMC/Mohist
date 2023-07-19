@@ -74,7 +74,7 @@
     private final Map<UUID, ServerPlayer> f_11197_ = Maps.newHashMap();
     private final UserBanList f_11198_ = new UserBanList(f_11189_);
     private final IpBanList f_11199_ = new IpBanList(f_11190_);
-@@ -126,14 +_,23 @@
+@@ -126,14 +_,22 @@
     private boolean f_11205_;
     private final LayeredRegistryAccess<RegistryLayer> f_243858_;
     private final RegistryAccess.Frozen f_256838_;
@@ -94,7 +94,6 @@
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
 +      p_203842_.console = ColouredConsoleSender.getInstance();
-+      p_203842_.reader.addCompleter(new ConsoleCommandCompleter(p_203842_.server));
 +      // CraftBukkit end
        this.f_11195_ = p_203842_;
        this.f_243858_ = p_251844_;

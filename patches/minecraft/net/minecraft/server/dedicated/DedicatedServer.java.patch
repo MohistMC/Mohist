@@ -31,23 +31,21 @@
  
     public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
-@@ -79,12 +_,43 @@
+@@ -79,12 +_,39 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
--            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
--
--            String s1;
--            try {
--               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
--                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            // CraftBukkit start
 +            if (!org.bukkit.craftbukkit.Main.useConsole) {
 +               return;
 +            }
-+            jline.console.ConsoleReader bufferedreader = reader;
-+
+             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+ 
+-            String s1;
+-            try {
+-               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
+-                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
 +               System.in.available();
@@ -59,11 +57,7 @@
 +            try {
 +               // CraftBukkit start - JLine disabling compatibility
 +               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
-+                  if (org.bukkit.craftbukkit.Main.useJline) {
-+                     s = bufferedreader.readLine(">", null);
-+                  } else {
-+                     s = bufferedreader.readLine();
-+                  }
++                  s = bufferedreader.readLine();
 +
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
 +                  if (s == null) {
