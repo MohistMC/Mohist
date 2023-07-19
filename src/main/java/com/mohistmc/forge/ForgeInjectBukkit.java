@@ -56,13 +56,6 @@ public class ForgeInjectBukkit {
                     .put(LevelStem.END, World.Environment.THE_END)
                     .build());
 
-    public static BiMap<ResourceKey<Level>, World.Environment> environment0 =
-            HashBiMap.create(ImmutableMap.<ResourceKey<Level>, World.Environment>builder()
-                    .put(Level.OVERWORLD, World.Environment.NORMAL)
-                    .put(Level.NETHER, World.Environment.NETHER)
-                    .put(Level.END, World.Environment.THE_END)
-                    .build());
-
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<StatType<?>, Statistic> statisticMap = new HashMap<>();
@@ -81,6 +74,7 @@ public class ForgeInjectBukkit {
         //addEnumArt();
         addEnumParticle();
         addStatistic();
+        addEnumEnvironment();
     }
 
 

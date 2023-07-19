@@ -136,7 +136,7 @@
 +
 +   @Override
 +   public ResourceKey<LevelStem> getTypeKey() {
-+      return Level2LevelStem.getTypeKey(this);
++      return super.getTypeKey();
 +   }
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {

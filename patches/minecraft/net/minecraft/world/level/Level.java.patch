@@ -68,7 +68,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,19 +_,61 @@
+@@ -101,19 +_,63 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -112,7 +112,9 @@
 +   public CraftServer getCraftServer() {
 +      return (CraftServer) Bukkit.getServer();
 +   }
-+   public abstract ResourceKey<LevelStem> getTypeKey();
++   public ResourceKey<LevelStem> getTypeKey() {
++      return Registries.m_257452_(f_46421_);
++   }
 +   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
 +      generator = gen;
 +      environment = env;
@@ -152,7 +154,7 @@
        this.f_268497_ = new DamageSources(p_270200_);
 +      // CraftBukkit start
 +      if (environment == null) {
-+         environment = getTypeKey() == null ? World.Environment.CUSTOM : ForgeInjectBukkit.environment.get(getTypeKey());
++         environment = ForgeInjectBukkit.environment.get(getTypeKey());
 +      }
 +      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
