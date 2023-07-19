@@ -2,6 +2,7 @@ package com.mohistmc.plugins.world.commands;
 
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
@@ -59,6 +60,7 @@ public class WorldsCommands extends Command {
                     int i = -1;
                     Inventory inv = Bukkit.createInventory(null, 27, MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
                     for (World.Environment environment : World.Environment.values()) {
+                        if (environment == World.Environment.CUSTOM) continue;
                         i++;
                         inv.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
                     }

@@ -56,6 +56,13 @@ public class ForgeInjectBukkit {
                     .put(LevelStem.END, World.Environment.THE_END)
                     .build());
 
+    public static BiMap<World.Environment, ResourceKey<LevelStem>> environment0 =
+            HashBiMap.create(ImmutableMap.<World.Environment, ResourceKey<LevelStem>>builder()
+                    .put(World.Environment.NORMAL, LevelStem.OVERWORLD)
+                    .put(World.Environment.NETHER, LevelStem.NETHER)
+                    .put(World.Environment.THE_END, LevelStem.END)
+                    .build());
+
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<StatType<?>, Statistic> statisticMap = new HashMap<>();
@@ -189,6 +196,7 @@ public class ForgeInjectBukkit {
                 int id = i - 1;
                 environment1 = MohistDynamEnum.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
                 environment.put(key, environment1);
+                environment0.put(environment1, key);
                 MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
             }
