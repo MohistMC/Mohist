@@ -18,15 +18,18 @@
 
 package com.mohistmc.bukkit.nms.utils;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.nms.remappers.ClassRemapperSupplier;
-import com.mohistmc.bukkit.nms.remappers.MohistInheritanceMap;
 import com.mohistmc.bukkit.nms.remappers.MohistInheritanceProvider;
 import com.mohistmc.bukkit.nms.remappers.MohistJarMapping;
 import com.mohistmc.bukkit.nms.remappers.MohistJarRemapper;
 import com.mohistmc.bukkit.nms.remappers.MohistSuperClassRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.bukkit.nms.remappers.ReflectRemapper;
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -36,6 +39,7 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
@@ -60,8 +64,7 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
-        jarMapping.setInheritanceMap(new MohistInheritanceMap());
-        jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
+        jarMapping.setInheritanceMap(getGlobalInheritanceMap());
         try {
             jarMapping.loadMappings(
                     new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
@@ -183,4 +186,43 @@ public class RemapUtils {
     public static boolean needRemap(String className) {
         return className.startsWith("net.minecraft.");
     }
+
+    // Cauldron start
+    private static InheritanceMap globalInheritanceMap = null;
+
+    /**
+     * Get the inheritance map for remapping all plugins
+     */
+    public static InheritanceMap getGlobalInheritanceMap() {
+        if (globalInheritanceMap == null) {
+            Map<String, String> relocationsCurrent = new HashMap<>();
+            JarMapping currentMappings = new JarMapping();
+
+            try {
+                currentMappings.loadMappings(
+                        new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
+                        new MavenShade(relocationsCurrent),
+                        null, false);
+            } catch (IOException ex) {
+                ex.fillInStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
+            globalInheritanceMap = new InheritanceMap();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/inheritanceMap.txt")));
+
+            try {
+                globalInheritanceMap.load(reader, inverseClassMap);
+            } catch (IOException ex) {
+                ex.fillInStackTrace();
+                throw new RuntimeException(ex);
+            }
+            System.out.println("Loaded inheritance map of " + globalInheritanceMap.size() + " classes");
+        }
+
+        return globalInheritanceMap;
+    }
+    // Cauldron end
 }
