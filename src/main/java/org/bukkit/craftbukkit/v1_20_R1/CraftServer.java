@@ -1081,12 +1081,19 @@ public final class CraftServer implements Server {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
 
-        ResourceKey<net.minecraft.world.level.Level> worldKey = Registries.levelStemToLevel(actualDimension); // Mohist
-        boolean isoverworld = creator.environment() == Environment.NORMAL;
+        ResourceKey<net.minecraft.world.level.Level> worldKey;
+        String levelName = this.getServer().getProperties().levelName;
+        if (name.equals(levelName + "_nether")) {
+            worldKey = net.minecraft.world.level.Level.NETHER;
+        } else if (name.equals(levelName + "_the_end")) {
+            worldKey = net.minecraft.world.level.Level.END;
+        } else {
+            worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
+        }
 
         net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider);
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
-                worlddata.isDebugWorld(), j, isoverworld ? list : ImmutableList.of(), isoverworld, isoverworld ? null : console.overworld().getRandomSequences());
+                worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences());
 
         if (name.contains("/")) {
             String[] strings = name.split("/");
