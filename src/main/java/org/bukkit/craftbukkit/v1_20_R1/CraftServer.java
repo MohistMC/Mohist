@@ -332,10 +332,6 @@ public final class CraftServer implements Server {
         MobEffects.BLINDNESS.getClass();
         // Ugly hack :(
 
-        if (!Main.useConsole) {
-            getLogger().info("Console input is disabled due to --noconsole command argument");
-        }
-
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         configuration.options().copyDefaults(true);
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
