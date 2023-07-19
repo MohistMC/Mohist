@@ -49,11 +49,12 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,16 @@
+@@ -69,8 +_,17 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState;
@@ -145,11 +146,14 @@
              }
           };
        } else {
-@@ -141,6 +_,43 @@
+@@ -141,6 +_,46 @@
        this.f_220350_ = new CollectingNeighborUpdater(this, p_270466_);
        this.f_268710_ = p_270200_;
        this.f_268497_ = new DamageSources(p_270200_);
 +      // CraftBukkit start
++      if (environment == null) {
++         environment = getTypeKey() == null ? World.Environment.CUSTOM : ForgeInjectBukkit.environment.get(getTypeKey());
++      }
 +      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {

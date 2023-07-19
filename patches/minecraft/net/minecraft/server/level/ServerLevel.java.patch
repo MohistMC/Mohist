@@ -182,16 +182,13 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,21 @@
+@@ -240,6 +_,18 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
 +      // Mohist start
 +      if (generator == null && p_215002_ != null) {
 +         generator = getCraftServer().getGenerator(p_215002_.m_5462_());
-+      }
-+      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment0.get(p_215003_);
 +      }
 +      if (biomeProvider == null) {
 +         biomeProvider = getCraftServer().getBiomeProvider(p_215002_.m_5462_());
