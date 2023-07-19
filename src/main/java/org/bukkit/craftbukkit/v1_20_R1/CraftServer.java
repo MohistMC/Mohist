@@ -82,6 +82,7 @@ import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.PatrolSpawner;
+import net.minecraft.world.level.levelgen.PhantomSpawner;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
@@ -1033,7 +1034,7 @@ public final class CraftServer implements Server {
 
         LevelStorageSource.LevelStorageAccess worldSession;
         try {
-            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).validateAndCreateAccess(name); // Mohist TODO
+            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).validateAndCreateAccess(name);
         } catch (IOException | ContentValidationException ex) {
             throw new RuntimeException(ex);
         }
@@ -1076,7 +1077,7 @@ public final class CraftServer implements Server {
         }
 
         long j = BiomeManager.obfuscateSeed(creator.seed());
-        List<CustomSpawner> list = ImmutableList.of(new PatrolSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
+        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(worlddata));
         LevelStem worlddimension = iregistry.get(actualDimension);
 
         WorldInfo worldInfo = new CraftWorldInfo(worlddata, worldSession, creator.environment(), worlddimension.type().value());
@@ -1084,19 +1085,12 @@ public final class CraftServer implements Server {
             biomeProvider = generator.getDefaultBiomeProvider(worldInfo);
         }
 
-        ResourceKey<net.minecraft.world.level.Level> worldKey;
-        String levelName = this.getServer().getProperties().levelName;
-        if (name.equals(levelName + "_nether")) {
-            worldKey = net.minecraft.world.level.Level.NETHER;
-        } else if (name.equals(levelName + "_the_end")) {
-            worldKey = net.minecraft.world.level.Level.END;
-        } else {
-            worldKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
-        }
+        ResourceKey<net.minecraft.world.level.Level> worldKey = Registries.levelStemToLevel(actualDimension); // Mohist
+        boolean isoverworld = creator.environment() == Environment.NORMAL;
 
         net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider);
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
-                worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences());
+                worlddata.isDebugWorld(), j, isoverworld ? list : ImmutableList.of(), isoverworld, isoverworld ? null : console.overworld().getRandomSequences());
 
         if (name.contains("/")) {
             String[] strings = name.split("/");
@@ -1112,7 +1106,7 @@ public final class CraftServer implements Server {
         internal.setSpawnSettings(true, true);
         console.addLevel(internal);
         getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
-        internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
+        internal.entityManager.tick(); // SPIGOT-6526: Load pending entities, so they are available to the API
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
         World world1 = internal.getWorld();
