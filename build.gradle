@@ -97,6 +97,7 @@ subprojects {
             name = 'minecraft'
             url = 'https://libraries.minecraft.net/'
         }
+        maven { url = 'https://maven.neoforged.net/releases' }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
         maven { url 'https://maven.izzel.io/releases' }

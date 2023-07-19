@@ -171,7 +171,7 @@
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      }
 +
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(p_215002_.m_5462_()); // Spigot // Mohist
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
 +      // CraftBukkit end
        boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();

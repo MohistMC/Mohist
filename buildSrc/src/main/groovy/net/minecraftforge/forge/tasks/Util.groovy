@@ -77,7 +77,7 @@ public class Util {
 			def path = "${folder}${filename}"
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
-				url = "https://maven.minecraftforge.net/${path}"
+				url = "https://maven.neoforged.net/${path}"
 			}
 			ret[key] = [
 				name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
