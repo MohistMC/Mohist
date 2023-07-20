@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.1)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.1--47.1.33-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html)
+[![](https://img.shields.io/badge/Forge-1.20.1--47.1.39-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html)
 [![](https://img.shields.io/badge/jdk-17.0.7-brightgreen.svg?colorB=469C00&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![](https://img.shields.io/badge/Gradle-8.2.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.2.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -22,19 +22,19 @@
 | 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.18.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.16.5  | Active      | Good      | Better than plugins | Good                 |
-| 1.12.2  | End Of Life | High      | Very good           | Very good            |
+| 1.12.2  | Active      | High      | Very good           | Very good            |
 | 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
 
 Progress
 ------
 
-- [x] Rectify Forge([**30f255d76**](https://github.com/MinecraftForge/MinecraftForge/commit/30f255d76))
-- [ ] Start patch
+- [x] Rectify Forge([**93a615e90**](https://github.com/MinecraftForge/MinecraftForge/commit/93a615e90))
+- [x] Start patch
     * [x] Bukkit([**2cc6db92**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/2cc6db92))
-    * [ ] CraftBukkit([**5daeb502a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/5daeb502a))
-    * [ ] Spigot ([**3374045a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/3374045a))
+    * [x] CraftBukkit([**5daeb502a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/5daeb502a))
+    * [x] Spigot ([**3374045a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/3374045a))
         * [x] Bukkit-Patches
-        * [ ] CraftBukkit-Patches (98%) - (029/030/091)
+        * [x] CraftBukkit-Patches
 
 - [ ] Sleep
 

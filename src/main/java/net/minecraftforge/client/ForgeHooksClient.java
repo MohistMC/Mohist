@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Constants;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
@@ -146,6 +147,8 @@ import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
+import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -508,7 +511,7 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, Direction facing, boolean calculateNormals)
     {
         Vector3f v2;
-        if (calculateNormals) {
+        if (calculateNormals || ForgeConfig.CLIENT.calculateAllNormals.get()) {
             Vector3f v1 = getVertexPos(faceData, 3);
             Vector3f t1 = getVertexPos(faceData, 1);
             v2 = getVertexPos(faceData, 2);
@@ -1201,27 +1204,45 @@ public class ForgeHooksClient
         return new ResourceLocation(loc.getNamespace(), normalised);
     }
 
-    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
+    // Use ForgeHooks.onCreativeModeTabBuildContents()
+    // since calling this will crash if called on server
+    @Deprecated(forRemoval = true, since = "1.20.1")
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output) {
+        // Bounce to ForgeHooks.onCreativeModeBuildContents(...)
+        ForgeHooks.onCreativeModeTabBuildContents(tab, tabKey, originalGenerator, params, output);
+    }
+
+    /**
+     * This function is a clone of {@link Direction#getNearest(float, float, float)} designed to return a consistent
+     * direction when the normal is at an inflection point (ie 45 degrees) rounding errors
+     * from associated matrix multiplication (such as during {@link SheetedDecalTextureGenerator#endVertex()}
+     * can cause the direction chosen to be unstable.
+     *
+     * The function will only take effect if the Forge Client config option "stabilizeDirectionGetNearest" is enabled.
+     *
+     * This is a port of the downstream changes from https://github.com/neoforged/NeoForge PR #26
+     *
+     * @param nX X component of the normal
+     * @param nY Y component of the normal
+     * @param nZ Z component of the normal
+     * @return the nearest Direction to the passed in normal, biased slightly in favor of the order of declaration
+     */
+    public static Direction getNearestStable(float nX, float nY, float nZ)
     {
-        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
-            (key, left, right) -> {
-                //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
-                // Vanilla adds enchanting books twice in both visibilities.
-                // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
-                return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+        if (ForgeConfig.CLIENT.stabilizeDirectionGetNearest.get()) {
+            Direction ret = Direction.NORTH;
+            float sum = Float.MIN_VALUE;
+            for(Direction dir : Direction.values()) {
+                float newSum = nX * (float)dir.getNormal().getX() + nY * (float)dir.getNormal().getY() + nZ * (float)dir.getNormal().getZ();
+                if (newSum > sum + Constants.EPSILON) {
+                    sum = newSum;
+                    ret = dir;
+                }
             }
-        );
-
-        originalGenerator.accept(params, (stack, vis) -> {
-            if (stack.getCount() != 1)
-                throw new IllegalArgumentException("The stack count must be 1");
-            entries.put(stack, vis);
-        });
-
-        ModLoader.get().postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
-
-        for (var entry : entries)
-            output.accept(entry.getKey(), entry.getValue());
+            return ret;
+        } else {
+            return Direction.getNearest(nX, nY, nZ);
+        }
     }
 
     // Make sure the below method is only ever called once (by forge).
