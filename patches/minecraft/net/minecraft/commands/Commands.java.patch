@@ -65,7 +65,7 @@
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
        });
-@@ -230,12 +_,63 @@
+@@ -230,12 +_,62 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -122,7 +122,6 @@
 +
 +   // Mohist start - add field to compat with mods
 +   private AtomicReference<String> mohist$label = new AtomicReference<>();
-+
  
     public int m_242674_(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
 +      var label = mohist$label.get();

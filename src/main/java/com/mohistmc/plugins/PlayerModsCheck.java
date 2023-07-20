@@ -22,7 +22,7 @@ public class PlayerModsCheck {
                 return true;
             }
         }
-        if (MohistConfig.player_modlist_blacklist_enable) {
+        if (MohistConfig.player_modlist_blacklist_enable && MohistConfig.player_modlist_blacklist != null) {
             for (String config : MohistConfig.player_modlist_blacklist) {
                 if (stringList.contains(config)) {
                     canLog.set(false);

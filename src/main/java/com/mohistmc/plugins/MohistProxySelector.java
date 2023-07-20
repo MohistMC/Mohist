@@ -30,10 +30,11 @@ public class MohistProxySelector extends ProxySelector {
         String uriString = uri.toString();
         String defaultMsg = "[NetworkManager] Network protection and blocked by network rules!";
         boolean intercept = false;
-
-        for (String config_uri : MohistConfig.networkmanager_intercept) {
-            if (uriString.contains(config_uri)) {
-                intercept = true;
+        if (MohistConfig.networkmanager_intercept != null) {
+            for (String config_uri : MohistConfig.networkmanager_intercept) {
+                if (uriString.contains(config_uri)) {
+                    intercept = true;
+                }
             }
         }
         if (Bukkit.getServer() != null && Bukkit.getServer().isPrimaryThread()) {
