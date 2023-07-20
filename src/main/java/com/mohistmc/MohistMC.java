@@ -2,12 +2,14 @@ package com.mohistmc;
 
 import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.i18n.i18n;
+import com.mohistmc.plugins.MohistProxySelector;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.ProxySelector;
 import java.util.Locale;
 
 @Mod("mohist")
@@ -27,5 +29,6 @@ public class MohistMC {
         LOGGER.info("Mohist mod loading.....");
         version = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
         EventDispatcherRegistry.init();
+        ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
     }
 }

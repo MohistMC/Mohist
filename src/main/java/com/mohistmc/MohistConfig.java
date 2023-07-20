@@ -156,6 +156,8 @@ public class MohistConfig {
     public static String server_modlist_whitelist;
     public static int maxBees;
     public static boolean bookAnimationTick;
+    public static boolean networkmanager_debug;
+    public static List<String> networkmanager_intercept;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -171,5 +173,7 @@ public class MohistConfig {
         server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
         maxBees = getInt("max-bees-in-hive", 3);
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
+        networkmanager_debug = getBoolean("networkmanager.debug", false);
+        networkmanager_intercept = getList("networkmanager.intercept", Collections.emptyList());
     }
 }
