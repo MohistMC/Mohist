@@ -564,13 +564,6 @@ public final class SimplePluginManager implements PluginManager {
      */
     @Override
     public void callEvent(@NotNull Event event) {
-        // JettPack start - Skip event if no listeners
-        HandlerList handlers = event.getHandlers();
-        RegisteredListener[] listeners = handlers.getRegisteredListeners();
-        if (listeners.length == 0) {
-            return;
-        }
-        // JettPack end
         // KTP start - optimize spigot event bus
         final boolean isAsync = event.isAsynchronous();
         final boolean isPrimary = server.isPrimaryThread(); // Cache to prevent multiple thread object comparisons.
@@ -592,9 +585,12 @@ public final class SimplePluginManager implements PluginManager {
     }
 
     private void fireEvent(@NotNull Event event) {
+        MohistPlugin.registerListener(event);
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
-
+        if (listeners.length == 0) {
+            return;
+        }
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {
                 continue;
@@ -619,7 +615,6 @@ public final class SimplePluginManager implements PluginManager {
                 server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), ex);
             }
         }
-        MohistPlugin.registerListener(event);
     }
 
     @Override
