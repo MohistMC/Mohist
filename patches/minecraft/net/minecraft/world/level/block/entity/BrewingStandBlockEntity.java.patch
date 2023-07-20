@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -1,6 +_,8 @@
+@@ -1,13 +_,17 @@
  package net.minecraft.world.level.block.entity;
  
 +import java.util.ArrayList;
@@ -9,7 +9,8 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
-@@ -8,6 +_,7 @@
+ import net.minecraft.core.NonNullList;
++import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
  import net.minecraft.world.Container;
@@ -182,6 +183,22 @@
  
        p_155293_.set(3, itemstack);
        p_155291_.m_46796_(1035, p_155292_, 0);
+@@ -191,6 +_,7 @@
+       ContainerHelper.m_18980_(p_155297_, this.f_58975_);
+       this.f_58976_ = p_155297_.m_128448_("BrewTime");
+       this.f_58979_ = p_155297_.m_128445_("Fuel");
++      this.f_58978_ = BuiltInRegistries.f_257033_.m_7745_(new net.minecraft.resources.ResourceLocation(p_155297_.m_128461_("Mohist.ingredient"))); // Mirai - fix brewing stands resetting their brewTime when being unloaded
+    }
+ 
+    protected void m_183515_(CompoundTag p_187484_) {
+@@ -198,6 +_,7 @@
+       p_187484_.m_128376_("BrewTime", (short)this.f_58976_);
+       ContainerHelper.m_18973_(p_187484_, this.f_58975_);
+       p_187484_.m_128344_("Fuel", (byte)this.f_58979_);
++      p_187484_.m_128359_("Mohist.ingredient", BuiltInRegistries.f_257033_.m_7981_(this.f_58978_).toString()); // Mirai - fix brewing stands resetting their brewTime when being unloaded
+    }
+ 
+    public ItemStack m_8020_(int p_58985_) {
 @@ -225,11 +_,11 @@
  
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {

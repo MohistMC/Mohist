@@ -9,11 +9,12 @@
        this.f_26137_ = this.f_26135_.m_5448_();
        this.f_26034_ = this.f_26135_.m_21213_();
        this.f_26138_ = 300;
-@@ -107,6 +_,6 @@
+@@ -107,6 +_,7 @@
     }
  
     protected void m_5766_(Mob p_26042_, LivingEntity p_26043_) {
 -      p_26042_.m_6710_(p_26043_);
++      if (p_26042_ == p_26043_) return; // Mirai - avoid entities with suicidal thoughts /s
 +      p_26042_.setTarget(p_26043_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit - reason
     }
  }

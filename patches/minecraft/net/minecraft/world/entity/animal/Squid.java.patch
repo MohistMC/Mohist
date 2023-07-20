@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Squid.java
++++ b/net/minecraft/world/entity/animal/Squid.java
+@@ -126,6 +_,8 @@
+          }
+ 
+          if (!this.m_9236_().f_46443_) {
++            Vec3 vec3 = m_20182_().m_82520_(f_29947_, f_29948_, f_29949_); // Mohist
++            if ((f_29947_ != 0 || f_29948_ != 0 || f_29949_ != 0) && !((ServerLevel) this.f_19853_).m_143340_(BlockPos.m_274561_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_))) f_29947_ = f_29948_ = f_29949_ = 0; // MultiPaper - don't allow squids to wander into non-ticking chunks
+             this.m_20334_((double)(this.f_29947_ * this.f_29944_), (double)(this.f_29948_ * this.f_29944_), (double)(this.f_29949_ * this.f_29944_));
+          }
+ 

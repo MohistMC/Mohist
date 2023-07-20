@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
+@@ -2,6 +_,9 @@
+ 
+ import java.util.EnumSet;
+ import javax.annotation.Nullable;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.entity.PathfinderMob;
+ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+ import net.minecraft.world.phys.Vec3;
+@@ -48,7 +_,7 @@
+          }
+ 
+          Vec3 vec3 = this.m_7037_();
+-         if (vec3 == null) {
++         if (vec3 == null|| !((ServerLevel) this.f_25725_.f_19853_).m_143340_(BlockPos.m_274561_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_))) { // MultiPaper - don't wander into non-ticking chunks
+             return false;
+          } else {
+             this.f_25726_ = vec3.f_82479_;

@@ -375,15 +375,6 @@ public class SpigotWorldConfig
         hangingTickFrequency = getInt( "hanging-tick-frequency", 100 );
     }
 
-    public int tileMaxTickTime;
-    public int entityMaxTickTime;
-    private void maxTickTimes()
-    {
-        tileMaxTickTime = getInt("max-tick-time.tile", 8);
-        entityMaxTickTime = getInt("max-tick-time.entity", 16);
-        log("Tile Max Tick Time: " + tileMaxTickTime + "ms Entity max Tick Time: " + entityMaxTickTime + "ms");
-    }
-
     public int thunderChance;
     private void thunderChance()
     {

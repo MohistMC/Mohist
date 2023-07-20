@@ -175,7 +175,7 @@
  
 +   // Mohist start - fix mixin
 +   AtomicBoolean reducedRange0 = new AtomicBoolean(false);
-+   boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
++   public boolean anyPlayerCloseEnoughForSpawning(ChunkPos p_183880_, boolean reducedRange) {
 +      reducedRange0.set(reducedRange);
 +      return m_183879_(p_183880_);
 +   }

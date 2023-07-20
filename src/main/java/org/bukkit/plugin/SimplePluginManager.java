@@ -564,18 +564,29 @@ public final class SimplePluginManager implements PluginManager {
      */
     @Override
     public void callEvent(@NotNull Event event) {
-        if (event.isAsynchronous()) {
+        // JettPack start - Skip event if no listeners
+        HandlerList handlers = event.getHandlers();
+        RegisteredListener[] listeners = handlers.getRegisteredListeners();
+        if (listeners.length == 0) {
+            return;
+        }
+        // JettPack end
+        // KTP start - optimize spigot event bus
+        final boolean isAsync = event.isAsynchronous();
+        final boolean isPrimary = server.isPrimaryThread(); // Cache to prevent multiple thread object comparisons.
+        if (isAsync) {
             if (Thread.holdsLock(this)) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
             }
-            if (server.isPrimaryThread()) {
+            if (isPrimary) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
             }
         } else {
-            if (!server.isPrimaryThread()) {
+            if (!isPrimary) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from another thread.");
             }
         }
+        // KTP end - optimize spigot event bus
 
         fireEvent(event);
     }

@@ -1171,6 +1171,14 @@
     }
  
     protected void m_6088_() {
+@@ -1770,6 +_,7 @@
+    }
+ 
+    protected void m_21203_() {
++      if (!this.f_20911_ && this.f_20913_ == 0) return; // Mirai
+       int i = this.m_21304_();
+       if (this.f_20911_) {
+          ++this.f_20913_;
 @@ -1862,6 +_,12 @@
  
     public abstract ItemStack m_6844_(EquipmentSlot p_21127_);
@@ -1323,7 +1331,11 @@
           }
        } else {
           this.f_20954_ = 0;
-@@ -2590,6 +_,8 @@
+@@ -2587,9 +_,12 @@
+    }
+ 
+    private void m_21323_() {
++      if (!this.m_21255_()) return; // Mirai
        boolean flag = this.m_20291_(7);
        if (flag && !this.m_20096_() && !this.m_20159_() && !this.m_21023_(MobEffects.f_19620_)) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);

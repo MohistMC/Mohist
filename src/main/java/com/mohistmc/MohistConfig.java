@@ -152,6 +152,8 @@ public class MohistConfig {
 
     public static boolean server_modlist_whitelist_enable;
     public static String server_modlist_whitelist;
+    public static int maxBees;
+    public static boolean bookAnimationTick;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -165,5 +167,7 @@ public class MohistConfig {
         player_modlist_blacklist = getList("player_modlist_blacklist.list", Collections.emptyList());
         server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
         server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
+        maxBees = getInt("max-bees-in-hive", 3);
+        bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
     }
 }

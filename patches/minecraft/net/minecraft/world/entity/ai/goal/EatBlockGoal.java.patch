@@ -8,6 +8,19 @@
  
  public class EatBlockGoal extends Goal {
     private static final int f_148085_ = 40;
+@@ -25,6 +_,12 @@
+    }
+ 
+    public boolean m_8036_() {
++      // Purpur start
++      net.minecraft.world.level.chunk.LevelChunk chunk = this.f_25202_.f_19853_.m_46745_(this.f_25202_.m_20183_());
++      if (chunk == null || !((net.minecraft.server.level.ServerLevel) this.f_25202_.f_19853_).m_7726_().f_8325_.anyPlayerCloseEnoughForSpawning(this.f_25202_.m_146902_(), false)) {
++         return false;
++      }
++      // Purpur end
+       if (this.f_25202_.m_217043_().m_188503_(this.f_25202_.m_6162_() ? 50 : 1000) != 0) {
+          return false;
+       } else {
 @@ -60,7 +_,7 @@
        if (this.f_25204_ == this.m_183277_(4)) {
           BlockPos blockpos = this.f_25202_.m_20183_();

@@ -36,8 +36,6 @@ Progress
         * [x] Bukkit-Patches
         * [x] CraftBukkit-Patches
 
-- [ ] Sleep
-
 Getting Help
 ------
 

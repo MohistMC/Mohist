@@ -62,11 +62,13 @@ public class RegisteredListener {
      * @throws EventException If an event handler throws an exception.
      */
     public void callEvent(@NotNull final Event event) throws EventException {
-        if (event instanceof Cancellable) {
+        // KTP start - optimize spigot event bus
+        if (isIgnoringCancelled()) {
             if (((Cancellable) event).isCancelled() && isIgnoringCancelled()) {
                 return;
             }
         }
+        // KTP end - optimize spigot event bus
         executor.execute(listener, event);
     }
 
