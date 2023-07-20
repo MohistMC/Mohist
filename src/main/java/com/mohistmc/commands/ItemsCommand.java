@@ -85,7 +85,7 @@ public class ItemsCommand extends Command {
                 ItemsCommand.info(player);
             }
             case "name" -> {
-                if (args.length == 1) {
+                if (args.length != 2) {
                     sender.sendMessage(ChatColor.RED + "Usage: /items name <string>");
                     return false;
                 }

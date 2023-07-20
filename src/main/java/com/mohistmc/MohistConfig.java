@@ -7,6 +7,7 @@ import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
+import com.mohistmc.commands.PermissionCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.plugins.MohistPlugin;
 import net.minecraft.server.MinecraftServer;
@@ -73,6 +74,7 @@ public class MohistConfig {
         commands.put("plugin", new PluginCommand("plugin"));
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
         commands.put("items", new ItemsCommand("items"));
+        commands.put("permission", new PermissionCommand("permission"));
 
         MohistPlugin.registerCommands(commands);
 
