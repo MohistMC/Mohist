@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.StandardMessenger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,8 +22,6 @@ public class ServerAPI {
     public static HashSet<String> modlists_Server = new HashSet<>();
     public static Set<String> modlists_Inside = Set.of("minecraft", "forge", "mohist");
     public static List<String> modlists_All = new ArrayList<>();
-
-    public static List<String> channels = new ArrayList<>();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap<>();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
@@ -38,6 +37,10 @@ public class ServerAPI {
                 }
             }
         }
+    }
+
+    public static Set<String> channels() {
+        return ((StandardMessenger)Bukkit.getServer().getMessenger()).incomingByChannel.keySet();
     }
 
     // Don't count the default number of mods

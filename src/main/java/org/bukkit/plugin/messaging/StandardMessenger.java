@@ -17,7 +17,7 @@ import java.util.logging.Level;
  * Standard implementation to {@link Messenger}
  */
 public class StandardMessenger implements Messenger {
-    private final Map<String, Set<PluginMessageListenerRegistration>> incomingByChannel = new HashMap<String, Set<PluginMessageListenerRegistration>>();
+    public final Map<String, Set<PluginMessageListenerRegistration>> incomingByChannel = new HashMap<String, Set<PluginMessageListenerRegistration>>();
     private final Map<Plugin, Set<PluginMessageListenerRegistration>> incomingByPlugin = new HashMap<Plugin, Set<PluginMessageListenerRegistration>>();
     private final Map<String, Set<Plugin>> outgoingByChannel = new HashMap<String, Set<Plugin>>();
     private final Map<Plugin, Set<String>> outgoingByPlugin = new HashMap<Plugin, Set<String>>();

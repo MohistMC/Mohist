@@ -49,7 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "advancements");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
@@ -235,7 +235,7 @@ public class DumpCommand extends Command {
 
     private void dumpChannels(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for (String channel : ServerAPI.channels) {
+        for (String channel : ServerAPI.channels()) {
             sb.append(channel).append("\n");
         }
         dump(sender, "channels", sb, mode);
@@ -249,12 +249,8 @@ public class DumpCommand extends Command {
         dump(sender, "advancements", sb, mode);
     }
 
-    private void dumpmsg(CommandSender sender, File file, String type) {
-        sender.sendMessage("Successfully dump " + type + ", output path: " + file.getAbsolutePath());
-    }
-
-    private void dumpmsg(CommandSender sender, String web, String type) {
-        sender.sendMessage("Successfully dump " + type + ", output path: " + web);
+    private void dumpmsg(CommandSender sender, String path, String type) {
+        sender.sendMessage(ChatColor.GREEN + "Successfully dump " + type + ", output path: " + path);
     }
 
     private void dump(CommandSender sender, String type, StringBuilder sb, String mode) {
@@ -264,12 +260,12 @@ public class DumpCommand extends Command {
                 try {
                     String url = HasteUtils.pasteMohist(sb.toString());
                     if (sender instanceof Player p) {
-                        ChatComponentAPI.sendClickOpenURLChat(p, "Successfully dump " + type + ", output path: " + url, url, url);
+                        ChatComponentAPI.sendClickOpenURLChat(p, ChatColor.GREEN + "Successfully dump " + type + ", output path: " + ChatColor.DARK_GRAY + url, url, url);
                     } else {
                         dumpmsg(sender, url, type);
                     }
                 } catch (IOException e) {
-                    sender.sendMessage("Failed to upload to hastebin.");
+                    sender.sendMessage(ChatColor.RED + "Failed to upload to hastebin.");
                     saveToF(type, sb, sender);
                 }
             }
@@ -279,7 +275,7 @@ public class DumpCommand extends Command {
     private void saveToF(String type, StringBuilder sb, CommandSender sender) {
         File file = new File("dump", type + ".txt");
         writeByteArrayToFile(file, sb);
-        dumpmsg(sender, file, type);
+        dumpmsg(sender, file.getAbsolutePath(), type);
     }
 
     protected void writeByteArrayToFile(File file, StringBuilder sb) {

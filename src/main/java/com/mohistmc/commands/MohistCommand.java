@@ -110,7 +110,7 @@ public class MohistCommand extends Command {
                 sender.sendMessage("CraftBukkit: " + cbs[1]);
                 sender.sendMessage("Spigot: " + cbs[2]);
             }
-            case "channels" -> sender.sendMessage(ServerAPI.channels.toString());
+            case "channels" -> sender.sendMessage(ServerAPI.channels().toString());
             case "speed" -> {
                 if (sender instanceof Player p) {
                     if (args.length == 2 && p.isOp()) {
