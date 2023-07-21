@@ -723,4 +723,8 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      * @return Whether the entity is invisible
      */
     public boolean isInvisible();
+
+    public default Block getTargetBlock(int maxDistance) {
+        return getTargetBlockExact(maxDistance);
+    }
 }
