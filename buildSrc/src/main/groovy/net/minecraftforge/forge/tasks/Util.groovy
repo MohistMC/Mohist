@@ -72,7 +72,7 @@ public class Util {
 			def path = "${folder}${filename}"
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
-				url = "https://maven.minecraftforge.net/${path}"
+				url = "https://maven.neoforged.net/${path}"
 			}
 			//TODO remove when Mojang launcher is updated
 			if (!classifiers && art.classifier != null) {
