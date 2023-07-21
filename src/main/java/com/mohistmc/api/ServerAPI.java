@@ -39,8 +39,12 @@ public class ServerAPI {
         }
     }
 
-    public static Set<String> channels() {
-        return ((StandardMessenger)Bukkit.getServer().getMessenger()).incomingByChannel.keySet();
+    public static Set<String> channels_Incoming() {
+        return Bukkit.getMessenger().getIncomingChannels();
+    }
+
+    public static Set<String> channels_Outgoing() {
+        return Bukkit.getMessenger().getOutgoingChannels();
     }
 
     // Don't count the default number of mods

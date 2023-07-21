@@ -116,8 +116,8 @@ public class NetworkHooks
         final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());
-        MCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
         Bukkit.getMessenger().getIncomingChannels().stream().map(ResourceLocation::new).forEach(resourceLocations::add);
+        MCRegisterPacketHandler.INSTANCE.addChannels(resourceLocations, manager);
         MCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }
 

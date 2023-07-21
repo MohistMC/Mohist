@@ -235,7 +235,10 @@ public class DumpCommand extends Command {
 
     private void dumpChannels(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for (String channel : ServerAPI.channels()) {
+        for (String channel : ServerAPI.channels_Outgoing()) {
+            sb.append(channel).append("\n");
+        }
+        for (String channel : ServerAPI.channels_Incoming()) {
             sb.append(channel).append("\n");
         }
         dump(sender, "channels", sb, mode);

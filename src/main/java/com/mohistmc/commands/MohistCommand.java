@@ -38,12 +38,12 @@ import java.util.Locale;
 
 public class MohistCommand extends Command {
 
-    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "reload", "version", "channels", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "reload", "version", "channels_incom", "channels_outgo", "speed");
 
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|lang|reload|version]";
+        this.usageMessage = "/mohist [mods|playermods|lang|reload|version|channels_incom|channels_outgo]";
         this.setPermission("mohist.command.mohist");
     }
 
@@ -110,7 +110,8 @@ public class MohistCommand extends Command {
                 sender.sendMessage("CraftBukkit: " + cbs[1]);
                 sender.sendMessage("Spigot: " + cbs[2]);
             }
-            case "channels" -> sender.sendMessage(ServerAPI.channels().toString());
+            case "channels_incom" -> sender.sendMessage(ServerAPI.channels_Incoming().toString());
+            case "channels_outgo" -> sender.sendMessage(ServerAPI.channels_Outgoing().toString());
             case "speed" -> {
                 if (sender instanceof Player p) {
                     if (args.length == 2 && p.isOp()) {
