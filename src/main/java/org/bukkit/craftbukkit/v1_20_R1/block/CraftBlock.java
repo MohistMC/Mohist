@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R1.block;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -354,10 +355,8 @@ public class CraftBlock implements Block {
         if (base == null) {
             return null;
         }
-
-        Biome biome = Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base)));
-        Biome biome1 = Biome.valueOf(normalizeName(registry.getKey(base).toString()));
-        return (biome == null) ? biome1 : biome;
+        
+        return ForgeInjectBukkit.biomeBiomeMap.getOrDefault(base, Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base))));
     }
 
     public static Holder<net.minecraft.world.level.biome.Biome> biomeToBiomeBase(net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry, Biome bio) {
