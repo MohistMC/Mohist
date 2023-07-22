@@ -194,6 +194,10 @@ public class FMLHandshakeHandler {
     void handleClientModListOnServer(FMLHandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
+        if(MohistForgeUtils.modsblacklist(clientModList.getModList())) {
+            c.get().getNetworkManager().disconnect(new StringTextComponent("Connection closed - mismatched mod channel list"));
+            return;
+        }
         boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA)
                 .set(new FMLConnectionData(clientModList.getModList(), clientModList.getChannels()));
@@ -207,9 +211,7 @@ public class FMLHandshakeHandler {
             LOGGER.info(i18n.get("client.join.mods", clientModList.getModList().size()) + " : " + String.join(", ", clientModList.getModList()));
         else
             LOGGER.info(i18n.get("client.join.mods", clientModList.getModList().size()));
-        if(MohistForgeUtils.modsblacklist(clientModList.getModList())) {
-            return;
-        }
+
         if(!clientModList.getModList().isEmpty() && c.get().getRemoteAddress() != null) {
             PlayerAPI.mods.put(c.get().getRemoteAddress(), clientModList.getModList().size());
             PlayerAPI.modlist.put(c.get().getRemoteAddress(), String.join(", ", clientModList.getModList()));
