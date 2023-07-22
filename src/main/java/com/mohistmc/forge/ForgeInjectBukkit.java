@@ -15,7 +15,6 @@ import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -33,6 +32,7 @@ import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +51,7 @@ public class ForgeInjectBukkit {
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
     public static Map<Motive, Art> artMap = new HashMap<>();
+    public static Map<net.minecraft.world.level.biome.Biome, Biome> biomeBiomeMap = new HashMap<>();
 
     public static void init() {
         addEnumMaterialInItems();
@@ -122,12 +123,15 @@ public class ForgeInjectBukkit {
 
     public static void addEnumBiome() {
         List<String> map = new ArrayList<>();
-        for (Map.Entry<ResourceKey<Biome>, Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
-            String biomeName = entry.getValue().getRegistryName().getNamespace();
-            if (!biomeName.equals(NamespacedKey.MINECRAFT) && !map.contains(biomeName)) {
+        var registry = ForgeRegistries.BIOMES;
+        for (net.minecraft.world.level.biome.Biome biome : registry) {
+            ResourceLocation resourceLocation = registry.getKey(biome);
+            String biomeName = normalizeName(resourceLocation.toString());
+            if (!isMINECRAFT(resourceLocation) && !map.contains(biomeName)) {
                 map.add(biomeName);
-                org.bukkit.block.Biome biome = MohistDynamEnum.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
-                MohistMC.LOGGER.debug("Save-BIOME:" + biome.name() + " - " + biomeName);
+                org.bukkit.block.Biome biomeCB = MohistDynamEnum.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                biomeBiomeMap.put(biome, biomeCB);
+                MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }
         map.clear();
@@ -230,5 +234,9 @@ public class ForgeInjectBukkit {
 
     public static String normalizeName(String name) {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
+    }
+
+    public static boolean isMINECRAFT(ResourceLocation resourceLocation) {
+        return resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT);
     }
 }

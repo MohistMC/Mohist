@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,8 @@
  package net.minecraft.server.level;
  
  import com.google.common.collect.Lists;
 +import com.mohistmc.entity.MohistModsAbstractHorse;
++import com.mohistmc.inventory.MohistModsInventory;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
@@ -52,7 +53,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -132,9 +_,23 @@
+@@ -132,9 +_,25 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -62,7 +63,9 @@
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R2.CraftWorldBorder;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryHorse;
++import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftDimensionUtil;
 +import org.bukkit.event.player.*;
@@ -674,7 +677,7 @@
        if (this.m_5803_()) {
           this.m_183503_().m_7726_().m_8394_(this, new ClientboundAnimatePacket(this, 2));
        }
-@@ -935,16 +_,44 @@
+@@ -935,16 +_,52 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -703,6 +706,14 @@
 +         // CraftBukkit start - Inventory open hook
 +         if (abstractcontainermenu != null) {
 +            abstractcontainermenu.setTitle(p_9033_.m_5446_());
++
++            // Mohist start - Custom Container compatible with mods
++            if (abstractcontainermenu.getBukkitView() == null) {
++               org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(abstractcontainermenu, this));
++               inventory.getType().setMods(true);
++               abstractcontainermenu.bukkitView = new CraftInventoryView(this.getBukkitEntity(), inventory, abstractcontainermenu);
++            }
++            // Mohist end
 +
 +            boolean cancelled = false;
 +            abstractcontainermenu = CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);

@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/crafting/UpgradeRecipe.java
 +++ b/net/minecraft/world/item/crafting/UpgradeRecipe.java
+@@ -2,6 +_,8 @@
+ 
+ import com.google.gson.JsonObject;
+ import java.util.stream.Stream;
++
++import com.mohistmc.inventory.MohistSpecialRecipe;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.resources.ResourceLocation;
 @@ -10,6 +_,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -11,7 +20,7 @@
  
  public class UpgradeRecipe implements Recipe<Container> {
     final Ingredient f_44518_;
-@@ -68,11 +_,21 @@
+@@ -68,11 +_,24 @@
  
     public boolean m_142505_() {
        return Stream.of(this.f_44518_, this.f_44519_).anyMatch((p_151284_) -> {
@@ -24,6 +33,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      if (this.f_44520_.m_41619_()) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_44520_);
 +
 +      CraftSmithingRecipe recipe = new CraftSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.f_44521_), result, CraftRecipe.toBukkit(this.f_44518_), CraftRecipe.toBukkit(this.f_44519_));

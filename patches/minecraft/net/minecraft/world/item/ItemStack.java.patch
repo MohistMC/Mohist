@@ -123,7 +123,7 @@
     }
  
     private void m_41617_() {
-@@ -147,20 +_,38 @@
+@@ -147,20 +_,48 @@
        this.f_41591_ = this.m_41619_();
     }
  
@@ -135,6 +135,16 @@
 +      loadNBT(p_41608_);
 +   }
 +   // CraftBukkit end
++
++   public CompoundTag getForgeCaps() {
++      return this.serializeCaps();
++   }
++
++   public void setForgeCaps(CompoundTag nbt) {
++      this.capNBT = nbt;
++      if (nbt != null)
++         this.deserializeCaps(nbt);
++   }
 +
 +   private CompoundTag loadNBT(CompoundTag p_41608_) {
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
@@ -156,7 +166,7 @@
 +      return p_41608_;
 +   }
  
-+   private ItemStack(CompoundTag p_41608_) {
++   public ItemStack(CompoundTag p_41608_) {
 +      super(ItemStack.class, true);
 +      CompoundTag c = loadNBT(p_41608_);
 +      this.f_41587_ = p_41608_.m_128445_("Count");

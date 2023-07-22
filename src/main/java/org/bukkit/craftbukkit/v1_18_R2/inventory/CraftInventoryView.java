@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_18_R2.inventory;
 
+import com.mohistmc.inventory.MohistModsInventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
@@ -13,13 +14,16 @@ import org.bukkit.inventory.ItemStack;
 public class CraftInventoryView extends InventoryView {
     private final AbstractContainerMenu container;
     private final CraftHumanEntity player;
-    private final CraftInventory viewing;
+    private CraftInventory viewing;
 
     public CraftInventoryView(HumanEntity player, Inventory viewing, AbstractContainerMenu container) {
         // TODO: Should we make sure it really IS a CraftHumanEntity first? And a CraftInventory?
         this.player = (CraftHumanEntity) player;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
+        if (container.slots.size() > this.countSlots()) {
+            this.viewing = new CraftInventory(new MohistModsInventory(container, ((CraftHumanEntity) player).getHandle()));
+        }
     }
 
     @Override

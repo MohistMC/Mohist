@@ -3,6 +3,9 @@ package org.bukkit.potion;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.world.effect.MobEffect;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
@@ -276,7 +279,7 @@ public abstract class PotionEffectType implements Keyed {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final PotionEffectType[] byId = new PotionEffectType[33];
+    private static final PotionEffectType[] byId = new PotionEffectType[ForgeRegistries.MOB_EFFECTS.getValues().stream().mapToInt(MobEffect::getId).max().orElse(0) + 1];
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     private static final Map<NamespacedKey, PotionEffectType> byKey = new HashMap<NamespacedKey, PotionEffectType>();
     // will break on updates.
@@ -356,6 +359,8 @@ public abstract class PotionEffectType implements Keyed {
      */
     @NotNull
     public static PotionEffectType[] values() {
-        return Arrays.copyOfRange(byId, 1, byId.length);
+        int from = byId[0] == null ? 1 : 0;
+        int to = byId[byId.length - 1] == null ? byId.length - 1 : byId.length;
+        return Arrays.copyOfRange(byId, from, to);
     }
 }

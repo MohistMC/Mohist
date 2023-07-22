@@ -96,15 +96,15 @@
        if (!OldUsersConverter.m_11106_(this)) {
           return false;
        } else {
++         // Spigot start
++         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
++         org.spigotmc.SpigotConfig.registerCommands();
++         // Spigot end
 +         // CraftBukkit start
           this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
-+         org.spigotmc.SpigotConfig.registerCommands();
-+         // Spigot end
 +
           long i = Util.m_137569_();
           SkullBlockEntity.m_196700_(this.m_129927_(), this.m_129925_(), this);

@@ -906,7 +906,7 @@ public class CraftEventFactory {
             } else if (source == DamageSource.IN_FIRE) {
                 cause = DamageCause.FIRE;
             } else {
-                throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager, source.msgId));
+                cause = DamageCause.CUSTOM;
             }
             EntityDamageEvent event = new EntityDamageByBlockEvent(damager, entity.getBukkitEntity(), cause, modifiers, modifierFunctions);
             event.setCancelled(cancelled);

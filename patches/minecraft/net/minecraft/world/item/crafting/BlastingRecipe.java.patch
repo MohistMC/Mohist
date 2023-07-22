@@ -1,6 +1,9 @@
 --- a/net/minecraft/world/item/crafting/BlastingRecipe.java
 +++ b/net/minecraft/world/item/crafting/BlastingRecipe.java
-@@ -3,6 +_,10 @@
+@@ -1,8 +_,13 @@
+ package net.minecraft.world.item.crafting;
+ 
++import com.mohistmc.inventory.MohistSpecialRecipe;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
@@ -11,7 +14,7 @@
  
  public class BlastingRecipe extends AbstractCookingRecipe {
     public BlastingRecipe(ResourceLocation p_43793_, String p_43794_, Ingredient p_43795_, ItemStack p_43796_, float p_43797_, int p_43798_) {
-@@ -16,4 +_,16 @@
+@@ -16,4 +_,19 @@
     public RecipeSerializer<?> m_7707_() {
        return RecipeSerializer.f_44092_;
     }
@@ -19,6 +22,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      if (this.f_43730_.m_41619_()) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_43730_);
 +
 +      CraftBlastingRecipe recipe = new CraftBlastingRecipe(CraftNamespacedKey.fromMinecraft(this.f_43727_), result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
