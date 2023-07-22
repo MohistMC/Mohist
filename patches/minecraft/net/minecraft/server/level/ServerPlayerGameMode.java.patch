@@ -1,6 +1,13 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -7,12 +_,16 @@
+@@ -2,17 +_,23 @@
+ 
+ import com.mojang.logging.LogUtils;
+ import java.util.Objects;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.network.protocol.game.ClientboundBlockBreakAckPacket;
@@ -270,7 +277,7 @@
           int i = p_9264_.m_41613_();
           int j = p_9264_.m_41773_();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
-@@ -294,10 +_,52 @@
+@@ -294,10 +_,58 @@
        }
     }
  
@@ -280,30 +287,36 @@
 +   public BlockPos interactPosition;
 +   public InteractionHand interactHand;
 +   public ItemStack interactItemStack;
++
++   // Mohist start
++   public AtomicReference<InteractionResult> enuminteractionresult = new AtomicReference<>(InteractionResult.PASS);
++   public AtomicReference<PlayerInteractEvent> eventCB = new AtomicReference<>();
++   public AtomicBoolean cancelledBlock = new AtomicBoolean(false);
++   // Mohist end
++
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
        BlockPos blockpos = p_9270_.m_82425_();
        BlockState blockstate = p_9267_.m_8055_(blockpos);
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
 +      if (event.isCanceled()) return event.getCancellationResult();
-+      InteractionResult interactionresult = InteractionResult.PASS;
-+      boolean cancelledBlock = false;
++
        if (this.f_9247_ == GameType.SPECTATOR) {
 +         MenuProvider itileinventory = blockstate.m_60750_(p_9267_, blockpos);
-+         cancelledBlock = !(itileinventory instanceof MenuProvider);
++         cancelledBlock.set(!(itileinventory instanceof MenuProvider));
 +      }
 +
 +      if (p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
-+         cancelledBlock = true;
++         cancelledBlock.set(true);
 +      }
 +
-+      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock, p_9269_);
++      eventCB.set(CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock.getAndSet(false), p_9269_));
 +      firedInteract = true;
-+      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
++      interactResult = eventCB.get().useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.m_7949_();
 +      interactHand = p_9269_;
 +      interactItemStack = p_9268_.m_41777_();
 +
-+      if (eventCB.useInteractedBlock() == Event.Result.DENY) {
++      if (eventCB.get().useInteractedBlock() == Event.Result.DENY) {
 +         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
 +         if (blockstate.m_60734_() instanceof DoorBlock) {
 +            boolean bottom = blockstate.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
@@ -318,12 +331,12 @@
 +            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_7494_()));
 +         }
 +         p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
-+         interactionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
++         enuminteractionresult.set((eventCB.getAndSet(null).useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS);
 +      } else if (this.f_9247_ == GameType.SPECTATOR) {
           MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
           if (menuprovider != null) {
              p_9266_.m_5893_(menuprovider);
-@@ -306,26 +_,31 @@
+@@ -306,10 +_,15 @@
              return InteractionResult.PASS;
           }
        } else {
@@ -337,19 +350,19 @@
 +         boolean flag1 = (p_9266_.m_36341_() && flag) && !(p_9266_.m_21205_().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.m_21206_().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
           ItemStack itemstack = p_9268_.m_41777_();
 -         if (!flag1) {
--            InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
 +         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-+            interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
+             InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
                 CriteriaTriggers.f_10562_.m_45482_(p_9266_, blockpos, itemstack);
-                return interactionresult;
+@@ -317,15 +_,16 @@
              }
           }
  
 -         if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
 -            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()) && interactionresult != InteractionResult.SUCCESS)) {
-+            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
++         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))) {
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)
++               return InteractionResult.PASS;
              InteractionResult interactionresult1;
              if (this.m_9295_()) {
                 int i = p_9268_.m_41613_();
@@ -370,7 +383,7 @@
 -            return InteractionResult.PASS;
           }
        }
-+      return interactionresult;
++      return enuminteractionresult.getAndSet(InteractionResult.PASS);
 +      // CraftBukkit end
     }
  
