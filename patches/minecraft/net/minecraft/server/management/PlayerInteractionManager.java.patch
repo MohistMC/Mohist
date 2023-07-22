@@ -274,7 +274,7 @@
 +      if (p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
 +         cancelledBlock.set(true);
 +      }
-+      eventCB.set(CraftEventFactory.callPlayerInteractEvent(p_219441_1_, Action.RIGHT_CLICK_BLOCK, blockpos, p_219441_5_.func_216354_b(), p_219441_3_, cancelledBlock.get(), p_219441_4_));
++      eventCB.set(CraftEventFactory.callPlayerInteractEvent(p_219441_1_, Action.RIGHT_CLICK_BLOCK, blockpos, p_219441_5_.func_216354_b(), p_219441_3_, cancelledBlock.getAndSet(false), p_219441_4_));
 +      firedInteract = true;
 +      interactResult = eventCB.get().useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.func_185334_h();
