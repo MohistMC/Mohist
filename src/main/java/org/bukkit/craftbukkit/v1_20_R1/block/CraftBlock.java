@@ -355,7 +355,7 @@ public class CraftBlock implements Block {
         if (base == null) {
             return null;
         }
-        
+
         return ForgeInjectBukkit.biomeBiomeMap.getOrDefault(base, Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(base))));
     }
 

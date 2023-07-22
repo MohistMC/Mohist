@@ -209,13 +209,14 @@
        this.f_19804_ = new SynchedEntityData(this);
        this.f_19804_.m_135372_(f_19805_, (byte)0);
        this.f_19804_.m_135372_(f_19832_, this.m_6062_());
-@@ -254,7 +_,10 @@
+@@ -254,7 +_,11 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
 -      this.f_19816_ = this.m_6380_(Pose.STANDING, this.f_19815_);
-+      this.f_19815_ = this.getDimensionsForge(Pose.STANDING);
-+      this.f_19816_ = this.getEyeHeightForge(Pose.STANDING, this.f_19815_);
++      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.f_19815_, this.m_6380_(Pose.STANDING, this.f_19815_));
++      this.f_19815_ = sizeEvent.getNewSize();
++      this.f_19816_ = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +      this.gatherCapabilities();
     }
@@ -1187,7 +1188,7 @@
              }).orElse((PortalInfo)null);
           }
        } else {
-@@ -2483,21 +_,47 @@
+@@ -2483,8 +_,15 @@
           } else {
              blockpos = p_19923_.m_5452_(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p_19923_.m_220360_());
           }
@@ -1205,11 +1206,10 @@
        }
     }
  
-    protected Vec3 m_7643_(Direction.Axis p_20045_, BlockUtil.FoundRectangle p_20046_) {
--      return PortalShape.m_77738_(p_20046_, p_20045_, this.m_20182_(), this.m_6972_(this.m_20089_()));
-+      return PortalShape.m_77738_(p_20046_, p_20045_, this.m_20182_(), this.getDimensionsForge(this.m_20089_()));
-+   }
-+
+@@ -2492,12 +_,31 @@
+       return PortalShape.m_77738_(p_20046_, p_20045_, this.m_20182_(), this.m_6972_(this.m_20089_()));
+    }
+ 
 +   // CraftBukkit start
 +   protected CraftPortalEvent callPortalEvent(Entity entity, ServerLevel exitWorldServer, PositionImpl exitPosition, PlayerTeleportEvent.TeleportCause cause, int searchRadius, int creationRadius) {
 +      org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
@@ -1222,8 +1222,8 @@
 +         return null;
 +      }
 +      return new CraftPortalEvent(event);
-    }
- 
++   }
++
     protected Optional<BlockUtil.FoundRectangle> m_183318_(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_) {
        return p_185935_.m_8871_().m_192985_(p_185936_, p_185937_, p_185938_);
     }
@@ -1274,25 +1274,15 @@
           this.m_5616_(p_265573_);
        } else {
           this.m_19877_();
-@@ -2670,17 +_,17 @@
-    @Deprecated
-    protected void m_252801_() {
-       Pose pose = this.m_20089_();
--      EntityDimensions entitydimensions = this.m_6972_(pose);
-+      EntityDimensions entitydimensions = this.getDimensionsForge(pose);
-       this.f_19815_ = entitydimensions;
--      this.f_19816_ = this.m_6380_(pose, entitydimensions);
-+      this.f_19816_ = this.getEyeHeightForge(pose, entitydimensions);
-    }
- 
-    public void m_6210_() {
+@@ -2679,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();
--      EntityDimensions entitydimensions1 = this.m_6972_(pose);
-+      EntityDimensions entitydimensions1 = this.getDimensionsForge(pose);
+       EntityDimensions entitydimensions1 = this.m_6972_(pose);
++      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitydimensions, entitydimensions1, this.m_6380_(pose, entitydimensions1));
++      entitydimensions1 = sizeEvent.getNewSize();
        this.f_19815_ = entitydimensions1;
 -      this.f_19816_ = this.m_6380_(pose, entitydimensions1);
-+      this.f_19816_ = this.getEyeHeightForge(pose, entitydimensions1);
++      this.f_19816_ = sizeEvent.getNewEyeHeight();
        this.m_20090_();
        boolean flag = (double)entitydimensions1.f_20377_ <= 4.0D && (double)entitydimensions1.f_20378_ <= 4.0D;
        if (!this.m_9236_().f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
@@ -1307,16 +1297,7 @@
           });
        }
  
-@@ -2720,7 +_,7 @@
-    }
- 
-    protected AABB m_20217_(Pose p_20218_) {
--      EntityDimensions entitydimensions = this.m_6972_(p_20218_);
-+      EntityDimensions entitydimensions = this.getDimensionsForge(p_20218_);
-       float f = entitydimensions.f_20377_ / 2.0F;
-       Vec3 vec3 = new Vec3(this.m_20185_() - (double)f, this.m_20186_(), this.m_20189_() - (double)f);
-       Vec3 vec31 = new Vec3(this.m_20185_() + (double)f, this.m_20186_() + (double)entitydimensions.f_20378_, this.m_20189_() + (double)f);
-@@ -2728,15 +_,39 @@
+@@ -2728,7 +_,27 @@
     }
  
     public final void m_20011_(AABB p_20012_) {
@@ -1344,20 +1325,7 @@
 +      // CraftBukkit end
     }
  
-+   /**
-+    * @deprecated Can be overridden. Use {@link #getEyeHeightForge(Pose, EntityDimensions)} instead.
-+    */
-+   @Deprecated
     protected float m_6380_(Pose p_19976_, EntityDimensions p_19977_) {
-       return p_19977_.f_20378_ * 0.85F;
-    }
- 
-    public float m_20236_(Pose p_20237_) {
--      return this.m_6380_(p_20237_, this.m_6972_(p_20237_));
-+      return this.getEyeHeightForge(p_20237_, this.getDimensionsForge(p_20237_));
-    }
- 
-    public final float m_20192_() {
 @@ -2939,7 +_,7 @@
        return SoundSource.NEUTRAL;
     }
@@ -1478,17 +1446,6 @@
        return this.f_19799_.getDouble(p_204037_);
     }
  
-@@ -3080,6 +_,10 @@
-       return new ClientboundAddEntityPacket(this);
-    }
- 
-+   /**
-+    * @deprecated Can be overridden. Use {@link #getDimensionsForge(Pose)} instead.
-+    */
-+   @Deprecated
-    public EntityDimensions m_6972_(Pose p_19975_) {
-       return this.f_19847_.m_20680_();
-    }
 @@ -3192,6 +_,7 @@
  
           this.f_146801_.m_142044_();
@@ -1514,7 +1471,7 @@
        this.f_146795_ = null;
     }
  
-@@ -3319,6 +_,111 @@
+@@ -3319,6 +_,108 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -1582,6 +1539,7 @@
 +   /**
 +    * Accessor method for {@link #getEyeHeight(Pose, EntityDimensions)}
 +    */
++   @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
 +   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
 +      return this.m_6380_(pose, size);
 +   }
@@ -1614,11 +1572,7 @@
 +   }
 +
 +   public EntityDimensions getDimensionsForge(Pose pose) {
-+      EntityDimensions size = m_6972_(pose);
-+      if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. So use the default.
-+      var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, pose, size, this.m_6380_(pose, size));
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
-+      return evt.getNewSize();
++      return m_6972_(pose);
 +   }
 +
 +   /* ================================== Forge End =====================================*/
