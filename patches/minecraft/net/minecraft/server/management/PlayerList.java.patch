@@ -113,7 +113,7 @@
     private final Map<UUID, ServerPlayerEntity> field_177454_f = Maps.newHashMap();
     private final BanList field_72401_g = new BanList(field_152613_a);
     private final IPBanList field_72413_h = new IPBanList(field_152614_b);
-@@ -110,8 +_,25 @@
+@@ -110,8 +_,21 @@
     private GameType field_72410_m;
     private boolean field_72407_n;
     private int field_72408_o;
@@ -130,10 +130,6 @@
 +      ForgeInjectBukkit.init();
 +      p_i231425_1_.server = cserver;
 +      p_i231425_1_.console = ColouredConsoleSender.getInstance();
-+      // Spigot start
-+      org.spigotmc.SpigotConfig.init(new File("./spigot.yml"));
-+      org.spigotmc.SpigotConfig.registerCommands();
-+      // Spigot end
 +      // CraftBukkit end
 +
        this.field_72400_f = p_i231425_1_;

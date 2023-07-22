@@ -18,16 +18,19 @@
 
 package com.mohistmc.command;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.configuration.MohistConfig;
-import com.mohistmc.configuration.TickConfig;
 import com.mohistmc.util.i18n.i18n;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -98,12 +101,13 @@ public class MohistCommand extends Command {
                     return false;
                 }
                 if (i18n.b.contains(args[1])) {
-                    MohistConfig.setValueMohist("mohist.lang", args[1]);
+                    MohistConfig.yml.set("mohist.lang", args[1]);
                     sender.sendMessage(ChatColor.GREEN + " Successfully set the mohist language to: " + args[1]);
                 } else {
-                    MohistConfig.setValueMohist("mohist.lang", "xx_XX");
+                    MohistConfig.yml.set("mohist.lang", "xx_XX");
                     sender.sendMessage(ChatColor.GREEN + args[1] + "For an unsupported language, the default value has been restored..");
                 }
+                MohistConfig.save();
                 break;
             case "item":
                 if (args.length == 1) {
@@ -117,11 +121,13 @@ public class MohistCommand extends Command {
                 }
                 break;
             case "reload":
-                if (MohistConfig.instance != null)
-                    MohistConfig.instance.load();
-                TickConfig.ENTITIES.reloadConfig();
-                TickConfig.TILES.reloadConfig();
-                sender.sendMessage(ChatColor.GREEN + "mohist-config directory reload complete.");
+                Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues.");
+                Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+
+                com.mohistmc.MohistConfig.init((File) MinecraftServer.options.valueOf("mohist-settings"));
+
+                MinecraftServer.getServer().server.reloadCount++;
+                sender.sendMessage(ChatColor.GREEN + "mohist-config/mohist.yml directory reload complete.");
                 break;
             case "version":
                 sender.sendMessage("Mohist: " + MohistMCStart.getVersion());

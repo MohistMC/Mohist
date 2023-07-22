@@ -40,7 +40,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
-@@ -71,31 +_,60 @@
+@@ -71,31 +_,70 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -57,16 +57,26 @@
 +              .ofType(File.class)
 +              .defaultsTo(new File("commands.yml"))
 +              .describedAs("Yml file");
-+      optionparser.acceptsAll(Arrays.asList("S", "spigot-settings"), "File for spigot settings")
-+                .withRequiredArg()
-+              .ofType(File.class)
-+              .defaultsTo(new File("spigot.yml"))
-+              .describedAs("Yml file");
 +      optionparser.acceptsAll(Arrays.asList("P", "plugins"), "Plugin directory to use")
 +              .withRequiredArg()
 +              .ofType(File.class)
 +              .defaultsTo(new File("plugins"))
 +              .describedAs("Plugin directory");
++
++      // Spigot Start
++      optionparser.acceptsAll(Arrays.asList("S", "spigot-settings"), "File for spigot settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("spigot.yml"))
++              .describedAs("Yml file");
++      // Spigot End
++      // Mohist Start
++      optionparser.acceptsAll(Arrays.asList("M", "mohist-settings"), "File for mohist settings")
++              .withRequiredArg()
++              .ofType(File.class)
++              .defaultsTo(new File("mohist-config","mohist.yml"))
++              .describedAs("Yml file");
++      // Mohist End
 +
 +
  

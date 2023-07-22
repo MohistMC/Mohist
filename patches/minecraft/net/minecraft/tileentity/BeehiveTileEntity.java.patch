@@ -1,12 +1,21 @@
 --- a/net/minecraft/tileentity/BeehiveTileEntity.java
 +++ b/net/minecraft/tileentity/BeehiveTileEntity.java
+@@ -4,6 +_,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import com.mohistmc.MohistConfig;
+ import net.minecraft.block.BeehiveBlock;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.CampfireBlock;
 @@ -26,7 +_,8 @@
  public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity {
     private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
     @Nullable
 -   private BlockPos field_226959_b_ = null;
 +   public BlockPos field_226959_b_ = null;
-+   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
++   public int maxBees = MohistConfig.maxBees; // CraftBukkit - allow setting max amount of bees a hive can hold
  
     public BeehiveTileEntity() {
        super(TileEntityType.field_226985_G_);

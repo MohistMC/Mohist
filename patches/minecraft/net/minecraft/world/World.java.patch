@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/World.java
 +++ b/net/minecraft/world/World.java
-@@ -1,11 +_,16 @@
+@@ -1,11 +_,15 @@
  package net.minecraft.world;
  
  import com.google.common.collect.Lists;
-+import com.mohistmc.configuration.TickConfig;
 +import com.mohistmc.forge.ForgeInjectBukkit;
  import com.mojang.serialization.Codec;
  import java.io.IOException;
@@ -449,8 +448,7 @@
 +         // Spigot end
           if (!tileentity.func_145837_r() && tileentity.func_145830_o()) {
              BlockPos blockpos = tileentity.func_174877_v();
--            if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
-+            if (TickConfig.TILES.canTick(tileentity.getClass(), this.func_82737_E()) && this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
+             if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
                 try {
 +                  net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
                    iprofiler.func_194340_a(() -> {

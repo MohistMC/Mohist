@@ -18,42 +18,45 @@
 
 package com.mohistmc.forge;
 
-import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.MohistConfig;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class MohistForgeUtils {
-	public static boolean modsblacklist(List<String> modslist) {
-		if (MohistConfig.instance.modsblacklistenable.getValue() && !MohistConfig.instance.modswhitelistenable.getValue()) {
-			String[] strings = MohistConfig.instance.modsblacklist.getValue().split(",");
-			for (String mods : modslist) {
-				for (String modsblacklist : strings) {
-					if (Objects.equals(mods, modsblacklist)) {
-						return true;
-					}
+
+	private static AtomicBoolean canLog = new AtomicBoolean(true);
+	public static boolean modsblacklist(List<String> stringList) {
+		if (MohistConfig.server_modlist_whitelist_enable) {
+			if (!equalList(stringList, server_modlist_whitelist())) {
+				canLog.set(false);
+				return true;
+			}
+		}
+		if (MohistConfig.player_modlist_blacklist_enable && MohistConfig.player_modlist_blacklist != null) {
+			for (String config : MohistConfig.player_modlist_blacklist) {
+				if (stringList.contains(config)) {
+					canLog.set(false);
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 
-	public static boolean modswhitelist(List<String> clientMods) {
-		String[] strings = MohistConfig.instance.modswhitelist.getValue().split(",");
-		if (!MohistConfig.instance.modsblacklistenable.getValue() && MohistConfig.instance.modswhitelistenable.getValue()) {
-			if (MohistConfig.instance.modsnumber.getValue() > 0) {
-				for (String mods : clientMods) {
-					for (String modswhitelist : strings) {
-						return Objects.equals(mods, modswhitelist) && clientMods.size() == MohistConfig.instance.modsnumber.getValue();
-					}
-				}
-			} else {
-				for (String mods : clientMods) {
-					for (String modswhitelist : strings) {
-						return Objects.equals(mods, modswhitelist);
-					}
-				}
-			}
-		}
-		return true;
+	public static List<String> server_modlist_whitelist() {
+		String s = MohistConfig.server_modlist_whitelist.replaceAll("(?:\\[|null|\\]| +)", "");
+		return Pattern.compile("\\s*,\\s*").splitAsStream(s).collect(Collectors.toList());
+	}
+
+	public static boolean canLog(boolean trunDef) {
+		return trunDef ? canLog.getAndSet(true) : canLog.get();
+	}
+
+	public static boolean equalList(List list1, List list2) {
+		if (list1.size() != list2.size()) return false;
+		if (list2.containsAll(list1)) return true;
+		return false;
 	}
 }

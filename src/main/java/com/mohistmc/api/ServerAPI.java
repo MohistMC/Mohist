@@ -27,6 +27,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.EnderDragon;
@@ -37,10 +41,17 @@ public class ServerAPI {
 
     public static Map<String, Integer> mods = new ConcurrentHashMap();
     public static Set<String> modlists = new ConcurrentSet();
+    public static List<String> modlists_All = new ArrayList<>();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
     public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
+
+    static {
+        for (ModInfo modInfo : ModList.get().getMods()) {
+            modlists_All.add(modInfo.getModId());
+        }
+    }
 
     // Don't count the default number of mods
     public static int getModSize() {

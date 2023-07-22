@@ -29,7 +29,7 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Objects;
-@@ -33,8 +_,41 @@
+@@ -33,8 +_,40 @@
  import java.util.function.Predicate;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
@@ -57,7 +57,6 @@
 +import com.google.common.collect.Sets;
 +import com.mohistmc.api.mc.ChunkMcAPI;
 +import com.mohistmc.config.MohistConfigUtil;
-+import com.mohistmc.configuration.TickConfig;
 +import com.mohistmc.inventory.CraftCustomInventory;
 +
 +import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -511,7 +510,7 @@
        if (!(p_217479_1_ instanceof PlayerEntity) && !this.func_72863_F().func_217204_a(p_217479_1_)) {
           this.func_217464_b(p_217479_1_);
        } else {
-+         if (!TickConfig.ENTITIES.canTick(p_217479_1_.getClass(), this.func_82737_E()) || !org.spigotmc.ActivationRange.checkIfActive(p_217479_1_)) {
++         if (!org.spigotmc.ActivationRange.checkIfActive(p_217479_1_)) {
 +            p_217479_1_.field_70173_aa++;
 +            p_217479_1_.inactiveTick();
 +            return;

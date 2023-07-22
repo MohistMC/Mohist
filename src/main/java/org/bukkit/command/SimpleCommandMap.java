@@ -38,17 +38,6 @@ public class SimpleCommandMap implements CommandMap {
         register("bukkit", new VersionCommand("version"));
         register("bukkit", new ReloadCommand("reload"));
         register("bukkit", new PluginsCommand("plugins"));
-        // Mohist
-        register("mohist", new MohistCommand("mohist"));
-        register("mohist", new GetPluginListCommand("getpluginlist"));
-        register("mohist", new DownloadFileCommand("downloadfile"));
-        register("mohist", new DumpCommand("dump"));
-        register("mohist", new PluginCommand("plugin"));
-		register("mohist", new UpdateMohistCommand("updatemohist"));
-		register("mohist", new BackupWorldCommand("backupworld"));
-        register("mohist", new WhitelistModsCommand("whitelistmods"));
-        register("mohist", new WorldCommand("world"));
-        register("mohist", new BiomeCommand("biome"));
     }
 
     public void setFallbackCommands() {

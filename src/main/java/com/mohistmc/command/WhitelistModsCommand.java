@@ -18,7 +18,8 @@
 
 package com.mohistmc.command;
 
-import com.mohistmc.configuration.MohistConfig;
+import com.mohistmc.MohistConfig;
+import com.mohistmc.api.ServerAPI;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.bukkit.ChatColor;
@@ -36,12 +37,6 @@ public class WhitelistModsCommand extends Command {
 		this.setPermission("mohist.command.whitelistmods");
 	}
 
-	private static String makeModList() {
-		for (ModInfo mod : ModList.get().getMods())
-			if (!mod.getModId().equals("mohist")) list += mod.getModId() + ",";
-		return list.substring(0, list.length() - 1);
-	}
-
 	@Override
 	public boolean execute(CommandSender sender, String currentAlias, String[] args) {
 		if (!testPermission(sender)) return true;
@@ -52,14 +47,16 @@ public class WhitelistModsCommand extends Command {
 
 		switch (args[0].toLowerCase()) {
 			case "enable":
-				MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
-				MohistConfig.setValueMohist("forge.modswhitelist.enable", true);
+				MohistConfig.yml.set("forge.modswhitelist.enable", true);
+				MohistConfig.save();
 				break;
 			case "disable":
-				MohistConfig.setValueMohist("forge.modswhitelist.enable", false);
+				MohistConfig.yml.set("forge.modswhitelist.enable", false);
+				MohistConfig.save();
 				break;
 			case "update":
-				MohistConfig.setValueMohist("forge.modswhitelist.list", makeModList());
+				MohistConfig.yml.set("forge.modswhitelist.list", ServerAPI.modlists_All);
+				MohistConfig.save();
 				break;
 		}
 
