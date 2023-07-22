@@ -92,16 +92,15 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
        thread.start();
-@@ -163,15 +_,27 @@
-       if (!OldUsersConverter.m_11106_(this)) {
+@@ -164,14 +_,26 @@
           return false;
        } else {
+          this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         // Spigot start
 +         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +         org.spigotmc.SpigotConfig.registerCommands();
 +         // Spigot end
 +         // CraftBukkit start
-          this.m_129823_(new DedicatedPlayerList(this, this.m_206579_(), this.f_129745_));
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end

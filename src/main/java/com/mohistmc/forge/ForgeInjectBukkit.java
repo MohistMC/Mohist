@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.block.Biome;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionEffectType;
@@ -32,7 +33,6 @@ import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.block.Biome;
 
 import java.util.ArrayList;
 import java.util.HashMap;
