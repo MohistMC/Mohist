@@ -334,7 +334,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,15 +_,60 @@
+@@ -563,16 +_,60 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -348,6 +348,7 @@
        this.m_146850_(GameEvent.f_223707_);
 -      boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_);
 -      if (flag) {
+-         Component component = this.m_21231_().m_19293_();
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
 +      boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
 +      // CraftBukkit start - fire PlayerDeathEvent
@@ -389,15 +390,15 @@
 +
 +      String deathMessage = event.getDeathMessage();
 +      if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
-+         Component ichatbasecomponent;
++         Component component;
 +         if (deathMessage.equals(deathmessage)) {
-+            ichatbasecomponent = this.m_21231_().m_19293_();
++            component = this.m_21231_().m_19293_();
 +         } else {
-+            ichatbasecomponent = CraftChatMessage.fromStringOrNull(deathMessage);
++            component = CraftChatMessage.fromStringOrNull(deathMessage);
 +         }
-          Component component = this.m_21231_().m_19293_();
           this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
              int i = 256;
+             String s = component.m_130668_(256);
 @@ -601,11 +_,23 @@
           this.m_9215_();
        }
