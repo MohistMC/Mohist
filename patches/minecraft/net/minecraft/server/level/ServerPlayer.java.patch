@@ -355,7 +355,7 @@
 +      if (this.m_213877_()) {
 +         return;
 +      }
-+      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
++      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<>(this.m_150109_().m_6643_());
 +      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
 +
 +      Inventory copyInv;
@@ -399,7 +399,7 @@
           this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
              int i = 256;
              String s = component.m_130668_(256);
-@@ -601,11 +_,23 @@
+@@ -601,11 +_,18 @@
           this.m_9215_();
        }
  
@@ -409,12 +409,7 @@
 +      this.m_21226_();
 +      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +      if (!event.getKeepInventory()) {
-+         // Paper start - replace logic
-+         for (NonNullList<ItemStack> inv : this.m_150109_().f_35979_) {
-+            processKeep(event, inv);
-+         }
-+         processKeep(event, null);
-+         // Paper end
++         this.m_150109_().m_6211_();
        }
  
 -      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
@@ -1186,7 +1181,7 @@
     }
  
     public boolean m_184128_() {
-@@ -1632,4 +_,191 @@
+@@ -1632,4 +_,151 @@
        }
  
     }
@@ -1337,44 +1332,4 @@
 +      this.tabListDisplayName = tabListDisplayName;
 +   }
 +   // CraftBukkit end
-+
-+   // Paper start - process inventory
-+   private static void processKeep(org.bukkit.event.entity.PlayerDeathEvent event, NonNullList<ItemStack> inv) {
-+      List<org.bukkit.inventory.ItemStack> itemsToKeep = event.getItemsToKeep();
-+      if (inv == null) {
-+         // remainder of items left in toKeep - plugin added stuff on death that wasn't in the initial loot?
-+         if (!itemsToKeep.isEmpty()) {
-+            for (org.bukkit.inventory.ItemStack itemStack : itemsToKeep) {
-+               event.getEntity().getInventory().addItem(itemStack);
-+            }
-+         }
-+
-+         return;
-+      }
-+
-+      for (int i = 0; i < inv.size(); ++i) {
-+         ItemStack item = inv.get(i);
-+         if (EnchantmentHelper.m_44924_(item) || itemsToKeep.isEmpty() || item.m_41619_()) {
-+            inv.set(i, ItemStack.f_41583_);
-+            continue;
-+         }
-+
-+         final org.bukkit.inventory.ItemStack bukkitStack = CraftItemStack.asCraftMirror(item);
-+         boolean keep = false;
-+         final Iterator<org.bukkit.inventory.ItemStack> iterator = itemsToKeep.iterator();
-+         while (iterator.hasNext()) {
-+            final org.bukkit.inventory.ItemStack itemStack = iterator.next();
-+            if (bukkitStack.equals(itemStack)) {
-+               iterator.remove();
-+               keep = true;
-+               break;
-+            }
-+         }
-+
-+         if (!keep) {
-+            inv.set(i, ItemStack.f_41583_);
-+         }
-+      }
-+   }
-+   // Paper end
  }
