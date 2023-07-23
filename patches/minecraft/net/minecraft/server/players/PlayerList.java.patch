@@ -427,7 +427,7 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,169 @@
+@@ -415,76 +_,172 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -451,8 +451,6 @@
 -      Optional<Vec3> optional;
 -      if (serverlevel != null && blockpos != null) {
 -         optional = Player.m_36130_(serverlevel, blockpos, f, flag, p_11238_);
--      } else {
--         optional = Optional.empty();
 +
 +      org.bukkit.World fromWorld = p_11237_.getBukkitEntity().getWorld();
 +      p_11237_.f_8944_ = false;
@@ -480,7 +478,7 @@
 +                  f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d2.f_82481_, vec3d2.f_82479_) * 57.2957763671875 - 90.0);
 +               }
 +
-+               flag2 = (!flag && flag3);
++               flag2 = (!p_11238_ && flag3);
 +               isBedSpawn = true;
 +               mohist$location = CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
 +            } else if (blockpos != null) {
@@ -503,6 +501,10 @@
 +         if (!p_11238_) {
 +            p_11237_.reset();
 +         }
+       } else {
+-         optional = Optional.empty();
++         if (mohist$worldserver == null) mohist$worldserver = this.f_11195_.m_129880_(p_11237_.m_8963_());
++         mohist$location.setWorld(mohist$worldserver.getWorld());
        }
 +      // CraftBukkit end
  
