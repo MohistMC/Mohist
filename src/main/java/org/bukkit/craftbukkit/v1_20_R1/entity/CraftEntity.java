@@ -999,6 +999,18 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return Pose.values()[getHandle().getPose().ordinal()];
     }
 
+    // Paper start
+    @Override
+    public void setSneaking(boolean sneak) {
+        this.getHandle().setShiftKeyDown(sneak);
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return this.getHandle().isShiftKeyDown();
+    }
+    // Paper end
+
     @Override
     public SpawnCategory getSpawnCategory() {
         return CraftSpawnCategory.toBukkit(getHandle().getType().getCategory());
