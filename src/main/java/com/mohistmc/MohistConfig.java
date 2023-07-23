@@ -80,6 +80,8 @@ public class MohistConfig {
 
         version = getInt("config-version", 1);
         set("config-version", 1);
+        set("keepinventory.world.inventory", false);
+        set("keepinventory.world.exp", false);
         readConfig();
     }
 
@@ -158,6 +160,9 @@ public class MohistConfig {
     public static boolean bookAnimationTick;
     public static boolean networkmanager_debug;
     public static List<String> networkmanager_intercept;
+    public static boolean keepinventory_global;
+    public static boolean keepinventory_inventory;
+    public static boolean keepinventory_exp;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -175,5 +180,8 @@ public class MohistConfig {
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
         networkmanager_intercept = getList("networkmanager.intercept", Collections.emptyList());
+        keepinventory_global = getBoolean("keepinventory.global.enable", false);
+        keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
+        keepinventory_exp = getBoolean("keepinventory.global.exp", true);
     }
 }

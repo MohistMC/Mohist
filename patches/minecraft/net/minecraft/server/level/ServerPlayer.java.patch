@@ -1,10 +1,12 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -2,17 +_,21 @@
+@@ -2,17 +_,23 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.net.InetAddresses;
++import com.mohistmc.MohistConfig;
 +import com.mohistmc.inventory.MohistModsInventory;
++import com.mohistmc.plugins.KeepInventory;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
@@ -334,7 +336,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,16 +_,60 @@
+@@ -563,16 +_,52 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -355,32 +357,24 @@
 +      if (this.m_213877_()) {
 +         return;
 +      }
-+      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<>(this.m_150109_().m_6643_());
-+      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
 +
-+      Inventory copyInv;
-+      if (keepInventory) {
-+         copyInv = this.m_150109_();
-+      } else {
-+         copyInv = new Inventory(this);
-+         copyInv.m_36006_(this.m_150109_());
++      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
++      boolean keepInventory = KeepInventory.inventory(this.f_19853_) || this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
++
++      if (!keepInventory) {
++         Collection<ItemEntity> drops = this.captureDrops(null);
++         if (drops != null) {
++            for (ItemEntity entity : drops) {
++               CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(entity.m_32055_());
++               loot.add(craftItemStack);
++            }
++         }
 +      }
-+
-+      this.m_6668_(p_9035_);
 +
 +      Component defaultMessage = this.m_21231_().m_19293_();
 +      String deathmessage = defaultMessage.getString();
-+      Collection<ItemEntity> drops = this.captureDrops(null);
-+      if (drops != null) {
-+         for (ItemEntity entity : drops) {
-+            CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(entity.m_32055_());
-+            loot.add(craftItemStack);
-+         }
-+      }
++
 +      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      if (!keepInventory) {
-+         this.m_150109_().m_36006_(copyInv);
-+      }
 +      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
 +
 +      // SPIGOT-943 - only call if they have an inventory open
@@ -409,7 +403,7 @@
 +      this.m_21226_();
 +      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +      if (!event.getKeepInventory()) {
-+         this.m_150109_().m_6211_();
++         m_6668_(p_9035_);
        }
  
 -      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);

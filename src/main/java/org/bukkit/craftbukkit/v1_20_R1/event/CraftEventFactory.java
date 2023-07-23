@@ -852,7 +852,6 @@ public class CraftEventFactory {
         event.setKeepLevel(victim.keepLevel); // SPIGOT-2222: pre-set keepLevel
         org.bukkit.World world = entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
-
         victim.keepLevel = event.getKeepLevel();
         victim.newLevel = event.getNewLevel();
         victim.newTotalExp = event.getNewTotalExp();
