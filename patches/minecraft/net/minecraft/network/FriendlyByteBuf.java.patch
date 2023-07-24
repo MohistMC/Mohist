@@ -45,3 +45,12 @@
           return itemstack;
        }
     }
+@@ -703,7 +_,7 @@
+    }
+ 
+    public FriendlyByteBuf m_130085_(ResourceLocation p_130086_) {
+-      this.m_130070_(p_130086_.toString());
++      if (p_130086_ != null) this.m_130070_(p_130086_.toString());
+       return this;
+    }
+ 
