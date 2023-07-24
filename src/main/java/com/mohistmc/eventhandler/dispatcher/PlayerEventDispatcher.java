@@ -20,8 +20,10 @@ package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 
 public class PlayerEventDispatcher {
@@ -32,5 +34,10 @@ public class PlayerEventDispatcher {
         if (event.getEntity() instanceof ServerPlayer player) {
             Bukkit.getPluginManager().callEvent(new PlayerAdvancementDoneEvent(player.getBukkitEntity(), event.getAdvancement().bukkit));
         }
+    }
+
+    @SubscribeEvent
+    public void onContainerClose(PlayerContainerEvent.Close event) {
+        CraftEventFactory.handleInventoryCloseEvent(event.getEntity()); // CraftBukkit
     }
 }

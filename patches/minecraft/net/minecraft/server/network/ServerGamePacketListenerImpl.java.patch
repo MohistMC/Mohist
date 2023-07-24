@@ -1337,12 +1337,11 @@
                 this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, false);
                 if (this.f_9745_.m_7035_()) {
                    this.f_9743_.m_143403_(GameType.SPECTATOR);
-@@ -1514,14 +_,18 @@
+@@ -1514,14 +_,17 @@
  
     public void m_7951_(ServerboundContainerClosePacket p_9858_) {
        PacketUtils.m_131359_(p_9858_, this, this.f_9743_.m_284548_());
 +      if (this.f_9743_.m_6107_()) return; // CraftBukkit
-+      CraftEventFactory.handleInventoryCloseEvent(this.f_9743_); // CraftBukkit
        this.f_9743_.m_9230_();
     }
  
