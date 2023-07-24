@@ -26,6 +26,22 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
+@@ -95,6 +_,7 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.MenuProvider;
++import net.minecraft.world.damagesource.CombatTracker;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
+@@ -113,6 +_,7 @@
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.projectile.AbstractArrow;
++import net.minecraft.world.food.FoodData;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.ContainerListener;
+ import net.minecraft.world.inventory.ContainerSynchronizer;
 @@ -133,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.biome.BiomeManager;
@@ -868,7 +884,7 @@
           this.m_36397_(p_9016_.m_36344_());
        }
  
-@@ -1129,12 +_,23 @@
+@@ -1129,12 +_,21 @@
        this.f_8920_ = -1;
        this.f_8917_ = -1.0F;
        this.f_8918_ = -1;
@@ -888,8 +904,6 @@
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
-+      p_9016_.setArrowCount(0, true); // CraftBukkit - ArrowBodyCountChangeEvent
-+      p_9016_.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH);
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
@@ -1155,7 +1169,7 @@
     }
  
     public boolean m_184128_() {
-@@ -1632,4 +_,115 @@
+@@ -1632,4 +_,149 @@
        }
  
     }
@@ -1264,6 +1278,40 @@
 +   @Override
 +   public CraftPlayer getBukkitEntity() {
 +      return (CraftPlayer) super.getBukkitEntity();
++   }
++
++   public void reset() {
++      float exp = 0;
++      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
++         exp = this.f_36080_;
++         this.newTotalExp = this.f_36079_;
++         this.newLevel = this.f_36078_;
++      }
++
++      this.m_21153_(this.m_21233_());
++      this.m_5810_(); // CraftBukkit - SPIGOT-6682: Clear active item on reset
++      this.m_7311_(0);
++      this.f_19789_ = 0;
++      this.f_36097_ = new FoodData(this);
++      this.f_36078_ = this.newLevel;
++      this.f_36079_ = this.newTotalExp;
++      this.f_36080_ = 0;
++      this.f_20919_ = 0;
++      this.setArrowCount(0, true); // CraftBukkit - ArrowBodyCountChangeEvent
++      this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH);
++      this.f_20948_ = true;
++      this.f_36096_ = this.f_36095_;
++      this.f_20888_ = null;
++      this.f_20949_ = null;
++      this.f_20944_ = new CombatTracker(this);
++      this.f_8920_ = -1;
++      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
++         this.f_36080_ = exp;
++      } else {
++         this.m_6756_(this.newExp);
++      }
++      this.keepLevel = false;
++      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
 +   }
 +
 +   public void setTabListDisplayName(Component tabListDisplayName) {
