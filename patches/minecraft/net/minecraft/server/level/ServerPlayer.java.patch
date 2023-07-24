@@ -364,7 +364,7 @@
 +      }
 +
 +      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
-+      boolean keepInventory = KeepInventory.inventory(this.f_19853_) || this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
++      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
 +
 +      if (!keepInventory) {
 +         Collection<ItemEntity> drops = this.captureDrops(null);
@@ -903,8 +903,8 @@
 -         this.f_36079_ = p_9016_.f_36079_;
 -         this.f_36080_ = p_9016_.f_36080_;
 +      } else if (MohistConfig.keepinventory_global || this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
-+         if (KeepInventory.inventory(this.m_9236_())) this.m_150109_().m_36006_(p_9016_.m_150109_());
-+         if (KeepInventory.exp(this.m_9236_())) {
++         if (KeepInventory.inventory(this)) this.m_150109_().m_36006_(p_9016_.m_150109_());
++         if (KeepInventory.exp(this) || this.keepLevel) {
 +            this.f_36078_ = p_9016_.f_36078_;
 +            this.f_36079_ = p_9016_.f_36079_;
 +            this.f_36080_ = p_9016_.f_36080_;
@@ -912,7 +912,7 @@
           this.m_36397_(p_9016_.m_36344_());
        }
  
-@@ -1129,12 +_,21 @@
+@@ -1129,12 +_,23 @@
        this.f_8920_ = -1;
        this.f_8917_ = -1.0F;
        this.f_8918_ = -1;
@@ -932,6 +932,8 @@
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
++      this.setArrowCount(0, true); // CraftBukkit - ArrowBodyCountChangeEvent
++      this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH);
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
@@ -1197,7 +1199,7 @@
     }
  
     public boolean m_184128_() {
-@@ -1632,4 +_,151 @@
+@@ -1632,4 +_,115 @@
        }
  
     }
@@ -1301,42 +1303,6 @@
 +   @Override
 +   public Scoreboard m_36329_() {
 +      return getBukkitEntity().getScoreboard().getHandle();
-+   }
-+
-+   public void reset() {
-+      float exp = 0;
-+      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_);
-+
-+      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
-+         exp = this.f_36080_;
-+         this.newTotalExp = this.f_36079_;
-+         this.newLevel = this.f_36078_;
-+      }
-+
-+      this.m_21153_(this.m_21233_());
-+      this.m_5810_(); // CraftBukkit - SPIGOT-6682: Clear active item on reset
-+      this.m_7311_(0);
-+      this.f_19789_ = 0;
-+      this.f_36097_ = new FoodData(this);
-+      this.f_36078_ = this.newLevel;
-+      this.f_36079_ = this.newTotalExp;
-+      this.f_36080_ = 0;
-+      this.f_20919_ = 0;
-+      this.setArrowCount(0, true); // CraftBukkit - ArrowBodyCountChangeEvent
-+      this.removeAllEffects(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DEATH);
-+      this.f_20948_ = true;
-+      this.f_36096_ = this.f_36095_;
-+      this.f_20888_ = null;
-+      this.f_20949_ = null;
-+      this.f_20944_ = new CombatTracker(this);
-+      this.f_8920_ = -1;
-+      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
-+         this.f_36080_ = exp;
-+      } else {
-+         this.m_6756_(this.newExp);
-+      }
-+      this.keepLevel = false;
-+      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
 +   }
 +
 +   @Override

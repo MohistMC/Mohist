@@ -427,7 +427,7 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,172 @@
+@@ -415,76 +_,165 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -498,9 +498,6 @@
 +            return p_11237_;
 +         }
 +         mohist$location = respawnEvent.getRespawnLocation();
-+         if (!p_11238_) {
-+            p_11237_.reset();
-+         }
        } else {
 -         optional = Optional.empty();
 +         if (mohist$worldserver == null) mohist$worldserver = this.f_11195_.m_129880_(p_11237_.m_8963_());
@@ -516,10 +513,6 @@
 +      p_11237_.f_8906_.f_9743_ = serverplayer;
        serverplayer.f_8906_ = p_11237_.f_8906_;
 +      serverplayer.m_143429_();
-+
-+      if (!p_11238_) {
-+         serverplayer.m_150109_().m_36006_(p_11237_.m_150109_());
-+      }
 +
        serverplayer.m_9015_(p_11237_, p_11238_);
 +      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
