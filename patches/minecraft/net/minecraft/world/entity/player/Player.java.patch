@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Lists;
++import com.mohistmc.plugins.KeepInventory;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.util.Either;
+ import com.mojang.logging.LogUtils;
 @@ -11,6 +_,8 @@
  import java.util.Map;
  import java.util.Optional;
@@ -863,6 +871,15 @@
  
     public Optional<WardenSpawnTracker> m_245217_() {
        return Optional.empty();
+@@ -1658,7 +_,7 @@
+    }
+ 
+    public int m_213860_() {
+-      if (!this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) && !this.m_5833_()) {
++      if (!KeepInventory.exp(this.m_9236_()) && !this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) && !this.m_5833_()) {
+          int i = this.f_36078_ * 7;
+          return i > 100 ? 100 : i;
+       } else {
 @@ -1715,6 +_,16 @@
  
     }

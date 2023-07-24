@@ -98,12 +98,11 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -226,11 +_,33 @@
+@@ -226,11 +_,32 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
     private boolean f_217034_;
 +   // CraftBukkit start
-+   public int expToDrop;
 +   public boolean forceDrops;
 +   public CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
@@ -804,17 +803,13 @@
     }
  
     protected void m_5907_() {
-@@ -1357,7 +_,12 @@
+@@ -1357,7 +_,8 @@
  
     protected void m_21226_() {
        if (this.m_9236_() instanceof ServerLevel && !this.m_217046_() && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_))) {
 -         ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), this.m_213860_());
 +         int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.m_213860_());
-+         if (this instanceof ServerPlayer) {
-+            reward = KeepInventory.exp(this.m_9236_(), reward);
-+         }
 +         ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), reward);
-+         this.expToDrop = 0;
        }
  
     }
@@ -1776,20 +1771,12 @@
        Equipable equipable = Equipable.m_269088_(p_147234_);
        return equipable != null ? equipable.m_40402_() : EquipmentSlot.MAINHAND;
     }
-@@ -3334,4 +_,17 @@
+@@ -3334,4 +_,9 @@
  
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
     }
 +
 +   // CraftBukkit start
-+   public int getExpReward() {
-+      if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
-+         int i = this.m_213860_();
-+         return i;
-+      } else {
-+         return 0;
-+      }
-+   }
 +
 +   public CraftLivingEntity getBukkitLivingEntity() { return (CraftLivingEntity) super.getBukkitEntity(); }
 +   // CraftBukkit end

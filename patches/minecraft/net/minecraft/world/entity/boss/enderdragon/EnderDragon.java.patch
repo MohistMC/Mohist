@@ -167,31 +167,7 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.f_19796_.m_188503_(l - i + 1), j + this.f_19796_.m_188503_(i1 - j + 1), k + this.f_19796_.m_188503_(j1 - k + 1));
           this.m_9236_().m_46796_(2008, blockpos1, 0);
-@@ -508,6 +_,23 @@
- 
-    }
- 
-+
-+   // CraftBukkit start - SPIGOT-2420: Special case, the ender dragon drops 12000 xp for the first kill and 500 xp for every other kill and this over time.
-+   @Override
-+   public int getExpReward() {
-+      // CraftBukkit - Moved from #tickDeath method
-+      boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_);
-+      short short0 = 500;
-+
-+      if (this.f_31073_ != null && !this.f_31073_.m_64099_()) {
-+         short0 = 12000;
-+      }
-+
-+      return flag ? short0 : 0;
-+   }
-+   // CraftBukkit end
-+
-+
-    protected void m_6153_() {
-       if (this.f_31073_ != null) {
-          this.f_31073_.m_64096_(this);
-@@ -518,29 +_,53 @@
+@@ -518,29 +_,48 @@
           float f = (this.f_19796_.m_188501_() - 0.5F) * 8.0F;
           float f1 = (this.f_19796_.m_188501_() - 0.5F) * 4.0F;
           float f2 = (this.f_19796_.m_188501_() - 0.5F) * 8.0F;
@@ -200,17 +176,11 @@
        }
  
 -      boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_);
-+      // CraftBukkit start - SPIGOT-2420: Moved up to #getExpReward method
-+      /*
-+      boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT);
++      boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_);
        int i = 500;
--      if (this.f_31073_ != null && !this.f_31073_.m_64099_()) {
-+      if (this.dragonFight != null && !this.dragonFight.hasPreviouslyKilledDragon()) {
+       if (this.f_31073_ != null && !this.f_31073_.m_64099_()) {
           i = 12000;
        }
-+      */
-+      int i = expToDrop;
-+      // CraftBukkit end
  
 -      if (this.m_9236_() instanceof ServerLevel) {
 -         if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
@@ -255,23 +225,11 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -729,6 +_,7 @@
-       super.m_7380_(p_31144_);
-       p_31144_.m_128405_("DragonPhase", this.f_31074_.m_31415_().m_7309_().m_31405_());
-       p_31144_.m_128405_("DragonDeathTime", this.f_31084_);
-+      p_31144_.m_128405_("Bukkit.expToDrop", expToDrop); // CraftBukkit - SPIGOT-2420: The ender dragon drops xp over time which can also happen between server starts
-    }
- 
-    public void m_7378_(CompoundTag p_31134_) {
-@@ -741,6 +_,11 @@
+@@ -740,7 +_,6 @@
+       if (p_31134_.m_128441_("DragonDeathTime")) {
           this.f_31084_ = p_31134_.m_128451_("DragonDeathTime");
        }
- 
-+      // CraftBukkit start - SPIGOT-2420: The ender dragon drops xp over time which can also happen between server starts
-+      if (p_31134_.m_128441_("Bukkit.expToDrop")) {
-+         this.expToDrop = p_31134_.m_128451_("Bukkit.expToDrop");
-+      }
-+      // CraftBukkit end
+-
     }
  
     public void m_6043_() {

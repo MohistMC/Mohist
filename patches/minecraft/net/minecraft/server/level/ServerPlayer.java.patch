@@ -32,7 +32,7 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
-@@ -95,6 +_,7 @@
+@@ -95,11 +_,13 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -40,6 +40,12 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.effect.MobEffects;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntitySelector;
++import net.minecraft.world.entity.ExperienceOrb;
+ import net.minecraft.world.entity.HumanoidArm;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.Mob;
 @@ -113,6 +_,7 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
@@ -348,11 +354,10 @@
  
     public void m_6667_(DamageSource p_9035_) {
        this.m_146850_(GameEvent.f_223707_);
--      boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_);
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
+       boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_);
 -      if (flag) {
 -         Component component = this.m_21231_().m_19293_();
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
-+      boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
 +      // CraftBukkit start - fire PlayerDeathEvent
 +      if (this.m_213877_()) {
 +         return;
@@ -393,14 +398,12 @@
           this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
              int i = 256;
              String s = component.m_130668_(256);
-@@ -601,11 +_,18 @@
+@@ -601,11 +_,16 @@
           this.m_9215_();
        }
  
 -      if (!this.m_5833_()) {
 -         this.m_6668_(p_9035_);
-+      // SPIGOT-5478 must be called manually now
-+      this.m_21226_();
 +      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
 +      if (!event.getKeepInventory()) {
 +         m_6668_(p_9035_);
@@ -890,6 +893,25 @@
     }
  
     public void m_5661_(Component p_9154_, boolean p_9155_) {
+@@ -1115,11 +_,13 @@
+          this.f_36080_ = p_9016_.f_36080_;
+          this.m_36397_(p_9016_.m_36344_());
+          this.f_19819_ = p_9016_.f_19819_;
+-      } else if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
+-         this.m_150109_().m_36006_(p_9016_.m_150109_());
+-         this.f_36078_ = p_9016_.f_36078_;
+-         this.f_36079_ = p_9016_.f_36079_;
+-         this.f_36080_ = p_9016_.f_36080_;
++      } else if (MohistConfig.keepinventory_global || this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
++         if (KeepInventory.inventory(this.m_9236_())) this.m_150109_().m_36006_(p_9016_.m_150109_());
++         if (KeepInventory.exp(this.m_9236_())) {
++            this.f_36078_ = p_9016_.f_36078_;
++            this.f_36079_ = p_9016_.f_36079_;
++            this.f_36080_ = p_9016_.f_36080_;
++         }
+          this.m_36397_(p_9016_.m_36344_());
+       }
+ 
 @@ -1129,12 +_,21 @@
        this.f_8920_ = -1;
        this.f_8917_ = -1.0F;

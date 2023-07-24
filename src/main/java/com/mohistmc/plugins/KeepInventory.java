@@ -1,9 +1,7 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
  * @author Mgazul by MohistMC
@@ -14,28 +12,18 @@ public class KeepInventory {
     public static boolean inventory(Level serverLevel) {
         String world = serverLevel.getWorld().getName();
         if (MohistConfig.keepinventory_global) {
-            if (MohistConfig.keepinventory_inventory) {
-                return true;
-            }
+            return MohistConfig.keepinventory_inventory;
         } else {
-            if (MohistConfig.yml.getBoolean("keepinventory." + world + ".inventory")) {
-                return true;
-            }
+            return MohistConfig.yml.getBoolean("keepinventory." + world + ".inventory");
         }
-        return false;
     }
 
-    public static int exp(Level serverLevel, int def) {
+    public static boolean exp(Level serverLevel) {
         String world = serverLevel.getWorld().getName();
         if (MohistConfig.keepinventory_global) {
-            if (MohistConfig.keepinventory_exp) {
-                return 0;
-            }
+            return MohistConfig.keepinventory_exp;
         } else {
-            if (MohistConfig.yml.getBoolean("keepinventory." + world + ".exp")) {
-                return 0;
-            }
+            return MohistConfig.yml.getBoolean("keepinventory." + world + ".exp");
         }
-        return def;
     }
 }
