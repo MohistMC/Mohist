@@ -36,15 +36,6 @@
              this.m_21053_(p_28357_);
              this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
              this.m_21508_(EquipmentSlot.MAINHAND);
-@@ -356,7 +_,7 @@
-       }
- 
-       public boolean m_8036_() {
--         return this.f_28399_.m_28377_() && this.f_28399_.m_20146_() >= 100;
-+         return this.f_28399_.m_28377_() && this.f_28399_.m_20146_() >= 100 && this.f_28399_.f_19853_.getWorld().canGenerateStructures(); // MC-151364, SPIGOT-5494: hangs if generate-structures=false
-       }
- 
-       public boolean m_8045_() {
 @@ -445,7 +_,7 @@
        }
  

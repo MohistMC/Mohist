@@ -8,17 +8,6 @@
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
  
-@@ -104,6 +_,10 @@
-          if (itemstack.m_41619_() && flag) {
-             itemstack = new ItemStack(Items.f_42412_);
-             itemstack1 = itemstack.m_41777_();
-+            // CraftBukkit start - SPIGOT-4870, MC-150847
-+         } else if (itemstack1.m_41619_()) {
-+            return false;
-+            // CraftBukkit end
-          }
- 
-          if (!m_40862_(p_40860_, p_40861_, itemstack, k > 0, flag)) {
 @@ -214,11 +_,27 @@
              Vector3f vector3f = vec3.m_252839_().rotate(quaternionf);
              projectile.m_6686_((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
