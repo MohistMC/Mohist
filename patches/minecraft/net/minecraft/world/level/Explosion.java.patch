@@ -118,7 +118,7 @@
                    double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -239,20 +_,73 @@
+@@ -239,31 +_,80 @@
           boolean flag1 = this.m_252906_() instanceof Player;
           Util.m_214673_(this.f_46020_, this.f_46012_.f_46441_);
  
@@ -136,13 +136,14 @@
 +            }
 +         }
 +
-+         boolean cancelled = false;
++         boolean cancelled;
 +         List<org.bukkit.block.Block> bukkitBlocks;
 +         float yield;
 +
 +         if (explode != null) {
 +            EntityExplodeEvent event = new EntityExplodeEvent(explode, location, blockList, this.f_46010_ == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.f_46017_ : 1.0F);
 +            this.f_46012_.getCraftServer().getPluginManager().callEvent(event);
++            cancelled = event.isCancelled();
 +            bukkitBlocks = event.blockList();
 +            yield = event.getYield();
 +         } else {
@@ -177,26 +178,35 @@
 +                  continue;
 +               }
 +            }
-+                           // CraftBukkit end
++            // CraftBukkit end
              if (!blockstate.m_60795_()) {
                 BlockPos blockpos1 = blockpos.m_7949_();
                 this.f_46012_.m_46473_().m_6180_("explosion_blocks");
 -               if (block.m_6903_(this)) {
-+               if (blockstate.canDropFromExplosion(this.f_46012_, blockpos, this)) {
-                   Level $$9 = this.f_46012_;
-                   if ($$9 instanceof ServerLevel) {
-                      ServerLevel serverlevel = (ServerLevel)$$9;
-                      BlockEntity blockentity = blockstate.m_155947_() ? this.f_46012_.m_7702_(blockpos) : null;
-                      LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(blockpos)).m_287286_(LootContextParams.f_81463_, ItemStack.f_41583_).m_287289_(LootContextParams.f_81462_, blockentity).m_287289_(LootContextParams.f_81455_, this.f_46016_);
+-                  Level $$9 = this.f_46012_;
+-                  if ($$9 instanceof ServerLevel) {
+-                     ServerLevel serverlevel = (ServerLevel)$$9;
+-                     BlockEntity blockentity = blockstate.m_155947_() ? this.f_46012_.m_7702_(blockpos) : null;
+-                     LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(blockpos)).m_287286_(LootContextParams.f_81463_, ItemStack.f_41583_).m_287289_(LootContextParams.f_81462_, blockentity).m_287289_(LootContextParams.f_81455_, this.f_46016_);
 -                     if (this.f_46010_ == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
 -                        lootparams$builder.m_287286_(LootContextParams.f_81464_, this.f_46017_);
-+                     if (yield < 1.0F) { // CraftBukkit - add yield
-+                        lootparams$builder.m_287286_(LootContextParams.f_81464_, 1.0F / yield); // CraftBukkit - add yield
-                      }
- 
-                      blockstate.m_222967_(serverlevel, blockpos, ItemStack.f_41583_, flag1);
-@@ -262,8 +_,7 @@
+-                     }
+-
+-                     blockstate.m_222967_(serverlevel, blockpos, ItemStack.f_41583_, flag1);
+-                     blockstate.m_287290_(lootparams$builder).forEach((p_46074_) -> {
+-                        m_46067_(objectarraylist, p_46074_, blockpos1);
+-                     });
++               if (blockstate.canDropFromExplosion(this.f_46012_, blockpos, this) && this.f_46012_ instanceof ServerLevel serverlevel) { // Mohist
++                  BlockEntity blockentity = blockstate.m_155947_() ? this.f_46012_.m_7702_(blockpos) : null;
++                  LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(blockpos)).m_287286_(LootContextParams.f_81463_, ItemStack.f_41583_).m_287289_(LootContextParams.f_81462_, blockentity).m_287289_(LootContextParams.f_81455_, this.f_46016_);
++                  if (yield < 1.0F) { // CraftBukkit - add yield
++                     lootparams$builder.m_287286_(LootContextParams.f_81464_, 1.0F / yield); // CraftBukkit - add yield
                    }
++
++                  blockstate.m_222967_(serverlevel, blockpos, ItemStack.f_41583_, flag1);
++                  blockstate.m_287290_(lootparams$builder).forEach((p_46074_) -> {
++                     m_46067_(objectarraylist, p_46074_, blockpos1);
++                  });
                 }
  
 -               this.f_46012_.m_7731_(blockpos, Blocks.f_50016_.m_49966_(), 3);
