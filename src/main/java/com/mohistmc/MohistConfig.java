@@ -164,6 +164,11 @@ public class MohistConfig {
     public static boolean keepinventory_inventory;
     public static boolean keepinventory_exp;
 
+    // Thread Priority
+    public static int server_thread;
+
+    public static List<String> nospawnEntity;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -183,5 +188,7 @@ public class MohistConfig {
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
+        server_thread = getInt("threadpriority.server_thread", 8);
+        nospawnEntity = getList("entity.nospawn", Collections.emptyList());
     }
 }

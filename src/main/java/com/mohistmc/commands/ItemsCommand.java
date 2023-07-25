@@ -64,7 +64,7 @@ public class ItemsCommand extends Command {
             return false;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
             return false;
         }
@@ -74,7 +74,6 @@ public class ItemsCommand extends Command {
             return false;
         }
 
-        Player player = (Player) sender;
         ItemStack itemStack = player.getInventory().getItemInMainHand();
         if (itemStack == null || itemStack.getType().isAir()) {
             player.sendMessage(ChatColor.RED + "You have nothing on main hand.");

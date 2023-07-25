@@ -1,9 +1,10 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -2,6 +_,9 @@
+@@ -2,6 +_,10 @@
  
  import com.google.common.annotations.VisibleForTesting;
  import com.google.common.collect.Lists;
++import com.mohistmc.MohistConfig;
 +import com.mohistmc.forge.ForgeInjectBukkit;
 +import com.mohistmc.forge.MohistDerivedWorldInfo;
 +import com.mohistmc.util.Level2LevelStem;
@@ -445,7 +446,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -835,18 +_,35 @@
+@@ -835,18 +_,38 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -455,6 +456,9 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
++      if (MohistConfig.nospawnEntity.contains(p_8873_.getBukkitEntity().getType().name())) {
++         return false;
++      }
        if (p_8873_.m_213877_()) {
 -         f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;

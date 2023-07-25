@@ -1,6 +1,9 @@
 package com.mohistmc.api;
 
 import com.mohistmc.MohistMC;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import org.apache.logging.log4j.LogManager;
@@ -140,5 +143,19 @@ public class ItemAPI {
         ItemMeta im = itemStack.getItemMeta();
         im.setLore(lore);
         itemStack.setItemMeta(im);
+    }
+
+    @Deprecated
+    public static TextComponent show(ItemStack itemStack) {
+        net.minecraft.world.item.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        CompoundTag compound = new CompoundTag();
+        nmsItemStack.save(compound);
+        String json = compound.toString();
+        BaseComponent[] hoverEventComponents = new BaseComponent[]{
+                new TextComponent(json)
+        };
+        TextComponent component = new TextComponent(itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? itemStack.getItemMeta().getDisplayName() : itemStack.getTranslationKey());
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
+        return component;
     }
 }
