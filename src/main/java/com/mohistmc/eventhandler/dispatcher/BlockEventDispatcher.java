@@ -27,9 +27,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,6 +176,27 @@ public class BlockEventDispatcher {
                 Bukkit.getPluginManager().callEvent(placeEvent);
                 event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onFarmlandBreak(BlockEvent.FarmlandTrampleEvent event) {
+        Entity entity = event.getEntity();
+        Cancellable cancellable;
+        if (entity instanceof Player player) {
+            cancellable = CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, event.getPos(), null, null, null);
+        } else {
+            cancellable = new EntityInteractEvent(entity.getBukkitEntity(), CraftBlock.at(event.getLevel(), event.getPos()));
+            Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+        }
+
+        if (cancellable.isCancelled()) {
+            event.setCanceled(true);
+            return;
+        }
+
+        if (!CraftEventFactory.callEntityChangeBlockEvent(entity, event.getPos(), Blocks.DIRT.defaultBlockState())) {
+            event.setCanceled(true);
         }
     }
 }
