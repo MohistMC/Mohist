@@ -46,6 +46,7 @@ public class MohistPlugin {
                 }
             }
         }
+        EntityClear.start();
     }
 
     public static void registerCommands(Map<String, Command> map) {

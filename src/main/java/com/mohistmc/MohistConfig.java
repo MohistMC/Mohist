@@ -169,6 +169,11 @@ public class MohistConfig {
 
     public static List<String> nospawnEntity;
 
+    public static boolean clear_item;
+    public static List<String> clear_item__whitelist;
+    public static String clear_item__msg;
+    public static int clear_item__time;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -190,5 +195,9 @@ public class MohistConfig {
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
         server_thread = getInt("threadpriority.server_thread", 8);
         nospawnEntity = getList("entity.nospawn", Collections.emptyList());
+        clear_item = getBoolean("entity.clear.item.enable", false);
+        clear_item__whitelist = getList("entity.clear.item.whitelist", Collections.emptyList());
+        clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
+        clear_item__time = getInt("entity.clear.item.time", 1800);
     }
 }
