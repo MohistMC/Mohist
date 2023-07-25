@@ -1,17 +1,14 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -9,9 +_,9 @@
+@@ -9,6 +_,7 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.network.chat.Component;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
--import net.minecraft.sounds.SoundSource;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
-@@ -29,9 +_,14 @@
+ import net.minecraft.sounds.SoundSource;
+@@ -29,6 +_,11 @@
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
@@ -22,11 +19,7 @@
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {
--   public static final String f_150696_ = "BlockEntityTag";
-+   private static final String f_150696_ = "BlockEntityTag";
-    public static final String f_150697_ = "BlockStateTag";
-    /** @deprecated */
-    @Deprecated
+    public static final String f_150696_ = "BlockEntityTag";
 @@ -59,6 +_,12 @@
           return InteractionResult.FAIL;
        } else {
@@ -67,7 +60,7 @@
                 level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(player, blockstate1));
 -               if (player == null || !player.m_150110_().f_35937_) {
 +               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.m_43723_());
-+               // level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               level.m_5594_(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.m_43723_()), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
 +               if ((player == null || !player.m_150110_().f_35937_) && itemstack != ItemStack.f_41583_) { // CraftBukkit
                    itemstack.m_41774_(1);
                 }
