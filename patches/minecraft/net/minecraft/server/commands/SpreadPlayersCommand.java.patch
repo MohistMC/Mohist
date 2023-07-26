@@ -10,12 +10,3 @@
           double d2 = Double.MAX_VALUE;
  
           for(SpreadPlayersCommand.Position spreadplayerscommand$position1 : p_138732_) {
-@@ -251,7 +_,7 @@
- 
-       public int m_138758_(BlockGetter p_138759_, int p_138760_) {
-          BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(this.f_138749_, (double)(p_138760_ + 1), this.f_138750_);
--         boolean flag = p_138759_.m_8055_(blockpos$mutableblockpos).m_60795_();
-+         boolean flag = p_138759_.m_8055_( blockpos$mutableblockpos).m_60795_();
-          blockpos$mutableblockpos.m_122173_(Direction.DOWN);
- 
-          boolean flag2;
