@@ -29,24 +29,27 @@
     private static final int f_164734_ = 3;
     private static final int f_164735_ = 128;
     private static final int f_164736_ = 16;
-@@ -39,9 +_,17 @@
+@@ -39,10 +_,19 @@
        this.f_77648_ = p_77650_;
     }
  
-+   private AtomicBoolean mohist$flag = new AtomicBoolean(true);
++   private AtomicInteger searchRadius = new AtomicInteger(-1);
 +
 +   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, WorldBorder p_192988_, int i) {
-+      return m_192985_(p_192986_, mohist$flag.getAndSet(true), p_192988_); // Search Radius
++      searchRadius.set(i);
++      return m_192985_(p_192986_, false, p_192988_); // Search Radius
 +   }
 +
     public Optional<BlockUtil.FoundRectangle> m_192985_(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
        PoiManager poimanager = this.f_77648_.m_8904_();
        int i = p_192987_ ? 16 : 128;
-+      mohist$flag.set(p_192987_);
+-      poimanager.m_27056_(this.f_77648_, p_192986_, i);
++      int newi = searchRadius.get() == -1 ? i : searchRadius.getAndSet(-1);
 +      // CraftBukkit end
-       poimanager.m_27056_(this.f_77648_, p_192986_, i);
++      poimanager.m_27056_(this.f_77648_, p_192986_, newi);
        Optional<PoiRecord> optional = poimanager.m_27166_((p_230634_) -> {
           return p_230634_.m_203565_(PoiTypes.f_218064_);
+       }, p_192986_, i, PoiManager.Occupancy.ANY).filter((p_192981_) -> {
 @@ -64,6 +_,15 @@
        });
     }
