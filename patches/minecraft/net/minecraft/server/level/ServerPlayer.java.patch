@@ -870,12 +870,11 @@
           this.m_36397_(p_9016_.m_36344_());
           this.f_19819_ = p_9016_.f_19819_;
 -      } else if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
--         this.m_150109_().m_36006_(p_9016_.m_150109_());
++      } else if (KeepInventory.inventory(this) || p_9016_.m_5833_()) {
+          this.m_150109_().m_36006_(p_9016_.m_150109_());
 -         this.f_36078_ = p_9016_.f_36078_;
 -         this.f_36079_ = p_9016_.f_36079_;
 -         this.f_36080_ = p_9016_.f_36080_;
-+      } else if (MohistConfig.keepinventory_global || this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
-+         if (KeepInventory.inventory(this)) this.m_150109_().m_36006_(p_9016_.m_150109_());
 +         if (KeepInventory.exp(this) || this.keepLevel) {
 +            this.f_36078_ = p_9016_.f_36078_;
 +            this.f_36079_ = p_9016_.f_36079_;
