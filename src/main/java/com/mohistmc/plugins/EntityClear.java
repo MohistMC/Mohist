@@ -26,7 +26,7 @@ public class EntityClear {
             if (MinecraftServer.getServer().hasStopped()) {
                 return;
             }
-            run();
+            if (MohistConfig.clear_item) run();
         }, 1000 * 60 * 1, 1000 * MohistConfig.clear_item__time, TimeUnit.MILLISECONDS);
     }
 
