@@ -3,6 +3,7 @@ package com.mohistmc;
 import com.google.common.base.Throwables;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.commands.BackupWorldCommand;
+import com.mohistmc.commands.BanItemsCommand;
 import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
@@ -75,6 +76,7 @@ public class MohistConfig {
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
         commands.put("items", new ItemsCommand("items"));
         commands.put("permission", new PermissionCommand("permission"));
+        commands.put("banitems", new BanItemsCommand("banitems"));
 
         MohistPlugin.registerCommands(commands);
 
@@ -82,6 +84,10 @@ public class MohistConfig {
         set("config-version", 1);
         set("keepinventory.world.inventory", false);
         set("keepinventory.world.exp", false);
+        readConfig();
+    }
+
+    public static void save() {
         readConfig();
     }
 
@@ -174,6 +180,10 @@ public class MohistConfig {
     public static String clear_item__msg;
     public static int clear_item__time;
 
+    // Ban
+    public static boolean ban_item_enable;
+    public static List<String> ban_item_materials;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -199,5 +209,8 @@ public class MohistConfig {
         clear_item__whitelist = getList("entity.clear.item.whitelist", Collections.emptyList());
         clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
         clear_item__time = getInt("entity.clear.item.time", 1800);
+
+        ban_item_enable = getBoolean("ban.item.enable" , false);
+        ban_item_materials = getList("ban.item.materials", Collections.emptyList());
     }
 }

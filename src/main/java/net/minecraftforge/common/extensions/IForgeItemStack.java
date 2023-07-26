@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import com.mohistmc.plugins.ban.item.BanItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
@@ -85,6 +86,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default InteractionResult onItemUseFirst(UseOnContext context)
     {
        Player entityplayer = context.getPlayer();
+        if (BanItem.check(entityplayer, context.getItemInHand())) return InteractionResult.FAIL;
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
        Registry<Block> registry = entityplayer.level().registryAccess().registryOrThrow(Registries.BLOCK);

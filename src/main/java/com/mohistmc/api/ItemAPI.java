@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -8,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -157,5 +159,10 @@ public class ItemAPI {
         TextComponent component = new TextComponent(itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? itemStack.getItemMeta().getDisplayName() : itemStack.getTranslationKey());
         component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
         return component;
+    }
+
+    public static boolean isBan(ItemStack itemStack) {
+        if (itemStack == null) return false;
+        return MohistConfig.ban_item_materials.contains(itemStack.getType().name());
     }
 }

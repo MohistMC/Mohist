@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,21 @@
+@@ -2,16 +_,22 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
 +import com.mohistmc.inventory.MohistModsInventory;
++import com.mohistmc.plugins.ban.item.BanItem;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
@@ -859,16 +860,19 @@
                       InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                       if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                          Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
-@@ -1068,12 +_,57 @@
+@@ -1068,12 +_,58 @@
  
     public void m_5760_(ServerboundUseItemPacket p_9932_) {
        PacketUtils.m_131359_(p_9932_, this, this.f_9743_.m_284548_());
+-      this.m_215201_(p_9932_.m_238013_());
+-      ServerLevel serverlevel = this.f_9743_.m_284548_();
 +      if (this.f_9743_.m_6107_()) return; // CraftBukkit
 +      if (!checkLimit(p_9932_.timestamp)) return; // Spigot - check limit
-       this.m_215201_(p_9932_.m_238013_());
-       ServerLevel serverlevel = this.f_9743_.m_284548_();
        InteractionHand interactionhand = p_9932_.m_134717_();
        ItemStack itemstack = this.f_9743_.m_21120_(interactionhand);
++      if(BanItem.check(this.f_9743_, itemstack)) return; // Mohist - banitem
++      this.m_215201_(p_9932_.m_238013_());
++      ServerLevel serverlevel = this.f_9743_.m_284548_();
        this.f_9743_.m_9243_();
        if (!itemstack.m_41619_() && itemstack.m_246617_(serverlevel.m_246046_())) {
 +         // CraftBukkit start
@@ -992,10 +996,12 @@
           if (this.f_9743_.m_150109_().f_35977_ != p_9909_.m_134498_() && this.f_9743_.m_7655_() == InteractionHand.MAIN_HAND) {
              this.f_9743_.m_5810_();
           }
-@@ -1168,16 +_,23 @@
+@@ -1167,17 +_,24 @@
+          this.f_9743_.m_150109_().f_35977_ = p_9909_.m_134498_();
           this.f_9743_.m_9243_();
        } else {
-          f_9744_.warn("{} tried to set an invalid carried item", (Object)this.f_9743_.m_7755_().getString());
+-         f_9744_.warn("{} tried to set an invalid carried item", (Object)this.f_9743_.m_7755_().getString());
++         f_9744_.warn("{} tried to set an invalid carried item", this.f_9743_.m_7755_().getString());
 +         this.disconnect("Invalid hotbar selection (Hacking?)"); // CraftBukkit
        }
     }

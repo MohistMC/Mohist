@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/item/context/BlockPlaceContext.java
++++ b/net/minecraft/world/item/context/BlockPlaceContext.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.world.item.context;
+ 
+ import javax.annotation.Nullable;
++
++import com.mohistmc.plugins.ban.item.BanItem;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.world.InteractionHand;
+@@ -37,6 +_,7 @@
+    }
+ 
+    public boolean m_7059_() {
++      if (BanItem.check(this.m_43723_(), this.m_43722_())) return false;
+       return this.f_43628_ || this.m_43725_().m_8055_(this.m_8083_()).m_60629_(this);
+    }
+ 

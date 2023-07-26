@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1,21 +_,28 @@
+@@ -1,21 +_,29 @@
  package net.minecraft.world.entity;
  
 +import com.google.common.base.Function;
@@ -10,6 +10,7 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
 +import com.mohistmc.plugins.KeepInventory;
++import com.mohistmc.plugins.ban.item.BanItem;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.DataResult;
@@ -1491,10 +1492,11 @@
        boolean flag = foodproperties != null && foodproperties.m_38748_();
        flag |= i <= this.f_20935_.m_41779_() - 7;
        return flag && i % 4 == 0;
-@@ -2875,8 +_,10 @@
+@@ -2875,8 +_,11 @@
     public void m_6672_(InteractionHand p_21159_) {
        ItemStack itemstack = this.m_21120_(p_21159_);
        if (!itemstack.m_41619_() && !this.m_6117_()) {
++         if (BanItem.check(itemstack)) return;
 +         int duration = net.minecraftforge.event.ForgeEventFactory.onItemUseStart(this, itemstack, itemstack.m_41779_());
 +         if (duration <= 0) return;
           this.f_20935_ = itemstack;

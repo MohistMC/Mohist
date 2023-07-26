@@ -1,5 +1,12 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.server.level;
+ 
++import com.mohistmc.plugins.ban.item.BanItem;
+ import com.mojang.logging.LogUtils;
+ import java.util.Objects;
+ import javax.annotation.Nullable;
 @@ -9,21 +_,31 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -254,7 +261,7 @@
           int i = p_9264_.m_41613_();
           int j = p_9264_.m_41773_();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
-@@ -294,13 +_,59 @@
+@@ -294,13 +_,60 @@
        }
     }
  
@@ -266,6 +273,7 @@
 +   public InteractionHand interactHand;
 +   public ItemStack interactItemStack;
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
++      if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
        BlockPos blockpos = p_9270_.m_82425_();
        BlockState blockstate = p_9267_.m_8055_(blockpos);
 +      InteractionResult enuminteractionresult = InteractionResult.PASS;
