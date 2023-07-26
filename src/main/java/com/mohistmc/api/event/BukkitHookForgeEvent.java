@@ -24,7 +24,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Using Bukkit to handle Forge's Event
- * look com.mohistmc.test.BukkitHookForgeEventTest
  */
 public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     private static final HandlerList handlers = new HandlerList();
