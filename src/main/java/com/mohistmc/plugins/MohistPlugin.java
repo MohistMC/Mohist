@@ -1,6 +1,5 @@
 package com.mohistmc.plugins;
 
-import com.mohistmc.api.event.BukkitHookForgeEvent;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
@@ -10,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.plugin.Plugin;
@@ -60,9 +58,6 @@ public class MohistPlugin {
         }
         if (event instanceof PrepareAnvilEvent prepareAnvilEvent) {
             EnchantmentFix.anvilListener(prepareAnvilEvent);
-        }
-        if (event instanceof BukkitHookForgeEvent bukkitHookForgeEvent) {
-            BukkitHookForgeEventTest.anvilListener(bukkitHookForgeEvent);
         }
     }
 
