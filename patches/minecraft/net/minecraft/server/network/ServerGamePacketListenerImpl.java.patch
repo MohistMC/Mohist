@@ -1224,11 +1224,12 @@
        this.m_9829_(new ClientboundPlayerChatPacket(p_250321_.f_243882_().f_244443_(), p_250321_.f_243882_().f_244066_(), p_250321_.f_244279_(), p_250321_.f_240885_().m_253217_(this.f_243718_), p_250321_.f_237215_(), p_250321_.f_242992_(), p_250910_.m_240987_(this.f_9743_.m_9236_().m_9598_())));
        this.m_241992_(p_250321_);
     }
-@@ -1430,8 +_,16 @@
+@@ -1430,8 +_,17 @@
  
     public void m_6946_(ServerboundInteractPacket p_9866_) {
        PacketUtils.m_131359_(p_9866_, this, this.f_9743_.m_284548_());
 +      if (this.f_9743_.m_6107_()) return; // CraftBukkit
++      if (BanItem.check(f_9743_)) return; // Mohist
        final ServerLevel serverlevel = this.f_9743_.m_284548_();
        final Entity entity = p_9866_.m_179603_(serverlevel);
 +      // Spigot Start

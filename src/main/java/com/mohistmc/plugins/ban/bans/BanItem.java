@@ -23,13 +23,12 @@ public class BanItem {
     }
 
     public static boolean check(net.minecraft.world.entity.player.Player player, ItemStack itemStack) {
-        if (!MohistConfig.ban_item_enable) return false;
         if (player == null) return false;
         if (BanEnchantment.check(itemStack)) {
             player.containerMenu.sendAllDataToRemote();
             return true;
         }
-        if (ItemAPI.isBan(CraftItemStack.asCraftMirror(itemStack))) {
+        if (check(itemStack)) {
             player.containerMenu.sendAllDataToRemote();
             return true;
         }
