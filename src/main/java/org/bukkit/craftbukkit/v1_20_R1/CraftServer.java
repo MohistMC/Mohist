@@ -246,6 +246,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -262,6 +263,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -514,7 +516,8 @@ public final class CraftServer implements Server {
                     }
                     node = clone;
                 }
-
+                final Predicate<CommandSourceStack> original = node.getRequirement();
+                node.setRequirement(original.or(source -> source.getBukkitSender().hasPermission(command.getPermission())));
                 dispatcher.getDispatcher().getRoot().addChild(node);
             } else {
                 new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);

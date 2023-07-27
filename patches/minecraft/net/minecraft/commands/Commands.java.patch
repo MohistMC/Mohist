@@ -1,14 +1,12 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -1,6 +_,8 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.commands;
  
 +import com.google.common.base.Joiner;
  import com.google.common.collect.Maps;
-+import com.mohistmc.forge.ModsCommandDispatcher;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
- import com.mojang.brigadier.StringReader;
 @@ -13,9 +_,12 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
@@ -31,15 +29,6 @@
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -127,7 +_,7 @@
-    public static final int f_165684_ = 2;
-    public static final int f_165685_ = 3;
-    public static final int f_165686_ = 4;
--   private final CommandDispatcher<CommandSourceStack> f_82090_ = new CommandDispatcher<>();
-+   private final CommandDispatcher<CommandSourceStack> f_82090_ = new ModsCommandDispatcher(this);
- 
-    public Commands(Commands.CommandSelection p_230943_, CommandBuildContext p_230944_) {
-       AdvancementCommands.m_136310_(this.f_82090_);
 @@ -193,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
@@ -158,7 +147,7 @@
                 });
                 if (j > 10) {
                    mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -295,16 +_,51 @@
+@@ -295,17 +_,65 @@
        }
     }
  
@@ -198,7 +187,7 @@
 +      // Remove labels that were removed during the event
 +      for (String orig : bukkit) {
 +         if (!event.getCommands().contains(orig)) {
-+            // rootcommandnode.removeCommand(orig); Mohsit TODO
++            rootcommandnode.removeCommand(orig);
 +         }
 +      }
 +      // CraftBukkit end
@@ -206,9 +195,24 @@
        p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
++   public static <S> boolean canUse(CommandNode<S> node, S source) {
++      if (source instanceof CommandSourceStack s) {
++         try {
++            s.currentCommand = node;
++            return node.canUse(source);
++         } finally {
++            s.currentCommand = null;
++         }
++      } else {
++         return node.canUse(source);
++      }
++   }
++
     private void m_82112_(CommandNode<CommandSourceStack> p_82113_, CommandNode<SharedSuggestionProvider> p_82114_, CommandSourceStack p_82115_, Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> p_82116_) {
        for(CommandNode<CommandSourceStack> commandnode : p_82113_.getChildren()) {
+-         if (commandnode.canUse(p_82115_)) {
 +         if (!org.spigotmc.SpigotConfig.sendNamespaced && commandnode.getName().contains( ":" ) ) continue; // Spigot
-          if (commandnode.canUse(p_82115_)) {
++         if (canUse(commandnode, p_82115_)) {
              ArgumentBuilder<SharedSuggestionProvider, ?> argumentbuilder = (ArgumentBuilder)commandnode.createBuilder();
              argumentbuilder.requires((p_82126_) -> {
+                return true;
