@@ -1,7 +1,9 @@
-package com.mohistmc.plugins.ban.item;
+package com.mohistmc.plugins.ban.bans;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.plugins.ban.BanType;
+import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.util.ListUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -23,6 +25,10 @@ public class BanItem {
     public static boolean check(net.minecraft.world.entity.player.Player player, ItemStack itemStack) {
         if (!MohistConfig.ban_item_enable) return false;
         if (player == null) return false;
+        if (BanEnchantment.check(itemStack)) {
+            player.containerMenu.sendAllDataToRemote();
+            return true;
+        }
         if (ItemAPI.isBan(CraftItemStack.asCraftMirror(itemStack))) {
             player.containerMenu.sendAllDataToRemote();
             return true;
@@ -30,12 +36,16 @@ public class BanItem {
         return false;
     }
 
+    public static boolean check(net.minecraft.world.entity.player.Player player) {
+        return check(player.getMainHandItem()) || check(player.getOffhandItem());
+    }
+
     public static boolean check(ItemStack itemStack) {
         if (!MohistConfig.ban_item_enable) return false;
         return ItemAPI.isBan(CraftItemStack.asCraftMirror(itemStack));
     }
 
-    public static void saveItems(InventoryCloseEvent event) {
+    public static void save(InventoryCloseEvent event) {
         if (event.getView().getTitle().equals("§4Add bans item")) {
 
             List<String> old = MohistConfig.ban_item_materials;
@@ -44,8 +54,7 @@ public class BanItem {
                     ListUtils.isDuplicate(old, itemStack.getType().name());
                 }
             }
-            MohistConfig.yml.set("ban.item.materials", old);
-            MohistConfig.save();
+            BanUtils.saveToYaml(old, BanType.ITEM);
         }
     }
 }

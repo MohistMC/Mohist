@@ -4,7 +4,7 @@
  import com.google.common.collect.HashMultimap;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Multimap;
-+import com.mohistmc.plugins.ban.item.BanItem;
++import com.mohistmc.plugins.ban.bans.BanItem;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Codec;
@@ -12,22 +12,7 @@
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import java.text.DecimalFormat;
  import java.text.DecimalFormatSymbols;
-@@ -15,6 +_,7 @@
- import java.util.Map;
- import java.util.Objects;
- import java.util.Optional;
-+import java.util.concurrent.atomic.AtomicReference;
- import java.util.function.Consumer;
- import java.util.function.Predicate;
- import java.util.stream.Collectors;
-@@ -25,12 +_,14 @@
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.commands.arguments.blocks.BlockStateParser;
- import net.minecraft.core.BlockPos;
-+import net.minecraft.core.Direction;
- import net.minecraft.core.Holder;
- import net.minecraft.core.Registry;
- import net.minecraft.core.registries.BuiltInRegistries;
+@@ -31,6 +_,7 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.ListTag;
@@ -35,17 +20,13 @@
  import net.minecraft.nbt.Tag;
  import net.minecraft.network.chat.CommonComponents;
  import net.minecraft.network.chat.Component;
-@@ -38,12 +_,17 @@
- import net.minecraft.network.chat.HoverEvent;
+@@ -39,11 +_,13 @@
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.chat.Style;
-+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.resources.ResourceLocation;
 +import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
-+import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.Stats;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.RandomSource;
@@ -53,30 +34,18 @@
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
-@@ -70,17 +_,37 @@
+@@ -70,17 +_,25 @@
  import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.level.ItemLike;
  import net.minecraft.world.level.Level;
 -import net.minecraft.world.level.block.Block;
 +import net.minecraft.world.level.block.*;
-+import net.minecraft.world.level.block.entity.BlockEntity;
-+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
-+import net.minecraft.world.level.block.entity.SignBlockEntity;
-+import net.minecraft.world.level.block.entity.SkullBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-+import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.Location;
-+import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
-+import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.player.PlayerItemDamageEvent;
-+import org.bukkit.event.world.StructureGrowEvent;
  import org.slf4j.Logger;
  
 -public final class ItemStack {

@@ -1,7 +1,8 @@
 package com.mohistmc.plugins;
 
-import com.mohistmc.plugins.ban.entity.BanEntity;
-import com.mohistmc.plugins.ban.item.BanItem;
+import com.mohistmc.plugins.ban.bans.BanEnchantment;
+import com.mohistmc.plugins.ban.bans.BanEntity;
+import com.mohistmc.plugins.ban.bans.BanItem;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
@@ -63,8 +64,9 @@ public class MohistPlugin {
             EnchantmentFix.anvilListener(prepareAnvilEvent);
         }
         if (event instanceof InventoryCloseEvent event1) {
-            BanItem.saveItems(event1);
-            BanEntity.saveEggs(event1);
+            BanItem.save(event1);
+            BanEntity.save(event1);
+            BanEnchantment.save(event1);
         }
     }
 

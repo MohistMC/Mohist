@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -8,6 +_,8 @@
+ import java.util.Map;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import com.mohistmc.plugins.ban.bans.BanEnchantment;
+ import net.minecraft.Util;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
 @@ -59,7 +_,14 @@
        return BuiltInRegistries.f_256876_.m_7981_(p_182433_);
     }
@@ -15,6 +24,14 @@
        if (p_44845_.m_41619_()) {
           return 0;
        } else {
+@@ -102,6 +_,7 @@
+       for(Map.Entry<Enchantment, Integer> entry : p_44866_.entrySet()) {
+          Enchantment enchantment = entry.getKey();
+          if (enchantment != null) {
++            if (BanEnchantment.check(enchantment)) return; // Mohist
+             int i = entry.getValue();
+             listtag.add(m_182443_(m_182432_(enchantment), i));
+             if (p_44867_.m_150930_(Items.f_42690_)) {
 @@ -120,6 +_,13 @@
  
     private static void m_44850_(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {

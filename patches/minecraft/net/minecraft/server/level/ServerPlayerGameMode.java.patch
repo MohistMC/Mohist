@@ -3,7 +3,7 @@
 @@ -1,5 +_,6 @@
  package net.minecraft.server.level;
  
-+import com.mohistmc.plugins.ban.item.BanItem;
++import com.mohistmc.plugins.ban.bans.BanItem;
  import com.mojang.logging.LogUtils;
  import java.util.Objects;
  import javax.annotation.Nullable;
@@ -68,11 +68,15 @@
        if (this.f_9253_) {
           BlockState blockstate = this.f_9244_.m_8055_(this.f_9254_);
           if (blockstate.m_60795_()) {
-@@ -124,7 +_,11 @@
+@@ -124,7 +_,15 @@
     }
  
     public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 -      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
++      if (BanItem.check(f_9245_)) {
++         this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++         return;
++      }
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_, p_215121_);
 +      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
@@ -192,9 +196,13 @@
           }
  
        }
-@@ -221,7 +_,8 @@
+@@ -220,8 +_,12 @@
+    }
  
     public boolean m_9280_(BlockPos p_9281_) {
++      if (BanItem.check(f_9245_)) {
++         return false;
++      }
        BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
 -      if (!this.f_9245_.m_21205_().m_41720_().m_6777_(blockstate, this.f_9244_, p_9281_, this.f_9245_)) {
 +      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(f_9244_, f_9247_, f_9245_, p_9281_);

@@ -20,10 +20,11 @@ import java.util.Locale;
 public class BansCommand extends Command {
 
     private final List<String> params = Arrays.asList("add");
+    private final List<String> params1 = Arrays.asList("item", "entity", "enchantment");
     public BansCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/bans [add] [item|entity]";
+        this.usageMessage = "/bans [add] [item|entity|enchantment]";
         this.setPermission("mohist.command.bans");
     }
 
@@ -45,7 +46,7 @@ public class BansCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "add" -> {
                 if (args.length != 2) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /bans add [item|entity]");
+                    sender.sendMessage(ChatColor.RED + usageMessage);
                     return false;
                 }
                 if (args[1].equals("item")) {
@@ -54,8 +55,11 @@ public class BansCommand extends Command {
                 } else if (args[1].equals("entity")) {
                     Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
                     player.openInventory(inventory);
-                }else {
-                    sender.sendMessage(ChatColor.RED + "Usage: /bans add [item|entity]");
+                } else if (args[1].equals("enchantment")) {
+                    Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
+                    player.openInventory(inventory);
+                } else {
+                    sender.sendMessage(ChatColor.RED + usageMessage);
                     return false;
                 }
             }
@@ -73,6 +77,13 @@ public class BansCommand extends Command {
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
                 if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    list.add(param);
+                }
+            }
+        }
+        if (args.length == 2 && (sender.isOp() || testPermission(sender))) {
+            for (String param : params1) {
+                if (param.toLowerCase().startsWith(args[1].toLowerCase())) {
                     list.add(param);
                 }
             }

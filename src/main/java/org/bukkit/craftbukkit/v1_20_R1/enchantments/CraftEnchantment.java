@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.enchantments;
 
+import com.mohistmc.api.EnchantmentAPI;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
 import net.minecraft.world.item.enchantment.VanishingCurseEnchantment;
@@ -162,7 +163,7 @@ public class CraftEnchantment extends Enchantment {
         case 38:
             return "VANISHING_CURSE";
         default:
-            return "UNKNOWN_ENCHANT_" + BuiltInRegistries.ENCHANTMENT.getId(target);
+            return EnchantmentAPI.getNameByNMS(target); // Mohist
         }
     }
 

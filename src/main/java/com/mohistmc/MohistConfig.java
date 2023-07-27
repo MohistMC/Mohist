@@ -184,6 +184,9 @@ public class MohistConfig {
     public static boolean ban_entity_enable;
     public static List<String> ban_entity_types;
 
+    public static boolean ban_enchantment_enable;
+    public static List<String> ban_enchantment_list;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -211,8 +214,10 @@ public class MohistConfig {
         clear_item__time = getInt("entity.clear.item.time", 1800);
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
-        ban_item_materials = getList("ban.item.materials", Collections.emptyList());
+        ban_item_materials = getList("ban.item.list", Collections.emptyList());
         ban_entity_enable = getBoolean("ban.entity.enable", false);
-        ban_entity_types = getList("ban.entity.types", Collections.emptyList());
+        ban_entity_types = getList("ban.entity.list", Collections.emptyList());
+        ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
+        ban_enchantment_list = getList("ban.enchantment.list", Collections.emptyList());
     }
 }

@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -1,6 +_,7 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.world.inventory;
  
  import java.util.List;
 +import java.util.Map;
++
++import com.mohistmc.plugins.ban.bans.BanEnchantment;
  import net.minecraft.Util;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
@@ -146,7 +148,7 @@
                 this.m_38946_();
              });
           } else {
-@@ -142,9 +_,25 @@
+@@ -142,9 +_,26 @@
              this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
@@ -163,6 +165,7 @@
 +                  CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
 +
 +                  org.bukkit.enchantments.Enchantment hintedEnchantment = org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.f_256876_.m_7981_(Enchantment.m_44697_(f_39447_[p_39466_]))));
++                  if (BanEnchantment.check(hintedEnchantment)) return;
 +                  int hintedEnchantmentLevel = f_39448_[p_39466_];
 +                  EnchantItemEvent event = new EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), f_39450_.getLocation().getBlock(), item, this.f_39446_[p_39466_], enchants, hintedEnchantment, hintedEnchantmentLevel, p_39466_);
 +                  Bukkit.getPluginManager().callEvent(event);

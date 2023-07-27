@@ -1,9 +1,11 @@
-package com.mohistmc.plugins.ban.entity;
+package com.mohistmc.plugins.ban.bans;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.plugins.ban.BanType;
+import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.util.ListUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,7 +26,7 @@ public class BanEntity {
         return EntityAPI.isBan(entity.getBukkitEntity());
     }
 
-    public static void saveEggs(InventoryCloseEvent event) {
+    public static void save(InventoryCloseEvent event) {
         if (event.getView().getTitle().equals("§4Add bans entity")) {
 
             List<String> old = MohistConfig.ban_entity_types;
@@ -37,8 +39,7 @@ public class BanEntity {
                     }
                 }
             }
-            MohistConfig.yml.set("ban.entity.types", old);
-            MohistConfig.save();
+            BanUtils.saveToYaml(old, BanType.ENTITY);
         }
     }
 }
