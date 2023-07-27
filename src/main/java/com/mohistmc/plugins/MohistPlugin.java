@@ -1,5 +1,6 @@
 package com.mohistmc.plugins;
 
+import com.mohistmc.plugins.ban.entity.BanEntity;
 import com.mohistmc.plugins.ban.item.BanItem;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
@@ -63,6 +64,7 @@ public class MohistPlugin {
         }
         if (event instanceof InventoryCloseEvent event1) {
             BanItem.saveItems(event1);
+            BanEntity.saveEggs(event1);
         }
     }
 

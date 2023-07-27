@@ -17,14 +17,14 @@ import java.util.Locale;
  * @author Mgazul by MohistMC
  * @date 2023/7/27 5:33:43
  */
-public class BanItemsCommand extends Command {
+public class BansCommand extends Command {
 
     private final List<String> params = Arrays.asList("add");
-    public BanItemsCommand(String name) {
+    public BansCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/banitems [add] [item]";
-        this.setPermission("mohist.command.items");
+        this.usageMessage = "/bans [add] [item|entity]";
+        this.setPermission("mohist.command.bans");
     }
 
     @Override
@@ -45,14 +45,17 @@ public class BanItemsCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "add" -> {
                 if (args.length != 2) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /items add [item]");
+                    sender.sendMessage(ChatColor.RED + "Usage: /bans add [item|entity]");
                     return false;
                 }
                 if (args[1].equals("item")) {
                     Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
                     player.openInventory(inventory);
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Usage: /items add [item]");
+                } else if (args[1].equals("entity")) {
+                    Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
+                    player.openInventory(inventory);
+                }else {
+                    sender.sendMessage(ChatColor.RED + "Usage: /bans add [item|entity]");
                     return false;
                 }
             }

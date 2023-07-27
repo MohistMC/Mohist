@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mohistmc.MohistConfig;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -27,5 +28,9 @@ public class EntityAPI {
         } else {
             return defType;
         }
+    }
+
+    public static boolean isBan(org.bukkit.entity.Entity entity) {
+        return MohistConfig.ban_entity_types.contains(entity.getType().name());
     }
 }

@@ -2,12 +2,12 @@ package com.mohistmc.plugins.ban.item;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.util.ListUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +41,7 @@ public class BanItem {
             List<String> old = MohistConfig.ban_item_materials;
             for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
                 if (itemStack != null) {
-                    old.add(itemStack.getType().name());
+                    ListUtils.isDuplicate(old, itemStack.getType().name());
                 }
             }
             MohistConfig.yml.set("ban.item.materials", old);

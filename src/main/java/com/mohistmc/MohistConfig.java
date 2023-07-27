@@ -3,7 +3,7 @@ package com.mohistmc;
 import com.google.common.base.Throwables;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.commands.BackupWorldCommand;
-import com.mohistmc.commands.BanItemsCommand;
+import com.mohistmc.commands.BansCommand;
 import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
@@ -76,7 +76,7 @@ public class MohistConfig {
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
         commands.put("items", new ItemsCommand("items"));
         commands.put("permission", new PermissionCommand("permission"));
-        commands.put("banitems", new BanItemsCommand("banitems"));
+        commands.put("bans", new BansCommand("bans"));
 
         MohistPlugin.registerCommands(commands);
 
@@ -173,8 +173,6 @@ public class MohistConfig {
     // Thread Priority
     public static int server_thread;
 
-    public static List<String> nospawnEntity;
-
     public static boolean clear_item;
     public static List<String> clear_item__whitelist;
     public static String clear_item__msg;
@@ -183,6 +181,8 @@ public class MohistConfig {
     // Ban
     public static boolean ban_item_enable;
     public static List<String> ban_item_materials;
+    public static boolean ban_entity_enable;
+    public static List<String> ban_entity_types;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -204,7 +204,7 @@ public class MohistConfig {
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
         server_thread = getInt("threadpriority.server_thread", 8);
-        nospawnEntity = getList("entity.nospawn", Collections.emptyList());
+
         clear_item = getBoolean("entity.clear.item.enable", false);
         clear_item__whitelist = getList("entity.clear.item.whitelist", Collections.emptyList());
         clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
@@ -212,5 +212,7 @@ public class MohistConfig {
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
         ban_item_materials = getList("ban.item.materials", Collections.emptyList());
+        ban_entity_enable = getBoolean("ban.entity.enable", false);
+        ban_entity_types = getList("ban.entity.types", Collections.emptyList());
     }
 }

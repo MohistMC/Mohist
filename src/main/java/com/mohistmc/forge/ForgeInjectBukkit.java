@@ -218,13 +218,15 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.ENTITY_TYPES;
         for (net.minecraft.world.entity.EntityType<?> entity : registry) {
             ResourceLocation resourceLocation = registry.getKey(entity);
+            String entityType = normalizeName(resourceLocation.toString());
             if (!isMINECRAFT(resourceLocation)) {
-                String entityType = normalizeName(resourceLocation.toString());
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistDynamEnum.addEnum0(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, entityType.toLowerCase(), MohistModsEntity.class, typeId, false);
                 EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity, entityType);
+            } else {
+                ServerAPI.entityTypeMap.put(entity, normalizeName(resourceLocation.getPath().toString()));
             }
         }
     }
