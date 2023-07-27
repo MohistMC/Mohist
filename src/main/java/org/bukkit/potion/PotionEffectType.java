@@ -1,7 +1,11 @@
 package org.bukkit.potion;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.potion.Potion;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 
@@ -145,7 +149,7 @@ public abstract class PotionEffectType {
      * Loot table unluck.
      */
     public static final PotionEffectType UNLUCK = new PotionEffectTypeWrapper(27);
-    private static final Map<Integer, PotionEffectType> byId = new HashMap<>(); // Cauldron change underlying storage to map
+    private static final PotionEffectType[] byId = new PotionEffectType[ForgeRegistries.POTIONS.getValues().stream().mapToInt(Potion::getIdFromPotion).max().orElse(0) + 1];
     private static final Map<String, PotionEffectType> byName = new HashMap<>();
     // will break on updates.
     private static boolean acceptingNew = true;
@@ -164,7 +168,9 @@ public abstract class PotionEffectType {
      */
 
     public static PotionEffectType getById(int id) {
-        return byId.get(id); // Cauldron
+        if (id >= byId.length || id < 0)
+            return null;
+        return byId[id];
     }
 
     /**
@@ -186,8 +192,6 @@ public abstract class PotionEffectType {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(PotionEffectType type) {
-        // Cauldron start - allow vanilla to replace potions
-        /*
         if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH))) {
             throw new IllegalArgumentException("Cannot set already-set type");
         } else if (!acceptingNew) {
@@ -196,8 +200,6 @@ public abstract class PotionEffectType {
         }
 
         byId[type.id] = type;
-        */
-        byId.put(type.id, type);
         byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
     }
 
@@ -215,14 +217,9 @@ public abstract class PotionEffectType {
      * @return Array of types.
      */
     public static PotionEffectType[] values() {
-        // Cauldron start
-        int maxId = 0;
-        for (int id : byId.keySet()) {
-            maxId = Math.max(maxId, id);
-        }
-        PotionEffectType[] result = new PotionEffectType[maxId + 1];
-        return byId.values().toArray(result); // Cauldron change underlying storage to map
-        // Cauldron end
+        int from = byId[0] == null ? 1 : 0;
+        int to = byId[byId.length - 1] == null ? byId.length - 1 : byId.length;
+        return Arrays.copyOfRange(byId, from, to);
     }
 
     /**
