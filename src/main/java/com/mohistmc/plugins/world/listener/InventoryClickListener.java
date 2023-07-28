@@ -13,6 +13,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.Random;
+
 /**
  * @author Mgazul by MohistMC
  * @date 2023/6/14 14:39:37
@@ -26,7 +28,7 @@ public class InventoryClickListener {
         World.Environment environment = World.Environment.valueOf(itemName);
         String worldName = WorldsCommands.type;
         WorldCreator wc = new WorldCreator(worldName);
-        wc.seed(worldName.hashCode());
+        wc.seed((new Random()).nextLong());
         wc.environment(environment);
 
         wc.createWorld();
