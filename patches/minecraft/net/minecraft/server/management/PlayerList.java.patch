@@ -440,7 +440,7 @@
     }
  
     public ServerPlayerEntity func_148545_a(GameProfile p_148545_1_) {
-@@ -399,81 +_,173 @@
+@@ -399,81 +_,174 @@
        return new ServerPlayerEntity(this.field_72400_f, serverworld, p_148545_1_, playerinteractionmanager);
     }
  
@@ -600,8 +600,9 @@
 +               mohist$location = respawnEvent.getRespawnLocation();
 +           }
 +           if (!p_232644_2_) p_232644_1_.reset(); // SPIGOT-4785
-+       } else {
-+           mohist$location.setWorld(worldserver1.getWorld());
++       }  else {
++           if (mohist$worldserver == null) mohist$worldserver = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
++           mohist$location.setWorld(mohist$worldserver.getWorld());
 +       }
 +
 +       ServerWorld serverworld1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
