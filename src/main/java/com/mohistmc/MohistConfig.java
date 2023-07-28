@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -196,28 +197,28 @@ public class MohistConfig {
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
         player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
-        player_modlist_blacklist = getList("player_modlist_blacklist.list", Collections.emptyList());
+        player_modlist_blacklist = getList("player_modlist_blacklist.list", new ArrayList<>());
         server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
         server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
         maxBees = getInt("max-bees-in-hive", 3);
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
-        networkmanager_intercept = getList("networkmanager.intercept", Collections.emptyList());
+        networkmanager_intercept = getList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
         server_thread = getInt("threadpriority.server_thread", 8);
 
         clear_item = getBoolean("entity.clear.item.enable", false);
-        clear_item__whitelist = getList("entity.clear.item.whitelist", Collections.emptyList());
+        clear_item__whitelist = getList("entity.clear.item.whitelist", new ArrayList<>());
         clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
         clear_item__time = getInt("entity.clear.item.time", 1800);
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
-        ban_item_materials = getList("ban.item.list", Collections.emptyList());
+        ban_item_materials = getList("ban.item.list", new ArrayList<>());
         ban_entity_enable = getBoolean("ban.entity.enable", false);
-        ban_entity_types = getList("ban.entity.list", Collections.emptyList());
+        ban_entity_types = getList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
-        ban_enchantment_list = getList("ban.enchantment.list", Collections.emptyList());
+        ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
     }
 }
