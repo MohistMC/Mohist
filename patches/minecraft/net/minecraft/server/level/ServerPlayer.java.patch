@@ -706,7 +706,7 @@
        return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_121945_(p_9118_.m_122424_()));
     }
  
-@@ -892,6 +_,24 @@
+@@ -892,13 +_,31 @@
     }
  
     public void m_6145_(boolean p_9165_, boolean p_9166_) {
@@ -731,6 +731,14 @@
        if (this.m_5803_()) {
           this.m_284548_().m_7726_().m_8394_(this, new ClientboundAnimatePacket(this, 2));
        }
+ 
+       super.m_6145_(p_9165_, p_9166_);
+       if (this.f_8906_ != null) {
+-         this.f_8906_.m_9774_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
++         this.f_8906_.teleport(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_(), PlayerTeleportEvent.TeleportCause.EXIT_BED); // CraftBukkit
+       }
+ 
+    }
 @@ -939,16 +_,53 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }

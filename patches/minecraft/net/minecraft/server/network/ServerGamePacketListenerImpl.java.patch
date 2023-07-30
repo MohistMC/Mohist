@@ -1789,7 +1789,7 @@
     }
  
     public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
-@@ -1715,8 +_,130 @@
+@@ -1715,8 +_,124 @@
        return this.f_9743_;
     }
  
@@ -1863,9 +1863,6 @@
 +                     if (originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
 +                        ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
 +                        return null;
-+                     } else if (CraftChatMessage.fromComponent(original.m_245692_()).equals(message)) {
-+                        ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.RAW, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
-+                        return null;
 +                     }
 +
 +                     for (ServerPlayer recipient : ServerGamePacketListenerImpl.this.f_9745_.m_6846_().f_11196_) {
@@ -1901,9 +1898,6 @@
 +            if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
 +               if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
 +                  ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
-+                  return;
-+               } else if (CraftChatMessage.fromComponent(original.m_245692_()).equals(s)) {
-+                  ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.RAW, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
 +                  return;
 +               }
 +               for (ServerPlayer recipient : f_9745_.m_6846_().f_11196_) {
