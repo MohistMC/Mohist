@@ -95,13 +95,13 @@
     public float m_7325_() {
        return this.f_60444_;
     }
-@@ -344,8 +_,9 @@
+@@ -344,8 +_,10 @@
  
     public void m_6240_(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
        p_49828_.m_36246_(Stats.f_12949_.m_12902_(this));
--      p_49828_.m_36399_(0.005F);
++      p_49828_.reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED); // CraftBukkit - EntityExhaustionEvent
+       p_49828_.m_36399_(0.005F);
 -      m_49881_(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_);
-+      p_49828_.causeFoodExhaustion(0.005F, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.BLOCK_MINED); // CraftBukkit - EntityExhaustionEvent
 +      //Forge: Don't drop xp as part of the resources as it is handled by the patches in ServerPlayerGameMode#destroyBlock
 +      dropResources(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_, false);
     }
