@@ -161,7 +161,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
-@@ -373,13 +_,30 @@
+@@ -373,13 +_,44 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -182,14 +182,28 @@
        worldborder.m_61931_(serverleveldata.m_5813_());
 +
 +      for (ServerLevel worldserver : this.m_129785_()) { // TODO Mohist
-+         this.prepareLevels(worldserver.m_7726_().f_8325_.f_140144_, worldserver);
-+         worldserver.f_143244_.m_157506_(); // SPIGOT-6526: Load pending entities so they are available to the API
-+         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
++         if (worldserver == this.m_129880_(Level.f_46430_)) {
++            if (this.server.getAllowEnd()) {
++               mohist$prepareWorld(worldserver);
++            }
++         } else if (worldserver == this.m_129880_(Level.f_46429_)) {
++            if (this.m_7079_()) {
++               mohist$prepareWorld(worldserver);
++            }
++         }else {
++            mohist$prepareWorld(worldserver);
++         }
 +      }
 +
 +      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
 +      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
 +      this.f_129755_.acceptConnections();
++   }
++
++   private void mohist$prepareWorld(ServerLevel worldserver) {
++      this.prepareLevels(worldserver.m_7726_().f_8325_.f_140144_, worldserver);
++      worldserver.f_143244_.m_157506_(); // SPIGOT-6526: Load pending entities so they are available to the API
++      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
     }
  
     private static void m_177896_(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
