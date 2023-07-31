@@ -102,15 +102,6 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -171,7 +_,7 @@
-    private final MinecraftServer f_8548_;
-    public final ServerLevelData f_8549_;
-    final EntityTickList f_143243_ = new EntityTickList();
--   private final PersistentEntitySectionManager<Entity> f_143244_;
-+   public final PersistentEntitySectionManager<Entity> f_143244_;
-    private final GameEventDispatcher f_243695_;
-    public boolean f_8564_;
-    private final SleepStatus f_143245_;
 @@ -188,24 +_,67 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable

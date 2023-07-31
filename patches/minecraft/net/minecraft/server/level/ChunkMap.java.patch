@@ -32,15 +32,6 @@
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -131,7 +_,7 @@
-    private final ChunkTaskPriorityQueueSorter f_140141_;
-    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
-    private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140143_;
--   private final ChunkProgressListener f_140144_;
-+   public final ChunkProgressListener f_140144_;
-    private final ChunkStatusUpdateListener f_143031_;
-    public final ChunkMap.DistanceManager f_140145_;
-    private final AtomicInteger f_140146_ = new AtomicInteger();
 @@ -144,6 +_,27 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
     int f_140126_;
