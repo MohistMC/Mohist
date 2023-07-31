@@ -16,7 +16,7 @@ public class MavenVersionAdapterFix {
 
     public static VersionRange createFromVersionSpec(final String spec) {
         try {
-            return VersionRange.createFromVersionSpec(spec.replace(",47.1.3", ",47.1.99"));
+            return VersionRange.createFromVersionSpec("[47.0.43,)");
         } catch (InvalidVersionSpecificationException e) {
             LOGGER.fatal("Failed to parse version spec {}", spec, e);
             throw new RuntimeException("Failed to parse spec", e);
