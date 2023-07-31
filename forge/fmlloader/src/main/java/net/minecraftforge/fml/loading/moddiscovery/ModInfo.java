@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mohistmc.loader.MavenVersionAdapterFix;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -214,7 +215,7 @@ public class ModInfo implements IModInfo, IConfigurable
             this.mandatory = config.<Boolean>getConfigElement("mandatory")
                     .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
             this.versionRange = config.<String>getConfigElement("versionRange")
-                    .map(MavenVersionAdapter::createFromVersionSpec)
+                    .map(MavenVersionAdapterFix::createFromVersionSpec)
                     .orElse(UNBOUNDED);
             this.ordering = config.<String>getConfigElement("ordering")
                     .map(Ordering::valueOf)
