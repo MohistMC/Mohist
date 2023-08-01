@@ -169,10 +169,17 @@ public class ItemAPI {
 
     public static Material getEggMaterial(EntityType entitytype) {
         try {
-            String getMaterial = entitytype.toString() + "_SPAWN_EGG";
+            if (entitytype == EntityType.PLAYER) {
+                return Material.PLAYER_HEAD;
+            }
+            String getMaterial = entitytype + "_SPAWN_EGG";
             return Material.valueOf(entitytype.toString().equals("MUSHROOM_COW") ? "MOOSHROOM_SPAWN_EGG" : getMaterial);
         } catch (Exception e) {
-            return Material.SPAWNER;
+            try {
+                return Material.valueOf(entitytype.getName().toUpperCase());
+            } catch (Exception e1) {
+                return Material.SPAWNER;
+            }
         }
     }
 

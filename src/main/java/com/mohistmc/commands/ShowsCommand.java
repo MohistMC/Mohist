@@ -1,5 +1,6 @@
 package com.mohistmc.commands;
 
+import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
@@ -8,29 +9,34 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * @author Mgazul by MohistMC
  * @date 2023/8/1 20:00:00
  */
-public class ShowCommand extends Command {
+public class ShowsCommand extends Command {
 
-    public ShowCommand(String name) {
+    public ShowsCommand(String name) {
         super(name);
-        this.description = "Mohist show commands";
-        this.usageMessage = "/show [sounds]";
-        this.setPermission("mohist.command.show");
+        this.description = "Mohist shows commands";
+        this.usageMessage = "/shows [sounds]";
+        this.setPermission("mohist.command.shows");
     }
 
-    private final List<String> params = List.of("sounds");
+    private final List<String> params = List.of("sound", "entity");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
@@ -65,7 +71,7 @@ public class ShowCommand extends Command {
         }
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "sounds" -> {
+            case "sound" -> {
                 Warehouse wh = new Warehouse("Sounds");
                 wh.getGUI().setItem(47, new GUIItem(new ItemStackFactory(Material.REDSTONE)
                         .setDisplayName("§cStop all sounds")
@@ -84,6 +90,35 @@ public class ShowCommand extends Command {
                             player.playSound(player.getLocation(), s, 1f, 1.0f);
                         }
                     });
+                }
+                wh.openGUI(player);
+                return true;
+            }
+            case "entity" -> {
+
+                Map<EntityType, Integer> collect = player.getWorld().getEntities().stream().collect(Collectors.toMap(Entity::getType, entity -> 1, Integer::sum));
+
+                List<Map.Entry<EntityType, Integer>> infoIds = new ArrayList<>(collect.entrySet());
+                infoIds.sort((o1, o2) -> {
+                    Integer p1 = o1.getValue();
+                    Integer p2 = o2.getValue();
+                    return p2 - p1;
+                });
+
+                LinkedHashMap<EntityType, Integer> newMap = new LinkedHashMap<>();
+                AtomicInteger allSize = new AtomicInteger(0);
+                for (Map.Entry<EntityType, Integer> entity : infoIds) {
+                    newMap.put(entity.getKey(), entity.getValue());
+                    allSize.addAndGet(entity.getValue());
+                }
+
+                Warehouse wh = new Warehouse("Entitys: " + allSize.getAndSet(0));
+                for (Map.Entry<EntityType, Integer> s : newMap.entrySet()) {
+                    wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(s.getKey()))
+                            .setDisplayName("§6Size: §4" + s.getValue())
+                            .setLore(List.of("§7EntityType: §2" + s.getKey().name()))
+                            .toItemStack())
+                    );
                 }
                 wh.openGUI(player);
                 return true;
