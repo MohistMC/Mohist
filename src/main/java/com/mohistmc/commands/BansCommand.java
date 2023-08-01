@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -57,18 +56,23 @@ public class BansCommand extends Command {
                     sender.sendMessage(ChatColor.RED + usageMessage);
                     return false;
                 }
-                if (args[1].equals("item")) {
-                    Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
-                    player.openInventory(inventory);
-                } else if (args[1].equals("entity")) {
-                    Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
-                    player.openInventory(inventory);
-                } else if (args[1].equals("enchantment")) {
-                    Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
-                    player.openInventory(inventory);
-                } else {
-                    sender.sendMessage(ChatColor.RED + usageMessage);
-                    return false;
+                switch (args[1]) {
+                    case "item" -> {
+                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
+                        player.openInventory(inventory);
+                    }
+                    case "entity" -> {
+                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
+                        player.openInventory(inventory);
+                    }
+                    case "enchantment" -> {
+                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
+                        player.openInventory(inventory);
+                    }
+                    default -> {
+                        sender.sendMessage(ChatColor.RED + usageMessage);
+                        return false;
+                    }
                 }
             }
             case "show" -> {
@@ -76,37 +80,42 @@ public class BansCommand extends Command {
                     sender.sendMessage(ChatColor.RED + usageMessage);
                     return false;
                 }
-                if (args[1].equals("item")) {
-                    Warehouse wh = new Warehouse("§2Show bans item");
-                    for (String s : MohistConfig.ban_item_materials) {
-                        wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getMaterial(s))
-                                .setDisplayName(s)
-                                .toItemStack()));
+                switch (args[1]) {
+                    case "item" -> {
+                        Warehouse wh = new Warehouse("§2Show bans item");
+                        for (String s : MohistConfig.ban_item_materials) {
+                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getMaterial(s))
+                                    .setDisplayName(s)
+                                    .toItemStack()));
+                        }
+                        wh.openGUI(player);
+                        return true;
                     }
-                    wh.openGUI(player);
-                    return true;
-                } else if (args[1].equals("entity")) {
-                    Warehouse wh = new Warehouse("§2Show bans entity");
-                    for (String s : MohistConfig.ban_entity_types) {
-                        wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
-                                .setDisplayName(s)
-                                .toItemStack()));
+                    case "entity" -> {
+                        Warehouse wh = new Warehouse("§2Show bans entity");
+                        for (String s : MohistConfig.ban_entity_types) {
+                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
+                                    .setDisplayName(s)
+                                    .toItemStack()));
+                        }
+                        wh.openGUI(player);
+                        return true;
                     }
-                    wh.openGUI(player);
-                    return true;
-                } else if (args[1].equals("enchantment")) {
-                    Warehouse wh = new Warehouse("§2Show bans enchantment");
-                    for (String s : MohistConfig.ban_enchantment_list) {
-                        wh.addItem(new GUIItem(new ItemStackFactory(Material.ENCHANTED_BOOK)
-                                .setDisplayName(s)
-                                .setEnchantment(ItemAPI.getEnchantment(s))
-                                .toItemStack()));
+                    case "enchantment" -> {
+                        Warehouse wh = new Warehouse("§2Show bans enchantment");
+                        for (String s : MohistConfig.ban_enchantment_list) {
+                            wh.addItem(new GUIItem(new ItemStackFactory(Material.ENCHANTED_BOOK)
+                                    .setDisplayName(s)
+                                    .setEnchantment(ItemAPI.getEnchantment(s))
+                                    .toItemStack()));
+                        }
+                        wh.openGUI(player);
+                        return true;
                     }
-                    wh.openGUI(player);
-                    return true;
-                } else {
-                    sender.sendMessage(ChatColor.RED + usageMessage);
-                    return false;
+                    default -> {
+                        sender.sendMessage(ChatColor.RED + usageMessage);
+                        return false;
+                    }
                 }
             }
             default -> {

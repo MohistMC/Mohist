@@ -80,9 +80,7 @@ public class ItemsCommand extends Command {
             return false;
         }
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "info" -> {
-                ItemsCommand.info(player);
-            }
+            case "info" -> ItemsCommand.info(player);
             case "name" -> {
                 if (args.length != 2) {
                     sender.sendMessage(ChatColor.RED + "Usage: /items name <string>");

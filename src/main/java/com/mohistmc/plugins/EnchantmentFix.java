@@ -34,7 +34,7 @@ public class EnchantmentFix {
         Map<Enchantment, Integer> merged = new HashMap<>();
         for (Map<Enchantment, Integer> m : Arrays.asList(enchantments1, enchantments2)) {
             for (Map.Entry<Enchantment, Integer> enchantmentIntegerEntry : m.entrySet()) {
-                merged.merge(enchantmentIntegerEntry.getKey(), enchantmentIntegerEntry.getValue(), (a, b) -> getUplevel(a, b));
+                merged.merge(enchantmentIntegerEntry.getKey(), enchantmentIntegerEntry.getValue(), EnchantmentFix::getUplevel);
             }
         }
 

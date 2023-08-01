@@ -1,7 +1,5 @@
 package com.mohistmc.commands;
 
-import com.mohistmc.api.PlayerAPI;
-import com.mohistmc.util.pluginmanager.PluginManagers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,7 +20,7 @@ import java.util.Locale;
  */
 public class PermissionCommand extends Command {
 
-    private final List<String> params = Arrays.asList("check");
+    private final List<String> params = List.of("check");
 
     public PermissionCommand(String name) {
         super(name);

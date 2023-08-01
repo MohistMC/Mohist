@@ -3,7 +3,6 @@ package com.mohistmc.api;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 
@@ -38,9 +37,7 @@ public class EnchantmentAPI {
     public static List<org.bukkit.enchantments.Enchantment> get(org.bukkit.inventory.ItemStack itemStack) {
         if (has(itemStack)) {
             List<org.bukkit.enchantments.Enchantment> list = new ArrayList<>();
-            for (org.bukkit.enchantments.Enchantment enchantment : itemStack.getEnchantments().keySet()) {
-                list.add(enchantment);
-            }
+            list.addAll(itemStack.getEnchantments().keySet());
             return list;
         }
         return Collections.emptyList();

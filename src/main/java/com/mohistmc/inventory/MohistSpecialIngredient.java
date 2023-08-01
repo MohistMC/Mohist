@@ -13,17 +13,7 @@ import java.util.Objects;
  * @author Mgazul by MohistMC
  * @date 2023/7/20 23:18:51
  */
-public class MohistSpecialIngredient implements RecipeChoice {
-
-    private final Ingredient ingredient;
-
-    public MohistSpecialIngredient(Ingredient ingredient) {
-        this.ingredient = ingredient;
-    }
-
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
+public record MohistSpecialIngredient(Ingredient ingredient) implements RecipeChoice {
 
     @NotNull
     @Override
@@ -55,8 +45,4 @@ public class MohistSpecialIngredient implements RecipeChoice {
         return Objects.equals(ingredient, that.ingredient);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(ingredient);
-    }
 }

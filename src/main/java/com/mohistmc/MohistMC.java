@@ -20,7 +20,7 @@ public class MohistMC {
     public static i18n i18n;
     public static String version;
 
-    public MohistMC() throws ClassNotFoundException {
+    public MohistMC() {
         String mohist_lang = MohistConfig.yml.getString("mohist.lang", "xx_XX");
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];

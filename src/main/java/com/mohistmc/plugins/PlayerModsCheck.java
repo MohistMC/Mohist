@@ -44,7 +44,6 @@ public class PlayerModsCheck {
 
     public static boolean equalList(List list1, List list2) {
         if (list1.size() != list2.size()) return false;
-        if (list2.containsAll(list1)) return true;
-        return false;
+        return list2.containsAll(list1);
     }
 }

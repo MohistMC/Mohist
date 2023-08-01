@@ -22,7 +22,6 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
@@ -134,9 +133,8 @@ public class ASMUtils {
                 if (method.instructions == null) {
                     continue;
                 }
-                ListIterator<AbstractInsnNode> it = method.instructions.iterator();
-                while (it.hasNext()) {
-                    print("    insn", it.next());
+                for (AbstractInsnNode abstractInsnNode : method.instructions) {
+                    print("    insn", abstractInsnNode);
                 }
                 if (method.localVariables == null) {
                     continue;

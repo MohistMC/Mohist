@@ -14,13 +14,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author LSeng
  */
 public class GUI {
 
-    static Map<Player, GUI> openGUI = new HashMap();
+    static Map<Player, GUI> openGUI = new HashMap<>();
     public GUIItem[] items;
     public Inventory inv;
     GUIType type;
@@ -59,13 +60,12 @@ public class GUI {
 
             @EventHandler
             public void onInventoryClickEvent(InventoryClickEvent event) {
-                if (!(event.getWhoClicked() instanceof Player)) {
+                if (!(event.getWhoClicked() instanceof Player p)) {
                     return;
                 }
                 if (event.getCurrentItem() == null) {
                     return;
                 }
-                Player p = (Player) event.getWhoClicked();
                 if (openGUI.containsKey(p) && openGUI.get(p) == GUI.this) {
                     event.setCancelled(true);
 
@@ -94,11 +94,7 @@ public class GUI {
     }
 
     public final void setItem(int index, GUIItem item) {
-        if (item == null) {
-            this.items[index] = new GUIItem(new ItemStack(Material.AIR));
-        } else {
-            this.items[index] = item;
-        }
+        this.items[index] = Objects.requireNonNullElseGet(item, () -> new GUIItem(new ItemStack(Material.AIR)));
     }
 
     public final GUIItem getItem(int index) {

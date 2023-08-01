@@ -14,7 +14,7 @@ import java.util.List;
 public class Warehouse {
 
     GUI gui;
-    List<GUIItem> items = new ArrayList();
+    List<GUIItem> items = new ArrayList<>();
     String tempName;
     int pageChoose = 0;
 

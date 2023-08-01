@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
-import com.google.common.base.Preconditions;
 import com.mohistmc.inventory.MohistSpecialIngredient;
-import com.mohistmc.inventory.MohistSpecialRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +27,7 @@ public interface CraftRecipe extends Recipe {
             stack = new Ingredient(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.world.item.crafting.Ingredient.ItemValue(CraftItemStack.asNMSCopy(mat))));
             stack.exact = true;
         }else if (bukkit instanceof MohistSpecialIngredient mohistSpecialIngredient) {
-            stack = mohistSpecialIngredient.getIngredient();
+            stack = mohistSpecialIngredient.ingredient();
         } else {
             throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
         }

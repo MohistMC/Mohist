@@ -56,18 +56,8 @@ public class Remapper {
                 new BufferedReader(new InputStreamReader(Remapper.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
                 null, null, false
         );
-        // TODO workaround for https://github.com/md-5/SpecialSource/pull/81
-        //  remove on update
-        var content = new String(Remapper.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg").readAllBytes(), StandardCharsets.UTF_8);
-        var i = content.indexOf("net/minecraft/server/level/ChunkMap net/minecraft/server/level/ChunkTracker");
-        var nextSection = content.substring(i).lines().skip(1).dropWhile(it -> it.startsWith("\t")).findFirst().orElseThrow();
-        var nextIndex = content.indexOf(nextSection);
         this.toBukkitMapping.loadMappings(
-                new BufferedReader(new StringReader(content.substring(0, i) + content.substring(nextIndex))),
-                null, null, true
-        );
-        this.toBukkitMapping.loadMappings(
-                new BufferedReader(new StringReader(content.substring(i, nextIndex))),
+                new BufferedReader(new InputStreamReader(Remapper.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
                 null, null, true
         );
         BiMap<String, String> inverseClassMap = HashBiMap.create(toNmsMapping.classes).inverse();

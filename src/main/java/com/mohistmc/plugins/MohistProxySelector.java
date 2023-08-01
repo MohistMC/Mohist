@@ -34,6 +34,7 @@ public class MohistProxySelector extends ProxySelector {
             for (String config_uri : MohistConfig.networkmanager_intercept) {
                 if (uriString.contains(config_uri)) {
                     intercept = true;
+                    break;
                 }
             }
         }

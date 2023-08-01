@@ -30,7 +30,7 @@ public class ShowCommand extends Command {
         this.setPermission("mohist.command.show");
     }
 
-    private final List<String> params = Arrays.asList("sounds");
+    private final List<String> params = List.of("sounds");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {

@@ -56,7 +56,7 @@ public class ItemStackFactory {
 
     public ItemStackFactory setLore(List<String> lores) {
         ItemMeta im = this.item.getItemMeta();
-        List<String> lores_ = new ArrayList();
+        List<String> lores_ = new ArrayList<>();
         for (String lore : lores) {
             lores_.add(lore.replaceAll("&", "§"));
         }
