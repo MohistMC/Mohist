@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -164,5 +166,30 @@ public class ItemAPI {
     public static boolean isBan(ItemStack itemStack) {
         if (itemStack == null) return false;
         return MohistConfig.ban_item_materials.contains(itemStack.getType().name());
+    }
+
+    public static Material getEggMaterial(EntityType entitytype) {
+        try {
+            String getMaterial = entitytype.toString() + "_SPAWN_EGG";
+            return Material.valueOf(entitytype.toString().equals("MUSHROOM_COW") ? "MOOSHROOM_SPAWN_EGG" : getMaterial);
+        } catch (Exception e) {
+            return Material.SPAWNER;
+        }
+    }
+
+    public static Material getMaterial(String type) {
+        try {
+            return Material.valueOf(type);
+        } catch (Exception e) {
+            return Material.AIR;
+        }
+    }
+
+    public static Enchantment getEnchantment(String name) {
+        try {
+            return Enchantment.getByName(name);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

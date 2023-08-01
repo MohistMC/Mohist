@@ -10,6 +10,7 @@ import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
 import com.mohistmc.commands.PermissionCommand;
 import com.mohistmc.commands.PluginCommand;
+import com.mohistmc.commands.ShowCommand;
 import com.mohistmc.plugins.MohistPlugin;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
@@ -78,6 +79,7 @@ public class MohistConfig {
         commands.put("items", new ItemsCommand("items"));
         commands.put("permission", new PermissionCommand("permission"));
         commands.put("bans", new BansCommand("bans"));
+        commands.put("show", new ShowCommand("show"));
 
         MohistPlugin.registerCommands(commands);
 

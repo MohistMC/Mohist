@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class MohistPlugin {
 
+    public static Plugin plugin;
+
     public static Logger LOGGER = LogManager.getLogger("MohistPlugin");
 
     public static void init(Server server) {
@@ -43,7 +45,7 @@ public class MohistPlugin {
             }
             File file = new File(data, "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
             if (file.exists()) {
-                Plugin plugin = Control.loadPlugin(file);
+                plugin = Control.loadPlugin(file);
                 if (plugin != null) {
                     server.getPluginManager().enablePlugin(plugin);
                 }
