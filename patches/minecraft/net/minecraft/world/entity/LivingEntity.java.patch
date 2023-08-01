@@ -1242,24 +1242,21 @@
           } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
              double d8 = this.m_20186_();
              this.m_19920_(0.02F, p_21280_);
-@@ -2074,13 +_,14 @@
+@@ -2074,12 +_,12 @@
                 }
              }
  
 -            if (this.m_20096_() && !this.m_9236_().f_46443_) {
-+            if (this.f_19861_ && !this.f_19853_.f_46443_) {
-+               if (m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) // CraftBukkit
++            if (this.m_20096_() && !this.f_19853_.f_46443_ && m_20291_(7) && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
                 this.m_20115_(7, false);
              }
           } else {
              BlockPos blockpos = this.m_20099_();
 -            float f2 = this.m_9236_().m_8055_(blockpos).m_60734_().m_49958_();
--            float f3 = this.m_20096_() ? f2 * 0.91F : 0.91F;
 +            float f2 = this.f_19853_.m_8055_(this.m_20099_()).getFriction(f_19853_, this.m_20099_(), this);
-+            float f3 = this.f_19861_ ? f2 * 0.91F : 0.91F;
+             float f3 = this.m_20096_() ? f2 * 0.91F : 0.91F;
              Vec3 vec35 = this.m_21074_(p_21280_, f2);
              double d2 = vec35.f_82480_;
-             if (this.m_21023_(MobEffects.f_19620_)) {
 @@ -2175,7 +_,7 @@
           double d0 = Mth.m_14008_(p_21298_.f_82479_, (double)-0.15F, (double)0.15F);
           double d1 = Mth.m_14008_(p_21298_.f_82481_, (double)-0.15F, (double)0.15F);

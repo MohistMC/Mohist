@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
+@@ -1,6 +_,8 @@
+ package net.minecraft.world.inventory;
+ 
+ import java.util.Optional;
++
++import com.mohistmc.plugins.ban.bans.BanItem;
+ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.Container;
 @@ -11,8 +_,12 @@
  import net.minecraft.world.item.crafting.CraftingRecipe;
  import net.minecraft.world.item.crafting.Recipe;
@@ -43,7 +52,17 @@
        this.m_38897_(new ResultSlot(p_39357_.f_35978_, this.f_39348_, this.f_39349_, 0, 124, 35));
  
        for(int i = 0; i < 3; ++i) {
-@@ -70,6 +_,8 @@
+@@ -64,12 +_,16 @@
+             CraftingRecipe craftingrecipe = optional.get();
+             if (p_150551_.m_40135_(p_150548_, serverplayer, craftingrecipe)) {
+                ItemStack itemstack1 = craftingrecipe.m_5874_(p_150550_, p_150548_.m_9598_());
+-               if (itemstack1.m_246617_(p_150548_.m_246046_())) {
+-                  itemstack = itemstack1;
++               if (!BanItem.check(itemstack1)) {
++                  if (itemstack1.m_246617_(p_150548_.m_246046_())) {
++                     itemstack = itemstack1;
++                  }
+                }
              }
           }
  
