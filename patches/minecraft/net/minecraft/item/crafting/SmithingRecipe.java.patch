@@ -1,5 +1,13 @@
 --- a/net/minecraft/item/crafting/SmithingRecipe.java
 +++ b/net/minecraft/item/crafting/SmithingRecipe.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.item.crafting;
+ 
+ import com.google.gson.JsonObject;
++import com.mohistmc.inventory.MohistSpecialRecipe;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.ItemStack;
 @@ -9,6 +_,11 @@
  import net.minecraft.util.JSONUtils;
  import net.minecraft.util.ResourceLocation;
@@ -12,7 +20,7 @@
  
  public class SmithingRecipe implements IRecipe<IInventory> {
     private final Ingredient field_234837_a_;
-@@ -65,7 +_,16 @@
+@@ -65,7 +_,19 @@
        return IRecipeType.field_234827_g_;
     }
  
@@ -20,7 +28,10 @@
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe() {
-+      CraftItemStack result = CraftItemStack.asCraftCopy(CraftItemStack.asBukkitCopy(this.func_77571_b()));
++      if (this.field_234839_c_.func_190926_b()) {
++         return new MohistSpecialRecipe(this);
++      }
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.field_234839_c_);
 +      CraftSmithingRecipe recipe = new CraftSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.field_234840_d_), result, CraftRecipe.toBukkit(this.field_234837_a_), CraftRecipe.toBukkit(this.field_234838_b_));
 +      return recipe;
 +   }

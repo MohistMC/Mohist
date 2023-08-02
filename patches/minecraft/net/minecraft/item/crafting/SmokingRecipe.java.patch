@@ -1,6 +1,9 @@
 --- a/net/minecraft/item/crafting/SmokingRecipe.java
 +++ b/net/minecraft/item/crafting/SmokingRecipe.java
-@@ -3,6 +_,11 @@
+@@ -1,8 +_,14 @@
+ package net.minecraft.item.crafting;
+ 
++import com.mohistmc.inventory.MohistSpecialRecipe;
  import net.minecraft.block.Blocks;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
@@ -12,7 +15,7 @@
  
  public class SmokingRecipe extends AbstractCookingRecipe {
     public SmokingRecipe(ResourceLocation p_i50022_1_, String p_i50022_2_, Ingredient p_i50022_3_, ItemStack p_i50022_4_, float p_i50022_5_, int p_i50022_6_) {
-@@ -16,4 +_,14 @@
+@@ -16,4 +_,17 @@
     public IRecipeSerializer<?> func_199559_b() {
        return IRecipeSerializer.field_222173_q;
     }
@@ -20,7 +23,10 @@
 +    // CraftBukkit start
 +    @Override
 +    public Recipe toBukkitRecipe() {
-+        CraftItemStack result = CraftItemStack.asCraftCopy(CraftItemStack.asBukkitCopy(this.func_77571_b()));
++        if (this.field_222143_e.func_190926_b()) {
++            return new MohistSpecialRecipe(this);
++        }
++        CraftItemStack result = CraftItemStack.asCraftMirror(this.field_222143_e);
 +        CraftSmokingRecipe recipe = new CraftSmokingRecipe(CraftNamespacedKey.fromMinecraft(this.field_222140_b), result, CraftRecipe.toBukkit(this.field_222142_d), this.field_222144_f, this.field_222145_g);
 +        recipe.setGroup(this.field_222141_c);
 +        return recipe;

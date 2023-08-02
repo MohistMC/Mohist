@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_16_R3.inventory;
 
-import com.mohistmc.recipe.RecipeUtils;
 import java.util.Arrays;
 import java.util.List;
 import net.minecraft.inventory.IInventory;
@@ -120,6 +119,6 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     @Override
     public Recipe getRecipe() {
         IRecipe recipe = getInventory().getCurrentRecipe();
-        return RecipeUtils.toBukkitRecipe(recipe);
+        return recipe == null ? null : recipe.toBukkitRecipe();
     }
 }

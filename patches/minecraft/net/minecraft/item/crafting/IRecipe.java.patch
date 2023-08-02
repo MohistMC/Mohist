@@ -21,19 +21,14 @@
           }
        }
  
-@@ -51,4 +_,15 @@
+@@ -51,4 +_,10 @@
     IRecipeSerializer<?> func_199559_b();
  
     IRecipeType<?> func_222127_g();
 +
 +   // Mohist start - Fix ProtectionStones startup (2) (#1271)
 +   default org.bukkit.inventory.Recipe toBukkitRecipe() {
-+       return new org.bukkit.inventory.Recipe() {
-+           @Override
-+           public org.bukkit.inventory.ItemStack getResult() {
-+               return new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
-+           }
-+       };
++       return () -> new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
 +   } // CraftBukkit
 +   // Mohist end
  }
