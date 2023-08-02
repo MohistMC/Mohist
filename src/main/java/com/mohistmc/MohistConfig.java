@@ -1,6 +1,7 @@
 package com.mohistmc;
 
 import com.google.common.base.Throwables;
+import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.BansCommand;
@@ -189,6 +190,8 @@ public class MohistConfig {
     public static boolean ban_enchantment_enable;
     public static List<String> ban_enchantment_list;
 
+    public static String motd;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -221,5 +224,6 @@ public class MohistConfig {
         ban_entity_types = getList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
+        motd = ColorsAPI.of(getString("motd", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
     }
 }
