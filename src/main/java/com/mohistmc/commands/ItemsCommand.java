@@ -43,7 +43,7 @@ public class ItemsCommand extends Command {
 
     public ItemsCommand(String name) {
         super(name);
-        this.description = "Mohist related commands";
+        this.description = "Mohist item edit commands";
         this.usageMessage = "/items [info|name|save|list|get|remove]";
         this.setPermission("mohist.command.items");
     }
