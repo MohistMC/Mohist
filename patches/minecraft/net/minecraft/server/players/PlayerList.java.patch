@@ -115,7 +115,7 @@
     public final PlayerDataStorage f_11204_;
     private boolean f_11205_;
     private final RegistryAccess.Frozen f_11206_;
-@@ -118,9 +_,21 @@
+@@ -118,9 +_,20 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -131,7 +131,6 @@
 +      // CraftBukkit end
 +
        this.f_11195_ = p_203842_;
-+      ForgeInjectBukkit.init();
 +      LogManager.getLogger().info("Forge Injected Bukkit!");
 +      p_203842_.console = ColouredConsoleSender.getInstance();
        this.f_11206_ = p_203843_;
