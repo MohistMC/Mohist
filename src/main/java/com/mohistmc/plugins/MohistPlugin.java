@@ -3,6 +3,7 @@ package com.mohistmc.plugins;
 import com.mohistmc.plugins.ban.bans.BanEnchantment;
 import com.mohistmc.plugins.ban.bans.BanEntity;
 import com.mohistmc.plugins.ban.bans.BanItem;
+import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
@@ -34,7 +35,7 @@ public class MohistPlugin {
 
     public static void init(Server server) {
         WorldManage.onEnable();
-
+        ItemsConfig.init();
         File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
         if (out.exists()) {
             String data = null;

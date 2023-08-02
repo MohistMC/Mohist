@@ -38,7 +38,7 @@ public class Warehouse {
                 .setDisplayName("§cClose")
                 .toItemStack()) {
             @Override
-            public void ClickAction(ClickType type, Player u) {
+            public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                 u.closeInventory();
             }
         });
@@ -121,7 +121,7 @@ public class Warehouse {
                     .setDisplayName("&eprevious page")
                     .toItemStack()) {
                 @Override
-                public void ClickAction(ClickType type, Player u) {
+                public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                     Warehouse.this.pageChoose--;
                     openGUI(u);
                 }
@@ -137,7 +137,7 @@ public class Warehouse {
                     .setDisplayName("&enext page")
                     .toItemStack()) {
                 @Override
-                public void ClickAction(ClickType type, Player u) {
+                public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                     Warehouse.this.pageChoose++;
                     openGUI(u);
                 }

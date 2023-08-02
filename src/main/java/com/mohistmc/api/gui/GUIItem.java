@@ -15,7 +15,7 @@ public class GUIItem {
         this.display = display;
     }
 
-    public void ClickAction(ClickType type, Player p) {
+    public void ClickAction(ClickType type, Player p, ItemStack itemStack) {
 
     }
 

@@ -70,7 +70,7 @@ public class GUI {
                     event.setCancelled(true);
 
                     if (items[event.getSlot()] != null) {
-                        items[event.getSlot()].ClickAction(event.getClick(), p);
+                        items[event.getSlot()].ClickAction(event.getClick(), p, items[event.getSlot()].display);
                     }
                 }
             }

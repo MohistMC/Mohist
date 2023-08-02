@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.utils;
 
+import com.mohistmc.util.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -83,18 +84,8 @@ public class ConfigByWorlds {
         }
     }
 
-    public static void createFile() {
-        try {
-            if (!ConfigByWorlds.f.exists()) {
-                try {
-                    config.save(f);
-                } catch (IOException var4) {
-                    var4.fillInStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+    public static void init() {
+        YamlUtils.save(f, config);
     }
 
     public static void loadWorlds() {

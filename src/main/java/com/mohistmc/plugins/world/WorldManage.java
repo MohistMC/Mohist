@@ -13,7 +13,7 @@ public class WorldManage {
     public static final String command = "worlds";
 
     public static void onEnable() {
-        ConfigByWorlds.createFile();
+        ConfigByWorlds.init();
         ConfigByWorlds.loadWorlds();
         ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName);
     }

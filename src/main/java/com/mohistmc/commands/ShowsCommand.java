@@ -4,6 +4,7 @@ import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.plugins.item.ItemsConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,11 +34,11 @@ public class ShowsCommand extends Command {
     public ShowsCommand(String name) {
         super(name);
         this.description = "Mohist shows commands";
-        this.usageMessage = "/shows [sounds]";
+        this.usageMessage = "/shows [sound|entitys]";
         this.setPermission("mohist.command.shows");
     }
 
-    private final List<String> params = List.of("sound", "entity");
+    private final List<String> params = List.of("sound", "entitys");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
@@ -77,7 +79,7 @@ public class ShowsCommand extends Command {
                         .setDisplayName("§cStop all sounds")
                         .toItemStack()) {
                     @Override
-                    public void ClickAction(ClickType type, Player u) {
+                    public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                         u.stopAllSounds();
                     }
                 });
@@ -86,7 +88,7 @@ public class ShowsCommand extends Command {
                             .setDisplayName(s.name())
                             .toItemStack()) {
                         @Override
-                        public void ClickAction(ClickType type, Player u) {
+                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                             player.playSound(player.getLocation(), s, 1f, 1.0f);
                         }
                     });
@@ -94,7 +96,7 @@ public class ShowsCommand extends Command {
                 wh.openGUI(player);
                 return true;
             }
-            case "entity" -> {
+            case "entitys" -> {
 
                 Map<EntityType, Integer> collect = player.getWorld().getEntities().stream().collect(Collectors.toMap(Entity::getType, entity -> 1, Integer::sum));
 
