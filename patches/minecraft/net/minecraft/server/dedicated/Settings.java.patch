@@ -1,6 +1,13 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -55,7 +_,7 @@
+@@ -48,14 +_,13 @@
+             }
+          }
+       } catch (IOException ioexception) {
+-         f_139797_.error("Failed to load properties from file: {}", p_139840_, ioexception);
+          return new Properties();
+       }
+    }
  
     public void m_139876_(Path p_139877_) {
        try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {

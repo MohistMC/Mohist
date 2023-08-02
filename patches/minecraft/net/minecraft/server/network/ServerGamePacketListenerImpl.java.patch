@@ -86,7 +86,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,15 +_,67 @@
+@@ -176,15 +_,68 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -108,6 +108,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 +import org.bukkit.craftbukkit.v1_20_R1.util.LazyPlayerSet;
 +import org.bukkit.craftbukkit.v1_20_R1.util.Waitable;
 +import org.bukkit.event.Event;
@@ -1647,6 +1648,25 @@
  
                 for(Int2ObjectMap.Entry<ItemStack> entry : Int2ObjectMaps.fastIterable(p_9856_.m_179582_())) {
                    this.f_9743_.f_36096_.m_182414_(entry.getIntKey(), entry.getValue());
+@@ -1558,8 +_,16 @@
+          if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
+             f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
+          } else {
+-            this.f_9745_.m_129894_().m_44043_(p_9882_.m_134252_()).ifPresent((p_287379_) -> {
+-               ((RecipeBookMenu)this.f_9743_.f_36096_).m_6951_(p_9882_.m_134253_(), p_287379_, this.f_9743_);
++            // CraftBukkit start - implement PlayerRecipeBookClickEvent
++            org.bukkit.inventory.Recipe recipe = this.cserver.getRecipe(CraftNamespacedKey.fromMinecraft(p_9882_.m_134252_()));
++            if (recipe == null) {
++               return;
++            }
++            org.bukkit.event.player.PlayerRecipeBookClickEvent event = CraftEventFactory.callRecipeBookClickEvent(this.f_9743_, recipe, p_9882_.m_134253_());
++
++            // Cast to keyed should be safe as the recipe will never be a MerchantRecipe.
++            this.f_9745_.m_129894_().m_44043_(CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((irecipe) -> {
++               ((RecipeBookMenu) this.f_9743_.f_36096_).m_6951_(event.isShiftClick(), irecipe, this.f_9743_);
+             });
+          }
+       }
 @@ -1567,6 +_,7 @@
  
     public void m_6557_(ServerboundContainerButtonClickPacket p_9854_) {
