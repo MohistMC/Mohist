@@ -267,14 +267,13 @@ public final class CraftServer implements Server {
         this.scoreboardManager = new CraftScoreboardManager( console, new ServerScoreboard( console ) );
         Bukkit.setServer(this);
 
-        ForgeInjectBukkit.init();
-
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();
 
         Potion.setPotionBrewer(new CraftPotionBrewer());
         MobEffects.BLINDNESS.getClass();
         // Ugly hack :(
+        ForgeInjectBukkit.init();
 
         if (!Main.useConsole) {
             getLogger().info("Console input is disabled due to --noconsole command argument");
