@@ -1,14 +1,12 @@
 package com.mohistmc.api.color;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Mgazul by MohistMC
  * @date 2023/8/3 0:53:40
  */
-public class RainbowPattern implements IPattern
-{
+public class RainbowPattern implements IPattern {
     java.util.regex.Pattern pattern;
 
     public RainbowPattern() {

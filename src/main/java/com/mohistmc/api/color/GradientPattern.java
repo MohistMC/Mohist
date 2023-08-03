@@ -1,7 +1,7 @@
 package com.mohistmc.api.color;
 
-import java.util.regex.Matcher;
 import java.awt.Color;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -9,8 +9,7 @@ import java.util.regex.Pattern;
  * @date 2023/8/2 23:32:24
  */
 
-public class GradientPattern implements IPattern
-{
+public class GradientPattern implements IPattern {
     Pattern pattern;
 
     public GradientPattern() {

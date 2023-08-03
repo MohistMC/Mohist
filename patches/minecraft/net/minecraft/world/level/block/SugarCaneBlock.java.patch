@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/level/block/SugarCaneBlock.java
 +++ b/net/minecraft/world/level/block/SugarCaneBlock.java
-@@ -17,8 +_,9 @@
- import net.minecraft.world.level.material.FluidState;
+@@ -18,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
  
 -public class SugarCaneBlock extends Block {
 +public class SugarCaneBlock extends Block implements net.minecraftforge.common.IPlantable {

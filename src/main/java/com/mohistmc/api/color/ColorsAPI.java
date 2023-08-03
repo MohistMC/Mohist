@@ -1,13 +1,12 @@
 package com.mohistmc.api.color;
 
-import com.google.common.collect.ImmutableMap;
 import net.md_5.bungee.api.ChatColor;
-import java.util.Arrays;
+
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.awt.Color;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -17,29 +16,6 @@ import java.util.stream.Collectors;
 public class ColorsAPI {
 
     private static final List<String> SPECIAL_COLORS = Arrays.asList("&l", "&n", "&o", "&k", "&m", "§l", "§n", "§o", "§k", "§m");
-
-    /**
-     * Cached result of all legacy colors.
-     *
-     * @since 1.0.0
-     */
-    private static final Map<Color, ChatColor> COLORS = ImmutableMap.<Color, ChatColor>builder()
-            .put(new Color(0), ChatColor.getByChar('0'))
-            .put(new Color(170), ChatColor.getByChar('1'))
-            .put(new Color(43520), ChatColor.getByChar('2'))
-            .put(new Color(43690), ChatColor.getByChar('3'))
-            .put(new Color(11141120), ChatColor.getByChar('4'))
-            .put(new Color(11141290), ChatColor.getByChar('5'))
-            .put(new Color(16755200), ChatColor.getByChar('6'))
-            .put(new Color(11184810), ChatColor.getByChar('7'))
-            .put(new Color(5592405), ChatColor.getByChar('8'))
-            .put(new Color(5592575), ChatColor.getByChar('9'))
-            .put(new Color(5635925), ChatColor.getByChar('a'))
-            .put(new Color(5636095), ChatColor.getByChar('b'))
-            .put(new Color(16733525), ChatColor.getByChar('c'))
-            .put(new Color(16733695), ChatColor.getByChar('d'))
-            .put(new Color(16777045), ChatColor.getByChar('e'))
-            .put(new Color(16777215), ChatColor.getByChar('f')).build();
 
     /**
      * Cached result of patterns.
@@ -101,10 +77,8 @@ public class ColorsAPI {
      */
     @Nonnull
     public static String color(@Nonnull String string, @Nonnull Color start, @Nonnull Color end) {
-        String originalString = string;
-
         ChatColor[] colors = createGradient(start, end, withoutSpecialChar(string).length());
-        return apply(originalString, colors);
+        return apply(string, colors);
     }
 
     /**
@@ -116,10 +90,8 @@ public class ColorsAPI {
      */
     @Nonnull
     public static String rainbow(@Nonnull String string, float saturation) {
-        String originalString = string;
-
         ChatColor[] colors = createRainbow(withoutSpecialChar(string).length(), saturation);
-        return apply(originalString, colors);
+        return apply(string, colors);
     }
 
     /**
@@ -130,7 +102,7 @@ public class ColorsAPI {
      */
     @Nonnull
     public static ChatColor getColor(@Nonnull String string) {
-        return  ChatColor.of(new Color(Integer.parseInt(string, 16)));
+        return ChatColor.of(new Color(Integer.parseInt(string, 16)));
     }
 
     /**
@@ -217,7 +189,7 @@ public class ColorsAPI {
         int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
         int stepG = Math.abs(start.getGreen() - end.getGreen()) / (step - 1);
         int stepB = Math.abs(start.getBlue() - end.getBlue()) / (step - 1);
-        int[] direction = new int[] {
+        int[] direction = new int[]{
                 start.getRed() < end.getRed() ? +1 : -1,
                 start.getGreen() < end.getGreen() ? +1 : -1,
                 start.getBlue() < end.getBlue() ? +1 : -1

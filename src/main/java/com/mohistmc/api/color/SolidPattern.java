@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
  * @author Mgazul by MohistMC
  * @date 2023/8/2 23:27:40
  */
-public class SolidPattern implements IPattern
-{
+public class SolidPattern implements IPattern {
     Pattern pattern;
 
     public SolidPattern() {
