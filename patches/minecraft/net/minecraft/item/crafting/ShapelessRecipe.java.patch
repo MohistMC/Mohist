@@ -62,7 +62,7 @@
        return this.field_194138_c;
     }
  
-@@ -47,17 +_,51 @@
+@@ -47,17 +_,49 @@
  
     public boolean func_77569_a(CraftingInventory p_77569_1_, World p_77569_2_) {
        RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
@@ -83,7 +83,6 @@
 -
 -      return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
 +            if (isSimple) {
-+               // Paper start
 +               itemstack = itemstack.func_77946_l();
 +               providedItems.add(itemstack);
 +               for (Ingredient ingredient : field_77579_b) {
@@ -92,7 +91,6 @@
 +                     matchedIngredients.increment(ingredient);
 +                  }
 +               }
-+               // Paper end
 +            } else {
 +               inputs.add(itemstack);
 +            }

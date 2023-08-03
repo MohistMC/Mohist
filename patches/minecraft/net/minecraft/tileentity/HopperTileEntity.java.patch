@@ -38,7 +38,7 @@
  
 +   // CraftBukkit start - add fields and methods
 +   private int maxStack = MAX_STACK;
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<>();
 +
 +   @Override
 +   public int func_70297_j_() {
@@ -107,45 +107,6 @@
        IInventory iinventory = this.func_145895_l();
        if (iinventory == null) {
           return false;
-@@ -144,12 +_,37 @@
-             for(int i = 0; i < this.func_70302_i_(); ++i) {
-                if (!this.func_70301_a(i).func_190926_b()) {
-                   ItemStack itemstack = this.func_70301_a(i).func_77946_l();
--                  ItemStack itemstack1 = func_174918_a(this, iinventory, this.func_70298_a(i, 1), direction);
-+
-+                  // CraftBukkit start - Call event when pushing items into other inventories
-+                  CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.func_70298_a(i, field_145850_b.spigotConfig.hopperAmount)); // Spigot
-+                  Inventory destinationInventory;
-+                  // Have to special case large chests as they work oddly
-+                  if (iinventory instanceof DoubleSidedInventory) {
-+                     destinationInventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
-+                  } else {
-+                     InventoryHolder owner = InventoryOwner.get(iinventory);
-+                     destinationInventory = (owner != null ? owner.getInventory() : new CraftCustomInventory(iinventory).getInventory());
-+                  }
-+
-+                  InventoryHolder owner = InventoryOwner.get((TileEntity) this);
-+                  Inventory hopperOwner = (owner != null ? owner.getInventory() : new CraftCustomInventory(this).getInventory());
-+                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopperOwner, oitemstack.clone(), destinationInventory, true);
-+                  this.func_145831_w().getCBServer().getPluginManager().callEvent(event);
-+                  if (event.isCancelled()) {
-+                     this.func_70299_a(i, itemstack);
-+                     this.func_145896_c(field_145850_b.spigotConfig.hopperTransfer); // Spigot
-+                     return false;
-+                  }
-+                  int origCount = event.getItem().getAmount(); // Spigot
-+                  ItemStack itemstack1 = func_174918_a(this, iinventory, CraftItemStack.asNMSCopy(event.getItem()), direction);
-+                  // CraftBukkit end
-+
-                   if (itemstack1.func_190926_b()) {
-                      iinventory.func_70296_d();
-                      return true;
-                   }
- 
-+                  itemstack.func_190918_g(origCount - itemstack1.func_190916_E()); // Spigot
-                   this.func_70299_a(i, itemstack);
-                }
-             }
 @@ -177,6 +_,8 @@
     }
  
@@ -223,6 +184,15 @@
                 }
              }
  
+@@ -296,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   private IInventory func_145895_l() {
++   public IInventory func_145895_l() {
+       Direction direction = this.func_195044_w().func_177229_b(HopperBlock.field_176430_a);
+       return func_195484_a(this.func_145831_w(), this.field_174879_c.func_177972_a(direction));
+    }
 @@ -322,10 +_,11 @@
        IInventory iinventory = null;
        BlockPos blockpos = new BlockPos(p_145893_1_, p_145893_3_, p_145893_5_);
