@@ -5,6 +5,8 @@
 
 package net.minecraftforge.items;
 
+import net.minecraft.world.CompoundContainer;
+import net.minecraft.world.Container;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +21,11 @@ import net.minecraft.world.level.Level;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest;
+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,14 +125,35 @@ public class VanillaInventoryCodeHooks
                             if (!hopper.getItem(i).isEmpty())
                             {
                                 ItemStack originalSlotContents = hopper.getItem(i).copy();
-                                ItemStack insertStack = hopper.removeItem(i, 1);
-                                ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
+                                Container container = hopper.getAttachedContainer(hopper.getLevel(), hopper.getBlockPos(), hopper.getBlockState());
+                                CraftItemStack oitemstack = CraftItemStack.asCraftMirror(hopper.removeItem(i, hopper.getLevel().spigotConfig.hopperAmount)); // Spigot
+
+                                org.bukkit.inventory.Inventory destinationInventory;
+                                // Have to special case large chests as they work oddly
+                                if (container instanceof CompoundContainer) {
+                                    destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) container);
+                                } else if (container.getOwner() != null) {
+                                    destinationInventory = container.getOwner().getInventory();
+                                } else {
+                                    destinationInventory = new CraftInventory(hopper);
+                                }
+
+                                InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
+                                Bukkit.getPluginManager().callEvent(event);
+                                if (event.isCancelled()) {
+                                    hopper.setItem(i, originalSlotContents);
+                                    hopper.setCooldown(hopper.getLevel().spigotConfig.hopperTransfer); // Spigot
+                                    return false;
+                                }
+                                int origCount = event.getItem().getAmount(); // Spigot
+                                ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, CraftItemStack.asNMSCopy(event.getItem()));
 
                                 if (remainder.isEmpty())
                                 {
                                     return true;
                                 }
 
+                                originalSlotContents.shrink(origCount - remainder.getCount()); // Spigot
                                 hopper.setItem(i, originalSlotContents);
                             }
                         }

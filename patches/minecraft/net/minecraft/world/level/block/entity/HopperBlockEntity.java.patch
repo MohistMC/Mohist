@@ -87,40 +87,6 @@
        Container container = m_155592_(p_155563_, p_155564_, p_155565_);
        if (container == null) {
           return false;
-@@ -140,10 +_,31 @@
-          if (m_59385_(container, direction)) {
-             return false;
-          } else {
--            for(int i = 0; i < p_155566_.m_6643_(); ++i) {
-+            for (int i = 0; i < p_155566_.m_6643_(); ++i) {
-                if (!p_155566_.m_8020_(i).m_41619_()) {
-                   ItemStack itemstack = p_155566_.m_8020_(i).m_41777_();
--                  ItemStack itemstack1 = m_59326_(p_155566_, container, p_155566_.m_7407_(i, 1), direction);
-+                  //ItemStack itemstack1 = addItem(p_155566_, container, p_155566_.removeItem(i, 1), direction);
-+
-+                  // CraftBukkit start - Call event when pushing items into other inventories
-+                  CraftItemStack oitemstack = CraftItemStack.asCraftMirror(container.m_7407_(i, 1));
-+
-+                  org.bukkit.inventory.Inventory destinationInventory;
-+                  // Have to special case large chests as they work oddly
-+                  if (container instanceof CompoundContainer) {
-+                     destinationInventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
-+                  } else {
-+                     destinationInventory = container.getOwner().getInventory();
-+                  }
-+
-+                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(container.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-+                  p_155563_.getCraftServer().getPluginManager().callEvent(event);
-+                  if (event.isCancelled()) {
-+                     p_155566_.m_6836_(i, itemstack);
-+                     p_155566_.m_59395_(8); // Delay hopper checks
-+                     return false;
-+                  }
-+                  ItemStack itemstack1 = m_59326_(p_155566_, container, CraftItemStack.asNMSCopy(event.getItem()), direction);
-+
-                   if (itemstack1.m_41619_()) {
-                      container.m_6596_();
-                      return true;
 @@ -176,6 +_,8 @@
     }
  
@@ -172,6 +138,15 @@
        ItemStack itemstack = p_59333_.m_32055_().m_41777_();
        ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
        if (itemstack1.m_41619_()) {
+@@ -295,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   private static Container m_155592_(Level p_155593_, BlockPos p_155594_, BlockState p_155595_) {
++   public static Container m_155592_(Level p_155593_, BlockPos p_155594_, BlockState p_155595_) {
+       Direction direction = p_155595_.m_61143_(HopperBlock.f_54021_);
+       return m_59390_(p_155593_, p_155594_.m_142300_(direction));
+    }
 @@ -399,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {

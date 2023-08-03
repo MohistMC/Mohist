@@ -332,13 +332,6 @@ public abstract class PotionEffectType implements Keyed {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(@NotNull PotionEffectType type) {
-        if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH)) || byKey.containsKey(type.key)) {
-            return;
-        } else if (!acceptingNew) {
-            throw new IllegalStateException(
-                    "No longer accepting new potion effect types (can only be done by the server implementation)");
-        }
-
         byId[type.id] = type;
         byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
         byKey.put(type.key, type);
