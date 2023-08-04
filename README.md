@@ -19,8 +19,6 @@
 | Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
 |---------|-------------|-----------|---------------------|----------------------|
 | 1.20.1  | Active      | Good      | Good                | Good                 |
-| 1.19.4  | WIP         | Poor      | Zero                | Zero                 |
-| 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.18.2  | WIP         | Poor      | Zero                | Zero                 |
 | 1.16.5  | Active      | Good      | Better than plugins | Good                 |
 | 1.12.2  | Active      | High      | Very good           | Very good            |
