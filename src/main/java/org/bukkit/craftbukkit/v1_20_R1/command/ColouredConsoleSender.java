@@ -51,17 +51,8 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
 
     @Override
     public void sendMessage(String message) {
-        // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
-        if (!conversationTracker.isConversingModaly()) {
-            String result = convertRGBColors(message);
-            for (ChatColor color : colors) {
-                if (replacements.containsKey(color)) {
-                    result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
-                } else {
-                    result = result.replaceAll("(?i)" + color.toString(), "");
-                }
-            }
-            LOGGER.info(result + Ansi.ansi().reset().toString());
+        if (!this.conversationTracker.isConversingModaly()) {
+            LOGGER.info(message);
         }
     }
 
