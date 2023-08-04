@@ -190,7 +190,8 @@ public class MohistConfig {
     public static boolean ban_enchantment_enable;
     public static List<String> ban_enchantment_list;
 
-    public static String motd;
+    public static String motdFirstLine;
+    public static String motdSecondLine;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -224,6 +225,7 @@ public class MohistConfig {
         ban_entity_types = getList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
-        motd = ColorsAPI.of(getString("motd", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
+        motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
+        motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
     }
 }
