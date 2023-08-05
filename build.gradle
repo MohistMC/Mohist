@@ -170,7 +170,7 @@ def sharedDeps = {
     installer 'net.minecraftforge:unsafe:0.2.+'
     installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
     installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
-    installer 'net.jodah:typetools:0.8.3'
+    installer 'net.jodah:typetools:0.6.3'
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
