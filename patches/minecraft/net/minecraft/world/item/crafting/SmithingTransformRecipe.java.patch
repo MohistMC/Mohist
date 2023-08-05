@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
+@@ -2,6 +_,8 @@
+ 
+ import com.google.gson.JsonObject;
+ import java.util.stream.Stream;
++
++import com.mohistmc.inventory.MohistSpecialRecipe;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.FriendlyByteBuf;
 @@ -10,6 +_,10 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;
@@ -11,7 +20,7 @@
  
  public class SmithingTransformRecipe implements SmithingRecipe {
     private final ResourceLocation f_265924_;
-@@ -67,6 +_,17 @@
+@@ -67,6 +_,20 @@
     public boolean m_142505_() {
        return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(Ingredient::m_43947_);
     }
@@ -19,6 +28,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      if (this.f_266098_.m_41619_()) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_266098_);
 +
 +      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(CraftNamespacedKey.fromMinecraft(this.f_265924_), result, CraftRecipe.toBukkit(this.f_265949_), CraftRecipe.toBukkit(this.f_265888_), CraftRecipe.toBukkit(this.f_265907_));

@@ -767,14 +767,6 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -995,6 +_,7 @@
-    }
- 
-    public void m_6915_() {
-+      CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
-       this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
-       this.m_9230_();
-    }
 @@ -1002,6 +_,7 @@
     public void m_9230_() {
        this.f_36096_.m_6877_(this);

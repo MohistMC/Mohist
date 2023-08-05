@@ -29,6 +29,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_19_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
@@ -55,7 +56,7 @@ public class ForgeInjectBukkit {
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
     public static Map<org.bukkit.attribute.Attribute, ResourceLocation> attributemap = new HashMap<>();
-
+    public static Map<net.minecraft.world.level.biome.Biome, Biome> biomeBiomeMap = new HashMap<>();
 
     public static void init() {
         addEnumMaterialInItems();
@@ -167,6 +168,7 @@ public class ForgeInjectBukkit {
             if (!isMINECRAFT(resourceLocation) && !map.contains(biomeName)) {
                 map.add(biomeName);
                 org.bukkit.block.Biome biomeCB = MohistDynamEnum.addEnum0(org.bukkit.block.Biome.class, biomeName, new Class[0]);
+                biomeBiomeMap.put(biome, biomeCB);
                 MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }

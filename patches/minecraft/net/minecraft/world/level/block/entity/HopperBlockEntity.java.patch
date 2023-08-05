@@ -8,14 +8,6 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.WorldlyContainer;
-@@ -19,6 +_,7 @@
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.entity.vehicle.MinecartHopper;
- import net.minecraft.world.inventory.AbstractContainerMenu;
- import net.minecraft.world.inventory.HopperMenu;
- import net.minecraft.world.item.ItemStack;
 @@ -30,6 +_,16 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.BooleanOp;
@@ -115,46 +107,6 @@
        Container container = m_155592_(p_155563_, p_155564_, p_155565_);
        if (container == null) {
           return false;
-@@ -142,12 +_,38 @@
-             for(int i = 0; i < p_155566_.m_6643_(); ++i) {
-                if (!p_155566_.m_8020_(i).m_41619_()) {
-                   ItemStack itemstack = p_155566_.m_8020_(i).m_41777_();
--                  ItemStack itemstack1 = m_59326_(p_155566_, container, p_155566_.m_7407_(i, 1), direction);
-+                  //ItemStack itemstack1 = addItem(p_155566_, container, p_155566_.removeItem(i, 1), direction);
-+                  // ItemStack itemstack1 = addItem(iinventory, iinventory1, iinventory.removeItem(i, 1), enumdirection);
-+
-+                  // CraftBukkit start - Call event when pushing items into other inventories
-+                  CraftItemStack oitemstack = CraftItemStack.asCraftMirror(p_155566_.m_7407_(i, p_155563_.spigotConfig.hopperAmount)); // Spigot
-+
-+                  org.bukkit.inventory.Inventory destinationInventory;
-+                  // Have to special case large chests as they work oddly
-+                  if (container instanceof CompoundContainer) {
-+                     destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) container);
-+                  } else if (container.getOwner() != null) {
-+                     destinationInventory = container.getOwner().getInventory();
-+                  } else {
-+                     destinationInventory = new CraftInventory(p_155566_);
-+                  }
-+
-+                  InventoryMoveItemEvent event = new InventoryMoveItemEvent(p_155566_.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-+                  p_155563_.getCraftServer().getPluginManager().callEvent(event);
-+                  if (event.isCancelled()) {
-+                     p_155566_.m_6836_(i, itemstack);
-+                     p_155566_.m_59395_(p_155563_.spigotConfig.hopperTransfer); // Spigot
-+                     return false;
-+                  }
-+                  int origCount = event.getItem().getAmount(); // Spigot
-+                  ItemStack itemstack1 = m_59326_(p_155566_, container, CraftItemStack.asNMSCopy(event.getItem()), direction);
-+                  // CraftBukkit end
-                   if (itemstack1.m_41619_()) {
-                      container.m_6596_();
-                      return true;
-                   }
- 
-+                  itemstack.m_41774_(origCount - itemstack1.m_41613_()); // Spigot
-                   p_155566_.m_6836_(i, itemstack);
-                }
-             }
 @@ -175,11 +_,13 @@
     }
  

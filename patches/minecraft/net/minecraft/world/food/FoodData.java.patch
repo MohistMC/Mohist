@@ -42,7 +42,7 @@
        this.f_38697_ = 5.0F;
     }
  
-@@ -23,10 +_,25 @@
+@@ -23,16 +_,39 @@
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
  
@@ -57,20 +57,34 @@
 -         FoodProperties foodproperties = p_38713_.m_41473_();
 -         this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
 +         FoodProperties foodproperties = p_38714_.getFoodProperties(entity);
-+         // CraftBukkit start
-+         int oldFoodLevel = f_38696_;
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.m_38744_() + oldFoodLevel, p_38714_);
++         if (entityhuman != null) {
++            // CraftBukkit start
++            int oldFoodLevel = f_38696_;
++            org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, foodproperties.m_38744_() + oldFoodLevel, p_38714_);
 +
-+         if (!event.isCancelled()) {
-+            this.m_38707_(event.getFoodLevel() - oldFoodLevel, foodproperties.m_38745_());
++            if (!event.isCancelled()) {
++               this.m_38707_(event.getFoodLevel() - oldFoodLevel, foodproperties.m_38745_());
++            }
++
++            ((ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
++            // CraftBukkit end
++         } else {
++            if (entity != null && entity instanceof Player player) {
++               this.entityhuman = player;
++            }
++            this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
 +         }
-+
-+         ((ServerPlayer) entityhuman).getBukkitEntity().sendHealthUpdate();
-+         // CraftBukkit end
        }
  
     }
-@@ -40,28 +_,39 @@
+ 
+    public void m_38710_(Player p_38711_) {
+       Difficulty difficulty = p_38711_.f_19853_.m_46791_();
++      if (entityhuman == null) entityhuman = p_38711_;
+       this.f_38700_ = this.f_38696_;
+       if (this.f_38698_ > 4.0F) {
+          this.f_38698_ -= 4.0F;
+@@ -40,28 +_,41 @@
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
              this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
@@ -95,7 +109,8 @@
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(f / 6.0F);
 -            this.m_38703_(f);
-+            p_38711_.causeFoodExhaustion(f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.m_36399_(f);
              this.f_38699_ = 0;
           }
        } else if (flag && this.f_38696_ >= 18 && p_38711_.m_36325_()) {
@@ -105,7 +120,8 @@
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(1.0F);
 -            this.m_38703_(6.0F);
-+            p_38711_.causeFoodExhaustion(6.0f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.m_36399_(6.0f);
              this.f_38699_ = 0;
           }
        } else if (this.f_38696_ <= 0) {

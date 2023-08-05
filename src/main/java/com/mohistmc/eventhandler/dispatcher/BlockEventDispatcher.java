@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -20,9 +21,12 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 
 import java.util.Objects;
 
@@ -119,6 +123,27 @@ public class BlockEventDispatcher {
     public void onBlockGrow(BlockEvent.CropGrowEvent event) {
         if (event.getLevel() instanceof final ServerLevel serverLevel) {
             event.setCanceled(CraftEventFactory.handleBlockGrowEvent(serverLevel, event.getPos(), event.getState()));
+        }
+    }
+
+    @SubscribeEvent
+    public void onFarmlandBreak(BlockEvent.FarmlandTrampleEvent event) {
+        Entity entity = event.getEntity();
+        Cancellable cancellable;
+        if (entity instanceof Player player) {
+            cancellable = CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, event.getPos(), null, null, null);
+        } else {
+            cancellable = new EntityInteractEvent(entity.getBukkitEntity(), CraftBlock.at(event.getLevel(), event.getPos()));
+            Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
+        }
+
+        if (cancellable.isCancelled()) {
+            event.setCanceled(true);
+            return;
+        }
+
+        if (CraftEventFactory.callEntityChangeBlockEvent(entity, event.getPos(), Blocks.DIRT.defaultBlockState()).isCancelled()) {
+            event.setCanceled(true);
         }
     }
 }

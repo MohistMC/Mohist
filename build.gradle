@@ -32,7 +32,7 @@ ext {
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '6.0.3'
+    EVENTBUS_VERSION = '6.0.5'
     MODLAUNCHER_VERSION = '10.0.8'
     SECUREJARHANDLER_VERSION = '2.1.6'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
@@ -208,14 +208,18 @@ def sharedDeps = {
     installer 'org.xerial:sqlite-jdbc:3.42.0.0'
     installer 'com.mysql:mysql-connector-j:8.0.32'
 
-    installer 'net.md-5:SpecialSource:1.11.0'
+    installer 'net.md-5:SpecialSource:1.11.2'
 
     // spigot
     installer 'net.md-5:bungeecord-chat:1.16-R0.4'
+    installer 'commons-codec:commons-codec:1.16.0'
+
+    // mohist
     installer 'io.izzel:tools:1.3.0'
     installer 'com.mohistmc:dynamicenum:0.1'
     installer 'com.mohistmc:i18n:0.2'
-    // installer 'com.mohistmc:remap:0.1'
+    installer 'com.mohistmc:brigadier:1.20.1'
+    installer 'javax.inject:javax.inject:1' // TODO
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer 'com.google.guava:guava:31.1-jre'
@@ -237,7 +241,6 @@ def sharedDeps = {
     installer 'commons-io:commons-io:2.11.0'
     installer 'com.mojang:javabridge:2.0.25'
     installer 'com.mojang:datafixerupper:6.0.6'
-    installer 'com.mojang:brigadier:1.0.18'
     installer 'com.github.oshi:oshi-core:6.4.0'
 
 

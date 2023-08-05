@@ -1291,6 +1291,7 @@ net/minecraft/server/dedicated/DedicatedPlayerList net/minecraft/server/players/
 net/minecraft/server/dedicated/DedicatedServerProperties net/minecraft/server/dedicated/Settings
 net/minecraft/server/dedicated/DedicatedServer net/minecraft/server/ServerInterface net/minecraft/server/MinecraftServer
 net/minecraft/server/level/ChunkMap net/minecraft/world/level/chunk/storage/ChunkStorage
+net/minecraft/server/level/ChunkTracker net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint
 net/minecraft/server/level/DemoMode net/minecraft/server/level/ServerPlayerGameMode
 net/minecraft/server/level/ServerBossEvent net/minecraft/world/BossEvent
 net/minecraft/server/level/SectionTracker net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint
@@ -1299,6 +1300,7 @@ net/minecraft/server/level/ServerPlayer net/minecraft/world/entity/player/Player
 net/minecraft/server/level/ServerLevel net/minecraft/world/level/WorldGenLevel net/minecraft/world/level/Level
 net/minecraft/server/level/ThreadedLevelLightEngine net/minecraft/world/level/lighting/LevelLightEngine
 net/minecraft/server/level/WorldGenRegion net/minecraft/world/level/WorldGenLevel
+net/minecraft/server/level/TickingTracker net/minecraft/server/level/ChunkTracker
 net/minecraft/server/level/progress/LoggerChunkProgressListener net/minecraft/server/level/progress/ChunkProgressListener
 net/minecraft/server/network/MemoryServerHandshakePacketListenerImpl net/minecraft/network/protocol/handshake/ServerHandshakePacketListener
 net/minecraft/server/network/ServerHandshakePacketListenerImpl net/minecraft/network/protocol/handshake/ServerHandshakePacketListener

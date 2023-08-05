@@ -9,8 +9,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
-import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -387,8 +388,8 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
+        ForgeEventHandler.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
-        RemapUtils.init();
 
         File pluginFolder = (File) console.options.valueOf("plugins");
 
@@ -479,6 +480,8 @@ public final class CraftServer implements Server {
                     node = clone;
                 }
 
+                final Predicate<CommandSourceStack> original = node.getRequirement();
+                node.setRequirement(original.or(source -> source.getBukkitSender().hasPermission(command.getPermission())));
                 dispatcher.getDispatcher().getRoot().addChild(node);
             } else {
                 new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);

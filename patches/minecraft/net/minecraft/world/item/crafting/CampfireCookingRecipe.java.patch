@@ -1,6 +1,9 @@
 --- a/net/minecraft/world/item/crafting/CampfireCookingRecipe.java
 +++ b/net/minecraft/world/item/crafting/CampfireCookingRecipe.java
-@@ -3,6 +_,11 @@
+@@ -1,8 +_,14 @@
+ package net.minecraft.world.item.crafting;
+ 
++import com.mohistmc.inventory.MohistSpecialRecipe;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
@@ -12,7 +15,7 @@
  
  public class CampfireCookingRecipe extends AbstractCookingRecipe {
     public CampfireCookingRecipe(ResourceLocation p_249468_, String p_250140_, CookingBookCategory p_251808_, Ingredient p_249826_, ItemStack p_251839_, float p_251432_, int p_251471_) {
-@@ -16,4 +_,17 @@
+@@ -16,4 +_,20 @@
     public RecipeSerializer<?> m_7707_() {
        return RecipeSerializer.f_44094_;
     }
@@ -20,6 +23,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe() {
++      if (this.f_43730_.m_41619_()) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_43730_);
 +
 +      CraftCampfireRecipe recipe = new CraftCampfireRecipe(CraftNamespacedKey.fromMinecraft(this.f_43727_), result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);

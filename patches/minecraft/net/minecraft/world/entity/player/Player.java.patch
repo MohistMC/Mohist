@@ -347,7 +347,7 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -880,22 +_,35 @@
+@@ -880,22 +_,36 @@
        }
     }
  
@@ -376,8 +376,8 @@
           }
  
           if (f2 != 0.0F) {
--            this.m_36399_(p_36312_.m_19377_());
-+            this.causeFoodExhaustion(p_36312_.m_19377_(), EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++            this.reason.set(EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
+             this.m_36399_(p_36312_.m_19377_());
              float f1 = this.m_21223_();
              this.m_21231_().m_19289_(p_36312_, f1, f2);
 -            this.m_21153_(this.m_21223_() - f2);
@@ -572,12 +572,12 @@
                       }
  
                       if (this.f_19853_ instanceof ServerLevel && f5 > 2.0F) {
-@@ -1186,14 +_,20 @@
+@@ -1186,14 +_,21 @@
                       }
                    }
  
--                  this.m_36399_(0.1F);
-+                  this.causeFoodExhaustion(0.1F, EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent
++                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent
+                   this.m_36399_(0.1F);
                 } else {
                    this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12315_, this.m_5720_(), 1.0F, 1.0F);
                    if (flag4) {
@@ -634,18 +634,17 @@
        } else {
           boolean flag = block.m_5568_();
           boolean flag1 = p_36131_.m_8055_(p_36132_.m_7494_()).m_60734_().m_5568_();
-@@ -1351,9 +_,9 @@
+@@ -1351,8 +_,10 @@
        super.m_6135_();
        this.m_36220_(Stats.f_12926_);
        if (this.m_20142_()) {
--         this.m_36399_(0.2F);
-+         this.causeFoodExhaustion(0.2F, EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - EntityExhaustionEvent
++         this.reason.set(EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - EntityExhaustionEvent
+          this.m_36399_(0.2F);
        } else {
--         this.m_36399_(0.05F);
-+         this.causeFoodExhaustion(0.05F, EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - EntityExhaustionEvent
++         this.reason.set(EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - EntityExhaustionEvent
+          this.m_36399_(0.05F);
        }
  
-    }
 @@ -1377,7 +_,11 @@
           Vec3 vec31 = this.m_20184_();
           this.m_20334_(vec31.f_82479_, d5 * 0.6D, vec31.f_82481_);
@@ -659,46 +658,44 @@
        } else {
           super.m_7023_(p_36359_);
        }
-@@ -1408,19 +_,19 @@
+@@ -1408,18 +_,21 @@
              int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (i > 0) {
                 this.m_36222_(Stats.f_12924_, i);
--               this.m_36399_(0.01F * (float)i * 0.01F);
-+               this.causeFoodExhaustion(0.01F * (float)i * 0.01F, EntityExhaustionEvent.ExhaustionReason.SWIM); // CraftBukkit - EntityExhaustionEvent
++               this.reason.set(EntityExhaustionEvent.ExhaustionReason.SWIM);
+                this.m_36399_(0.01F * (float)i * 0.01F);
              }
           } else if (this.m_204029_(FluidTags.f_13131_)) {
              int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (j > 0) {
                 this.m_36222_(Stats.f_13001_, j);
--               this.m_36399_(0.01F * (float)j * 0.01F);
-+               this.causeFoodExhaustion(0.01F * (float)j * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER); // CraftBukkit - EntityExhaustionEvent
++               this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
+                this.m_36399_(0.01F * (float)j * 0.01F);
              }
           } else if (this.m_20069_()) {
              int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
              if (k > 0) {
                 this.m_36222_(Stats.f_12997_, k);
--               this.m_36399_(0.01F * (float)k * 0.01F);
-+               this.causeFoodExhaustion(0.01F * (float)k * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER); // CraftBukkit - EntityExhaustionEvent
++               this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
+                this.m_36399_(0.01F * (float)k * 0.01F);
              }
           } else if (this.m_6147_()) {
-             if (p_36380_ > 0.0D) {
-@@ -1431,13 +_,13 @@
+@@ -1431,12 +_,15 @@
              if (l > 0) {
                 if (this.m_20142_()) {
                    this.m_36222_(Stats.f_12996_, l);
--                  this.m_36399_(0.1F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.SPRINT); // CraftBukkit - EntityExhaustionEvent
++                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.SPRINT);
+                   this.m_36399_(0.1F * (float)l * 0.01F);
                 } else if (this.m_6047_()) {
                    this.m_36222_(Stats.f_12995_, l);
--                  this.m_36399_(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.CROUCH); // CraftBukkit - EntityExhaustionEvent
++                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.CROUCH);
+                   this.m_36399_(0.0F * (float)l * 0.01F);
                 } else {
                    this.m_36222_(Stats.f_12994_, l);
--                  this.m_36399_(0.0F * (float)l * 0.01F);
-+                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F, EntityExhaustionEvent.ExhaustionReason.WALK); // CraftBukkit - EntityExhaustionEvent
++                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK);
+                   this.m_36399_(0.0F * (float)l * 0.01F);
                 }
              }
-          } else if (this.m_21255_()) {
 @@ -1476,6 +_,7 @@
  
     public boolean m_142535_(float p_150093_, float p_150094_, DamageSource p_150095_) {

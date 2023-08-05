@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
+@@ -3,6 +_,7 @@
+ import com.google.gson.JsonArray;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import com.mohistmc.inventory.MohistSpecialRecipe;
+ import it.unimi.dsi.fastutil.ints.IntList;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.RegistryAccess;
 @@ -13,6 +_,9 @@
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
@@ -18,7 +26,7 @@
  
     public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
        this.f_44241_ = p_251840_;
-@@ -27,7 +_,23 @@
+@@ -27,7 +_,26 @@
        this.f_244076_ = p_249390_;
        this.f_44243_ = p_252071_;
        this.f_44244_ = p_250689_;
@@ -28,7 +36,10 @@
 +
 +   // CraftBukkit start
 +   @SuppressWarnings("unchecked")
-+   public org.bukkit.inventory.ShapelessRecipe toBukkitRecipe() {
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      if (this.f_44243_.m_41619_() || f_44244_.size() + 1 <= 9) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_44243_);
 +      CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, this);
 +      recipe.setGroup(this.f_44242_);

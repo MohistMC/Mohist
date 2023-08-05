@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
+@@ -10,6 +_,8 @@
+ import com.google.gson.JsonSyntaxException;
+ import java.util.Map;
+ import java.util.Set;
++
++import com.mohistmc.inventory.MohistSpecialRecipe;
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.core.registries.BuiltInRegistries;
 @@ -21,8 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
@@ -28,12 +37,15 @@
     final int f_44146_;
     final int f_44147_;
     final NonNullList<Ingredient> f_44148_;
-@@ -47,6 +_,67 @@
+@@ -47,6 +_,70 @@
        this(p_250963_, p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
     }
  
 +   // CraftBukkit start
-+   public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      if (this.m_44220_() < 1 || this.m_44220_() > 3 || this.m_44221_() < 1 || this.m_44221_() > 3 || this.f_44149_.m_41619_()) {
++         return new MohistSpecialRecipe(this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_44149_);
 +      CraftShapedRecipe recipe = new CraftShapedRecipe(result, this);
 +      recipe.setGroup(this.f_44151_);

@@ -22,8 +22,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlockEntityState;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Mgazul
@@ -32,7 +46,7 @@ import org.bukkit.inventory.InventoryHolder;
 public class InventoryOwner {
 
     public static InventoryHolder get(BlockEntity te) {
-        return get(te.getLevel(), te.getBlockPos(), true);
+        return get(te.getLevel(), te.getBlockPos());
     }
 
     public static InventoryHolder get(Container inventory) {
@@ -43,7 +57,7 @@ public class InventoryOwner {
         }
     }
 
-    public static InventoryHolder get(Level world, BlockPos pos, boolean useSnapshot) {
+    public static InventoryHolder get(Level world, BlockPos pos) {
         if (world == null) return null;
         // Spigot start
         org.bukkit.block.Block block = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
@@ -61,5 +75,42 @@ public class InventoryOwner {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static InventoryHolder get(IItemHandler handler) {
+        if (handler == null) {
+            return null;
+        }
+        if (handler instanceof ItemStackHandler) {
+            return new CraftCustomInventory((ItemStackHandler) handler);
+        }
+        if (handler instanceof SlotItemHandler) {
+            return new CraftCustomInventory(((SlotItemHandler) handler).container);
+        }
+        if (handler instanceof InvWrapper) {
+            return new CraftCustomInventory(((InvWrapper) handler).getInv());
+        }
+        if (handler instanceof SidedInvWrapper) {
+            return new CraftCustomInventory(((SidedInvWrapper) handler).getInv());
+        }
+        if (handler instanceof PlayerInvWrapper) {
+            IItemHandlerModifiable[] piw = ObfuscationReflectionHelper.getPrivateValue(CombinedInvWrapper.class, (PlayerInvWrapper) handler, "itemHandler");
+            for (IItemHandlerModifiable itemHandler : piw) {
+                if (itemHandler instanceof PlayerMainInvWrapper) {
+                    return new CraftCustomInventory(((PlayerMainInvWrapper) itemHandler).getInventoryPlayer());
+                }
+                if (itemHandler instanceof PlayerArmorInvWrapper) {
+                    return new CraftCustomInventory(((PlayerArmorInvWrapper) itemHandler).getInventoryPlayer());
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Inventory inventoryFromForge(IItemHandler handler) {
+        InventoryHolder holder = get(handler);
+        return holder != null ? holder.getInventory() : null;
     }
 }
