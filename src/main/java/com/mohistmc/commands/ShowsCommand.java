@@ -4,7 +4,6 @@ import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
-import com.mohistmc.plugins.item.ItemsConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;

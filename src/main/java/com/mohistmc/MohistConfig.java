@@ -1,8 +1,8 @@
 package com.mohistmc;
 
 import com.google.common.base.Throwables;
-import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.BansCommand;
 import com.mohistmc.commands.DumpCommand;

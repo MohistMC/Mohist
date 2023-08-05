@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ConfigByWorlds {
     public static File f = new File("mohist-config", "worlds.yml");

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.items;
 
+import com.mohistmc.inventory.InventoryOwner;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.DropperBlock;
@@ -88,15 +89,8 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    Container container = HopperBlockEntity.getContainerAt(level, blockpos);
-                    org.bukkit.inventory.Inventory destinationInventory;
-                    // Have to a special case large chests as they work oddly
-                    if (container instanceof CompoundContainer compoundContainer) {
-                        destinationInventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest(compoundContainer);
-                    } else {
-                        destinationInventory = container.getOwner().getInventory();
-                    }
-
+                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) dropper);
+                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
@@ -141,19 +135,9 @@ public class VanillaInventoryCodeHooks
                             if (!hopper.getItem(i).isEmpty())
                             {
                                 ItemStack originalSlotContents = hopper.getItem(i).copy();
-                                Container container = hopper.getAttachedContainer(hopper.getLevel(), hopper.getBlockPos(), hopper.getBlockState());
                                 CraftItemStack oitemstack = CraftItemStack.asCraftMirror(hopper.removeItem(i, hopper.getLevel().spigotConfig.hopperAmount)); // Spigot
-
-                                org.bukkit.inventory.Inventory destinationInventory;
-                                // Have to special case large chests as they work oddly
-                                if (container instanceof CompoundContainer) {
-                                    destinationInventory = new CraftInventoryDoubleChest((CompoundContainer) container);
-                                } else if (container.getOwner() != null) {
-                                    destinationInventory = container.getOwner().getInventory();
-                                } else {
-                                    destinationInventory = new CraftInventory(hopper);
-                                }
-
+                                org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) hopper);
+                                org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                                 InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                                 Bukkit.getPluginManager().callEvent(event);
                                 if (event.isCancelled()) {

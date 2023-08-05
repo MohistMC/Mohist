@@ -1,6 +1,5 @@
 package com.mohistmc.plugins.item;
 
-import com.google.common.base.Charsets;
 import com.mohistmc.util.YamlUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
