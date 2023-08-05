@@ -126,8 +126,6 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEffectAndPotion() {
         // Points
-        int maxId = ForgeRegistries.MOB_EFFECTS.getValues().stream().mapToInt(MobEffect::getId).max().orElse(0);
-        PotionEffectType.byId = new PotionEffectType[maxId];
         for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
             try {
                 String name = normalizeName(effect.getRegistryName().toString());
