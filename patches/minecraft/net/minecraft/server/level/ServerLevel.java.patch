@@ -355,7 +355,7 @@
        }
  
        this.m_7726_().m_8483_().m_78151_();
-@@ -785,10 +_,30 @@
+@@ -785,10 +_,27 @@
        return this.m_8872_(p_8848_);
     }
  
@@ -369,10 +369,7 @@
 +   }
 +
     public void m_143334_(Entity p_143335_) {
-+      // SPIGOT-6415: Don't call spawn event for entities which travel trough worlds,
-+      // since it is only an implementation detail, that a new entity is created when
-+      // they are traveling between worlds.
-+      this.addEntityspawnReason.set(null); // Mohist
++      p_143335_.spawnReason.set(null);
        this.m_8872_(p_143335_);
     }
  
@@ -394,7 +391,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -813,18 +_,36 @@
+@@ -813,18 +_,35 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -409,7 +406,7 @@
           return false;
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
-+         if (this.addEntityspawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, this.addEntityspawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
++         if (p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
 +            return false;
 +         }
 +         if (this.f_143244_.m_157533_(p_8873_)) {
@@ -422,9 +419,8 @@
     }
  
 +   // Mohist start
-+   public AtomicReference<CreatureSpawnEvent.SpawnReason> addEntityspawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      this.addEntityspawnReason.set(spawnReason);
++      entity.spawnReason.set(spawnReason);
 +      return m_8872_(entity);
 +   }
 +   // Mohist end

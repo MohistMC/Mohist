@@ -313,27 +313,26 @@
           this.m_21463_(p_21500_, true);
           itemstack.m_41774_(1);
           return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-@@ -1195,7 +_,12 @@
+@@ -1195,7 +_,13 @@
                 }
              }
  
--            this.f_19853_.m_7967_(t);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callEntityTransformEvent(this, t, this.transformReason.getAndSet(EntityTransformEvent.TransformReason.UNKNOWN)).isCancelled()) {
 +               return null;
 +            }
-+            this.f_19853_.addFreshEntity(t, this.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT));
++            t.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT);
+             this.f_19853_.m_7967_(t);
 +            // CraftBukkit end
              if (this.m_20159_()) {
                 Entity entity = this.m_20202_();
                 this.m_8127_();
-@@ -1208,6 +_,20 @@
+@@ -1208,6 +_,19 @@
        }
     }
  
 +   // Mohist start
 +   public AtomicReference<EntityTransformEvent.TransformReason> transformReason = new AtomicReference<>(EntityTransformEvent.TransformReason.UNKNOWN);
-+   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public void transformReasonAndspawnReason(EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      this.transformReason.set(transformReason);
 +      this.spawnReason.set(spawnReason);

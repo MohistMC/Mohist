@@ -69,7 +69,7 @@
        return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
     }
  
-@@ -464,24 +_,32 @@
+@@ -464,24 +_,33 @@
        return f_238776_.test(p_239736_);
     }
  
@@ -83,8 +83,8 @@
           allay.m_21530_();
           allay.m_239811_();
           this.m_239811_();
--         this.f_19853_.m_7967_(allay);
-+         this.f_19853_.addFreshEntity(allay, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
++         allay.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
+          this.f_19853_.m_7967_(allay);
        }
 -
 -   }
