@@ -7,7 +7,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.entity.MohistModsEntity;
-import net.minecraft.core.Registry;
+import com.mohistmc.potion.MohistPotionEffect;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +32,6 @@ import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
@@ -83,12 +82,11 @@ public class ForgeInjectBukkit {
 
 
     public static void addEnumMaterialInItems() {
-        for (Map.Entry<ResourceKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
-            ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+        for (Item item : ForgeRegistries.ITEMS) {
+            ResourceLocation resourceLocation = item.getRegistryName();
+            if (isMods(resourceLocation)) {
                 // inject item materials into Bukkit for FML
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
-                Item item = entry.getValue();
+                String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
                 Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
@@ -102,12 +100,11 @@ public class ForgeInjectBukkit {
 
 
     public static void addEnumMaterialsInBlocks() {
-        for (Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
-            ResourceLocation resourceLocation = entry.getValue().getRegistryName();
-            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+        for (Block block : ForgeRegistries.BLOCKS) {
+            ResourceLocation resourceLocation = block.getRegistryName();
+            if (isMods(resourceLocation)) {
                 // inject block materials into Bukkit for FML
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
-                Block block = entry.getValue();
+                String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(block.asItem());
                 Material material = Material.addMaterial(materialName, id, true, resourceLocation.getNamespace());
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
@@ -119,7 +116,6 @@ public class ForgeInjectBukkit {
         }
     }
 
-
     public static void addEnumEnchantment() {
         // Enchantment
         for (Enchantment enchantment : ForgeRegistries.ENCHANTMENTS) {
@@ -130,9 +126,17 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEffectAndPotion() {
         // Points
+        int maxId = ForgeRegistries.MOB_EFFECTS.getValues().stream().mapToInt(MobEffect::getId).max().orElse(0);
+        PotionEffectType.byId = new PotionEffectType[maxId];
         for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
-            PotionEffectType pet = new CraftPotionEffectType(effect);
-            PotionEffectType.registerPotionEffectType(pet);
+            try {
+                String name = normalizeName(effect.getRegistryName().toString());
+                MohistPotionEffect pet = new MohistPotionEffect(effect, name);
+                PotionEffectType.registerPotionEffectType(pet);
+                MohistMC.LOGGER.debug("Registered {} as potion {}", effect.getRegistryName(), effect);
+            } catch (Exception e) {
+                MohistMC.LOGGER.error("Failed to register potion type {}: {}", effect.getRegistryName(), e);
+            }
         }
         PotionEffectType.stopAcceptingRegistrations();
         var registry = ForgeRegistries.POTIONS;
