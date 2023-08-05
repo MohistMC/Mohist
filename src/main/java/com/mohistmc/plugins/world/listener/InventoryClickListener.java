@@ -46,7 +46,6 @@ public class InventoryClickListener {
         }
 
         world.setSpawnLocation(spawnLocation);
-        p.teleport(spawnLocation);
         p.sendMessage(ChatColor.GREEN + "The world was created successfully");
         try {
             ConfigByWorlds.addWorld(world.getName());

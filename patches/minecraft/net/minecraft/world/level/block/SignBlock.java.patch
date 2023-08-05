@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/block/SignBlock.java
++++ b/net/minecraft/world/level/block/SignBlock.java
+@@ -2,6 +_,7 @@
+ 
+ import java.util.Arrays;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+@@ -36,6 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.event.player.PlayerSignOpenEvent;
+ 
+ public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
+    public static final BooleanProperty f_56268_ = BlockStateProperties.f_61362_;
+@@ -101,6 +_,7 @@
+             } else if (flag) {
+                return InteractionResult.SUCCESS;
+             } else if (!this.m_277189_(p_56281_, signblockentity) && p_56281_.m_36326_() && this.m_278656_(p_56281_, signblockentity, flag2)) {
++               openTextEditcause.set(PlayerSignOpenEvent.Cause.INTERACT); // CraftBukkit
+                this.m_276926_(p_56281_, signblockentity, flag2);
+                return InteractionResult.SUCCESS;
+             } else {
+@@ -146,9 +_,18 @@
+       return woodtype;
+    }
+ 
++   public AtomicReference<PlayerSignOpenEvent.Cause> openTextEditcause = new AtomicReference<>(PlayerSignOpenEvent.Cause.UNKNOWN);
+    public void m_276926_(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
++      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, openTextEditcause.getAndSet(PlayerSignOpenEvent.Cause.UNKNOWN))) {
++         return;
++      }
+       p_277467_.m_155713_(p_277738_.m_20148_());
+       p_277738_.m_7739_(p_277467_, p_277771_);
++   }
++
++   public void openTextEdit(Player entityhuman, SignBlockEntity tileentitysign, boolean flag, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
++      openTextEditcause.set(cause);
++      m_276926_(entityhuman, tileentitysign, flag);
+    }
+ 
+    private boolean m_277189_(Player p_277952_, SignBlockEntity p_277599_) {

@@ -19,6 +19,7 @@ public class MohistMC {
     public static Logger LOGGER = LogManager.getLogger();
     public static i18n i18n;
     public static String version;
+    public static String modid = "mohist";
 
     public MohistMC() {
         String mohist_lang = MohistConfig.yml.getString("mohist.lang", "xx_XX");

@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
+@@ -483,7 +_,8 @@
+ 
+    }
+ 
+-   private void m_64091_(List<EndCrystal> p_64092_) {
++   public boolean respawnDragon = false;
++   public void m_64091_(List<EndCrystal> p_64092_) {
+       if (this.f_64068_ && this.f_64073_ == null) {
+          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.m_64105_(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.m_64105_()) {
+             for(int i = 0; i < this.f_64063_.m_61203_(); ++i) {
+@@ -502,6 +_,7 @@
+          this.f_64074_ = 0;
+          this.m_64093_(false);
+          this.f_64075_ = p_64092_;
++         respawnDragon = true;
+       }
+ 
+    }
 @@ -513,7 +_,14 @@
              endcrystal.m_31052_((BlockPos)null);
           }
