@@ -66,10 +66,10 @@ public class RedirectAdapter implements PluginTransformer {
         modify(Package.class, "getName", "packageGetName");
         redirect(Class.class, "forName", "classForName", String.class);
         redirect(Class.class, "forName", "classForName", String.class, boolean.class, ClassLoader.class);
-        redirect(Class.class, "getDeclaredField", "classGetDeclaredField", String.class);
-        redirect(Class.class, "getField", "classGetField", String.class);
-        redirect(Class.class, "getDeclaredMethod", "classGetDeclaredMethod", String.class, Class[].class);
-        redirect(Class.class, "getMethod", "classGetMethod", String.class, Class[].class);
+        modify(Class.class, "getField", "classGetField", String.class);
+        modify(Class.class, "getDeclaredField", "classGetDeclaredField", String.class);
+        modify(Class.class, "getMethod", "classGetMethod", String.class, Class[].class);
+        modify(Class.class, "getDeclaredMethod", "classGetDeclaredMethod", String.class, Class[].class);
         redirect(Class.class, "getDeclaredMethods", "getDeclaredMethods");
         redirect(Class.class, "getMethods", "getMethods");
         redirect(Class.class, "getDeclaredFields", "getDeclaredFields");
@@ -177,9 +177,9 @@ public class RedirectAdapter implements PluginTransformer {
             for (AbstractInsnNode insnNode : methodNode.instructions) {
                 if (insnNode instanceof MethodInsnNode from) {
                     if (from.getOpcode() == Opcodes.INVOKESPECIAL
-                            && Objects.equals(from.owner, classNode.superName)
-                            && Objects.equals(from.name, methodNode.name)
-                            && Objects.equals(from.desc, methodNode.desc)) {
+                        && Objects.equals(from.owner, classNode.superName)
+                        && Objects.equals(from.name, methodNode.name)
+                        && Objects.equals(from.desc, methodNode.desc)) {
                         continue;
                     }
                     process(from, methodNode.instructions, remapper, classNode);

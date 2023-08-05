@@ -23,7 +23,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.spongepowered.asm.service.MixinService;
 
 import java.io.File;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -162,12 +161,10 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void checkFieldTypes(Field field) throws TypeNotPresentException {
         field.getGenericType();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void checkMethodTypes(Method method) throws TypeNotPresentException {
         method.getGenericReturnType();
         method.getGenericParameterTypes();
@@ -297,6 +294,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
                 signers = null;
             }
             return Product.of(bytes, new CodeSource(url, signers));
+
         } catch (Exception e) {
             throw new ClassNotFoundException(className, e);
         }
@@ -315,13 +313,13 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
     private byte[] remapClassFile(ClassReader reader, final ClassRepo repo) {
         ClassNode node = new ClassNode();
         RemappingClassAdapter mapper = new RemappingClassAdapter(node, this, repo);
-        reader.accept(mapper, ClassReader.SKIP_FRAMES);
+        reader.accept(mapper, 0);
 
         for (PluginTransformer transformer : Remapper.INSTANCE.getTransformerList()) {
             transformer.handleClass(node, this);
         }
 
-        ClassWriter wr = new PluginClassWriter(node.version == Opcodes.V1_5 ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);
+        ClassWriter wr = new PluginClassWriter(ClassWriter.COMPUTE_MAXS);
         node.accept(wr);
 
         return dump(wr.toByteArray());
@@ -342,8 +340,8 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             Class<?> cl = Unsafe.defineClass(name.replace('/', '.'), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
             Unsafe.ensureClassInitialized(cl);
 
-            VarHandle remapper = Unsafe.lookup().findStaticVarHandle(cl, "remapper", ClassLoaderRemapper.class);
-            remapper.set(this);
+            Field remapper = cl.getField("remapper");
+            remapper.set(null, this);
             return cl;
         } catch (Exception e) {
             throw new RuntimeException(e);

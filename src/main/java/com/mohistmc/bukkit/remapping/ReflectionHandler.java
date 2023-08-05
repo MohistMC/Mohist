@@ -173,9 +173,9 @@ public class ReflectionHandler extends ClassLoader {
 
     // srg -> bukkit
     public static String redirectTypeGetName(java.lang.reflect.Type type) {
-        if (type instanceof Class cl) {
+        if (type instanceof Class<?> cl) {
             if (cl.isArray()) {
-                return redirectTypeGetName(cl) + "[]";
+                return redirectTypeGetName(cl.getComponentType()) + "[]";
             }
             return redirectClassGetName(cl);
         } else if (type instanceof WildcardType wType) {
@@ -224,23 +224,22 @@ public class ReflectionHandler extends ClassLoader {
 
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl) throws ClassNotFoundException {
-        return redirectClassForName(cl, true, ReflectionUtils.getCallerClassLoader());
+        return redirectClassForName(cl, true, Unsafe.getCallerClass().getClassLoader());
     }
 
     // bukkit -> srg
     public static Class<?> redirectClassForName(String cl, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
         try {
             String replace = remapper.mapType(cl.replace('.', '/')).replace('/', '.');
-            return Class.forName(ASMUtils.toClassName(replace), initialize, classLoader);
+            return Class.forName(replace, initialize, classLoader);
         } catch (ClassNotFoundException e) { // nested/inner class
             int i = cl.lastIndexOf('.');
             if (i > 0) {
                 String replace = cl.substring(0, i).replace('.', '/') + "$" + cl.substring(i + 1);
                 replace = remapper.mapType(replace).replace('/', '.').replace('$', '.');
-                return Class.forName(ASMUtils.toClassName(replace), initialize, classLoader);
-            }
+                return Class.forName(replace, initialize, classLoader);
+            } else throw e;
         }
-        throw new ClassNotFoundException(cl);
     }
 
     // bukkit -> srg
@@ -268,8 +267,7 @@ public class ReflectionHandler extends ClassLoader {
     // bukkit -> srg
     public static Object[] handleClassGetMethod(Class<?> cl, String bukkitName, Class<?>... pTypes) {
         Method method = remapper.tryMapMethodToSrg(cl, bukkitName, pTypes);
-        String methodName = method == null ? bukkitName : method.getName();
-        return new Object[]{cl, methodName, pTypes};
+        return new Object[]{cl, method == null ? bukkitName : method.getName(), pTypes};
     }
 
     // bukkit -> srg

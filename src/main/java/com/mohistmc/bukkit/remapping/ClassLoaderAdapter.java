@@ -10,6 +10,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -92,6 +93,9 @@ public class ClassLoaderAdapter implements PluginTransformer {
         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(Remapper.class), "createClassLoaderRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class), Type.getType(ClassLoader.class)), false));
         list.add(new FieldInsnNode(Opcodes.PUTFIELD, node.name, remapper.name, remapper.desc));
         list.add(labelNode);
+        if ((node.version & 0xFFFF) >= Opcodes.V1_6) {
+            list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+        }
         list.add(new VarInsnNode(Opcodes.ALOAD, 0));
         list.add(new FieldInsnNode(Opcodes.GETFIELD, node.name, remapper.name, remapper.desc));
         list.add(new InsnNode(Opcodes.ARETURN));
