@@ -10,6 +10,7 @@ import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
 import com.mohistmc.commands.PermissionCommand;
+import com.mohistmc.commands.PingCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.commands.ShowsCommand;
 import com.mohistmc.plugins.MohistPlugin;
@@ -80,6 +81,7 @@ public class MohistConfig {
         commands.put("permission", new PermissionCommand("permission"));
         commands.put("bans", new BansCommand("bans"));
         commands.put("shows", new ShowsCommand("shows"));
+        commands.put("ping", new PingCommand("ping"));
 
         MohistPlugin.registerCommands(commands);
 
@@ -192,6 +194,7 @@ public class MohistConfig {
 
     public static String motdFirstLine;
     public static String motdSecondLine;
+    public static String pingCommandOutput;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -227,5 +230,7 @@ public class MohistConfig {
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
         motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
         motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
+
+        pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
     }
 }
