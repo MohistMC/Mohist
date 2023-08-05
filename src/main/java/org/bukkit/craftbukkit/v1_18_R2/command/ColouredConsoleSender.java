@@ -5,6 +5,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -17,6 +20,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
     private static final char ANSI_ESC_CHAR = '\u001B';
     private static final String RGB_STRING = String.valueOf(ANSI_ESC_CHAR) + "[38;2;%d;%d;%dm";
     private static final Pattern RBG_TRANSLATE = Pattern.compile(String.valueOf(ChatColor.COLOR_CHAR) + "x(" + String.valueOf(ChatColor.COLOR_CHAR) + "[A-F0-9]){6}", Pattern.CASE_INSENSITIVE);
+    private static final Logger LOGGER = LogManager.getLogger("ColouredConsoleSender");
 
     protected ColouredConsoleSender() {
         super();
@@ -47,17 +51,8 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
 
     @Override
     public void sendMessage(String message) {
-        // support jansi passthrough VM option when jansi doesn't detect an ANSI supported terminal
-        if (!conversationTracker.isConversingModaly()) {
-            String result = convertRGBColors(message);
-            for (ChatColor color : colors) {
-                if (replacements.containsKey(color)) {
-                    result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
-                } else {
-                    result = result.replaceAll("(?i)" + color.toString(), "");
-                }
-            }
-            System.out.println(result + Ansi.ansi().reset().toString());
+        if (!this.conversationTracker.isConversingModaly()) {
+            LOGGER.info(message);
         }
     }
 
