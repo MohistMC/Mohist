@@ -86,23 +86,25 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,6 +_,15 @@
+@@ -155,6 +_,17 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.generator.CraftWorldInfo;
 +import org.bukkit.craftbukkit.v1_20_R1.generator.CustomWorldChunkManager;
 +import org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
++import org.bukkit.generator.WorldInfo;
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,67 @@
+@@ -188,24 +_,72 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -149,16 +151,21 @@
 +      // CraftBukkit start
 +      K.setWorld(this);
 +      if (biomeProvider != null) {
-+         BiomeSource worldChunkManager = new CustomWorldChunkManager(getWorld(), biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
++         WorldInfo worldInfo = new CraftWorldInfo(K, p_215001_, environment, p_215004_.f_63975_().m_203334_());
++         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
 +         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
 +            chunkgenerator = new NoiseBasedChunkGenerator(worldChunkManager, cga.f_64318_);
 +         } else if (chunkgenerator instanceof FlatLevelSource cpf) {
 +            chunkgenerator = new FlatLevelSource(cpf.m_64191_(), worldChunkManager);
 +         }
++      } else {
++         biomeProvider = getCraftServer().getBiomeProvider(p_215002_.m_5462_());
 +      }
 +
 +      if (generator != null) {
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
++      } else {
++         generator = getCraftServer().getGenerator(p_215002_.m_5462_());
 +      }
 +
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
@@ -172,18 +179,10 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,18 @@
+@@ -240,6 +_,10 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
-+      // Mohist start
-+      if (generator == null && p_215002_ != null) {
-+         generator = getCraftServer().getGenerator(p_215002_.m_5462_());
-+      }
-+      if (biomeProvider == null) {
-+         biomeProvider = getCraftServer().getBiomeProvider(p_215002_.m_5462_());
-+      }
-+      // Mohist end
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
 +      m_6857_().world = this;
