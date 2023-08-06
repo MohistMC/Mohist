@@ -1,14 +1,27 @@
 --- a/net/minecraft/world/level/block/SculkBlock.java
 +++ b/net/minecraft/world/level/block/SculkBlock.java
-@@ -27,8 +_,10 @@
+@@ -6,6 +_,7 @@
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.valueproviders.ConstantInt;
+ import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+@@ -27,8 +_,15 @@
              if (p_222076_.m_188503_(j) < i) {
                 BlockPos blockpos1 = blockpos.m_7494_();
                 BlockState blockstate = this.m_222067_(p_222074_, blockpos1, p_222076_, p_222077_.m_222282_());
 -               p_222074_.m_7731_(blockpos1, blockstate, 3);
 -               p_222074_.m_5594_((Player)null, blockpos, blockstate.m_60827_().m_56777_(), SoundSource.BLOCKS, 1.0F, 1.0F);
-+               // CraftBukkit start - Call BlockSpreadEvent
-+               if (org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
-+                  p_222074_.m_5594_((Player)null, blockpos, blockstate.m_60827_().m_56777_(), SoundSource.BLOCKS, 1.0F, 1.0F);
++               // Mohist start - Fix LostFeatures mod mixin
++               if (p_222074_ instanceof Level) {
++                  if (org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
++                     p_222074_.m_5594_((Player) null, blockpos, blockstate.m_60827_().m_56777_(), SoundSource.BLOCKS, 1.0F, 1.0F);
++                  }
++               } else {
++                  p_222074_.m_7731_(blockpos1, blockstate, 3);
++                  p_222074_.m_5594_((Player) null, blockpos, blockstate.m_60827_().m_56777_(), SoundSource.BLOCKS, 1.0F, 1.0F);
 +               }
              }
  

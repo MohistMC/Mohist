@@ -52,6 +52,7 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -107,8 +108,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         if (entity instanceof LivingEntity) {
             // Players
             if (entity instanceof net.minecraft.world.entity.player.Player) {
-                if (entity instanceof ServerPlayer) { return new CraftPlayer(server, (ServerPlayer) entity); }
-                else { return new CraftHumanEntity(server, (net.minecraft.world.entity.player.Player) entity); }
+                if (entity instanceof ServerPlayer) {
+                    if (entity instanceof FakePlayer) {
+                        return new CraftFakePlayer(server, (FakePlayer) entity);
+                    }
+                    return new CraftPlayer(server, (ServerPlayer) entity);
+                } else { return new CraftHumanEntity(server, (net.minecraft.world.entity.player.Player) entity); }
             }
             // Water Animals
             else if (entity instanceof WaterAnimal) {

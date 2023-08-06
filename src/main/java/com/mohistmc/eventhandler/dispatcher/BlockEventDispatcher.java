@@ -119,13 +119,6 @@ public class BlockEventDispatcher {
         }
     }
 
-    @SubscribeEvent(receiveCanceled = true)
-    public void onBlockGrow(BlockEvent.CropGrowEvent event) {
-        if (event.getLevel() instanceof final ServerLevel serverLevel) {
-            event.setCanceled(CraftEventFactory.handleBlockGrowEvent(serverLevel, event.getPos(), event.getState()));
-        }
-    }
-
     @SubscribeEvent
     public void onFarmlandBreak(BlockEvent.FarmlandTrampleEvent event) {
         Entity entity = event.getEntity();

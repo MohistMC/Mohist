@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_19_R3.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -1026,9 +1027,9 @@ public class CraftEventFactory {
 
         if (cause != null) {
             return callEntityDamageEvent(null, entity, cause, modifiers, modifierFunctions, cancelled);
+        } else {
+            return new EntityDamageEvent(entity.getBukkitEntity(), DamageCause.CUSTOM, modifiers, modifierFunctions);
         }
-
-        throw new IllegalStateException(String.format("Unhandled damage of %s from %s", entity, source.getMsgId()));
     }
 
     private static EntityDamageEvent callEntityDamageEvent(Entity damager, Entity damagee, DamageCause cause, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
@@ -1449,7 +1450,9 @@ public class CraftEventFactory {
         if (true) {
             org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
             if (stat == null) {
-                System.err.println("Unhandled statistic: " + statistic);
+                stat = ForgeInjectBukkit.statisticMap.get(statistic.getType());
+            }
+            if (stat == null) {
                 return null;
             }
             switch (stat) {

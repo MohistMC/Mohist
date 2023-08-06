@@ -1111,11 +1111,11 @@
 -         PortalInfo portalinfo = this.m_7937_(p_20118_);
 +         PositionImpl location = mohist$postion.get();
 +         PortalInfo portalinfo = (location == null) ? teleporter.getPortalInfo(this, p_20118_, this::m_7937_) : new PortalInfo(new Vec3(location.m_7096_(), location.m_7098_(), location.m_7094_()), Vec3.f_82478_, this.f_19857_, this.f_19858_);
-+         portalinfo.setWorld(p_20118_);
           if (portalinfo == null) {
              return null;
           } else {
 +            // CraftBukkit start
++            portalinfo.setWorld(p_20118_);
 +            if (portalinfo.world == f_19853_) {
 +               // SPIGOT-6782: Just move the entity if a plugin changed the world to the one the entity is already in
 +               m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, portalinfo.f_77679_);
