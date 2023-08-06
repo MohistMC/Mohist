@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -121,8 +123,6 @@ class LibraryLoader
             } );
         }
 
-        URLClassLoader loader = new URLClassLoader( jarFiles.toArray( new URL[ jarFiles.size() ] ), getClass().getClassLoader() );
-
-        return loader;
+        return new RemappingURLClassLoader( jarFiles.toArray( new URL[ jarFiles.size() ] ), getClass().getClassLoader() );
     }
 }
