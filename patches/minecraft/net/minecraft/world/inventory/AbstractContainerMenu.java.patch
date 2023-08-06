@@ -21,19 +21,21 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
-@@ -19,6 +_,8 @@
+@@ -19,6 +_,9 @@
  import net.minecraft.ReportedException;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.registries.BuiltInRegistries;
 +import net.minecraft.network.chat.Component;
 +import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
++import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.Mth;
  import net.minecraft.world.Container;
-@@ -29,6 +_,16 @@
+@@ -29,6 +_,17 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
++import net.minecraftforge.registries.ForgeRegistries;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
@@ -47,96 +49,37 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -60,6 +_,100 @@
+@@ -60,6 +_,41 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
 +   // CraftBukkit star
 +   public boolean checkReachable = true;
 +   // Mohist start
-+   public InventoryView bukkitView;
-+
-+   private boolean isBukkitViewCreated;
++   public InventoryView bukkitView = null;
 +
 +   public InventoryView getBukkitView(){
-+      if(!isBukkitViewCreated) {
-+         isBukkitViewCreated = true;
-+         bukkitView = computeBukkitView();
-+         return bukkitView;
-+      }
 +      return bukkitView;
-+   }
-+
-+   public void setBukkitView(InventoryView iv) {
-+      this.bukkitView = iv;
-+      isBukkitViewCreated = true;
-+   }
-+
-+   @Nullable
-+   private InventoryView computeBukkitView() {
-+      Set<Container> uniqueInventorySet = new HashSet<>();
-+      for(Slot slot : f_38839_) {
-+         if (slot.f_40218_ != null) uniqueInventorySet.add(slot.f_40218_);
-+      }
-+      List<Container> inventories = new ArrayList<>(uniqueInventorySet);
-+      Inventory playerInv = null;
-+
-+      for(Iterator<Container> it = inventories.iterator(); it.hasNext();) {
-+         Container inv = it.next();
-+         if(inv instanceof Inventory) {
-+            playerInv = (Inventory) inv;
-+            it.remove();
-+            break;
-+         }
-+      }
-+      if(playerInv == null) {
-+         return null;
-+      }
-+      CraftPlayer bukkitPlayer = (CraftPlayer) playerInv.f_35978_.getBukkitEntity();
-+      org.bukkit.inventory.Inventory craftInv;
-+      if(inventories.size() != 1) {
-+         craftInv = Bukkit.getServer().createInventory(bukkitPlayer, InventoryType.CHEST);
-+      } else {
-+         craftInv = new CraftInventory(inventories.get(0));
-+      }
-+      return new CraftInventoryView(bukkitPlayer, craftInv, this);
 +   }
 +
 +   // Mohist end
 +   public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
 +      InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
-+      if (source != null) {
-+         try {
-+            ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
-+      if (destination != null) {
-+         try {
-+            ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+
-+         try {
-+            ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
-+         } catch (AbstractMethodError ex) {
-+            // modded
-+         }
-+      }
++      ((CraftInventory) source.getTopInventory()).getInventory().onClose(player);
++      ((CraftInventory) source.getBottomInventory()).getInventory().onClose(player);
++      ((CraftInventory) destination.getTopInventory()).getInventory().onOpen(player);
++      ((CraftInventory) destination.getBottomInventory()).getInventory().onOpen(player);
 +   }
 +   private Component title;
 +   public Component getTitle() {
 +      // Mohist: null title -> empty title
 +      if (this.title == null) {
-+         this.title = Component.m_237113_("");
++         if (this.f_38843_ != null) {
++            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.f_38843_);
++            return Component.m_237115_(key.toString());
++         } else {
++            this.title = Component.m_237113_(this.toString());
++         }
 +      }
 +      return this.title;
 +   }

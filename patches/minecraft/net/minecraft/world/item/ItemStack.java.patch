@@ -112,15 +112,10 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -154,20 +_,50 @@
+@@ -154,20 +_,68 @@
        this.f_41591_ = this.m_41619_();
     }
  
--   private ItemStack(CompoundTag p_41608_) {
--      this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
--      this.f_41587_ = p_41608_.m_128445_("Count");
--      if (p_41608_.m_128425_("tag", 10)) {
--         this.f_41590_ = p_41608_.m_128469_("tag");
 +   // Called to run this stack through the data converter to handle older storage methods and serialized items
 +   public void convertStack(int version) {
 +      if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
@@ -131,13 +126,8 @@
 +      }
 +   }
 +
-+   // Mohist start fix 'Bigger Stacks' mod mixin
 +   // CraftBukkit start - break into own method
 +   private void load(CompoundTag compound) {
-+      this.loadNbt(compound);
-+   }
-+
-+   private CompoundTag loadNbt(CompoundTag compound) {
 +      this.capNBT = compound.m_128441_("ForgeCaps") ? compound.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
 +      this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(compound.m_128461_("id")));
@@ -146,25 +136,48 @@
 +      if (compound.m_128425_("tag", 10)) {
 +         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
 +         this.f_41590_ = compound.m_128469_("tag").m_6426_();
++         this.m_41720_().m_142312_(this.f_41590_);
++         // CraftBukkit end
++      }
++
++      this.forgeInit();
++      if (this.m_41720_().isDamageable(this)) {
++         this.m_41721_(this.m_41773_());
++      }
++   }
++
+    private ItemStack(CompoundTag p_41608_) {
+-      this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
++      super(ItemStack.class, true);
++      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
++      Item rawItem =
++              this.f_41589_ = BuiltInRegistries.f_257033_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
+       this.f_41587_ = p_41608_.m_128445_("Count");
+       if (p_41608_.m_128425_("tag", 10)) {
++         // CraftBukkit start - make defensive copy as this data may be coming from the save thread
+          this.f_41590_ = p_41608_.m_128469_("tag");
           this.m_41720_().m_142312_(this.f_41590_);
 +         // CraftBukkit end
        }
  
--      if (this.m_41720_().m_41465_()) {
 +      this.forgeInit();
-+      if (this.m_41720_().isDamageable(this)) {
+       if (this.m_41720_().m_41465_()) {
           this.m_41721_(this.m_41773_());
        }
-+      return compound;
-+   }
-+
-+   private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
-+      CompoundTag c = this.loadNbt(p_41608_);
-+      this.f_41587_ = c.m_128445_("Count");
  
        this.m_41617_();
     }
++   public CompoundTag getForgeCaps() {
++      return this.serializeCaps();
++   }
++
++   public void setForgeCaps(CompoundTag nbt) {
++      this.capNBT = nbt;
++      if (nbt != null)
++         this.deserializeCaps(nbt);
++   }
++
 +   // Mohist end
  
     public static ItemStack m_41712_(CompoundTag p_41713_) {
@@ -630,7 +643,7 @@
 +   @Deprecated
 +   public void setItem(Item item) {
 +      this.f_41589_ = item;
-+      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item);
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item.m_5456_());
 +   }
 +   // CraftBukkit end
  

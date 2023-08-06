@@ -39,7 +39,7 @@
           if (itemstack.m_41619_()) {
 -            this.f_59044_[i] = p_238287_;
 +            // CraftBukkit start
-+            CampfireStartEvent event = new CampfireStartEvent(CraftBlock.at(this.f_58857_,this.f_58858_), CraftItemStack.asCraftMirror(itemstack), (CampfireRecipe) m_59051_(itemstack).get().toBukkitRecipe());
++            CampfireStartEvent event = new CampfireStartEvent(CraftBlock.at(this.f_58857_,this.f_58858_), CraftItemStack.asCraftMirror(p_238286_), (CampfireRecipe) m_59051_(p_238286_).get().toBukkitRecipe());
 +            this.f_58857_.getCraftServer().getPluginManager().callEvent(event);
 +            this.f_59044_[i] = event.getTotalCookTime(); // i -> event.getTotalCookTime()
 +            // CraftBukkit end

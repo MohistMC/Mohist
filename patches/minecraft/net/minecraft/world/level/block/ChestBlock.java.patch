@@ -38,24 +38,20 @@
        }
  
        public Optional<MenuProvider> m_7693_(ChestBlockEntity p_51602_) {
-@@ -270,8 +_,15 @@
+@@ -273,6 +_,13 @@
+       return this.m_5641_(p_51574_, p_51575_, p_51576_, false).m_5649_(f_51487_).orElse((MenuProvider)null);
+    }
  
-    @Nullable
-    public MenuProvider m_7246_(BlockState p_51574_, Level p_51575_, BlockPos p_51576_) {
--      return this.m_5641_(p_51574_, p_51575_, p_51576_, false).m_5649_(f_51487_).orElse((MenuProvider)null);
--   }
-+      return this.m_5641_(p_51574_, p_51575_, p_51576_, false).<Optional<MenuProvider>>m_5649_(f_51487_).orElse((MenuProvider)null);
-+   }
-+
 +   // CraftBukkit start
 +   @Nullable
 +   public MenuProvider getMenuProvider(BlockState p_51574_, Level p_51575_, BlockPos p_51576_, boolean ignoreObstructions) {
 +      return this.m_5641_(p_51574_, p_51575_, p_51576_, ignoreObstructions).m_5649_(f_51487_).orElse((MenuProvider) null);
 +   }
 +   // CraftBukkit end
- 
++
     public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> m_51517_(final LidBlockEntity p_51518_) {
        return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {
+          public Float2FloatFunction m_6959_(ChestBlockEntity p_51633_, ChestBlockEntity p_51634_) {
 @@ -335,7 +_,8 @@
     }
  

@@ -34,11 +34,17 @@
     protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
     public int f_58316_;
     int f_58317_;
-@@ -107,8 +_,10 @@
+@@ -103,12 +_,16 @@
+    };
+    private final Object2IntOpenHashMap<ResourceLocation> f_58320_ = new Object2IntOpenHashMap<>();
+    private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> f_222691_;
++   protected static BlockPos worldPosition$mohist;
+ 
     protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
        super(p_154991_, p_154992_, p_154993_);
        this.f_222691_ = RecipeManager.m_220267_((RecipeType)p_154994_);
 +      this.recipeType = p_154994_;
++      worldPosition$mohist = p_154992_;
     }
  
 +   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated

@@ -66,7 +66,7 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public void notifyTradeUpdated(ItemStack p_45308_) {
+        public void notifyTradeUpdated(ItemStack itemstack) {
 
         }
 

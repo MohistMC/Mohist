@@ -92,7 +92,7 @@
        ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
        ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
        ServerLevel serverlevel1;
-@@ -161,22 +_,38 @@
+@@ -161,22 +_,37 @@
        p_11263_.m_143425_(serverlevel1);
        String s1 = "local";
        if (p_11262_.m_129523_() != null) {
@@ -124,7 +124,6 @@
 -      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_256838_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), this.f_11207_, this.f_184208_, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
 +      // Spigot - view distance
 +      servergamepacketlistenerimpl.m_9829_(new ClientboundLoginPacket(p_11263_.m_19879_(), leveldata.m_5466_(), p_11263_.f_8941_.m_9290_(), p_11263_.f_8941_.m_9293_(), this.f_11195_.m_129784_(), this.f_256838_, serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), this.m_11310_(), serverlevel1.spigotConfig.viewDistance, serverlevel1.spigotConfig.simulationDistance, flag1, !flag, serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11263_.m_219759_()));
-+      p_11263_.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.f_244280_.m_245829_(serverlevel1.m_246046_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundCustomPayloadPacket(ClientboundCustomPayloadPacket.f_132012_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(this.m_7873_().m_130001_())));
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
@@ -249,12 +248,11 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -317,6 +_,8 @@
+@@ -317,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
 +      if (!p_11277_.getBukkitEntity().isPersistent()) return; // CraftBukkit
-+      if (p_11277_.f_8906_ == null) return; // ? who add? Mohist TODO
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {

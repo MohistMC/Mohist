@@ -110,7 +110,7 @@ public class BlockEventDispatcher {
                     // Update any tile entity data for this block
                     BlockEntity tileentity = serverLevel.getBlockEntity(pos);
                     if (tileentity != null) {
-                        serverPlayer.connection.send(Objects.requireNonNull(tileentity.getUpdatePacket()));
+                        serverPlayer.connection.send(tileentity.getUpdatePacket());
                     }
                     event.setCanceled(true);
                 }

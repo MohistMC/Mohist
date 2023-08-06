@@ -112,7 +112,7 @@
 +
 +   @Override
 +   public ResourceKey<LevelStem> getTypeKey() {
-+      return Level2LevelStem.getTypeKey(this);
++      return super.getTypeKey();
 +   }
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
@@ -585,7 +585,7 @@
     public MapItemSavedData m_7489_(String p_8785_) {
 -      return this.m_7654_().m_129783_().m_8895_().m_164858_(MapItemSavedData::m_164807_, p_8785_);
 +      // CraftBukkit start
-+      return (MapItemSavedData) this.m_7654_().m_129783_().m_8895_().m_164858_((nbttagcompound) -> {
++      return this.m_7654_().m_129783_().m_8895_().m_164858_((nbttagcompound) -> {
 +         // We only get here when the data file exists, but is not a valid map
 +         MapItemSavedData newMap = MapItemSavedData.m_164807_(nbttagcompound);
 +         newMap.id = p_8785_;

@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.mohistmc.inventory.MohistModsInventory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.Component;
@@ -42,6 +43,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
 import org.jetbrains.annotations.Nullable;
 
 public class NetworkHooks
@@ -204,8 +208,18 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         AbstractContainerMenu c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
+        // Mohist start - Custom Container compatible with mods
+        c.setTitle(containerSupplier.getDisplayName());
+        if (c.getBukkitView() == null) {
+            org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(c, player));
+            inventory.getType().setMods(true);
+            c.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, c);
+        }
+        c = CraftEventFactory.callInventoryOpenEvent(player, c);
+        if (c == null) return;
+        // Mohist end
         MenuType<?> type = c.getType();
-        PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
+        PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, c.getTitle(), output);
         NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 
         player.containerMenu = c;
