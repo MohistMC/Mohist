@@ -346,7 +346,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -899,25 +_,63 @@
+@@ -899,25 +_,66 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -357,6 +357,9 @@
 +
 +   // Mohist start
 +   public AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++   public void addEffectCause(EntityPotionEffectEvent.Cause cause) {
++      addEffectCause.set(cause);
++   }
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
@@ -460,18 +463,16 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -985,19 +_,50 @@
- 
+@@ -986,18 +_,48 @@
     }
  
-+   public AtomicReference<RegainReason> regainReason0 = new AtomicReference<>(RegainReason.CUSTOM);
     public void m_5634_(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
        float f = this.m_21223_();
        if (f > 0.0F) {
 -         this.m_21153_(f + p_21116_);
-+         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason0.getAndSet(RegainReason.CUSTOM));
++         EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, heal$regainReason.getAndSet(RegainReason.CUSTOM));
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
@@ -485,7 +486,7 @@
 +   }
  
 +   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason regainReason) {
-+      this.regainReason0.set(regainReason);
++      this.heal$regainReason(regainReason);
 +      this.m_5634_(p_21116_);
     }
  

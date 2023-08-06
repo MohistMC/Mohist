@@ -30,6 +30,14 @@
     protected Brain.Provider<Allay> m_5490_() {
        return Brain.m_21923_(f_218301_, f_218297_);
     }
+@@ -211,6 +_,7 @@
+    public void m_8107_() {
+       super.m_8107_();
+       if (!this.f_19853_.f_46443_ && this.m_6084_() && this.f_19797_ % 10 == 0) {
++         this.heal$regainReason(org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
+          this.m_5634_(1.0F);
+       }
+ 
 @@ -273,7 +_,12 @@
        ItemStack itemstack = p_218361_.m_21120_(p_218362_);
        ItemStack itemstack1 = this.m_21120_(InteractionHand.MAIN_HAND);

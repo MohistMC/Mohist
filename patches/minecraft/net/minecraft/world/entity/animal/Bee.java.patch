@@ -10,6 +10,15 @@
     Bee.BeePollinateGoal f_27699_;
     Bee.BeeGoToHiveGoal f_27700_;
     private Bee.BeeGoToKnownFlowerGoal f_27701_;
+@@ -231,7 +_,7 @@
+             }
+ 
+             if (i > 0) {
+-               ((LivingEntity)p_27722_).m_147207_(new MobEffectInstance(MobEffects.f_19614_, i * 20, 0), this);
++               ((LivingEntity)p_27722_).addEffect(new MobEffectInstance(MobEffects.f_19614_, i * 20, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK);
+             }
+          }
+ 
 @@ -472,7 +_,7 @@
           return false;
        } else {
@@ -37,7 +46,24 @@
        this.m_27832_(4, p_27926_);
     }
  
-@@ -614,8 +_,18 @@
+@@ -602,11 +_,14 @@
+       if (this.m_6673_(p_27762_)) {
+          return false;
+       } else {
+-         if (!this.f_19853_.f_46443_) {
++         // CraftBukkit start - Only stop pollinating if entity was damaged
++         boolean result = super.m_6469_(p_27762_, p_27763_);
++         if (result && !this.f_19853_.f_46443_) {
++            // CraftBukkit end
+             this.f_27699_.m_28087_();
+          }
+ 
+-         return super.m_6469_(p_27762_, p_27763_);
++         return result; // CraftBukkit
+       }
+    }
+ 
+@@ -614,10 +_,20 @@
        return MobType.f_21642_;
     }
  
@@ -48,11 +74,31 @@
 +
 +   private void jumpInLiquidInternal() {
        this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.01D, 0.0D));
-+   }
-+
+    }
+ 
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal();
-    }
- 
++   }
++
     public Vec3 m_7939_() {
+       return new Vec3(0.0D, (double)(0.5F * this.m_20192_()), (double)(this.m_20205_() * 0.2F));
+    }
+@@ -917,7 +_,7 @@
+                      ((BonemealableBlock)blockstate.m_60734_()).m_214148_((ServerLevel)Bee.this.f_19853_, Bee.this.f_19796_, blockpos, blockstate);
+                   }
+ 
+-                  if (flag) {
++                  if (flag && !org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate.m_61124_(integerproperty, blockstate.m_61143_(integerproperty) + 1)).isCancelled()) { // Spigot
+                      Bee.this.f_19853_.m_46796_(2005, blockpos, 0);
+                      Bee.this.f_19853_.m_46597_(blockpos, blockstate.m_61124_(integerproperty, Integer.valueOf(blockstate.m_61143_(integerproperty) + 1)));
+                      Bee.this.m_27871_();
+@@ -940,7 +_,7 @@
+ 
+       protected void m_5766_(Mob p_28035_, LivingEntity p_28036_) {
+          if (p_28035_ instanceof Bee && this.f_26135_.m_142582_(p_28036_)) {
+-            p_28035_.m_6710_(p_28036_);
++            p_28035_.setTarget(p_28036_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
+          }
+ 
+       }

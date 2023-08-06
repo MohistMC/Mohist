@@ -17,7 +17,7 @@
 +                                    // Note: This call to canEntitySpawn is erroneous, it is only provided for backwards compatibility.
 +                                    if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(phantom, p_64576_, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_(), null, MobSpawnType.NATURAL) == -1) { i--; continue; }
 +                                    if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(phantom, p_64576_, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_(), null, MobSpawnType.NATURAL))
-+                                    p_64576_.addEntityspawnReason.set(CreatureSpawnEvent.SpawnReason.NATURAL); // Mohist
++                                       phantom.spawnReason(CreatureSpawnEvent.SpawnReason.NATURAL); // Mohist
 +                                    p_64576_.m_47205_(phantom); // CraftBukkit
                                   }
  

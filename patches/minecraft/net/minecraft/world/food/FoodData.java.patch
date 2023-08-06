@@ -91,7 +91,7 @@
 -         if (this.f_38699_ >= 10) {
 +         if (this.f_38699_ >= this.saturatedRegenRate) { // CraftBukkit
              float f = Math.min(this.f_38697_, 6.0F);
-+            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.heal$regainReason(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(f / 6.0F);
              this.m_38703_(f);
 +            // entityhuman.causeFoodExhaustion(f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Mohist TODO
@@ -101,7 +101,7 @@
           ++this.f_38699_;
 -         if (this.f_38699_ >= 80) {
 +         if (this.f_38699_ >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
-+            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.heal$regainReason(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(1.0F);
              this.m_38703_(6.0F);
 +            // entityhuman.causeFoodExhaustion(6.0f, org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent // Mohist TODO

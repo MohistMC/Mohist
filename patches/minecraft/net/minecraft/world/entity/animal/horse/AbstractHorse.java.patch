@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+@@ -69,6 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
+ 
+ public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, PlayerRideableJumping, Saddleable {
+    public static final int f_149486_ = 400;
 @@ -108,6 +_,7 @@
     private float f_30516_;
     protected boolean f_30523_ = true;
@@ -8,7 +16,7 @@
  
     protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
        super(p_30531_, p_30532_);
-@@ -273,7 +_,7 @@
+@@ -273,9 +_,10 @@
        return 2;
     }
  
@@ -16,7 +24,10 @@
 +   public void m_30625_() {
        SimpleContainer simplecontainer = this.f_30520_;
        this.f_30520_ = new SimpleContainer(this.m_7506_());
++      this.f_30520_.setBukkitOwner((org.bukkit.entity.AbstractHorse) this.getBukkitEntity());
        if (simplecontainer != null) {
+          simplecontainer.m_19181_(this);
+          int i = Math.min(simplecontainer.m_6643_(), this.f_30520_.m_6643_());
 @@ -290,6 +_,7 @@
  
        this.f_30520_.m_19164_(this);
@@ -37,6 +48,31 @@
           }
  
           if (this.m_20160_() && this.f_30523_) {
+@@ -382,7 +_,7 @@
+    }
+ 
+    public int m_7555_() {
+-      return 100;
++      return this.maxDomestication; // CraftBukkit - return stored max domestication instead of 100
+    }
+ 
+    protected float m_6121_() {
+@@ -452,6 +_,7 @@
+       }
+ 
+       if (this.m_21223_() < this.m_21233_() && f > 0.0F) {
++         this.heal$regainReason(EntityRegainHealthEvent.RegainReason.EATING);
+          this.m_5634_(f);
+          flag = true;
+       }
+@@ -524,6 +_,7 @@
+       super.m_8107_();
+       if (!this.f_19853_.f_46443_ && this.m_6084_()) {
+          if (this.f_19796_.m_188503_(900) == 0 && this.f_20919_ == 0) {
++            this.heal$regainReason(EntityRegainHealthEvent.RegainReason.REGEN);
+             this.m_5634_(1.0F);
+          }
+ 
 @@ -702,6 +_,7 @@
                 this.m_20334_(vec3.f_82479_, d1, vec3.f_82481_);
                 this.m_30655_(true);
@@ -45,6 +81,47 @@
                 if (f1 > 0.0F) {
                    float f2 = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
                    float f3 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
+@@ -747,6 +_,8 @@
+          p_30589_.m_128362_("Owner", this.m_30615_());
+       }
+ 
++      p_30589_.m_128405_("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
++
+       if (!this.f_30520_.m_8020_(0).m_41619_()) {
+          p_30589_.m_128365_("SaddleItem", this.f_30520_.m_8020_(0).m_41739_(new CompoundTag()));
+       }
+@@ -771,6 +_,12 @@
+          this.m_30586_(uuid);
+       }
+ 
++      // CraftBukkit start
++      if (p_30565_.m_128441_("Bukkit.MaxDomestication")) {
++         this.maxDomestication = p_30565_.m_128451_("Bukkit.MaxDomestication");
++      }
++      // CraftBukkit end
++
+       if (p_30565_.m_128425_("SaddleItem", 10)) {
+          ItemStack itemstack = ItemStack.m_41712_(p_30565_.m_128469_("SaddleItem"));
+          if (itemstack.m_150930_(Items.f_42450_)) {
+@@ -838,6 +_,18 @@
+    }
+ 
+    public void m_7199_(int p_30574_) {
++      // CraftBukkit start
++      float power;
++      if (p_30574_ >= 90) {
++         power = 1.0F;
++      } else {
++         power = 0.4F + 0.4F * (float) p_30574_ / 90.0F;
++      }
++      org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory.callHorseJumpEvent(this, power);
++      if (event.isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       this.f_30510_ = true;
+       this.m_30613_();
+       this.m_7486_();
 @@ -1033,6 +_,25 @@
  
        this.m_214179_(p_30555_.m_213780_());

@@ -308,13 +308,12 @@
           if (this.m_20159_()) {
              Entity entity = this.m_20202_();
              this.m_8127_();
-@@ -1172,6 +_,20 @@
+@@ -1172,6 +_,19 @@
        }
     }
  
 +   // Mohist start
 +   public AtomicReference<EntityTransformEvent.TransformReason> transformReason = new AtomicReference<>(EntityTransformEvent.TransformReason.UNKNOWN);
-+   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   public void transformReasonAndspawnReason(EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      this.transformReason.set(transformReason);
 +      this.spawnReason.set(spawnReason);

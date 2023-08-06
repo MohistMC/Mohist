@@ -1,13 +1,15 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -15,6 +_,7 @@
+@@ -15,7 +_,9 @@
  import java.util.Optional;
  import java.util.Set;
  import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiConsumer;
  import java.util.function.Predicate;
+ import java.util.stream.Stream;
 @@ -31,6 +_,7 @@
  import net.minecraft.commands.arguments.EntityAnchorArgument;
  import net.minecraft.core.BlockPos;
@@ -16,7 +18,7 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.BlockParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -116,9 +_,36 @@
+@@ -116,9 +_,38 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -35,12 +37,14 @@
 +import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
++import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityAirChangeEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityCombustEvent;
 +import org.bukkit.event.entity.EntityDropItemEvent;
 +import org.bukkit.event.entity.EntityPortalEvent;
 +import org.bukkit.event.entity.EntityPoseChangeEvent;
++import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -81,7 +85,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -230,13 +_,71 @@
+@@ -230,13 +_,85 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -102,6 +106,20 @@
 +   public long activatedTick = Integer.MIN_VALUE;
 +   public void inactiveTick() { }
 +   // Spigot end
++
++   // Mohist start
++   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
++
++   public void spawnReason(CreatureSpawnEvent.SpawnReason spawnReason) {
++      this.spawnReason.set(spawnReason);
++   }
++
++   public AtomicReference<EntityRegainHealthEvent.RegainReason> heal$regainReason = new AtomicReference<>(EntityRegainHealthEvent.RegainReason.CUSTOM);
++
++   public void heal$regainReason(EntityRegainHealthEvent.RegainReason regainReason){
++      heal$regainReason.set(regainReason);
++   }
++   // Mohist end
 +
 +   public float getBukkitYaw() {
 +      return this.f_19857_;

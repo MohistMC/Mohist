@@ -1,8 +1,19 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -60,7 +_,7 @@
+@@ -46,6 +_,7 @@
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.CraftingContainer;
+ import net.minecraft.world.inventory.MenuType;
++import net.minecraft.world.inventory.ResultContainer;
+ import net.minecraft.world.item.DyeColor;
+ import net.minecraft.world.item.DyeItem;
+ import net.minecraft.world.item.ItemStack;
+@@ -59,8 +_,10 @@
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
++import org.bukkit.event.entity.SheepRegrowWoolEvent;
++import org.bukkit.inventory.InventoryView;
  
 -public class Sheep extends Animal implements Shearable {
 +public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
@@ -18,7 +29,46 @@
           if (!this.f_19853_.f_46443_ && this.m_6220_()) {
              this.m_5851_(SoundSource.PLAYERS);
              this.m_146852_(GameEvent.f_157781_, p_29853_);
-@@ -362,5 +_,28 @@
+@@ -234,7 +_,9 @@
+       int i = 1 + this.f_19796_.m_188503_(3);
+ 
+       for(int j = 0; j < i; ++j) {
++         this.forceDrops = true; // CraftBukkit
+          ItemEntity itementity = this.m_20000_(f_29800_.get(this.m_29874_()), 1);
++         this.forceDrops = false; // CraftBukkit
+          if (itementity != null) {
+             itementity.m_20256_(itementity.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F), (double)(this.f_19796_.m_188501_() * 0.05F), (double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F)));
+          }
+@@ -320,6 +_,12 @@
+    }
+ 
+    public void m_8035_() {
++      // CraftBukkit start
++      SheepRegrowWoolEvent event = new SheepRegrowWoolEvent((org.bukkit.entity.Sheep) this.getBukkitEntity());
++      this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++      if (event.isCancelled()) return;
++      // CraftBukkit end
+       super.m_8035_();
+       this.m_29878_(false);
+       if (this.m_6162_()) {
+@@ -354,13 +_,44 @@
+          public boolean m_6875_(Player p_29888_) {
+             return false;
+          }
++
++         // CraftBukkit start
++         @Override
++         public InventoryView getBukkitView() {
++            return null; // TODO: O.O
++         }
++         // CraftBukkit end
+       }, 2, 1);
+       craftingcontainer.m_6836_(0, new ItemStack(DyeItem.m_41082_(p_29832_)));
+       craftingcontainer.m_6836_(1, new ItemStack(DyeItem.m_41082_(p_29833_)));
++      craftingcontainer.resultInventory = new ResultContainer(); // CraftBukkit - add result slot for event
+       return craftingcontainer;
+    }
  
     protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {
        return 0.95F * p_29851_.f_20378_;

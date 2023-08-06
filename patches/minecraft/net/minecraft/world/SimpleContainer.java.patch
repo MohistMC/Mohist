@@ -11,7 +11,7 @@
  
  public class SimpleContainer implements Container, StackedContentsCompatible {
     private final int f_19146_;
-@@ -19,9 +_,63 @@
+@@ -19,9 +_,67 @@
     @Nullable
     private List<ContainerListener> f_19148_;
  
@@ -38,6 +38,10 @@
 +
 +   public InventoryHolder getOwner() {
 +      return bukkitOwner;
++   }
++
++   public void setBukkitOwner(InventoryHolder holder) {
++      bukkitOwner = holder;
 +   }
 +
 +   @Override
