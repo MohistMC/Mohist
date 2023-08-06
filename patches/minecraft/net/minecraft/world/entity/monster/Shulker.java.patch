@@ -24,12 +24,12 @@
                    this.m_19877_();
                    this.m_149788_(direction);
                    this.m_5496_(SoundEvents.f_12418_, 1.0F, 1.0F);
-@@ -423,9 +_,8 @@
+@@ -423,9 +_,9 @@
              if (shulker != null) {
                 shulker.m_28464_(this.m_28554_());
                 shulker.m_20219_(vec3);
--               this.m_9236_().m_7967_(shulker);
-+               this.m_9236_().addFreshEntity(shulker, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - the mysteries of life
++               shulker.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);  // CraftBukkit - the mysteries of life
+                this.m_9236_().m_7967_(shulker);
              }
 -
           }

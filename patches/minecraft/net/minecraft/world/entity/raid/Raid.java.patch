@@ -126,7 +126,7 @@
              p_37715_.m_6518_(this.f_37675_, this.f_37675_.m_6436_(p_37716_), MobSpawnType.EVENT, (SpawnGroupData)null, (CompoundTag)null);
              p_37715_.m_7895_(p_37714_, false);
              p_37715_.m_6853_(true);
-+            this.f_37675_.addEntityspawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
++            p_37715_.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.RAID); // CraftBukkit
              this.f_37675_.m_47205_(p_37715_);
           }
        }

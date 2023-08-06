@@ -51,7 +51,7 @@
  
        this.m_9236_().m_7605_(this, (byte)18);
     }
-@@ -206,15 +_,43 @@
+@@ -206,15 +_,44 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);
@@ -82,7 +82,8 @@
 +         }
 +         experience = entityBreedEvent.getExperience();
 +         this.finalizeSpawnChildFromBreeding(p_27564_, p_27565_, ageablemob, experience);
-+         p_27564_.addFreshEntityWithPassengers(ageablemob, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++         ageablemob.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++         p_27564_.m_47205_(ageablemob);
 +         // CraftBukkit end
        }
     }

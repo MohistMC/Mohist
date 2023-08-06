@@ -64,12 +64,12 @@
           areaeffectcloud.m_19712_(2.5F);
           areaeffectcloud.m_19732_(-0.5F);
           areaeffectcloud.m_19740_(10);
-@@ -246,7 +_,7 @@
+@@ -245,7 +_,7 @@
+          for(MobEffectInstance mobeffectinstance : collection) {
              areaeffectcloud.m_19716_(new MobEffectInstance(mobeffectinstance));
           }
- 
--         this.m_9236_().m_7967_(areaeffectcloud);
-+         this.m_9236_().addFreshEntity(areaeffectcloud, CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
+-
++         areaeffectcloud.spawnReason.set(CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
+          this.m_9236_().m_7967_(areaeffectcloud);
        }
  
-    }

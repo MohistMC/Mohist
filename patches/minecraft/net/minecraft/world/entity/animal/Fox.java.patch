@@ -73,14 +73,14 @@
              if (serverplayer2 != null) {
                 serverplayer2.m_36220_(Stats.f_12937_);
                 CriteriaTriggers.f_10581_.m_147278_(serverplayer2, this.f_25113_, this.f_25115_, fox);
-@@ -832,12 +_,14 @@
+@@ -832,12 +_,15 @@
              this.f_25115_.m_146762_(6000);
              this.f_25113_.m_27594_();
              this.f_25115_.m_27594_();
 -            fox.m_146762_(-24000);
 -            fox.m_7678_(this.f_25113_.m_20185_(), this.f_25113_.m_20186_(), this.f_25113_.m_20189_(), 0.0F, 0.0F);
--            serverlevel.m_47205_(fox);
-+            serverlevel.addFreshEntityWithPassengers(fox, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
++            fox.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
+             serverlevel.m_47205_(fox);
              this.f_25114_.m_7605_(this.f_25113_, (byte)18);
              if (this.f_25114_.m_46469_().m_46207_(GameRules.f_46135_)) {
 -               this.f_25114_.m_7967_(new ExperienceOrb(this.f_25114_, this.f_25113_.m_20185_(), this.f_25113_.m_20186_(), this.f_25113_.m_20189_(), this.f_25113_.m_217043_().m_188503_(7) + 1));

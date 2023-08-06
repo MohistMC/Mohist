@@ -9,7 +9,7 @@
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -46,11 +_,16 @@
+@@ -46,12 +_,18 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.f_8906_.m_6198_() && serverplayer.m_9236_() == this.m_9236_() && !serverplayer.m_5803_()) {
@@ -19,14 +19,15 @@
                    Endermite endermite = EntityType.f_20567_.m_20615_(this.m_9236_());
                    if (endermite != null) {
                       endermite.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
--                     this.m_9236_().m_7967_(endermite);
-+                     this.m_9236_().addFreshEntity(endermite, CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
-+                  }
++                     endermite.spawnReason.set(CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
+                      this.m_9236_().m_7967_(endermite);
+                   }
 +                  if (entity.m_20159_()) {
 +                     entity.m_8127_();
-                   }
++                  }
                 }
  
+                if (entity.m_20159_()) {
 @@ -60,8 +_,12 @@
                    entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
                 }

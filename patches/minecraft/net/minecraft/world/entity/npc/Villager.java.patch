@@ -137,20 +137,19 @@
           f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           if (witch != null) {
-@@ -735,7 +_,12 @@
+@@ -735,6 +_,12 @@
              }
  
              witch.m_21530_();
--            p_35409_.m_47205_(witch);
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
-+            p_35409_.addFreshEntityWithPassengers(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            witch.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             p_35409_.m_47205_(witch);
              this.m_35524_();
              this.m_146870_();
-          } else {
 @@ -816,7 +_,7 @@
              return p_186293_.m_35392_(p_35399_);
           }).limit(5L).collect(Collectors.toList());

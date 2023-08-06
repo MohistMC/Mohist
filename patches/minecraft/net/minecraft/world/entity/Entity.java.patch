@@ -37,7 +37,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -118,9 +_,36 @@
+@@ -118,9 +_,37 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -56,6 +56,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Vehicle;
++import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityAirChangeEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityCombustEvent;
@@ -120,7 +121,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -236,13 +_,88 @@
+@@ -236,13 +_,90 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -142,6 +143,8 @@
 +   public long activatedTick = Integer.MIN_VALUE;
 +   public void inactiveTick() { }
 +   // Spigot end
++
++   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +
 +   public float getBukkitYaw() {
 +      return this.f_19857_;

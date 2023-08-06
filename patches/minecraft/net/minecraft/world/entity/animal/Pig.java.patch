@@ -17,18 +17,18 @@
           ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
           if (zombifiedpiglin != null) {
              zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
-@@ -214,7 +_,14 @@
+@@ -214,7 +_,15 @@
              }
  
              zombifiedpiglin.m_21530_();
--            p_29473_.m_7967_(zombifiedpiglin);
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit - added a reason for spawning this creature
-+            p_29473_.addFreshEntity(zombifiedpiglin, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            zombifiedpiglin.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+             p_29473_.m_7967_(zombifiedpiglin);
 +            // CraftBukkit end
              this.m_146870_();
           } else {

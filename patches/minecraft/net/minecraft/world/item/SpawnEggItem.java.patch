@@ -43,15 +43,14 @@
     }
  
     public Optional<Mob> m_43215_(Player p_43216_, Mob p_43217_, EntityType<? extends Mob> p_43218_, ServerLevel p_43219_, Vec3 p_43220_, ItemStack p_43221_) {
-@@ -170,7 +_,7 @@
+@@ -170,6 +_,7 @@
                 return Optional.empty();
              } else {
                 mob.m_7678_(p_43220_.m_7096_(), p_43220_.m_7098_(), p_43220_.m_7094_(), 0.0F, 0.0F);
--               p_43219_.m_47205_(mob);
-+               p_43219_.addFreshEntityWithPassengers(mob, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
++               mob.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
+                p_43219_.m_47205_(mob);
                 if (p_43221_.m_41788_()) {
                    mob.m_6593_(p_43221_.m_41786_());
-                }
 @@ -183,5 +_,9 @@
              }
           }

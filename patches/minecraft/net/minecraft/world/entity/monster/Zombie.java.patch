@@ -104,20 +104,19 @@
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.m_216271_(this.f_19796_, 7, 40) * Mth.m_216271_(this.f_19796_, -1, 1);
-@@ -290,9 +_,10 @@
+@@ -290,8 +_,10 @@
                 if (NaturalSpawner.m_47051_(spawnplacements$type, this.m_9236_(), blockpos, entitytype) && SpawnPlacements.m_217074_(entitytype, serverlevel, MobSpawnType.REINFORCEMENT, blockpos, this.m_9236_().f_46441_)) {
                    zombie.m_6034_((double)i1, (double)j1, (double)k1);
                    if (!this.m_9236_().m_45914_((double)i1, (double)j1, (double)k1, 7.0D) && this.m_9236_().m_45784_(zombie) && this.m_9236_().m_45786_(zombie) && !this.m_9236_().m_46855_(zombie.m_20191_())) {
 -                     zombie.m_6710_(livingentity);
 -                     zombie.m_6518_(serverlevel, this.m_9236_().m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
--                     serverlevel.m_47205_(zombie);
 +                     if (livingentity != null)
 +                     zombie.setTarget(livingentity, EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
 +                     zombie.m_6518_(serverlevel, this.f_19853_.m_6436_(zombie.m_20183_()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
-+                     serverlevel.addFreshEntityWithPassengers(zombie, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
++                     zombie.spawnReason.set(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
+                      serverlevel.m_47205_(zombie);
                       this.m_21051_(Attributes.f_22287_).m_22125_(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
                       zombie.m_21051_(Attributes.f_22287_).m_22125_(new AttributeModifier("Zombie reinforcement callee charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
-                      break;
 @@ -310,7 +_,14 @@
        if (flag) {
           float f = this.m_9236_().m_6436_(this.m_20183_()).m_19056_();
@@ -179,12 +178,13 @@
     protected float m_6431_(Pose p_34313_, EntityDimensions p_34314_) {
        return this.m_6162_() ? 0.93F : 1.74F;
     }
-@@ -438,7 +_,7 @@
+@@ -438,7 +_,8 @@
                       chicken1.m_6518_(p_34297_, p_34298_, MobSpawnType.JOCKEY, (SpawnGroupData)null, (CompoundTag)null);
                       chicken1.m_28273_(true);
                       this.m_20329_(chicken1);
 -                     p_34297_.m_7967_(chicken1);
-+                     p_34297_.addFreshEntity(chicken1, CreatureSpawnEvent.SpawnReason.MOUNT); // CraftBukkit
++                     chicken1.spawnReason.set(CreatureSpawnEvent.SpawnReason.MOUNT);
++                     p_34297_.m_7967_(chicken1); // CraftBukkit
                    }
                 }
              }

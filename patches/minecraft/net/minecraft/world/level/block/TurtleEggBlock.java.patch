@@ -59,15 +59,14 @@
              p_222645_.m_5594_((Player)null, p_222646_, SoundEvents.f_12535_, SoundSource.BLOCKS, 0.7F, 0.9F + p_222647_.m_188501_() * 0.2F);
              p_222645_.m_7471_(p_222646_, false);
  
-@@ -98,7 +_,7 @@
+@@ -98,6 +_,7 @@
                    turtle.m_146762_(-24000);
                    turtle.m_30219_(p_222646_);
                    turtle.m_7678_((double)p_222646_.m_123341_() + 0.3D + (double)j * 0.2D, (double)p_222646_.m_123342_(), (double)p_222646_.m_123343_() + 0.3D, 0.0F, 0.0F);
--                  p_222645_.m_7967_(turtle);
-+                  p_222645_.addFreshEntity(turtle, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG); // CraftBukkit
++                  turtle.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
+                   p_222645_.m_7967_(turtle);
                 }
              }
-          }
 @@ -158,7 +_,7 @@
           if (!(p_57769_ instanceof LivingEntity)) {
              return false;

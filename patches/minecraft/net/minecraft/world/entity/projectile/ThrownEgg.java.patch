@@ -18,7 +18,7 @@
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -42,19 +_,47 @@
+@@ -42,19 +_,48 @@
  
     protected void m_6532_(HitResult p_37488_) {
        super.m_6532_(p_37488_);
@@ -69,7 +69,8 @@
 +                     if (entity.getBukkitEntity() instanceof Ageable) {
 +                        ((Ageable) entity.getBukkitEntity()).setBaby();
 +                     }
-+                     f_19853_.getWorld().addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                     entity.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                     m_9236_().m_7967_(entity);
 +                     // CraftBukkit end
 +                  }
                 }
