@@ -19,14 +19,15 @@
 package com.mohistmc.api;
 
 import com.mojang.authlib.GameProfile;
-import java.net.SocketAddress;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import java.net.SocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerAPI {
 

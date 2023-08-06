@@ -23,13 +23,6 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.i18n.i18n;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
@@ -38,6 +31,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class MohistCommand extends Command {
 

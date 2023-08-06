@@ -19,23 +19,20 @@
 package com.mohistmc.api;
 
 import io.netty.util.internal.ConcurrentSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerAPI {
 

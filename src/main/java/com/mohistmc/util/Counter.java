@@ -2,11 +2,11 @@ package com.mohistmc.util;
 
 
 import com.google.common.collect.ForwardingMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Mgazul by MohistMC

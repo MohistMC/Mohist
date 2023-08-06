@@ -25,15 +25,9 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.entity.CraftCustomEntity;
 import com.mohistmc.util.MohistEnumHelper;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
@@ -64,13 +58,17 @@ import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.permissions.DefaultPermissions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ForgeInjectBukkit {
 

@@ -93,14 +93,8 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    IInventory iinventory = HopperTileEntity.getContainerAt(world, pos.relative(enumfacing));
-                    org.bukkit.inventory.Inventory destinationInventory;
-                    // Have to special case large chests as they work oddly
-                    if (iinventory instanceof ChestBlock.DoubleInventory) {
-                        destinationInventory = new CraftInventoryDoubleChest((ChestBlock.DoubleInventory) iinventory);
-                    } else {
-                        destinationInventory = InventoryOwner.get(iinventory).getInventory();
-                    }
+                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((TileEntity) dropper);
+                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
@@ -149,19 +143,9 @@ public class VanillaInventoryCodeHooks
 
                                 // CraftBukkit start - Call event when pushing items into other inventories
                                 CraftItemStack oitemstack = CraftItemStack.asCraftMirror(hopper.removeItem(i, hopper.level.spigotConfig.hopperAmount)); // Spigot
-                                IInventory iinventory = hopper.getAttachedContainer();
-                                Inventory destinationInventory;
-                                // Have to special case large chests as they work oddly
-                                if (iinventory instanceof DoubleSidedInventory) {
-                                    destinationInventory = new org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
-                                } else {
-                                    InventoryHolder owner = InventoryOwner.get(iinventory);
-                                    destinationInventory = (owner != null ? owner.getInventory() : new CraftCustomInventory(iinventory).getInventory());
-                                }
-
-                                InventoryHolder owner = InventoryOwner.get((TileEntity) hopper);
-                                Inventory hopperOwner = (owner != null ? owner.getInventory() : new CraftCustomInventory(hopper).getInventory());
-                                InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopperOwner, oitemstack.clone(), destinationInventory, true);
+                                org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((TileEntity) hopper);
+                                org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
+                                InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                                 Bukkit.getPluginManager().callEvent(event);
                                 if (event.isCancelled()) {
                                     hopper.setItem(i, originalSlotContents);

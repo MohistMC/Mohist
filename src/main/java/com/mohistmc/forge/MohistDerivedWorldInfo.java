@@ -1,7 +1,6 @@
 package com.mohistmc.forge;
 
 import com.mojang.serialization.Lifecycle;
-import java.util.UUID;
 import net.minecraft.command.TimerCallbackManager;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.server.MinecraftServer;
@@ -15,6 +14,8 @@ import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.storage.DerivedWorldInfo;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.ServerWorldInfo;
+
+import java.util.UUID;
 
 public class MohistDerivedWorldInfo extends ServerWorldInfo {
 

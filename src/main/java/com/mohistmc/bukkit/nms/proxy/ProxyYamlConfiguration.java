@@ -18,12 +18,13 @@
 
 package com.mohistmc.bukkit.nms.proxy;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.reader.ReaderException;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.yaml.snakeyaml.reader.ReaderException;
 
 /**
  *

@@ -18,10 +18,10 @@
 
 package com.mohistmc.command;
 
-import java.io.File;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.io.File;
 
 import static com.mohistmc.network.download.UpdateUtils.downloadFile;
 

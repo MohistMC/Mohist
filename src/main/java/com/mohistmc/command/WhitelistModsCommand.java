@@ -20,8 +20,6 @@ package com.mohistmc.command;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.ServerAPI;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

@@ -18,9 +18,6 @@
 
 package com.mohistmc.bukkit;
 
-import java.net.InetSocketAddress;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
@@ -28,6 +25,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftIconCache;
 import org.bukkit.entity.Player;
+
+import java.net.InetSocketAddress;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 

@@ -19,13 +19,14 @@
 package com.mohistmc.util.pluginmanager;
 
 import com.mohistmc.util.i18n.i18n;
-import java.io.File;
-import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class PluginManagers {
 

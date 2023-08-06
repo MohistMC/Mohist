@@ -25,6 +25,14 @@ import com.mohistmc.bukkit.nms.proxy.ProxyMethodHandlesLookup;
 import com.mohistmc.bukkit.nms.proxy.ProxyYamlConfiguration;
 import com.mohistmc.bukkit.nms.proxy.asm.ProxyClassWriter;
 import com.mohistmc.bukkit.nms.utils.ASMUtils;
+import net.minecraftforge.server.ServerMain;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.MethodRemapper;
+import org.objectweb.asm.commons.Remapper;
+
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -36,13 +44,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.minecraftforge.server.ServerMain;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.MethodRemapper;
-import org.objectweb.asm.commons.Remapper;
 
 /**
  *
