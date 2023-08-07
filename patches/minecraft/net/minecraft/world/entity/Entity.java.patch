@@ -121,7 +121,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -236,13 +_,90 @@
+@@ -236,13 +_,93 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -146,6 +146,9 @@
 +
 +   public AtomicReference<CreatureSpawnEvent.SpawnReason> spawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
 +
++   public void spawnReason(CreatureSpawnEvent.SpawnReason spawnReason) {
++      this.spawnReason.set(spawnReason);
++   }
 +   public float getBukkitYaw() {
 +      return this.f_19857_;
 +   }

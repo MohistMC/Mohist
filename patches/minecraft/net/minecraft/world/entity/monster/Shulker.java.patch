@@ -28,7 +28,7 @@
              if (shulker != null) {
                 shulker.m_28464_(this.m_28554_());
                 shulker.m_20219_(vec3);
-+               shulker.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);  // CraftBukkit - the mysteries of life
++               shulker.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);  // CraftBukkit - the mysteries of life
                 this.m_9236_().m_7967_(shulker);
              }
 -

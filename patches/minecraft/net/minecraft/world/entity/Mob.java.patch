@@ -336,7 +336,7 @@
 +   public AtomicReference<EntityTransformEvent.TransformReason> transformReason = new AtomicReference<>(EntityTransformEvent.TransformReason.UNKNOWN);
 +   public void transformReasonAndspawnReason(EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      this.transformReason.set(transformReason);
-+      this.spawnReason.set(spawnReason);
++      this.spawnReason(spawnReason);
 +   }
 +   @Nullable
 +   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {

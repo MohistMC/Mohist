@@ -69,7 +69,7 @@
              areaeffectcloud.m_19716_(new MobEffectInstance(mobeffectinstance));
           }
 -
-+         areaeffectcloud.spawnReason.set(CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
++         areaeffectcloud.spawnReason(CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
           this.m_9236_().m_7967_(areaeffectcloud);
        }
  

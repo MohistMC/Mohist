@@ -4,7 +4,7 @@
                 vex.m_33994_(Evoker.this);
                 vex.m_34033_(blockpos);
                 vex.m_33987_(20 * (30 + Evoker.this.f_19796_.m_188503_(90)));
-+               vex.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
++               vex.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
                 serverlevel.m_47205_(vex);
              }
           }

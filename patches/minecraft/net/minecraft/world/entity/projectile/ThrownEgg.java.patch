@@ -69,7 +69,7 @@
 +                     if (entity.getBukkitEntity() instanceof Ageable) {
 +                        ((Ageable) entity.getBukkitEntity()).setBaby();
 +                     }
-+                     entity.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                     entity.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
 +                     m_9236_().m_7967_(entity);
 +                     // CraftBukkit end
 +                  }

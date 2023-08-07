@@ -27,7 +27,7 @@
 +               return;
 +            }
 +            // CraftBukkit - added a reason for spawning this creature
-+            zombifiedpiglin.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            zombifiedpiglin.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
              p_29473_.m_7967_(zombifiedpiglin);
 +            // CraftBukkit end
              this.m_146870_();

@@ -395,7 +395,7 @@
        }
  
        this.m_7726_().m_8483_().m_78151_();
-@@ -807,10 +_,30 @@
+@@ -807,10 +_,28 @@
        return this.m_8872_(p_8848_);
     }
  
@@ -412,7 +412,7 @@
 +      // SPIGOT-6415: Don't call spawn event for entities which travel trough worlds,
 +      // since it is only an implementation detail, that a new entity is created when
 +      // they are traveling between worlds.
-+      p_143335_.spawnReason.set(null); // Mohist
++      p_143335_.spawnReason(null); // Mohist
        this.m_8872_(p_143335_);
     }
  
@@ -420,8 +420,6 @@
 +      this.addEntity(entity, reason);
 +   }
 +   // CraftBukkit end
-+
-+
 +
     public void m_8622_(ServerPlayer p_8623_) {
        this.m_8853_(p_8623_);
@@ -466,7 +464,7 @@
  
 +   // Mohist start
 +   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      entity.spawnReason.set(spawnReason);
++      entity.spawnReason(spawnReason);
 +      return m_8872_(entity);
 +   }
 +   // Mohist end

@@ -63,7 +63,7 @@
                    turtle.m_146762_(-24000);
                    turtle.m_30219_(p_222646_);
                    turtle.m_7678_((double)p_222646_.m_123341_() + 0.3D + (double)j * 0.2D, (double)p_222646_.m_123342_(), (double)p_222646_.m_123343_() + 0.3D, 0.0F, 0.0F);
-+                  turtle.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                  turtle.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
                    p_222645_.m_7967_(turtle);
                 }
              }

@@ -71,7 +71,7 @@
 +            if (CraftEventFactory.callEntityTransformEvent(this, cow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return java.util.Collections.emptyList();
 +            }
-+            cow.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
++            cow.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
              this.m_9236_().m_7967_(cow);
  
 +            this.m_146870_(); // CraftBukkit - from above
