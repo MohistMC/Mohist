@@ -74,7 +74,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -91,15 +_,87 @@
+@@ -91,15 +_,86 @@
     public final Random f_46441_ = new Random();
     final DimensionType f_46445_;
     private final Holder<DimensionType> f_204147_;
@@ -92,7 +92,6 @@
 +   private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
 +
-+   private ResourceKey<LevelStem> typeKey;
 +   public CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
@@ -131,7 +130,7 @@
 +   }
 +
 +   public ResourceKey<LevelStem> getTypeKey() {
-+      return typeKey;
++      return ResourceKey.m_135785_(Registry.f_122820_, f_46421_.m_135782_());
 +   }
 +
 +   public static void setGeneratorAndEnv(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env){
