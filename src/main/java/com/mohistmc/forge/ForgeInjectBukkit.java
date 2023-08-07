@@ -15,6 +15,7 @@ import net.minecraft.stats.StatType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
@@ -34,6 +35,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
@@ -78,6 +80,7 @@ public class ForgeInjectBukkit {
         //addEnumArt();
         addEnumParticle();
         addStatistic();
+        addEndDragonPhase();
     }
 
 
@@ -262,6 +265,15 @@ public class ForgeInjectBukkit {
                 statisticMap.put(statType, statistic);
                 MohistMC.LOGGER.debug("Registered forge StatType as Statistic(Bukkit) {}", statistic.name());
             }
+        }
+    }
+
+    public static void addEndDragonPhase() {
+        var max = EnderDragonPhase.getCount();
+        for (var id = EnderDragon.Phase.values().length; id < max; id++) {
+            var name = "MOD_PHASE_" + id;
+            EnderDragon.Phase newPhase = MohistDynamEnum.addEnum0(EnderDragon.Phase.class, name, new Class[0]);
+            MohistMC.LOGGER.debug("Registered {} as ender dragon phase {}", name, newPhase);
         }
     }
 
