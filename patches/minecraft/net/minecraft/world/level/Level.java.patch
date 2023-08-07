@@ -74,7 +74,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -91,15 +_,86 @@
+@@ -91,29 +_,100 @@
     public final Random f_46441_ = new Random();
     final DimensionType f_46445_;
     private final Holder<DimensionType> f_204147_;
@@ -146,6 +146,12 @@
 +      this.ticksPerWaterAmbientSpawns = this.getCraftServer().getTicksPerWaterAmbientSpawns(); // CraftBukkit
 +      this.ticksPerWaterUndergroundCreatureSpawns = this.getCraftServer().getTicksPerWaterUndergroundCreatureSpawns(); // CraftBukkit
 +      this.ticksPerAmbientSpawns = this.getCraftServer().getTicksPerAmbientSpawns(); // CraftBukkit
+       this.f_46446_ = p_204152_;
+       this.f_46442_ = p_204149_;
+       this.f_204147_ = p_204151_;
+       this.f_46445_ = p_204151_.m_203334_();
+       this.f_46421_ = p_204150_;
+       this.f_46443_ = p_204153_;
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
@@ -159,10 +165,6 @@
 +      if (environment == null) {
 +         environment = ForgeInjectBukkit.environment.get(getTypeKey());
 +      }
-       this.f_46446_ = p_204152_;
-       this.f_46442_ = p_204149_;
-       this.f_204147_ = p_204151_;
-@@ -109,11 +_,11 @@
        if (this.f_46445_.m_63959_() != 1.0D) {
           this.f_46447_ = new WorldBorder() {
              public double m_6347_() {
