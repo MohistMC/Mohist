@@ -102,13 +102,14 @@
           return p_203762_.m_129783_().m_8895_();
        });
        this.f_8552_ = new PortalForcer(this);
-@@ -223,6 +_,10 @@
+@@ -223,6 +_,11 @@
        }
  
        this.f_143245_ = new SleepStatus();
 +      this.initCapabilities();
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      m_6857_().world = this;
++      serverLevelDataCB.setWorld(this);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
  
@@ -236,52 +237,40 @@
        }
     }
  
-@@ -739,16 +_,42 @@
-       return list.isEmpty() ? null : list.get(this.f_46441_.nextInt(list.size()));
+@@ -743,14 +_,33 @@
+       return this.m_8872_(p_8837_);
     }
  
-+
-+   public CreatureSpawnEvent.SpawnReason addFreshSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT;
-+   public void resetAddFreshSpawnReason() {
-+      addFreshSpawnReason = CreatureSpawnEvent.SpawnReason.DEFAULT;
-+   }
-    public boolean m_7967_(Entity p_8837_) {
--      return this.m_8872_(p_8837_);
-+      // CraftBukkit start
-+      return this.addFreshEntity(p_8837_, addFreshSpawnReason);
-+   }
-+
 +   public boolean addFreshEntity(Entity entity, CreatureSpawnEvent.SpawnReason reason) {
 +      return this.addEntity(entity, reason);
-+      // CraftBukkit end
-    }
- 
-    public boolean m_8847_(Entity p_8848_) {
--      return this.m_8872_(p_8848_);
-+      // CraftBukkit start
-+      return this.addWithUUID(p_8848_, CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
+    public boolean m_8847_(Entity p_8848_) {
+       return this.m_8872_(p_8848_);
+    }
+ 
 +   public boolean addWithUUID(Entity p_8848_, CreatureSpawnEvent.SpawnReason reason) {
 +      return this.addEntity(p_8848_, reason);
 +      // CraftBukkit end
-    }
- 
++   }
++
     public void m_143334_(Entity p_143335_) {
--      this.m_8872_(p_143335_);
 +      // CraftBukkit start
 +      // SPIGOT-6415: Don't call spawn event for entities which travel trough worlds,
 +      // since it is only an implementation detail, that a new entity is created when
 +      // they are traveling between worlds.
-+      this.addDuringTeleport(p_143335_, null);
-+   }
-+
++      p_143335_.spawnReason(null); // Mohist
+       this.m_8872_(p_143335_);
+    }
+ 
 +   public void addDuringTeleport(Entity p_143335_, CreatureSpawnEvent.SpawnReason reason) {
 +      this.addEntity(p_143335_, reason);
 +      // CraftBukkit end
-    }
- 
++   }
++
     public void m_8622_(ServerPlayer p_8623_) {
+       this.m_8853_(p_8623_);
+    }
 @@ -767,7 +_,55 @@
        this.m_8853_(p_8846_);
     }
@@ -348,34 +337,29 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -783,7 +_,26 @@
+@@ -783,8 +_,21 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
++         if (p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
++            return false;
++         }
 +         if (this.f_143244_.m_157533_(p_8873_)) {
 +            p_8873_.onAddedToWorld();
 +            return true;
 +         } else {
 +            return false;
 +         }
-+      }
+       }
 +   }
 +
 +   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      if (entity.m_146910_()) {
-+         // WorldServer.LOGGER.warn("Tried to add entity {} but it was marked as removed already", EntityTypes.getKey(entity.getType())); // CraftBukkit
-+         return false;
-+      } else {
-+         if (spawnReason != null && !CraftEventFactory.doEntityAddEventCalling(this, entity, spawnReason)) {
-+            return false;
-+         }
-+         // CraftBukkit end
-+
-+         return this.f_143244_.m_157533_(entity);
-       }
++      entity.spawnReason(spawnReason);
++      return m_8872_(entity);
     }
  
+    public boolean m_8860_(Entity p_8861_) {
 @@ -797,6 +_,15 @@
     }
  
