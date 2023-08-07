@@ -5,6 +5,7 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
@@ -24,6 +25,7 @@ public class ServerAPI {
     public static Map<String, String> forgecmdper = new ConcurrentHashMap<>();
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
+    public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
 
     static {
         for (IModInfo modInfo : ModLoader.getModList().getMods()) {
