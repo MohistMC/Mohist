@@ -28,8 +28,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 
-import java.util.Objects;
-
 public class BlockEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)

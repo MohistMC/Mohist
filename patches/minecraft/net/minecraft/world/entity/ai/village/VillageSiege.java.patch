@@ -25,7 +25,7 @@
  
           zombie.m_7678_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_, p_27017_.f_46441_.m_188501_() * 360.0F, 0.0F);
 -         p_27017_.m_47205_(zombie);
-+         zombie.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION);
++         zombie.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION);
 +         p_27017_.m_47205_(zombie); // CraftBukkit
        }
     }

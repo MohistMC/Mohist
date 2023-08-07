@@ -79,7 +79,7 @@
              this.f_25115_.m_27594_();
 -            fox.m_146762_(-24000);
 -            fox.m_7678_(this.f_25113_.m_20185_(), this.f_25113_.m_20186_(), this.f_25113_.m_20189_(), 0.0F, 0.0F);
-+            fox.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
++            fox.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
              serverlevel.m_47205_(fox);
              this.f_25114_.m_7605_(this.f_25113_, (byte)18);
              if (this.f_25114_.m_46469_().m_46207_(GameRules.f_46135_)) {

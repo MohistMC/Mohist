@@ -83,7 +83,7 @@
           allay.m_21530_();
           allay.m_239811_();
           this.m_239811_();
-+         allay.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
++         allay.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DUPLICATION); // CraftBukkit - reason for duplicated allay
           this.f_19853_.m_7967_(allay);
        }
 -

@@ -369,7 +369,7 @@
 +   }
 +
     public void m_143334_(Entity p_143335_) {
-+      p_143335_.spawnReason.set(null);
++      p_143335_.spawnReason(null);
        this.m_8872_(p_143335_);
     }
  
@@ -420,7 +420,7 @@
  
 +   // Mohist start
 +   public boolean addEntity(Entity entity, CreatureSpawnEvent.SpawnReason spawnReason) {
-+      entity.spawnReason.set(spawnReason);
++      entity.spawnReason(spawnReason);
 +      return m_8872_(entity);
 +   }
 +   // Mohist end

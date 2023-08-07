@@ -139,7 +139,7 @@
 +            if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
-+            witch.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++            witch.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
              p_35409_.m_47205_(witch);
              this.m_35524_();
              this.m_146870_();

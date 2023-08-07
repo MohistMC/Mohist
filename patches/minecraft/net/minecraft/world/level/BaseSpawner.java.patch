@@ -57,7 +57,7 @@
                    }
  
 -                  if (!p_151312_.m_8860_(entity)) {
-+                  entity.spawnReason.set(CreatureSpawnEvent.SpawnReason.SPAWNER); // Mohist
++                  entity.spawnReason(CreatureSpawnEvent.SpawnReason.SPAWNER); // Mohist
 +                  if (!p_151312_.m_8860_(entity)) { // CraftBukkit
                       this.m_151350_(p_151312_, p_151313_);
                       return;

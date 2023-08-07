@@ -92,7 +92,7 @@
           p_27565_.m_27594_();
 -         ageablemob.m_6863_(true);
 -         ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);
-+         ageablemob.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
++         ageablemob.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
           p_27564_.m_47205_(ageablemob);
           p_27564_.m_7605_(this, (byte)18);
           if (p_27564_.m_46469_().m_46207_(GameRules.f_46135_)) {

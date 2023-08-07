@@ -11,7 +11,7 @@
 +            }
 +            // CraftBukkit end
              this.m_5496_(SoundEvents.f_215760_, 0.15F, 1.0F);
-+            frog.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS);
++            frog.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.METAMORPHOSIS);
              serverlevel.m_47205_(frog);
              this.m_146870_();
           }

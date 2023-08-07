@@ -64,7 +64,7 @@
 +            return;
 +         }
 +         for (LivingEntity living : slimes) {
-+            living.spawnReason.set(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
++            living.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
 +            this.f_19853_.m_7967_(living);
 +         }
 +         // CraftBukkit end
