@@ -554,9 +554,8 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @SuppressWarnings("unchecked")
     public net.minecraft.world.entity.Entity createEntity(Location location, Class<? extends Entity> clazz, boolean randomizeData) throws IllegalArgumentException {
-        if (location == null || clazz == null) {
-            throw new IllegalArgumentException("Location or entity class cannot be null");
-        }
+        Preconditions.checkArgument(location != null, "Location cannot be null");
+        Preconditions.checkArgument(clazz != null, "Entity class cannot be null");
 
         net.minecraft.world.entity.Entity entity = null;
         net.minecraft.world.level.Level world = getHandle().getMinecraftWorld();

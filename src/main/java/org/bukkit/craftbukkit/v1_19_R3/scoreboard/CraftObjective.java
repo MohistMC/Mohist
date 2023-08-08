@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R3.scoreboard;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.world.scores.Scoreboard;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.OfflinePlayer;
@@ -25,51 +26,50 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     }
 
     @Override
-    public String getName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public String getName() {
+        checkState();
 
         return objective.getName();
     }
 
     @Override
-    public String getDisplayName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public String getDisplayName() {
+        checkState();
 
         return CraftChatMessage.fromComponent(objective.getDisplayName());
     }
 
     @Override
-    public void setDisplayName(String displayName) throws IllegalStateException, IllegalArgumentException {
-        Validate.notNull(displayName, "Display name cannot be null");
-        Validate.isTrue(displayName.length() <= 128, "Display name '" + displayName + "' is longer than the limit of 128 characters");
-        CraftScoreboard scoreboard = checkState();
+    public void setDisplayName(String displayName) {
+        Preconditions.checkArgument(displayName != null, "Display name cannot be null");
+        checkState();
 
         objective.setDisplayName(CraftChatMessage.fromString(displayName)[0]); // SPIGOT-4112: not nullable
     }
 
     @Override
-    public String getCriteria() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public String getCriteria() {
+        checkState();
 
         return criteria.bukkitName;
     }
 
     @Override
-    public Criteria getTrackedCriteria() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public Criteria getTrackedCriteria() {
+        checkState();
 
         return criteria;
     }
 
     @Override
-    public boolean isModifiable() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public boolean isModifiable() {
+        checkState();
 
         return !criteria.criteria.isReadOnly();
     }
 
     @Override
-    public void setDisplaySlot(DisplaySlot slot) throws IllegalStateException {
+    public void setDisplaySlot(DisplaySlot slot) {
         CraftScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         net.minecraft.world.scores.Objective objective = this.objective;
@@ -86,7 +86,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     }
 
     @Override
-    public DisplaySlot getDisplaySlot() throws IllegalStateException {
+    public DisplaySlot getDisplaySlot() {
         CraftScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         net.minecraft.world.scores.Objective objective = this.objective;
@@ -100,49 +100,47 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     }
 
     @Override
-    public void setRenderType(RenderType renderType) throws IllegalStateException {
-        Validate.notNull(renderType, "RenderType cannot be null");
-        CraftScoreboard scoreboard = checkState();
+    public void setRenderType(RenderType renderType) {
+        Preconditions.checkArgument(renderType != null, "RenderType cannot be null");
+        checkState();
 
         this.objective.setRenderType(CraftScoreboardTranslations.fromBukkitRender(renderType));
     }
 
     @Override
-    public RenderType getRenderType() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+    public RenderType getRenderType() {
+        checkState();
 
         return CraftScoreboardTranslations.toBukkitRender(this.objective.getRenderType());
     }
 
     @Override
-    public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
-        Validate.notNull(player, "Player cannot be null");
-        CraftScoreboard scoreboard = checkState();
+    public Score getScore(OfflinePlayer player) {
+        Preconditions.checkArgument(player != null, "Player cannot be null");
+        checkState();
 
         return new CraftScore(this, player.getName());
     }
 
     @Override
-    public Score getScore(String entry) throws IllegalArgumentException, IllegalStateException {
-        Validate.notNull(entry, "Entry cannot be null");
-        Validate.isTrue(entry.length() <= Short.MAX_VALUE, "Score '" + entry + "' is longer than the limit of 32767 characters");
-        CraftScoreboard scoreboard = checkState();
+    public Score getScore(String entry) {
+        Preconditions.checkArgument(entry != null, "Entry cannot be null");
+        Preconditions.checkArgument(entry.length() <= Short.MAX_VALUE, "Score '" + entry + "' is longer than the limit of 32767 characters");
+        checkState();
 
         return new CraftScore(this, entry);
     }
 
     @Override
-    public void unregister() throws IllegalStateException {
+    public void unregister() {
         CraftScoreboard scoreboard = checkState();
 
         scoreboard.board.removeObjective(objective);
     }
 
     @Override
-    CraftScoreboard checkState() throws IllegalStateException {
-        if (getScoreboard().board.getObjective(objective.getName()) == null) {
-            throw new IllegalStateException("Unregistered scoreboard component");
-        }
+    CraftScoreboard checkState() {
+        Preconditions.checkState(getScoreboard().board.getObjective(objective.getName()) != null, "Unregistered scoreboard component");
 
         return getScoreboard();
     }

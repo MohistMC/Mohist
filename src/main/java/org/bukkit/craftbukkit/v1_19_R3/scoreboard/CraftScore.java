@@ -1,11 +1,13 @@
 package org.bukkit.craftbukkit.v1_19_R3.scoreboard;
 
-import java.util.Map;
 import net.minecraft.world.scores.Scoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * TL;DR: This class is special and lazily grabs a handle...
@@ -33,12 +35,12 @@ final class CraftScore implements Score {
     }
 
     @Override
-    public Objective getObjective() {
+    public @NotNull Objective getObjective() {
         return objective;
     }
 
     @Override
-    public int getScore() throws IllegalStateException {
+    public int getScore() {
         Scoreboard board = objective.checkState().board;
 
         if (board.getTrackedPlayers().contains(entry)) { // Lazy
@@ -53,12 +55,12 @@ final class CraftScore implements Score {
     }
 
     @Override
-    public void setScore(int score) throws IllegalStateException {
+    public void setScore(int score) {
         objective.checkState().board.getOrCreatePlayerScore(entry, objective.getHandle()).setScore(score);
     }
 
     @Override
-    public boolean isScoreSet() throws IllegalStateException {
+    public boolean isScoreSet() {
         Scoreboard board = objective.checkState().board;
 
         return board.getTrackedPlayers().contains(entry) && board.getPlayerScores(entry).containsKey(objective.getHandle());
