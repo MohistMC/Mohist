@@ -16,7 +16,7 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-<img height="400px" alt="Mohist Project Status" src="https://mohistmc.com/api/v2/projects/mohist/table" />
+<img height="400px" alt="Mohist Project Status" src="https://mohistmc.com/api/v2/projects/mohist/table?" />
 
 Progress
 ------
