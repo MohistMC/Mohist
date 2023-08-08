@@ -81,8 +81,11 @@ public final class NamespacedKey {
      */
     @Deprecated
     public NamespacedKey(@NotNull String namespace, @NotNull String key) {
+        // Mohsit TODO
+        /*
         Preconditions.checkArgument(namespace != null && isValidNamespace(namespace), "Invalid namespace. Must be [a-z0-9._-]: %s", namespace);
         Preconditions.checkArgument(key != null && isValidKey(key), "Invalid key. Must be [a-z0-9/._-]: %s", key);
+         */
 
         this.namespace = namespace;
         this.key = key;
