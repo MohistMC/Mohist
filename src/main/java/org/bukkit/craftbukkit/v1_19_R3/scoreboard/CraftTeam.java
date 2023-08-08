@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R3.scoreboard;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import net.minecraft.world.scores.PlayerTeam;
