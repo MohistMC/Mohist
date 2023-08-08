@@ -53,7 +53,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -62,8 +_,19 @@
+@@ -62,8 +_,20 @@
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.scores.Scoreboard;
@@ -68,6 +68,7 @@
 +import org.bukkit.entity.SpawnCategory;
 +import org.bukkit.event.block.BlockPhysicsEvent;
 +import org.bukkit.event.world.GenericGameEvent;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
@@ -539,7 +540,7 @@
                    blockstate.m_60690_(this, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -870,13 +_,33 @@
+@@ -870,13 +_,35 @@
        return this.f_46420_;
     }
  
@@ -563,14 +564,16 @@
 +   public abstract LevelEntityGetter<Entity> m_142646_();
  
     protected void m_151513_(@Nullable Entity p_151514_, GameEvent p_151515_, BlockPos p_151516_, int p_151517_) {
-+        // CraftBukkit start
-+        GenericGameEvent event = new GenericGameEvent( org.bukkit.GameEvent.getByKey( CraftNamespacedKey.fromMinecraft( Registry.f_175412_.m_7981_( p_151515_ ) ) ), new Location( this.getWorld(), p_151516_.m_123341_(), p_151516_.m_123342_(), p_151516_.m_123343_() ), (p_151514_ == null) ? null : p_151514_.getBukkitEntity(), p_151517_ );
-+        getCraftServer().getPluginManager().callEvent( event );
-+        if (event.isCancelled()) {
++      if (!AsyncCatcher.catchAsync()) {
++         // CraftBukkit start
++         GenericGameEvent event = new GenericGameEvent( org.bukkit.GameEvent.getByKey( CraftNamespacedKey.fromMinecraft( Registry.f_175412_.m_7981_( p_151515_ ) ) ), new Location( this.getWorld(), p_151516_.m_123341_(), p_151516_.m_123342_(), p_151516_.m_123343_() ), (p_151514_ == null) ? null : p_151514_.getBukkitEntity(), p_151517_ );
++         getCraftServer().getPluginManager().callEvent( event );
++         if (event.isCancelled()) {
 +            return;
-+        }
-+        p_151517_ = event.getRadius();
-+        // CraftBukkit end
++         }
++         p_151517_ = event.getRadius();
++      }
++      // CraftBukkit end
        int i = SectionPos.m_123171_(p_151516_.m_123341_() - p_151517_);
        int j = SectionPos.m_123171_(p_151516_.m_123343_() - p_151517_);
        int k = SectionPos.m_123171_(p_151516_.m_123341_() + p_151517_);
