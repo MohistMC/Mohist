@@ -109,7 +109,7 @@
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(f / 6.0F);
 -            this.m_38703_(f);
-+            p_38711_.reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
++            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
 +            p_38711_.m_36399_(f);
              this.f_38699_ = 0;
           }
@@ -120,7 +120,7 @@
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(1.0F);
 -            this.m_38703_(6.0F);
-+            p_38711_.reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
++            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent
 +            p_38711_.m_36399_(6.0f);
              this.f_38699_ = 0;
           }

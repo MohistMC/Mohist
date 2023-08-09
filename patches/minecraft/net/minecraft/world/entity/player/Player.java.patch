@@ -30,11 +30,12 @@
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -112,10 +_,18 @@
+@@ -112,10 +_,19 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
 -import net.minecraft.world.scores.Team;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftVector;
@@ -402,7 +403,7 @@
  
     protected void m_6475_(DamageSource p_36312_, float p_36313_) {
 +      if (true) {
-+         super.damageEntity0(p_36312_, p_36313_);
++         damageEntity0(p_36312_, p_36313_);
 +         return;
 +      }
        if (!this.m_6673_(p_36312_)) {
@@ -419,7 +420,7 @@
           }
  
           if (f1 != 0.0F) {
-+            this.reason.set(EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++            this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
              this.m_36399_(p_36312_.m_19377_());
              this.m_21231_().m_289194_(p_36312_, f1);
              this.m_21153_(this.m_21223_() - f1);
@@ -527,7 +528,7 @@
                    }
                 }
  
-@@ -1121,10 +_,14 @@
+@@ -1121,10 +_,13 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
@@ -539,9 +540,8 @@
 +                        double entityReachSq = Mth.m_144952_(this.getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
 +                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < entityReachSq) {
 +                           // CraftBukkit start - Only apply knockback if the damage hits
-+                           if (livingentity.m_6469_(this.m_269291_().m_269075_(this).sweep(), f4)) {
++                           if (livingentity.m_6469_(this.m_269291_().m_269075_(this).sweep(), f3)) {
 +                              livingentity.m_147240_((double) 0.4F, (double) Mth.m_14031_(this.m_146908_() * ((float) Math.PI / 180F)), (double) (-Mth.m_14089_(this.m_146908_() * ((float) Math.PI / 180F))));
-+                              livingentity.m_6469_(this.m_269291_().m_269075_(this), f3);
 +                           }
                          }
                       }
@@ -559,7 +559,7 @@
 +                     org.bukkit.util.Vector velocity = CraftVector.toBukkit(vec3);
 +
 +                     PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+                     f_19853_.getCraftServer().getPluginManager().callEvent(event);
++                     Bukkit.getPluginManager().callEvent(event);
 +
 +                     if (event.isCancelled()) {
 +                        cancelled = true;
@@ -614,8 +614,9 @@
                       }
                    }
  
-+                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent
-                   this.m_36399_(0.1F);
+-                  this.m_36399_(0.1F);
++                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.ATTACK); // CraftBukkit - EntityExhaustionEvent
++                  this.m_36399_(m_9236_().spigotConfig.combatExhaustion);
                 } else {
                    this.m_9236_().m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12315_, this.m_5720_(), 1.0F, 1.0F);
                    if (flag4) {
@@ -675,10 +676,10 @@
        super.m_6135_();
        this.m_36220_(Stats.f_12926_);
        if (this.m_20142_()) {
-+         this.reason.set(EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - EntityExhaustionEvent
++         this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.JUMP_SPRINT); // CraftBukkit - EntityExhaustionEvent
           this.m_36399_(0.2F);
        } else {
-+         this.reason.set(EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - EntityExhaustionEvent
++         this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.JUMP); // CraftBukkit - EntityExhaustionEvent
           this.m_36399_(0.05F);
        }
  
@@ -699,21 +700,21 @@
              int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (i > 0) {
                 this.m_36222_(Stats.f_12924_, i);
-+               this.reason.set(EntityExhaustionEvent.ExhaustionReason.SWIM);
++               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.SWIM);
                 this.m_36399_(0.01F * (float)i * 0.01F);
              }
           } else if (this.m_204029_(FluidTags.f_13131_)) {
              int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (j > 0) {
                 this.m_36222_(Stats.f_13001_, j);
-+               this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
++               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
                 this.m_36399_(0.01F * (float)j * 0.01F);
              }
           } else if (this.m_20069_()) {
              int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
              if (k > 0) {
                 this.m_36222_(Stats.f_12997_, k);
-+               this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
++               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
                 this.m_36399_(0.01F * (float)k * 0.01F);
              }
           } else if (this.m_6147_()) {
@@ -726,15 +727,15 @@
              if (l > 0) {
                 if (this.m_20142_()) {
                    this.m_36222_(Stats.f_12996_, l);
-+                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.SPRINT);
++                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.SPRINT);
                    this.m_36399_(0.1F * (float)l * 0.01F);
                 } else if (this.m_6047_()) {
                    this.m_36222_(Stats.f_12995_, l);
-+                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.CROUCH);
++                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.CROUCH);
                    this.m_36399_(0.0F * (float)l * 0.01F);
                 } else {
                    this.m_36222_(Stats.f_12994_, l);
-+                  this.reason.set(EntityExhaustionEvent.ExhaustionReason.WALK);
++                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK);
                    this.m_36399_(0.0F * (float)l * 0.01F);
                 }
              }
@@ -830,7 +831,7 @@
        this.f_36078_ += p_36276_;
        if (this.f_36078_ < 0) {
           this.f_36078_ = 0;
-@@ -1620,12 +_,27 @@
+@@ -1620,12 +_,30 @@
  
     public void m_36399_(float p_36400_) {
        if (!this.f_36077_.f_35934_) {
@@ -850,9 +851,12 @@
 +
 +   // Mohist start
 +   // CraftBukkit start
-+   public AtomicReference<EntityExhaustionEvent.ExhaustionReason> reason = new AtomicReference<>(EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
++   private AtomicReference<EntityExhaustionEvent.ExhaustionReason> reason = new AtomicReference<>(EntityExhaustionEvent.ExhaustionReason.UNKNOWN);
++   public void exhaustionReason(EntityExhaustionEvent.ExhaustionReason exhaustionReason) {
++      reason.set(exhaustionReason);
++   }
 +   public void causeFoodExhaustion(float f, EntityExhaustionEvent.ExhaustionReason reason) {
-+      this.reason.set(reason);
++      this.exhaustionReason(reason);
 +      m_36399_(f);
 +   }
 +   // CraftBukkit end

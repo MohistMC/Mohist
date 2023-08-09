@@ -46,7 +46,7 @@
        } else if (this == MobEffects.f_19615_) {
           p_19467_.m_6469_(p_19467_.m_269291_().m_269251_(), 1.0F);
        } else if (this == MobEffects.f_19612_ && p_19467_ instanceof Player) {
-+         ((Player)p_19467_).reason.set(EntityExhaustionEvent.ExhaustionReason.HUNGER_EFFECT); // Mohist
++         ((Player)p_19467_).exhaustionReason(EntityExhaustionEvent.ExhaustionReason.HUNGER_EFFECT); // Mohist
           ((Player)p_19467_).m_36399_(0.005F * (float)(p_19468_ + 1));
        } else if (this == MobEffects.f_19618_ && p_19467_ instanceof Player) {
 -         if (!p_19467_.m_9236_().f_46443_) {

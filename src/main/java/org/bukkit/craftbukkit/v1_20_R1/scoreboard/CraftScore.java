@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ final class CraftScore implements Score {
     }
 
     @Override
-    public Objective getObjective() {
+    public @NotNull Objective getObjective() {
         return objective;
     }
 

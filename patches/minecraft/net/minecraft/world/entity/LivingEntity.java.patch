@@ -1072,7 +1072,7 @@
 +         if (p_21241_ > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the Player subclass each update.
-+               ((Player) this).reason.set(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
++               ((Player) this).exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
 +               ((Player) this).m_36399_(p_21240_.m_19377_());
 +               if (p_21241_ < 3.4028235E37F) {
 +                  ((Player) this).m_36222_(Stats.f_12931_, Math.round(p_21241_ * 10.0F));
