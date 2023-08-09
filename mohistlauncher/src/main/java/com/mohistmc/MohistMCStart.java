@@ -73,6 +73,9 @@ public class MohistMCStart {
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
+        }
+
+        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_20.run();
         }
 

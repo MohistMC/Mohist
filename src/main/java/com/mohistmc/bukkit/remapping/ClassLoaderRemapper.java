@@ -322,7 +322,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         ClassWriter wr = new PluginClassWriter(ClassWriter.COMPUTE_MAXS);
         node.accept(wr);
 
-        return dump(wr.toByteArray());
+        return wr.toByteArray();
     }
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -336,7 +336,6 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             ClassVisitor visitor = new ClassRemapper(writer, new NameRemapper(name));
             node.accept(visitor);
             byte[] bytes = writer.toByteArray();
-            dump(bytes);
             Class<?> cl = Unsafe.defineClass(name.replace('/', '.'), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
             Unsafe.ensureClassInitialized(cl);
 
@@ -441,23 +440,5 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             result = 31 * result + Arrays.hashCode(pTypes);
             return result;
         }
-    }
-
-    private static byte[] dump(byte[] bytes) {
-        try {
-            if (Remapper.DUMP != null) {
-                String className = new ClassReader(bytes).getClassName() + ".class";
-                int index = className.lastIndexOf('/');
-                if (index != -1) {
-                    File file = new File(Remapper.DUMP, className.substring(0, index));
-                    file.mkdirs();
-                    Files.write(file.toPath().resolve(className.substring(index + 1)), bytes);
-                } else {
-                    Files.write(Remapper.DUMP.toPath().resolve(className), bytes);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return bytes;
     }
 }

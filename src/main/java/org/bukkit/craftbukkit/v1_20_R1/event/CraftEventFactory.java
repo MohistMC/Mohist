@@ -270,6 +270,7 @@ public class CraftEventFactory {
      * PlayerSignOpenEvent
      */
     public static boolean callPlayerSignOpenEvent(net.minecraft.world.entity.player.Player player, SignBlockEntity tileEntitySign, boolean front, PlayerSignOpenEvent.Cause cause) {
+
         final Block block = CraftBlock.at(tileEntitySign.getLevel(), tileEntitySign.getBlockPos());
         final Sign sign = (Sign) CraftBlockStates.getBlockState(block);
         final Side side = (front) ? Side.FRONT : Side.BACK;
