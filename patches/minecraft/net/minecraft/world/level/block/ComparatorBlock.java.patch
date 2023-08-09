@@ -8,24 +8,6 @@
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
     public static final EnumProperty<ComparatorMode> f_51854_ = BlockStateProperties.f_61393_;
-@@ -48,7 +_,7 @@
-       if (i == 0) {
-          return 0;
-       } else {
--         int j = this.m_276835_(p_51904_, p_51905_, p_51906_);
-+         int j = this.getAlternateSignal(p_51904_, p_51905_, p_51906_);
-          if (j > i) {
-             return 0;
-          } else {
-@@ -62,7 +_,7 @@
-       if (i == 0) {
-          return false;
-       } else {
--         int j = this.m_276835_(p_51861_, p_51862_, p_51863_);
-+         int j = this.getAlternateSignal(p_51861_, p_51862_, p_51863_);
-          if (i > j) {
-             return true;
-          } else {
 @@ -138,8 +_,18 @@
           boolean flag1 = this.m_7320_(p_51908_, p_51909_, p_51910_);
           boolean flag = p_51910_.m_61143_(f_52496_);

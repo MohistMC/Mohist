@@ -39,7 +39,7 @@
        int i = this.m_55527_(p_55531_, p_55532_);
 -      if (p_55533_.m_61143_(f_55500_) != i) {
 +      // CraftBukkit start
-+      int oldPower = (Integer) p_55533_.m_61143_(f_55500_);
++      int oldPower = p_55533_.m_61143_(f_55500_);
 +      if (oldPower != i) {
 +         BlockRedstoneEvent event = new BlockRedstoneEvent(p_55531_.getWorld().getBlockAt(p_55532_.m_123341_(), p_55532_.m_123342_(), p_55532_.m_123343_()), oldPower, i);
 +         p_55531_.getCraftServer().getPluginManager().callEvent(event);
