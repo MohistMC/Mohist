@@ -196,6 +196,9 @@ public class MohistConfig {
     public static String motdSecondLine;
     public static String pingCommandOutput;
 
+    // Ban events
+    public static boolean doFireTick;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -232,5 +235,7 @@ public class MohistConfig {
         motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
 
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
+
+        doFireTick = getBoolean("events.fire_tick", false);
     }
 }

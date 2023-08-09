@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
+@@ -6,6 +_,8 @@
+ import java.util.Set;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
++import com.mohistmc.plugins.ban.bans.BanEvents;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.nbt.CompoundTag;
 @@ -24,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
@@ -58,7 +67,12 @@
                 entity.m_8038_((ServerLevel)this.m_9236_(), this);
              }
  
-@@ -143,16 +_,24 @@
+@@ -139,20 +_,29 @@
+    }
+ 
+    private void m_20870_(int p_20871_) {
++      if (BanEvents.banFireTick()) return;
+       if (!this.f_20862_ && !this.m_9236_().f_46443_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46131_)) {
           BlockPos blockpos = this.m_20183_();
           BlockState blockstate = BaseFireBlock.m_49245_(this.m_9236_(), blockpos);
           if (this.m_9236_().m_8055_(blockpos).m_60795_() && blockstate.m_60710_(this.m_9236_(), blockpos)) {
