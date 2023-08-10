@@ -149,7 +149,6 @@ public abstract class Action {
                 try {
                     file.createNewFile();
                     Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println(file.getAbsolutePath());
                 } catch (IOException ignored) {
                 }
             } else {
