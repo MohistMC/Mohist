@@ -11,11 +11,14 @@
  import net.minecraft.Util;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
-@@ -30,6 +_,9 @@
+@@ -29,7 +_,12 @@
+ import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
++import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import org.apache.commons.lang3.ArrayUtils;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.event.world.LootGenerateEvent;
 +import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
@@ -95,7 +98,7 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -131,10 +_,24 @@
+@@ -131,10 +_,27 @@
  
     }
  
@@ -109,14 +112,17 @@
        LootContext lootcontext = (new LootContext.Builder(p_287743_)).m_78965_(p_287585_).m_287259_(this.f_286958_);
        ObjectArrayList<ItemStack> objectarraylist = this.m_230922_(lootcontext);
        RandomSource randomsource = lootcontext.m_230907_();
-+
-+      // CraftBukkit start
-+      LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
-+      if (event.isCancelled()) {
-+         return;
++      // Mohist start
++      if (lootcontext.m_78936_(LootContextParams.f_81460_) && lootcontext.m_78936_(LootContextParams.f_81455_)) {
++         // CraftBukkit start
++         LootGenerateEvent event = CraftEventFactory.callLootGenerateEvent(p_287662_, this, lootcontext, objectarraylist, isPlugin.getAndSet(false));
++         if (event.isCancelled()) {
++            return;
++         }
++         objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
++         // CraftBukkit end
 +      }
-+      // objectarraylist = event.getLoot().stream().map(CraftItemStack::asNMSCopy).collect(ObjectArrayList.toList());
-+      // CraftBukkit end
++      // Mohist end
        List<Integer> list = this.m_230919_(p_287662_, randomsource);
        this.m_230924_(objectarraylist, list.size(), randomsource);
  
