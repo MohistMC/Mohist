@@ -23,6 +23,9 @@ public class PluginFixManager {
         if (className.equals("com.earth2me.essentials.utils.VersionUtil")) {
             return helloWorld(clazz, "net.minecraftforge.common.MinecraftForge", "hello.World");
         }
+        if (className.equals("net.Zrips.CMILib.Reflections")) {
+            return helloWorld(clazz, "bR", "f_36096_");
+        }
         return clazz;
     }
 
