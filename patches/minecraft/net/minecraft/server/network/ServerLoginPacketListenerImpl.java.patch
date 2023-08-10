@@ -126,7 +126,7 @@
     public void m_5990_(ServerboundHelloPacket p_10047_) {
        Validate.validState(this.f_10019_ == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet");
 -      Validate.validState(m_203792_(p_10047_.f_238040_()), "Invalid characters in username");
-+      // Validate.validState(isValidUsername(p_10047_.name()), "Invalid characters in username"); // Mohist Chinese and other special characters are allowed
++      // Validate.validState(isValidUsername(pPacket.name()), "Invalid characters in username"); // Mohist Chinese and other special characters are allowed
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {
           this.f_10021_ = gameprofile;

@@ -4,21 +4,35 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_40637_) {
+-      Level level = p_40637_.m_43725_();
+-      BlockPos blockpos = p_40637_.m_8083_();
+-      BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
+-      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
 +      // CraftBukkit start - extract bonemeal application logic to separate, static method
 +      return bukkit_applyBonemeal(p_40637_);
 +   }
 +
 +   // Mohist TODO fix mixin?
-+   public static InteractionResult bukkit_applyBonemeal(UseOnContext p_40637_) {
++   public static InteractionResult bukkit_applyBonemeal(UseOnContext pContext) {
 +      // CraftBukkit end
-       Level level = p_40637_.m_43725_();
-       BlockPos blockpos = p_40637_.m_8083_();
-       BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
--      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
-+      if (applyBonemeal(p_40637_.m_43722_(), level, blockpos, p_40637_.m_43723_())) {
++      Level level = pContext.m_43725_();
++      BlockPos blockpos = pContext.m_8083_();
++      BlockPos blockpos1 = blockpos.m_121945_(pContext.m_43719_());
++      if (applyBonemeal(pContext.m_43722_(), level, blockpos, pContext.m_43723_())) {
           if (!level.f_46443_) {
              level.m_46796_(1505, blockpos, 0);
           }
+@@ -41,8 +_,8 @@
+          return InteractionResult.m_19078_(level.f_46443_);
+       } else {
+          BlockState blockstate = level.m_8055_(blockpos);
+-         boolean flag = blockstate.m_60783_(level, blockpos, p_40637_.m_43719_());
+-         if (flag && m_40631_(p_40637_.m_43722_(), level, blockpos1, p_40637_.m_43719_())) {
++         boolean flag = blockstate.m_60783_(level, blockpos, pContext.m_43719_());
++         if (flag && m_40631_(pContext.m_43722_(), level, blockpos1, pContext.m_43719_())) {
+             if (!level.f_46443_) {
+                level.m_46796_(1505, blockpos1, 0);
+             }
 @@ -54,8 +_,17 @@
        }
     }
@@ -43,11 +57,11 @@
     }
 +
 +   // CraftBukkit Mohist start
-+   public static InteractionResult applyBonemeal(UseOnContext p_40637_) {
-+      Level level = p_40637_.m_43725_();
-+      BlockPos blockpos = p_40637_.m_8083_();
-+      BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
-+      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
++   public static InteractionResult applyBonemeal(UseOnContext pContext) {
++      Level level = pContext.m_43725_();
++      BlockPos blockpos = pContext.m_8083_();
++      BlockPos blockpos1 = blockpos.m_121945_(pContext.m_43719_());
++      if (m_40627_(pContext.m_43722_(), level, blockpos)) {
 +         if (!level.f_46443_) {
 +            level.m_46796_(1505, blockpos, 0);
 +         }
@@ -55,8 +69,8 @@
 +         return InteractionResult.m_19078_(level.f_46443_);
 +      } else {
 +         BlockState blockstate = level.m_8055_(blockpos);
-+         boolean flag = blockstate.m_60783_(level, blockpos, p_40637_.m_43719_());
-+         if (flag && m_40631_(p_40637_.m_43722_(), level, blockpos1, p_40637_.m_43719_())) {
++         boolean flag = blockstate.m_60783_(level, blockpos, pContext.m_43719_());
++         if (flag && m_40631_(pContext.m_43722_(), level, blockpos1, pContext.m_43719_())) {
 +            if (!level.f_46443_) {
 +               level.m_46796_(1505, blockpos1, 0);
 +            }

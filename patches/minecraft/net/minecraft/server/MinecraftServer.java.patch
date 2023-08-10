@@ -273,9 +273,9 @@
 +
 +   public AtomicReference<ServerLevel> prepareLevels$serverlevel = new AtomicReference<>(this.m_129783_());
 +
-+   public void prepareLevels(ChunkProgressListener p_129941_, ServerLevel serverlevel) {
++   public void prepareLevels(ChunkProgressListener pListener, ServerLevel serverlevel) {
 +      prepareLevels$serverlevel.set(serverlevel);
-+      m_129940_(p_129941_);
++      m_129940_(pListener);
 +   }
 +
 +   public void m_129940_(ChunkProgressListener p_129941_) {

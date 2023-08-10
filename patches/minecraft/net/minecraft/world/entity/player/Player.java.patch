@@ -204,9 +204,9 @@
 +   // Mohist start
 +   public AtomicBoolean callEventA = new AtomicBoolean(true);
 +   @Nullable
-+   public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_, boolean callEven) {
++   public ItemEntity drop(ItemStack pDroppedItem, boolean pDropAround, boolean pIncludeThrowerName, boolean callEven) {
 +      callEventA.set(callEven);
-+      return m_7197_(p_36179_, p_36180_, p_36181_);
++      return m_7197_(pDroppedItem, pDropAround, pIncludeThrowerName);
 +   }
 +   // Mohist end
  
@@ -929,8 +929,8 @@
        }
 +   }
  
-+   private boolean spawnEntityFromShoulder(CompoundTag p_36371_) { // CraftBukkit void->boolean
-+      m_36370_(p_36371_);
++   private boolean spawnEntityFromShoulder(CompoundTag pEntityCompound) { // CraftBukkit void->boolean
++      m_36370_(pEntityCompound);
 +      return spawnEntityFromShoulder.getAndSet(true);
     }
 +   // Mohist end

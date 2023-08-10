@@ -22,7 +22,7 @@
     protected int m_6693_(Level p_58213_, BlockPos p_58214_) {
 -      int i = Math.min(m_289607_(p_58213_, f_49287_.m_82338_(p_58214_), Entity.class), this.f_58199_);
 +      // CraftBukkit start
-+      // int i = Math.min(p_58213_.getEntitiesOfClass(Entity.class, TOUCH_AABB.move(p_58214_)).size(), this.maxWeight);
++      // int i = Math.min(pLevel.getEntitiesOfClass(Entity.class, TOUCH_AABB.move(pPos)).size(), this.maxWeight);
 +      int i = 0;
 +      java.util.Iterator iterator = p_58213_.m_45976_(Entity.class, f_49287_.m_82338_(p_58214_)).iterator();
 +

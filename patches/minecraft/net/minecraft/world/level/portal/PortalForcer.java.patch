@@ -35,9 +35,9 @@
  
 +   private AtomicInteger searchRadius = new AtomicInteger(-1);
 +
-+   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, WorldBorder p_192988_, int i) {
++   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pPos, WorldBorder pWorldBorder, int i) {
 +      searchRadius.set(i);
-+      return m_192985_(p_192986_, false, p_192988_); // Search Radius
++      return m_192985_(pPos, false, pWorldBorder); // Search Radius
 +   }
 +
     public Optional<BlockUtil.FoundRectangle> m_192985_(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
@@ -57,10 +57,10 @@
 +   private AtomicReference<Entity> mohist$entity = new AtomicReference<>();
 +   private AtomicInteger mohist$createRedius = new AtomicInteger(16);
 +
-+   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_, Entity entity, int createRadius) {
++   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos pPos, Direction.Axis pAxis, Entity entity, int createRadius) {
 +      mohist$entity.set(entity);
 +      mohist$createRedius.set(createRadius);
-+      return m_77666_(p_77667_, p_77668_);
++      return m_77666_(pPos, pAxis);
 +   }
 +
     public Optional<BlockUtil.FoundRectangle> m_77666_(BlockPos p_77667_, Direction.Axis p_77668_) {

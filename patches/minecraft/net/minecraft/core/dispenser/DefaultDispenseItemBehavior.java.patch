@@ -46,30 +46,30 @@
 +
 +   // Mohist start TODO
 +   // CraftBukkit start
-+   public static boolean spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, BlockSource isourceblock, boolean dropper) {
-+      if (p_123380_.m_41619_()) return true;
++   public static boolean spawnItem(Level pLevel, ItemStack pStack, int pSpeed, Direction pFacing, BlockSource isourceblock, boolean dropper) {
++      if (pStack.m_41619_()) return true;
 +      Position iposition = DispenserBlock.m_52720_(isourceblock);
 +      // CraftBukkit end
 +      double d0 = iposition.m_7096_();
 +      double d1 = iposition.m_7098_();
 +      double d2 = iposition.m_7094_();
-+      if (p_123382_.m_122434_() == Direction.Axis.Y) {
++      if (pFacing.m_122434_() == Direction.Axis.Y) {
 +         d1 -= 0.125D;
 +      } else {
 +         d1 -= 0.15625D;
 +      }
 +
-+      ItemEntity itementity = new ItemEntity(p_123379_, d0, d1, d2, p_123380_);
-+      double d3 = p_123379_.f_46441_.m_188500_() * 0.1D + 0.2D;
-+      itementity.m_20334_(p_123379_.f_46441_.m_216328_((double)p_123382_.m_122429_() * d3, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_(0.2D, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_((double)p_123382_.m_122431_() * d3, 0.0172275D * (double)p_123381_));
++      ItemEntity itementity = new ItemEntity(pLevel, d0, d1, d2, pStack);
++      double d3 = pLevel.f_46441_.m_188500_() * 0.1D + 0.2D;
++      itementity.m_20334_(pLevel.f_46441_.m_216328_((double)pFacing.m_122429_() * d3, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_(0.2D, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_((double)pFacing.m_122431_() * d3, 0.0172275D * (double)pSpeed));
 +
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = p_123379_.getWorld().getBlockAt(isourceblock.m_7961_().m_123341_(), isourceblock.m_7961_().m_123342_(), isourceblock.m_7961_().m_123343_());
-+      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123380_);
++      org.bukkit.block.Block block = pLevel.getWorld().getBlockAt(isourceblock.m_7961_().m_123341_(), isourceblock.m_7961_().m_123342_(), isourceblock.m_7961_().m_123343_());
++      CraftItemStack craftItem = CraftItemStack.asCraftMirror(pStack);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.m_20184_()));
 +      if (!DispenserBlock.eventFired) {
-+         p_123379_.getCraftServer().getPluginManager().callEvent(event);
++         pLevel.getCraftServer().getPluginManager().callEvent(event);
 +      }
 +
 +      if (event.isCancelled()) {
@@ -86,12 +86,12 @@
 +         if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior.getClass() != DefaultDispenseItemBehavior.class) {
 +            idispensebehavior.m_6115_(isourceblock, eventStack);
 +         } else {
-+            p_123379_.m_7967_(itementity);
++            pLevel.m_7967_(itementity);
 +         }
 +         return false;
 +      }
 +
-+      p_123379_.m_7967_(itementity);
++      pLevel.m_7967_(itementity);
 +      return true;
 +   }
 +   // CraftBukkit end

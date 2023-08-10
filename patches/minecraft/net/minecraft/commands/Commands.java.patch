@@ -151,9 +151,9 @@
        }
     }
  
-+   public int performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_, String label) { // CraftBukkit
++   public int performCommand(ParseResults<CommandSourceStack> pParseResults, String pCommand, String label) { // CraftBukkit
 +      mohist$label.set(label);
-+      return this.m_242674_(p_242844_, p_242841_);
++      return this.m_242674_(pParseResults, pCommand);
 +   }
 +
     public void m_82095_(ServerPlayer p_82096_) {

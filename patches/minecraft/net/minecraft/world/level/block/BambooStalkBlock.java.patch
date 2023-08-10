@@ -63,8 +63,8 @@
 -                  p_262076_.m_7731_(p_262109_.m_7495_(), blockstate.m_61124_(f_260716_, BambooLeaves.SMALL), 3);
 -                  p_262076_.m_7731_(blockpos, blockstate1.m_61124_(f_260716_, BambooLeaves.NONE), 3);
 +                  // CraftBukkit start - moved down
-+                  // p_262076_.setBlock(p_262109_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
-+                  // p_262076_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
++                  // pLevel.setBlock(pPos.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
++                  // pLevel.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
 +                  shouldUpdateOthers = true;
 +                  // CraftBukkit end
                 }

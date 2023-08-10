@@ -105,11 +105,11 @@
 +   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>(null);
 +   private AtomicReference<InteractionHand> mohist$hand = new AtomicReference<>(null);
 +
-+   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, Direction enumdirection, BlockPos clicked, @Nullable ItemStack container, InteractionHand enumhand) {
++   public boolean emptyContents(@Nullable Player pPlayer, Level pLevel, BlockPos pPos, @Nullable BlockHitResult pResult, Direction enumdirection, BlockPos clicked, @Nullable ItemStack container, InteractionHand enumhand) {
 +      mohist$direction.set(enumdirection);
 +      mohist$clickedPos.set(clicked);
 +      mohist$hand.set(enumhand);
-+      return emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, container);
++      return emptyContents(pPlayer, pLevel, pPos, pResult, container);
 +   }
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {

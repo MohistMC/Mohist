@@ -44,8 +44,8 @@
  
 +   // CraftBukkit start
 +   @Nullable
-+   public MenuProvider getMenuProvider(BlockState p_51574_, Level p_51575_, BlockPos p_51576_, boolean ignoreObstructions) {
-+      return this.m_5641_(p_51574_, p_51575_, p_51576_, ignoreObstructions).m_5649_(f_51487_).orElse((MenuProvider) null);
++   public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos, boolean ignoreObstructions) {
++      return this.m_5641_(pState, pLevel, pPos, ignoreObstructions).m_5649_(f_51487_).orElse((MenuProvider) null);
 +   }
 +   // CraftBukkit end
 +

@@ -13,7 +13,7 @@
  
     private static void m_245952_(Level p_249110_, BlockPattern.BlockPatternMatch p_251293_, Entity p_251251_, BlockPos p_251189_) {
 -      m_245585_(p_249110_, p_251293_);
-+      //clearPatternBlocks(p_249110_, p_251293_);
++      //clearPatternBlocks(pLevel, pPatternMatch);
        p_251251_.m_7678_((double)p_251189_.m_123341_() + 0.5D, (double)p_251189_.m_123342_() + 0.05D, (double)p_251189_.m_123343_() + 0.5D, 0.0F, 0.0F);
 -      p_249110_.m_7967_(p_251251_);
 +      // CraftBukkit start

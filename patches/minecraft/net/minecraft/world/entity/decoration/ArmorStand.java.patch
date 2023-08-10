@@ -60,15 +60,15 @@
  
     }
  
-+   public void setItemSlot(EquipmentSlot p_31584_, ItemStack p_31585_, boolean silent) {
++   public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack, boolean silent) {
 +      // CraftBukkit end
-+      this.m_181122_(p_31585_);
-+      switch(p_31584_.m_20743_()) {
++      this.m_181122_(pStack);
++      switch(pSlot.m_20743_()) {
 +         case HAND:
-+            this.f_31538_.set(p_31584_.m_20749_(), p_31585_);
++            this.f_31538_.set(pSlot.m_20749_(), pStack);
 +            break;
 +         case ARMOR:
-+            this.f_31539_.set(p_31584_.m_20749_(), p_31585_);
++            this.f_31539_.set(pSlot.m_20749_(), pStack);
 +      }
 +
 +   }

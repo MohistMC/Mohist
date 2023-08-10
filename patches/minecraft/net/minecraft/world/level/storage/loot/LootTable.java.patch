@@ -100,9 +100,9 @@
     }
  
 +   public AtomicBoolean isPlugin = new AtomicBoolean(false);
-+   public void fillInventory(Container p_287662_, LootParams p_287743_, long p_287585_, boolean plugin) {
++   public void fillInventory(Container pContainer, LootParams pParams, long pSeed, boolean plugin) {
 +      isPlugin.set(plugin);
-+      m_287188_(p_287662_, p_287743_, p_287585_);
++      m_287188_(pContainer, pParams, pSeed);
 +   }
 +
     public void m_287188_(Container p_287662_, LootParams p_287743_, long p_287585_) {

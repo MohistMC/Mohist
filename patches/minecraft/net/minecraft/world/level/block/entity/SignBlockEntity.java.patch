@@ -52,30 +52,43 @@
        }
     }
  
-@@ -156,7 +_,8 @@
+@@ -156,18 +_,42 @@
        return this.m_276956_(p_277877_.apply(signtext), p_277426_);
     }
  
 -   private SignText m_276929_(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_) {
-+   private SignText setMessages(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_, boolean front) { // CraftBukkit
-+      SignText originalText = p_277359_; // CraftBukkit
-       for(int i = 0; i < p_277744_.size(); ++i) {
-          FilteredText filteredtext = p_277744_.get(i);
-          Style style = p_277359_.m_277138_(i, p_277396_.m_143387_()).m_7383_();
-@@ -167,6 +_,29 @@
-          }
-       }
- 
+-      for(int i = 0; i < p_277744_.size(); ++i) {
+-         FilteredText filteredtext = p_277744_.get(i);
+-         Style style = p_277359_.m_277138_(i, p_277396_.m_143387_()).m_7383_();
+-         if (p_277396_.m_143387_()) {
+-            p_277359_ = p_277359_.m_276913_(i, Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
++   private SignText setMessages(Player pPlayer, List<FilteredText> pFilteredText, SignText pText, boolean front) { // CraftBukkit
++      SignText originalText = pText; // CraftBukkit
++      for(int i = 0; i < pFilteredText.size(); ++i) {
++         FilteredText filteredtext = pFilteredText.get(i);
++         Style style = pText.m_277138_(i, pPlayer.m_143387_()).m_7383_();
++         if (pPlayer.m_143387_()) {
++            pText = pText.m_276913_(i, Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
+          } else {
+-            p_277359_ = p_277359_.m_276948_(i, Component.m_237113_(filteredtext.f_215168_()).m_6270_(style), Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
+-         }
+-      }
+-
+-      return p_277359_;
++            pText = pText.m_276948_(i, Component.m_237113_(filteredtext.f_215168_()).m_6270_(style), Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
++         }
++      }
++
 +      // CraftBukkit start
-+      org.bukkit.entity.Player player = ((ServerPlayer) p_277396_).getBukkitEntity();
++      org.bukkit.entity.Player player = ((ServerPlayer) pPlayer).getBukkitEntity();
 +      String[] lines = new String[4];
 +
-+      for (int i = 0; i < p_277744_.size(); ++i) {
-+         lines[i] = CraftChatMessage.fromComponent(p_277359_.m_277138_(i, p_277396_.m_143387_()));
++      for (int i = 0; i < pFilteredText.size(); ++i) {
++         lines[i] = CraftChatMessage.fromComponent(pText.m_277138_(i, pPlayer.m_143387_()));
 +      }
 +
 +      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.f_58857_, this.f_58858_), player, lines.clone(), (front) ? Side.FRONT : Side.BACK);
-+      p_277396_.m_9236_().getCraftServer().getPluginManager().callEvent(event);
++      pPlayer.m_9236_().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
 +         return originalText;
@@ -84,14 +97,15 @@
 +      Component[] components = org.bukkit.craftbukkit.v1_20_R1.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!Objects.equals(lines[i], event.getLine(i))) {
-+            p_277359_ = p_277359_.m_276913_(i, components[i]);
++            pText = pText.m_276913_(i, components[i]);
 +         }
 +      }
 +      // CraftBukkit end
 +
-       return p_277359_;
++      return pText;
     }
  
+    public boolean m_276956_(SignText p_277733_, boolean p_277720_) {
 @@ -213,10 +_,33 @@
        return flag;
     }

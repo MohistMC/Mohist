@@ -54,19 +54,19 @@
 +      }
 +   }
 +
-+   boolean addTicketCB(long p_140785_, Ticket<?> p_140786_) {
-+      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(p_140785_);
++   boolean addTicketCB(long pChunkPos, Ticket<?> pTicket) {
++      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(pChunkPos);
 +      int i = m_140797_(sortedarrayset);
-+      Ticket<?> ticket = sortedarrayset.m_14253_(p_140786_);
++      Ticket<?> ticket = sortedarrayset.m_14253_(pTicket);
 +      ticket.m_9429_(this.f_140771_);
-+      if (p_140786_.m_9433_() < i) {
-+         this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
++      if (pTicket.m_9433_() < i) {
++         this.f_140762_.m_140715_(pChunkPos, pTicket.m_9433_(), true);
 +      }
-+      if (p_140786_.isForceTicks()) {
-+         SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(p_140785_, e -> SortedArraySet.m_14246_(4));
++      if (pTicket.isForceTicks()) {
++         SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(pChunkPos, e -> SortedArraySet.m_14246_(4));
 +         tickets.m_14253_(ticket);
 +      }
-+      return p_140786_ == ticket; // CraftBukkit
++      return pTicket == ticket; // CraftBukkit
     }
  
     void m_140818_(long p_140819_, Ticket<?> p_140820_) {
@@ -83,22 +83,22 @@
 +      }
 +   }
 +
-+   boolean removeTicketCB(long p_140819_, Ticket<?> p_140820_) {
-+      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(p_140819_);
-+      if (sortedarrayset.remove(p_140820_)) {
++   boolean removeTicketCB(long pChunkPos, Ticket<?> pTicket) {
++      SortedArraySet<Ticket<?>> sortedarrayset = this.m_140857_(pChunkPos);
++      if (sortedarrayset.remove(pTicket)) {
 +      }
 +      boolean removed = false; // CraftBukkit
 +      if (sortedarrayset.isEmpty()) {
-+         this.f_140761_.remove(p_140819_);
++         this.f_140761_.remove(pChunkPos);
 +         removed = true; // CraftBukkit
 +      }
 +
-+      this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
++      this.f_140762_.m_140715_(pChunkPos, m_140797_(sortedarrayset), false);
 +
-+      if (p_140820_.isForceTicks()) {
-+         SortedArraySet<Ticket<?>> tickets = forcedTickets.get(p_140819_);
++      if (pTicket.isForceTicks()) {
++         SortedArraySet<Ticket<?>> tickets = forcedTickets.get(pChunkPos);
 +         if (tickets != null) {
-+            tickets.remove(p_140820_);
++            tickets.remove(pTicket);
 +         }
 +      }
 +      return removed; // CraftBukkit

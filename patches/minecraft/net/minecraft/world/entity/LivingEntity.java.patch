@@ -221,9 +221,9 @@
  
 +   // CraftBukkit start
 +   // Mohist start
-+   public void onEquipItem(EquipmentSlot p_238393_, ItemStack p_238394_, ItemStack p_238395_, boolean silent) {
++   public void onEquipItem(EquipmentSlot pSlot, ItemStack pOldItem, ItemStack pNewItem, boolean silent) {
 +      silent0.set(silent);
-+      m_238392_(p_238393_, p_238394_, p_238395_);
++      m_238392_(pSlot, pOldItem, pNewItem);
 +   }
 +   // CraftBukkit end
 +   // Mohist end
@@ -388,8 +388,8 @@
     }
  
 +   // CraftBukkit start
-+   public boolean addEffect(MobEffectInstance p_147208_, EntityPotionEffectEvent.Cause cause) {
-+      return addEffect(p_147208_, (Entity) null, cause);
++   public boolean addEffect(MobEffectInstance pEffectInstance, EntityPotionEffectEvent.Cause cause) {
++      return addEffect(pEffectInstance, (Entity) null, cause);
 +   }
 +
 +   // Mohist start
@@ -436,9 +436,9 @@
        }
     }
 +
-+   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
++   public boolean addEffect(MobEffectInstance pEffectInstance, @Nullable Entity pEntity, EntityPotionEffectEvent.Cause cause) {
 +      addEffectCause.set(cause);
-+      return m_147207_(p_147208_, p_147209_);
++      return m_147207_(pEffectInstance, pEntity);
 +   }
 +   // Mohist end
  
@@ -475,9 +475,9 @@
     }
  
 +   @Nullable
-+   public MobEffectInstance c(@Nullable MobEffect p_21164_, EntityPotionEffectEvent.Cause cause) {
++   public MobEffectInstance c(@Nullable MobEffect pEffect, EntityPotionEffectEvent.Cause cause) {
 +      removeEffectNoUpdateCause.set(cause);
-+      return m_6234_(p_21164_);
++      return m_6234_(pEffect);
 +   }
 +
     public boolean m_21195_(MobEffect p_21196_) {
@@ -489,9 +489,9 @@
        }
     }
  
-+   public boolean removeEffect(MobEffect p_21196_, EntityPotionEffectEvent.Cause cause) {
++   public boolean removeEffect(MobEffect pEffect, EntityPotionEffectEvent.Cause cause) {
 +      removeEffectNoUpdateCause.set(cause);
-+      return m_21195_(p_21196_);
++      return m_21195_(pEffect);
 +   }
 +   // Mohist end
 +
@@ -522,9 +522,9 @@
        }
 +   }
  
-+   public void heal(float p_21116_, EntityRegainHealthEvent.RegainReason regainReason) {
++   public void heal(float pHealAmount, EntityRegainHealthEvent.RegainReason regainReason) {
 +      this.regainReason0.set(regainReason);
-+      this.m_5634_(p_21116_);
++      this.m_5634_(pHealAmount);
     }
  
     public float m_21223_() {
@@ -902,7 +902,7 @@
           this.m_5496_(this.m_5896_(i), 1.0F, 1.0F);
           this.m_21229_();
 -         this.m_6469_(p_147189_, (float)i);
-+         // this.hurt(p_147189_, (float)i); // CraftBukkit - moved up
++         // this.hurt(pSource, (float)i); // CraftBukkit - moved up
           return true;
        } else {
           return flag;
@@ -924,7 +924,7 @@
     protected float m_21161_(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.m_269533_(DamageTypeTags.f_268490_)) {
 -         this.m_6472_(p_21162_, p_21163_);
-+         // this.hurtArmor(p_21162_, p_21163_); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
++         // this.hurtArmor(pDamageSource, pDamageAmount); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  
@@ -954,12 +954,7 @@
     }
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
-+      damageEntity0(p_21240_, p_21241_);
-+   }
-+
-+   // CraftBukkit start
-+   protected boolean damageEntity0(final DamageSource p_21240_, float p_21241_) { // void -> boolean, add final
-       if (!this.m_6673_(p_21240_)) {
+-      if (!this.m_6673_(p_21240_)) {
 -         p_21241_ = this.m_21161_(p_21240_, p_21241_);
 -         p_21241_ = this.m_6515_(p_21240_, p_21241_);
 -         float f1 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
@@ -974,36 +969,46 @@
 -         }
 -
 -         if (f1 != 0.0F) {
+-            this.m_21231_().m_289194_(p_21240_, f1);
+-            this.m_21153_(this.m_21223_() - f1);
+-            this.m_7911_(this.m_6103_() - f1);
+-            this.m_146850_(GameEvent.f_223706_);
++      damageEntity0(p_21240_, p_21241_);
++   }
++
++   // CraftBukkit start
++   protected boolean damageEntity0(final DamageSource pDamageSource, float pDamageAmount) { // void -> boolean, add final
++      if (!this.m_6673_(pDamageSource)) {
 +         // Check if entity is a "human" aka player
 +         final boolean human = this instanceof Player;
-+         final float originalDamage = p_21241_;
++         final float originalDamage = pDamageAmount;
 +         // Cauldron start - apply forge damage hook
-+         p_21241_ = ForgeHooks.onLivingHurt(this, p_21240_, p_21241_);
++         pDamageAmount = ForgeHooks.onLivingHurt(this, pDamageSource, pDamageAmount);
 +         // If the damage is negative return true
-+         if (p_21241_ < 0) return true;
++         if (pDamageAmount < 0) return true;
 +         // Thermos detect null damage
-+         final boolean nulldmg = p_21241_ == 0;
++         final boolean nulldmg = pDamageAmount == 0;
 +         // Cauldron end
 +
 +         Function<Double, Double> hardHat = f -> {
-+            if (p_21240_.m_269533_(DamageTypeTags.f_268627_)  && !LivingEntity.this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++            if (pDamageSource.m_269533_(DamageTypeTags.f_268627_)  && !LivingEntity.this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
 +               return -(f - (f * 0.75F));
 +            }
 +            return -0.0;
 +         };
-+         float hardHatModifier = hardHat.apply((double) p_21241_).floatValue();
-+         p_21241_ += hardHatModifier;
++         float hardHatModifier = hardHat.apply((double) pDamageAmount).floatValue();
++         pDamageAmount += hardHatModifier;
 +
-+         Function<Double, Double> blocking = f -> -((LivingEntity.this.m_21275_(p_21240_)) ? f : 0.0);
-+         float blockingModifier = blocking.apply((double) p_21241_).floatValue();
-+         p_21241_ += blockingModifier;
++         Function<Double, Double> blocking = f -> -((LivingEntity.this.m_21275_(pDamageSource)) ? f : 0.0);
++         float blockingModifier = blocking.apply((double) pDamageAmount).floatValue();
++         pDamageAmount += blockingModifier;
 +
-+         Function<Double, Double> armor = f -> -(f - LivingEntity.this.m_21161_(p_21240_, f.floatValue()));
-+         float armorModifier = armor.apply((double) p_21241_).floatValue();
-+         p_21241_ += armorModifier;
++         Function<Double, Double> armor = f -> -(f - LivingEntity.this.m_21161_(pDamageSource, f.floatValue()));
++         float armorModifier = armor.apply((double) pDamageAmount).floatValue();
++         pDamageAmount += armorModifier;
 +
 +         Function<Double, Double> resistance = f -> {
-+            if (!p_21240_.m_269533_(DamageTypeTags.f_268437_) && LivingEntity.this.m_21023_(MobEffects.f_19606_) && !p_21240_.m_269533_(DamageTypeTags.f_268630_)) {
++            if (!pDamageSource.m_269533_(DamageTypeTags.f_268437_) && LivingEntity.this.m_21023_(MobEffects.f_19606_) && !pDamageSource.m_269533_(DamageTypeTags.f_268630_)) {
 +               int i = (LivingEntity.this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
 +               int j = 25 - i;
 +               float f1 = f.floatValue() * (float) j;
@@ -1011,25 +1016,25 @@
 +            }
 +            return -0.0;
 +         };
-+         float resistanceModifier = resistance.apply((double) p_21241_).floatValue();
-+         p_21241_ += resistanceModifier;
++         float resistanceModifier = resistance.apply((double) pDamageAmount).floatValue();
++         pDamageAmount += resistanceModifier;
 +
-+         Function<Double, Double> magic = f -> -(f - LivingEntity.this.m_6515_(p_21240_, f.floatValue()));
-+         float magicModifier = magic.apply((double) p_21241_).floatValue();
-+         p_21241_ += magicModifier;
++         Function<Double, Double> magic = f -> -(f - LivingEntity.this.m_6515_(pDamageSource, f.floatValue()));
++         float magicModifier = magic.apply((double) pDamageAmount).floatValue();
++         pDamageAmount += magicModifier;
 +
 +         Function<Double, Double> absorption = f -> -(Math.max(f - Math.max(f - LivingEntity.this.m_6103_(), 0.0F), 0.0F));
-+         float absorptionModifier = absorption.apply((double) p_21241_).floatValue();
++         float absorptionModifier = absorption.apply((double) pDamageAmount).floatValue();
 +
-+         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_21240_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
-+         if (p_21240_.m_7639_() instanceof Player) {
-+            ((Player) p_21240_.m_7639_()).m_36334_(); // Moved from Player in order to make the cooldown reset get called after the damage event is fired
++         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, pDamageSource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
++         if (pDamageSource.m_7639_() instanceof Player) {
++            ((Player) pDamageSource.m_7639_()).m_36334_(); // Moved from Player in order to make the cooldown reset get called after the damage event is fired
 +         }
 +         if (event.isCancelled()) {
 +            return false;
 +         }
 +
-+         p_21241_ = (float) event.getFinalDamage();
++         pDamageAmount = (float) event.getFinalDamage();
 +
 +         if (nulldmg) return true; // Preclude any stupidity with null head items
 +
@@ -1039,28 +1044,28 @@
 +            if (f3 > 0.0F && f3 < 3.4028235E37F) {
 +               if (this instanceof ServerPlayer) {
 +                  ((ServerPlayer) this).m_36222_(Stats.f_12934_, Math.round(f3 * 10.0F));
-+               } else if (p_21240_.m_7639_() instanceof ServerPlayer) {
-+                  ((ServerPlayer) p_21240_.m_7639_()).m_36222_(Stats.f_12930_, Math.round(f3 * 10.0F));
++               } else if (pDamageSource.m_7639_() instanceof ServerPlayer) {
++                  ((ServerPlayer) pDamageSource.m_7639_()).m_36222_(Stats.f_12930_, Math.round(f3 * 10.0F));
 +               }
 +            }
 +         }
 +
 +         // Apply damage to helmet
-+         if (p_21240_.m_269533_(DamageTypeTags.f_268627_) && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
-+            this.m_142642_(p_21240_, p_21241_);
++         if (pDamageSource.m_269533_(DamageTypeTags.f_268627_) && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++            this.m_142642_(pDamageSource, pDamageAmount);
 +         }
 +
 +         // Apply damage to armor
-+         if (!p_21240_.m_269533_(DamageTypeTags.f_268490_)) {
++         if (!pDamageSource.m_269533_(DamageTypeTags.f_268490_)) {
 +            float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
-+            this.m_6472_(p_21240_, armorDamage);
++            this.m_6472_(pDamageSource, armorDamage);
 +         }
 +
 +         // Apply blocking code // PAIL: steal from above
 +         if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
 +            this.f_19853_.m_7605_(this, (byte) 29); // SPIGOT-4635 - shield damage sound
 +            this.m_7909_((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
-+            Entity entity = p_21240_.m_7640_();
++            Entity entity = pDamageSource.m_7640_();
 +            if (entity instanceof LivingEntity) {
 +               this.m_6728_((LivingEntity) entity);
 +            }
@@ -1073,47 +1078,44 @@
 +         if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof Player) {
 +            ((Player) this).m_36222_(Stats.f_12933_, Math.round(f2 * 10.0F));
 +         }
-+         if (f2 > 0.0F && f2 < 3.4028235E37F && p_21240_.m_7639_() instanceof ServerPlayer) {
-+            ((ServerPlayer) p_21240_.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f2 * 10.0F));
++         if (f2 > 0.0F && f2 < 3.4028235E37F && pDamageSource.m_7639_() instanceof ServerPlayer) {
++            ((ServerPlayer) pDamageSource.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f2 * 10.0F));
 +         }
 +
-+         p_21241_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, p_21241_);
++         pDamageAmount = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, pDamageSource, pDamageAmount);
 +
-+         if (p_21241_ > 0 || !human) {
++         if (pDamageAmount > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the Player subclass each update.
 +               ((Player) this).exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED);
-+               ((Player) this).m_36399_(p_21240_.m_19377_());
-+               if (p_21241_ < 3.4028235E37F) {
-+                  ((Player) this).m_36222_(Stats.f_12931_, Math.round(p_21241_ * 10.0F));
++               ((Player) this).m_36399_(pDamageSource.m_19377_());
++               if (pDamageAmount < 3.4028235E37F) {
++                  ((Player) this).m_36222_(Stats.f_12931_, Math.round(pDamageAmount * 10.0F));
 +               }
 +            }
 +            // CraftBukkit end
 +            float f1 = this.m_21223_();
-             this.m_21231_().m_289194_(p_21240_, f1);
--            this.m_21153_(this.m_21223_() - f1);
--            this.m_7911_(this.m_6103_() - f1);
--            this.m_146850_(GameEvent.f_223706_);
-+            this.m_21153_(f1 - p_21241_); // Forge: moved to fix MC-121048
++            this.m_21231_().m_289194_(pDamageSource, f1);
++            this.m_21153_(f1 - pDamageAmount); // Forge: moved to fix MC-121048
 +            // CraftBukkit start
 +            if (!human) {
-+               this.m_7911_(this.m_6103_() - p_21241_);
++               this.m_7911_(this.m_6103_() - pDamageAmount);
 +            }
-+            this.m_146852_(GameEvent.f_223706_, p_21240_.m_7639_());
++            this.m_146852_(GameEvent.f_223706_, pDamageSource.m_7639_());
 +
 +            return true;
 +         } else {
 +            // Duplicate triggers if blocking
 +            if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
 +               if (this instanceof ServerPlayer) {
-+                  CriteriaTriggers.f_10574_.m_35174_((ServerPlayer) this, p_21240_, p_21241_, originalDamage, true);
++                  CriteriaTriggers.f_10574_.m_35174_((ServerPlayer) this, pDamageSource, pDamageAmount, originalDamage, true);
 +                  f2 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
 +                  if (f2 > 0.0F && f2 < 3.4028235E37F) {
 +                     ((ServerPlayer) this).m_36222_(Stats.f_12932_, Math.round(originalDamage * 10.0F));
 +                  }
 +               }
-+               if (p_21240_.m_7639_() instanceof ServerPlayer) {
-+                  CriteriaTriggers.f_10573_.m_60112_((ServerPlayer) p_21240_.m_7639_(), this, p_21240_, p_21241_, originalDamage, true);
++               if (pDamageSource.m_7639_() instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10573_.m_60112_((ServerPlayer) pDamageSource.m_7639_(), this, pDamageSource, pDamageAmount, originalDamage, true);
 +               }
 +               return false;
 +            } else {
@@ -1139,8 +1141,8 @@
        this.f_19804_.m_135381_(f_20940_, p_21318_);
     }
  
-+   public final void setArrowCount(int p_21318_, boolean flag){
-+      ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent( this, m_21234_(), p_21318_, flag );
++   public final void setArrowCount(int pCount, boolean flag){
++      ArrowBodyCountChangeEvent event = CraftEventFactory.callArrowBodyCountChangeEvent( this, m_21234_(), pCount, flag );
 +      if(event.isCancelled()){
 +         return;
 +      }
@@ -1572,7 +1574,7 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -3028,6 +_,11 @@
+@@ -3028,12 +_,17 @@
     }
  
     public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
@@ -1580,17 +1582,25 @@
 +      return randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN).orElse(false);
 +   }
 +
-+   public Optional<Boolean> randomTeleport(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++   public Optional<Boolean> randomTeleport(double pX, double pY, double pZ, boolean pBroadcastTeleport, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
        double d0 = this.m_20185_();
        double d1 = this.m_20186_();
        double d2 = this.m_20189_();
-@@ -3050,16 +_,37 @@
+-      double d3 = p_20986_;
++      double d3 = pY;
+       boolean flag = false;
+-      BlockPos blockpos = BlockPos.m_274561_(p_20985_, p_20986_, p_20987_);
++      BlockPos blockpos = BlockPos.m_274561_(pX, pY, pZ);
+       Level level = this.m_9236_();
+       if (level.m_46805_(blockpos)) {
+          boolean flag1 = false;
+@@ -3050,18 +_,39 @@
           }
  
           if (flag1) {
 -            this.m_6021_(p_20985_, d3, p_20987_);
 +            // CraftBukkit start - Teleport event
-+            this.m_6034_(p_20985_, d3, p_20987_);
++            this.m_6034_(pX, d3, pZ);
              if (level.m_45786_(this) && !level.m_46855_(this.m_20191_())) {
                 flag = true;
              }
@@ -1599,7 +1609,7 @@
 +
 +            if (flag1) {
 +               if (!(this instanceof ServerPlayer)) {
-+                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), p_20985_, d3, p_20987_));
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), pX, d3, pZ));
 +                  this.f_19853_.getCraftServer().getPluginManager().callEvent(teleport);
 +                  if (!teleport.isCancelled()) {
 +                     Location to = teleport.getTo();
@@ -1609,7 +1619,7 @@
 +                  }
 +               } else {
 +                  // player teleport event is called in the underlining code
-+                  if (((ServerPlayer) this).f_8906_.teleport(p_20985_, d3, p_20987_, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), cause)) {
++                  if (((ServerPlayer) this).f_8906_.teleport(pX, d3, pZ, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), cause)) {
 +                     return Optional.empty();
 +                  }
 +               }
@@ -1623,8 +1633,11 @@
 -         return false;
 +         return Optional.of(false); // CraftBukkit
        } else {
-          if (p_20988_) {
+-         if (p_20988_) {
++         if (pBroadcastTeleport) {
              level.m_7605_(this, (byte)46);
+          }
+ 
 @@ -3069,7 +_,7 @@
              ((PathfinderMob)this).m_21573_().m_26573_();
           }

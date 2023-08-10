@@ -80,9 +80,9 @@
 +      craftItem0.set(craftItem);
 +   }
 +   // CraftBukkit - add args
-+   private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) {
++   private static boolean tryShearLivingEntity(ServerLevel pLevel, BlockPos pPos, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) {
 +      bukkitBlockAndcraftItem(bukkitBlock, craftItem);
-+      return m_123582_(p_123583_, p_123584_);
++      return m_123582_(pLevel, pPos);
 +   }
 +   // Mohist end
  }

@@ -17,9 +17,9 @@
 +   @Nullable
 +   public final ChatFormatting format;
 +
-+   private TextColor(int p_131263_, String p_131264_, ChatFormatting format) {
-+      this.f_131257_ = p_131263_;
-+      this.f_131258_ = p_131264_;
++   private TextColor(int pValue, String pName, ChatFormatting format) {
++      this.f_131257_ = pValue;
++      this.f_131258_ = pName;
 +      this.format = format;
 +   }
 +

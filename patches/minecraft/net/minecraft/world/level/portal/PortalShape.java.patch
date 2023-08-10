@@ -131,9 +131,9 @@
 +      return portalInfo;
 +   }
 +
-+   public static PortalInfo createPortalInfo(ServerLevel p_259301_, BlockUtil.FoundRectangle p_259931_, Direction.Axis p_259901_, Vec3 p_259630_, Entity p_259166_, Vec3 p_260043_, float p_259853_, float p_259667_, CraftPortalEvent portalEventInfo) { // CraftBukkit
++   public static PortalInfo createPortalInfo(ServerLevel pLevel, BlockUtil.FoundRectangle pPortalPos, Direction.Axis pAxis, Vec3 pRelativePos, Entity pEntity, Vec3 pVelocity, float pYRot, float pXRot, CraftPortalEvent portalEventInfo) { // CraftBukkit
 +      mohist$portalInfo.set(portalEventInfo);
-+      return m_257966_(p_259301_, p_259931_, p_259901_, p_259630_, p_259166_, p_260043_, p_259853_, p_259667_);
++      return m_257966_(pLevel, pPortalPos, pAxis, pRelativePos, pEntity, pVelocity, pYRot, pXRot);
     }
  
     private static Vec3 m_257963_(Vec3 p_260315_, ServerLevel p_259704_, Entity p_259626_, EntityDimensions p_259816_) {

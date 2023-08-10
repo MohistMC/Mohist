@@ -1,28 +1,38 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
-@@ -17,7 +_,14 @@
+@@ -17,18 +_,25 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SpawnUtil {
 +
     public static <T extends Mob> Optional<T> m_216403_(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_) {
+-      BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.m_122032_();
+-
+-      for(int i = 0; i < p_216408_; ++i) {
+-         int j = Mth.m_216287_(p_216406_.f_46441_, -p_216409_, p_216409_);
+-         int k = Mth.m_216287_(p_216406_.f_46441_, -p_216409_, p_216409_);
+-         blockpos$mutableblockpos.m_122154_(p_216407_, j, p_216410_, k);
+-         if (p_216406_.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
+-            T t = p_216404_.m_262451_(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
 +      // CraftBukkit start
 +      return trySpawnMob(p_216404_, p_216405_, p_216406_, p_216407_, p_216408_, p_216409_, p_216410_, p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
-+   public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++   public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> pEntityType, MobSpawnType pSpawnType, ServerLevel pLevel, BlockPos pPos, int pAttempts, int p_216409_, int pYOffset, SpawnUtil.Strategy pStrategy, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      // CraftBukkit end
-       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.m_122032_();
- 
-       for(int i = 0; i < p_216408_; ++i) {
-@@ -27,8 +_,8 @@
-          if (p_216406_.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
-             T t = p_216404_.m_262451_(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
++      BlockPos.MutableBlockPos blockpos$mutableblockpos = pPos.m_122032_();
++
++      for(int i = 0; i < pAttempts; ++i) {
++         int j = Mth.m_216287_(pLevel.f_46441_, -p_216409_, p_216409_);
++         int k = Mth.m_216287_(pLevel.f_46441_, -p_216409_, p_216409_);
++         blockpos$mutableblockpos.m_122154_(pPos, j, pYOffset, k);
++         if (pLevel.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(pLevel, pYOffset, blockpos$mutableblockpos, pStrategy)) {
++            T t = pEntityType.m_262451_(pLevel, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, pSpawnType, false, false);
              if (t != null) {
 -               if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
 -                  p_216406_.m_47205_(t);
-+               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, p_216406_, p_216405_)) {
-+                  p_216406_.addFreshEntityWithPassengers(t, reason); // CraftBukkit
++               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, pLevel, pSpawnType)) {
++                  pLevel.addFreshEntityWithPassengers(t, reason); // CraftBukkit
                    return Optional.of(t);
                 }
  

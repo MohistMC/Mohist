@@ -18,14 +18,15 @@ plugins {
     id 'de.undercouch.download' version '5.4.0'
     id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
     id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+' apply false
 }
 
 init() //Init all our extension methods!
 
 ext {
     JAR_SIGNER = null
-    MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.20.1'
+    MAPPING_CHANNEL = 'parchment'
+    MAPPING_VERSION = '2023.07.16-1.20.1'
     MC_VERSION = '1.20.1'
     MC_NEXT_VERSION = '1.21'
     MCP_VERSION = '20230612.114412'
@@ -58,8 +59,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.20.1-47.1.62'
-    FORGE_VERSION = '47.1.62'
+    VERSION = '1.20.1-47.1.65'
+    FORGE_VERSION = '47.1.65'
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
@@ -123,6 +124,7 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'org.parchmentmc.librarian.forgegradle'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -350,6 +352,7 @@ project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
     applyPatches { level 'WARNING' }
 

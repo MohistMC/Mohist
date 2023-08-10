@@ -70,9 +70,9 @@
        }
     }
  
-+   static BlockState addItem(@Nullable Entity p_270464_, BlockState p_270603_, LevelAccessor p_270151_, BlockPos p_270547_, ItemStack p_270354_, double rand) {
++   static BlockState addItem(@Nullable Entity pEntity, BlockState pState, LevelAccessor pLevel, BlockPos pPos, ItemStack pStack, double rand) {
 +      bukkitRand.set(rand);
-+      return m_269330_(p_270464_, p_270603_, p_270151_, p_270547_, p_270354_);
++      return m_269330_(pEntity, pState, pLevel, pPos, pStack);
 +   }
 +   // Mohist end
 +

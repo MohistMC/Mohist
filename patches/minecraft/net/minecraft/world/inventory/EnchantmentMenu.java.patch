@@ -155,7 +155,7 @@
 -               if (!list.isEmpty()) {
 -                  p_39465_.m_7408_(itemstack, i);
 +               if (true || !list.isEmpty()) {
-+                  // p_39465_.onEnchantmentPerformed(itemstack, i); // Moved down
++                  // pPlayer.onEnchantmentPerformed(itemstack, i); // Moved down
                    boolean flag = itemstack.m_150930_(Items.f_42517_);
 +                  Map<org.bukkit.enchantments.Enchantment, Integer> enchants = new java.util.HashMap<>();
 +                  for (Object obj : list) {

@@ -161,35 +161,35 @@
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +
 +         @Override
-+         public void m_6312_(WorldBorder p_61847_, double p_61848_) {
-+            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderSizePacket(p_61847_), p_61847_.world.m_46472_());
++         public void m_6312_(WorldBorder pBorder, double pSize) {
++            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderSizePacket(pBorder), pBorder.world.m_46472_());
 +         }
 +
 +         @Override
-+         public void m_6689_(WorldBorder p_61852_, double p_61853_, double p_61854_, long p_61855_) {
-+            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderLerpSizePacket(p_61852_), p_61852_.world.m_46472_());
++         public void m_6689_(WorldBorder pBorder, double pOldSize, double pNewSize, long pTime) {
++            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderLerpSizePacket(pBorder), pBorder.world.m_46472_());
 +         }
 +
 +         @Override
-+         public void m_7721_(WorldBorder p_61849_, double p_61850_, double p_61851_) {
-+            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderCenterPacket(p_61849_), p_61849_.world.m_46472_());
++         public void m_7721_(WorldBorder pBorder, double pX, double pZ) {
++            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderCenterPacket(pBorder), pBorder.world.m_46472_());
 +         }
 +
 +         @Override
-+         public void m_5904_(WorldBorder p_61856_, int p_61857_) {
-+            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderWarningDelayPacket(p_61856_), p_61856_.world.m_46472_());
++         public void m_5904_(WorldBorder pBorder, int pWarningTime) {
++            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderWarningDelayPacket(pBorder), pBorder.world.m_46472_());
 +         }
 +
 +         @Override
-+         public void m_5903_(WorldBorder p_61860_, int p_61861_) {
-+            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderWarningDistancePacket(p_61860_), p_61860_.world.m_46472_());
++         public void m_5903_(WorldBorder pBorder, int pWarningBlocks) {
++            getCraftServer().getHandle().m_11270_(new ClientboundSetBorderWarningDistancePacket(pBorder), pBorder.world.m_46472_());
 +         }
 +
 +         @Override
-+         public void m_6315_(WorldBorder p_61858_, double p_61859_) { }
++         public void m_6315_(WorldBorder pBorder, double pDamagePerBlock) { }
 +
 +         @Override
-+         public void m_6313_(WorldBorder p_61862_, double p_61863_) { }
++         public void m_6313_(WorldBorder pBorder, double pDamageSafeZone) { }
 +      });
 +      // CraftBukkit end
     }
@@ -378,24 +378,29 @@
        explosion.m_46061_();
        explosion.m_46075_(p_256377_);
        return explosion;
-@@ -495,6 +_,16 @@
+@@ -495,16 +_,32 @@
  
     @Nullable
     public BlockEntity m_7702_(BlockPos p_46716_) {
+-      if (this.m_151570_(p_46716_)) {
 +      // CraftBukkit start
 +      return getBlockEntity(p_46716_, true);
 +   }
 +
 +   @Nullable
-+   public BlockEntity getBlockEntity(BlockPos p_46716_, boolean validate) {
-+      if (capturedTileEntities.containsKey(p_46716_)) {
-+         return capturedTileEntities.get(p_46716_);
++   public BlockEntity getBlockEntity(BlockPos pPos, boolean validate) {
++      if (capturedTileEntities.containsKey(pPos)) {
++         return capturedTileEntities.get(pPos);
 +      }
 +      // CraftBukkit end
-       if (this.m_151570_(p_46716_)) {
++      if (this.m_151570_(pPos)) {
           return null;
        } else {
-@@ -505,6 +_,12 @@
+-         return !this.f_46443_ && Thread.currentThread() != this.f_46423_ ? null : this.m_46745_(p_46716_).m_5685_(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
++         return !this.f_46443_ && Thread.currentThread() != this.f_46423_ ? null : this.m_46745_(pPos).m_5685_(pPos, LevelChunk.EntityCreationType.IMMEDIATE);
+       }
+    }
+ 
     public void m_151523_(BlockEntity p_151524_) {
        BlockPos blockpos = p_151524_.m_58899_();
        if (!this.m_151570_(blockpos)) {

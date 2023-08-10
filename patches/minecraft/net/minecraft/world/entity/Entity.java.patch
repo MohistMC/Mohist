@@ -856,29 +856,31 @@
                 list.add(0, p_20349_);
              } else {
                 list.add(p_20349_);
-@@ -1945,11 +_,39 @@
+@@ -1945,28 +_,59 @@
           this.m_146852_(GameEvent.f_268500_, p_20349_);
        }
     }
 -
 -   protected void m_20351_(Entity p_20352_) {
-+   protected boolean removePassenger(Entity p_20352_) {
-       if (p_20352_.m_20202_() == this) {
+-      if (p_20352_.m_20202_() == this) {
++   protected boolean removePassenger(Entity pPassenger) {
++      if (pPassenger.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
+-         if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
 +         // CraftBukkit start
-+         CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++         CraftEntity craft = (CraftEntity) pPassenger.getBukkitEntity().getVehicle();
 +         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
++         if (getBukkitEntity() instanceof Vehicle && pPassenger.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
 +            VehicleExitEvent event = new VehicleExitEvent(
 +                    (Vehicle) getBukkitEntity(),
-+                    (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
++                    (org.bukkit.entity.LivingEntity) pPassenger.getBukkitEntity()
 +            );
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
 +            }
-+            CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
++            CraftEntity craftn = (CraftEntity) pPassenger.getBukkitEntity().getVehicle();
 +            Entity n = craftn == null ? null : craftn.getHandle();
 +            if (event.isCancelled() || n != orig) {
 +               return false;
@@ -886,7 +888,7 @@
 +         }
 +         // CraftBukkit end
 +         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
++         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(pPassenger.getBukkitEntity(), this.getBukkitEntity());
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            Bukkit.getPluginManager().callEvent(event);
@@ -895,12 +897,19 @@
 +            return false;
 +         }
 +         // Spigot end
-          if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
++         if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == pPassenger) {
              this.f_19823_ = ImmutableList.of();
           } else {
-@@ -1961,12 +_,15 @@
-          p_20352_.f_19851_ = 60;
-          this.m_146852_(GameEvent.f_268533_, p_20352_);
+             this.f_19823_ = this.f_19823_.stream().filter((p_185980_) -> {
+-               return p_185980_ != p_20352_;
++               return p_185980_ != pPassenger;
+             }).collect(ImmutableList.toImmutableList());
+          }
+ 
+-         p_20352_.f_19851_ = 60;
+-         this.m_146852_(GameEvent.f_268533_, p_20352_);
++         pPassenger.f_19851_ = 60;
++         this.m_146852_(GameEvent.f_268533_, pPassenger);
        }
 +      return true;
     }
@@ -1076,9 +1085,9 @@
 +   private AtomicReference<PositionImpl> mohist$postion = new AtomicReference<>();
 +
 +   @Nullable
-+   public Entity teleportTo(ServerLevel p_20118_, PositionImpl location) {
++   public Entity teleportTo(ServerLevel pDestination, PositionImpl location) {
 +      mohist$postion.set(location);
-+      return this.m_5489_(p_20118_);
++      return this.m_5489_(pDestination);
 +   }
 +
 +   @Nullable
@@ -1234,8 +1243,8 @@
        return p_185935_.m_8871_().m_192985_(p_185936_, p_185937_, p_185938_);
     }
  
-+   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel p_185935_, BlockPos p_185936_, boolean p_185937_, WorldBorder p_185938_, int searchRadius, boolean canCreatePortal, int createRadius) {
-+      return p_185935_.m_8871_().findPortalAround(p_185936_, p_185938_, searchRadius);
++   protected Optional<BlockUtil.FoundRectangle> getExitPortal(ServerLevel pDestination, BlockPos pFindFrom, boolean pIsToNether, WorldBorder pWorldBorder, int searchRadius, boolean canCreatePortal, int createRadius) {
++      return pDestination.m_8871_().findPortalAround(pFindFrom, pWorldBorder, searchRadius);
 +      // CraftBukkit end
 +   }
 +
@@ -1308,7 +1317,7 @@
  
     public final void m_20011_(AABB p_20012_) {
 -      this.f_19828_ = p_20012_;
-+      // this.bb = p_20012_;
++      // this.bb = pBb;
 +      // CraftBukkit start - block invalid bounding boxes
 +      double minX = p_20012_.f_82288_,
 +              minY = p_20012_.f_82289_,

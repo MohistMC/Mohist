@@ -52,18 +52,27 @@
           } else if (tilt == Tilt.FULL) {
              m_152313_(p_220798_, p_220799_, p_220800_);
           }
-@@ -190,8 +_,8 @@
+@@ -190,34 +_,41 @@
        return p_152303_.m_20096_() && p_152303_.m_20182_().f_82480_ > (double)((float)p_152302_.m_123342_() + 0.6875F);
     }
  
 -   private void m_152282_(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
 -      m_152277_(p_152283_, p_152284_, p_152285_, p_152286_);
-+   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_, @Nullable Entity entity) {
-+      if (!setTilt(p_152283_, p_152284_, p_152285_, p_152286_, entity)) return;
-       if (p_152287_ != null) {
-          m_152232_(p_152284_, p_152285_, p_152287_);
+-      if (p_152287_ != null) {
+-         m_152232_(p_152284_, p_152285_, p_152287_);
++   private void setTiltAndScheduleTick(BlockState pState, Level pLevel, BlockPos pPos, Tilt pTilt, @Nullable SoundEvent pSound, @Nullable Entity entity) {
++      if (!setTilt(pState, pLevel, pPos, pTilt, entity)) return;
++      if (pSound != null) {
++         m_152232_(pLevel, pPos, pSound);
        }
-@@ -204,20 +_,27 @@
+ 
+-      int i = f_152203_.getInt(p_152286_);
++      int i = f_152203_.getInt(pTilt);
+       if (i != -1) {
+-         p_152284_.m_186460_(p_152285_, this, i);
++         pLevel.m_186460_(pPos, this, i);
+       }
+ 
     }
  
     private static void m_152313_(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {
@@ -76,17 +85,21 @@
     }
  
 -   private static void m_152277_(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_) {
-+   private static boolean setTilt(BlockState p_152278_, Level p_152279_, BlockPos p_152280_, Tilt p_152281_, @Nullable Entity entity) {
+-      Tilt tilt = p_152278_.m_61143_(f_152201_);
+-      p_152279_.m_7731_(p_152280_, p_152278_.m_61124_(f_152201_, p_152281_), 2);
+-      if (p_152281_.m_156084_() && p_152281_ != tilt) {
+-         p_152279_.m_142346_((Entity)null, GameEvent.f_157792_, p_152280_);
++   private static boolean setTilt(BlockState pState, Level pLevel, BlockPos pPos, Tilt pTilt, @Nullable Entity entity) {
 +      if (entity != null) {
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_152280_, p_152278_.m_61124_(BigDripleafBlock.f_152201_, p_152281_))) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pPos, pState.m_61124_(BigDripleafBlock.f_152201_, pTilt))) {
 +            return false;
 +         }
 +      }
 +      // CraftBukkit end
-       Tilt tilt = p_152278_.m_61143_(f_152201_);
-       p_152279_.m_7731_(p_152280_, p_152278_.m_61124_(f_152201_, p_152281_), 2);
-       if (p_152281_.m_156084_() && p_152281_ != tilt) {
-          p_152279_.m_142346_((Entity)null, GameEvent.f_157792_, p_152280_);
++      Tilt tilt = pState.m_61143_(f_152201_);
++      pLevel.m_7731_(pPos, pState.m_61124_(f_152201_, pTilt), 2);
++      if (pTilt.m_156084_() && pTilt != tilt) {
++         pLevel.m_142346_((Entity)null, GameEvent.f_157792_, pPos);
        }
  
 +      return true; // CraftBukkit

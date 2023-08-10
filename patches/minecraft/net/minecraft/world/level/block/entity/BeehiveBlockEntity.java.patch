@@ -57,7 +57,7 @@
           p_58745_.m_8127_();
           p_58745_.m_20153_();
           CompoundTag compoundtag = new CompoundTag();
-@@ -156,7 +_,13 @@
+@@ -156,65 +_,85 @@
     }
  
     private static boolean m_155136_(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_) {
@@ -66,13 +66,32 @@
 +      return releaseBee(p_155137_, p_155138_, p_155139_, p_155140_, p_155141_, p_155142_, p_155143_, false);
 +   }
 +
-+   private static boolean releaseBee(Level p_155137_, BlockPos p_155138_, BlockState p_155139_, BeehiveBlockEntity.BeeData p_155140_, @Nullable List<Entity> p_155141_, BeehiveBlockEntity.BeeReleaseStatus p_155142_, @Nullable BlockPos p_155143_, boolean force) {
-+      if (!force && (p_155137_.m_46462_() || p_155137_.m_46471_()) && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++   private static boolean releaseBee(Level pLevel, BlockPos pPos, BlockState pState, BeehiveBlockEntity.BeeData pData, @Nullable List<Entity> pStoredInHives, BeehiveBlockEntity.BeeReleaseStatus pReleaseStatus, @Nullable BlockPos pSavedFlowerPos, boolean force) {
++      if (!force && (pLevel.m_46462_() || pLevel.m_46471_()) && pReleaseStatus != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
 +         // CraftBukkit end
           return false;
        } else {
-          CompoundTag compoundtag = p_155140_.f_58782_.m_6426_();
-@@ -176,6 +_,18 @@
+-         CompoundTag compoundtag = p_155140_.f_58782_.m_6426_();
++         CompoundTag compoundtag = pData.f_58782_.m_6426_();
+          m_155161_(compoundtag);
+-         compoundtag.m_128365_("HivePos", NbtUtils.m_129224_(p_155138_));
++         compoundtag.m_128365_("HivePos", NbtUtils.m_129224_(pPos));
+          compoundtag.m_128379_("NoGravity", true);
+-         Direction direction = p_155139_.m_61143_(BeehiveBlock.f_49563_);
+-         BlockPos blockpos = p_155138_.m_121945_(direction);
+-         boolean flag = !p_155137_.m_8055_(blockpos).m_60812_(p_155137_, blockpos).m_83281_();
+-         if (flag && p_155142_ != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
++         Direction direction = pState.m_61143_(BeehiveBlock.f_49563_);
++         BlockPos blockpos = pPos.m_121945_(direction);
++         boolean flag = !pLevel.m_8055_(blockpos).m_60812_(pLevel, blockpos).m_83281_();
++         if (flag && pReleaseStatus != BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY) {
+             return false;
+          } else {
+-            Entity entity = EntityType.m_20645_(compoundtag, p_155137_, (p_58740_) -> {
++            Entity entity = EntityType.m_20645_(compoundtag, pLevel, (p_58740_) -> {
+                return p_58740_;
+             });
+             if (entity != null) {
                 if (!entity.m_6095_().m_204039_(EntityTypeTags.f_13122_)) {
                    return false;
                 } else {
@@ -80,19 +99,50 @@
 +                  if (entity instanceof Bee) {
 +                     float f = entity.m_20205_();
 +                     double d0 = flag ? 0.0D : 0.55D + (double) (f / 2.0F);
-+                     double d1 = (double) p_155138_.m_123341_() + 0.5D + d0 * (double) direction.m_122429_();
-+                     double d2 = (double) p_155138_.m_123342_() + 0.5D - (double) (entity.m_20206_() / 2.0F);
-+                     double d3 = (double) p_155138_.m_123343_() + 0.5D + d0 * (double) direction.m_122431_();
++                     double d1 = (double) pPos.m_123341_() + 0.5D + d0 * (double) direction.m_122429_();
++                     double d2 = (double) pPos.m_123342_() + 0.5D - (double) (entity.m_20206_() / 2.0F);
++                     double d3 = (double) pPos.m_123343_() + 0.5D + d0 * (double) direction.m_122431_();
 +
 +                     entity.m_7678_(d1, d2, d3, entity.m_146908_(), entity.m_146909_());
 +                  }
-+                  if (!p_155137_.addFreshEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BEEHIVE)) return false; // CraftBukkit - SpawnReason, moved from below
++                  if (!pLevel.addFreshEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BEEHIVE)) return false; // CraftBukkit - SpawnReason, moved from below
 +                  // CraftBukkit end
                    if (entity instanceof Bee) {
                       Bee bee = (Bee)entity;
-                      if (p_155143_ != null && !bee.m_27852_() && p_155137_.f_46441_.m_188501_() < 0.9F) {
-@@ -204,17 +_,19 @@
-                         p_155141_.add(bee);
+-                     if (p_155143_ != null && !bee.m_27852_() && p_155137_.f_46441_.m_188501_() < 0.9F) {
+-                        bee.m_27876_(p_155143_);
++                     if (pSavedFlowerPos != null && !bee.m_27852_() && pLevel.f_46441_.m_188501_() < 0.9F) {
++                        bee.m_27876_(pSavedFlowerPos);
+                      }
+ 
+-                     if (p_155142_ == BeehiveBlockEntity.BeeReleaseStatus.HONEY_DELIVERED) {
++                     if (pReleaseStatus == BeehiveBlockEntity.BeeReleaseStatus.HONEY_DELIVERED) {
+                         bee.m_27864_();
+-                        if (p_155139_.m_204338_(BlockTags.f_13072_, (p_202037_) -> {
++                        if (pState.m_204338_(BlockTags.f_13072_, (p_202037_) -> {
+                            return p_202037_.m_61138_(BeehiveBlock.f_49564_);
+                         })) {
+-                           int i = m_58752_(p_155139_);
++                           int i = m_58752_(pState);
+                            if (i < 5) {
+-                              int j = p_155137_.f_46441_.m_188503_(100) == 0 ? 2 : 1;
++                              int j = pLevel.f_46441_.m_188503_(100) == 0 ? 2 : 1;
+                               if (i + j > 5) {
+                                  --j;
+                               }
+ 
+-                              p_155137_.m_46597_(p_155138_, p_155139_.m_61124_(BeehiveBlock.f_49564_, Integer.valueOf(i + j)));
++                              pLevel.m_46597_(pPos, pState.m_61124_(BeehiveBlock.f_49564_, Integer.valueOf(i + j)));
+                            }
+                         }
+                      }
+ 
+-                     m_58736_(p_155140_.f_58783_, bee);
+-                     if (p_155141_ != null) {
+-                        p_155141_.add(bee);
++                     m_58736_(pData.f_58783_, bee);
++                     if (pStoredInHives != null) {
++                        pStoredInHives.add(bee);
                       }
  
 -                     float f = entity.m_20205_();
@@ -103,17 +153,19 @@
 -                     double d1 = (double)p_155138_.m_123342_() + 0.5D - (double)(entity.m_20206_() / 2.0F);
 -                     double d2 = (double)p_155138_.m_123343_() + 0.5D + d3 * (double)direction.m_122431_();
 -                     entity.m_7678_(d0, d1, d2, entity.m_146908_(), entity.m_146909_());
-+                     double d0 = (double)p_155138_.getX() + 0.5D + d3 * (double)direction.getStepX();
-+                     double d1 = (double)p_155138_.getY() + 0.5D - (double)(entity.getBbHeight() / 2.0F);
-+                     double d2 = (double)p_155138_.getZ() + 0.5D + d3 * (double)direction.getStepZ();
++                     double d0 = (double)pPos.getX() + 0.5D + d3 * (double)direction.getStepX();
++                     double d1 = (double)pPos.getY() + 0.5D - (double)(entity.getBbHeight() / 2.0F);
++                     double d2 = (double)pPos.getZ() + 0.5D + d3 * (double)direction.getStepZ();
 +                     entity.moveTo(d0, d1, d2, entity.getYRot(), entity.getXRot());
 +                     */ // CraftBukkit end
                    }
  
-                   p_155137_.m_5594_((Player)null, p_155138_, SoundEvents.f_11696_, SoundSource.BLOCKS, 1.0F, 1.0F);
-                   p_155137_.m_220407_(GameEvent.f_157792_, p_155138_, GameEvent.Context.m_223719_(entity, p_155137_.m_8055_(p_155138_)));
+-                  p_155137_.m_5594_((Player)null, p_155138_, SoundEvents.f_11696_, SoundSource.BLOCKS, 1.0F, 1.0F);
+-                  p_155137_.m_220407_(GameEvent.f_157792_, p_155138_, GameEvent.Context.m_223719_(entity, p_155137_.m_8055_(p_155138_)));
 -                  return p_155137_.m_7967_(entity);
-+                  return true; // return p_155137_.addFreshEntity(entity); // CraftBukkit - moved up
++                  pLevel.m_5594_((Player)null, pPos, SoundEvents.f_11696_, SoundSource.BLOCKS, 1.0F, 1.0F);
++                  pLevel.m_220407_(GameEvent.f_157792_, pPos, GameEvent.Context.m_223719_(entity, pLevel.m_8055_(pPos)));
++                  return true; // return pLevel.addFreshEntity(entity); // CraftBukkit - moved up
                 }
              } else {
                 return false;
@@ -155,10 +207,10 @@
        EMERGENCY;
 +   }
 +
-+   public List<Entity> releaseBees(BlockState p_58760_, BeehiveBlockEntity.BeeReleaseStatus p_58761_, boolean force) {
++   public List<Entity> releaseBees(BlockState pState, BeehiveBlockEntity.BeeReleaseStatus pReleaseStatus, boolean force) {
 +      List<Entity> list = Lists.newArrayList();
 +      this.f_58732_.removeIf((p_58766_) -> {
-+         return releaseBee(this.f_58857_, this.f_58858_, p_58760_, p_58766_, list, p_58761_, this.f_58733_, force);
++         return releaseBee(this.f_58857_, this.f_58858_, pState, p_58766_, list, pReleaseStatus, this.f_58733_, force);
 +         // CraftBukkit end
 +      });
 +      if (!list.isEmpty()) {

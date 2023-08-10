@@ -18,24 +18,34 @@
           }
  
           return InteractionResult.m_19078_(level.f_46443_);
-@@ -33,7 +_,7 @@
+@@ -33,30 +_,53 @@
        }
     }
  
 -   public static InteractionResult m_42829_(Player p_42830_, Level p_42831_, BlockPos p_42832_) {
-+   public static InteractionResult bindPlayerMobs(Player p_42830_, Level p_42831_, BlockPos p_42832_, net.minecraft.world.InteractionHand enumhand) {
++   public static InteractionResult bindPlayerMobs(Player pPlayer, Level pLevel, BlockPos pPos, net.minecraft.world.InteractionHand enumhand) {
        LeashFenceKnotEntity leashfenceknotentity = null;
        boolean flag = false;
        double d0 = 7.0D;
-@@ -45,9 +_,26 @@
-          if (mob.m_21524_() == p_42830_) {
+-      int i = p_42832_.m_123341_();
+-      int j = p_42832_.m_123342_();
+-      int k = p_42832_.m_123343_();
++      int i = pPos.m_123341_();
++      int j = pPos.m_123342_();
++      int k = pPos.m_123343_();
+ 
+-      for(Mob mob : p_42831_.m_45976_(Mob.class, new AABB((double)i - 7.0D, (double)j - 7.0D, (double)k - 7.0D, (double)i + 7.0D, (double)j + 7.0D, (double)k + 7.0D))) {
+-         if (mob.m_21524_() == p_42830_) {
++      for(Mob mob : pLevel.m_45976_(Mob.class, new AABB((double)i - 7.0D, (double)j - 7.0D, (double)k - 7.0D, (double)i + 7.0D, (double)j + 7.0D, (double)k + 7.0D))) {
++         if (mob.m_21524_() == pPlayer) {
              if (leashfenceknotentity == null) {
-                leashfenceknotentity = LeashFenceKnotEntity.m_31844_(p_42831_, p_42832_);
+-               leashfenceknotentity = LeashFenceKnotEntity.m_31844_(p_42831_, p_42832_);
++               leashfenceknotentity = LeashFenceKnotEntity.m_31844_(pLevel, pPos);
 +
 +               // CraftBukkit start - fire HangingPlaceEvent
 +               org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(enumhand);
-+               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), p_42830_ != null ? (org.bukkit.entity.Player) p_42830_.getBukkitEntity() : null, p_42831_.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
-+               p_42831_.getCraftServer().getPluginManager().callEvent(event);
++               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), pPlayer != null ? (org.bukkit.entity.Player) pPlayer.getBukkitEntity() : null, pLevel.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
++               pLevel.getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {
 +                  leashfenceknotentity.m_146870_();
@@ -46,7 +56,7 @@
              }
  
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, p_42830_, enumhand).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mob, leashfenceknotentity, pPlayer, enumhand).isCancelled()) {
 +               continue;
 +            }
 +            // CraftBukkit end
@@ -54,7 +64,12 @@
              mob.m_21463_(leashfenceknotentity, true);
              flag = true;
           }
-@@ -59,4 +_,10 @@
+       }
+ 
+       if (flag) {
+-         p_42831_.m_220407_(GameEvent.f_157791_, p_42832_, GameEvent.Context.m_223717_(p_42830_));
++         pLevel.m_220407_(GameEvent.f_157791_, pPos, GameEvent.Context.m_223717_(pPlayer));
+       }
  
        return flag ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }

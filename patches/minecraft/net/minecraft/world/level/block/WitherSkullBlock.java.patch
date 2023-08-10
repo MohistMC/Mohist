@@ -21,7 +21,7 @@
                 WitherBoss witherboss = EntityType.f_20496_.m_20615_(p_58256_);
                 if (witherboss != null) {
 -                  CarvedPumpkinBlock.m_245585_(p_58256_, blockpattern$blockpatternmatch);
-+                  // CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch);
++                  // CarvedPumpkinBlock.clearPatternBlocks(pLevel, blockpattern$blockpatternmatch);
                    BlockPos blockpos = blockpattern$blockpatternmatch.m_61229_(1, 2, 0).m_61176_();
                    witherboss.m_7678_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.55D, (double)blockpos.m_123343_() + 0.5D, blockpattern$blockpatternmatch.m_61233_().m_122434_() == Direction.Axis.X ? 0.0F : 90.0F, 0.0F);
                    witherboss.f_20883_ = blockpattern$blockpatternmatch.m_61233_().m_122434_() == Direction.Axis.X ? 0.0F : 90.0F;
@@ -38,7 +38,7 @@
                    }
  
 -                  p_58256_.m_7967_(witherboss);
-+                  // p_58256_.addFreshEntity(witherboss);
++                  // pLevel.addFreshEntity(witherboss);
                    CarvedPumpkinBlock.m_246758_(p_58256_, blockpattern$blockpatternmatch);
                 }
  

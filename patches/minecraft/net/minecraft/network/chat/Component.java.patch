@@ -47,8 +47,8 @@
        return MutableComponent.m_237204_(new TranslatableContents(p_237116_, (String)null, TranslatableContents.f_237494_));
 +   }
 +
-+   static MutableComponent a(String p_237111_, Object... p_237112_) {
-+      return MutableComponent.m_237204_(new TranslatableContents(p_237111_, (String)null, p_237112_));
++   static MutableComponent a(String pKey, Object... pArgs) {
++      return MutableComponent.m_237204_(new TranslatableContents(pKey, (String)null, pArgs));
     }
  
     static MutableComponent m_237110_(String p_237111_, Object... p_237112_) {

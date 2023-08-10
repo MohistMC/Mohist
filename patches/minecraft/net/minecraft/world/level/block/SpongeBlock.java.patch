@@ -53,8 +53,8 @@
 -                  m_49892_(blockstate, p_56808_, p_279054_, blockentity);
 -                  p_56808_.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
 +                  // CraftBukkit start
-+                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? p_56808_.getBlockEntity(p_279054_) : null;
-+                  // dropResources(blockstate, p_56808_, p_279054_, blockentity);
++                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? pLevel.getBlockEntity(p_279054_) : null;
++                  // dropResources(blockstate, pLevel, p_279054_, blockentity);
 +                  blockList.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
                 }
  

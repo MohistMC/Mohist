@@ -8,7 +8,7 @@
  import net.minecraft.core.Registry;
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.world.level.biome.Biome;
-@@ -22,9 +_,10 @@
+@@ -22,11 +_,12 @@
     private short f_62970_;
     private short f_62971_;
     private final PalettedContainer<BlockState> f_62972_;
@@ -17,10 +17,14 @@
 +   private PalettedContainer<Holder<Biome>> f_187995_;
  
 -   public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainerRO<Holder<Biome>> p_281695_) {
-+   public LevelChunkSection(PalettedContainer<BlockState> p_282846_, PalettedContainer<Holder<Biome>> p_281695_) {
-       this.f_62972_ = p_282846_;
-       this.f_187995_ = p_281695_;
+-      this.f_62972_ = p_282846_;
+-      this.f_187995_ = p_281695_;
++   public LevelChunkSection(PalettedContainer<BlockState> pStates, PalettedContainer<Holder<Biome>> pBiomes) {
++      this.f_62972_ = pStates;
++      this.f_187995_ = pBiomes;
        this.m_63018_();
+    }
+ 
 @@ -192,4 +_,10 @@
  
        this.f_187995_ = palettedcontainer;

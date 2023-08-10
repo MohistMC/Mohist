@@ -32,9 +32,9 @@
        }
     }
  
-+   private boolean attemptPlaceSculk(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_, BlockPos sourceBlock0) {
++   private boolean attemptPlaceSculk(SculkSpreader pSpreader, LevelAccessor pLevel, BlockPos pPos, RandomSource pRandom, BlockPos sourceBlock0) {
 +      this.sourceBlock.set(sourceBlock0);
-+      return m_222375_(p_222376_, p_222377_, p_222378_, p_222379_);
++      return m_222375_(pSpreader, pLevel, pPos, pRandom);
 +   }
 +
     private boolean m_222375_(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_) {

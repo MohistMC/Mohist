@@ -78,7 +78,7 @@
              p_175639_.m_36220_(Stats.f_12944_);
              p_175639_.m_36246_(Stats.f_12982_.m_12902_(item));
 -            p_175637_.m_46597_(p_175638_, Blocks.f_50256_.m_49966_());
-+            // p_175637_.setBlockAndUpdate(p_175638_, Blocks.CAULDRON.defaultBlockState());
++            // pLevel.setBlockAndUpdate(pPos, Blocks.CAULDRON.defaultBlockState());
              p_175637_.m_5594_((Player)null, p_175638_, p_175644_, SoundSource.BLOCKS, 1.0F, 1.0F);
              p_175637_.m_142346_((Entity)null, GameEvent.f_157816_, p_175638_);
           }
@@ -96,7 +96,7 @@
           p_175621_.m_36220_(Stats.f_12943_);
           p_175621_.m_36246_(Stats.f_12982_.m_12902_(item));
 -         p_175619_.m_46597_(p_175620_, p_175624_);
-+         // p_175619_.setBlockAndUpdate(p_175620_, p_175624_);
++         // pLevel.setBlockAndUpdate(pPos, pState);
           p_175619_.m_5594_((Player)null, p_175620_, p_175625_, SoundSource.BLOCKS, 1.0F, 1.0F);
           p_175619_.m_142346_((Entity)null, GameEvent.f_157769_, p_175620_);
        }

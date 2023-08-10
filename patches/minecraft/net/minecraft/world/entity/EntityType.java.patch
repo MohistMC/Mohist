@@ -28,7 +28,7 @@
     private static <T extends Entity> EntityType<T> m_20634_(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.m_122961_(BuiltInRegistries.f_256780_, p_20635_, p_20636_.m_20712_(p_20635_));
     }
-@@ -320,21 +_,35 @@
+@@ -320,33 +_,47 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
@@ -70,17 +70,24 @@
 +   }
 +
 +   @Nullable
-+   public T spawn(ServerLevel p_20593_, @Nullable ItemStack p_20594_, @Nullable Player p_20595_, BlockPos p_20596_, MobSpawnType p_20597_, boolean p_20598_, boolean p_20599_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   public T spawn(ServerLevel pServerLevel, @Nullable ItemStack pStack, @Nullable Player pPlayer, BlockPos pPos, MobSpawnType pSpawnType, boolean pShouldOffsetY, boolean pShouldOffsetYMore, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
        Consumer<T> consumer;
        CompoundTag compoundtag;
-       if (p_20594_ != null) {
-@@ -346,7 +_,7 @@
+-      if (p_20594_ != null) {
+-         compoundtag = p_20594_.m_41783_();
+-         consumer = m_263562_(p_20593_, p_20594_, p_20595_);
++      if (pStack != null) {
++         compoundtag = pStack.m_41783_();
++         consumer = m_263562_(pServerLevel, pStack, pPlayer);
+       } else {
+          consumer = (p_263563_) -> {
+          };
           compoundtag = null;
        }
  
 -      return this.m_262455_(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_);
-+      return this.spawn(p_20593_, compoundtag, consumer, p_20596_, p_20597_, p_20598_, p_20599_, spawnReason); // CraftBukkit
++      return this.spawn(pServerLevel, compoundtag, consumer, pPos, pSpawnType, pShouldOffsetY, pShouldOffsetYMore, spawnReason); // CraftBukkit
     }
  
     public static <T extends Entity> Consumer<T> m_263562_(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
@@ -97,8 +104,8 @@
     }
  
     @Nullable
-+   public T spawn(ServerLevel p_262634_, BlockPos p_262707_, MobSpawnType p_262597_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      return this.spawn(p_262634_,(CompoundTag)null, (Consumer<T>)null, p_262707_, p_262597_, false, false, spawnReason);
++   public T spawn(ServerLevel pLevel, BlockPos pPos, MobSpawnType pSpawnType, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      return this.spawn(pLevel,(CompoundTag)null, (Consumer<T>)null, pPos, pSpawnType, false, false, spawnReason);
 +   }
 +
 +   @Nullable
@@ -116,9 +123,9 @@
     }
  
     @Nullable
-+   public T spawn(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   public T spawn(ServerLevel pLevel, @Nullable CompoundTag pCompound, @Nullable Consumer<T> pConsumer, BlockPos pPos, MobSpawnType pSpawnType, boolean pShouldOffsetY, boolean pShouldOffsetYMore, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      spawnReasonAtomicReference.setRelease(spawnReason);
-+      return m_262455_(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
++      return m_262455_(pLevel, pCompound, pConsumer, pPos, pSpawnType, pShouldOffsetY, pShouldOffsetYMore);
 +   }
 +   // Mohist end
 +

@@ -122,54 +122,59 @@
           });
        } else {
           for(ItemEntity itementity : m_155589_(p_155553_, p_155554_)) {
-@@ -192,16 +_,45 @@
+@@ -192,17 +_,46 @@
        }
     }
  
 -   private static boolean m_59354_(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_) {
-+   private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_, Level world) { // Spigot // Mohist TODO mixin
-       ItemStack itemstack = p_59356_.m_8020_(p_59357_);
-       if (!itemstack.m_41619_() && m_271906_(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
+-      ItemStack itemstack = p_59356_.m_8020_(p_59357_);
+-      if (!itemstack.m_41619_() && m_271906_(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
++   private static boolean tryTakeInItemFromSlot(Hopper pHopper, Container pContainer, int pSlot, Direction pDirection, Level world) { // Spigot // Mohist TODO mixin
++      ItemStack itemstack = pContainer.m_8020_(pSlot);
++      if (!itemstack.m_41619_() && m_271906_(pHopper, pContainer, itemstack, pSlot, pDirection)) {
           ItemStack itemstack1 = itemstack.m_41777_();
 -         ItemStack itemstack2 = m_59326_(p_59356_, p_59355_, p_59356_.m_7407_(p_59357_, 1), (Direction)null);
 +         // ItemStack itemstack2 = addItem(iinventory, ihopper, iinventory.removeItem(i, 1), (EnumDirection) null);
 +         // CraftBukkit start - Call event on collection of items from inventories into the hopper
-+         CraftItemStack oitemstack = CraftItemStack.asCraftMirror(p_59356_.m_7407_(p_59357_, world.spigotConfig.hopperAmount)); // Spigot
++         CraftItemStack oitemstack = CraftItemStack.asCraftMirror(pContainer.m_7407_(pSlot, world.spigotConfig.hopperAmount)); // Spigot
 +
 +         org.bukkit.inventory.Inventory sourceInventory;
 +         // Have to special case large chests as they work oddly
-+         if (p_59356_ instanceof CompoundContainer) {
-+            sourceInventory = new CraftInventoryDoubleChest((CompoundContainer) p_59356_);
-+         } else if (p_59356_.getOwner() != null) {
-+            sourceInventory = p_59356_.getOwner().getInventory();
++         if (pContainer instanceof CompoundContainer) {
++            sourceInventory = new CraftInventoryDoubleChest((CompoundContainer) pContainer);
++         } else if (pContainer.getOwner() != null) {
++            sourceInventory = pContainer.getOwner().getInventory();
 +         } else {
-+            sourceInventory = new CraftInventory(p_59356_);
++            sourceInventory = new CraftInventory(pContainer);
 +         }
 +
-+         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), p_59355_.getOwner().getInventory(), false);
++         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), pHopper.getOwner().getInventory(), false);
 +
 +         Bukkit.getServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
-+            p_59356_.m_6836_(p_59357_, itemstack1);
++            pContainer.m_6836_(pSlot, itemstack1);
 +
-+            if (p_59355_ instanceof HopperBlockEntity) {
-+               ((HopperBlockEntity) p_59355_).m_59395_(world.spigotConfig.hopperTransfer); // Spigot
++            if (pHopper instanceof HopperBlockEntity) {
++               ((HopperBlockEntity) pHopper).m_59395_(world.spigotConfig.hopperTransfer); // Spigot
 +            }
 +
 +            return false;
 +         }
 +         int origCount = event.getItem().getAmount(); // Spigot
-+         ItemStack itemstack2 = m_59326_(p_59356_, p_59355_, CraftItemStack.asNMSCopy(event.getItem()), null);
++         ItemStack itemstack2 = m_59326_(pContainer, pHopper, CraftItemStack.asNMSCopy(event.getItem()), null);
 +         // CraftBukkit end
           if (itemstack2.m_41619_()) {
-             p_59356_.m_6596_();
+-            p_59356_.m_6596_();
++            pContainer.m_6596_();
              return true;
           }
  
+-         p_59356_.m_6836_(p_59357_, itemstack1);
 +         itemstack1.m_41774_(origCount - itemstack2.m_41613_()); // Spigot
-          p_59356_.m_6836_(p_59357_, itemstack1);
++         pContainer.m_6836_(pSlot, itemstack1);
        }
  
+       return false;
 @@ -210,6 +_,13 @@
  
     public static boolean m_59331_(Container p_59332_, ItemEntity p_59333_) {

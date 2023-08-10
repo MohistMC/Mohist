@@ -9,18 +9,24 @@
              BlockEntity blockentity = blockstate.m_155947_() ? this.m_7702_(p_9550_) : null;
              Block.m_49881_(blockstate, this.f_9479_, p_9550_, blockentity, p_9552_, ItemStack.f_41583_);
           }
-@@ -297,6 +_,14 @@
+@@ -297,9 +_,17 @@
     }
  
     public boolean m_7967_(Entity p_9580_) {
+-      int i = SectionPos.m_123171_(p_9580_.m_146903_());
+-      int j = SectionPos.m_123171_(p_9580_.m_146907_());
+-      this.m_6325_(i, j).m_6286_(p_9580_);
 +      // CraftBukkit start
 +      return addFreshEntity(p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   @Override
-+   public boolean addFreshEntity(Entity p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++   public boolean addFreshEntity(Entity pEntity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      // CraftBukkit end
-+      if (p_9580_ instanceof net.minecraft.world.entity.Mob mob && mob.isSpawnCancelled()) return false;
-       int i = SectionPos.m_123171_(p_9580_.m_146903_());
-       int j = SectionPos.m_123171_(p_9580_.m_146907_());
-       this.m_6325_(i, j).m_6286_(p_9580_);
++      if (pEntity instanceof net.minecraft.world.entity.Mob mob && mob.isSpawnCancelled()) return false;
++      int i = SectionPos.m_123171_(pEntity.m_146903_());
++      int j = SectionPos.m_123171_(pEntity.m_146907_());
++      this.m_6325_(i, j).m_6286_(pEntity);
+       return true;
+    }
+ 

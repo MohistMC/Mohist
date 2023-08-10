@@ -240,7 +240,7 @@
 +   }
 +   // CraftBukkit end
 +
-+   public void disconnect(String p_9943_) {
++   public void disconnect(String pTextComponent) {
 +      // CraftBukkit start - fire PlayerKickEvent
 +      if (this.processedDisconnect) {
 +         return;
@@ -249,7 +249,7 @@
 +         Waitable waitable = new Waitable() {
 +            @Override
 +            protected Object evaluate() {
-+               ServerGamePacketListenerImpl.this.disconnect(p_9943_);
++               ServerGamePacketListenerImpl.this.disconnect(pTextComponent);
 +               return null;
 +            }
 +         };
@@ -267,7 +267,7 @@
 +      }
 +      String leaveMessage = ChatFormatting.YELLOW + this.f_9743_.m_6302_() + " left the game.";
 +
-+      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), p_9943_, leaveMessage);
++      PlayerKickEvent event = new PlayerKickEvent(this.f_9743_.getBukkitEntity(), pTextComponent, leaveMessage);
 +
 +      if (this.cserver.getServer().m_130010_()) {
 +         this.cserver.getPluginManager().callEvent(event);
@@ -502,10 +502,10 @@
 +   private AtomicInteger mohist$slot = new AtomicInteger(-1);
 +   private AtomicReference<ItemStack> mohist$handItem = new AtomicReference<>(null);
 +
-+   private void updateBookPages(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_, int slot, ItemStack handItem) { // CraftBukkit
++   private void updateBookPages(List<FilteredText> pPages, UnaryOperator<String> p_143636_, ItemStack pBook, int slot, ItemStack handItem) { // CraftBukkit
 +      mohist$slot.set(slot);
 +      mohist$handItem.set(handItem);
-+      m_143634_(p_143635_, p_143636_, p_143637_);
++      m_143634_(pPages, p_143636_, pBook);
     }
  
     private void m_143634_(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
@@ -681,7 +681,7 @@
                          this.f_9743_.m_289599_(this.f_9743_.m_20185_() - d3, this.f_9743_.m_20186_() - d4, this.f_9743_.m_20189_() - d5, p_9874_.m_134139_());
                       }
                    }
-@@ -954,11 +_,68 @@
+@@ -954,28 +_,86 @@
        return false;
     }
  
@@ -696,6 +696,12 @@
     }
  
     public void m_9780_(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<RelativeMovement> p_9786_) {
+-      double d0 = p_9786_.contains(RelativeMovement.X) ? this.f_9743_.m_20185_() : 0.0D;
+-      double d1 = p_9786_.contains(RelativeMovement.Y) ? this.f_9743_.m_20186_() : 0.0D;
+-      double d2 = p_9786_.contains(RelativeMovement.Z) ? this.f_9743_.m_20189_() : 0.0D;
+-      float f = p_9786_.contains(RelativeMovement.Y_ROT) ? this.f_9743_.m_146908_() : 0.0F;
+-      float f1 = p_9786_.contains(RelativeMovement.X_ROT) ? this.f_9743_.m_146909_() : 0.0F;
+-      this.f_9766_ = new Vec3(p_9781_, p_9782_, p_9783_);
 +      this.teleport(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_, p_9786_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
@@ -737,21 +743,33 @@
 +      internalTeleport(dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch(), Collections.emptySet());
 +   }
 +
-+   private void internalTeleport(double p_9781_, double p_9782_, double p_9783_, float p_9784_, float p_9785_, Set<RelativeMovement> p_9786_) {
++   private void internalTeleport(double pX, double pY, double pZ, float pYaw, float pPitch, Set<RelativeMovement> pRelativeSet) {
 +      // CraftBukkit start
-+      if (Float.isNaN(p_9784_)) {
-+         p_9784_ = 0;
++      if (Float.isNaN(pYaw)) {
++         pYaw = 0;
 +      }
-+      if (Float.isNaN(p_9785_)) {
-+         p_9785_ = 0;
++      if (Float.isNaN(pPitch)) {
++         pPitch = 0;
 +      }
 +
 +      this.justTeleported = true;
 +      // CraftBukkit end
-       double d0 = p_9786_.contains(RelativeMovement.X) ? this.f_9743_.m_20185_() : 0.0D;
-       double d1 = p_9786_.contains(RelativeMovement.Y) ? this.f_9743_.m_20186_() : 0.0D;
-       double d2 = p_9786_.contains(RelativeMovement.Z) ? this.f_9743_.m_20189_() : 0.0D;
-@@ -976,6 +_,7 @@
++      double d0 = pRelativeSet.contains(RelativeMovement.X) ? this.f_9743_.m_20185_() : 0.0D;
++      double d1 = pRelativeSet.contains(RelativeMovement.Y) ? this.f_9743_.m_20186_() : 0.0D;
++      double d2 = pRelativeSet.contains(RelativeMovement.Z) ? this.f_9743_.m_20189_() : 0.0D;
++      float f = pRelativeSet.contains(RelativeMovement.Y_ROT) ? this.f_9743_.m_146908_() : 0.0F;
++      float f1 = pRelativeSet.contains(RelativeMovement.X_ROT) ? this.f_9743_.m_146909_() : 0.0F;
++      this.f_9766_ = new Vec3(pX, pY, pZ);
+       if (++this.f_9767_ == Integer.MAX_VALUE) {
+          this.f_9767_ = 0;
+       }
+ 
+       this.f_9735_ = this.f_9746_;
+-      this.f_9743_.m_19890_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_);
+-      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_9781_ - d0, p_9782_ - d1, p_9783_ - d2, p_9784_ - f, p_9785_ - f1, p_9786_, this.f_9767_));
++      this.f_9743_.m_19890_(pX, pY, pZ, pYaw, pPitch);
++      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(pX - d0, pY - d1, pZ - d2, pYaw - f, pPitch - f1, pRelativeSet, this.f_9767_));
+    }
  
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
        PacketUtils.m_131359_(p_9889_, this, this.f_9743_.m_284548_());

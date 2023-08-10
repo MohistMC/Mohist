@@ -38,7 +38,7 @@
        }
  
        super.m_141947_(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -46,16 +_,21 @@
+@@ -46,17 +_,22 @@
        if (p_55473_.f_46443_) {
           m_55454_(p_55473_, p_55474_);
        } else {
@@ -51,17 +51,21 @@
     }
  
 -   private static void m_55492_(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
-+   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, Entity entity) { // CraftBukkit - add Entity
-       m_55454_(p_55494_, p_55495_);
-       if (!p_55493_.m_61143_(f_55450_)) {
+-      m_55454_(p_55494_, p_55495_);
+-      if (!p_55493_.m_61143_(f_55450_)) {
+-         p_55494_.m_7731_(p_55495_, p_55493_.m_61124_(f_55450_, Boolean.valueOf(true)), 3);
++   private static void interact(BlockState pState, Level pLevel, BlockPos pPos, Entity entity) { // CraftBukkit - add Entity
++      m_55454_(pLevel, pPos);
++      if (!pState.m_61143_(f_55450_)) {
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.m_61124_(f_55450_, true))) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pPos, pState.m_61124_(f_55450_, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_55494_.m_7731_(p_55495_, p_55493_.m_61124_(f_55450_, Boolean.valueOf(true)), 3);
++         pLevel.m_7731_(pPos, pState.m_61124_(f_55450_, Boolean.valueOf(true)), 3);
        }
  
+    }
 @@ -67,6 +_,11 @@
  
     public void m_213898_(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {

@@ -21,23 +21,23 @@
        }
     }
  
-+   public void addVanillaDecorations(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) { // CraftBukkit
-+      this.m_213609_(p_223087_, p_223088_, p_223089_);
++   public void addVanillaDecorations(WorldGenLevel pLevel, ChunkAccess pChunk, StructureManager pStructureManager) { // CraftBukkit
++      this.m_213609_(pLevel, pChunk, pStructureManager);
 +   }
 +
-+   public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_, boolean vanilla) {
++   public void applyBiomeDecoration(WorldGenLevel pLevel, ChunkAccess pChunk, StructureManager pStructureManager, boolean vanilla) {
 +      if (vanilla) {
-+         this.addVanillaDecorations(p_223087_, p_223088_, p_223089_);
++         this.addVanillaDecorations(pLevel, pChunk, pStructureManager);
 +      }
-+      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
++      org.bukkit.World world = pLevel.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.m_7697_());
-+         int x = p_223088_.m_7697_().f_45578_;
-+         int z = p_223088_.m_7697_().f_45579_;
++         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(pLevel, pChunk.m_7697_());
++         int x = pChunk.m_7697_().f_45578_;
++         int z = pChunk.m_7697_().f_45579_;
 +         for (BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.m_7328_()));
-+            seededrandom.m_64690_(p_223087_.m_7328_(), x, z);
++            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(pLevel.m_7328_()));
++            seededrandom.m_64690_(pLevel.m_7328_(), x, z);
 +            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
 +         }
 +         limitedRegion.saveEntities();

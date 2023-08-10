@@ -1,49 +1,28 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -110,21 +_,44 @@
+@@ -110,7 +_,6 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_32537_) {
 -      super.m_6710_(p_32537_);
--      AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
--      if (p_32537_ == null) {
--         this.f_32477_ = 0;
--         this.f_19804_.m_135381_(f_32473_, false);
--         this.f_19804_.m_135381_(f_32474_, false);
--         attributeinstance.m_22130_(f_32481_);
--      } else {
--         this.f_32477_ = this.f_19797_;
--         this.f_19804_.m_135381_(f_32473_, true);
--         if (!attributeinstance.m_22109_(f_32481_)) {
--            attributeinstance.m_22118_(f_32481_);
--         }
--      }
--
-+      AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
-+      if (p_32537_ == null) {
-+         this.f_32477_ = 0;
-+         this.f_19804_.m_135381_(f_32473_, false);
-+         this.f_19804_.m_135381_(f_32474_, false);
-+         attributeinstance.m_22130_(f_32481_);
-+      } else {
-+         this.f_32477_ = this.f_19797_;
-+         this.f_19804_.m_135381_(f_32473_, true);
-+         if (!attributeinstance.m_22109_(f_32481_)) {
-+            attributeinstance.m_22118_(f_32481_);
-+         }
-+      }
-+
+       AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
+       if (p_32537_ == null) {
+          this.f_32477_ = 0;
+@@ -125,6 +_,30 @@
+          }
+       }
+ 
 +      super.setTarget(p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.UNKNOWN, true); //Forge: Moved down to allow event handlers to write data manager values.
 +   }
 +
-+   public boolean setTarget(@Nullable LivingEntity p_32537_, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
-+      if (!super.setTarget(p_32537_, reason, fireEvent)) {
++   public boolean setTarget(@Nullable LivingEntity pLivingEntity, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (!super.setTarget(pLivingEntity, reason, fireEvent)) {
 +         return false;
 +      }
-+      p_32537_ = m_5448_();
++      pLivingEntity = m_5448_();
 +      // CraftBukkit end
 +      AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
-+      if (p_32537_ == null) {
++      if (pLivingEntity == null) {
 +         this.f_32477_ = 0;
 +         this.f_19804_.m_135381_(f_32473_, false);
 +         this.f_19804_.m_135381_(f_32474_, false);

@@ -222,9 +222,11 @@
     }
  
 -   protected void m_220822_(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
-+   protected int tryDropExperience(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
-       if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_220825_) == 0) {
-          int i = p_220826_.m_214085_(p_220823_.f_46441_);
+-      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_220825_) == 0) {
+-         int i = p_220826_.m_214085_(p_220823_.f_46441_);
++   protected int tryDropExperience(ServerLevel pLevel, BlockPos pPos, ItemStack pHeldItem, IntProvider pAmount) {
++      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, pHeldItem) == 0) {
++         int i = pAmount.m_214085_(pLevel.f_46441_);
           if (i > 0) {
 -            this.m_49805_(p_220823_, p_220824_, i);
 +            return i;

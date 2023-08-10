@@ -18,13 +18,13 @@
 +      }
 +   }
 +
-+   public static Path getStorageFolder(Path p_196977_, ResourceKey<LevelStem> p_196976_) {
-+      if (p_196976_ == LevelStem.f_63971_) {
-+         return p_196977_;
-+      } else if (p_196976_ == LevelStem.f_63973_) {
-+         return p_196977_.resolve("DIM1");
++   public static Path getStorageFolder(Path pLevelFolder, ResourceKey<LevelStem> pDimensionKey) {
++      if (pDimensionKey == LevelStem.f_63971_) {
++         return pLevelFolder;
++      } else if (pDimensionKey == LevelStem.f_63973_) {
++         return pLevelFolder.resolve("DIM1");
 +      } else {
-+         return p_196976_ == LevelStem.f_63972_ ? p_196977_.resolve("DIM-1") : p_196977_.resolve("dimensions").resolve(p_196976_.m_135782_().m_135827_()).resolve(p_196976_.m_135782_().m_135815_());
++         return pDimensionKey == LevelStem.f_63972_ ? pLevelFolder.resolve("DIM-1") : pLevelFolder.resolve("dimensions").resolve(pDimensionKey.m_135782_().m_135827_()).resolve(pDimensionKey.m_135782_().m_135815_());
 +      }
 +   }
 +

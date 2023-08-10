@@ -84,9 +84,9 @@
 +   }
 +
 +   // Mohist start
-+   public boolean setTarget(@Nullable LivingEntity p_21544_, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
-+      if (m_5448_() == p_21544_) return false;
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
++   public boolean setTarget(@Nullable LivingEntity pTarget, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (m_5448_() == pTarget) return false;
++      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, pTarget, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +      changeTargetEvent.setReason(reason);
 +      changeTargetEvent.setfireCBEvent(fireEvent);
 +      if (!changeTargetEvent.isCanceled()) {
@@ -339,9 +339,9 @@
 +      this.spawnReason(spawnReason);
 +   }
 +   @Nullable
-+   public <T extends Mob> T convertTo(EntityType<T> p_21407_, boolean p_21408_, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
++   public <T extends Mob> T convertTo(EntityType<T> pEntityType, boolean pTransferInventory, EntityTransformEvent.TransformReason transformReason, CreatureSpawnEvent.SpawnReason spawnReason) {
 +      transformReasonAndspawnReason(transformReason, spawnReason);
-+      return m_21406_(p_21407_, p_21408_);
++      return m_21406_(pEntityType, pTransferInventory);
 +   }
 +   // Mohist end
 +

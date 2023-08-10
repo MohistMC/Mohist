@@ -477,11 +477,11 @@
        }
     }
  
-+   public boolean tryAddFreshEntityWithPassengers(Entity p_8861_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
-+      if (p_8861_.m_20199_().map(Entity::m_20148_).anyMatch(this.f_143244_::m_157550_)) {
++   public boolean tryAddFreshEntityWithPassengers(Entity pEntity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      if (pEntity.m_20199_().map(Entity::m_20148_).anyMatch(this.f_143244_::m_157550_)) {
 +         return false;
 +      } else {
-+         this.addFreshEntityWithPassengers(p_8861_, reason);
++         this.addFreshEntityWithPassengers(pEntity, reason);
 +         return true;
 +      }
 +   }
@@ -585,14 +585,14 @@
        return i;
     }
  
-+   public <T extends ParticleOptions> int sendParticles(ServerPlayer sender, T p_8768_, double p_8769_, double p_8770_, double p_8771_, int p_8772_, double p_8773_, double p_8774_, double p_8775_, double p_8776_, boolean force) {
-+      ClientboundLevelParticlesPacket clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(p_8768_, force, p_8769_, p_8770_, p_8771_, (float)p_8773_, (float)p_8774_, (float)p_8775_, (float)p_8776_, p_8772_);
++   public <T extends ParticleOptions> int sendParticles(ServerPlayer sender, T pType, double pPosX, double pPosY, double pPosZ, int pParticleCount, double pXOffset, double pYOffset, double pZOffset, double pSpeed, boolean force) {
++      ClientboundLevelParticlesPacket clientboundlevelparticlespacket = new ClientboundLevelParticlesPacket(pType, force, pPosX, pPosY, pPosZ, (float)pXOffset, (float)pYOffset, (float)pZOffset, (float)pSpeed, pParticleCount);
 +      int i = 0;
 +
 +      for(int j = 0; j < this.f_8546_.size(); ++j) {
 +         ServerPlayer serverplayer = this.f_8546_.get(j);
 +         if (sender != null && !serverplayer.getBukkitEntity().canSee(sender.getBukkitEntity())) continue; // CraftBukkit
-+         if (this.m_8636_(serverplayer, force, p_8769_, p_8770_, p_8771_, clientboundlevelparticlespacket)) { // CraftBukkit
++         if (this.m_8636_(serverplayer, force, pPosX, pPosY, pPosZ, clientboundlevelparticlespacket)) { // CraftBukkit
 +            ++i;
 +         }
 +      }

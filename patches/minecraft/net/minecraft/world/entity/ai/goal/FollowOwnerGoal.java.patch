@@ -15,7 +15,7 @@
           return false;
        } else {
 -         this.f_25283_.m_7678_((double)p_25304_ + 0.5D, (double)p_25305_, (double)p_25306_ + 0.5D, this.f_25283_.m_146908_(), this.f_25283_.m_146909_());
-+         // this.tamable.moveTo((double)p_25304_ + 0.5D, (double)p_25305_, (double)p_25306_ + 0.5D, this.tamable.getYRot(), this.tamable.getXRot());
++         // this.tamable.moveTo((double)pX + 0.5D, (double)pY, (double)pZ + 0.5D, this.tamable.getYRot(), this.tamable.getXRot());
 +         // CraftBukkit start
 +         EntityTeleportEvent event = CraftEventFactory.callEntityTeleportEvent(this.f_25283_, (double) p_25304_ + 0.5D, (double) p_25305_, (double) p_25306_ + 0.5D);
 +         if (event.isCancelled()) {

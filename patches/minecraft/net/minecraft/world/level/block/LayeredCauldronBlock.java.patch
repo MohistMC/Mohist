@@ -37,10 +37,10 @@
 +      changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, CauldronLevelChangeEvent.ChangeReason.UNKNOWN);
 +   }
 +
-+   public static boolean lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
-+      int i = p_153560_.m_61143_(f_153514_) - 1;
-+      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : p_153560_.m_61124_(f_153514_, Integer.valueOf(i));
-+      return changeLevel(p_153560_, p_153561_, p_153562_, blockstate, null, reason);
++   public static boolean lowerFillLevel(BlockState pState, Level pLevel, BlockPos pPos, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
++      int i = pState.m_61143_(f_153514_) - 1;
++      BlockState blockstate = i == 0 ? Blocks.f_50256_.m_49966_() : pState.m_61124_(f_153514_, Integer.valueOf(i));
++      return changeLevel(pState, pLevel, pPos, blockstate, null, reason);
 +   }
 +
 +   // CraftBukkit start

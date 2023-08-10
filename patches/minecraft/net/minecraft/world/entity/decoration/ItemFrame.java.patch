@@ -94,19 +94,19 @@
 +
 +   }
 +
-+   public void setItem(ItemStack p_31790_, boolean p_31791_, boolean playSound) {
-+      if (!p_31790_.m_41619_()) {
-+         p_31790_ = p_31790_.m_41777_();
-+         p_31790_.m_41764_(1);
-+         p_31790_.m_41636_(this);
++   public void setItem(ItemStack pStack, boolean pUpdateNeighbours, boolean playSound) {
++      if (!pStack.m_41619_()) {
++         pStack = pStack.m_41777_();
++         pStack.m_41764_(1);
++         pStack.m_41636_(this);
 +      }
 +
-+      this.m_20088_().m_135381_(f_31757_, p_31790_);
-+      if (!p_31790_.m_41619_() && playSound) { // CraftBukkit
++      this.m_20088_().m_135381_(f_31757_, pStack);
++      if (!pStack.m_41619_() && playSound) { // CraftBukkit
 +         this.m_5496_(this.m_142546_(), 1.0F, 1.0F);
 +      }
 +
-+      if (p_31791_ && this.f_31698_ != null) {
++      if (pUpdateNeighbours && this.f_31698_ != null) {
 +         this.f_19853_.m_46717_(this.f_31698_, Blocks.f_50016_);
        }
  

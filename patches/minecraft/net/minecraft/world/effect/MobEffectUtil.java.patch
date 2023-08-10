@@ -6,10 +6,10 @@
     }
 +
 +   // CraftBukkit start
-+   public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel p_216947_, @Nullable Entity p_216948_, Vec3 p_216949_, double p_216950_, MobEffectInstance p_216951_, int p_216952_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
++   public static List<ServerPlayer> addEffectToPlayersAround(ServerLevel pLevel, @Nullable Entity pSource, Vec3 pPos, double pRadius, MobEffectInstance pEffect, int pDuration, org.bukkit.event.entity.EntityPotionEffectEvent.Cause cause) {
 +      // Mohist start
 +      LivingEntity.addEffectCause.set(cause);
-+      return m_216946_(p_216947_, p_216948_, p_216949_, p_216950_, p_216951_, p_216952_);
++      return m_216946_(pLevel, pSource, pPos, pRadius, pEffect, pDuration);
 +      // Mohist end
 +   }
 +   // CraftBukkit end

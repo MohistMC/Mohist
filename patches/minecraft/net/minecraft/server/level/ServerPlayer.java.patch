@@ -907,30 +907,38 @@
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1173,6 +_,11 @@
+@@ -1173,20 +_,25 @@
     }
  
     public boolean m_264318_(ServerLevel p_265564_, double p_265424_, double p_265680_, double p_265312_, Set<RelativeMovement> p_265192_, float p_265059_, float p_265266_) {
+-      ChunkPos chunkpos = new ChunkPos(BlockPos.m_274561_(p_265424_, p_265680_, p_265312_));
+-      p_265564_.m_7726_().m_8387_(TicketType.f_9448_, chunkpos, 1, this.m_19879_());
 +      // CraftBukkit start
 +      return teleportTo(p_265564_, p_265424_, p_265680_, p_265312_, p_265192_, p_265059_, p_265266_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
-+   public boolean teleportTo(ServerLevel p_265564_, double p_265424_, double p_265680_, double p_265312_, Set<RelativeMovement> p_265192_, float p_265059_, float p_265266_, PlayerTeleportEvent.TeleportCause cause) {
-       ChunkPos chunkpos = new ChunkPos(BlockPos.m_274561_(p_265424_, p_265680_, p_265312_));
-       p_265564_.m_7726_().m_8387_(TicketType.f_9448_, chunkpos, 1, this.m_19879_());
++   public boolean teleportTo(ServerLevel pLevel, double pX, double pY, double pZ, Set<RelativeMovement> pRelativeMovements, float pYRot, float pXRot, PlayerTeleportEvent.TeleportCause cause) {
++      ChunkPos chunkpos = new ChunkPos(BlockPos.m_274561_(pX, pY, pZ));
++      pLevel.m_7726_().m_8387_(TicketType.f_9448_, chunkpos, 1, this.m_19879_());
        this.m_8127_();
-@@ -1181,9 +_,9 @@
+       if (this.m_5803_()) {
+          this.m_6145_(true, true);
        }
  
-       if (p_265564_ == this.m_9236_()) {
+-      if (p_265564_ == this.m_9236_()) {
 -         this.f_8906_.m_9780_(p_265424_, p_265680_, p_265312_, p_265059_, p_265266_, p_265192_);
-+         this.f_8906_.teleport(p_265424_, p_265680_, p_265312_, p_265059_, p_265266_, p_265192_, cause); // CraftBukkit
++      if (pLevel == this.m_9236_()) {
++         this.f_8906_.teleport(pX, pY, pZ, pYRot, pXRot, pRelativeMovements, cause); // CraftBukkit
        } else {
 -         this.m_8999_(p_265564_, p_265424_, p_265680_, p_265312_, p_265059_, p_265266_);
-+         this.teleportTo(p_265564_, p_265424_, p_265680_, p_265312_, p_265059_, p_265266_, cause); // CraftBukkit
++         this.teleportTo(pLevel, pX, pY, pZ, pYRot, pXRot, cause); // CraftBukkit
        }
  
-       this.m_5616_(p_265059_);
+-      this.m_5616_(p_265059_);
++      this.m_5616_(pYRot);
+       return true;
+    }
+ 
 @@ -1215,6 +_,8 @@
     }
  
@@ -997,35 +1005,44 @@
 +      this.teleportTo(p_9000_, p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
-+   public void teleportTo(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++   public void teleportTo(ServerLevel pNewLevel, double pX, double pY, double pZ, float pYaw, float pPitch, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
        this.m_9213_(this);
        this.m_8127_();
+-      if (p_9000_ == this.m_9236_()) {
+-         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+-      } else {
 +
 +      if (cause != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
-+         this.getBukkitEntity().teleport(new Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), cause);
++         this.getBukkitEntity().teleport(new Location(pNewLevel.getWorld(), pX, pY, pZ, pYaw, pPitch), cause);
 +         return;
 +      }
-       if (p_9000_ == this.m_9236_()) {
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
--      } else {
-+      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
++      if (pNewLevel == this.m_9236_()) {
++         this.f_8906_.m_9774_(pX, pY, pZ, pYaw, pPitch);
++      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, pNewLevel.m_46472_())) {
           ServerLevel serverlevel = this.m_284548_();
-          LevelData leveldata = p_9000_.m_6106_();
-          this.f_8906_.m_9829_(new ClientboundRespawnPacket(p_9000_.m_220362_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), (byte)3, this.m_219759_(), this.m_287157_()));
+-         LevelData leveldata = p_9000_.m_6106_();
+-         this.f_8906_.m_9829_(new ClientboundRespawnPacket(p_9000_.m_220362_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), (byte)3, this.m_219759_(), this.m_287157_()));
++         LevelData leveldata = pNewLevel.m_6106_();
++         this.f_8906_.m_9829_(new ClientboundRespawnPacket(pNewLevel.m_220362_(), pNewLevel.m_46472_(), BiomeManager.m_47877_(pNewLevel.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), pNewLevel.m_46659_(), pNewLevel.m_8584_(), (byte)3, this.m_219759_(), this.m_287157_()));
           this.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           this.f_8924_.m_6846_().m_11289_(this);
           serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
+-         this.m_7678_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+-         this.m_284127_(p_9000_);
+-         p_9000_.m_8622_(this);
 +         this.revive();
-          this.m_7678_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-          this.m_284127_(p_9000_);
-          p_9000_.m_8622_(this);
++         this.m_7678_(pX, pY, pZ, pYaw, pPitch);
++         this.m_284127_(pNewLevel);
++         pNewLevel.m_8622_(this);
           this.m_9209_(serverlevel);
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-+         this.f_8941_.m_9260_(p_9000_);
-          this.f_8924_.m_6846_().m_11229_(this, p_9000_);
+-         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+-         this.f_8924_.m_6846_().m_11229_(this, p_9000_);
++         this.f_8906_.m_9774_(pX, pY, pZ, pYaw, pPitch);
++         this.f_8941_.m_9260_(pNewLevel);
++         this.f_8924_.m_6846_().m_11229_(this, pNewLevel);
           this.f_8924_.m_6846_().m_11292_(this);
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
++         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), pNewLevel.m_46472_());
        }
  
     }
