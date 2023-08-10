@@ -33,11 +33,12 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
         Preconditions.checkArgument(sign.isPlaced(), "Sign must be placed");
         Preconditions.checkArgument(sign.getWorld() == player.getWorld(), "Sign must be in same world as Player");
 
-        SignBlockEntity handle = ((CraftSign<?>) sign).getTileEntity();
-
         if (!CraftEventFactory.callPlayerSignOpenEvent(player, sign, side, PlayerSignOpenEvent.Cause.PLUGIN)) {
             return;
         }
+
+        SignBlockEntity handle = ((CraftSign<?>) sign).getTileEntity();
+        handle.setAllowedPlayerEditor(player.getUniqueId());
 
         ((CraftPlayer) player).getHandle().openTextEdit(handle, Side.FRONT == side);
     }
