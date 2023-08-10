@@ -68,8 +68,6 @@ public class v_1_20 {
         }
 
         private void install() throws Exception {
-            if (!checkDependencies()) return;
-            System.out.println(MohistMCStart.i18n.get("installation.start"));
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
@@ -80,6 +78,9 @@ public class v_1_20 {
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mohistplugin, "data/mohistplugins-1.20.1.jar");
+
+            if (!checkDependencies()) return;
+            System.out.println(MohistMCStart.i18n.get("installation.start"));
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
