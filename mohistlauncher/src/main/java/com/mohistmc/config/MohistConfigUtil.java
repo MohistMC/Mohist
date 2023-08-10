@@ -49,7 +49,7 @@ public class MohistConfigUtil {
     public static boolean CHECK_UPDATE_AUTO_DOWNLOAD() {
         String key = "mohist.check_update_auto_download";
         if (yml.get(key) == null) {
-            yml.set(key, true);
+            yml.set(key, false);
             save();
         }
         return yml.getBoolean(key, false);

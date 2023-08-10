@@ -62,7 +62,7 @@ public class UpdateUtils {
             else {
                 System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
-                    downloadFile("https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", JarTool.getFile());
+                    downloadFile(root.getAsJsonObject().get("url").toString(), JarTool.getFile());
                     restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
                 }
             }
