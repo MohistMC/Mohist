@@ -21,6 +21,8 @@ package com.mohistmc.network.download;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 
 import java.io.File;
@@ -31,11 +33,12 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import static com.mohistmc.network.download.NetworkUtil.getConn;
 import static com.mohistmc.network.download.NetworkUtil.getInput;
 
@@ -58,6 +61,10 @@ public class UpdateUtils {
                 System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
             else {
                 System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
+                if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
+                    downloadFile("https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1/lastSuccessfulBuild/artifact/projects/mohist/build/libs/mohist-" + build_number + "-server.jar", JarTool.getFile());
+                    restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
+                }
             }
         } catch (Throwable e) {
             System.out.println(MohistMCStart.i18n.get("check.update.noci"));
@@ -100,5 +107,16 @@ public class UpdateUtils {
 
     public static String getSize(long size) {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
+    }
+
+    public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
+        System.out.println(MohistMCStart.i18n.get("jarfile.restart"));
+        if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
+            System.out.println(MohistMCStart.i18n.get("xmswarn"));
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.directory(JarTool.getJarDir());
+        pb.inheritIO().start().waitFor();
+        Thread.sleep(2000);
+        if(shutdown) System.exit(0);
     }
 }
