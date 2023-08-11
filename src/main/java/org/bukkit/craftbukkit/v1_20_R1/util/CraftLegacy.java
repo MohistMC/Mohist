@@ -11,6 +11,9 @@ import java.util.Arrays;
 @Deprecated
 public final class CraftLegacy {
 
+    private static Material[] CACHE;
+    private static int offset;
+
     private CraftLegacy() {
         //
     }
@@ -28,16 +31,23 @@ public final class CraftLegacy {
     }
 
     public static Material[] modern_values() {
-        Material[] values = Material.values();
-        return Arrays.copyOfRange(values, 0, Material.LEGACY_AIR.ordinal());
+        if (CACHE == null) {
+            int origin = Material.values().length;
+            CACHE = Arrays.stream(Material.values()).filter(it -> !it.isLegacy()).toArray(Material[]::new);
+            offset = origin - CACHE.length;
+        }
+        return Arrays.copyOf(CACHE, CACHE.length);
     }
 
     public static int modern_ordinal(Material material) {
-        if (material.isLegacy()) {
-            // SPIGOT-4002: Fix for eclipse compiler manually compiling in default statements to lookupswitch
-            throw new NoSuchFieldError("Legacy field ordinal: " + material);
+        if (CACHE == null) {
+            modern_values();
         }
-
-        return material.ordinal();
+        if (material.isLegacy()) {
+            throw new NoSuchFieldError("Legacy field ordinal: " + material);
+        } else {
+            int ordinal = material.ordinal();
+            return ordinal < Material.LEGACY_AIR.ordinal() ? ordinal : ordinal - offset;
+        }
     }
 }

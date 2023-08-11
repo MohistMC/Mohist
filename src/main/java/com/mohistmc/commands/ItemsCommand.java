@@ -174,8 +174,8 @@ public class ItemsCommand extends Command {
         // item name and i18n name
         player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType());
         player.sendMessage(ChatColor.GRAY + "Name(Translate) - " + ChatColor.GREEN + nmsItem.getDisplayName().getString());
-        player.sendMessage(ChatColor.GRAY + "ForgeItem - " + itemStack.getType().isForgeBlock);
-        player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + itemStack.getType().isForgeItem);
+        player.sendMessage(ChatColor.GRAY + "ForgeItem - " + itemStack.getType().isForgeItem);
+        player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + itemStack.getType().isForgeBlock);
         player.sendMessage(ChatColor.GRAY + "NBT(CraftBukkit) - " + ItemAPI.getNBTAsString(itemStack));
         player.sendMessage(ChatColor.GRAY + "NBT(Vanilla) - " + ItemAPI.getNbtAsString(PlayerAPI.getNMSPlayer(player).getMainHandItem().getTag())); // Use vanilla method
         player.sendMessage(ChatColor.GRAY + "NBT(Forge) - " + ItemAPI.getNbtAsString(nmsItem.getForgeCaps()));

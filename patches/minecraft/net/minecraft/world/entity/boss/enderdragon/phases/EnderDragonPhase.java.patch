@@ -16,7 +16,7 @@
        f_31388_ = Arrays.copyOf(f_31388_, f_31388_.length + 1);
        f_31388_[enderdragonphase.m_31405_()] = enderdragonphase;
 +      if (enderdragonphase.m_31405_() > 10) {
-+         org.bukkit.entity.EnderDragon.Phase bukkit = MohistDynamEnum.addEnum0(org.bukkit.entity.EnderDragon.Phase.class, enderdragonphase.getName(), new Class[0]);
++         org.bukkit.entity.EnderDragon.Phase bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.EnderDragon.Phase.class, enderdragonphase.getName());
 +         ServerAPI.phasetypeMap.put(enderdragonphase.m_31405_(), bukkit);
 +         MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
 +      }
