@@ -20,6 +20,7 @@ package com.mohistmc;
 
 import com.mohistmc.action.v_1_20;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
@@ -78,6 +79,8 @@ public class MohistMCStart {
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_20.run();
         }
+
+        AutoDeleteMods.jar();
 
         CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
