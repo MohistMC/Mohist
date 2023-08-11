@@ -68,7 +68,7 @@
     protected Object2DoubleMap<TagKey<Fluid>> f_19799_ = new Object2DoubleArrayMap<>(2);
     protected boolean f_19800_;
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
-@@ -228,7 +_,64 @@
+@@ -228,7 +_,68 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -112,6 +112,10 @@
 +      return f_146818_;
 +   }
 +   // CraftBukkit end
++
++   public void setBukkitEntity(CraftEntity bukkitEntity) {
++      this.bukkitEntity = bukkitEntity;
++   }
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {

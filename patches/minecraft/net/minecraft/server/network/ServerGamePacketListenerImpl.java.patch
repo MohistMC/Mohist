@@ -497,6 +497,27 @@
     }
  
     public void m_7548_(ServerboundEntityTagQuery p_9864_) {
+@@ -764,6 +_,20 @@
+          this.f_9743_.f_8906_.m_141995_(new ClientboundTagQueryPacket(p_9837_.m_133810_(), compoundtag));
+       }
+    }
++   
++   // Mohist start - fix servercore  - removel 1.20.2
++   // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
++   @Deprecated
++   double prevX;
++   @Deprecated
++   double prevY;
++   @Deprecated
++   double prevZ;
++   @Deprecated
++   float prevYaw;
++   @Deprecated
++   float prevPitch;
++   // CraftBukkit end
+ 
+    public void m_7185_(ServerboundMovePlayerPacket p_9874_) {
+       PacketUtils.m_131359_(p_9874_, this, this.f_9743_.m_183503_());
 @@ -771,7 +_,7 @@
           this.m_9942_(new TranslatableComponent("multiplayer.disconnect.invalid_player_movement"));
        } else {
@@ -521,11 +542,11 @@
 +                  this.allowedPlayerTicks = 20; // CraftBukkit
                 } else {
 +                  // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
-+                  double prevX = f_9743_.m_20185_();
-+                  double prevY = f_9743_.m_20186_();
-+                  double prevZ = f_9743_.m_20189_();
-+                  float prevYaw = f_9743_.m_146908_();
-+                  float prevPitch = f_9743_.m_146909_();
++                  prevX = f_9743_.m_20185_();
++                  prevY = f_9743_.m_20185_();
++                  prevZ = f_9743_.m_20185_();
++                  prevYaw = f_9743_.m_146908_();
++                  prevPitch = f_9743_.m_146909_();
 +                  // CraftBukkit end
                    double d3 = this.f_9743_.m_20185_();
                    double d4 = this.f_9743_.m_20186_();

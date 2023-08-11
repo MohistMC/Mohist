@@ -774,7 +774,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (fromWorld == toWorld) {
             entity.connection.teleport(to);
         } else {
-            server.getHandle().respawn(entity, toWorld, true, to, true);
+            server.getHandle().respawn(entity, toWorld, true, to);
         }
         return true;
     }
@@ -1717,6 +1717,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void resetTitle() {
         ClientboundClearTitlesPacket packetReset = new ClientboundClearTitlesPacket(true);
         getHandle().connection.send(packetReset);
+    }
+
+    public void restore(CraftPlayer player) {
+        setDisplayName(player.getDisplayName());
+        player.setHandle(getHandle());
     }
 
     @Override

@@ -88,7 +88,7 @@
        if (p_39461_ == this.f_39449_) {
           ItemStack itemstack = p_39461_.m_8020_(0);
 -         if (!itemstack.m_41619_() && itemstack.m_41792_()) {
-+         if (!itemstack.m_41619_()) { // CraftBukkit - relax condition
++         if (!itemstack.m_41619_() && itemstack.m_41792_()) { // CraftBukkit - relax condition
              this.f_39450_.m_39292_((p_39485_, p_39486_) -> {
 -               int j = 0;
 +               float j = 0;

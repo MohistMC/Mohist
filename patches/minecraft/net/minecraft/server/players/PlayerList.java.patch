@@ -363,7 +363,7 @@
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -332,82 +_,155 @@
+@@ -332,135 +_,287 @@
        serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.m_8960_().m_135978_();
        this.f_11196_.remove(p_11287_);
@@ -513,44 +513,106 @@
 +      // CraftBukkit end
     }
  
-    public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
-+      return this.respawn(p_11237_, this.f_11195_.m_129880_(p_11237_.m_8963_()), p_11238_, null, true);
-+   }
++   // Mohist TODO start
++   public Location mohist$location;
++   public ServerLevel mohist$worldserver;
 +
-+   public ServerPlayer respawn(ServerPlayer p_11237_, ServerLevel worldserver, boolean p_11238_, Location location, boolean avoidSuffocation) {
++   // Mohist start - Fix mixin by apoli
++   public org.bukkit.World fromWorld;
++   public PlayerRespawnEvent respawnEvent;
++   public LevelData worlddata;
++   public org.bukkit.entity.Player respawnPlayer;
++   BlockState iblockdata;
++   Vec3 vec3d;
++   Vec3 vec3d2;
++   float f1;
++   boolean isBedSpawn;
++   boolean flag2;
++   // Mohist end
+    public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
 +      p_11237_.m_8127_(); // CraftBukkit
        this.f_11196_.remove(p_11237_);
++      this.playersByName.remove(p_11237_.m_6302_().toLowerCase(java.util.Locale.ROOT)); // Spigot
        p_11237_.m_183503_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
        BlockPos blockpos = p_11237_.m_8961_();
        float f = p_11237_.m_8962_();
        boolean flag = p_11237_.m_8964_();
 -      ServerLevel serverlevel = this.f_11195_.m_129880_(p_11237_.m_8963_());
-+      /* CraftBukkit start
-+      ServerLevel serverlevel = this.server.getLevel(p_11237_.getRespawnDimension());
++
++      fromWorld = p_11237_.getBukkitEntity().getWorld();
++      p_11237_.f_8944_ = false;
++      flag2 = false;
++      ServerLevel worldserver1 = this.f_11195_.m_129880_(p_11237_.m_8963_());
        Optional<Vec3> optional;
-       if (serverlevel != null && blockpos != null) {
+-      if (serverlevel != null && blockpos != null) {
 -         optional = Player.m_36130_(serverlevel, blockpos, f, flag, p_11238_);
-+         optional = Player.findRespawnPositionAndUseSpawnBlock(serverlevel, blockpos, f, flag, p_11238_);
++      if (worldserver1 != null && blockpos != null) {
++         optional = Player.m_36130_(worldserver1, blockpos, f, flag, p_11238_);
        } else {
           optional = Optional.empty();
        }
- 
+-
 -      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
--      ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
-+      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.server.overworld();
-+      ServerPlayer serverplayer = new ServerPlayer(this.server, serverlevel1, p_11237_.getGameProfile());
-+      // */
-+      ServerPlayer serverplayer = p_11237_;
-+      org.bukkit.World fromWorld = p_11237_.getBukkitEntity().getWorld();
-+      p_11237_.f_8944_ = false;
++      if (mohist$location == null) {
++         isBedSpawn = false;
++         if (optional.isPresent()) {
++            iblockdata = worldserver1.m_8055_(blockpos);
++            boolean flag3 = iblockdata.m_60713_(Blocks.f_50724_);
++            vec3d = optional.get();
++            if (!iblockdata.m_204336_(BlockTags.f_13038_) && !flag3) {
++               f1 = f;
++            } else {
++               vec3d2 = Vec3.m_82539_(blockpos).m_82546_(vec3d).m_82541_();
++               f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d2.f_82481_, vec3d2.f_82479_) * 57.2957763671875 - 90.0);
++            }
++
++            flag2 = (!p_11238_ && flag3);
++            isBedSpawn = true;
++            mohist$location = new Location(worldserver1.getWorld(), vec3d.m_7096_(), vec3d.m_7098_(), vec3d.m_7094_(), f1, 0.0F);
++         } else if (blockpos != null) {
++            p_11237_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
++            p_11237_.m_9158_(Level.f_46428_, null, 0f, false, false);
++         }
++
++         if (mohist$location == null) {
++            worldserver1 = this.f_11195_.m_129880_(Level.f_46428_);
++            blockpos = p_11237_.getSpawnPoint(worldserver1);
++            mohist$location = new Location(worldserver1.getWorld(), blockpos.m_123341_() + 0.5f, blockpos.m_123342_() + 0.1f, blockpos.m_123343_() + 0.5f);
++         }
++         respawnPlayer = p_11237_.getBukkitEntity();
++         respawnEvent = new PlayerRespawnEvent(respawnPlayer, mohist$location, isBedSpawn && !flag2, flag2);
++         this.cserver.getPluginManager().callEvent(respawnEvent);
++         if (p_11237_.f_8906_.isDisconnected()) {
++            return p_11237_;
++         }
++         mohist$location = respawnEvent.getRespawnLocation();
++         if (!p_11238_) {
++            p_11237_.reset();
++         }
++      } else {
++         if (mohist$worldserver == null) mohist$worldserver = this.f_11195_.m_129880_(p_11237_.m_8963_());
++         mohist$location.setWorld(mohist$worldserver.getWorld());
++      }
 +      // CraftBukkit end
++
++      ServerLevel serverlevel1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
+       ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
++      serverplayer.getBukkitEntity().restore(p_11237_.getBukkitEntity());
++      serverplayer.setBukkitEntity(p_11237_.getBukkitEntity());
++      p_11237_.f_8906_.f_9743_ = serverplayer;
        serverplayer.f_8906_ = p_11237_.f_8906_;
++
        serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
        serverplayer.m_20234_(p_11237_.m_142049_());
-@@ -418,46 +_,110 @@
+       serverplayer.m_36163_(p_11237_.m_5737_());
+ 
+-      for(String s : p_11237_.m_19880_()) {
++      for (String s : p_11237_.m_19880_()) {
+          serverplayer.m_20049_(s);
        }
  
-       boolean flag2 = false;
+-      boolean flag2 = false;
 -      if (optional.isPresent()) {
 -         BlockState blockstate = serverlevel1.m_8055_(blockpos);
 -         boolean flag1 = blockstate.m_60713_(Blocks.f_50724_);
@@ -568,102 +630,56 @@
 -         flag2 = !p_11238_ && flag1;
 -      } else if (blockpos != null) {
 -         serverplayer.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
-+      // CraftBukkit start - fire PlayerRespawnEvent
-+      if (location == null) {
-+         boolean isBedSpawn = false;
-+         ServerLevel worldserver1 = this.f_11195_.m_129880_(p_11237_.m_8963_());
-+         if (worldserver1 != null) {
-+            Optional optional;
-+            if (blockpos != null) {
-+               optional = Player.m_36130_(worldserver1, blockpos, f, p_11238_, flag);
-+            } else {
-+               optional = Optional.empty();
-+            }
-+
-+            if (optional.isPresent()) {
-+               BlockState iblockdata = worldserver1.m_8055_(blockpos);
-+               boolean flag3 = iblockdata.m_60713_(Blocks.f_50724_);
-+               Vec3 vec3d = (Vec3) optional.get();
-+               float f1;
-+
-+               if (!iblockdata.m_204336_(BlockTags.f_13038_) && !flag3) {
-+                  f1 = f;
-+               } else {
-+                  Vec3 vec3d1 = Vec3.m_82539_(blockpos).m_82546_(vec3d).m_82541_();
-+
-+                  f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d1.f_82481_, vec3d1.f_82479_) * 57.2957763671875D - 90.0D);
-+               }
-+
-+               serverplayer.m_9158_(worldserver1.m_46472_(), blockpos, f, p_11238_, false);
-+               flag2 = !flag && flag3;
-+               isBedSpawn = true;
-+               location = new Location(worldserver1.getWorld(), vec3d.f_82479_, vec3d.f_82480_, vec3d.f_82481_, f1, 0.0F);
-+            } else if (blockpos != null) {
-+               serverplayer.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
-+               serverplayer.m_9158_(null, null, 0f, false, false); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed
-+            }
-+         }
-+
-+         if (location == null) {
-+            worldserver1 = this.f_11195_.m_129880_(Level.f_46428_);
-+            blockpos = serverplayer.getSpawnPoint(worldserver1);
-+            location = new Location(worldserver1.getWorld(), (double) ((float) blockpos.m_123341_() + 0.5F), (double) ((float) blockpos.m_123342_() + 0.1F), (double) ((float) blockpos.m_123343_() + 0.5F));
-+         }
-+         org.bukkit.entity.Player respawnPlayer = serverplayer.getBukkitEntity();
-+         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2);
-+         cserver.getPluginManager().callEvent(respawnEvent);
-+
-+         location = respawnEvent.getRespawnLocation();
-+         if (!flag) p_11237_.reset(); // SPIGOT-4785
-+      } else {
-+         location.setWorld(worldserver.getWorld());
-       }
-+      ServerLevel worldserver1 = (( CraftWorld ) location.getWorld()).getHandle();
-+      serverplayer.forceSetPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-+      // CraftBukkit end
- 
+-      }
+-
 -      while(!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double)serverlevel1.m_151558_()) {
-+      while (avoidSuffocation && !worldserver1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double) worldserver1.m_151558_()) {
++      serverplayer.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
++      // CraftBukkit end
++
++      while (!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double) serverlevel1.m_151558_()) {
           serverplayer.m_6034_(serverplayer.m_20185_(), serverplayer.m_20186_() + 1.0D, serverplayer.m_20189_());
        }
- 
+-
 -      LevelData leveldata = serverplayer.f_19853_.m_6106_();
 -      serverplayer.f_8906_.m_141995_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_204156_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_183503_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_183503_().m_46659_(), serverplayer.m_183503_().m_8584_(), p_11238_));
 -      serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
--      serverplayer.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_8900_(), serverlevel1.m_8901_()));
-+      LevelData leveldata = worldserver1.m_6106_();
-+      serverplayer.f_8906_.m_141995_(new ClientboundRespawnPacket(worldserver1.m_204156_(), worldserver1.m_46472_(), BiomeManager.m_47877_(worldserver1.m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), worldserver1.m_46659_(), worldserver1.m_8584_(), flag));
-+      serverplayer.spawnIn(worldserver1);
++      // CraftBukkit start
++      worlddata = serverlevel1.m_6106_();
++      serverplayer.f_8906_.m_141995_(new ClientboundRespawnPacket(serverlevel1.m_204156_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11238_));
++      serverplayer.f_8906_.m_141995_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
++      serverplayer.f_8906_.m_141995_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
++      serverplayer.spawnIn(serverlevel1);
 +      serverplayer.m_146912_();
-+      serverplayer.f_8906_.teleport(new Location(worldserver1.getWorld(), serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_()));
++      serverplayer.f_8906_.teleport(new Location(serverlevel1.getWorld(), serverplayer.m_20182_().m_7096_(), serverplayer.m_20182_().m_7098_(), serverplayer.m_20182_().m_7094_(), serverplayer.m_146908_(), serverplayer.m_146909_()));
 +      serverplayer.m_20260_(false);
-+      //serverplayer.connection.teleport(serverplayer.getX(), serverplayer.getY(), serverplayer.getZ(), serverplayer.getYRot(), serverplayer.getXRot());
-+      serverplayer.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(worldserver1.m_8900_(), worldserver1.m_8901_()));
-       serverplayer.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
+       serverplayer.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_8900_(), serverlevel1.m_8901_()));
+-      serverplayer.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
++      serverplayer.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(worlddata.m_5472_(), worlddata.m_5474_()));
        serverplayer.f_8906_.m_141995_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
--      this.m_11229_(serverplayer, serverlevel1);
-+      this.m_11229_(serverplayer, worldserver1);
+       this.m_11229_(serverplayer, serverlevel1);
        this.m_11289_(serverplayer);
 -      serverlevel1.m_8845_(serverplayer);
 -      this.f_11196_.add(serverplayer);
 -      this.f_11197_.put(serverplayer.m_142081_(), serverplayer);
--      serverplayer.m_143429_();
 +      if (!p_11237_.f_8906_.isDisconnected()) {
-+         worldserver1.m_8845_(serverplayer);
++         serverlevel1.m_8845_(serverplayer);
 +         this.f_11196_.add(serverplayer);
++         this.playersByName.put(serverplayer.m_6302_().toLowerCase(java.util.Locale.ROOT), serverplayer); // Spigot
 +         this.f_11197_.put(serverplayer.m_142081_(), serverplayer);
 +      }
-+      // serverplayer.initInventoryMenu();
+       serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
        if (flag2) {
-          serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F));
-       }
- 
+-         serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F));
+-      }
+-
++         serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), 1.0F, 1.0F));
++      }
 +      // Added from changeDimension
-+      m_11292_(p_11237_); // Update health, etc...
++      this.m_11292_(p_11237_); // Update health, etc...
 +      p_11237_.m_6885_();
-+      for ( MobEffectInstance mobEffect : p_11237_.m_21220_()) {
++      for (MobEffectInstance mobEffect : p_11237_.m_21220_()) {
 +         p_11237_.f_8906_.m_141995_(new ClientboundUpdateMobEffectPacket(p_11237_.m_142049_(), mobEffect));
 +      }
 +
@@ -671,7 +687,7 @@
 +      p_11237_.m_9209_(((CraftWorld) fromWorld).getHandle());
 +
 +      // Don't fire on respawn
-+      if (fromWorld != location.getWorld()) {
++      if (fromWorld != mohist$location.getWorld()) {
 +         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(p_11237_.getBukkitEntity(), fromWorld);
 +         f_11195_.server.getPluginManager().callEvent(event);
 +      }
@@ -680,11 +696,23 @@
 +      if (p_11237_.f_8906_.isDisconnected()) {
 +         this.m_6765_(p_11237_);
 +      }
-+      // CraftBukkit end
 +
++      // CraftBukkit end
++      mohist$location = null; // Mohist
        return serverplayer;
     }
  
++   public ServerPlayer respawn(ServerPlayer entityplayer, ServerLevel worldserver, boolean flag, Location location) {
++      this.mohist$location = location;
++      this.mohist$worldserver = worldserver;
++      return m_11236_(entityplayer, flag);
++   }
++   // Mohist TODO end
++
++
+    public void m_11289_(ServerPlayer p_11290_) {
+       GameProfile gameprofile = p_11290_.m_36316_();
+       int i = this.f_11195_.m_129944_(gameprofile);
 @@ -469,11 +_,40 @@
  
     public void m_11288_() {
