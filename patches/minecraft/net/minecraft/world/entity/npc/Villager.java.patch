@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -4,6 +_,7 @@
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.ImmutableSet;
++import com.mohistmc.optimizations.OptVillager;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.DataResult;
 @@ -87,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.ServerLevelAccessor;
@@ -11,7 +19,7 @@
  import org.slf4j.Logger;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-@@ -204,10 +_,21 @@
+@@ -204,10 +_,25 @@
        return this.f_35366_;
     }
  
@@ -31,7 +39,11 @@
 -      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
 -      this.m_9236_().m_46473_().m_7238_();
 +      this.f_19853_.m_46473_().m_6180_("villagerBrain");
-+      this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
++      // Mohist start
++      if (OptVillager.getInstance().isLobotomized(this)) {
++         this.m_6274_().m_21865_((ServerLevel)this.f_19853_, this);
++      }
++      // Mohist end
 +      this.f_19853_.m_46473_().m_7238_();
        if (this.f_35366_) {
           this.f_35366_ = false;
