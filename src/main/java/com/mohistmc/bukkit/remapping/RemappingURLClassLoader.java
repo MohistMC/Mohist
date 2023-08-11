@@ -50,7 +50,7 @@ public class RemappingURLClassLoader extends URLClassLoader implements Remapping
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         Class<?> result = null;
         String path = name.replace('.', '/').concat(".class");
-        URL resource = this.getResource(path);
+        URL resource = this.findResource(path);
         if (resource != null) {
             URLConnection connection;
             Callable<byte[]> byteSource;
@@ -78,10 +78,16 @@ public class RemappingURLClassLoader extends URLClassLoader implements Remapping
             if (i != -1) {
                 String pkgName = name.substring(0, i);
                 if (getPackage(pkgName) == null) {
-                    if (manifest != null) {
-                        this.definePackage(pkgName, manifest, ((JarURLConnection) connection).getJarFileURL());
-                    } else {
-                        this.definePackage(pkgName, null, null, null, null, null, null, null);
+                    try {
+                        if (manifest != null) {
+                            definePackage(pkgName, manifest, resource);
+                        } else {
+                            definePackage(pkgName, null, null, null, null, null, null, null);
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        if (getPackage(pkgName) == null) {
+                            throw new IllegalStateException("Cannot find package " + pkgName);
+                        }
                     }
                 }
             }
