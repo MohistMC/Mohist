@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_19_R2 {
+public class v_1_19_R3 {
 
     public static final List<String> loadedLibsPaths = new ArrayList<>();
 
@@ -65,17 +65,20 @@ public class v_1_19_R2 {
         }
 
         private void install() throws Exception {
-            if (!checkDependencies()) return;
-            System.out.println(MohistMCStart.i18n.get("installation.start"));
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
-            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
             copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+
+            if (!checkDependencies()) return;
+            System.out.println(MohistMCStart.i18n.get("installation.start"));
+
+
+            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");

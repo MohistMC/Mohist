@@ -18,7 +18,7 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_19_R2;
+import com.mohistmc.action.v_1_19_R3;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
@@ -73,8 +73,9 @@ public class MohistMCStart {
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
-            v_1_19_R2.run();
         }
+
+        v_1_19_R3.run();
 
         CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();

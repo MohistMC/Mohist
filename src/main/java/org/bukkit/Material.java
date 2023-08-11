@@ -4,11 +4,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import com.mohistmc.dynamicenum.MohistDynamEnum;
+import net.minecraft.resources.ResourceLocation;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
@@ -108,6 +110,7 @@ import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallHangingSign;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey;
 import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.MaterialData;
@@ -4349,29 +4352,18 @@ public enum Material implements Keyed, Translatable {
     private final short durability;
     public final Class<?> data;
     private final boolean legacy;
-    private final NamespacedKey key;
-
-    private String modName;
-    private NamespacedKey keyForge;
+    private NamespacedKey key;
     public boolean isForgeBlock = false;
+    public boolean isForgeItem = false;
 
     private Material(final int id) {
         this(id, 64);
     }
 
     // Mohist start - constructor used to set if the Material is a block or not
-    private Material(final int id, boolean flag) {
-        this(id, 64);
+    private Material(final int id, final int stack, boolean flag) {
+        this(id, stack);
         this.isForgeBlock = flag;
-    }
-    // Mohist end
-
-    // Mohist start - constructor used to set if block is modded
-    private Material(final int id, boolean flag, String modName) {
-        this(id, 64);
-        this.isForgeBlock = flag;
-        this.modName = modName;
-        this.keyForge = new NamespacedKey(modName, this.name().toLowerCase(Locale.ROOT).substring(modName.length() + 1));
     }
     // Mohist end
 
@@ -10936,45 +10928,22 @@ public enum Material implements Keyed, Translatable {
         return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
     }
 
-    // use a normalize() function to ensure it is accessible after a round-trip
-    public static String normalizeName(String name) {
-        return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
-    }
-
-    public static Material addMaterial(String materialName, int id, boolean isBlock) {
-        // Forge Blocks
+    public static Material addMaterial(String materialName, int id, int stack, boolean isBlock, ResourceLocation resourceLocation) {
         if (isBlock) {
             Material material = BY_NAME.get(materialName);
             if (material != null){
                 material.blockID = id;
                 material.isForgeBlock = true;
             }else {
-                material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, true});
+                material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE), List.of(id, stack, isBlock));
             }
             BY_NAME.put(materialName, material);
+            material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             return material;
         } else { // Forge Items
-            Material material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{id, false});
+            Material material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE), List.of(id, stack, isBlock));
             BY_NAME.put(materialName, material);
-            return material;
-        }
-    }
-
-    public static Material addMaterial(String materialName, int id, boolean isBlock, String modName) {
-        // Forge Blocks
-        if (isBlock) {
-            Material material = BY_NAME.get(materialName);
-            if (material != null){
-                material.blockID = id;
-                material.isForgeBlock = true;
-            }else {
-                material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, true, modName});
-            }
-            BY_NAME.put(materialName, material);
-            return material;
-        } else { // Forge Items
-            Material material = (Material) MohistDynamEnum.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE, String.class}, new Object[]{id, false, modName});
-            BY_NAME.put(materialName, material);
+            material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             return material;
         }
     }

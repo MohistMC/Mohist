@@ -52,7 +52,7 @@ Upstream Projects
 * [**Pufferfish**](https://github.com/pufferfish-gg/Pufferfish.git) - plugin support.
 * [**Mirai**](https://github.com/etil2jz/Mirai.git) - plugin support.
 
-A Special Thanks To:
+Special Thanks To:
 -------------
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="172"></a>
 
@@ -61,3 +61,7 @@ A Special Thanks To:
 ![YourKit-Logo](https://www.yourkit.com/images/yklogo.png)
 
 [YourKit](http://www.yourkit.com/), makers of the outstanding java profiler, support open source projects of all kinds with their full featured [Java](https://www.yourkit.com/java/profiler/index.jsp) and [.NET](https://www.yourkit.com/.net/profiler/index.jsp) application profilers. We thank them for granting Mohist an OSS license so that we can make our software the best it can be.
+
+[<img src="https://user-images.githubusercontent.com/21148213/121807008-8ffc6700-cc52-11eb-96a7-2f6f260f8fda.png" alt="" width="100">](https://www.jetbrains.com)
+
+[JetBrains](https://www.jetbrains.com/), creators of the IntelliJ IDEA, supports Paper with one of their [Open Source Licenses](https://www.jetbrains.com/opensource/). IntelliJ IDEA is the recommended IDE for working with Paper, and most of the Paper team uses it.

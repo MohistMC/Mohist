@@ -3,6 +3,7 @@ package com.mohistmc.util;
 import com.mohistmc.MohistMCStart;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,5 +23,17 @@ public class FileUtil {
         } catch (Exception e) {
             return Collections.emptyList();
         }
+    }
+
+    public static void deleteFolders(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    deleteFolders(f);
+                }
+            }
+        }
+        file.delete();
     }
 }
