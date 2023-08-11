@@ -217,7 +217,6 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
--         BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
 +
 +         // CraftBukkit start - capture blockstates
 +         boolean captured = false;
@@ -238,8 +237,8 @@
 +         BlockState old = m_8055_(p_46605_);
 +         int oldLight = old.getLightEmission(this, p_46605_);
 +         int oldOpacity = old.m_60739_(this, p_46605_);
-+
-+         BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0, (p_46607_ & 1024) == 0); // CraftBukkit custom NO_PLACE flag
++         levelchunk.mohist$doPlace.set((p_46607_ & 1024) == 0);
+          BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
 +
           if (blockstate == null) {
 +            // CraftBukkit start - remove blockstate if failed (or the same)
