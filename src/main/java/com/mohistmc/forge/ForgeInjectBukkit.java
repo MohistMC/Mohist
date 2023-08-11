@@ -46,6 +46,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -152,7 +153,7 @@ public class ForgeInjectBukkit {
             if (CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
                 String name = normalizeName(resourceLocation.toString());
                 MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
-                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, List.of(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), List.of(effectInstance == null ? null : PotionEffectType.getById(MobEffect.getId(effectInstance.getEffect())), false, false));
+                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : PotionEffectType.getById(MobEffect.getId(effectInstance.getEffect())), false, false));
                 if (potionType != null) {
                     MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
                 }
