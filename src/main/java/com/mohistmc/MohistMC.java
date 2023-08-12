@@ -20,8 +20,10 @@ public class MohistMC {
     public static i18n i18n;
     public static String version;
     public static String modid = "mohist";
+    public static ClassLoader classLoader;
 
     public MohistMC() {
+        classLoader = MohistMC.class.getClassLoader();
         String mohist_lang = MohistConfig.yml.getString("mohist.lang", "xx_XX");
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];

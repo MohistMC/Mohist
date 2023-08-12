@@ -22,6 +22,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
 import com.mohistmc.bukkit.remapping.ClassLoaderRemapper;
 import com.mohistmc.bukkit.remapping.Remapper;
@@ -102,11 +103,8 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
-
-        if (parent != null && parent instanceof TransformingClassLoader transformingClassLoader)
-        {
-            transformingClassLoader.addChild(this);
-        }
+        System.out.println(this);
+        ((TransformingClassLoader)MohistMC.classLoader).addChild(this);
     }
 
     @Override
