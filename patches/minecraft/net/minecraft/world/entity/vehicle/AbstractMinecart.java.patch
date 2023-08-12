@@ -104,16 +104,25 @@
                 this.m_20153_();
                 if (flag && !this.m_8077_()) {
                    this.m_146870_();
-@@ -261,6 +_,14 @@
+@@ -260,7 +_,23 @@
+       return this.f_38068_ ? this.m_6350_().m_122424_().m_122427_() : this.m_6350_().m_122427_();
     }
  
++   // Mohist start - Fix mixin (locals = LocalCapture.CAPTURE_FAILSOFT)
++   double prevX;
++   double prevY;
++   double prevZ;
++   float prevYaw;
++   float prevPitch;
++   // Mohist end
++
     public void m_8119_() {
 +      // CraftBukkit start
-+      double prevX = this.m_20185_();
-+      double prevY = this.m_20186_();
-+      double prevZ = this.m_20189_();
-+      float prevYaw = this.m_146908_();
-+      float prevPitch = this.m_146909_();
++      prevX = this.m_20185_();
++      prevY = this.m_20186_();
++      prevZ = this.m_20189_();
++      prevYaw = this.m_146908_();
++      prevPitch = this.m_146909_();
 +      // CraftBukkit end
 +
        if (this.m_38176_() > 0) {
