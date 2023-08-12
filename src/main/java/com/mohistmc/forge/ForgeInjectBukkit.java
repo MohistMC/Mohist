@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.StatType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -35,8 +36,10 @@ import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_18_R2.util.CraftSpawnCategory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -81,6 +84,7 @@ public class ForgeInjectBukkit {
         addEnumParticle();
         addStatistic();
         addEndDragonPhase();
+        loadSpawnCategory();
     }
 
 
@@ -274,6 +278,18 @@ public class ForgeInjectBukkit {
             var name = "MOD_PHASE_" + id;
             EnderDragon.Phase newPhase = MohistDynamEnum.addEnum0(EnderDragon.Phase.class, name, new Class[0]);
             MohistMC.LOGGER.debug("Registered {} as ender dragon phase {}", name, newPhase);
+        }
+    }
+
+    private static void loadSpawnCategory() {
+        for (MobCategory category : MobCategory.values()) {
+            try {
+                CraftSpawnCategory.toBukkit(category);
+            } catch (Exception e) {
+                String name = category.name();
+                SpawnCategory spawnCategory = MohistDynamEnum.addEnum0(SpawnCategory.class, name, new Class[0]);
+                MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
+            }
         }
     }
 
