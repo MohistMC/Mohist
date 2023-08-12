@@ -8,6 +8,19 @@
  import net.minecraft.core.Registry;
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.world.level.biome.Biome;
+@@ -30,6 +_,12 @@
+       this.m_63018_();
+    }
+ 
++   public LevelChunkSection(PalettedContainer<BlockState> pStates, PalettedContainer<Holder<Biome>> pBiomes) {
++      this.f_62972_ = pStates;
++      this.f_187995_ = pBiomes;
++      this.m_63018_();
++   }
++
+    public LevelChunkSection(Registry<Biome> p_282873_) {
+       this.f_62972_ = new PalettedContainer<>(Block.f_49791_, Blocks.f_50016_.m_49966_(), PalettedContainer.Strategy.f_188137_);
+       this.f_187995_ = new PalettedContainer<>(p_282873_.m_206115_(), p_282873_.m_246971_(Biomes.f_48202_), PalettedContainer.Strategy.f_188138_);
 @@ -192,4 +_,10 @@
  
        this.f_187995_ = palettedcontainer;
