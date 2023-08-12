@@ -18,10 +18,12 @@
  import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.Containers;
  import net.minecraft.world.WorldlyContainer;
-@@ -23,6 +_,14 @@
+@@ -23,6 +_,17 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BrewingStandBlock;
  import net.minecraft.world.level.block.state.BlockState;
++import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
@@ -29,6 +31,7 @@
 +import org.bukkit.event.block.BrewingStartEvent;
 +import org.bukkit.event.inventory.BrewEvent;
 +import org.bukkit.event.inventory.BrewingStandFuelEvent;
++import org.bukkit.inventory.BrewerInventory;
 +import org.bukkit.inventory.InventoryHolder;
  
  public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
@@ -71,7 +74,7 @@
     public BrewingStandBlockEntity(BlockPos p_155283_, BlockState p_155284_) {
        super(BlockEntityType.f_58927_, p_155283_, p_155284_);
     }
-@@ -92,19 +_,36 @@
+@@ -92,18 +_,36 @@
     public static void m_155285_(Level p_155286_, BlockPos p_155287_, BlockState p_155288_, BrewingStandBlockEntity p_155289_) {
        ItemStack itemstack = p_155289_.f_58975_.get(4);
        if (p_155289_.f_58979_ <= 0 && itemstack.m_150930_(Items.f_42593_)) {
@@ -108,11 +111,10 @@
 +         // CraftBukkit end
 +
           if (flag2 && flag) {
--            m_155290_(p_155286_, p_155287_, p_155289_.f_58975_);
-+            doBrew(p_155286_, p_155287_, p_155289_.f_58975_, p_155289_); // CraftBukkit
++            brewingStandBlock = p_155289_;
+             m_155290_(p_155286_, p_155287_, p_155289_.f_58975_);
              m_155232_(p_155286_, p_155287_, p_155288_);
           } else if (!flag || !itemstack1.m_150930_(p_155289_.f_58978_)) {
-             p_155289_.f_58976_ = 0;
 @@ -112,7 +_,11 @@
           }
        } else if (flag && p_155289_.f_58979_ > 0) {
@@ -134,63 +136,62 @@
        if (itemstack.m_41619_()) {
           return false;
        } else if (!PotionBrewing.m_43506_(itemstack)) {
-@@ -164,25 +_,43 @@
+@@ -164,22 +_,49 @@
        }
     }
  
--   private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
--      ItemStack itemstack = p_155293_.get(3);
--
++   private static BrewingStandBlockEntity brewingStandBlock;
+    private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_)) return;
+       ItemStack itemstack = p_155293_.get(3);
+ 
 -      for(int i = 0; i < 3; ++i) {
 -         p_155293_.set(i, PotionBrewing.m_43529_(itemstack, p_155293_.get(i)));
 -      }
--
--      itemstack.m_41774_(1);
--      if (itemstack.m_41720_().m_41470_()) {
--         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
-+   // Mohist TODO
-+   // CraftBukkit start
-+   private static void doBrew(Level pLevel, BlockPos pPos, NonNullList<ItemStack> pItems, BrewingStandBlockEntity brewingStandBlock) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(pItems)) return;
-+      ItemStack itemstack = pItems.get(3);
-+
-+      InventoryHolder owner = brewingStandBlock.getOwner();
++      // CraftBukkit start
 +      List<org.bukkit.inventory.ItemStack> brewResults = new ArrayList<>(3);
-+
 +      for (int i = 0; i < 3; ++i) {
-+         brewResults.add(i, CraftItemStack.asCraftMirror(PotionBrewing.m_43529_(itemstack, pItems.get(i))));
++         ItemStack input = p_155293_.get(i);
++         ItemStack output = BrewingRecipeRegistry.getOutput(input, itemstack);
++         brewResults.add(i, CraftItemStack.asCraftMirror(output.m_41619_() ? input : output));
 +      }
-+
++      BrewingStandBlockEntity brewingStandBlockEntity = brewingStandBlock;
++      InventoryHolder owner = brewingStandBlockEntity == null ? null : brewingStandBlockEntity.getOwner();
 +      if (owner != null) {
-+         BrewEvent event = new BrewEvent(CraftBlock.at(pLevel, pPos), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), brewResults, brewingStandBlock.f_58979_);
-+         org.bukkit.Bukkit.getPluginManager().callEvent(event);
++         BrewEvent event = new BrewEvent(CraftBlock.at(p_155291_, p_155292_), (BrewerInventory) owner.getInventory(), brewResults, brewingStandBlockEntity.f_58979_);
++         Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
++         } else {
++            for (int i = 0; i < 3; ++i) {
++               if (i < brewResults.size()) {
++                  p_155293_.set(i, CraftItemStack.asNMSCopy(brewResults.get(i)));
++               } else {
++                  p_155293_.set(i, ItemStack.f_41583_);
++               }
++            }
 +         }
 +      }
 +      // CraftBukkit end
-+
-+      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(pItems, itemstack, f_58974_);
-+      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(pItems);
+ 
+-      itemstack.m_41774_(1);
+-      if (itemstack.m_41720_().m_41470_()) {
+-         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
++      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, f_58974_);
++      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
 +      if (itemstack.hasCraftingRemainingItem()) {
 +         ItemStack itemstack1 = itemstack.getCraftingRemainingItem();
 +         itemstack.m_41774_(1);
           if (itemstack.m_41619_()) {
              itemstack = itemstack1;
           } else {
--            Containers.m_18992_(p_155291_, (double)p_155292_.m_123341_(), (double)p_155292_.m_123342_(), (double)p_155292_.m_123343_(), itemstack1);
-+            Containers.m_18992_(pLevel, (double)pPos.m_123341_(), (double)pPos.m_123342_(), (double)pPos.m_123343_(), itemstack1);
+             Containers.m_18992_(p_155291_, (double)p_155292_.m_123341_(), (double)p_155292_.m_123342_(), (double)p_155292_.m_123343_(), itemstack1);
           }
        }
 +      else itemstack.m_41774_(1);
  
--      p_155293_.set(3, itemstack);
--      p_155291_.m_46796_(1035, p_155292_, 0);
-+      pItems.set(3, itemstack);
-+      pLevel.m_46796_(1035, pPos, 0);
-    }
- 
-    public void m_142466_(CompoundTag p_155297_) {
+       p_155293_.set(3, itemstack);
+       p_155291_.m_46796_(1035, p_155292_, 0);
 @@ -191,6 +_,7 @@
        ContainerHelper.m_18980_(p_155297_, this.f_58975_);
        this.f_58976_ = p_155297_.m_128448_("BrewTime");
