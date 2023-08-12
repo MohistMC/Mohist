@@ -27,6 +27,7 @@ import com.mohistmc.bukkit.remapping.ClassLoaderRemapper;
 import com.mohistmc.bukkit.remapping.Remapper;
 import com.mohistmc.bukkit.remapping.RemappingClassLoader;
 import cpw.mods.modlauncher.EnumerationHelper;
+import cpw.mods.modlauncher.TransformingClassLoader;
 import io.izzel.tools.product.Product2;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidPluginException;
@@ -100,6 +101,11 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
             throw new InvalidPluginException("No public constructor", ex);
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
+        }
+
+        if (parent != null && parent instanceof TransformingClassLoader transformingClassLoader)
+        {
+            transformingClassLoader.addChild(this);
         }
     }
 

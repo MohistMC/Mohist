@@ -38,7 +38,7 @@ ext {
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '6.0.5'
     MODLAUNCHER_VERSION = '10.0.9'
-    SECUREJARHANDLER_VERSION = '2.1.10'
+    SECUREJARHANDLER_VERSION = 'mohist-2.1.11'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
     ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
@@ -162,6 +162,7 @@ def sharedDeps = {
     moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
+    installer 'net.minecraftforge:srgutils:0.5.4'
     installer "org.ow2.asm:asm:${ASM_VERSION}"
     installer "org.ow2.asm:asm-commons:${ASM_VERSION}"
     installer "org.ow2.asm:asm-tree:${ASM_VERSION}"
@@ -685,7 +686,7 @@ project(':mohist') {
                 MC_VERSION   : MC_VERSION,
                 MCP_VERSION  : MCP_VERSION,
                 FORGE_GROUP  : project.group,
-                IGNORE_LIST  : getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(','),
+                IGNORE_LIST  : getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(',').replace("2.1.2", "mohist-2.1.11"),
                 MODULES      : 'ALL-MODULE-PATH'
         ]
 
@@ -755,12 +756,12 @@ project(':mohist') {
         }
 
         from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';').replace("2.1.2", "mohist-2.1.11"), CLASS_PATH: CLASS_PATH.join(';').replace("2.1.2", "mohist-2.1.11")]) // modlauncher use 2.1.2
             rename { 'data/win_args.txt' }
         }
 
         from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':').replace("2.1.2", "mohist-2.1.11"), CLASS_PATH: CLASS_PATH.join(':').replace("2.1.2", "mohist-2.1.11")]) // modlauncher use 2.1.2
             rename { 'data/unix_args.txt' }
         }
     }

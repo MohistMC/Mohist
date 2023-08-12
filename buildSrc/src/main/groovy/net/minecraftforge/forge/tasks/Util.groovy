@@ -78,6 +78,15 @@ public class Util {
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
 				url = "https://maven.neoforged.net/${path}"
+				if (!checkExists(url)) {
+					url = "https://maven.minecraftforge.net/${path}"
+					if (!checkExists(url)) {
+						url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
+						if (!checkExists(url)) {
+							url = "https://maven.mohistmc.com/${path}"
+						}
+					}
+				}
 			}
 			ret[key] = [
 				name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
