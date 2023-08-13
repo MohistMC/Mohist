@@ -48,7 +48,7 @@ public class MohistMC {
         DefaultLibraries.loadDefaultLibs();
         CustomLibraries.loadCustomLibs();
 
-        if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
+        // if (MohistConfigUtil.bMohist("check_update")) UpdateUtils.versionCheck();
 
         if (mainArgs.contains("-noserver"))
             System.exit(0); //-noserver -> Do not run the Minecraft server, only let the installation running.
