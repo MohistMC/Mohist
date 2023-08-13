@@ -421,7 +421,11 @@ public final class CraftBlockStates {
         } else {
             factory = getFactory(material);
         }
-        return factory.createBlockState(world, blockPosition, blockData, tileEntity);
+        try {
+            return factory.createBlockState(world, blockPosition, blockData, tileEntity);
+        } catch (ClassCastException cce) {
+            return DEFAULT_FACTORY.createBlockState(world, blockPosition, blockData, tileEntity);
+        }
     }
 
     private static boolean isTileEntityOptional(Material material) {

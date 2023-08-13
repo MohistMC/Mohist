@@ -7,6 +7,8 @@ import com.mohistmc.api.gui.Warehouse;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -17,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,11 +36,11 @@ public class ShowsCommand extends Command {
     public ShowsCommand(String name) {
         super(name);
         this.description = "Mohist shows commands";
-        this.usageMessage = "/shows [sound|entitys]";
+        this.usageMessage = "/shows [sound|entitys|blockentitys]";
         this.setPermission("mohist.command.shows");
     }
 
-    private final List<String> params = List.of("sound", "entitys");
+    private final List<String> params = List.of("sound", "entitys", "blockentitys");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
@@ -118,6 +121,36 @@ public class ShowsCommand extends Command {
                     wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(s.getKey()))
                             .setDisplayName("§6Size: §4" + s.getValue())
                             .setLore(List.of("§7EntityType: §2" + s.getKey().name()))
+                            .toItemStack())
+                    );
+                }
+                wh.openGUI(player);
+                return true;
+            }
+            case "blockentitys" -> {
+
+                Map<Material, Integer> collect = Arrays.stream(player.getWorld().getLoadedChunks()).flatMap(chunk -> Arrays.stream(chunk.getTileEntities())).map(BlockState::getBlock).collect(Collectors.toMap(Block::getType, block -> 1, Integer::sum));
+
+                List<Map.Entry<Material, Integer>> infoIds = new ArrayList<>(collect.entrySet());
+                infoIds.sort((o1, o2) -> {
+                    Integer p1 = o1.getValue();
+                    Integer p2 = o2.getValue();
+                    return p2 - p1;
+                });
+
+                LinkedHashMap<Material, Integer> newMap = new LinkedHashMap<>();
+                AtomicInteger allSize = new AtomicInteger(0);
+                for (Map.Entry<Material, Integer> entity : infoIds) {
+                    newMap.put(entity.getKey(), entity.getValue());
+                    allSize.addAndGet(entity.getValue());
+                }
+
+                Warehouse wh = new Warehouse("BlockEntitys: " + allSize.getAndSet(0));
+                for (Map.Entry<Material, Integer> s : newMap.entrySet()) {
+                    Material material = s.getKey().name().contains("_WALL") ? Material.getMaterial(s.getKey().name().replace("_WALL", "")) : s.getKey();
+                    wh.addItem(new GUIItem(new ItemStackFactory(material)
+                            .setDisplayName("§6Size: §4" + s.getValue())
+                            .setLore(List.of("§7BlockEntity: §2" + s.getKey()))
                             .toItemStack())
                     );
                 }

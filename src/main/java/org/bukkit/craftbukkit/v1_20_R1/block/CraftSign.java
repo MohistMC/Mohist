@@ -27,6 +27,10 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
         this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
+    public CraftSign(T tileEntity) {
+        this(tileEntity.getLevel().getWorld(), tileEntity);
+    }
+
     public static void openSign(Sign sign, Player player, Side side) {
         Preconditions.checkArgument(sign != null, "sign == null");
         Preconditions.checkArgument(side != null, "side == null");
