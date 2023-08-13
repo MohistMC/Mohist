@@ -4579,6 +4579,9 @@ public enum Material implements Keyed, Translatable {
      * @return true if this material is a block
      */
     public boolean isBlock() {
+        if (isForgeBlock) {
+            return true;
+        }
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isBlock">
             case ACACIA_BUTTON:
