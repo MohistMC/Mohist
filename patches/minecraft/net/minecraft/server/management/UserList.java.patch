@@ -17,15 +17,6 @@
        }
  
     }
-@@ -50,7 +_,7 @@
-    @Nullable
-    public V func_152683_b(K p_152683_1_) {
-       this.func_152680_h();
--      return this.field_152696_d.get(this.func_152681_a(p_152683_1_));
-+      return (V)(this.field_152696_d.get(this.func_152681_a(p_152683_1_)));
-    }
- 
-    public void func_152684_c(K p_152684_1_) {
 @@ -59,7 +_,7 @@
        try {
           this.func_152678_f();
