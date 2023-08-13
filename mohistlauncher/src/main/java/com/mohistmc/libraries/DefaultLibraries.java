@@ -57,6 +57,7 @@ public class DefaultLibraries {
 
     public static void run() throws Exception {
         System.out.println(MohistMCStart.i18n.get("libraries.checking.start"));
+        System.out.println(MohistMCStart.i18n.get("libraries.downloadsource", DownloadSource.get()));
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
