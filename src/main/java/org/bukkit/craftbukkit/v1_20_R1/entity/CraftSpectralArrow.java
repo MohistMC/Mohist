@@ -21,11 +21,6 @@ public class CraftSpectralArrow extends CraftArrow implements SpectralArrow {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.SPECTRAL_ARROW;
-    }
-
-    @Override
     public int getGlowingTicks() {
         return getHandle().duration;
     }

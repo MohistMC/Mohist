@@ -24,11 +24,6 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
         return "CraftLightningStrike";
     }
 
-    @Override
-    public EntityType getType() {
-        return EntityType.LIGHTNING;
-    }
-
     // Spigot start
     private final LightningStrike.Spigot spigot = new LightningStrike.Spigot() {
 

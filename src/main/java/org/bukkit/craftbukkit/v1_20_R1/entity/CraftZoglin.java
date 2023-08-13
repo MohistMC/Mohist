@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Zoglin;
 
 public class CraftZoglin extends CraftMonster implements Zoglin {
@@ -28,11 +27,6 @@ public class CraftZoglin extends CraftMonster implements Zoglin {
     @Override
     public String toString() {
         return "CraftZoglin";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.ZOGLIN;
     }
 
     @Override

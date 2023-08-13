@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Parrot;
 
 public class CraftParrot extends CraftTameableAnimal implements Parrot {
@@ -31,11 +30,6 @@ public class CraftParrot extends CraftTameableAnimal implements Parrot {
     @Override
     public String toString() {
         return "CraftParrot";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.PARROT;
     }
 
     @Override

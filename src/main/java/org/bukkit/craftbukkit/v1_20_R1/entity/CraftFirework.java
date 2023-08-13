@@ -48,11 +48,6 @@ public class CraftFirework extends CraftProjectile implements Firework {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.FIREWORK;
-    }
-
-    @Override
     public FireworkMeta getFireworkMeta() {
         return (FireworkMeta) item.getItemMeta();
     }

@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 
 public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
@@ -27,10 +26,5 @@ public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
     @Override
     public String toString() {
         return "CraftExperienceOrb";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.EXPERIENCE_ORB;
     }
 }

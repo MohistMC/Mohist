@@ -83,11 +83,6 @@ public class CraftPiglin extends CraftPiglinAbstract implements Piglin {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.PIGLIN;
-    }
-
-    @Override
     public String toString() {
         return "CraftPiglin";
     }

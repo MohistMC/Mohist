@@ -19,9 +19,4 @@ public class CraftIllusioner extends CraftSpellcaster implements Illusioner {
     public String toString() {
         return "CraftIllusioner";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.ILLUSIONER;
-    }
 }

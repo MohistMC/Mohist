@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
 
 import java.util.UUID;
@@ -22,11 +21,6 @@ public class CraftInteraction extends CraftEntity implements Interaction {
     @Override
     public String toString() {
         return "CraftInteraction";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.INTERACTION;
     }
 
     @Override

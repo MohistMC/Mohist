@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Husk;
 
 public class CraftHusk extends CraftZombie implements Husk {
@@ -13,10 +12,5 @@ public class CraftHusk extends CraftZombie implements Husk {
     @Override
     public String toString() {
         return "CraftHusk";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.HUSK;
     }
 }

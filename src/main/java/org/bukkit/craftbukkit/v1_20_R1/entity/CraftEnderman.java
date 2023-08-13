@@ -50,11 +50,6 @@ public class CraftEnderman extends CraftMonster implements Enderman {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.ENDERMAN;
-    }
-
-    @Override
     public boolean teleport() {
         return getHandle().teleport();
     }

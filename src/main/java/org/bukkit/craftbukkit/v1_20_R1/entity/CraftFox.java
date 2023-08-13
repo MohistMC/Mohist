@@ -21,11 +21,6 @@ public class CraftFox extends CraftAnimals implements Fox {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.FOX;
-    }
-
-    @Override
     public String toString() {
         return "CraftFox";
     }

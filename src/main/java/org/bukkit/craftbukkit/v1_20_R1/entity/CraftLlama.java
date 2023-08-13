@@ -58,9 +58,4 @@ public class CraftLlama extends CraftChestedHorse implements Llama {
     public String toString() {
         return "CraftLlama";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.LLAMA;
-    }
 }

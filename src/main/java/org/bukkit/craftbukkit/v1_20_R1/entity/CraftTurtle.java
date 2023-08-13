@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Turtle;
 
 public class CraftTurtle extends CraftAnimals implements Turtle {
@@ -18,11 +17,6 @@ public class CraftTurtle extends CraftAnimals implements Turtle {
     @Override
     public String toString() {
         return "CraftTurtle";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.TURTLE;
     }
 
     @Override

@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Strider;
 
 public class CraftStrider extends CraftAnimals implements Strider {
@@ -74,10 +73,5 @@ public class CraftStrider extends CraftAnimals implements Strider {
     @Override
     public String toString() {
         return "CraftStrider";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.STRIDER;
     }
 }

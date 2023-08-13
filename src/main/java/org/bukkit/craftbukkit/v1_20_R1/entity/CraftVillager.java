@@ -38,11 +38,6 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.VILLAGER;
-    }
-
-    @Override
     public void remove() {
         getHandle().releaseAllPois();
 

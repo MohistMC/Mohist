@@ -19,11 +19,6 @@ public class CraftCat extends CraftTameableAnimal implements Cat {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.CAT;
-    }
-
-    @Override
     public String toString() {
         return "CraftCat";
     }

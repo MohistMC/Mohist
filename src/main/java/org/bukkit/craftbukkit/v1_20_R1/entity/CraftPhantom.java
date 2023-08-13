@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Phantom;
 
 public class CraftPhantom extends CraftFlying implements Phantom, CraftEnemy {
@@ -28,10 +27,5 @@ public class CraftPhantom extends CraftFlying implements Phantom, CraftEnemy {
     @Override
     public String toString() {
         return "CraftPhantom";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.PHANTOM;
     }
 }

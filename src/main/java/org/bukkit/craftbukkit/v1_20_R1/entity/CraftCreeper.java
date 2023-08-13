@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreeperPowerEvent;
 
 public class CraftCreeper extends CraftMonster implements Creeper {
@@ -88,10 +87,5 @@ public class CraftCreeper extends CraftMonster implements Creeper {
     @Override
     public String toString() {
         return "CraftCreeper";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.CREEPER;
     }
 }

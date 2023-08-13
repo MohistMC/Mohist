@@ -17,11 +17,6 @@ public class CraftDonkey extends CraftChestedHorse implements Donkey {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.DONKEY;
-    }
-
-    @Override
     public Variant getVariant() {
         return Variant.DONKEY;
     }

@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hoglin;
 
 public class CraftHoglin extends CraftAnimals implements Hoglin, CraftEnemy {
@@ -60,10 +59,5 @@ public class CraftHoglin extends CraftAnimals implements Hoglin, CraftEnemy {
     @Override
     public String toString() {
         return "CraftHoglin";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.HOGLIN;
     }
 }

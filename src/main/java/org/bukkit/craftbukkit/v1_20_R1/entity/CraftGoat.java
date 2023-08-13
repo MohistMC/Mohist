@@ -16,11 +16,6 @@ public class CraftGoat extends CraftAnimals implements Goat {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.GOAT;
-    }
-
-    @Override
     public String toString() {
         return "CraftGoat";
     }

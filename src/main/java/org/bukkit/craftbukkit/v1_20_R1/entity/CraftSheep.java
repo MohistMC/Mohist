@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
 
 public class CraftSheep extends CraftAnimals implements Sheep {
@@ -38,10 +37,5 @@ public class CraftSheep extends CraftAnimals implements Sheep {
     @Override
     public String toString() {
         return "CraftSheep";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.SHEEP;
     }
 }

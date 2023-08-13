@@ -1,10 +1,8 @@
 package com.mohistmc.entity;
 
-import com.mohistmc.api.EntityAPI;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftAnimals;
-import org.bukkit.entity.EntityType;
 
 /**
  * Mohist
@@ -15,20 +13,12 @@ import org.bukkit.entity.EntityType;
  */
 public class MohistModsAnimals extends CraftAnimals {
 
-    public String entityName;
-
     public MohistModsAnimals(CraftServer server, Animal entity) {
         super(server, entity);
-        this.entityName = EntityAPI.entityName(entity);
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityAPI.entityType(entityName, EntityType.FORGE_MOD_ANIMAL);
     }
 
     @Override
     public String toString() {
-        return "MohistModsAnimals{" + entityName + '}';
+        return "MohistModsAnimals{" + getType() + '}';
     }
 }

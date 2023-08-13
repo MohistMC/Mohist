@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.boss;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import org.bukkit.Location;

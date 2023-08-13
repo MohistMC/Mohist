@@ -33,9 +33,4 @@ public class CraftLeash extends CraftHanging implements LeashHitch {
     public String toString() {
         return "CraftLeash";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.LEASH_HITCH;
-    }
 }

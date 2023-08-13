@@ -25,11 +25,6 @@ public class CraftItemDisplay extends CraftDisplay implements ItemDisplay {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.ITEM_DISPLAY;
-    }
-
-    @Override
     public ItemStack getItemStack() {
         return CraftItemStack.asBukkitCopy(getHandle().getItemStack());
     }

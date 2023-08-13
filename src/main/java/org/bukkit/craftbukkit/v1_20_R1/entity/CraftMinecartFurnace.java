@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.minecart.PoweredMinecart;
 
 @SuppressWarnings("deprecation")
@@ -30,10 +29,5 @@ public class CraftMinecartFurnace extends CraftMinecart implements PoweredMineca
     @Override
     public String toString() {
         return "CraftMinecartFurnace";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.MINECART_FURNACE;
     }
 }

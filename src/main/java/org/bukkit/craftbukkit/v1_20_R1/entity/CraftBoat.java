@@ -96,11 +96,6 @@ public class CraftBoat extends CraftVehicle implements Boat {
         return "CraftBoat{boatType=" + getBoatType() + ",status=" + getStatus() + ",passengers=" + getPassengers().stream().map(Entity::toString).collect(Collectors.joining("-", "{", "}")) + "}";
     }
 
-    @Override
-    public EntityType getType() {
-        return EntityType.BOAT;
-    }
-
     public static Boat.Type boatTypeFromNms(net.minecraft.world.entity.vehicle.Boat.Type boatType) {
         return switch (boatType) {
             default -> throw new EnumConstantNotPresentException(Type.class, boatType.name());

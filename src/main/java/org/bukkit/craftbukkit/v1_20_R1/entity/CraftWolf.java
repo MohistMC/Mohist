@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Wolf;
 
 public class CraftWolf extends CraftTameableAnimal implements Wolf {
@@ -27,11 +26,6 @@ public class CraftWolf extends CraftTameableAnimal implements Wolf {
     @Override
     public net.minecraft.world.entity.animal.Wolf getHandle() {
         return (net.minecraft.world.entity.animal.Wolf) entity;
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.WOLF;
     }
 
     @Override

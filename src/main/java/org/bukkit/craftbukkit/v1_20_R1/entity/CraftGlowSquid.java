@@ -17,11 +17,6 @@ public class CraftGlowSquid extends CraftSquid implements GlowSquid {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.GLOW_SQUID;
-    }
-
-    @Override
     public String toString() {
         return "CraftGlowSquid";
     }

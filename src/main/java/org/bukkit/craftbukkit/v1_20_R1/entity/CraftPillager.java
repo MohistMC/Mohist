@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pillager;
 import org.bukkit.inventory.Inventory;
 
@@ -15,11 +14,6 @@ public class CraftPillager extends CraftIllager implements Pillager {
     @Override
     public net.minecraft.world.entity.monster.Pillager getHandle() {
         return (net.minecraft.world.entity.monster.Pillager) super.getHandle();
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.PILLAGER;
     }
 
     @Override

@@ -16,11 +16,6 @@ public class CraftRavager extends CraftRaider implements Ravager {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.RAVAGER;
-    }
-
-    @Override
     public String toString() {
         return "CraftRavager";
     }

@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 
 public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
@@ -18,11 +17,6 @@ public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
     @Override
     public String toString() {
         return "CraftGhast";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.GHAST;
     }
 
     @Override

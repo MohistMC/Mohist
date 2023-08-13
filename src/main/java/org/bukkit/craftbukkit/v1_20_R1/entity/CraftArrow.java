@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftArrow extends AbstractProjectile implements AbstractArrow {
@@ -126,10 +125,5 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
     @Override
     public String toString() {
         return "CraftArrow";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.UNKNOWN;
     }
 }

@@ -4,7 +4,6 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.ComplexLivingEntity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
@@ -40,10 +39,5 @@ public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
     @Override
     public String toString() {
         return "CraftComplexPart";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.UNKNOWN;
     }
 }

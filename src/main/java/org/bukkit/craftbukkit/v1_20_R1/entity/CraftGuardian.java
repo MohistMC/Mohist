@@ -25,11 +25,6 @@ public class CraftGuardian extends CraftMonster implements Guardian {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.GUARDIAN;
-    }
-
-    @Override
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
 

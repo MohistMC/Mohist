@@ -23,11 +23,6 @@ public class CraftZombie extends CraftMonster implements Zombie {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.ZOMBIE;
-    }
-
-    @Override
     public boolean isBaby() {
         return getHandle().isBaby();
     }

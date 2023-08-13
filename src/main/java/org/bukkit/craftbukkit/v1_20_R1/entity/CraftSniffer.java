@@ -29,11 +29,6 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.SNIFFER;
-    }
-
-    @Override
     public Collection<Location> getExploredLocations() {
         return this.getHandle().getExploredPositions().map(blockPosition -> CraftLocation.toBukkit(blockPosition.pos(), this.server.getServer().getLevel(blockPosition.dimension()))).collect(Collectors.toList());
     }

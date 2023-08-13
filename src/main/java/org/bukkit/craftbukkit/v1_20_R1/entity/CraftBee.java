@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
 import org.bukkit.entity.Bee;
-import org.bukkit.entity.EntityType;
 
 public class CraftBee extends CraftAnimals implements Bee {
 
@@ -22,11 +21,6 @@ public class CraftBee extends CraftAnimals implements Bee {
     @Override
     public String toString() {
         return "CraftBee";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.BEE;
     }
 
     @Override

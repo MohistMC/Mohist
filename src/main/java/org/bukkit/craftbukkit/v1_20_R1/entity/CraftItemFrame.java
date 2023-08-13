@@ -163,9 +163,4 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     public String toString() {
         return "CraftItemFrame{item=" + getItem() + ", rotation=" + getRotation() + "}";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.ITEM_FRAME;
-    }
 }

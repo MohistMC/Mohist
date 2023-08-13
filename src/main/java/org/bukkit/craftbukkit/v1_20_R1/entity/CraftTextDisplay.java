@@ -25,11 +25,6 @@ public class CraftTextDisplay extends CraftDisplay implements TextDisplay {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.TEXT_DISPLAY;
-    }
-
-    @Override
     public String getText() {
         return CraftChatMessage.fromComponent(getHandle().getText());
     }

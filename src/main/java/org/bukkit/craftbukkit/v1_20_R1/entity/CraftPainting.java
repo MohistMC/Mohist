@@ -6,7 +6,6 @@ import org.bukkit.Art;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_20_R1.CraftArt;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Painting;
 
 public class CraftPainting extends CraftHanging implements Painting {
@@ -60,10 +59,5 @@ public class CraftPainting extends CraftHanging implements Painting {
     @Override
     public String toString() {
         return "CraftPainting{art=" + getArt() + "}";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.PAINTING;
     }
 }

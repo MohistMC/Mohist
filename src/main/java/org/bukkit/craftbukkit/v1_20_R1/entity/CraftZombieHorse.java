@@ -17,11 +17,6 @@ public class CraftZombieHorse extends CraftAbstractHorse implements ZombieHorse 
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.ZOMBIE_HORSE;
-    }
-
-    @Override
     public Variant getVariant() {
         return Variant.UNDEAD_HORSE;
     }

@@ -12,7 +12,6 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftParticle;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
@@ -35,11 +34,6 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
     @Override
     public String toString() {
         return "CraftAreaEffectCloud";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.AREA_EFFECT_CLOUD;
     }
 
     @Override

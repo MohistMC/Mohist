@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.TNTPrimed;
 
@@ -50,11 +49,6 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
     @Override
     public String toString() {
         return "CraftTNTPrimed";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.PRIMED_TNT;
     }
 
     @Override

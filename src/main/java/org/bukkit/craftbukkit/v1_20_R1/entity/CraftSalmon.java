@@ -19,9 +19,4 @@ public class CraftSalmon extends CraftFish implements Salmon {
     public String toString() {
         return "CraftSalmon";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.SALMON;
-    }
 }

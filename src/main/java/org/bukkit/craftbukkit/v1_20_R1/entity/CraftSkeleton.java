@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Skeleton;
 
 public class CraftSkeleton extends CraftAbstractSkeleton implements Skeleton {
@@ -40,11 +39,6 @@ public class CraftSkeleton extends CraftAbstractSkeleton implements Skeleton {
     @Override
     public String toString() {
         return "CraftSkeleton";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.SKELETON;
     }
 
     @Override

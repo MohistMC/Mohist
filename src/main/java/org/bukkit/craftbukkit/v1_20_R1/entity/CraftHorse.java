@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.animal.horse.Markings;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryHorse;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.inventory.HorseInventory;
 
@@ -64,10 +63,5 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
     @Override
     public String toString() {
         return "CraftHorse{variant=" + getVariant() + ", owner=" + getOwner() + '}';
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.HORSE;
     }
 }

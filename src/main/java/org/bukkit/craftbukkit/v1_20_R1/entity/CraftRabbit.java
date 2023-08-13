@@ -21,11 +21,6 @@ public class CraftRabbit extends CraftAnimals implements Rabbit {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.RABBIT;
-    }
-
-    @Override
     public Type getRabbitType() {
         return Type.values()[getHandle().getVariant().ordinal()];
     }

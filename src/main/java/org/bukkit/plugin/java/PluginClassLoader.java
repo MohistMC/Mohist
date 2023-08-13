@@ -2,6 +2,21 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
+import com.mohistmc.MohistMC;
+import com.mohistmc.bukkit.pluginfix.PluginFixManager;
+import com.mohistmc.bukkit.remapping.ClassLoaderRemapper;
+import com.mohistmc.bukkit.remapping.Remapper;
+import com.mohistmc.bukkit.remapping.RemappingClassLoader;
+import cpw.mods.modlauncher.EnumerationHelper;
+import cpw.mods.modlauncher.TransformingClassLoader;
+import io.izzel.tools.product.Product2;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.SimplePluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,21 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-
-import com.mohistmc.MohistMC;
-import com.mohistmc.bukkit.pluginfix.PluginFixManager;
-import com.mohistmc.bukkit.remapping.ClassLoaderRemapper;
-import com.mohistmc.bukkit.remapping.Remapper;
-import com.mohistmc.bukkit.remapping.RemappingClassLoader;
-import cpw.mods.modlauncher.EnumerationHelper;
-import cpw.mods.modlauncher.TransformingClassLoader;
-import io.izzel.tools.product.Product2;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.SimplePluginManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

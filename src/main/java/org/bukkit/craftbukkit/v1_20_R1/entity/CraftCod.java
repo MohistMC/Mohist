@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Cod;
-import org.bukkit.entity.EntityType;
 
 public class CraftCod extends CraftFish implements Cod {
 
@@ -18,10 +17,5 @@ public class CraftCod extends CraftFish implements Cod {
     @Override
     public String toString() {
         return "CraftCod";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.COD;
     }
 }

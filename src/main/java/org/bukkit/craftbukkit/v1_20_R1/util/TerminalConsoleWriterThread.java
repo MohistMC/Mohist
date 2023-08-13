@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.util;
 
 import com.mojang.logging.LogQueues;
 import jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.Main;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Erase;
 

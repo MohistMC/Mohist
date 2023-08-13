@@ -17,11 +17,6 @@ public class CraftMule extends CraftChestedHorse implements Mule {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.MULE;
-    }
-
-    @Override
     public Variant getVariant() {
         return Variant.MULE;
     }

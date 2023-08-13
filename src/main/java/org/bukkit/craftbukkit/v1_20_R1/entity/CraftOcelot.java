@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
 
 public class CraftOcelot extends CraftAnimals implements Ocelot {
@@ -37,10 +36,5 @@ public class CraftOcelot extends CraftAnimals implements Ocelot {
     @Override
     public String toString() {
         return "CraftOcelot";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.OCELOT;
     }
 }

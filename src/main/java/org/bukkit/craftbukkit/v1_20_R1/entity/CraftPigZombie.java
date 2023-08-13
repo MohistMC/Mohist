@@ -41,11 +41,6 @@ public class CraftPigZombie extends CraftZombie implements PigZombie {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.ZOMBIFIED_PIGLIN;
-    }
-
-    @Override
     public boolean isConverting() {
         return false;
     }

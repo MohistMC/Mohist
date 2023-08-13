@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R1.boss.CraftBossBar;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Wither;
 
@@ -29,11 +28,6 @@ public class CraftWither extends CraftMonster implements Wither {
     @Override
     public String toString() {
         return "CraftWither";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.WITHER;
     }
 
     @Override

@@ -28,9 +28,4 @@ public class CraftSnowman extends CraftGolem implements Snowman {
     public String toString() {
         return "CraftSnowman";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.SNOWMAN;
-    }
 }

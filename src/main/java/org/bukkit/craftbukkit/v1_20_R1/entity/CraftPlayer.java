@@ -1738,11 +1738,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.PLAYER;
-    }
-
-    @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         server.getPlayerMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }

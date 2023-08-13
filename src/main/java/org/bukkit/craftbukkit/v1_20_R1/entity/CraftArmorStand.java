@@ -4,7 +4,6 @@ import net.minecraft.core.Rotations;
 import org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -18,11 +17,6 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
     @Override
     public String toString() {
         return "CraftArmorStand";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.ARMOR_STAND;
     }
 
     @Override

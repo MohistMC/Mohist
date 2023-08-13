@@ -1,11 +1,12 @@
 package org.bukkit.boss;
 
-import java.util.Collection;
 import org.bukkit.Location;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * Represents a dragon battle state for a world with an end environment.

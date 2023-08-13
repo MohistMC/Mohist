@@ -19,9 +19,4 @@ public class CraftMagmaCube extends CraftSlime implements MagmaCube {
     public String toString() {
         return "CraftMagmaCube";
     }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.MAGMA_CUBE;
-    }
 }

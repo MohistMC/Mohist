@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TropicalFish;
 
 import java.util.HashMap;
@@ -22,11 +21,6 @@ public class CraftTropicalFish extends CraftFish implements TropicalFish {
     @Override
     public String toString() {
         return "CraftTropicalFish";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.TROPICAL_FISH;
     }
 
     @Override

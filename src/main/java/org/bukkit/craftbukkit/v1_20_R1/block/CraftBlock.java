@@ -68,8 +68,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.mohistmc.forge.ForgeInjectBukkit.normalizeName;
-
 public class CraftBlock implements Block {
     private final net.minecraft.world.level.LevelAccessor world;
     private final BlockPos position;

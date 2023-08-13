@@ -20,11 +20,6 @@ public final class CraftMinecartHopper extends CraftMinecartContainer implements
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.MINECART_HOPPER;
-    }
-
-    @Override
     public Inventory getInventory() {
         return inventory;
     }

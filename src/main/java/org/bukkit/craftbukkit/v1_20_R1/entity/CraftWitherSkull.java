@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.entity;
 
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.WitherSkull;
 
 public class CraftWitherSkull extends CraftFireball implements WitherSkull {
@@ -27,10 +26,5 @@ public class CraftWitherSkull extends CraftFireball implements WitherSkull {
     @Override
     public String toString() {
         return "CraftWitherSkull";
-    }
-
-    @Override
-    public EntityType getType() {
-        return EntityType.WITHER_SKULL;
     }
 }
