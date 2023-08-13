@@ -475,7 +475,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 if (page == null) {
                     page = new BaseComponent[0];
                 }
-                CraftMetaBook.this.pages.add(componentsToPage(page));
+                CraftMetaBook.this.internalAddPage(componentsToPage(page));
             }
         }
         @Override
