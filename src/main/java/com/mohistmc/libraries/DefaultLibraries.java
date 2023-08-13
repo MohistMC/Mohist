@@ -24,6 +24,7 @@ public class DefaultLibraries {
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
+        System.out.println(Message.getFormatString("libraries.downloadsource", new Object[]{DownloadSource.get()}));
         String url = DownloadSource.get().getUrl();
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();

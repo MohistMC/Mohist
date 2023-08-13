@@ -13,7 +13,7 @@ public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
     CHINA("http://s1.devicloud.cn:25119/"),
-    GITHUB("https://mavenmirror.mohistmc.com/");
+    GITHUB("https://mohistmc.github.io/maven/");
 
     public static final DownloadSource defaultSource = Message.isCN() ? CHINA : MOHIST;
     final String url;
