@@ -22,7 +22,7 @@ public enum DownloadSource {
         this.url = url;
     }
 
-    public static DownloadSource get() throws IOException {
+    public static DownloadSource get() {
         String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
@@ -37,11 +37,15 @@ public enum DownloadSource {
         return url;
     }
 
-    public static int isDown(String s) throws IOException {
-        URL url = new URL(s);
-        URLConnection rulConnection = url.openConnection();
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
-        httpUrlConnection.connect();
-        return httpUrlConnection.getResponseCode();
+    public static int isDown(String s) {
+        try {
+            URL url = new URL(s);
+            URLConnection rulConnection = url.openConnection();
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
+            httpUrlConnection.connect();
+            return httpUrlConnection.getResponseCode();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
