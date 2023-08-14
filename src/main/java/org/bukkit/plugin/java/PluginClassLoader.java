@@ -1,5 +1,6 @@
 package org.bukkit.plugin.java;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.util.MohistJDK9EnumHelper;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.logging.Level;
 
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
+import cpw.mods.modlauncher.TransformingClassLoader;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -94,6 +96,8 @@ public final class PluginClassLoader extends URLClassLoader {
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
+
+        ((TransformingClassLoader) MohistMC.class.getClassLoader()).addChild(this);
     }
 
     @Override

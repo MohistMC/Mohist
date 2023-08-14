@@ -71,6 +71,9 @@ public class Util {
 					url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
 					if (!checkExists(url)) {
 						url = "https://repository.raincubic.com/repository/maven_public/${path}"
+						if (!checkExists(url)) {
+							url = "https://maven.mohistmc.com/${path}"
+						}
 					}
 				}
 			}
