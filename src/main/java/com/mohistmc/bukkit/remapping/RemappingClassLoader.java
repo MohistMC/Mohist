@@ -1,6 +1,5 @@
 package com.mohistmc.bukkit.remapping;
 
-import com.mohistmc.MohistMC;
 import cpw.mods.modlauncher.TransformingClassLoader;
 
 /**
@@ -18,7 +17,6 @@ public interface RemappingClassLoader {
         while (classLoader != null) {
             if (classLoader instanceof TransformingClassLoader || classLoader instanceof RemappingClassLoader) {
                 found = true;
-                ((TransformingClassLoader) MohistMC.classLoader).addChild(classLoader);
                 break;
             } else {
                 classLoader = classLoader.getParent();

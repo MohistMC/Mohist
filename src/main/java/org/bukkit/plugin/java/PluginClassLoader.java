@@ -103,7 +103,9 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
-        ((TransformingClassLoader)MohistMC.classLoader).addChild(this);
+        if (plugin.callForge()) {
+            ((TransformingClassLoader) MohistMC.classLoader).addChild(this);
+        }
     }
 
     @Override
