@@ -11,7 +11,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        
+
         initCallForge();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {

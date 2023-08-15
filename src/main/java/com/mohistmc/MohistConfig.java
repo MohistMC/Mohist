@@ -199,6 +199,8 @@ public class MohistConfig {
     // Ban events
     public static boolean doFireTick;
 
+    public static boolean bukkitpermissionshandler;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", "xx_XX");
@@ -237,5 +239,6 @@ public class MohistConfig {
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
         doFireTick = getBoolean("events.fire_tick", false);
+        bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
     }
 }
