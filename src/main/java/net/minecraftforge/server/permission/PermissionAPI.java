@@ -137,8 +137,8 @@ public final class PermissionAPI
         }
         if (MohistConfig.bukkitpermissionshandler) {
             var handler = new BukkitPermissionsHandler(activeHandler);
+            LOGGER.info("Forwarding forge permission[{}] to bukkit[{}]", activeHandler.getIdentifier(), handler.getIdentifier());
             activeHandler = handler;
-            LOGGER.info("Forwarding forge permission[{}] to bukkit", activeHandler.getIdentifier());
         }
     }
 }
