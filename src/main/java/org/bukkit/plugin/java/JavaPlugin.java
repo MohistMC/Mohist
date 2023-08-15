@@ -44,6 +44,16 @@ public abstract class JavaPlugin extends PluginBase {
     private File configFile = null;
     private PluginLogger logger = null;
 
+    private boolean callForge = false;
+
+    public boolean callForge() {
+        return callForge;
+    }
+
+    public void initCallForge() {
+        callForge = true;
+    }
+
     public JavaPlugin() {
         final ClassLoader classLoader = this.getClass().getClassLoader();
         if (!(classLoader instanceof PluginClassLoader)) {

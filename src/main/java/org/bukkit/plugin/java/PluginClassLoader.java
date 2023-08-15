@@ -97,7 +97,9 @@ public final class PluginClassLoader extends URLClassLoader {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
 
-        ((TransformingClassLoader) MohistMC.class.getClassLoader()).addChild(this);
+        if (plugin.callForge()) {
+            ((TransformingClassLoader) MohistMC.class.getClassLoader()).addChild(this);
+        }
     }
 
     @Override
