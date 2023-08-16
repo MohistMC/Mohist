@@ -111,6 +111,22 @@
        boolean flag = this.m_157512_(p_157569_, (p_157595_) -> {
           p_157595_.m_142429_().forEach(this::m_157585_);
        });
+@@ -237,9 +_,12 @@
+    }
+ 
+    private void m_157577_() {
+-      this.f_157499_.removeIf((long p_157584_) -> {
+-         return this.f_157497_.get(p_157584_) != Visibility.HIDDEN ? true : this.m_157568_(p_157584_);
+-      });
++      try {
++         this.f_157499_.removeIf((long p_157584_) -> {
++            return this.f_157497_.get(p_157584_) != Visibility.HIDDEN ? true : this.m_157568_(p_157584_);
++         });
++      } catch (Exception ignored) {
++      }
+    }
+ 
+    private void m_157582_() {
 @@ -247,8 +_,13 @@
        while((chunkentities = this.f_157500_.poll()) != null) {
           chunkentities.m_156792_().forEach((p_157593_) -> {
