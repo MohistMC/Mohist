@@ -30,7 +30,7 @@
        }
 -
 +      // Mohist - set worldborder size to worlds.yml
-+      ConfigByWorlds.addFlag(world.getWorld(), "worldborder", p_61918_);
++      if (world != null) ConfigByWorlds.addFlag(world.getWorld(), "worldborder", p_61918_);
     }
  
     public void m_61919_(double p_61920_, double p_61921_, long p_61922_) {
