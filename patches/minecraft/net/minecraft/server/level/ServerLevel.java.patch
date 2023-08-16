@@ -9,7 +9,7 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -14,12 +_,15 @@
+@@ -14,12 +_,16 @@
  import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
  import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -20,6 +20,7 @@
  import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.ArrayList;
++import java.util.Collections;
  import java.util.Comparator;
 +import java.util.Iterator;
  import java.util.List;
@@ -644,6 +645,15 @@
        this.m_7654_().m_129783_().m_8895_().m_164855_(p_143305_, p_143306_);
     }
  
+@@ -1162,7 +_,7 @@
+    }
+ 
+    public List<ServerPlayer> m_6907_() {
+-      return this.f_8546_;
++      return this.f_8546_ == null ? Collections.emptyList() : this.f_8546_; // Mohist TODO
+    }
+ 
+    public void m_6559_(BlockPos p_8751_, BlockState p_8752_, BlockState p_8753_) {
 @@ -1309,6 +_,11 @@
  
     public void m_6289_(BlockPos p_8743_, Block p_8744_) {

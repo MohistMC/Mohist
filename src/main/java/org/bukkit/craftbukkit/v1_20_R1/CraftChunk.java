@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R1;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -10,7 +11,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.thread.ProcessorMailbox;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -23,6 +26,7 @@ import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.level.chunk.PalettedContainerRO;
+import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import net.minecraft.world.level.chunk.storage.EntityStorage;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -42,6 +46,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BooleanSupplier;
@@ -118,52 +123,19 @@ public class CraftChunk implements Chunk {
         if (!isLoaded()) {
             getWorld().getChunkAt(x, z); // Transient load for this tick
         }
+        List<Entity> list = Lists.newArrayList();
 
-        net.minecraft.world.level.entity.PersistentEntitySectionManager<net.minecraft.world.entity.Entity> entityManager = getCraftWorld().getHandle().entityManager;
-        long pair = ChunkPos.asLong(x, z);
-
-        if (entityManager.areEntitiesLoaded(pair)) { // PAIL rename isEntitiesLoaded
-            return entityManager.getEntities(new ChunkPos(x, z)).stream()
-                    .map(net.minecraft.world.entity.Entity::getBukkitEntity)
-                    .filter(Objects::nonNull).toArray(Entity[]::new);
+        ChunkAccess chunk = getCraftWorld().getHandle().getChunk(this.getX(), this.getZ());
+        if (chunk instanceof ProtoChunk proto) {
+            proto.getEntities().forEach(nbt -> {
+                net.minecraft.world.entity.Entity entity = EntityType.loadEntityRecursive(nbt, getCraftWorld().getHandle().getLevel(), e -> e);
+                if (entity != null) {
+                    list.add(entity.getBukkitEntity());
+                }
+            });
         }
 
-        entityManager.ensureChunkQueuedForLoad(pair); // Start entity loading
-
-        // SPIGOT-6772: Use entity mailbox and re-schedule entities if they get unloaded
-        ProcessorMailbox<Runnable> mailbox = ((EntityStorage) entityManager.permanentStorage).entityDeserializerQueue;
-        BooleanSupplier supplier = () -> {
-            // only execute inbox if our entities are not present
-            if (entityManager.areEntitiesLoaded(pair)) {
-                return true;
-            }
-
-            if (!entityManager.isPending(pair)) {
-                // Our entities got unloaded, this should normally not happen.
-                entityManager.ensureChunkQueuedForLoad(pair); // Re-start entity loading
-            }
-
-            // tick loading inbox, which loads the created entities to the world
-            // (if present)
-            entityManager.tick();
-            // check if our entities are loaded
-            return entityManager.areEntitiesLoaded(pair);
-        };
-
-        // now we wait until the entities are loaded,
-        // the converting from NBT to entity object is done on the main Thread which is why we wait
-        while (!supplier.getAsBoolean()) {
-            if (mailbox.size() != 0) {
-                mailbox.run();
-            } else {
-                Thread.yield();
-                LockSupport.parkNanos("waiting for entity loading", 100000L);
-            }
-        }
-
-        return entityManager.getEntities(new ChunkPos(x, z)).stream()
-                .map(net.minecraft.world.entity.Entity::getBukkitEntity)
-                .filter(Objects::nonNull).toArray(Entity[]::new);
+        return list.toArray(Entity[]::new);
     }
 
     @Override

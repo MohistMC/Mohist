@@ -124,7 +124,7 @@
  
     @Nullable
 +   public T spawn(ServerLevel pLevel, @Nullable CompoundTag pCompound, @Nullable Consumer<T> pConsumer, BlockPos pPos, MobSpawnType pSpawnType, boolean pShouldOffsetY, boolean pShouldOffsetYMore, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      spawnReasonAtomicReference.setRelease(spawnReason);
++      spawnReasonAtomicReference.set(spawnReason);
 +      return m_262455_(pLevel, pCompound, pConsumer, pPos, pSpawnType, pShouldOffsetY, pShouldOffsetYMore);
 +   }
 +   // Mohist end
