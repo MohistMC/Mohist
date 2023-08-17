@@ -335,7 +335,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -420,16 +_,21 @@
+@@ -420,16 +_,17 @@
  
        this.f_151504_ = false;
        profilerfiller.m_7238_();
@@ -347,11 +347,10 @@
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
           p_46654_.accept(p_46655_);
        } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
-          CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
-          p_46655_.m_7976_(crashreportcategory);
+-         CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
+-         CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
+-         p_46655_.m_7976_(crashreportcategory);
 -         throw new ReportedException(crashreport);
-+         com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.m_127526_());
 +         p_46655_.m_146870_();
 +      } finally {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);

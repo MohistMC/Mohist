@@ -326,13 +326,14 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -652,7 +_,10 @@
-                   CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
-                   CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
-                   this.f_156428_.m_58886_(crashreportcategory);
+@@ -649,10 +_,8 @@
+ 
+                   profilerfiller.m_7238_();
+                } catch (Throwable throwable) {
+-                  CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
+-                  CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
+-                  this.f_156428_.m_58886_(crashreportcategory);
 -                  throw new ReportedException(crashreport);
-+
-+                  f_62771_.error("{}", crashreport.m_127526_());
 +                  f_156428_.m_7651_();
 +                  LevelChunk.this.m_8114_(f_156428_.m_58899_());
                 }
