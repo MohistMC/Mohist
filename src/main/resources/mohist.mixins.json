@@ -5,7 +5,8 @@
   "refmap": "mixins.mohist.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "bukkit.MixinCraftServer"
+    "bukkit.MixinCraftServer",
+    "minecraft.MixinDedicatedServer"
   ],
   "injectors": {
     "defaultRequire": 1
