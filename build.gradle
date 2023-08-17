@@ -414,6 +414,8 @@ project(':mohist') {
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
+
+        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
     dependencies sharedDeps
 
@@ -463,7 +465,8 @@ project(':mohist') {
                         'Timestamp'      : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                         'GitCommit'      : gradleutils.gitInfo.abbreviatedId,
                         'Git-Branch'     : '1.20.1',
-                        'FML-System-Mods': 'forge'
+                        'FML-System-Mods': 'forge',
+                        'MixinConfigs': 'mohist.mixins.json'
                 ] as LinkedHashMap,
                 'net/minecraftforge/versions/forge/'        : [
                         'Specification-Title'   : 'Forge',
@@ -697,7 +700,6 @@ project(':mohist') {
                             'Premain-Class': 'com.mohistmc.util.JarLoader',
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
                             'Main-Class': 'com.mohistmc.MohistMCStart',
-                            'MixinConnector': 'com.mohistmc.ExampleConnector',
                             'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
                     ])
                 } else {
