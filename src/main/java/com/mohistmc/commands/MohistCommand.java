@@ -18,6 +18,7 @@
 
 package com.mohistmc.commands;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.ServerAPI;
 import net.minecraft.DetectedVersion;
@@ -103,9 +104,10 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN + "mohist-config/mohist.yml directory reload complete.");
             }
             case "version" -> {
-                sender.sendMessage("Mohist: " + DetectedVersion.BUILT_IN.getName());
-                sender.sendMessage("Forge: " + ForgeVersion.getVersion());
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
+                sender.sendMessage("Mohist: " + MohistMC.version);
+                sender.sendMessage("Forge: " + cbs[3]);
+                sender.sendMessage("NeoForge: " + ForgeVersion.getVersion());
                 sender.sendMessage("Bukkit: " + cbs[0]);
                 sender.sendMessage("CraftBukkit: " + cbs[1]);
                 sender.sendMessage("Spigot: " + cbs[2]);

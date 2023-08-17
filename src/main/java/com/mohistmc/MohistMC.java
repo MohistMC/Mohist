@@ -30,7 +30,7 @@ public class MohistMC {
         i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
         //TODO: do something when mod loading
         LOGGER.info("Mohist mod loading.....");
-        version = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "unknown";
+        version = (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : "1.20.1";
         EventDispatcherRegistry.init();
         ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
     }
