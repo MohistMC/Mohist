@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * @author Mgazul by MohistMC
  * @date 2023/8/17 7:41:02
  */
-@Mixin(CraftServer.class)
+@Mixin(value = CraftServer.class, remap = false)
 public class MixinCraftServer {
 
-    @Inject(method = "loadPlugins", at = @At("HEAD"))
+    @Inject(method = "loadPlugins", remap = false, at = @At("HEAD"))
     private void helloWorld(CallbackInfo ci) {
        MohistMC.LOGGER.info("Hello Plugins!");
     }
