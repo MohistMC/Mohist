@@ -7,6 +7,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.entity.MohistModsEntity;
+import com.mohistmc.inventory.MohistPotionEffect;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -143,7 +144,8 @@ public class ForgeInjectBukkit {
     public static void addEnumEffectAndPotion() {
         // Points
         for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
-            PotionEffectType pet = new CraftPotionEffectType(effect);
+            String name = normalizeName(ForgeRegistries.MOB_EFFECTS.getKey(effect).toString());
+            MohistPotionEffect pet = new MohistPotionEffect(effect, name);
             PotionEffectType.registerPotionEffectType(pet);
         }
         PotionEffectType.stopAcceptingRegistrations();
