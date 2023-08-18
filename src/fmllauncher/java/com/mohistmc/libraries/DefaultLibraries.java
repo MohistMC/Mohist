@@ -40,7 +40,7 @@ public class DefaultLibraries {
 
 	public static void run() throws Exception {
 		System.out.println(i18n.get("libraries.checking.start"));
-		System.out.println(i18n.get("libraries.downloadsource", DownloadSource.get()));
+		System.out.println(i18n.get("libraries.downloadsource", DownloadSource.get().name()));
 		String url = DownloadSource.get().getUrl();
 		LinkedHashMap<File, String> libs = getDefaultLibs();
 		AtomicLong currentSize = new AtomicLong();

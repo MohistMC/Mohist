@@ -214,6 +214,7 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
+        if (c == null) return;
         // Mohist start
         c.setTitle(containerSupplier.getDisplayName());
         c = CraftEventFactory.callInventoryOpenEvent(player, c);

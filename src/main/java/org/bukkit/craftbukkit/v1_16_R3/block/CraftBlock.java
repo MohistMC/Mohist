@@ -14,6 +14,7 @@ import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.Items;
+import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -497,7 +498,7 @@ public class CraftBlock implements Block {
                 TileEntity tileEntity = world.getBlockEntity(position);
                 if (tileEntity != null) {
                     // block with unhandled TileEntity:
-                    return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+                    return new CraftBlockEntityState<>(this.getType(), tileEntity);
                 } else {
                     // Block without TileEntity:
                     return new CraftBlockState(this);
