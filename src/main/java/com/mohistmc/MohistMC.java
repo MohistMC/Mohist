@@ -48,7 +48,7 @@ public class MohistMC {
         arguments.put("bukkit", cbs[0]);
         arguments.put("craftbukkit", cbs[1]);
         arguments.put("spigot", cbs[2]);
-        arguments.put("forge", cbs[4]);
+        arguments.put("forge", cbs[3]);
         arguments.put("neoforge", ForgeVersion.getVersion());
         versionInfo = new VersionInfo(arguments);
     }
