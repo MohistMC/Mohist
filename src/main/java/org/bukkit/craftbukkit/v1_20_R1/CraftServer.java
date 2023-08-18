@@ -319,7 +319,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = MohistMC.version;
+        this.serverVersion = MohistMC.versionInfo.mohist();
         this.structureManager = new CraftStructureManager(console.getStructureManager());
         this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());

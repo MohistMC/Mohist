@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableList;
+import com.mohistmc.MohistMC;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.advancement.Advancement;
@@ -94,8 +95,7 @@ public final class Bukkit {
         }
 
         Bukkit.server = server;
-        String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
-        server.getLogger().info("This server is running " + getName() + " version " + getVersion() + " (Implementing API version " + getBukkitVersion() + ", Forge version " + cbs[3] + ", NeoForge version " + ForgeVersion.getVersion() + ")");
+        server.getLogger().info("This server is running " + getName() + " version " + getVersion() + " (Implementing API version " + getBukkitVersion() + ", Forge version " + MohistMC.versionInfo.forge() + ", NeoForge version " + MohistMC.versionInfo.neoforge() + ")");
     }
 
     /**

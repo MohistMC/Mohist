@@ -12,7 +12,7 @@
     private final Map<String, String> f_143512_ = Maps.newLinkedHashMap();
  
     public SystemReport() {
-+      this.m_143519_("Mohist Version", MohistMC.version);
++      this.m_143519_("Mohist Version", MohistMC.versionInfo.mohist());
        this.m_143519_("Minecraft Version", SharedConstants.m_183709_().m_132493_());
        this.m_143519_("Minecraft Version ID", SharedConstants.m_183709_().m_132492_());
        this.m_143519_("Operating System", f_143509_);

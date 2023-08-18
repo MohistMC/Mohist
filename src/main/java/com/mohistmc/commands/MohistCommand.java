@@ -105,12 +105,12 @@ public class MohistCommand extends Command {
             }
             case "version" -> {
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
-                sender.sendMessage("Mohist: " + MohistMC.version);
-                sender.sendMessage("Forge: " + cbs[3]);
-                sender.sendMessage("NeoForge: " + ForgeVersion.getVersion());
-                sender.sendMessage("Bukkit: " + cbs[0]);
-                sender.sendMessage("CraftBukkit: " + cbs[1]);
-                sender.sendMessage("Spigot: " + cbs[2]);
+                sender.sendMessage("Mohist: " + MohistMC.versionInfo.mohist());
+                sender.sendMessage("Forge: " + MohistMC.versionInfo.forge());
+                sender.sendMessage("NeoForge: " + MohistMC.versionInfo.neoforge());
+                sender.sendMessage("Bukkit: " + MohistMC.versionInfo.bukkit());
+                sender.sendMessage("CraftBukkit: " + MohistMC.versionInfo.craftbukkit());
+                sender.sendMessage("Spigot: " + MohistMC.versionInfo.spigot());
             }
             case "channels_incom" -> sender.sendMessage(ServerAPI.channels_Incoming().toString());
             case "channels_outgo" -> sender.sendMessage(ServerAPI.channels_Outgoing().toString());

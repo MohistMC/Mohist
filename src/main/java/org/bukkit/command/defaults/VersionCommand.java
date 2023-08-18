@@ -2,6 +2,7 @@ package org.bukkit.command.defaults;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.mohistmc.MohistMC;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,8 +32,7 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion()  + ", Forge version " + cbs[3] + ", NeoForge version " + ForgeVersion.getVersion() +  ")");
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion()  + ", Forge version " + MohistMC.versionInfo.forge() + ", NeoForge version " + MohistMC.versionInfo.neoforge() +  ")");
         } else {
             StringBuilder name = new StringBuilder();
 
