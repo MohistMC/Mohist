@@ -1,6 +1,6 @@
 package com.mohistmc.eventhandler.dispatcher;
 
-import com.mohistmc.block.MohistBlockSnapshot;
+import com.mohistmc.bukkit.block.MohistBlockSnapshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;

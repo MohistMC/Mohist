@@ -1,4 +1,4 @@
-package com.mohistmc.inventory;
+package com.mohistmc.bukkit.inventory;
 
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.server.ServerLifecycleHooks;

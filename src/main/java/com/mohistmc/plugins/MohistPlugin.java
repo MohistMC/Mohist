@@ -7,7 +7,7 @@ import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
-import com.mohistmc.util.pluginmanager.Control;
+import com.mohistmc.plugins.pluginmanager.Control;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;

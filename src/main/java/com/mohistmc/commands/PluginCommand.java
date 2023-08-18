@@ -18,7 +18,7 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.util.pluginmanager.PluginManagers;
+import com.mohistmc.plugins.pluginmanager.PluginManagers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

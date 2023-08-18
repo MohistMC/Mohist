@@ -1,4 +1,4 @@
-package com.mohistmc.inventory;
+package com.mohistmc.bukkit.inventory;
 
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.Material;

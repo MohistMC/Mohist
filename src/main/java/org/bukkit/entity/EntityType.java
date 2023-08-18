@@ -1,13 +1,13 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.entity.MohistModsAbstractHorse;
-import com.mohistmc.entity.MohistModsAnimals;
-import com.mohistmc.entity.MohistModsChestHorse;
-import com.mohistmc.entity.MohistModsMinecartContainer;
-import com.mohistmc.entity.MohistModsMonster;
-import com.mohistmc.entity.MohistModsProjectileEntity;
-import com.mohistmc.entity.MohistModsTameableEntity;
+import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
+import com.mohistmc.bukkit.entity.MohistModsAnimals;
+import com.mohistmc.bukkit.entity.MohistModsChestHorse;
+import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
+import com.mohistmc.bukkit.entity.MohistModsMonster;
+import com.mohistmc.bukkit.entity.MohistModsProjectileEntity;
+import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;

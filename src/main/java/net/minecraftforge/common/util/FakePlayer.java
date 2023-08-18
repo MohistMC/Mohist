@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.util;
 
+import com.mohistmc.bukkit.entity.CraftFakePlayer;
 import com.mojang.authlib.GameProfile;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -84,8 +85,8 @@ public class FakePlayer extends ServerPlayer
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
-    public com.mohistmc.entity.CraftFakePlayer getBukkitEntity() {
-        return (com.mohistmc.entity.CraftFakePlayer) super.getBukkitEntity();
+    public CraftFakePlayer getBukkitEntity() {
+        return (CraftFakePlayer) super.getBukkitEntity();
     }
 
     @Override public void displayClientMessage(Component chatComponent, boolean actionBar) { }

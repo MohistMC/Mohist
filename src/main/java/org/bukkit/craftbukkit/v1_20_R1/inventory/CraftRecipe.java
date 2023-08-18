@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R1.inventory;
 
-import com.mohistmc.inventory.MohistSpecialIngredient;
+import com.mohistmc.bukkit.inventory.MohistSpecialIngredient;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;

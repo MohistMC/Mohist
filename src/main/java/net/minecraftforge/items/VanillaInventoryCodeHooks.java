@@ -5,9 +5,7 @@
 
 package net.minecraftforge.items;
 
-import com.mohistmc.inventory.InventoryOwner;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
+import com.mohistmc.bukkit.inventory.InventoryOwner;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.item.ItemStack;
@@ -24,8 +22,6 @@ import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryDoubleChest;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.jetbrains.annotations.NotNull;

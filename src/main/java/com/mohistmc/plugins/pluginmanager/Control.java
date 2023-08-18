@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.util.pluginmanager;
+package com.mohistmc.plugins.pluginmanager;
 
 import com.mohistmc.MohistMC;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;

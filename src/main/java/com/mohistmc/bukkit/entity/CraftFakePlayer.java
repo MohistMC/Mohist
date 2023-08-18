@@ -1,4 +1,4 @@
-package com.mohistmc.entity;
+package com.mohistmc.bukkit.entity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraftforge.common.util.FakePlayer;

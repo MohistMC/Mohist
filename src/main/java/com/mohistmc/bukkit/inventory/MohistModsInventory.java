@@ -1,4 +1,4 @@
-package com.mohistmc.inventory;
+package com.mohistmc.bukkit.inventory;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

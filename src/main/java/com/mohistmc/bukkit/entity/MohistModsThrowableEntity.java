@@ -1,4 +1,4 @@
-package com.mohistmc.entity;
+package com.mohistmc.bukkit.entity;
 
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;

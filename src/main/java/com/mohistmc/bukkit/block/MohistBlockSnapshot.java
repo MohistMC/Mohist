@@ -1,4 +1,4 @@
-package com.mohistmc.block;
+package com.mohistmc.bukkit.block;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.BlockSnapshot;

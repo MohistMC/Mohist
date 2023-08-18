@@ -18,7 +18,7 @@
 
 package com.mohistmc.eventhandler.dispatcher;
 
-import com.mohistmc.inventory.MohistModsInventory;
+import com.mohistmc.bukkit.inventory.MohistModsInventory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
