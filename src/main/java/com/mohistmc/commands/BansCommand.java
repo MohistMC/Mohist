@@ -40,6 +40,7 @@ public class BansCommand extends Command {
         if (!testPermission(sender)) {
             return false;
         }
+        String check = "This function is not enabled, you can go to mohist.yml to enable it.";
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
@@ -58,16 +59,31 @@ public class BansCommand extends Command {
                 }
                 switch (args[1]) {
                     case "item" -> {
+                        if (!MohistConfig.ban_item_enable) {
+                            sender.sendMessage(ChatColor.RED + check);
+                            return false;
+                        }
                         Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
                         player.openInventory(inventory);
+                        return true;
                     }
                     case "entity" -> {
+                        if (!MohistConfig.ban_entity_enable) {
+                            sender.sendMessage(ChatColor.RED + check);
+                            return false;
+                        }
                         Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
                         player.openInventory(inventory);
+                        return true;
                     }
                     case "enchantment" -> {
+                        if (!MohistConfig.ban_enchantment_enable) {
+                            sender.sendMessage(ChatColor.RED + check);
+                            return false;
+                        }
                         Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
                         player.openInventory(inventory);
+                        return true;
                     }
                     default -> {
                         sender.sendMessage(ChatColor.RED + usageMessage);
@@ -123,7 +139,6 @@ public class BansCommand extends Command {
                 return false;
             }
         }
-        return false;
     }
 
     @Override
