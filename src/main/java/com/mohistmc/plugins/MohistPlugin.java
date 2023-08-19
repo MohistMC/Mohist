@@ -49,6 +49,8 @@ public class MohistPlugin {
                 plugin = Control.loadPlugin(file);
                 if (plugin != null) {
                     server.getPluginManager().enablePlugin(plugin);
+                } else {
+                    LOGGER.error("Failed to load mohistplugins.jar");
                 }
             }
         }
