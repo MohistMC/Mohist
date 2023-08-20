@@ -2368,7 +2368,7 @@ public final class CraftServer implements Server {
 
         @Override
         public void restart() {
-            throw new UnsupportedOperationException("Mohist Not supported yet, This causes unknown issues with the mod.");
+            MohistMC.LOGGER.error("Mohist Not supported yet, This causes unknown issues with the mod.");
         }
 
         @Override

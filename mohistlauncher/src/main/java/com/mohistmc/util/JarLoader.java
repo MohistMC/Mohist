@@ -18,6 +18,8 @@
 
 package com.mohistmc.util;
 
+import com.mohistmc.config.MohistConfigUtil;
+
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
@@ -43,6 +45,12 @@ public class JarLoader {
 
     public static void loadJar(Path path) {
         if (!path.toFile().getName().endsWith(".jar")) {
+            return;
+        }
+        if (path.toFile().getName().contains("javax.inject-1") && !MohistConfigUtil.LIBRARIES_JAVAX_INJECT()) {
+            return;
+        }
+        if (path.toFile().getName().contains("snakeyaml") && !MohistConfigUtil.LIBRARIES_SNAKEYAML()) {
             return;
         }
         try {

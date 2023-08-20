@@ -56,7 +56,34 @@ public class MohistConfigUtil {
     }
 
     public static boolean CHECK_LIBRARIES() {
-        String key = "mohist.check_libraries";
+        String key = "mohist.libraries.check";
+        if (yml.get(key) == null) {
+            yml.set(key, true);
+            save();
+        }
+        return yml.getBoolean(key, true);
+    }
+
+    public static String LIBRARIES_DOWNLOADSOURCE() {
+        String key = "mohist.libraries.downloadsource";
+        if (yml.get(key) == null) {
+            yml.set(key, DownloadSource.defaultSource.name());
+            save();
+        }
+        return yml.getString(key, DownloadSource.defaultSource.name());
+    }
+
+    public static boolean LIBRARIES_JAVAX_INJECT() {
+        String key = "mohist.libraries.javax-inject";
+        if (yml.get(key) == null) {
+            yml.set(key, true);
+            save();
+        }
+        return yml.getBoolean(key, true);
+    }
+
+    public static boolean LIBRARIES_SNAKEYAML() {
+        String key = "mohist.libraries.snakeyaml";
         if (yml.get(key) == null) {
             yml.set(key, true);
             save();
@@ -71,15 +98,6 @@ public class MohistConfigUtil {
             save();
         }
         return yml.getBoolean(key, true);
-    }
-
-    public static String defaultSource() {
-        String key = "mohist.libraries_downloadsource";
-        if (yml.get(key) == null) {
-            yml.set(key, DownloadSource.defaultSource.name());
-            save();
-        }
-        return yml.getString(key, DownloadSource.defaultSource.name());
     }
 
     public static boolean aBoolean(String key, boolean defaultReturn) {
