@@ -300,7 +300,7 @@
           return false;
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
-+         if (p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
++         if (p_8873_ instanceof LivingEntity && p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
 +            return false;
 +         }
 +         if (this.f_143244_.m_157533_(p_8873_)) {
