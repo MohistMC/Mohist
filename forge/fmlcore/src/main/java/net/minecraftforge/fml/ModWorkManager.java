@@ -22,12 +22,15 @@ public class ModWorkManager {
         boolean driveOne();
 
         default void drive(Runnable ticker) {
+            boolean ranOne = false;
             if (!selfDriven()) {
                 ticker.run();
                 while (true) {
                     if (!driveOne()) break;
+                    ranOne = true;
                 }
-            } else {
+            }
+            if(!ranOne) {
                 // park for a bit so other threads can schedule
                 LockSupport.parkNanos(PARK_TIME);
             }

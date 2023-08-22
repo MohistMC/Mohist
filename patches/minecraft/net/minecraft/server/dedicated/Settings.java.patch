@@ -1,5 +1,17 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
+@@ -33,6 +_,11 @@
+ 
+    public static Properties m_139839_(Path p_139840_) {
+       try {
++         // CraftBukkit start - SPIGOT-7465, MC-264979: Don't load if file doesn't exist
++         if (!p_139840_.toFile().exists()) {
++            return new Properties();
++         }
++         // CraftBukkit end
+          try (InputStream inputstream = Files.newInputStream(p_139840_)) {
+             CharsetDecoder charsetdecoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
+             Properties properties1 = new Properties();
 @@ -48,14 +_,13 @@
              }
           }
