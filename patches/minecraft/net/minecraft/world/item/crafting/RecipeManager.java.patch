@@ -122,17 +122,36 @@
     }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
-@@ -189,4 +_,39 @@
+@@ -189,4 +_,58 @@
     public interface CachedCheck<C extends Container, T extends Recipe<C>> {
        Optional<T> m_213657_(C p_220280_, Level p_220281_);
     }
 +
 +   // CraftBukkit start
 +   public void addRecipe(Recipe<?> irecipe) {
++      if (this.f_44007_ instanceof ImmutableMap) {
++         this.f_44007_ = new HashMap<>(f_44007_);
++      }
++      if (this.f_199900_ instanceof ImmutableMap) {
++         this.f_199900_ = new HashMap<>(f_199900_);
++      }
++      Map<ResourceLocation, Recipe<?>> map = this.f_44007_.get(irecipe.m_6671_());
++      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> map0;
++      if (!(map instanceof Object2ObjectLinkedOpenHashMap)) {
++         Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> hashMap = new Object2ObjectLinkedOpenHashMap<>();
++         hashMap.putAll(map);
++         this.f_44007_.put(irecipe.m_6671_(), hashMap);
++         map0 = hashMap;
++      } else {
++         map0 = ((Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>) map);
++      }
++
 +      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> craftbukkit = this.recipesCB.get(irecipe.m_6671_()); // CraftBukkit
-+      if (this.f_199900_.containsKey(irecipe.m_6423_())  || craftbukkit.containsKey(irecipe.m_6423_())) {
++
++      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_()) || craftbukkit.containsKey(irecipe.m_6423_())) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
 +      } else {
++         map0.putAndMoveToFirst(irecipe.m_6423_(), irecipe);
 +         craftbukkit.putAndMoveToFirst(irecipe.m_6423_(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
 +         this.f_199900_.put(irecipe.m_6423_(), irecipe);
 +      }
