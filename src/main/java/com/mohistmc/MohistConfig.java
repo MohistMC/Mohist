@@ -79,15 +79,15 @@ public class MohistConfig {
 
         // Mohist
         commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("mohist", new GetPluginListCommand("getpluginlist"));
-        commands.put("mohist", new DownloadFileCommand("downloadfile"));
-        commands.put("mohist", new DumpCommand("dump"));
-        commands.put("mohist", new PluginCommand("plugin"));
-        commands.put("mohist", new UpdateMohistCommand("updatemohist"));
-        commands.put("mohist", new BackupWorldCommand("backupworld"));
-        commands.put("mohist", new WhitelistModsCommand("whitelistmods"));
-        commands.put("mohist", new WorldCommand("world"));
-        commands.put("mohist", new BiomeCommand("biome"));
+        commands.put("getpluginlist", new GetPluginListCommand("getpluginlist"));
+        commands.put("downloadfile", new DownloadFileCommand("downloadfile"));
+        commands.put("dump", new DumpCommand("dump"));
+        commands.put("plugin", new PluginCommand("plugin"));
+        commands.put("updatemohist", new UpdateMohistCommand("updatemohist"));
+        commands.put("backupworld", new BackupWorldCommand("backupworld"));
+        commands.put("whitelistmods", new WhitelistModsCommand("whitelistmods"));
+        commands.put("world", new WorldCommand("world"));
+        commands.put("biome", new BiomeCommand("biome"));
 
         version = getInt("config-version", 1);
         set("config-version", 1);
