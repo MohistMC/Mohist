@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/levelgen/FlatLevelSource.java
++++ b/net/minecraft/world/level/levelgen/FlatLevelSource.java
+@@ -33,6 +_,13 @@
+       this.f_64165_ = p_209100_;
+    }
+ 
++   // CraftBukkit start
++   public FlatLevelSource(Registry<StructureSet> iregistry, FlatLevelGeneratorSettings generatorsettingsflat, net.minecraft.world.level.biome.BiomeSource worldchunkmanager) {
++      super(iregistry, generatorsettingsflat.m_209810_(), worldchunkmanager, Util.m_143827_(generatorsettingsflat::m_226294_));
++      // CraftBukkit end
++      this.f_64165_ = generatorsettingsflat;
++   }
++
+    protected Codec<? extends ChunkGenerator> m_6909_() {
+       return f_64164_;
+    }
