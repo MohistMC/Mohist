@@ -343,7 +343,7 @@
 +                  bl = bl.getRelative( BlockFace.NORTH);
 +               }
 +
-+               if (!bl.getType().isAir()) {
++               if (bl.getType() != null && !bl.getType().isAir()) {
 +                  VehicleBlockCollisionEvent event = new VehicleBlockCollisionEvent(vehicle, bl);
 +                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
 +               }
