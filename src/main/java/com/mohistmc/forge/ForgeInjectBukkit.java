@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.bukkit.entity.MohistModsEntity;
 import com.mohistmc.bukkit.inventory.MohistPotionEffect;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import net.minecraft.core.particles.ParticleType;
@@ -39,6 +38,7 @@ import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.SpawnCategory;
 import org.bukkit.entity.Villager;
@@ -228,7 +228,7 @@ public class ForgeInjectBukkit {
             String entityType = normalizeName(resourceLocation.toString());
             if (isMods(resourceLocation)) {
                 int typeId = entityType.hashCode();
-                EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), MohistModsEntity.class, typeId, false));
+                EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), Entity.class, typeId, false));
                 EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity, entityType);
