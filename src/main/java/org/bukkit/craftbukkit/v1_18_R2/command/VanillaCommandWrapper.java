@@ -42,7 +42,8 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         CommandSourceStack icommandlistener = getListener(sender);
-        dispatcher.performCommand(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel), true);
+        dispatcher.mohist$label.set(toDispatcher(args, commandLabel));
+        dispatcher.performCommand(icommandlistener, toDispatcher(args, getName()));
         return true;
     }
 

@@ -9,7 +9,7 @@
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -12,6 +_,8 @@
+@@ -12,8 +_,12 @@
  import com.mojang.brigadier.tree.CommandNode;
  import com.mojang.brigadier.tree.RootCommandNode;
  import com.mojang.logging.LogUtils;
@@ -17,7 +17,11 @@
 +import java.util.LinkedHashSet;
  import java.util.Map;
  import java.util.Set;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
 @@ -106,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
@@ -44,7 +48,7 @@
  
        this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
           f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
-@@ -210,9 +_,55 @@
+@@ -210,9 +_,58 @@
        });
     }
  
@@ -87,17 +91,20 @@
 +      }
 +
 +      String newCommand = joiner.join(args);
-+      return this.performCommand(sender, newCommand, newCommand, false);
++      stripSlash.set(false);
++      return this.m_82117_(sender, newCommand);
 +   }
++
++   public AtomicReference<String> mohist$label = new AtomicReference<>();
++   public AtomicBoolean stripSlash = new AtomicBoolean(true);
 +
     public int m_82117_(CommandSourceStack p_82118_, String p_82119_) {
-+      return this.performCommand(p_82118_, p_82119_, p_82119_, true);
-+   }
-+
-+    public int performCommand(CommandSourceStack p_82118_, String p_82119_, String label, boolean stripSlash) {
++      if (mohist$label.get() == null) {
++         mohist$label.set(p_82119_);
++      }
        StringReader stringreader = new StringReader(p_82119_);
 -      if (stringreader.canRead() && stringreader.peek() == '/') {
-+      if (stripSlash && stringreader.canRead() && stringreader.peek() == '/') {
++      if (stripSlash.getAndSet(true) && stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
        }
  
@@ -125,7 +132,7 @@
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = (new TextComponent("")).m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
 -                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, p_82119_));
-+                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
++                  return p_82134_.m_131142_(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, mohist$label.getAndSet(null)));
                 });
                 if (j > 10) {
                    mutablecomponent1.m_130946_("...");
