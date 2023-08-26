@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -11,18 +_,19 @@
+@@ -11,18 +_,20 @@
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -13,6 +13,7 @@
  import java.util.Set;
  import java.util.UUID;
 +import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.function.Function;
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
@@ -34,7 +35,7 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -102,6 +_,18 @@
+@@ -102,6 +_,20 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -46,6 +47,8 @@
 +import org.bukkit.craftbukkit.v1_19_R3.command.ConsoleCommandCompleter;
 +import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_19_R3.util.CraftLocation;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerJoinEvent;
 +import org.bukkit.event.player.PlayerLoginEvent;
 +import org.bukkit.event.player.PlayerQuitEvent;
@@ -62,7 +65,7 @@
     private final Map<UUID, ServerPlayer> f_11197_ = Maps.newHashMap();
     private final UserBanList f_11198_ = new UserBanList(f_11189_);
     private final IpBanList f_11199_ = new IpBanList(f_11190_);
-@@ -132,8 +_,16 @@
+@@ -132,8 +_,17 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -70,6 +73,7 @@
 +
 +   // CraftBukkit start
 +   private CraftServer cserver;
++   private final Map<String,ServerPlayer> playersByName = new java.util.HashMap<>();
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
 +      this.cserver = p_203842_.server = new CraftServer((DedicatedServer) p_203842_, this);
@@ -145,9 +149,11 @@
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
        ServerStatus serverstatus = this.f_11195_.m_129928_();
        if (serverstatus != null) {
-@@ -201,10 +_,58 @@
+@@ -200,11 +_,60 @@
+ 
        p_11263_.f_8906_.m_9829_(ClientboundPlayerInfoUpdatePacket.m_247122_(this.f_11196_));
        this.f_11196_.add(p_11263_);
++      this.playersByName.put(p_11263_.m_6302_().toLowerCase(java.util.Locale.ROOT), p_11263_); // Spigot
        this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
 -      this.m_11268_(ClientboundPlayerInfoUpdatePacket.m_247122_(List.of(p_11263_)));
 +
@@ -283,7 +289,13 @@
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -354,62 +_,129 @@
+@@ -349,84 +_,199 @@
+       serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+       p_11287_.m_8960_().m_135978_();
+       this.f_11196_.remove(p_11287_);
++      this.playersByName.remove(p_11287_.m_6302_().toLowerCase(java.util.Locale.ROOT)); // Spigot
+       this.f_11195_.m_129901_().m_136305_(p_11287_);
+       UUID uuid = p_11287_.m_20148_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
        if (serverplayer == p_11287_) {
           this.f_11197_.remove(uuid);
@@ -418,45 +430,208 @@
        }
  
 -      return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
--   }
 +      return new ServerPlayer(this.server, this.server.overworld(), p_215625_);
 +      */
 +      return player;
 +      // CraftBukkit end
-+   }
+    }
 +
 +   // Mohist TODO start
-+   public ServerPlayer respawn(ServerPlayer p_11237_, ServerLevel worldserver, boolean p_11238_, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason reason) {
-+      return null;
-+   }
-+
-+   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
-+      return m_11236_(p_11237_, p_11238_);
-+   }
-+   // Mohist TODO end
++   public Location mohist$location = null;
++   public PlayerRespawnEvent.RespawnReason mohist$reason = null;
++   public ServerLevel mohist$worldserver = null;
++   public AtomicBoolean avoidSuffocation = new AtomicBoolean(true);
  
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
 +      p_11237_.m_8127_(); // CraftBukkit
        this.f_11196_.remove(p_11237_);
++      this.playersByName.remove(p_11237_.m_6302_().toLowerCase(java.util.Locale.ROOT)); // Spigot
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
        BlockPos blockpos = p_11237_.m_8961_();
-@@ -461,6 +_,8 @@
+       float f = p_11237_.m_8962_();
+       boolean flag = p_11237_.m_8964_();
+-      ServerLevel serverlevel = this.f_11195_.m_129880_(p_11237_.m_8963_());
+-      Optional<Vec3> optional;
+-      if (serverlevel != null && blockpos != null) {
+-         optional = Player.m_36130_(serverlevel, blockpos, f, flag, p_11238_);
++      org.bukkit.World fromWorld = p_11237_.getBukkitEntity().getWorld();
++      p_11237_.f_8944_ = false;
++
++      boolean flag2 = false;
++      ServerLevel worldserver1 = this.f_11195_.m_129880_(p_11237_.m_8963_());
++      if (mohist$location == null) {
++         boolean isBedSpawn = false;
++         if (worldserver1 != null) {
++            Optional<Vec3> optional;
++            if (blockpos != null) {
++               optional = Player.m_36130_(worldserver1, blockpos, f, flag, p_11238_);
++            } else {
++               optional = Optional.empty();
++            }
++            if (optional.isPresent()) {
++               BlockState iblockdata = worldserver1.m_8055_(blockpos);
++               boolean flag3 = iblockdata.m_60713_(Blocks.f_50724_);
++               Vec3 vec3d = optional.get();
++               float f1;
++               if (!iblockdata.m_204336_(BlockTags.f_13038_) && !flag3) {
++                  f1 = f;
++               } else {
++                  Vec3 vec3d2 = Vec3.m_82539_(blockpos).m_82546_(vec3d).m_82541_();
++                  f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d2.f_82481_, vec3d2.f_82479_) * 57.2957763671875 - 90.0);
++               }
++
++               flag2 = (!p_11238_ && flag3);
++               isBedSpawn = true;
++               mohist$location = new Location(worldserver1.getWorld(), vec3d.f_82479_, vec3d.f_82480_, vec3d.f_82481_, f1, 0.0F);
++            } else if (blockpos != null) {
++               p_11237_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
++               p_11237_.m_9158_(Level.f_46428_, null, 0f, false, false);
++            }
++         }
++         if (mohist$location == null) {
++            worldserver1 = this.f_11195_.m_129880_(Level.f_46428_);
++            blockpos = p_11237_.getSpawnPoint(worldserver1);
++            mohist$location = new Location(worldserver1.getWorld(), blockpos.m_123341_() + 0.5f, blockpos.m_123342_() + 0.1f, blockpos.m_123343_() + 0.5f);
++         }
++         org.bukkit.entity.Player respawnPlayer = p_11237_.getBukkitEntity();
++         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, mohist$location, isBedSpawn && !flag2, flag2);
++         this.cserver.getPluginManager().callEvent(respawnEvent);
++         if (p_11237_.f_8906_.isDisconnected()) {
++            return p_11237_;
++         }
++         mohist$location = respawnEvent.getRespawnLocation();
++         if (!p_11238_) {
++            p_11237_.reset();
++         }
+       } else {
+-         optional = Optional.empty();
++         if (mohist$worldserver == null) mohist$worldserver = this.f_11195_.m_129880_(p_11237_.m_8963_());
++         mohist$location.setWorld(mohist$worldserver.getWorld());
+       }
+-
+-      ServerLevel serverlevel1 = serverlevel != null && optional.isPresent() ? serverlevel : this.f_11195_.m_129783_();
++      // CraftBukkit end
++      ServerLevel serverlevel1 = ((CraftWorld) mohist$location.getWorld()).getHandle();
+       ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
++      serverplayer.getBukkitEntity().restore(p_11237_.getBukkitEntity());
++      serverplayer.setBukkitEntity(p_11237_.getBukkitEntity());
++      p_11237_.f_8906_.f_9743_ = serverplayer;
+       serverplayer.f_8906_ = p_11237_.f_8906_;
+       serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
+       serverplayer.m_20234_(p_11237_.m_19879_());
+       serverplayer.m_36163_(p_11237_.m_5737_());
+ 
+@@ -434,51 +_,82 @@
+          serverplayer.m_20049_(s);
+       }
+ 
+-      boolean flag2 = false;
+-      if (optional.isPresent()) {
+-         BlockState blockstate = serverlevel1.m_8055_(blockpos);
+-         boolean flag1 = blockstate.m_60713_(Blocks.f_50724_);
+-         Vec3 vec3 = optional.get();
+-         float f1;
+-         if (!blockstate.m_204336_(BlockTags.f_13038_) && !flag1) {
+-            f1 = f;
+-         } else {
+-            Vec3 vec31 = Vec3.m_82539_(blockpos).m_82546_(vec3).m_82541_();
+-            f1 = (float)Mth.m_14175_(Mth.m_14136_(vec31.f_82481_, vec31.f_82479_) * (double)(180F / (float)Math.PI) - 90.0D);
+-         }
+-
+-         serverplayer.m_7678_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_, f1, 0.0F);
+-         serverplayer.m_9158_(serverlevel1.m_46472_(), blockpos, f, flag, false);
+-         flag2 = !p_11238_ && flag1;
+-      } else if (blockpos != null) {
+-         serverplayer.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0F));
+-      }
+-
+-      while(!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double)serverlevel1.m_151558_()) {
++      serverplayer.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
++      // CraftBukkit end
++
++      while(avoidSuffocation.getAndSet(true) && !serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double)serverlevel1.m_151558_()) {
+          serverplayer.m_6034_(serverplayer.m_20185_(), serverplayer.m_20186_() + 1.0D, serverplayer.m_20189_());
+       }
+ 
        byte b0 = (byte)(p_11238_ ? 1 : 0);
        LevelData leveldata = serverplayer.f_19853_.m_6106_();
-       serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), b0, serverplayer.m_219759_()));
+-      serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), b0, serverplayer.m_219759_()));
+-      serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
++      serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverlevel1.m_46659_(), serverlevel1.m_8584_(), b0, serverplayer.m_219759_()));
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
-       serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
++      serverplayer.spawnIn(serverlevel1);
++      serverplayer.m_146912_();
++      serverplayer.f_8906_.teleport(CraftLocation.toBukkit(serverplayer.m_20182_(), serverlevel1.getWorld(), serverplayer.m_146908_(), serverplayer.m_146909_()));
++      serverplayer.m_20260_(false);
        serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
        serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-@@ -472,6 +_,7 @@
-       this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
+       serverplayer.f_8906_.m_9829_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
+       this.m_11229_(serverplayer, serverlevel1);
+       this.m_11289_(serverplayer);
+-      serverlevel1.m_8845_(serverplayer);
+-      this.f_11196_.add(serverplayer);
+-      this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
++      if (!p_11237_.f_8906_.isDisconnected()) {
++         serverlevel1.m_8845_(serverplayer);
++         this.f_11196_.add(serverplayer);
++         this.playersByName.put(serverplayer.m_6302_().toLowerCase(java.util.Locale.ROOT), serverplayer); // Spigot
++         this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
++      }
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
+-
++      // Added from changeDimension
++      this.m_11292_(p_11237_); // Update health, etc...
++      p_11237_.m_6885_();
++      for (MobEffectInstance mobEffect : p_11237_.m_21220_()) {
++         p_11237_.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(p_11237_.m_19879_(), mobEffect));
++      }
++
++      // Fire advancement trigger
++      p_11237_.m_9209_(((CraftWorld) fromWorld).getHandle());
++
++      // Don't fire on respawn
++      if (fromWorld != mohist$location.getWorld()) {
++         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(p_11237_.getBukkitEntity(), fromWorld);
++         f_11195_.server.getPluginManager().callEvent(event);
++      }
++
++      // Save player file again if they were disconnected
++      if (p_11237_.f_8906_.isDisconnected()) {
++         this.m_6765_(p_11237_);
++      }
++
++      // CraftBukkit end
++      mohist$location = null; // Mohist
++      mohist$worldserver = null; // Mohist
++      this.mohist$reason = null; // Mohist
+       return serverplayer;
+    }
+ 
++
++   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
++      return this.respawn(p_11237_, this.f_11195_.m_129880_(p_11237_.m_8963_()), p_11238_, null, true, reason);
++   }
++   // Mohist TODO end
++
++   public ServerPlayer respawn(ServerPlayer entityplayer, ServerLevel worldserver, boolean flag, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason reason) {
++      this.mohist$location = location;
++      this.mohist$worldserver = worldserver;
++      this.mohist$reason = reason;
++      this.avoidSuffocation.set(avoidSuffocation);
++      return m_11236_(entityplayer, flag);
++   }
++   // Mohist TODO end
++
+    public void m_11289_(ServerPlayer p_11290_) {
+       GameProfile gameprofile = p_11290_.m_36316_();
+       int i = this.f_11195_.m_129944_(gameprofile);
 @@ -487,7 +_,18 @@
  
     public void m_11288_() {
