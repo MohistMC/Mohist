@@ -47,13 +47,14 @@
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -125,9 +_,14 @@
+@@ -125,9 +_,15 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
 +
 +   private CraftServer cserver;
++   private final Map<String,ServerPlayer> playersByName = new java.util.HashMap<>();
  
     public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
@@ -97,7 +98,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -182,18 +_,68 @@
+@@ -182,18 +_,69 @@
           mutablecomponent = Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
        }
  
@@ -109,6 +110,7 @@
 +      // this.broadcastSystemMessage(mutablecomponent.withStyle(ChatFormatting.YELLOW), false);
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
        this.f_11196_.add(p_11263_);
++      this.playersByName.put(p_11263_.m_6302_().toLowerCase(java.util.Locale.ROOT), p_11263_); // Spigot
        this.f_11197_.put(p_11263_.m_20148_(), p_11263_);
 -      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
 +      // this.broadcastAll(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
@@ -221,7 +223,15 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -400,24 +_,80 @@
+@@ -340,6 +_,7 @@
+       serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+       p_11287_.m_8960_().m_135978_();
+       this.f_11196_.remove(p_11287_);
++      this.playersByName.remove(p_11287_.m_6302_().toLowerCase(java.util.Locale.ROOT)); // Spigot
+       this.f_11195_.m_129901_().m_136305_(p_11287_);
+       UUID uuid = p_11287_.m_20148_();
+       ServerPlayer serverplayer = this.f_11197_.get(uuid);
+@@ -400,24 +_,82 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_, p_215626_);
     }
  
@@ -231,7 +241,9 @@
 +   public AtomicBoolean avoidSuffocation = new AtomicBoolean(true);
 +
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
++      p_11237_.m_8127_(); // CraftBukkit
        this.f_11196_.remove(p_11237_);
++      this.playersByName.remove(p_11237_.m_6302_().toLowerCase(java.util.Locale.ROOT)); // Spigot
        p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
        BlockPos blockpos = p_11237_.m_8961_();
        float f = p_11237_.m_8962_();
@@ -308,7 +320,7 @@
        serverplayer.m_20234_(p_11237_.m_19879_());
        serverplayer.m_36163_(p_11237_.m_5737_());
  
-@@ -425,32 +_,17 @@
+@@ -425,50 +_,73 @@
           serverplayer.m_20049_(s);
        }
  
@@ -342,14 +354,28 @@
  
        LevelData leveldata = serverplayer.f_19853_.m_6106_();
 -      serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverplayer.f_19853_.m_220362_(), serverplayer.f_19853_.m_46472_(), BiomeManager.m_47877_(serverplayer.m_9236_().m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverplayer.m_9236_().m_46659_(), serverplayer.m_9236_().m_8584_(), p_11238_, serverplayer.m_219759_()));
+-      serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
 +      serverplayer.f_8906_.m_9829_(new ClientboundRespawnPacket(serverlevel1.m_220362_(), serverlevel1.m_46472_(), BiomeManager.m_47877_(serverlevel1.m_7328_()), serverplayer.f_8941_.m_9290_(), serverplayer.f_8941_.m_9293_(), serverlevel1.m_46659_(), serverlevel1.m_8584_(), p_11238_, serverplayer.m_219759_()));
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetChunkCacheRadiusPacket(serverlevel1.spigotConfig.viewDistance)); // Spigot
 +      serverplayer.f_8906_.m_9829_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
-       serverplayer.f_8906_.m_9774_(serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_());
++      serverplayer.spawnIn(serverlevel1);
++      serverplayer.m_146912_();
++      serverplayer.f_8906_.teleport(new Location(worldserver1.getWorld(), serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_()));
++      serverplayer.m_20260_(false);
        serverplayer.f_8906_.m_9829_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_220360_(), serverlevel1.m_220361_()));
        serverplayer.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-@@ -462,13 +_,44 @@
-       this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
+       serverplayer.f_8906_.m_9829_(new ClientboundSetExperiencePacket(serverplayer.f_36080_, serverplayer.f_36079_, serverplayer.f_36078_));
+       this.m_11229_(serverplayer, serverlevel1);
+       this.m_11289_(serverplayer);
+-      serverlevel1.m_8845_(serverplayer);
+-      this.f_11196_.add(serverplayer);
+-      this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
++      if (!p_11237_.f_8906_.isDisconnected()) {
++         serverlevel1.m_8845_(serverplayer);
++         this.f_11196_.add(serverplayer);
++         this.playersByName.put(serverplayer.m_6302_().toLowerCase(java.util.Locale.ROOT), serverplayer); // Spigot
++         this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
++      }
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
@@ -380,6 +406,7 @@
 +
 +      // CraftBukkit end
 +      mohist$location = null; // Mohist
++      mohist$worldserver = null; // Mohist
        return serverplayer;
     }
  
