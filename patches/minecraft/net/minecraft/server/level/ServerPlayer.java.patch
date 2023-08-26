@@ -64,6 +64,52 @@
     public ServerPlayer(MinecraftServer p_215088_, ServerLevel p_215089_, GameProfile p_215090_, @Nullable ProfilePublicKey p_215091_) {
        super(p_215089_, p_215089_.m_220360_(), p_215089_.m_220361_(), p_215090_, p_215091_);
        this.f_8939_ = p_215088_.m_7950_(this);
+@@ -246,6 +_,45 @@
+       this.m_9201_(p_215089_);
+    }
+ 
++   // Yes, this doesn't match Vanilla, but it's the best we can do for now.
++   // If this is an issue, PRs are welcome
++   public final BlockPos getSpawnPoint(ServerLevel worldserver) {
++      BlockPos blockposition = worldserver.m_220360_();
++
++      if (worldserver.m_6042_().f_223549_() && worldserver.f_8549_.m_5464_() != GameType.ADVENTURE) {
++         int i = Math.max(0, this.f_8924_.m_129803_(worldserver));
++         int j = Mth.m_14107_(worldserver.m_6857_().m_61941_((double) blockposition.m_123341_(), (double) blockposition.m_123343_()));
++
++         if (j < i) {
++            i = j;
++         }
++
++         if (j <= 1) {
++            i = 1;
++         }
++
++         long k = (long) (i * 2 + 1);
++         long l = k * k;
++         int i1 = l > 2147483647L ? Integer.MAX_VALUE : (int) l;
++         int j1 = this.m_9237_(i1);
++         int k1 = RandomSource.m_216327_().m_188503_(i1);
++
++         for (int l1 = 0; l1 < i1; ++l1) {
++            int i2 = (k1 + j1 * l1) % i1;
++            int j2 = i2 % (i * 2 + 1);
++            int k2 = i2 / (i * 2 + 1);
++            BlockPos blockposition1 = PlayerRespawnLogic.m_183928_(worldserver, blockposition.m_123341_() + j2 - i, blockposition.m_123343_() + k2 - i);
++
++            if (blockposition1 != null) {
++               return blockposition1;
++            }
++         }
++      }
++
++      return blockposition;
++   }
++   // CraftBukkit end
++
+    private void m_9201_(ServerLevel p_9202_) {
+       BlockPos blockpos = p_9202_.m_220360_();
+       if (p_9202_.m_6042_().f_223549_() && p_9202_.m_7654_().m_129910_().m_5464_() != GameType.ADVENTURE) {
 @@ -550,6 +_,7 @@
  
     public void m_6667_(DamageSource p_9035_) {
@@ -153,6 +199,15 @@
  
     }
  
+@@ -778,7 +_,7 @@
+       }
+    }
+ 
+-   private void m_9209_(ServerLevel p_9210_) {
++   public void m_9209_(ServerLevel p_9210_) {
+       ResourceKey<Level> resourcekey = p_9210_.m_46472_();
+       ResourceKey<Level> resourcekey1 = this.f_19853_.m_46472_();
+       CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
 @@ -806,6 +_,9 @@
     }
  

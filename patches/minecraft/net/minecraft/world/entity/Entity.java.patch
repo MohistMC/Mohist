@@ -85,7 +85,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -230,13 +_,85 @@
+@@ -230,13 +_,88 @@
     @Nullable
     private BlockState f_185934_ = null;
  
@@ -138,6 +138,9 @@
 +      return bukkitEntity;
 +   }
 +
++   public void setBukkitEntity(CraftEntity bukkitEntity) {
++      this.bukkitEntity = bukkitEntity;
++   }
 +   @Override
 +   public CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return getBukkitEntity();
