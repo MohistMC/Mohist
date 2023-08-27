@@ -21,7 +21,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FMLModContainer extends ModContainer
 {
@@ -65,7 +69,45 @@ public class FMLModContainer extends ModContainer
         try
         {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
-            this.modInstance = modClass.getDeclaredConstructor().newInstance();
+            try {
+                // Try noargs constructor first
+                this.modInstance = modClass.getDeclaredConstructor().newInstance();
+            } catch (NoSuchMethodException ignored) {
+                // Otherwise look for constructor that can accept more arguments
+                Map<Class<?>, Object> allowedConstructorArgs = Map.of(
+                        IEventBus.class, eventBus,
+                        ModContainer.class, this,
+                        FMLModContainer.class, this);
+
+                constructorsLoop: for (var constructor : modClass.getDeclaredConstructors()) {
+                    var parameterTypes = constructor.getParameterTypes();
+                    Object[] constructorArgs = new Object[parameterTypes.length];
+                    Set<Class<?>> foundArgs = new HashSet<>();
+
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        Object argInstance = allowedConstructorArgs.get(parameterTypes[i]);
+                        if (argInstance == null) {
+                            // Unknown argument, try next constructor method...
+                            continue constructorsLoop;
+                        }
+
+                        if (foundArgs.contains(parameterTypes[i])) {
+                            throw new RuntimeException("Duplicate constructor argument type: " + parameterTypes[i]);
+                        }
+
+                        foundArgs.add(parameterTypes[i]);
+                        constructorArgs[i] = argInstance;
+                    }
+
+                    // All arguments are found
+                    this.modInstance = constructor.newInstance(constructorArgs);
+                }
+
+                if (this.modInstance == null) {
+                    throw new RuntimeException("Could not find mod constructor. Allowed optional argument classes: " +
+                            allowedConstructorArgs.keySet().stream().map(Class::getSimpleName).collect(Collectors.joining(", ")));
+                }
+            }
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         }
         catch (Throwable e)

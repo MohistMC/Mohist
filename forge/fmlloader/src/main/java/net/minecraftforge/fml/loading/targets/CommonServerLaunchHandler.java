@@ -40,11 +40,17 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
             }, mcextra
         );
         BiPredicate<String, String> filter = (path, base) -> true;
+        BiPredicate<String, String> nullFilter = filter;
 
         var mcstream = Stream.<Path>builder().add(mc).add(mcextra_filtered.getRootPath());
         var modstream = Stream.<List<Path>>builder();
 
         filter = processMCStream(vers, mcstream, filter, modstream);
+
+        // use this hack instead of setting filter to null initially for backwards compatibility if anything overrides
+        // processMCStream with a custom filter
+        if (filter == nullFilter)
+            filter = null;
 
         var fmlcore = LibraryFinder.findPathForMaven(vers.forgeGroup(), "fmlcore", "", "", vers.mcAndForgeVersion());
         var javafmllang = LibraryFinder.findPathForMaven(vers.forgeGroup(), "javafmllanguage", "", "", vers.mcAndForgeVersion());

@@ -44,6 +44,7 @@ public class BackgroundScanHandler
         modContentScanner = Executors.newSingleThreadExecutor(r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             thread.setDaemon(true);
+            thread.setName("Background Scan Handler");
             return thread;
         });
         scannedFiles = new ArrayList<>();
