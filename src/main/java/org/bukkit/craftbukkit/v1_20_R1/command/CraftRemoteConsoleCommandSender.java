@@ -4,12 +4,23 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.rcon.RconConsoleSource;
 import org.bukkit.command.RemoteConsoleCommandSender;
 
+import java.net.SocketAddress;
+
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {
 
     private final RconConsoleSource listener;
 
     public CraftRemoteConsoleCommandSender(RconConsoleSource listener) {
         this.listener = listener;
+    }
+
+    public RconConsoleSource getListener() {
+        return listener;
+    }
+
+    @Override
+    public SocketAddress getAddress() {
+        return listener.socketAddress;
     }
 
     @Override

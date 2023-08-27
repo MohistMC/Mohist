@@ -6,8 +6,6 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
@@ -76,7 +74,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((CraftBlockCommandSender) sender).getWrapper();
         }
         if (sender instanceof RemoteConsoleCommandSender) {
-            return ((DedicatedServer) MinecraftServer.getServer()).rconConsoleSource.createCommandSourceStack();
+            return  ((CraftRemoteConsoleCommandSender) sender).getListener().createCommandSourceStack();
         }
         if (sender instanceof ConsoleCommandSender) {
             return ((CraftServer) sender.getServer()).getServer().createCommandSourceStack();

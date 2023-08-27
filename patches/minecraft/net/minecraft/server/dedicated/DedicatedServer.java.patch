@@ -22,7 +22,16 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -68,6 +_,8 @@
+@@ -60,7 +_,7 @@
+    public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
+    @Nullable
+    private QueryThreadGs4 f_139601_;
+-   public final RconConsoleSource f_139602_;
++   // public final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field // Mohist TODO
+    @Nullable
+    private RconThread f_139603_;
+    public DedicatedServerSettings f_139604_;
+@@ -68,23 +_,48 @@
     private MinecraftServerGui f_139605_;
     @Nullable
     private final TextFilterClient f_139606_;
@@ -31,7 +40,11 @@
  
     public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
-@@ -79,12 +_,36 @@
+       this.f_139604_ = p_214793_;
+-      this.f_139602_ = new RconConsoleSource(this);
+       this.f_139606_ = TextFilterClient.m_143736_(p_214793_.m_139777_().f_139724_);
+    }
+ 
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -131,11 +144,8 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -173,9 +_,10 @@
-          if (dedicatedserverproperties.f_139747_) {
-             f_139598_.info("Starting remote control listener");
+@@ -175,7 +_,7 @@
              this.f_139603_ = RconThread.m_11615_(this);
-+            this.remoteConsole = new org.bukkit.craftbukkit.v1_20_R1.command.CraftRemoteConsoleCommandSender(this.f_139602_); // CraftBukkit
           }
  
 -         if (this.m_139669_() > 0L) {
@@ -198,7 +208,7 @@
     }
  
     protected boolean m_139668_() {
-@@ -474,13 +_,43 @@
+@@ -474,15 +_,49 @@
     }
  
     public String m_7138_() {
@@ -229,21 +239,29 @@
     }
  
     public String m_7261_(String p_139644_) {
-       this.f_139602_.m_11512_();
+-      this.f_139602_.m_11512_();
++      // CraftBukkit start - fire RemoteServerCommandEvent
++      throw new UnsupportedOperationException("Not supported - remote source required.");
++   }
++
++   public String runCommand(RconConsoleSource rconConsoleSource, String pCommand) {
++      rconConsoleSource.m_11512_();
        this.m_18709_(() -> {
 -         this.m_129892_().m_230957_(this.f_139602_.m_11514_(), p_139644_);
-+         // CraftBukkit start - fire RemoteServerCommandEvent
-+         RemoteServerCommandEvent event = new RemoteServerCommandEvent(remoteConsole, p_139644_);
++         CommandSourceStack wrapper = rconConsoleSource.m_11514_();
++         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), pCommand);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
 +         }
-+         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), f_139602_.m_11514_());
-+         server.dispatchServerCommand(remoteConsole, serverCommand);
-+         // CraftBukkit end
++         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), wrapper);
++         server.dispatchServerCommand(event.getSender(), serverCommand);
        });
-       return this.f_139602_.m_11513_();
+-      return this.f_139602_.m_11513_();
++      return rconConsoleSource.m_11513_();
     }
+ 
+    public void m_139688_(boolean p_139689_) {
 @@ -492,7 +_,12 @@
     }
  
