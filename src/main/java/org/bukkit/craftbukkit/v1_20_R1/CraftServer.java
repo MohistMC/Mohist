@@ -839,6 +839,11 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
+    public Set<String> getWorldsByName() {
+        return new HashSet<>(worlds.keySet());
+    }
+
+
     public DedicatedPlayerList getHandle() {
         return playerList;
     }
@@ -1101,7 +1106,8 @@ public final class CraftServer implements Server {
             String[] strings = name.split("/");
             name = strings[strings.length - 1];
         }
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+        name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        if (!(worlds.containsKey(name))) {
             Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
@@ -1162,10 +1168,10 @@ public final class CraftServer implements Server {
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, null, ex);
         }
-
+        String worldname = world.getName().contains("DIM") ? world.getName() : world.getName().toLowerCase(java.util.Locale.ENGLISH);
         this.worldsByUUID.remove(world.getUID()); // MultiPaper - optimize getWorld(UUID)
-        this.worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        Level2LevelStem.plugin_worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
+        this.worlds.remove(worldname);
+        Level2LevelStem.plugin_worlds.remove(worldname);
         this.console.removeLevel(handle);
         return true;
     }
@@ -1174,8 +1180,9 @@ public final class CraftServer implements Server {
         if (world == null) {
             return;
         }
-        this.worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
-        Level2LevelStem.plugin_worlds.remove(world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH));
+        String worldname = world.getWorld().getName().contains("DIM") ? world.getWorld().getName() :world.getWorld().getName().toLowerCase(java.util.Locale.ENGLISH);
+        this.worlds.remove(worldname);
+        Level2LevelStem.plugin_worlds.remove(worldname);
     }
 
     public DedicatedServer getServer() {
@@ -1185,8 +1192,8 @@ public final class CraftServer implements Server {
     @Override
     public World getWorld(String name) {
         Validate.notNull(name, "Name cannot be null");
-
-        return worlds.get(name.toLowerCase(java.util.Locale.ENGLISH));
+        String worldname = name.contains("DIM") ? name :name.toLowerCase(java.util.Locale.ENGLISH);
+        return worlds.get(worldname);
     }
 
     @Override
@@ -1206,7 +1213,8 @@ public final class CraftServer implements Server {
             return;
         }
         this.worldsByUUID.put(world.getUID(), world); // MultiPaper - optimize getWorld(UUID)
-        worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
+        String worldname = world.getName().contains("DIM") ? world.getName() : world.getName().toLowerCase(java.util.Locale.ENGLISH);
+        worlds.put(worldname, world);
     }
 
     @Override

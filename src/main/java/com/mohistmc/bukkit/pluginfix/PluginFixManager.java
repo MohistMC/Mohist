@@ -20,6 +20,9 @@ public class PluginFixManager {
         if (className.endsWith("PaperLib")) {
             return patch(clazz, PluginFixManager::removePaper);
         }
+        if (className.equals("com.onarandombox.MultiverseCore.utils.WorldManager")) {
+            return patch(clazz, MultiverseCore::fix);
+        }
         Consumer<ClassNode> patcher = switch (className) {
             case "com.sk89q.worldedit.bukkit.BukkitAdapter" -> WorldEdit::handleBukkitAdapter;
             case "com.sk89q.worldedit.bukkit.adapter.Refraction" -> WorldEdit::handlePickName;
