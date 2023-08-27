@@ -940,7 +940,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             entity.connection.teleport(to);
         } else {
             // The respawn reason should never be used if the passed location is non null.
-            server.getHandle().respawn(entity, toWorld, true, to, null);
+            server.getHandle().respawn(entity, toWorld, true, to, true, null);
         }
         return true;
     }

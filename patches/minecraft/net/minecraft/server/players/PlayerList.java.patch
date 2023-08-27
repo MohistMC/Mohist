@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -11,18 +_,20 @@
+@@ -11,18 +_,21 @@
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -13,6 +13,7 @@
  import java.util.Set;
  import java.util.UUID;
 +import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.function.Function;
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
@@ -428,7 +429,7 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,167 @@
+@@ -415,76 +_,171 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -437,9 +438,11 @@
 +   }
 +
 +   // Mohist TODO start
-+   public Location mohist$location;
-+   public PlayerRespawnEvent.RespawnReason mohist$reason;
-+   public ServerLevel mohist$worldserver;
++   public Location mohist$location = null;
++   public PlayerRespawnEvent.RespawnReason mohist$reason = null;
++   public ServerLevel mohist$worldserver = null;
++   public AtomicBoolean avoidSuffocation = new AtomicBoolean(true);
++
     public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
 +      p_11237_.m_8127_(); // CraftBukkit
        this.f_11196_.remove(p_11237_);
@@ -551,7 +554,7 @@
 +      serverplayer.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
 +      // CraftBukkit end
 +
-+      while (!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double) serverlevel1.m_151558_()) {
++      while (avoidSuffocation.getAndSet(true) && !serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double) serverlevel1.m_151558_()) {
           serverplayer.m_6034_(serverplayer.m_20185_(), serverplayer.m_20186_() + 1.0D, serverplayer.m_20189_());
        }
  
@@ -615,18 +618,20 @@
 +
 +      // CraftBukkit end
 +      mohist$location = null; // Mohist
++      mohist$worldserver = null; // Mohist
 +      this.mohist$reason = null; // Mohist
        return serverplayer;
     }
  
 +   public ServerPlayer respawn(ServerPlayer entityplayer, boolean flag, PlayerRespawnEvent.RespawnReason reason) {
-+      return this.respawn(entityplayer, this.f_11195_.m_129880_(entityplayer.m_8963_()), flag, null, reason);
++      return this.respawn(entityplayer, this.f_11195_.m_129880_(entityplayer.m_8963_()), flag, null, true, reason);
 +   }
 +
-+   public ServerPlayer respawn(ServerPlayer entityplayer, ServerLevel worldserver, boolean flag, Location location, PlayerRespawnEvent.RespawnReason reason) {
++   public ServerPlayer respawn(ServerPlayer entityplayer, ServerLevel worldserver, boolean flag, Location location, boolean avoidSuffocation, PlayerRespawnEvent.RespawnReason reason) {
 +      this.mohist$location = location;
 +      this.mohist$worldserver = worldserver;
 +      this.mohist$reason = reason;
++      this.avoidSuffocation.set(avoidSuffocation);
 +      return m_11236_(entityplayer, flag);
 +   }
 +   // Mohist TODO end
