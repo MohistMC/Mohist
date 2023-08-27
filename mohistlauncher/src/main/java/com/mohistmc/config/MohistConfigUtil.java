@@ -112,8 +112,17 @@ public class MohistConfigUtil {
         }
     }
 
+    public static String MOHISTLANG() {
+        String key = "mohist.lang";
+        if (yml.get(key) == null) {
+            yml.set(key, Locale.getDefault().toString());
+            save();
+        }
+        return yml.getString(key, Locale.getDefault().toString());
+    }
+
     public static void i18n() {
-        String mohist_lang = yml.getString("mohist.lang", "xx_XX");
+        String mohist_lang = MOHISTLANG();
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];
         MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), new Locale(l, c));

@@ -30,7 +30,7 @@ public class MohistMC {
 
     public MohistMC() {
         classLoader = MohistMC.class.getClassLoader();
-        String mohist_lang = MohistConfig.yml.getString("mohist.lang", "xx_XX");
+        String mohist_lang = MohistConfig.yml.getString("mohist.lang", Locale.getDefault().toString());
         String l = mohist_lang.split("_")[0];
         String c = mohist_lang.split("_")[1];
         i18n = new i18n(MohistMC.class.getClassLoader(), new Locale(l, c));
