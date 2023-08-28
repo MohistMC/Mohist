@@ -48,12 +48,9 @@ public class Remapper {
 
     public Remapper() throws Exception {
         this.toNmsMapping = new JarMapping();
-        this.toNmsMapping.packages.put("com.mohistmc.org.yaml.snakeyaml", "org.yaml.snakeyaml");
-        this.toNmsMapping.packages.put("com.mohistmc.javax.inject", "javax.inject");
-
+        this.toNmsMapping.packages.put("org/yaml/snakeyaml", "com/mohistmc/org/yaml/snakeyaml");
+        this.toNmsMapping.packages.put("javax/inject", "com/mohistmc/javax/inject");
         this.toBukkitMapping = new JarMapping();
-        this.toBukkitMapping.packages.put("com.mohistmc.org.yaml.snakeyaml", "org.yaml.snakeyaml");
-        this.toBukkitMapping.packages.put("com.mohistmc.javax.inject", "javax.inject");
         this.inheritanceMap = new InheritanceMap();
         this.toNmsMapping.loadMappings(
                 new BufferedReader(new InputStreamReader(Remapper.class.getClassLoader().getResourceAsStream("mappings/spigot2srg.srg"))),
