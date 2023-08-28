@@ -181,7 +181,6 @@ def sharedDeps = {
     installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
     // bukkit
-    installer 'org.yaml:snakeyaml:1.33'
     installer 'org.apache.maven:maven-resolver-provider:3.8.5'
     installer 'org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3'
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
@@ -200,9 +199,8 @@ def sharedDeps = {
 
     // mohist
     installer 'io.izzel:tools:1.3.0'
-    installer 'com.mohistmc.yaml:yaml:0.2'
     installer 'com.mohistmc:brigadier:1.20.1'
-    installer 'javax.inject:javax.inject:1' // TODO
+    installer 'com.mohistmc:librariesvault:1.19.2'
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer "com.google.guava:guava:${GUAVA_VERSION}"

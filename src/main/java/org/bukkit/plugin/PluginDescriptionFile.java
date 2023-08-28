@@ -23,11 +23,11 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.AbstractConstruct;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.Tag;
+import com.mohistmc.org.yaml.snakeyaml.Yaml;
+import com.mohistmc.org.yaml.snakeyaml.constructor.AbstractConstruct;
+import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
 
 /**
  * This type is the runtime-container for the information in the plugin.yml.
