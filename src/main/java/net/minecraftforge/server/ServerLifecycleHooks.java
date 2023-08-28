@@ -65,6 +65,7 @@ import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
+import org.spigotmc.SpigotConfig;
 
 public class ServerLifecycleHooks
 {
@@ -162,7 +163,7 @@ public class ServerLifecycleHooks
                 return false;
             }
 
-            if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
+            if (!SpigotConfig.bungee && connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
                 rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
                 return false;
             }
