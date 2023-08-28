@@ -56,6 +56,7 @@ import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.GameData;
+import org.spigotmc.SpigotConfig;
 
 public class ServerLifecycleHooks
 {
@@ -146,7 +147,7 @@ public class ServerLifecycleHooks
                 return false;
             }
 
-            if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
+            if (!SpigotConfig.bungee && connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
                 rejectConnection(manager, connectionType, i18n.get("serverlifecyclehooks.4"));
                 return false;
             }
