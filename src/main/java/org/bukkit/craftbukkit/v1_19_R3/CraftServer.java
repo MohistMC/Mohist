@@ -224,10 +224,10 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.error.MarkedYAMLException;
+import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
+import com.mohistmc.org.yaml.snakeyaml.Yaml;
+import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
+import com.mohistmc.org.yaml.snakeyaml.error.MarkedYAMLException;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
