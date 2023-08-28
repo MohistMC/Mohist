@@ -51,7 +51,7 @@ public class i18n {
     }
 
     public static String getLocale(int key) {
-        String locale = MohistConfigUtil.yml.getString("mohist.lang", "xx_XX");
+        String locale = MohistConfigUtil.yml.getString("mohist.lang", Locale.getDefault().toString());
         if (locale.length() == 5) {
             if (key == 1) {
                 return locale.substring(0, 2);

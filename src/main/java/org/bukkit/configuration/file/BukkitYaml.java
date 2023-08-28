@@ -6,18 +6,18 @@ import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.comments.CommentEventsCollector;
-import org.yaml.snakeyaml.comments.CommentType;
-import org.yaml.snakeyaml.constructor.BaseConstructor;
-import org.yaml.snakeyaml.emitter.Emitter;
-import org.yaml.snakeyaml.error.YAMLException;
-import org.yaml.snakeyaml.events.Event;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.representer.Representer;
-import org.yaml.snakeyaml.serializer.Serializer;
+import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
+import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
+import com.mohistmc.org.yaml.snakeyaml.Yaml;
+import com.mohistmc.org.yaml.snakeyaml.comments.CommentEventsCollector;
+import com.mohistmc.org.yaml.snakeyaml.comments.CommentType;
+import com.mohistmc.org.yaml.snakeyaml.constructor.BaseConstructor;
+import com.mohistmc.org.yaml.snakeyaml.emitter.Emitter;
+import com.mohistmc.org.yaml.snakeyaml.error.YAMLException;
+import com.mohistmc.org.yaml.snakeyaml.events.Event;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
+import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
+import com.mohistmc.org.yaml.snakeyaml.serializer.Serializer;
 
 final class BukkitYaml extends Yaml {
 
