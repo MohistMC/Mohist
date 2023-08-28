@@ -35,7 +35,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.RecipeManager;
-@@ -45,11 +_,13 @@
+@@ -45,15 +_,18 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.TickingBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
@@ -49,6 +49,11 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.lighting.LevelLightEngine;
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.material.Fluids;
 @@ -64,8 +_,16 @@
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
@@ -67,7 +72,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,17 +_,78 @@
+@@ -97,17 +_,66 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -112,7 +117,9 @@
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
-+   public abstract ResourceKey<LevelStem> getTypeKey();
++   public ResourceKey<LevelStem> getTypeKey() {
++      return WorldGenSettings.m_190052_(f_46421_);
++   }
 +
 +   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
 +      generator = gen;
@@ -124,35 +131,24 @@
 +      super(Level.class);
        this.f_46446_ = p_220355_;
        this.f_46442_ = p_220352_;
-+      String worldName = MinecraftServer.getServer().f_129744_.m_197394_(p_220353_).getFileName().toFile().getName();
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(worldName); // Spigot // Mohist
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
-+      // Mohist start
-+      if (generator == null && p_220352_ != null) {
-+         generator = getCraftServer().getGenerator(worldName);
-+      }
-+      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment0.get(p_220353_);
-+      }
-+      if (biomeProvider == null) {
-+         biomeProvider = getCraftServer().getBiomeProvider(worldName);
-+      }
-+      this.world = new CraftWorld((ServerLevel) this, generator, biomeProvider, environment);
-+      // Mohist end
        this.f_204147_ = p_220354_;
        this.f_220349_ = p_220354_.m_203543_().orElseThrow(() -> {
           return new IllegalArgumentException("Dimension must be registered, got " + p_220354_);
-@@ -133,6 +_,43 @@
+@@ -133,6 +_,46 @@
        this.f_46420_ = new BiomeManager(this, p_220358_);
        this.f_46424_ = p_220357_;
        this.f_220350_ = new CollectingNeighborUpdater(this, p_220359_);
 +      // CraftBukkit start
-+      m_6857_().world = (ServerLevel) this;
++      if (environment == null) {
++         environment = ForgeInjectBukkit.environment.get(getTypeKey());
++      }
++      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +

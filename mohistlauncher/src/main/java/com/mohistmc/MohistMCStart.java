@@ -70,6 +70,9 @@ public class MohistMCStart {
         CustomLibraries.loadCustomLibs();
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
+        }
+
+        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             new v_1_19().run();
         }
 

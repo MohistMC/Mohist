@@ -39,6 +39,7 @@ public final class WorldUUID {
         UUID uuid = UUID.randomUUID();
         DataOutputStream dos = null;
         try {
+            baseDir.mkdirs();
             dos = new DataOutputStream(new FileOutputStream(file1));
             dos.writeLong(uuid.getMostSignificantBits());
             dos.writeLong(uuid.getLeastSignificantBits());
