@@ -9,6 +9,15 @@
              BlockEntity blockentity = blockstate.m_155947_() ? this.m_7702_(p_9550_) : null;
              Block.m_49881_(blockstate, this.f_9479_, p_9550_, blockentity, p_9552_, ItemStack.f_41583_);
           }
+@@ -249,7 +_,7 @@
+ 
+          return true;
+       } else {
+-         Util.m_143785_("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + p_181031_ + ", status: " + this.f_143480_ + (this.f_143482_ == null ? "" : ", currently generating: " + (String)this.f_143482_.get()));
++         // Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + pPos + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String)this.currentlyGenerating.get()));
+          return false;
+       }
+    }
 @@ -297,9 +_,17 @@
     }
  

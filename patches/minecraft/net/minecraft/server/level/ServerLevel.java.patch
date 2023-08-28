@@ -180,13 +180,12 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,10 @@
+@@ -240,6 +_,9 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
-+      m_6857_().world = this;
 +      this.initCapabilities();
     }
  
