@@ -32,3 +32,4 @@ public class MultiverseCore {
         return ((CraftServer) Bukkit.getServer()).getWorldsByName().contains(name);
     }
 }
+

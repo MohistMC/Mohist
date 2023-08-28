@@ -73,24 +73,6 @@ public class MohistConfigUtil {
         return yml.getString(key, DownloadSource.defaultSource.name());
     }
 
-    public static boolean LIBRARIES_JAVAX_INJECT() {
-        String key = "mohist.libraries.javax-inject";
-        if (yml.get(key) == null) {
-            yml.set(key, true);
-            save();
-        }
-        return yml.getBoolean(key, true);
-    }
-
-    public static boolean LIBRARIES_SNAKEYAML() {
-        String key = "mohist.libraries.snakeyaml";
-        if (yml.get(key) == null) {
-            yml.set(key, true);
-            save();
-        }
-        return yml.getBoolean(key, true);
-    }
-
     public static boolean CHECK_UPDATE() {
         String key = "mohist.check_update";
         if (yml.get(key) == null) {
@@ -123,8 +105,12 @@ public class MohistConfigUtil {
 
     public static void i18n() {
         String mohist_lang = MOHISTLANG();
-        String l = mohist_lang.split("_")[0];
-        String c = mohist_lang.split("_")[1];
-        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), new Locale(l, c));
+        Locale locale = Locale.getDefault();
+        if (mohist_lang.contains("_")) {
+            String l = mohist_lang.split("_")[0];
+            String c = mohist_lang.split("_")[1];
+            locale = new Locale(l, c);
+        }
+        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), locale);
     }
 }

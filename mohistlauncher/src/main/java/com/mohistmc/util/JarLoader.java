@@ -47,12 +47,6 @@ public class JarLoader {
         if (!path.toFile().getName().endsWith(".jar")) {
             return;
         }
-        if (path.toFile().getName().contains("javax.inject-1") && !MohistConfigUtil.LIBRARIES_JAVAX_INJECT()) {
-            return;
-        }
-        if (path.toFile().getName().contains("snakeyaml") && !MohistConfigUtil.LIBRARIES_SNAKEYAML()) {
-            return;
-        }
         try {
             inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
         } catch (IOException e) {

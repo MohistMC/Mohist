@@ -188,8 +188,6 @@ def sharedDeps = {
     installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
     installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
-    // bukkit
-    installer 'org.yaml:snakeyaml:2.0'
     // LibraryLoader start
     installer "org.apache.maven:maven-artifact:3.8.5"
     installer 'org.apache.maven:maven-builder-support:3.8.5'
@@ -226,6 +224,7 @@ def sharedDeps = {
     installer 'com.mohistmc:dynamicenum:0.2'
     installer 'com.mohistmc:i18n:0.2'
     installer 'com.mohistmc:brigadier:1.20.1'
+    installer 'com.mohistmc:librariesvault:1.20.1'
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer "com.google.guava:guava:${GUAVA_VERSION}"

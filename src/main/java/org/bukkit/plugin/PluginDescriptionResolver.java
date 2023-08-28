@@ -1,7 +1,7 @@
 package org.bukkit.plugin;
 
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.resolver.Resolver;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
+import com.mohistmc.org.yaml.snakeyaml.resolver.Resolver;
 
 public class PluginDescriptionResolver extends Resolver {
 
