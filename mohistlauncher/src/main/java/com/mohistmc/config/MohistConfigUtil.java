@@ -47,7 +47,7 @@ public class MohistConfigUtil {
     }
 
     public static boolean CHECK_LIBRARIES() {
-        String key = "mohist.check_libraries";
+        String key = "mohist.libraries.check";
         if (yml.get(key) == null) {
             yml.set(key, true);
             save();
@@ -65,12 +65,21 @@ public class MohistConfigUtil {
     }
 
     public static String defaultSource() {
-        String key = "mohist.libraries_downloadsource";
+        String key = "mohist.libraries.downloadsource";
         if (yml.get(key) == null) {
             yml.set(key, DownloadSource.defaultSource.name());
             save();
         }
         return yml.getString(key, DownloadSource.defaultSource.name());
+    }
+
+    public static String MOHISTLANG() {
+        String key = "mohist.lang";
+        if (yml.get(key) == null) {
+            yml.set(key, Locale.getDefault().toString());
+            save();
+        }
+        return yml.getString(key, Locale.getDefault().toString());
     }
 
     public static boolean aBoolean(String key, boolean defaultReturn) {
@@ -86,9 +95,6 @@ public class MohistConfigUtil {
     }
 
     public static void i18n() {
-        String mohist_lang = yml.getString("mohist.lang", "xx_XX");
-        String l = mohist_lang.split("_")[0];
-        String c = mohist_lang.split("_")[1];
-        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), new Locale(l, c));
+        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), MOHISTLANG());
     }
 }

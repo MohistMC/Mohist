@@ -16,7 +16,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
 
     implementation 'com.mohistmc.yaml:yaml:0.4'
-    implementation 'com.mohistmc:i18n:0.2'
+    implementation 'com.mohistmc:i18n:0.3'
     implementation 'org.yaml:snakeyaml:2.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -32,7 +32,7 @@ shadowJar {
         include(dependency('com.google.code.gson:gson:2.10.1'))
         include(dependency('org.apache.commons:commons-lang3:3.12.0'))
         include(dependency('com.google.guava:guava:31.1-jre'))
-        include(dependency('com.mohistmc:i18n:0.2'))
+        include(dependency('com.mohistmc:i18n:0.3'))
     }
     relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
