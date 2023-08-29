@@ -31,14 +31,7 @@ public class MohistMC {
     public MohistMC() {
         classLoader = MohistMC.class.getClassLoader();
         String mohist_lang = MohistConfig.yml.getString("mohist.lang", Locale.getDefault().toString());
-        Locale locale = Locale.getDefault();
-        if (mohist_lang.contains("_")) {
-            String l = mohist_lang.split("_")[0];
-            String c = mohist_lang.split("_")[1];
-            locale = new Locale(l, c);
-        }
-
-        i18n = new i18n(MohistMC.class.getClassLoader(), locale);
+        i18n = new i18n(MohistMC.class.getClassLoader(), mohist_lang);
 
         //TODO: do something when mod loading
         LOGGER.info("Mohist mod loading.....");
