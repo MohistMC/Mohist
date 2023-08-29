@@ -1,6 +1,9 @@
 package com.mohistmc.plugins.world.utils;
 
+import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.YamlUtils;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -8,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -20,14 +24,8 @@ public class ConfigByWorlds {
     public static void addInfo(String w, String info) {
         World world = Bukkit.getWorld(w);
         if (ConfigByWorlds.f.exists()) {
-            try {
-                config.load(ConfigByWorlds.f);
-                if (config.getString("worlds." + world.getName()) != null) {
-                    config.set("worlds." + world.getName() + ".info", info);
-                }
-                config.save(ConfigByWorlds.f);
-            } catch (Exception e) {
-                e.fillInStackTrace();
+            if (config.getString("worlds." + world.getName()) != null) {
+                config.set("worlds." + world.getName() + ".info", info);
             }
         }
     }
@@ -35,30 +33,20 @@ public class ConfigByWorlds {
     public static void addname(String w, String info) {
         World world = Bukkit.getWorld(w);
         if (ConfigByWorlds.f.exists()) {
-            try {
-                config.load(ConfigByWorlds.f);
-                if (config.getString("worlds." + world.getName()) != null) {
-                    config.set("worlds." + world.getName() + ".name", info);
-                }
-                config.save(ConfigByWorlds.f);
-            } catch (Exception e) {
-                e.fillInStackTrace();
+            if (config.getString("worlds." + world.getName()) != null) {
+                config.set("worlds." + world.getName() + ".name", info);
             }
+            init();
         }
     }
 
     public static void setnandu(Player player, String nandu) {
         World world = player.getWorld();
         if (ConfigByWorlds.f.exists()) {
-            try {
-                config.load(ConfigByWorlds.f);
-                if (config.getString("worlds." + world.getName()) != null) {
-                    config.set("worlds." + world.getName() + ".difficulty", nandu);
-                }
-                config.save(ConfigByWorlds.f);
-            } catch (Exception e) {
-                e.fillInStackTrace();
+            if (config.getString("worlds." + world.getName()) != null) {
+                config.set("worlds." + world.getName() + ".difficulty", nandu);
             }
+            init();
         }
     }
 
@@ -66,19 +54,14 @@ public class ConfigByWorlds {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
             if (ConfigByWorlds.f.exists()) {
-                try {
-                    config.load(ConfigByWorlds.f);
-                    if (config.getString("worlds." + world.getName()) == null) {
-                        config.set("worlds." + world.getName() + ".seed", world.getSeed());
-                        config.set("worlds." + world.getName() + ".environment", world.getEnvironment().name());
-                        config.set("worlds." + world.getName() + ".name", world.getName());
-                        config.set("worlds." + world.getName() + ".info", "-/-");
-                        config.set("worlds." + world.getName() + ".difficulty", world.getDifficulty().name());
-                    }
-                    config.save(ConfigByWorlds.f);
-                } catch (Exception e) {
-                    e.fillInStackTrace();
+                if (config.getString("worlds." + world.getName()) == null) {
+                    config.set("worlds." + world.getName() + ".seed", world.getSeed());
+                    config.set("worlds." + world.getName() + ".environment", world.getEnvironment().name());
+                    config.set("worlds." + world.getName() + ".name", world.getName());
+                    config.set("worlds." + world.getName() + ".info", "-/-");
+                    config.set("worlds." + world.getName() + ".difficulty", world.getDifficulty().name());
                 }
+                init();
             }
         }
     }
@@ -87,45 +70,66 @@ public class ConfigByWorlds {
         YamlUtils.save(f, config);
     }
 
+    public static void initMods(Level level, double pSize) {
+        // Mohist - set worldborder size to worlds.ymls
+        if (level != null && level instanceof ServerLevel serverLevel) {
+            CraftWorld world = serverLevel.getWorld();
+            ConfigByWorlds.addFlag(world, "worldborder", pSize);
+            if (world.isMods()) {
+                ConfigByWorlds.addFlag(world, "ismods", world.isMods());
+                ConfigByWorlds.addFlag(world, "modName", world.getModid());
+            }
+        }
+    }
+
     public static void loadWorlds() {
-        try {
-            config.load(ConfigByWorlds.f);
-            if (config.getConfigurationSection("worlds.") != null) {
-                for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
+        if (config.getConfigurationSection("worlds.") != null) {
+            for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
 
-                    String environment = "NORMAL";
-                    String difficulty = "EASY";
-                    if (Bukkit.getWorld(w) == null && ConfigByWorlds.f.exists()) {
-                        long seed = -1L;
-                        if (config.get("worlds." + w + ".seed") != null) {
-                            seed = config.getLong("worlds." + w + ".seed");
-                        }
-                        if (config.get("worlds." + w + ".environment") != null) {
-                            environment = config.getString("worlds." + w + ".environment");
-                        }
-                        if (config.get("worlds." + w + ".difficulty") != null) {
-                            difficulty = config.getString("worlds." + w + ".difficulty");
-                        }
-                        WorldCreator wc = new WorldCreator(w);
-                        wc.seed(seed);
-                        wc.environment(World.Environment.valueOf(environment));
-
-                        wc.createWorld();
+                String environment = "NORMAL";
+                String difficulty = "EASY";
+                boolean isMods = false;
+                String modName = null;
+                if (Bukkit.getWorld(w) == null) {
+                    long seed = -1L;
+                    if (config.get("worlds." + w + ".seed") != null) {
+                        seed = config.getLong("worlds." + w + ".seed");
                     }
-                    World world = Bukkit.getWorld(w);
-                    if (world != null) {
-                        if (config.get("worlds." + w + ".difficulty") != null) {
-                            difficulty = config.getString("worlds." + w + ".difficulty");
-                            world.setDifficulty(Difficulty.valueOf(difficulty));
-                        }
-                        if (config.get("worlds." + w + ".worldborder") != null) {
-                            world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
-                        }
+                    if (config.get("worlds." + w + ".environment") != null) {
+                        environment = config.getString("worlds." + w + ".environment");
+                    }
+                    if (config.get("worlds." + w + ".difficulty") != null) {
+                        difficulty = config.getString("worlds." + w + ".difficulty");
+                    }
+                    if (config.get("worlds." + w + ".ismods") != null) {
+                        isMods = config.getBoolean("worlds." + w + ".ismods");
+                    }
+                    if (config.get("worlds." + w + ".modName") != null) {
+                        modName = config.getString("worlds." + w + ".modName");
+                    }
+                    // Worlds created by mods are no longer loaded when the mod is unloaded
+                    if (isMods && !ServerAPI.hasMod(modName)) {
+                        config.set("worlds." + w, null);
+                        init();
+                        return;
+                    }
+                    WorldCreator wc = new WorldCreator(w);
+                    wc.seed(seed);
+                    wc.environment(World.Environment.valueOf(environment));
+
+                    wc.createWorld();
+                }
+                World world = Bukkit.getWorld(w);
+                if (world != null) {
+                    if (config.get("worlds." + w + ".difficulty") != null) {
+                        difficulty = config.getString("worlds." + w + ".difficulty");
+                        world.setDifficulty(Difficulty.valueOf(difficulty));
+                    }
+                    if (config.get("worlds." + w + ".worldborder") != null) {
+                        world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
                     }
                 }
             }
-        } catch (Exception e) {
-            e.fillInStackTrace();
         }
     }
 
@@ -133,14 +137,9 @@ public class ConfigByWorlds {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
             if (ConfigByWorlds.f.exists()) {
-                try {
-                    config.load(ConfigByWorlds.f);
-                    if (config.getString("worlds." + world.getName()) != null) {
-                        config.set("worlds." + world.getName(), null);
-                        config.save(ConfigByWorlds.f);
-                    }
-                } catch (Exception e) {
-                    e.fillInStackTrace();
+                if (config.getString("worlds." + world.getName()) != null) {
+                    config.set("worlds." + world.getName(), null);
+                    init();
                 }
             }
         }
@@ -149,49 +148,37 @@ public class ConfigByWorlds {
     public static void addSpawn(Location location) {
         World world = location.getWorld();
         if (ConfigByWorlds.f.exists()) {
-            try {
-                config.load(ConfigByWorlds.f);
-                if (config.getString("worlds." + world.getName()) != null) {
-                    config.set("worlds." + world.getName() + ".spawn.x", location.getX());
-                    config.set("worlds." + world.getName() + ".spawn.y", location.getY());
-                    config.set("worlds." + world.getName() + ".spawn.z", location.getZ());
-                    config.set("worlds." + world.getName() + ".spawn.yaw", location.getYaw());
-                    config.set("worlds." + world.getName() + ".spawn.pitch", location.getPitch());
-                }
-                config.save(ConfigByWorlds.f);
-            } catch (Exception e) {
-                e.fillInStackTrace();
+            if (config.getString("worlds." + world.getName()) != null) {
+                config.set("worlds." + world.getName() + ".spawn.x", location.getX());
+                config.set("worlds." + world.getName() + ".spawn.y", location.getY());
+                config.set("worlds." + world.getName() + ".spawn.z", location.getZ());
+                config.set("worlds." + world.getName() + ".spawn.yaw", location.getYaw());
+                config.set("worlds." + world.getName() + ".spawn.pitch", location.getPitch());
             }
+            init();
         }
     }
 
     public static void getSpawn(String w, Player player) {
         World world = Bukkit.getWorld(w);
         if (f.exists()) {
-            try {
-                config.load(f);
-                if (config.getString("worlds." + world.getName()) != null) {
-                    double x = config.getDouble("worlds." + world.getName() + ".spawn.x");
-                    double y = config.getDouble("worlds." + world.getName() + ".spawn.y");
-                    double z = config.getDouble("worlds." + world.getName() + ".spawn.z");
-                    double yaw = config.getDouble("worlds." + world.getName() + ".spawn.yaw");
-                    double pitch = config.getDouble("worlds." + world.getName() + ".spawn.pitch");
-                    player.teleport(new Location(world, x, y, z, (float) yaw, (float) pitch));
-                } else {
-                    player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
-                }
-            } catch (Exception e) {
-                e.fillInStackTrace();
+            if (config.getString("worlds." + world.getName()) != null) {
+                double x = config.getDouble("worlds." + world.getName() + ".spawn.x");
+                double y = config.getDouble("worlds." + world.getName() + ".spawn.y");
+                double z = config.getDouble("worlds." + world.getName() + ".spawn.z");
+                double yaw = config.getDouble("worlds." + world.getName() + ".spawn.yaw");
+                double pitch = config.getDouble("worlds." + world.getName() + ".spawn.pitch");
+                player.teleport(new Location(world, x, y, z, (float) yaw, (float) pitch));
+            } else {
+                player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
             }
         }
     }
 
     public static void addFlag(World world, String key, Object v) {
-        config.set("worlds." + world.getName() + "." + key, v);
-        try {
-            config.save(ConfigByWorlds.f);
-        } catch (Exception e) {
-            e.fillInStackTrace();
+        if (config.get("worlds." + world.getName() + "." + key) == null) {
+            config.set("worlds." + world.getName() + "." + key, v);
+            init();
         }
     }
 }

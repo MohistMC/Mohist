@@ -456,8 +456,8 @@ public final class CraftServer implements Server {
                 enablePlugin(plugin);
             }
         }
-        MohistPlugin.init(this);
         if (type == PluginLoadOrder.POSTWORLD) {
+            MohistPlugin.init(this);
             // Spigot start - Allow vanilla commands to be forced to be the main command
             setVanillaCommands(true);
             commandMap.setFallbackCommands();
@@ -1121,6 +1121,7 @@ public final class CraftServer implements Server {
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
         World world1 = internal.getWorld();
+        world1.setBukkit(true);
         Level2LevelStem.reloadAndInit(world1);
         return world1;
     }

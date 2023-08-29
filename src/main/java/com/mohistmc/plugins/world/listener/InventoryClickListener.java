@@ -47,27 +47,20 @@ public class InventoryClickListener {
 
         world.setSpawnLocation(spawnLocation);
         p.sendMessage(ChatColor.GREEN + "The world was created successfully");
-        try {
-            ConfigByWorlds.addWorld(world.getName());
-            ConfigByWorlds.addSpawn(spawnLocation);
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
+        ConfigByWorlds.addWorld(world.getName());
+        ConfigByWorlds.addSpawn(spawnLocation);
     }
 
     public static void init(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player p) {
             if (event.getView().getTitle().startsWith(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey())) {
-                try {
-                    event.setCancelled(true);
-                    if (event.getCurrentItem() == null) {
-                        return;
-                    }
-                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
-                        createWorld(event, p);
-                    }
-                } catch (Exception ex) {
-                    ex.fillInStackTrace();
+
+                event.setCancelled(true);
+                if (event.getCurrentItem() == null) {
+                    return;
+                }
+                if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
+                    createWorld(event, p);
                 }
             } else if (event.getView().getTitle().equals(MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey())) {
                 event.setCancelled(true);
