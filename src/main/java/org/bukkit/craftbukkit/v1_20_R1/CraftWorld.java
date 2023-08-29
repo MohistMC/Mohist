@@ -1888,6 +1888,35 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     }
     // Spigot end
 
+    // Mohist start
+    private boolean isbukkit = false;
+    @Override
+    public boolean isBukkit() {
+        return isbukkit;
+    }
+
+    @Override
+    public void setBukkit(boolean b) {
+        isbukkit = b;
+    }
+
+    @Override
+    public boolean isMods() {
+        String path = getWorldFolder().getAbsolutePath().replaceAll("\\\\", "/");
+        return !isBukkit() && path.contains("/world/dimensions/");
+    }
+
+    @Override
+    public String getModid() {
+        String path = getWorldFolder().getAbsolutePath().replaceAll("\\\\", "/");
+        String modName = "";
+        if(path.contains("/world/dimensions/")) {
+            modName = path.split("/world/dimensions/")[1].split("/")[0];
+        }
+        return modName;
+    }
+    // Mohist end
+
     // Spigot start
     private final Spigot spigot = new Spigot() {
 

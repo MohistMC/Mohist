@@ -36,7 +36,7 @@ public class InventoryClickListener {
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            String msg = String.format( MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart1") + worldName) +  MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart2");
+            String msg = String.format(MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart1") + worldName) + MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart2");
             p.sendMessage(ChatColor.RED + msg);
             return;
         }
@@ -59,16 +59,13 @@ public class InventoryClickListener {
     public static void init(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player p) {
             if (event.getView().getTitle().startsWith(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey())) {
-                try {
-                    event.setCancelled(true);
-                    if (event.getCurrentItem() == null) {
-                        return;
-                    }
-                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
-                        createWorld(event, p);
-                    }
-                } catch (Exception ex) {
-                    ex.fillInStackTrace();
+
+                event.setCancelled(true);
+                if (event.getCurrentItem() == null) {
+                    return;
+                }
+                if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
+                    createWorld(event, p);
                 }
             } else if (event.getView().getTitle().equals(MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey())) {
                 event.setCancelled(true);

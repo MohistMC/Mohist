@@ -26,28 +26,29 @@ public class WorldsGUI {
         Inventory inv = Bukkit.createInventory(null, groesse, name);
         for (World w : Bukkit.getWorlds()) {
             ArrayList<String> infoLore = new ArrayList<>();
-            try {
-                FileConfiguration config = ConfigByWorlds.config;
-                config.load(ConfigByWorlds.f);
-                if (ConfigByWorlds.f.exists() && config.getConfigurationSection("worlds.") != null) {
-                    String worldtype = w.getEnvironment() == null ? "null" : w.getEnvironment().name();
-                    String infos = "§7-/-";
-                    String name1 = w.getName();
-                    String difficulty = w.getDifficulty().name();
-                    if (config.get("worlds." + w.getName() + ".info") != null) {
-                        infos = config.getString("worlds." + w.getName() + ".info");
-                        worldtype = config.getString("worlds." + w.getName() + ".environment");
-                        name1 = config.getString("worlds." + w.getName() + ".name");
-                        difficulty = config.getString("worlds." + w.getName() + ".difficulty");
-                    }
-                    infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_0.getKey() + name1.replace("&", "§"));
-                    infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_1.getKey() + infos.replace("&", "§"));
-                    infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_2.getKey() + w.getWorldBorder().getSize());
-                    infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_3.getKey() + worldtype);
-                    infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
+            FileConfiguration config = ConfigByWorlds.config;
+            if (ConfigByWorlds.f.exists() && config.getConfigurationSection("worlds.") != null) {
+                String worldtype = w.getEnvironment() == null ? "null" : w.getEnvironment().name();
+                String infos = "§7-/-";
+                String name1 = w.getName();
+                String difficulty = w.getDifficulty().name();
+                if (config.get("worlds." + w.getName() + ".info") != null) {
+                    infos = config.getString("worlds." + w.getName() + ".info");
+                    worldtype = config.getString("worlds." + w.getName() + ".environment");
+                    name1 = config.getString("worlds." + w.getName() + ".name");
+                    difficulty = config.getString("worlds." + w.getName() + ".difficulty");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_0.getKey() + name1.replace("&", "§"));
+                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_1.getKey() + infos.replace("&", "§"));
+                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_2.getKey() + w.getWorldBorder().getSize());
+                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_3.getKey() + worldtype);
+                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
+                if (w.isMods()) {
+                    infoLore.add("§bModid §8>> §7" + w.getModid());
+                }
+                if (w.isBukkit()) {
+                    infoLore.add("§bPluginWorld §8>> §7" + w.isBukkit());
+                }
             }
             inv.setItem(pos, ItemAPI.doItem(Material.MAP, 1, "§7>> §6" + w.getName(), infoLore));
             ++pos;
