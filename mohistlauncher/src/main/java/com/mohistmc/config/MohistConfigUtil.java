@@ -95,13 +95,6 @@ public class MohistConfigUtil {
     }
 
     public static void i18n() {
-        String mohist_lang = MOHISTLANG();
-        Locale locale = Locale.getDefault();
-        if (mohist_lang.contains("_")) {
-            String l = mohist_lang.split("_")[0];
-            String c = mohist_lang.split("_")[1];
-            locale = new Locale(l, c);
-        }
-        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), locale);
+        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), MOHISTLANG());
     }
 }
