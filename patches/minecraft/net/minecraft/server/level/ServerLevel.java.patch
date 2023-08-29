@@ -373,8 +373,8 @@
     public void m_8712_(LevelChunk p_8713_) {
 +      // Spigot Start
 +      for (net.minecraft.world.level.block.entity.BlockEntity tileentity : p_8713_.m_62954_().values()) {
-+         if (tileentity instanceof net.minecraft.world.Container) {
-+            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((net.minecraft.world.Container) tileentity).getViewers())) {
++         if (tileentity instanceof net.minecraft.world.Container container) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(container.getViewers())) {
 +               h.closeInventory();
 +            }
 +         }
