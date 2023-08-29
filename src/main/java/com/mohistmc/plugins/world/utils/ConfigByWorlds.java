@@ -4,7 +4,6 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.YamlUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.LevelStem;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;

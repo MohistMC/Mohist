@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,7 +65,7 @@ public class BlockEventDispatcher {
         // CraftBukkit start - fire BlockBreakEvent
         org.bukkit.block.Block bblock = CraftBlock.at(level, pos);
         BlockBreakEvent bukkitEvent;
-        if (player instanceof final ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
             if (level instanceof final ServerLevel serverLevel) {
                 // Sword + Creative mode pre-cancel
                 boolean isSwordNoBreak = !serverPlayer.getMainHandItem().getItem().canAttackBlock(state, serverLevel, pos, serverPlayer);
@@ -127,7 +128,7 @@ public class BlockEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof ServerPlayer serverPlayer) {
+        if (entity instanceof ServerPlayer serverPlayer && !(entity instanceof FakePlayer)) {
             org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
             Direction direction = event.getPlaceEventDirection();
             if (direction != null) {
@@ -154,7 +155,7 @@ public class BlockEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onMultiPlace(BlockEvent.EntityMultiPlaceEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof ServerPlayer serverPlayer) {
+        if (entity instanceof ServerPlayer serverPlayer && !(entity instanceof FakePlayer)) {
             org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
             Direction direction = event.getPlaceEventDirection();
             if (direction != null) {
