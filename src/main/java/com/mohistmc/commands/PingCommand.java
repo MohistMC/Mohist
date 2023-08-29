@@ -1,6 +1,7 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.MohistMC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -47,7 +48,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
+                sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
                 return false;
             }
         } else if(args.length == 1) {
@@ -57,7 +58,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + "The player [" + args[0] + "] is not online.");
+                sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep1") + args[1] + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep2"));
                 return false;
             }
         }

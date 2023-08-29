@@ -1,5 +1,6 @@
 package com.mohistmc.commands;
 
+import com.mohistmc.MohistMC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -23,7 +24,7 @@ public class PermissionCommand extends Command {
 
     public PermissionCommand(String name) {
         super(name);
-        this.description = "Permission manager";
+        this.description = MohistMC.i18n.get("permissioncmd.description");
         this.usageMessage = "/permission <check>";
         this.setPermission("mohist.command.permission");
     }
@@ -49,7 +50,7 @@ public class PermissionCommand extends Command {
                 if (player != null) {
                     sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
                 } else {
-                    sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
+                    sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep1") + args[1] + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep2") );
                 }
             }
             default -> {

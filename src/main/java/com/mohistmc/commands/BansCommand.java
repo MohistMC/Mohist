@@ -1,6 +1,7 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
@@ -30,7 +31,7 @@ public class BansCommand extends Command {
     private final List<String> params1 = Arrays.asList("item", "entity", "enchantment");
     public BansCommand(String name) {
         super(name);
-        this.description = "Mohist related commands";
+        this.description = MohistMC.i18n.get("banscmd.description");
         this.usageMessage = "/bans [add|show] [item|entity|enchantment]";
         this.setPermission("mohist.command.bans");
     }
@@ -40,7 +41,7 @@ public class BansCommand extends Command {
         if (!testPermission(sender)) {
             return false;
         }
-        String check = "This function is not enabled, you can go to mohist.yml to enable it.";
+        String check = MohistMC.i18n.get("banscmd.check");
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");

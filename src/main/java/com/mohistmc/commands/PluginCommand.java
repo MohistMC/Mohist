@@ -18,6 +18,7 @@
 
 package com.mohistmc.commands;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.plugins.pluginmanager.PluginManagers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,7 +37,7 @@ public class PluginCommand extends Command {
 
     public PluginCommand(String name) {
         super(name);
-        this.description = "Plugin manager";
+        this.description = MohistMC.i18n.get("plugincmd.description");
         this.usageMessage = "/plugin [load|unload|reload] [name]";
         this.setPermission("mohist.command.plugin");
     }

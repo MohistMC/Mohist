@@ -33,7 +33,7 @@ public class BackupWorldCommand extends Command {
 
     public BackupWorldCommand(String name) {
         super(name);
-        this.description = "Create a backup of your world.";
+        this.description = MohistMC.i18n.get("worldbackupcmd.description");
         this.usageMessage = "/backupworld";
         this.setPermission("mohist.command.backupworld");
     }
@@ -42,26 +42,26 @@ public class BackupWorldCommand extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (sender.isOp()) {
             if (args.length != 1) {
-                sender.sendMessage("You need to specify the world name.");
+                sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.promptWorldName"));
                 return true;
             }
 
             World world = Bukkit.getWorld(args[0]);
             if (!new File(args[0]).exists() || world == null) {
-                sender.sendMessage("This world doesn't exists.  " + Bukkit.getWorlds());
+                sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.worldDontExists")  + Bukkit.getWorlds());
                 return true;
             }
             world.save();
             new Thread(() -> {
                 try {
-                    sender.sendMessage("Creating world backup, please wait...");
+                    sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.creatingWorldBackup"));
                     LocalDateTime now = LocalDateTime.now();
                     File zip = new File("./MohistBackups/" + args[0] + "-" + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".zip");
                     zip.getParentFile().mkdirs();
                     zip.createNewFile();
 
                     ZipUtil.zipFolder(Paths.get("./" + args[0]), zip.toPath());
-                    sender.sendMessage("The world has been successfully saved!");
+                    sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.worldComplete"));
                 } catch (Exception e) {
                     MohistMC.LOGGER.error("Failed to save world or this world doesn't exists.", e);
                 }
