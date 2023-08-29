@@ -43,7 +43,6 @@ public class WorldsGUI {
                 infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_2.getKey() + w.getWorldBorder().getSize());
                 infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_3.getKey() + worldtype);
                 infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
-                infoLore.add(MessageI18N.WORLDMANAGE_GUI_LORE_4.getKey() + difficulty);
                 if (w.isMods()) {
                     infoLore.add("§bModid §8>> §7" + w.getModid());
                 }
