@@ -1,14 +1,29 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -18,6 +_,8 @@
+@@ -18,8 +_,12 @@
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
  import net.minecraft.network.FriendlyByteBuf;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.LivingEntity;
  import org.apache.commons.lang3.ObjectUtils;
++import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
  import org.slf4j.Logger;
+ 
+ public class SynchedEntityData {
+@@ -123,6 +_,10 @@
+    }
+ 
+    public <T> void m_276349_(EntityDataAccessor<T> p_276368_, T p_276363_, boolean p_276370_) {
++      if (p_276368_ == LivingEntity.f_20961_ && this.f_135344_ instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
++         CraftPlayer player = serverPlayer.getBukkitEntity();
++         player.setRealHealth(((Float) p_276363_));
++      }
+       SynchedEntityData.DataItem<T> dataitem = this.m_135379_(p_276368_);
+       if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.m_135403_())) {
+          dataitem.m_135397_(p_276363_);
 @@ -209,6 +_,26 @@
     public boolean m_135388_() {
        return this.f_135345_.isEmpty();

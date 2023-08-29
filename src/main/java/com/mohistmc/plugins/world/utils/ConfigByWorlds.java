@@ -4,6 +4,7 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.YamlUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.LevelStem;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.io.File;
+import java.util.Objects;
 
 public class ConfigByWorlds {
     public static File f = new File("mohist-config", "worlds.yml");
@@ -85,7 +87,20 @@ public class ConfigByWorlds {
     public static void loadWorlds() {
         if (config.getConfigurationSection("worlds.") != null) {
             for (String w : config.getConfigurationSection("worlds.").getKeys(false)) {
-
+                boolean canload = true;
+                if (Objects.equals(w, "DIM1")) {
+                    if (!Bukkit.getAllowNether()) {
+                        config.set("worlds." + w, null);
+                        init();
+                        canload = false;
+                    }
+                } else if (Objects.equals(w, "DIM-1")) {
+                    if (!Bukkit.getAllowEnd()) {
+                        config.set("worlds." + w, null);
+                        init();
+                        canload = false;
+                    }
+                }
                 String environment = "NORMAL";
                 String difficulty = "EASY";
                 boolean isMods = false;
@@ -111,13 +126,15 @@ public class ConfigByWorlds {
                     if (isMods && !ServerAPI.hasMod(modName)) {
                         config.set("worlds." + w, null);
                         init();
-                        return;
+                        canload = false;
                     }
-                    WorldCreator wc = new WorldCreator(w);
-                    wc.seed(seed);
-                    wc.environment(World.Environment.valueOf(environment));
+                    if (canload) {
+                        WorldCreator wc = new WorldCreator(w);
+                        wc.seed(seed);
+                        wc.environment(World.Environment.valueOf(environment));
 
-                    wc.createWorld();
+                        wc.createWorld();
+                    }
                 }
                 World world = Bukkit.getWorld(w);
                 if (world != null) {
