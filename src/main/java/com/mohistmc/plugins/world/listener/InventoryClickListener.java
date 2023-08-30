@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.listener;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
@@ -23,7 +24,7 @@ public class InventoryClickListener {
 
     public static void createWorld(InventoryClickEvent event, Player p) {
         p.closeInventory();
-        p.sendMessage(ChatColor.GREEN + "Start to create the world, there will be a little lag");
+        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateStart"));
         String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
         World.Environment environment = World.Environment.valueOf(itemName);
         String worldName = WorldsCommands.type;
@@ -35,7 +36,7 @@ public class InventoryClickListener {
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            String msg = String.format("Unable to create world %s. There may be more information in the console", worldName);
+            String msg = String.format(MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart1") + worldName) + MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart2");
             p.sendMessage(ChatColor.RED + msg);
             return;
         }
@@ -46,9 +47,13 @@ public class InventoryClickListener {
         }
 
         world.setSpawnLocation(spawnLocation);
-        p.sendMessage(ChatColor.GREEN + "The world was created successfully");
-        ConfigByWorlds.addWorld(world.getName());
-        ConfigByWorlds.addSpawn(spawnLocation);
+        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateSuccess"));
+        try {
+            ConfigByWorlds.addWorld(world.getName());
+            ConfigByWorlds.addSpawn(spawnLocation);
+        } catch (Exception e) {
+            e.fillInStackTrace();
+        }
     }
 
     public static void init(InventoryClickEvent event) {

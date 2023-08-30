@@ -18,6 +18,7 @@
 
 package com.mohistmc.commands;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.gui.GUIItem;
@@ -43,7 +44,7 @@ public class ItemsCommand extends Command {
 
     public ItemsCommand(String name) {
         super(name);
-        this.description = "Mohist item edit commands";
+        this.description = MohistMC.i18n.get("itemscmd.description");
         this.usageMessage = "/items [info|name|save|list|get|remove]";
         this.setPermission("mohist.command.items");
     }
@@ -69,7 +70,7 @@ public class ItemsCommand extends Command {
         }
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
+            sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
             return false;
         }
 
@@ -82,7 +83,7 @@ public class ItemsCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "info" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + "You have nothing on main hand.");
+                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 ItemsCommand.info(player);
@@ -90,7 +91,7 @@ public class ItemsCommand extends Command {
             }
             case "name" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + "You have nothing on main hand.");
+                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 if (args.length != 2) {
@@ -103,7 +104,7 @@ public class ItemsCommand extends Command {
             }
             case "save" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + "You have nothing on main hand.");
+                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 if (args.length != 2) {
@@ -112,16 +113,16 @@ public class ItemsCommand extends Command {
                 }
                 ItemsConfig.yaml.set("items." + args[1], itemStack);
                 ItemsConfig.save();
-                sender.sendMessage(ChatColor.GREEN + "Item save complete.");
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.completeSet"));
                 return true;
             }
             case "lore" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + "You have nothing on main hand.");
+                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 ItemAPI.lore(itemStack, List.of("§4test §2LO§3RE"));
-                sender.sendMessage(ChatColor.GREEN + "Item lore set complete.");
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.completeLore"));
                 return true;
             }
             case "get" -> {
@@ -132,7 +133,7 @@ public class ItemsCommand extends Command {
                 if (player.getInventory().firstEmpty() != -1) {
                     player.getInventory().addItem(ItemsConfig.get(args[1]));
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "You inventory full.");
+                    sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.inventoryFull"));
                     return false;
                 }
                 return true;
@@ -143,7 +144,7 @@ public class ItemsCommand extends Command {
                     return false;
                 }
                 ItemsConfig.remove(args[1]);
-                sender.sendMessage(ChatColor.GREEN + "Item §6" + args[1] + ChatColor.GREEN + " removed.");
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + MohistMC.i18n.get("itemscmd.removedItemp2") );
                 return true;
             }
             case "list" ->{

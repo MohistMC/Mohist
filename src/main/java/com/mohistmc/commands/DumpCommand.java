@@ -54,7 +54,7 @@ public class DumpCommand extends Command {
 
     public DumpCommand(String name) {
         super(name);
-        this.description = "Universal Dump, which will print the information you need locally!";
+        this.description = MohistMC.i18n.get("dumpcmd.description");
         this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements]";
         this.setPermission("mohist.command.dump");
     }

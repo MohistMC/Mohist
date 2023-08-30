@@ -1,5 +1,6 @@
 package com.mohistmc.commands;
 
+import com.mohistmc.MohistMC;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
@@ -70,7 +71,7 @@ public class ShowsCommand extends Command {
 
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + "You must be a player to perform this command.");
+            sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
             return false;
         }
 

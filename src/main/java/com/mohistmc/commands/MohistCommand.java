@@ -74,10 +74,10 @@ public class MohistCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "mods" -> {
                 // Not recommended for use in games, only test output
-                sender.sendMessage(ChatColor.GREEN + "Inside mods: (" + ServerAPI.modlists_Inside.size() + ") -> " + ServerAPI.modlists_Inside);
-                sender.sendMessage(ChatColor.GREEN + "Only Client mods: (" + ServerAPI.modlists_Client.size() + ") -> " + ServerAPI.modlists_Client);
-                sender.sendMessage(ChatColor.GREEN + "Only Server mods: (" + ServerAPI.modlists_Server.size() + ") -> " + ServerAPI.modlists_Server);
-                sender.sendMessage(ChatColor.GREEN + "All mods: (" + ServerAPI.modlists_All.size() + ") -> " + ServerAPI.modlists_All);
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("mohistcmd.insidemods") + ServerAPI.modlists_Inside.size() + ") -> " + ServerAPI.modlists_Inside);
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("mohistcmd.clientOnlymods")+ ServerAPI.modlists_Client.size() + ") -> " + ServerAPI.modlists_Client);
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("mohistcmd.serverOnlymods") + ServerAPI.modlists_Server.size() + ") -> " + ServerAPI.modlists_Server);
+                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("mohistcmd.allMods") + ServerAPI.modlists_All.size() + ") -> " + ServerAPI.modlists_All);
             }
             case "playermods" -> {
                 // Not recommended for use in games, only test output
@@ -89,12 +89,12 @@ public class MohistCommand extends Command {
                 if (player != null) {
                     sender.sendMessage(ChatColor.GREEN + String.valueOf(PlayerAPI.getModSize(player)) + " " + PlayerAPI.getModlist(player).toString());
                 } else {
-                    sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
+                    sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep1") + args[1] + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep2"));
                 }
             }
             case "reload" -> {
-                Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues.");
-                Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+                Command.broadcastCommandMessage(sender, ChatColor.RED + MohistMC.i18n.get("mohistcmd.reload.line1"));
+                Command.broadcastCommandMessage(sender, ChatColor.RED + MohistMC.i18n.get("mohistcmd.reload.line2"));
 
                 com.mohistmc.MohistConfig.init((File) MinecraftServer.options.valueOf("mohist-settings"));
 
@@ -120,24 +120,24 @@ public class MohistCommand extends Command {
                                 float speed = Float.parseFloat(args[1]);
                                 if (speed >= 0.0f && speed < 11.0f) {
                                     p.setFlySpeed(speed / 10.0f);
-                                    p.sendMessage("The flight speed is set to §b" + speed);
+                                    p.sendMessage(MohistMC.i18n.get("mohistcmd.playerflightspeedSet") + speed);
                                 }
                             } else {
                                 float speed = Float.parseFloat(args[1]);
                                 if (speed >= 0.0f && speed < 11.0f) {
                                     p.setWalkSpeed(speed / 10.0f);
-                                    p.sendMessage("Walk speed is set to §b" + speed);
+                                    p.sendMessage(MohistMC.i18n.get("mohistcmd.playerwalkspeedset") + speed);
                                 }
                             }
                         }
                         if (args[0].equalsIgnoreCase("reset")) {
                             p.setFlySpeed(0.1f);
                             p.setWalkSpeed(0.2f);
-                            p.sendMessage("Walking and flying speeds have been restored to default.");
+                            p.sendMessage(MohistMC.i18n.get("mohistcmd.flightAndWalkspeedRestore"));
                         }
                     }
                 } else {
-                    sender.sendMessage("§cConsole can't overdrive");
+                    sender.sendMessage("§c" + MohistMC.i18n.get("控制台不能覆盖这个设置"));
                 }
             }
             default -> {
