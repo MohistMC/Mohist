@@ -88,7 +88,7 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -226,11 +_,32 @@
+@@ -226,6 +_,25 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
     private boolean f_217034_;
@@ -114,21 +114,15 @@
  
     protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
        super(p_20966_, p_20967_);
-       this.f_20943_ = new AttributeMap(DefaultAttributes.m_22297_(p_20966_));
--      this.m_21153_(this.m_21233_());
-+      this.craftAttributes = new CraftAttributeMap(f_20943_); // CraftBukkit
-+      // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
-+      this.f_19804_.m_135381_(LivingEntity.f_20961_, (float) this.m_21051_(Attributes.f_22276_).m_22135_());
-       this.f_19850_ = true;
-       this.f_20928_ = (float)((Math.random() + 1.0D) * (double)0.01F);
-       this.m_20090_();
-@@ -239,7 +_,8 @@
+@@ -239,7 +_,10 @@
        this.f_20885_ = this.m_146908_();
        this.m_274367_(0.6F);
        NbtOps nbtops = NbtOps.f_128958_;
 -      this.f_20939_ = this.m_8075_(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
 +      var dyn = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
 +      this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dyn), dyn);
++      this.craftAttributes = new CraftAttributeMap(f_20943_); // CraftBukkit
++      this.f_19804_.m_135381_(f_20961_, (float) this.m_21172_(Attributes.f_22276_));
     }
  
     public Brain<?> m_6274_() {
@@ -498,7 +492,7 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.m_9236_().f_46443_) {
-@@ -1015,12 +_,28 @@
+@@ -1015,19 +_,54 @@
  
     }
  
@@ -528,13 +522,16 @@
     }
  
     public float m_21223_() {
-@@ -1028,6 +_,22 @@
++      if (this instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
++         return (float) serverPlayer.getBukkitEntity().getHealth();
++      }
+       return this.f_19804_.m_135370_(f_20961_);
     }
  
     public void m_21153_(float p_21154_) {
 +      // CraftBukkit start - Handle scaled health
-+      if (this instanceof ServerPlayer) {
-+         org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = ((ServerPlayer) this).getBukkitEntity();
++      if (this instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
++         org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = serverPlayer.getBukkitEntity();
 +         // Squeeze
 +         if (p_21154_ < 0.0F) {
 +            player.setRealHealth(0.0D);
@@ -928,28 +925,28 @@
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  
-@@ -1550,7 +_,8 @@
-       if (p_21193_.m_269533_(DamageTypeTags.f_268437_)) {
-          return p_21194_;
-       } else {
--         if (this.m_21023_(MobEffects.f_19606_) && !p_21193_.m_269533_(DamageTypeTags.f_268630_)) {
-+         // CraftBukkit - Moved to damageEntity0(DamageSource, float)
-+         if (false && this.m_21023_(MobEffects.f_19606_) && !p_21193_.m_269533_(DamageTypeTags.f_268630_)) {
-             int i = (this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
-             int j = 25 - i;
+@@ -1556,14 +_,17 @@
              float f = p_21194_ * (float)j;
-@@ -1559,9 +_,9 @@
-             float f2 = f1 - p_21194_;
+             float f1 = p_21194_;
+             p_21194_ = Math.max(f / 25.0F, 0.0F);
+-            float f2 = f1 - p_21194_;
++            // CraftBukkit - Moved to damageEntity0(DamageSource, float)
++            /*
++            float f2 = f1 - pDamageAmount;
              if (f2 > 0.0F && f2 < 3.4028235E37F) {
                 if (this instanceof ServerPlayer) {
 -                  ((ServerPlayer)this).m_36222_(Stats.f_12934_, Math.round(f2 * 10.0F));
-+                  ((ServerPlayer)this).m_6278_(Stats.f_12988_.m_12902_(Stats.f_12934_), Math.round(f2 * 10.0F));
-                } else if (p_21193_.m_7639_() instanceof ServerPlayer) {
+-               } else if (p_21193_.m_7639_() instanceof ServerPlayer) {
 -                  ((ServerPlayer)p_21193_.m_7639_()).m_36222_(Stats.f_12930_, Math.round(f2 * 10.0F));
-+                  ((ServerPlayer)p_21193_.m_7639_()).m_6278_(Stats.f_12988_.m_12902_(Stats.f_12930_), Math.round(f2 * 10.0F));
++                  ((ServerPlayer)this).awardStat(Stats.CUSTOM.get(Stats.DAMAGE_RESISTED), Math.round(f2 * 10.0F));
++               } else if (pDamageSource.getEntity() instanceof ServerPlayer) {
++                  ((ServerPlayer)pDamageSource.getEntity()).awardStat(Stats.CUSTOM.get(Stats.DAMAGE_DEALT_RESISTED), Math.round(f2 * 10.0F));
                 }
              }
++            */
           }
+ 
+          if (p_21194_ <= 0.0F) {
 @@ -1582,27 +_,158 @@
     }
  

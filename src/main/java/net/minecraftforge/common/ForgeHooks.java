@@ -849,7 +849,7 @@ public class ForgeHooks
             }
             catch (Exception exception)
             {
-                LOGGER.error("Couldn't parse element {}:{}", directory, location, exception);
+                //LOGGER.error("Couldn't parse element {}:{}", directory, location, exception);
                 return Optional.empty();
             }
         };

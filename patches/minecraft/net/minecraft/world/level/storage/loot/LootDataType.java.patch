@@ -17,7 +17,7 @@
        this.f_278508_ = p_279334_;
        this.f_278462_ = p_279433_;
        this.f_278443_ = p_279363_;
-@@ -41,17 +_,17 @@
+@@ -41,31 +_,31 @@
        this.f_278443_.m_278714_(p_279366_, p_279106_, p_279124_);
     }
  
@@ -39,7 +39,11 @@
              try {
                 return Optional.of(p_279398_.fromJson(p_279222_, p_279251_));
              } catch (Exception exception) {
-@@ -62,10 +_,10 @@
+-               f_278425_.error("Couldn't parse element {}:{}", p_279358_, p_279297_, exception);
++               //LOGGER.error("Couldn't parse element {}:{}", p_279358_, p_279297_, exception);
+                return Optional.empty();
+             }
+          };
        };
     }
  
@@ -52,3 +56,12 @@
              try {
                 if (p_279409_.isJsonArray()) {
                    T[] at = (T[])((Object[])p_279462_.fromJson(p_279409_, oclass));
+@@ -74,7 +_,7 @@
+                   return Optional.of(p_279462_.fromJson(p_279409_, p_279337_));
+                }
+             } catch (Exception exception) {
+-               f_278425_.error("Couldn't parse element {}:{}", p_279351_, p_279495_, exception);
++               //LOGGER.error("Couldn't parse element {}:{}", p_279351_, p_279495_, exception);
+                return Optional.empty();
+             }
+          };

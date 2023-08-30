@@ -99,7 +99,7 @@
     private WardenSpawnTracker f_244516_ = new WardenSpawnTracker(0, 0, 0);
     private final ContainerSynchronizer f_143379_ = new ContainerSynchronizer() {
        public void m_142589_(AbstractContainerMenu p_143448_, NonNullList<ItemStack> p_143449_, ItemStack p_143450_, int[] p_143451_) {
-@@ -245,6 +_,20 @@
+@@ -245,6 +_,22 @@
     public int f_8943_;
     public boolean f_8944_;
  
@@ -117,10 +117,12 @@
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
++   public boolean initialized = false; // Mohist
++
     public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_) {
        super(p_254435_, p_254435_.m_220360_(), p_254435_.m_220361_(), p_253651_);
        this.f_8939_ = p_254143_.m_7950_(this);
-@@ -254,11 +_,55 @@
+@@ -254,11 +_,56 @@
        this.f_8909_ = p_254143_.m_6846_().m_11296_(this);
        this.m_274367_(1.0F);
        this.m_9201_(p_254435_);
@@ -130,6 +132,7 @@
 +      this.displayName = this.m_6302_();
 +      this.bukkitPickUpLoot = true;
 +      this.maxHealthCache = this.m_21233_();
++      initialized = true;
 +   }
 +
 +   // Yes, this doesn't match Vanilla, but it's the best we can do for now.
