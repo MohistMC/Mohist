@@ -2,6 +2,7 @@ package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
+import com.mohistmc.org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import com.mohistmc.org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
