@@ -867,7 +867,7 @@
              this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
           }
  
-@@ -1404,20 +_,27 @@
+@@ -1404,15 +_,21 @@
     protected void func_184590_k(float p_184590_1_) {
     }
  
@@ -891,13 +891,27 @@
     protected float func_70672_c(DamageSource p_70672_1_, float p_70672_2_) {
        if (p_70672_1_.func_151517_h()) {
           return p_70672_2_;
-       } else {
--         if (this.func_70644_a(Effects.field_76429_m) && p_70672_1_ != DamageSource.field_76380_i) {
-+         // CraftBukkit - Moved to damageEntity0(DamageSource, float)
-+         if (false && this.func_70644_a(Effects.field_76429_m) && p_70672_1_ != DamageSource.field_76380_i) {
-             int i = (this.func_70660_b(Effects.field_76429_m).func_76458_c() + 1) * 5;
-             int j = 25 - i;
+@@ -1423,14 +_,17 @@
              float f = p_70672_2_ * (float)j;
+             float f1 = p_70672_2_;
+             p_70672_2_ = Math.max(f / 25.0F, 0.0F);
++            // CraftBukkit - Moved to damageEntity0(DamageSource, float)
++            /*
+             float f2 = f1 - p_70672_2_;
+             if (f2 > 0.0F && f2 < 3.4028235E37F) {
+                if (this instanceof ServerPlayerEntity) {
+-                  ((ServerPlayerEntity)this).func_195067_a(Stats.field_212739_K, Math.round(f2 * 10.0F));
+-               } else if (p_70672_1_.func_76346_g() instanceof ServerPlayerEntity) {
+-                  ((ServerPlayerEntity)p_70672_1_.func_76346_g()).func_195067_a(Stats.field_212736_G, Math.round(f2 * 10.0F));
++                  ((ServerPlayerEntity)this).awardStat(Stats.DAMAGE_RESISTED, Math.round(f2 * 10.0F));
++               } else if (p_70672_1_.getEntity() instanceof ServerPlayerEntity) {
++                  ((ServerPlayerEntity)p_70672_1_.getEntity()).awardStat(Stats.DAMAGE_DEALT_RESISTED, Math.round(f2 * 10.0F));
+                }
+             }
++            */
+          }
+ 
+          if (p_70672_2_ <= 0.0F) {
 @@ -1447,23 +_,140 @@
     }
  
