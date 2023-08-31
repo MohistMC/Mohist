@@ -47,7 +47,7 @@ public class InventoryClickListener {
         }
 
         world.setSpawnLocation(spawnLocation);
-        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateSuccess"));
+        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateSuccess" , worldName));
         try {
             ConfigByWorlds.addWorld(world.getName());
             ConfigByWorlds.addSpawn(spawnLocation);
