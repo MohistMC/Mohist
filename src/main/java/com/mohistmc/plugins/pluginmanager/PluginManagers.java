@@ -26,7 +26,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
 
 
 public class PluginManagers {
@@ -62,7 +61,7 @@ public class PluginManagers {
             return false;
         }
 
-        for (Plugin p :  Bukkit.getPluginManager().getPlugins()) {
+        for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
             if (desc.getName().equals(p.getName())) {
                 sender.sendMessage(MohistMC.i18n.get("pluginscommand.alreadyloaded", desc.getName()));
                 return true;
