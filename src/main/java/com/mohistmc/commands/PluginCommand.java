@@ -55,7 +55,7 @@ public class PluginCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!testPermission(sender)) {
-            return true;
+            return false;
         }
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);

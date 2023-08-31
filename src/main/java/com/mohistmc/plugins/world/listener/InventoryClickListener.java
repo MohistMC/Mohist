@@ -24,10 +24,11 @@ public class InventoryClickListener {
 
     public static void createWorld(InventoryClickEvent event, Player p) {
         p.closeInventory();
-        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateStart"));
+        String worldName = WorldsCommands.type;
+        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateStart" , worldName));
         String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
         World.Environment environment = World.Environment.valueOf(itemName);
-        String worldName = WorldsCommands.type;
+
         WorldCreator wc = new WorldCreator(worldName);
         wc.seed((new Random()).nextLong());
         wc.environment(environment);

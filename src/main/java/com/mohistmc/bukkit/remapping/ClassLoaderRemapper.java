@@ -172,7 +172,6 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         if (!internalName.startsWith(PREFIX)) {
             throw new NoClassDefFoundError(internalName);
         }
-        LOGGER.warn("Loading CLIENT side class: {}", internalName);
         ClassWriter writer = new ClassWriter(0);
         writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC | Opcodes.ACC_DEPRECATED, internalName, null, "java/lang/Object", new String[]{});
         writer.visitEnd();
