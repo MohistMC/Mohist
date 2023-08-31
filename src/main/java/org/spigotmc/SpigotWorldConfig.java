@@ -192,7 +192,7 @@ public class SpigotWorldConfig
     public int itemDespawnRate;
     private void itemDespawnRate()
     {
-        itemDespawnRate = getInt( "item-despawn-rate", 1200 );
+        itemDespawnRate = getInt( "item-despawn-rate", 6000 );
         log( "Item Despawn Rate: " + itemDespawnRate );
     }
 
