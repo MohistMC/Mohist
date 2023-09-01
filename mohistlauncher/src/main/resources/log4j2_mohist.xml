@@ -25,7 +25,7 @@
             </PatternLayout>
         </TerminalConsole>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.zip">
-            <PatternLayout pattern="%d %highlight{%-5level} %style{[%t]} %style{%c{1.}.%M(%L)}: %msg{nolookups}%n" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg{nolookups}}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
@@ -33,7 +33,7 @@
             <DefaultRolloverStrategy max="99" fileIndex="min"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
-            <PatternLayout pattern="%d %highlight{%-5level} %style{[%t]} %style{%c{1.}.%M(%L)}: %msg{nolookups}%n" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg{nolookups}}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
