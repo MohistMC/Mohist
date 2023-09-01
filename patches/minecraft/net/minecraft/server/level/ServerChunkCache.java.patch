@@ -25,7 +25,7 @@
     public ThreadedLevelLightEngine m_7827_() {
        return this.f_8331_;
     }
-@@ -120,7 +_,7 @@
+@@ -120,12 +_,16 @@
           for(int j = 0; j < 4; ++j) {
              if (i == this.f_8337_[j] && p_8362_ == this.f_8338_[j]) {
                 ChunkAccess chunkaccess = this.f_8339_[j];
@@ -34,6 +34,15 @@
                    return chunkaccess;
                 }
              }
+          }
+ 
++         ChunkHolder chunkholder = this.m_8364_(i);
++         if (chunkholder != null && chunkholder.currentlyLoading != null)
++            return chunkholder.currentlyLoading; // Neo: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
++
+          profilerfiller.m_6174_("getChunkCacheMiss");
+          CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.m_8456_(p_8360_, p_8361_, p_8362_, p_8363_);
+          this.f_8332_.m_18701_(completablefuture::isDone);
 @@ -162,6 +_,7 @@
           if (chunkholder == null) {
              return null;
