@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/item/ArmorItem.java
 +++ b/net/minecraft/world/item/ArmorItem.java
-@@ -24,6 +_,8 @@
+@@ -24,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.AABB;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
  
@@ -16,7 +17,7 @@
 -         livingentity.m_8061_(equipmentslot, itemstack);
 +         // CraftBukkit start
 +         Level world = p_40399_.m_7727_();
-+         org.bukkit.block.Block block = world.getWorld().getBlockAt(p_40399_.m_7961_().m_123341_(), p_40399_.m_7961_().m_123342_(), p_40399_.m_7961_().m_123343_());
++         org.bukkit.block.Block block = CraftBlock.at(world, p_40399_.m_7961_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +
 +         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) livingentity.getBukkitEntity());

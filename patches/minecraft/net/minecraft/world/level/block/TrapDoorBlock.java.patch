@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -26,6 +_,7 @@
+@@ -26,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty f_57514_ = BlockStateProperties.f_61446_;
-@@ -102,6 +_,19 @@
+@@ -102,6 +_,18 @@
        if (!p_57548_.f_46443_) {
           boolean flag = p_57548_.m_276867_(p_57549_);
           if (flag != p_57547_.m_61143_(f_57516_)) {
 +            // CraftBukkit start
-+            org.bukkit.World bworld = p_57548_.getWorld();
-+            org.bukkit.block.Block bblock = bworld.getBlockAt(p_57549_.m_123341_(), p_57549_.m_123342_(), p_57549_.m_123343_());
++            org.bukkit.block.Block bblock = CraftBlock.at(p_57548_, p_57549_);
 +
 +            int power = bblock.getBlockPower();
 +            int oldPower = (Boolean) p_57547_.m_61143_(f_57514_) ? 15 : 0;

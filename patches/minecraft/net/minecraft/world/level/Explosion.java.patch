@@ -9,7 +9,7 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.item.PrimedTnt;
  import net.minecraft.world.entity.player.Player;
-@@ -33,11 +_,16 @@
+@@ -33,11 +_,17 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.FluidState;
@@ -20,6 +20,7 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
@@ -130,7 +131,7 @@
 +         List<org.bukkit.block.Block> blockList = new ObjectArrayList<>();
 +         for (int i1 = this.f_46020_.size() - 1; i1 >= 0; i1--) {
 +            BlockPos cpos = this.f_46020_.get(i1);
-+            org.bukkit.block.Block bblock = bworld.getBlockAt(cpos.m_123341_(), cpos.m_123342_(), cpos.m_123343_());
++            org.bukkit.block.Block bblock = CraftBlock.at(this.f_46012_, cpos);
 +            if (!bblock.getType().isAir()) {
 +               blockList.add(bblock);
 +            }

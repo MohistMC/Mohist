@@ -35,7 +35,7 @@
  
 +         // CraftBukkit start
 +         if (!this.f_60160_) {
-+            org.bukkit.block.Block block = p_60168_.getWorld().getBlockAt(p_60169_.m_123341_(), p_60169_.m_123342_(), p_60169_.m_123343_());
++            org.bukkit.block.Block block = CraftBlock.at(p_60168_, p_60169_);
 +            BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(direction));
 +            p_60168_.getCraftServer().getPluginManager().callEvent(event);
 +
@@ -78,7 +78,7 @@
           Direction direction = p_60185_ ? p_60184_ : p_60184_.m_122424_();
           int j = 0;
 +         // CraftBukkit start
-+         final org.bukkit.block.Block bblock = p_60182_.getWorld().getBlockAt(p_60183_.m_123341_(), p_60183_.m_123342_(), p_60183_.m_123343_());
++         final org.bukkit.block.Block bblock = CraftBlock.at(p_60182_, p_60183_);
 +
 +         final List<BlockPos> moved = pistonstructureresolver.m_60436_();
 +         final List<BlockPos> broken = pistonstructureresolver.m_60437_();

@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/CommandBlock.java
 +++ b/net/minecraft/world/level/block/CommandBlock.java
-@@ -25,6 +_,7 @@
+@@ -25,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.block.state.properties.DirectionProperty;
  import net.minecraft.world.phys.BlockHitResult;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  import org.slf4j.Logger;
  
@@ -13,7 +14,7 @@
              boolean flag = p_51839_.m_276867_(p_51840_);
              boolean flag1 = commandblockentity.m_59142_();
 +            // CraftBukkit start
-+            org.bukkit.block.Block bukkitBlock = p_51839_.getWorld().getBlockAt(p_51840_.m_123341_(), p_51840_.m_123342_(), p_51840_.m_123343_());
++            org.bukkit.block.Block bukkitBlock = CraftBlock.at(p_51839_, p_51840_);
 +            int old = flag1 ? 15 : 0;
 +            int current = flag ? 15 : 0;
 +

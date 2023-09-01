@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/item/HangingEntityItem.java
 +++ b/net/minecraft/world/item/HangingEntityItem.java
-@@ -19,6 +_,7 @@
+@@ -19,6 +_,8 @@
  import net.minecraft.world.item.context.UseOnContext;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.hanging.HangingPlaceEvent;
  
  public class HangingEntityItem extends Item {
@@ -14,7 +15,7 @@
              if (!level.f_46443_) {
 +               // CraftBukkit start - fire HangingPlaceEvent
 +               org.bukkit.entity.Player who = (p_41331_.m_43723_() == null) ? null : (org.bukkit.entity.Player) p_41331_.m_43723_().getBukkitEntity();
-+               org.bukkit.block.Block blockClicked = level.getWorld().getBlockAt(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               org.bukkit.block.Block blockClicked = CraftBlock.at(level, blockpos);
 +               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock.notchToBlockFace(direction);
 +               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(p_41331_.m_43724_());
 +

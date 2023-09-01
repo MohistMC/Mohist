@@ -7,12 +7,13 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -22,8 +_,11 @@
+@@ -22,8 +_,12 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
 -
 -public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.LeavesDecayEvent;
 +
 +import java.util.OptionalInt;
@@ -26,7 +27,7 @@
     public void m_213898_(BlockState p_221379_, ServerLevel p_221380_, BlockPos p_221381_, RandomSource p_221382_) {
        if (this.m_221385_(p_221379_)) {
 +         // CraftBukkit start
-+         LeavesDecayEvent event = new LeavesDecayEvent(p_221380_.getWorld().getBlockAt(p_221381_.m_123341_(), p_221381_.m_123342_(), p_221381_.m_123343_()));
++         LeavesDecayEvent event = new LeavesDecayEvent(CraftBlock.at(p_221380_, p_221381_));
 +         p_221380_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled() || p_221380_.m_8055_(p_221381_).m_60734_() != this) {

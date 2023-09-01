@@ -8,10 +8,11 @@
  import net.minecraft.tags.FluidTags;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.entity.Entity;
-@@ -19,8 +_,9 @@
+@@ -19,8 +_,10 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
  
 -public class CactusBlock extends Block {
@@ -63,7 +64,7 @@
     }
  
     public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
-+      CraftEventFactory.blockDamage = p_51149_.getWorld().getBlockAt(p_51150_.m_123341_(), p_51150_.m_123342_(), p_51150_.m_123343_()); // CraftBukkit
++      CraftEventFactory.blockDamage = CraftBlock.at(p_51149_, p_51150_); // CraftBukkit
        p_51151_.m_6469_(p_51149_.m_269111_().m_269325_(), 1.0F);
 +      CraftEventFactory.blockDamage = null; // CraftBukkit
     }

@@ -12,10 +12,11 @@
  import java.util.function.Function;
  import java.util.stream.Collectors;
  import net.minecraft.Util;
-@@ -27,6 +_,11 @@
+@@ -27,6 +_,12 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
@@ -177,8 +178,8 @@
 +         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
 +
 +         // CraftBukkit start
-+         org.bukkit.block.Block theBlock = p_53432_.getWorld().getBlockAt(p_53433_.m_123341_(), p_53433_.m_123342_(), p_53433_.m_123343_());
-+         org.bukkit.block.Block sourceBlock = p_53432_.getWorld().getBlockAt(sourceposition.get().m_123341_(), sourceposition.get().m_123342_(), sourceposition.get().m_123343_());
++         org.bukkit.block.Block theBlock = CraftBlock.at(p_53432_, p_53433_);
++         org.bukkit.block.Block sourceBlock = CraftBlock.at(p_53432_, sourceposition.get());
 +
 +         BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
 +         p_53432_.getCraftServer().getPluginManager().callEvent(event);

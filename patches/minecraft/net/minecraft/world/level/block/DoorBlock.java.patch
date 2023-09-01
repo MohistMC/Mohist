@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DoorBlock.java
 +++ b/net/minecraft/world/level/block/DoorBlock.java
-@@ -27,11 +_,13 @@
+@@ -27,11 +_,14 @@
  import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
  import net.minecraft.world.level.block.state.properties.EnumProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -10,11 +10,12 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class DoorBlock extends Block {
     public static final DirectionProperty f_52726_ = HorizontalDirectionalBlock.f_54117_;
-@@ -178,8 +_,23 @@
+@@ -178,8 +_,22 @@
     }
  
     public void m_6861_(BlockState p_52776_, Level p_52777_, BlockPos p_52778_, Block p_52779_, BlockPos p_52780_, boolean p_52781_) {
@@ -23,9 +24,8 @@
 +      // CraftBukkit start
 +      BlockPos otherHalf = p_52778_.m_121945_(p_52776_.m_61143_(f_52730_) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
 +
-+      org.bukkit.World bworld = p_52777_.getWorld();
-+      org.bukkit.block.Block bukkitBlock = bworld.getBlockAt(p_52778_.m_123341_(), p_52778_.m_123342_(), p_52778_.m_123343_());
-+      org.bukkit.block.Block blockTop = bworld.getBlockAt(otherHalf.m_123341_(), otherHalf.m_123342_(), otherHalf.m_123343_());
++      org.bukkit.block.Block bukkitBlock = CraftBlock.at(p_52777_, p_52778_);
++      org.bukkit.block.Block blockTop = CraftBlock.at(p_52777_, otherHalf);
 +
 +      int power = bukkitBlock.getBlockPower();
 +      int powerTop = blockTop.getBlockPower();

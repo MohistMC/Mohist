@@ -1,9 +1,11 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -8,6 +_,11 @@
+@@ -8,6 +_,13 @@
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.material.FluidState;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator;
 +import org.bukkit.event.block.SpongeAbsorbEvent;
@@ -66,10 +68,10 @@
 +      // CraftBukkit start
 +      List<CraftBlockState> blocks = blockList.getList(); // Is a clone
 +      if (!blocks.isEmpty()) {
-+         final org.bukkit.block.Block bblock = p_56808_.getWorld().getBlockAt(p_56809_.m_123341_(), p_56809_.m_123342_(), p_56809_.m_123343_());
++         final org.bukkit.block.Block bblock = CraftBlock.at(p_56808_, p_56809_);
 +
 +         SpongeAbsorbEvent event = new SpongeAbsorbEvent(bblock, (List<org.bukkit.block.BlockState>) (List) blocks);
-+         p_56808_.getCraftServer().getPluginManager().callEvent(event);
++         Bukkit.getPluginManager().callEvent(event);
 +
 +         if (event.isCancelled()) {
 +            return false;

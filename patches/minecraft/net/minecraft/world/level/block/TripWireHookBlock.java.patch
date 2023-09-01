@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -26,6 +_,7 @@
+@@ -26,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TripWireHookBlock extends Block {
@@ -13,7 +14,7 @@
        }
  
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = p_57686_.getWorld().getBlockAt(p_57687_.m_123341_(), p_57687_.m_123342_(), p_57687_.m_123343_());
++      org.bukkit.block.Block block = CraftBlock.at(p_57686_, p_57687_);
 +
 +      BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, 15, 0);
 +      p_57686_.getCraftServer().getPluginManager().callEvent(eventRedstone);

@@ -49,7 +49,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,17 @@
+@@ -69,8 +_,18 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
@@ -58,6 +58,7 @@
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CapturedBlockState;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 +import org.bukkit.entity.SpawnCategory;
@@ -508,7 +509,7 @@
  
     public long m_183596_() {
        return (long)(this.f_186455_++);
-@@ -880,4 +_,54 @@
+@@ -880,4 +_,53 @@
        MOB,
        TNT;
     }
@@ -539,9 +540,8 @@
 +
 +            // CraftBukkit start
 +            iblockdata1.m_60762_(this, blockposition, k, j - 1); // Don't call an event for the old block to limit event spam
-+            CraftWorld world = ((ServerLevel) this).getWorld();
 +            if (world != null) {
-+               BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(blockposition.m_123341_(), blockposition.m_123342_(), blockposition.m_123343_()), CraftBlockData.fromData(iblockdata));
++               BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(this, blockposition), CraftBlockData.fromData(iblockdata));
 +               this.getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {

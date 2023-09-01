@@ -1,9 +1,17 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -13,9 +_,12 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.block.entity;
+ 
++import com.mohistmc.bukkit.inventory.InventoryOwner;
+ import com.mojang.logging.LogUtils;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReportCategory;
+@@ -13,9 +_,13 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
@@ -81,7 +89,7 @@
     }
  
     public void m_6339_() {
-@@ -191,9 +_,25 @@
+@@ -191,9 +_,22 @@
        return this.f_58855_;
     }
  
@@ -100,10 +108,7 @@
 +
 +   // CraftBukkit start - add method
 +   public InventoryHolder getOwner() {
-+      if (f_58857_ == null) return null;
-+      org.bukkit.block.BlockState state = f_58857_.getWorld().getBlockAt(f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_()).getState();
-+      if (state instanceof InventoryHolder) return (InventoryHolder) state;
-+      return null;
++      return InventoryOwner.get(this);
 +   }
 +   // CraftBukkit end
  }

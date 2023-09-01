@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/item/LeadItem.java
 +++ b/net/minecraft/world/item/LeadItem.java
-@@ -11,6 +_,8 @@
+@@ -11,6 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.hanging.HangingPlaceEvent;
  
  public class LeadItem extends Item {
@@ -44,7 +45,7 @@
 +
 +               // CraftBukkit start - fire HangingPlaceEvent
 +               org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(enumhand);
-+               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), pPlayer != null ? (org.bukkit.entity.Player) pPlayer.getBukkitEntity() : null, pLevel.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
++               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) leashfenceknotentity.getBukkitEntity(), pPlayer != null ? (org.bukkit.entity.Player) pPlayer.getBukkitEntity() : null, CraftBlock.at(pLevel, pPos), org.bukkit.block.BlockFace.SELF, hand);
 +               pLevel.getCraftServer().getPluginManager().callEvent(event);
 +
 +               if (event.isCancelled()) {

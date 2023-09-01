@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/LeverBlock.java
 +++ b/net/minecraft/world/level/block/LeverBlock.java
-@@ -22,6 +_,7 @@
+@@ -22,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class LeverBlock extends FaceAttachedHorizontalDirectionalBlock {
@@ -14,7 +15,7 @@
        } else {
 +         // CraftBukkit start - Interact Lever
 +         boolean powered = p_54640_.m_61143_(f_54622_); // Old powered state
-+         org.bukkit.block.Block block = p_54641_.getWorld().getBlockAt(p_54642_.m_123341_(), p_54642_.m_123342_(), p_54642_.m_123343_());
++         org.bukkit.block.Block block = CraftBlock.at(p_54641_, p_54642_);
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +

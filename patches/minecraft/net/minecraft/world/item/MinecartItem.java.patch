@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -15,6 +_,9 @@
+@@ -15,6 +_,10 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.level.gameevent.GameEvent;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
@@ -26,7 +27,7 @@
 -         AbstractMinecart abstractminecart = AbstractMinecart.m_38119_(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.m_41720_()).f_42935_);
 +         // CraftBukkit start
 +         ItemStack itemstack1 = p_42950_.m_41620_(1);
-+         org.bukkit.block.Block block2 = level.getWorld().getBlockAt(p_42949_.m_7961_().m_123341_(), p_42949_.m_7961_().m_123342_(), p_42949_.m_7961_().m_123343_());
++         org.bukkit.block.Block block2 = CraftBlock.at(level, p_42949_.m_7961_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +         BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));

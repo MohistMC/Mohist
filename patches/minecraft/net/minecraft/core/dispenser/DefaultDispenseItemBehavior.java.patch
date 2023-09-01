@@ -1,9 +1,10 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -7,9 +_,24 @@
+@@ -7,9 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftVector;
 +import org.bukkit.event.block.BlockDispenseEvent;
@@ -64,7 +65,7 @@
 +      itementity.m_20334_(pLevel.f_46441_.m_216328_((double)pFacing.m_122429_() * d3, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_(0.2D, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_((double)pFacing.m_122431_() * d3, 0.0172275D * (double)pSpeed));
 +
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = pLevel.getWorld().getBlockAt(isourceblock.m_7961_().m_123341_(), isourceblock.m_7961_().m_123342_(), isourceblock.m_7961_().m_123343_());
++      org.bukkit.block.Block block = CraftBlock.at(pLevel, isourceblock.m_7961_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(pStack);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.m_20184_()));

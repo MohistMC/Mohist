@@ -8,10 +8,11 @@
  import net.minecraft.world.item.context.BlockPlaceContext;
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.Level;
-@@ -21,6 +_,7 @@
+@@ -21,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class TripWireBlock extends Block {
@@ -25,16 +26,15 @@
           p_57615_.m_7731_(p_57616_, p_57617_.m_61124_(f_57592_, Boolean.valueOf(true)), 4);
           p_57615_.m_142346_(p_57618_, GameEvent.f_157781_, p_57616_);
        }
-@@ -124,6 +_,40 @@
+@@ -124,6 +_,39 @@
              }
           }
        }
 +
 +      // CraftBukkit start - Call interact even when triggering connected tripwire
 +      if (flag != flag1 && flag1 && (Boolean)blockstate.m_61143_(f_57591_)) {
-+         org.bukkit.World bworld = p_57608_.getWorld();
 +         org.bukkit.plugin.PluginManager manager = p_57608_.getCraftServer().getPluginManager();
-+         org.bukkit.block.Block block = bworld.getBlockAt(p_57609_.m_123341_(), p_57609_.m_123342_(), p_57609_.m_123343_());
++         org.bukkit.block.Block block = CraftBlock.at(p_57608_, p_57609_);
 +         boolean allowed = false;
 +
 +         // If all of the events are cancelled block the tripwire trigger, else allow

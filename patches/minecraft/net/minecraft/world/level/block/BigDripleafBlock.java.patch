@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/BigDripleafBlock.java
 +++ b/net/minecraft/world/level/block/BigDripleafBlock.java
-@@ -39,6 +_,8 @@
+@@ -39,6 +_,9 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
@@ -28,7 +29,7 @@
 +            if (p_152269_ instanceof Player) {
 +               cancellable = CraftEventFactory.callPlayerInteractEvent((Player) p_152269_, org.bukkit.event.block.Action.PHYSICAL, p_152268_, null, null, null);
 +            } else {
-+               cancellable = new EntityInteractEvent(p_152269_.getBukkitEntity(), p_152267_.getWorld().getBlockAt(p_152268_.m_123341_(), p_152268_.m_123342_(), p_152268_.m_123343_()));
++               cancellable = new EntityInteractEvent(p_152269_.getBukkitEntity(), CraftBlock.at(p_152267_, p_152268_));
 +               p_152267_.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
 +            }
 +

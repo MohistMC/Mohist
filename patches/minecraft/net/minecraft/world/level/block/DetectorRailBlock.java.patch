@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
-@@ -23,6 +_,7 @@
+@@ -23,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.phys.AABB;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class DetectorRailBlock extends BaseRailBlock {
@@ -25,7 +26,7 @@
  
 +         // CraftBukkit start
 +         if (flag != flag1) {
-+            org.bukkit.block.Block block = p_52433_.getWorld().getBlockAt(p_52434_.m_123341_(), p_52434_.m_123342_(), p_52434_.m_123343_());
++            org.bukkit.block.Block block = CraftBlock.at(p_52433_, p_52434_);
 +
 +            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
 +            p_52433_.getCraftServer().getPluginManager().callEvent(eventRedstone);

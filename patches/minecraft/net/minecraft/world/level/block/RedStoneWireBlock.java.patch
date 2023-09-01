@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/RedStoneWireBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneWireBlock.java
-@@ -32,6 +_,7 @@
+@@ -32,6 +_,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class RedStoneWireBlock extends Block {
@@ -41,7 +42,7 @@
 +      // CraftBukkit start
 +      int oldPower = p_55533_.m_61143_(f_55500_);
 +      if (oldPower != i) {
-+         BlockRedstoneEvent event = new BlockRedstoneEvent(p_55531_.getWorld().getBlockAt(p_55532_.m_123341_(), p_55532_.m_123342_(), p_55532_.m_123343_()), oldPower, i);
++         BlockRedstoneEvent event = new BlockRedstoneEvent(CraftBlock.at(p_55531_, p_55532_), oldPower, i);
 +         p_55531_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         i = event.getNewCurrent();

@@ -1,10 +1,11 @@
 --- a/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java
 +++ b/net/minecraft/core/dispenser/AbstractProjectileDispenseBehavior.java
-@@ -7,6 +_,9 @@
+@@ -7,6 +_,10 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
 +import net.minecraft.world.level.block.entity.DispenserBlockEntity;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
@@ -18,7 +19,7 @@
 +
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123367_.m_41620_(1);
-+      org.bukkit.block.Block block = level.getWorld().getBlockAt(p_123366_.m_7961_().m_123341_(), p_123366_.m_7961_().m_123342_(), p_123366_.m_7961_().m_123343_());
++      org.bukkit.block.Block block = CraftBlock.at(level, p_123366_.m_7961_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +      
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) direction.m_122429_(), (double) ((float) direction.m_122430_() + 0.1F), (double) direction.m_122431_()));

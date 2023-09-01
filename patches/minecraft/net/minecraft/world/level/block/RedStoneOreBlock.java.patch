@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,9 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
@@ -28,7 +29,7 @@
 +               interact(p_154299_.m_8055_(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }
 +         } else {
-+            EntityInteractEvent event = new EntityInteractEvent(p_154302_.getBukkitEntity(), p_154299_.getWorld().getBlockAt(p_154300_.m_123341_(), p_154300_.m_123342_(), p_154300_.m_123343_()));
++            EntityInteractEvent event = new EntityInteractEvent(p_154302_.getBukkitEntity(), CraftBlock.at(p_154299_, p_154300_));
 +            p_154299_.getCraftServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.m_8055_(p_154300_), p_154299_, p_154300_, p_154302_); // add entity

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MagmaBlock.java
 +++ b/net/minecraft/world/level/block/MagmaBlock.java
-@@ -2,10 +_,14 @@
+@@ -2,15 +_,20 @@
  
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
@@ -15,11 +15,17 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
+ 
+ public class MagmaBlock extends Block {
+    private static final int f_153775_ = 20;
 @@ -21,7 +_,9 @@
  
     public void m_141947_(Level p_153777_, BlockPos p_153778_, BlockState p_153779_, Entity p_153780_) {
        if (!p_153780_.m_20161_() && p_153780_ instanceof LivingEntity && !EnchantmentHelper.m_44938_((LivingEntity)p_153780_)) {
-+         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = p_153777_.getWorld().getBlockAt(p_153778_.m_123341_(), p_153778_.m_123342_(), p_153778_.m_123343_()); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = CraftBlock.at(p_153777_, p_153778_); // CraftBukkit
           p_153780_.m_6469_(p_153777_.m_269111_().m_269047_(), 1.0F);
 +         org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.blockDamage = null; // CraftBukkit
        }

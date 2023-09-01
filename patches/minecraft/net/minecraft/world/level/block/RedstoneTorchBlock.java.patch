@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/RedstoneTorchBlock.java
 +++ b/net/minecraft/world/level/block/RedstoneTorchBlock.java
-@@ -16,6 +_,7 @@
+@@ -16,6 +_,8 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class RedstoneTorchBlock extends TorchBlock {
@@ -14,7 +15,7 @@
  
 +      // CraftBukkit start
 +      org.bukkit.plugin.PluginManager manager = p_221950_.getCraftServer().getPluginManager();
-+      org.bukkit.block.Block block = p_221950_.getWorld().getBlockAt(p_221951_.m_123341_(), p_221951_.m_123342_(), p_221951_.m_123343_());
++      org.bukkit.block.Block block = CraftBlock.at(p_221950_, p_221951_);
 +      int oldCurrent = ((Boolean) p_221949_.m_61143_(f_55674_)).booleanValue() ? 15 : 0;
 +
 +      BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);

@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/level/block/ButtonBlock.java
 +++ b/net/minecraft/world/level/block/ButtonBlock.java
-@@ -26,6 +_,8 @@
+@@ -26,6 +_,9 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
@@ -14,8 +15,8 @@
           return InteractionResult.CONSUME;
        } else {
 +         // CraftBukkit start
-+         boolean powered = ((Boolean) p_51088_.m_61143_(f_51045_));
-+         org.bukkit.block.Block block = p_51089_.getWorld().getBlockAt(p_51090_.m_123341_(), p_51090_.m_123342_(), p_51090_.m_123343_());
++         boolean powered = p_51088_.m_61143_(f_51045_);
++         org.bukkit.block.Block block = CraftBlock.at(p_51089_, p_51090_);
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
@@ -36,7 +37,7 @@
 +
 +      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
 +      if (flag1 != flag && flag) {
-+         org.bukkit.block.Block block = p_51122_.getWorld().getBlockAt(p_51123_.m_123341_(), p_51123_.m_123342_(), p_51123_.m_123343_());
++         org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
 +         EntityInteractEvent event = new EntityInteractEvent(abstractarrow.getBukkitEntity(), block);
 +         p_51122_.getCraftServer().getPluginManager().callEvent(event);
 +
@@ -49,7 +50,7 @@
        if (flag != flag1) {
 +         // CraftBukkit start
 +         boolean powered = flag1;
-+         org.bukkit.block.Block block = p_51122_.getWorld().getBlockAt(p_51123_.m_123341_(), p_51123_.m_123342_(), p_51123_.m_123343_());
++         org.bukkit.block.Block block = CraftBlock.at(p_51122_, p_51123_);
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
 +
