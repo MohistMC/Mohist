@@ -18,8 +18,6 @@
 
 package com.mohistmc.util;
 
-import com.mohistmc.config.MohistConfigUtil;
-
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;

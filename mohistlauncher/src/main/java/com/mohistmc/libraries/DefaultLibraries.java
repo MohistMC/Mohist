@@ -26,6 +26,9 @@ import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,7 +51,6 @@ public class DefaultLibraries {
 
     public static void run() throws Exception {
         System.out.println(MohistMCStart.i18n.get("libraries.checking.start"));
-        System.out.println(MohistMCStart.i18n.get("libraries.downloadsource", DownloadSource.get().name()));
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -57,28 +59,40 @@ public class DefaultLibraries {
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
             }
-            if (lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))) {
+            if (lib.exists() && Objects.equals(MD5Util.getMd5(lib), libs.get(lib))) {
                 currentSize.addAndGet(lib.length());
                 continue;
             }
             defaultLibs.add(lib);
         }
-        for (File lib : defaultLibs) {
-            lib.getParentFile().mkdirs();
 
-            String u = libUrl(lib);
-            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
-            try {
-                UpdateUtils.downloadFile(u, lib, libs.get(lib));
-                JarLoader.loadJar(lib.toPath());
-                currentSize.addAndGet(lib.length());
-                fail.remove(u.replace(MAVENURL, ""));
-            } catch (Exception e) {
-                if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
-                    System.out.println(MohistMCStart.i18n.get("file.download.nook", u));
-                    lib.delete();
+        if (!defaultLibs.isEmpty()) {
+            System.out.println(MohistMCStart.i18n.get("libraries.downloadsource", DownloadSource.get().name()));
+            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage"));
+            ProgressBarBuilder builder = new ProgressBarBuilder().setTaskName("")
+                    .setStyle(ProgressBarStyle.ASCII)
+                    .setUpdateIntervalMillis(100)
+                    .setInitialMax(defaultLibs.size());
+            try (ProgressBar pb = builder.build()) {
+                for (File lib : defaultLibs) {
+                    lib.getParentFile().mkdirs();
+
+                    String u = libUrl(lib);
+                    String failKey = u.replace(MAVENURL, "");
+                    try {
+                        UpdateUtils.downloadFile(u, lib, libs.get(lib), false);
+                        JarLoader.loadJar(lib.toPath());
+                        currentSize.addAndGet(lib.length());
+                        fail.remove(failKey);
+                    } catch (Exception e) {
+                        if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
+                            System.out.println(MohistMCStart.i18n.get("file.download.nook", u));
+                            lib.delete();
+                        }
+                        fail.put(failKey, lib.getAbsolutePath());
+                    }
+                    pb.step();
                 }
-                fail.put(u.replace(MAVENURL, ""), lib.getAbsolutePath());
             }
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
@@ -91,7 +105,7 @@ public class DefaultLibraries {
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
         LinkedHashMap<File, String> temp = new LinkedHashMap<>();
-        BufferedReader b = new BufferedReader(new InputStreamReader(Objects.requireNonNull(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))));
+        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt")));
         String str;
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");

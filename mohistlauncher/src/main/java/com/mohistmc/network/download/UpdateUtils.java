@@ -36,13 +36,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class UpdateUtils {
-
-    private static int percentage = 0;
 
     public static void versionCheck() {
         System.out.println(MohistMCStart.i18n.get("update.check"));
@@ -70,37 +65,25 @@ public class UpdateUtils {
     }
 
     public static void downloadFile(String URL, File f) throws Exception {
-        downloadFile(URL, f, null);
+        downloadFile(URL, f, null, true);
     }
 
-    public static void downloadFile(String URL, File f, String md5) throws Exception {
+    public static void downloadFile(String URL, File f, String md5, boolean showlog) throws Exception {
         URLConnection conn = getConn(URL);
-        System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+        if (showlog) System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        int fS = conn.getContentLength();
 
-        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(2);
-        scheduledExecutorService.scheduleAtFixedRate(
-                () -> {
-                    if (rbc.isOpen()) {
-                        if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100) {
-                            System.out.println(MohistMCStart.i18n.get("file.download.percentage", f.getName(), percentage));
-                        }
-                        percentage = Math.round((float) f.length() / fS * 100);
-                    }
-                }, 3000, 1000, TimeUnit.SECONDS);
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        percentage = 0;
         String MD5 = MD5Util.getMd5(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
             System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
-            throw new Exception("md5");
+            return;
         }
-        System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
+        if (showlog) System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
     }
 
     public static String getSize(long size) {
