@@ -8,7 +8,6 @@ version = VERSION
 repositories {
     mavenCentral()
     maven { url 'https://maven.mohistmc.com/' }
-    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
@@ -16,19 +15,19 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'com.mohistmc.yaml:yaml:0.4'
+    implementation 'com.mohistmc:yaml:0.5'
     implementation 'com.mohistmc:i18n:0.3'
     implementation 'org.yaml:snakeyaml:2.0'
-    implementation 'org.sharegov:mjson:1.4.1'
+    implementation 'com.mohistmc:mjson:1.4.2'
     implementation "cpw.mods:bootstraplauncher:1.1.2"
 }
 
 shadowJar {
     dependencies {
-        include(dependency('com.mohistmc.yaml:yaml:0.4'))
+        include(dependency('com.mohistmc:yaml:0.5'))
         include(dependency('org.yaml:snakeyaml:2.0'))
         include(dependency('com.mohistmc:i18n:0.3'))
-        include(dependency('org.sharegov:mjson:1.4.1'))
+        include(dependency('com.mohistmc:mjson:1.4.2'))
     }
     relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
