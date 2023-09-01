@@ -19,7 +19,7 @@ dependencies {
     implementation 'com.mohistmc.yaml:yaml:0.4'
     implementation 'com.mohistmc:i18n:0.3'
     implementation 'org.yaml:snakeyaml:2.0'
-
+    implementation 'org.sharegov:mjson:1.4.1'
     implementation "cpw.mods:bootstraplauncher:1.1.2"
 }
 
@@ -28,6 +28,7 @@ shadowJar {
         include(dependency('com.mohistmc.yaml:yaml:0.4'))
         include(dependency('org.yaml:snakeyaml:2.0'))
         include(dependency('com.mohistmc:i18n:0.3'))
+        include(dependency('org.sharegov:mjson:1.4.1'))
     }
     relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }

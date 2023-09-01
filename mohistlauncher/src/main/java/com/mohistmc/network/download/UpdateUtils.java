@@ -18,15 +18,15 @@
 
 package com.mohistmc.network.download;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
+import mjson.Json;
 
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -39,8 +39,6 @@ import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
 
@@ -51,18 +49,18 @@ public class UpdateUtils {
         System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
 
         try {
-            JsonElement root = JsonParser.parseReader(new InputStreamReader(getInput("https://mohistmc.com/api/1.20.1/latest")));
+            Json json = Json.read(new URL("https://mohistmc.com/api/1.20.1/latest"));
 
             String jar_sha = MohistMCStart.getVersion();
-            String build_number = "1.20.1-" + root.getAsJsonObject().get("number").toString();
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timeinmillis").toString())));
+            String build_number = "1.20.1-" + json.at("number").asInteger();
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.at("timeinmillis").asLong()));
 
             if (jar_sha.equals(build_number))
                 System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
             else {
                 System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
-                    downloadFile(root.getAsJsonObject().get("url").toString(), JarTool.getFile());
+                    downloadFile(json.at("url").asString(), JarTool.getFile());
                     restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
                 }
             }
@@ -118,5 +116,16 @@ public class UpdateUtils {
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
         if(shutdown) System.exit(0);
+    }
+
+    public static URLConnection getConn(String URL) {
+        URLConnection conn = null;
+        try {
+            conn = new URL(URL).openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+        } catch (IOException e) {
+            e.fillInStackTrace();
+        }
+        return conn;
     }
 }
