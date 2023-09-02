@@ -16,6 +16,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -72,6 +73,9 @@ public class MohistPlugin {
             BanItem.save(event1);
             BanEntity.save(event1);
             BanEnchantment.save(event1);
+        }
+        if (event instanceof PluginEnableEvent event1) {
+            PluginHooks.register(event1);
         }
     }
 

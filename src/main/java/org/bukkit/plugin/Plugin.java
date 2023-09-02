@@ -190,4 +190,9 @@ public interface Plugin extends TabExecutor {
      */
     @NotNull
     public String getName();
+
+    // Mohist start
+    public boolean callForge();
+    public void initCallForge();
+    // Mohist end
 }

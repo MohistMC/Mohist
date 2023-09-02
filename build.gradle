@@ -102,6 +102,7 @@ subprojects {
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
         maven { url 'https://maven.izzel.io/releases' }
+        maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -225,6 +226,8 @@ def sharedDeps = {
     installer 'com.mohistmc:i18n:0.3'
     installer 'com.mohistmc:brigadier:1.20.1'
     installer 'com.mohistmc:librariesvault:1.20.1'
+
+    compileOnly 'me.clip:placeholderapi:2.11.3'
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer "com.google.guava:guava:${GUAVA_VERSION}"
