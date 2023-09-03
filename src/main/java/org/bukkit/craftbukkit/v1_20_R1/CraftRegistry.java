@@ -1,9 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R1;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import org.bukkit.GameEvent;
 import org.bukkit.Keyed;
+import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure;
@@ -24,7 +28,29 @@ import java.util.stream.Stream;
 
 public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
+    private static RegistryAccess registry;
+
+    public static void setMinecraftRegistry(RegistryAccess registry) {
+        Preconditions.checkState(CraftRegistry.registry == null, "Registry already set");
+        CraftRegistry.registry = registry;
+    }
+
+    public static RegistryAccess getMinecraftRegistry() {
+        return registry;
+    }
+
+    public static <E> net.minecraft.core.Registry<E> getMinecraftRegistry(ResourceKey<net.minecraft.core.Registry<E>> key) {
+        return getMinecraftRegistry().registryOrThrow(key);
+    }
+
+
     public static <B extends Keyed> Registry<?> createRegistry(Class<B> bukkitClass, RegistryAccess registryHolder) {
+        if (bukkitClass == GameEvent.class) {
+            return new CraftRegistry<>(registryHolder.registryOrThrow(Registries.GAME_EVENT), CraftGameEvent::new);
+        }
+        if (bukkitClass == MusicInstrument.class) {
+            return new CraftRegistry<>(registryHolder.registryOrThrow(Registries.INSTRUMENT), CraftMusicInstrument::new);
+        }
         if (bukkitClass == Structure.class) {
             return new CraftRegistry<>(registryHolder.registryOrThrow(Registries.STRUCTURE), CraftStructure::new);
         }

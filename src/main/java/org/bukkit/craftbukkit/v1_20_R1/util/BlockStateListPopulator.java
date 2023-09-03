@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.LevelData;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockEntityState;
@@ -139,5 +140,16 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
     @Override
     public RegistryAccess registryAccess() {
         return world.registryAccess();
+    }
+
+    // Needed when a tree generates in water
+    @Override
+    public LevelData getLevelData() {
+        return world.getLevelData();
+    }
+
+    @Override
+    public long nextSubTickCount() {
+        return world.nextSubTickCount();
     }
 }

@@ -325,6 +325,8 @@ public final class CraftServer implements Server {
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
         Bukkit.setServer(this);
 
+        CraftRegistry.setMinecraftRegistry(console.registryAccess());
+
         ForgeInjectBukkit.init();
 
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
