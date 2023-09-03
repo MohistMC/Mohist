@@ -18,13 +18,13 @@
 
 package com.mohistmc.network.download;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.MD5Util;
+import mjson.Json;
 
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -36,9 +36,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-import static com.mohistmc.network.download.NetworkUtil.getInput;
-
 public class UpdateUtils {
 
     private static int percentage = 0;
@@ -48,11 +45,11 @@ public class UpdateUtils {
         System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
 
         try {
-            JsonElement root = JsonParser.parseReader(new InputStreamReader(getInput("https://mohistmc.com/api/1.19.4/latest")));
+            Json json = Json.read(new URL("https://mohistmc.com/api/1.19.4/latest"));
 
             String jar_sha = MohistMCStart.getVersion();
-            String build_number = "1.19.4-" + root.getAsJsonObject().get("number").toString();
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(root.getAsJsonObject().get("timeinmillis").toString())));
+            String build_number = "1.19.4-" + json.at("number").asInteger();
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.at("timeinmillis").asLong()));
 
             if (jar_sha.equals(build_number))
                 System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
@@ -100,5 +97,16 @@ public class UpdateUtils {
 
     public static String getSize(long size) {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
+    }
+
+    public static URLConnection getConn(String URL) {
+        URLConnection conn = null;
+        try {
+            conn = new URL(URL).openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+        } catch (IOException e) {
+            e.fillInStackTrace();
+        }
+        return conn;
     }
 }

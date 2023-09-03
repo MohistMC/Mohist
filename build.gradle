@@ -55,8 +55,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.19.4-45.1.18'
-    FORGE_VERSION = '45.1.18'
+    FORGE_VERSION = project.forge_version
+    VERSION = MC_VERSION + "-" + FORGE_VERSION
     MOHIST_VERSION = JenkinsNumber.info()
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
