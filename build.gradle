@@ -12,11 +12,11 @@ import com.mohistmc.tasks.JenkinsNumber
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '2.+'
+    id 'net.neoforged.gradleutils' version '[2.0.13,)'
     id 'eclipse'
-    id 'de.undercouch.download' version '5.1.3'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
+    id 'de.undercouch.download' version '5.4.0'
+    id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
+    id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -96,18 +96,19 @@ subprojects {
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
         maven { url 'https://maven.izzel.io/releases' }
+        maven { url = 'https://maven.neoforged.net/releases' }
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-        options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation" << "-Xlint:-dep-ann" << "-Xlint:-removal"// Mohist ignore compile warnings
+        options.warnings = false // Shutup deprecated for removal warnings
     }
 }
 
 project(':mcp') {
-    apply plugin: 'net.minecraftforge.gradle.mcp'
+    apply plugin: 'net.neoforged.gradle.mcp'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
@@ -117,7 +118,7 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'net.neoforged.gradle.patcher'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -469,7 +470,7 @@ def sharedFmlonlyForge = { Project prj ->
 project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'net.neoforged.gradle.patcher'
 
     sourceSets {
         main {

@@ -219,7 +219,7 @@ abstract class CheckATs extends DefaultTask {
 			}
 
 			
-			def data = []
+			def data = [] as List<String>
             def remapComment = { entry ->
                 if (!mappings || !entry || !entry.desc) return null
                 def comment = entry.comment?.substring(1)?.trim()

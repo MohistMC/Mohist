@@ -74,7 +74,7 @@ public class Util {
 			if (!checkExists(url)) {
 				url = "https://libraries.minecraft.net/${path}"
 				if (!checkExists(url)) {
-					url = "https://maven.minecraftforge.net/${path}"
+					url = "https://maven.neoforged.net/${path}"
 					if (!checkExists(url)) {
 						url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
 					}
