@@ -586,7 +586,7 @@
              if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {
-@@ -1065,32 +_,60 @@
+@@ -1065,32 +_,45 @@
                 }
              }
  
@@ -607,41 +607,25 @@
                 return false;
              }
  
--            this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
 +            // CraftBukkit start
-+            if (this instanceof Player player) {
-+               this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
-+               // Mohist start
-+               if (!player.canDamage()) {
-+                  return false;
-+               }
-+               // Mohist end
-+            } else {
-+               if (!this.damageEntity0(p_21016_, p_21017_ - this.f_20898_)) {
-+                  return false;
-+               }
+             this.m_6475_(p_21016_, p_21017_ - this.f_20898_);
++            if (!this.canDamage()) {
++               return false;
 +            }
 +            // CraftBukkit end
              this.f_20898_ = p_21017_;
              flag1 = false;
           } else {
-+            // CraftBukkit start
-+            if (this instanceof Player player) {
-+               this.m_6475_(p_21016_, p_21017_);
-+               // Mohist start
-+               if (!player.canDamage()) {
-+                  return false;
-+               }
-+               // Mohist end
-+            } else {
-+               if (!this.damageEntity0(p_21016_, p_21017_)) {
-+                  return false;
-+               }
-+               // CraftBukkit end
-+            }
-             this.f_20898_ = p_21017_;
+-            this.f_20898_ = p_21017_;
 -            this.f_19802_ = 20;
--            this.m_6475_(p_21016_, p_21017_);
++            // CraftBukkit start
+             this.m_6475_(p_21016_, p_21017_);
++            if (!this.canDamage()) {
++               return false;
++            }
++            // CraftBukkit end
++
++            this.f_20898_ = p_21017_;
 +            this.f_19802_ = this.f_20926_; // CraftBukkit - restore use of maxNoDamageTicks
 +            // CraftBukkit end
              this.f_20917_ = 10;
@@ -947,7 +931,7 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1582,27 +_,158 @@
+@@ -1582,27 +_,172 @@
     }
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
@@ -973,6 +957,12 @@
 +      damageEntity0(p_21240_, p_21241_);
 +   }
 +
++   public AtomicBoolean canDamage = new AtomicBoolean(true);
++   public boolean canDamage() {
++      return canDamage.getAndSet(true);
++   }
++   // Mohist end
++
 +   // CraftBukkit start
 +   protected boolean damageEntity0(final DamageSource pDamageSource, float pDamageAmount) { // void -> boolean, add final
 +      if (!this.m_6673_(pDamageSource)) {
@@ -982,7 +972,10 @@
 +         // Cauldron start - apply forge damage hook
 +         pDamageAmount = ForgeHooks.onLivingHurt(this, pDamageSource, pDamageAmount);
 +         // If the damage is negative return true
-+         if (pDamageAmount < 0) return true;
++         if (pDamageAmount < 0) {
++            this.canDamage.set(true);
++            return true;
++         }
 +         // Thermos detect null damage
 +         final boolean nulldmg = pDamageAmount == 0;
 +         // Cauldron end
@@ -1028,6 +1021,7 @@
 +            ((Player) pDamageSource.m_7639_()).m_36334_(); // Moved from Player in order to make the cooldown reset get called after the damage event is fired
 +         }
 +         if (event.isCancelled()) {
++            this.canDamage.set(false);
 +            return false;
 +         }
 +
@@ -1099,7 +1093,7 @@
 +               this.m_7911_(this.m_6103_() - pDamageAmount);
 +            }
 +            this.m_146852_(GameEvent.f_223706_, pDamageSource.m_7639_());
-+
++            this.canDamage.set(true);
 +            return true;
 +         } else {
 +            // Duplicate triggers if blocking
@@ -1114,13 +1108,17 @@
 +               if (pDamageSource.m_7639_() instanceof ServerPlayer) {
 +                  CriteriaTriggers.f_10573_.m_60112_((ServerPlayer) pDamageSource.m_7639_(), this, pDamageSource, pDamageAmount, originalDamage, true);
 +               }
++               this.canDamage.set(false);
 +               return false;
 +            } else {
-+               return originalDamage > 0;
++               boolean flag = originalDamage > 0;
++               this.canDamage.set(flag);
++               return flag;
 +            }
 +            // CraftBukkit end
           }
        }
++      this.canDamage.set(false);
 +      return false;
     }
  

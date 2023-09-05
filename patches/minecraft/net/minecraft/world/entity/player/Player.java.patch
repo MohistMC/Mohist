@@ -383,7 +383,7 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -874,25 +_,44 @@
+@@ -874,25 +_,37 @@
                 }
  
                 this.f_20935_ = ItemStack.f_41583_;
@@ -393,22 +393,15 @@
           }
  
        }
-    }
++   }
 +
-+   // Mohist start
 +   protected boolean damageEntity0(DamageSource damagesource, float f) { // void -> boolean
 +      return super.damageEntity0(damagesource, f);
-+   }
-+   public AtomicBoolean canDamage = new AtomicBoolean(true);
-+   public boolean canDamage() {
-+      return canDamage.getAndSet(true);
-+   }
-+   // Mohist end
+    }
  
     protected void m_6475_(DamageSource p_36312_, float p_36313_) {
 +      if (true) {
-+         boolean can = damageEntity0(p_36312_, p_36313_);
-+         canDamage.set(can);
++         damageEntity0(p_36312_, p_36313_);
 +         return;
 +      }
        if (!this.m_6673_(p_36312_)) {

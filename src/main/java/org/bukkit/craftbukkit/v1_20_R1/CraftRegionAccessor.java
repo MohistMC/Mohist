@@ -443,7 +443,7 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
 
     @Override
     public List<LivingEntity> getLivingEntities() {
-        List<LivingEntity> list = new ArrayList<LivingEntity>();
+        List<LivingEntity> list = new ArrayList<>();
 
         getNMSEntities().forEach(entity -> {
             Entity bukkitEntity = entity.getBukkitEntity();
