@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 
@@ -93,9 +94,16 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
         return bukkit;
     }
 
+    @NotNull
+    @Override
+    public Stream<B> stream() {
+        return minecraftRegistry.keySet().stream().map(minecraftKey -> get(CraftNamespacedKey.fromMinecraft(minecraftKey)));
+    }
+
+
     @Override
     public Iterator<B> iterator() {
-        return values().iterator();
+        return stream().iterator();
     }
 
     public B createBukkit(NamespacedKey namespacedKey, M minecraft) {
@@ -104,9 +112,5 @@ public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
         }
 
         return minecraftToBukkit.apply(namespacedKey, minecraft);
-    }
-
-    public Stream<B> values() {
-        return minecraftRegistry.keySet().stream().map(minecraftKey -> get(CraftNamespacedKey.fromMinecraft(minecraftKey)));
     }
 }
