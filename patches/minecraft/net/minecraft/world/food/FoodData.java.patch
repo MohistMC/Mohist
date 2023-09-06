@@ -77,8 +77,7 @@
     }
  
     public void m_38710_(Player p_38711_) {
--      Difficulty difficulty = p_38711_.m_9236_().m_46791_();
-+      Difficulty difficulty = p_38711_.f_19853_.m_46791_();
+       Difficulty difficulty = p_38711_.m_9236_().m_46791_();
 +      if (entityhuman == null) entityhuman = p_38711_;
        this.f_38700_ = this.f_38696_;
        if (this.f_38698_ > 4.0F) {
@@ -99,8 +98,7 @@
           }
        }
  
--      boolean flag = p_38711_.m_9236_().m_46469_().m_46207_(GameRules.f_46139_);
-+      boolean flag = p_38711_.f_19853_.m_46469_().m_46207_(GameRules.f_46139_);
+       boolean flag = p_38711_.m_9236_().m_46469_().m_46207_(GameRules.f_46139_);
        if (flag && this.f_38697_ > 0.0F && p_38711_.m_36325_() && this.f_38696_ >= 20) {
           ++this.f_38699_;
 -         if (this.f_38699_ >= 10) {

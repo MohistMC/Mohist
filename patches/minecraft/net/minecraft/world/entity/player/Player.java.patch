@@ -624,7 +624,7 @@
 +                  if (this instanceof ServerPlayer) {
 +                     ((ServerPlayer) this).getBukkitEntity().updateInventory();
 +                  }
-+                                         // CraftBukkit end
++                  // CraftBukkit end
                 }
              }
 +            // this.resetAttackStrengthTicker(); // FORGE: Moved from beginning of attack() so that getAttackStrengthScale() returns an accurate value during all attack events // Mohist TODO
@@ -694,7 +694,7 @@
        } else {
           super.m_7023_(p_36359_);
        }
-@@ -1413,35 +_,41 @@
+@@ -1413,18 +_,21 @@
              int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
              if (i > 0) {
                 this.m_36222_(Stats.f_12924_, i);
@@ -716,12 +716,7 @@
                 this.m_36399_(0.01F * (float)k * 0.01F);
              }
           } else if (this.m_6147_()) {
-             if (p_36380_ > 0.0D) {
-                this.m_36222_(Stats.f_12999_, (int)Math.round(p_36380_ * 100.0D));
-             }
--         } else if (this.m_20096_()) {
-+         } else if (this.f_19861_) {
-             int l = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
+@@ -1436,12 +_,15 @@
              if (l > 0) {
                 if (this.m_20142_()) {
                    this.m_36222_(Stats.f_12996_, l);
