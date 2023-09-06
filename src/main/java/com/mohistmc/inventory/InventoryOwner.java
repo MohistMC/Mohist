@@ -31,6 +31,7 @@ import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockEntityState;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -58,7 +59,7 @@ public class InventoryOwner {
     public static InventoryHolder get(World world, BlockPos pos, boolean useSnapshot) {
         if (world == null) return null;
         // Spigot start
-        org.bukkit.block.Block block = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+        org.bukkit.block.Block block = CraftBlock.at(world, pos);
         if (block == null) {
             return null;
         }

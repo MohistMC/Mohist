@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
@@ -24,6 +25,7 @@ import java.util.logging.Level;
 
 import com.mohistmc.bukkit.nms.model.ClassMapping;
 import com.mohistmc.bukkit.pluginfix.PluginFixManager;
+import cpw.mods.modlauncher.EnumerationHelper;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
@@ -104,12 +106,26 @@ public final class PluginClassLoader extends URLClassLoader {
 
     @Override
     public URL getResource(String name) {
-        return findResource(name);
+        Objects.requireNonNull(name);
+        URL url = findResource(name);
+        if (url == null) {
+            if (getParent() != null) {
+                url = getParent().getResource(name);
+            }
+        }
+        return url;
     }
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        return findResources(name);
+        Objects.requireNonNull(name);
+        @SuppressWarnings("unchecked")
+        Enumeration<URL>[] tmp = (Enumeration<URL>[]) new Enumeration<?>[2];
+        if (getParent()!= null) {
+            tmp[1] = getParent().getResources(name);
+        }
+        tmp[0] = findResources(name);
+        return EnumerationHelper.merge(tmp[0], tmp[1]);
     }
 
     @Override
@@ -119,7 +135,11 @@ public final class PluginClassLoader extends URLClassLoader {
 
     Class<?> loadClass0(@NotNull String name, boolean resolve, boolean checkGlobal, boolean checkLibraries) throws ClassNotFoundException {
         try {
-            return super.loadClass(name, resolve);
+            Class<?> result = super.loadClass(name, resolve);
+            // SPIGOT-6749: Library classes will appear in the above, but we don't want to return them to other plugins
+            if (checkGlobal || result.getClassLoader() == this) {
+                return result;
+            }
         } catch (ClassNotFoundException ex) {
         }
 

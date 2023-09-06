@@ -81,10 +81,13 @@ public class MohistMCStart {
 			Class.forName("com.mohistmc.util.MohistModuleManager", false, URLClassLoader.newInstance(new java.net.URL[]{universalJar.toURI().toURL()})).getDeclaredConstructor().newInstance();
 		}
 
-		// make sure gson use this EnumTypeAdapter
-		Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
-		// Used to avoid mods using BusBuilder.builder().build() themselves
-		Class.forName("net.minecraftforge.eventbus.EventBus").getClassLoader();
+		try {
+			// make sure gson use this EnumTypeAdapter
+			Class.forName("com.google.gson.internal.bind.TypeAdapters$EnumTypeAdapter").getClassLoader();
+			// Used to avoid mods using BusBuilder.builder().build() themselves
+			Class.forName("net.minecraftforge.eventbus.EventBus").getClassLoader();
+		} catch (Exception ignored) {
+		}
 
 		System.setOut(new LoggingPrintStream("STDOUT", System.out, Level.INFO));
 		System.setErr(new LoggingPrintStream("STDERR", System.err, Level.ERROR));

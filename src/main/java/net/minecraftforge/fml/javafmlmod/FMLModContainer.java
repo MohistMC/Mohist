@@ -64,7 +64,6 @@ public class FMLModContainer extends ModContainer
     {
         try
         {
-            LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.4", getModId(), modClass.getName()));
             this.modInstance = modClass.newInstance();
             LOGGER.debug(LOADING, i18n.get("fmlmodcontainer.4", getModId(), modClass.getName()));
         }

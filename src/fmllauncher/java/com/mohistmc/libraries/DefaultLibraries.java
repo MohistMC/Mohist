@@ -27,6 +27,7 @@ import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.i18n.i18n;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,7 +39,7 @@ public class DefaultLibraries {
 	public static HashMap<String, String> fail = new HashMap<>();
 	public static final AtomicLong allSize = new AtomicLong(); // global
 
-	public static void run() throws Exception {
+	public static void run() {
 		System.out.println(i18n.get("libraries.checking.start"));
 		System.out.println(i18n.get("libraries.downloadsource", DownloadSource.get().name()));
 		String url = DownloadSource.get().getUrl();
@@ -80,16 +81,21 @@ public class DefaultLibraries {
 		} else System.out.println(i18n.get("libraries.check.end"));
 	}
 
-	public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
+	public static LinkedHashMap<File, String> getDefaultLibs() {
 		LinkedHashMap<File, String> temp = new LinkedHashMap<>();
-		BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt")));
-		String str;
-		while ((str = b.readLine()) != null) {
-			String[] s = str.split("\\|");
-			temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
-			allSize.addAndGet(Long.parseLong(s[2]));
+		try {
+			BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt")));
+			String str;
+			while (true) {
+				if (!((str = b.readLine()) != null)) break;
+				String[] s = str.split("\\|");
+				temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
+				allSize.addAndGet(Long.parseLong(s[2]));
+			}
+			b.close();
+			return temp;
+		} catch (IOException e) {
+			return temp;
 		}
-		b.close();
-		return temp;
 	}
 }
