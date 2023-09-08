@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/AbstractCauldronBlock.java
++++ b/net/minecraft/world/level/block/AbstractCauldronBlock.java
+@@ -39,6 +_,12 @@
+       this.f_151943_ = p_151947_;
+    }
+ 
++   // Mohist - start TODO: Fix endertanks mixin ET_Cauldron_Accessor
++   public Map<Item, CauldronInteraction> getInteractions(){
++      return f_151943_;
++   }
++   // Mohist end
++
+    protected double m_142446_(BlockState p_151948_) {
+       return 0.0D;
+    }
