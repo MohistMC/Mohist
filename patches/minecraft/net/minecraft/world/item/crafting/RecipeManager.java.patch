@@ -20,7 +20,7 @@
  import org.slf4j.Logger;
  
  public class RecipeManager extends SimpleJsonResourceReloadListener {
-@@ -37,35 +_,64 @@
+@@ -37,35 +_,62 @@
     public Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
@@ -40,6 +40,7 @@
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
        this.f_44008_ = false;
+-      Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
 +
 +      // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
 +      Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>>> map1 = Maps.newHashMap();
@@ -47,8 +48,6 @@
 +         map1.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
 +      }
 +      // CraftBukkit end
-+
-       Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
        ImmutableMap.Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
@@ -85,11 +84,10 @@
 -      this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
 -         return p_44033_.getValue().build();
 -      }));
--      this.f_199900_ = builder.build();
--      f_44006_.info("Loaded {} recipes", (int)map.size());
 +      this.f_44007_ = (Map) map1;
 +      this.recipesCB = map1;
-+      this.f_199900_ = Maps.newHashMap(builder.build()); // CraftBukkit
+       this.f_199900_ = builder.build();
+-      f_44006_.info("Loaded {} recipes", (int)map.size());
 +      f_44006_.info("Loaded {} recipes", (int)map1.size());
     }
  
