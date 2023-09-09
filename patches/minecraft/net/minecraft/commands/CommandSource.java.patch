@@ -8,16 +8,19 @@
 +      // CraftBukkit start
 +      @Override
 +      public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+         throw new UnsupportedOperationException("Not supported yet.");
++         return wrapper.m_81377_().console;
 +      }
 +      // CraftBukkit end
     };
  
     void m_213846_(Component p_230797_);
-@@ -31,4 +_,6 @@
+@@ -30,5 +_,9 @@
+ 
     default boolean m_142559_() {
        return false;
-    }
++   }
 +
-+   org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper); // CraftBukkit
++   default org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
++      return f_80164_.getBukkitSender(wrapper);
+    }
  }
