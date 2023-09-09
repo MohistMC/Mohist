@@ -26,6 +26,7 @@ import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.util.DataParser;
+import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 
@@ -34,13 +35,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
-import static com.mohistmc.util.EulaUtil.writeInfos;
-
 public class MohistMCStart {
 
     public static final List<String> mainArgs = new ArrayList<>();
-    public static final float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
     public static i18n i18n;
 
     public static String getVersion() {
@@ -55,16 +52,19 @@ public class MohistMCStart {
         MohistConfigUtil.i18n();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
-            System.out.println("\n" + "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" + "\n" +
-                    "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+            String test = """
+                     
+                     __    __   ______   __  __   __   ______   ______
+                    /\\ "-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\
+                    \\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/
+                     \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\
+                      \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/
+                    
+                    
+                    %s - %s, Java(%s) %s
+                    """;
+            System.out.println(test.formatted(i18n.get("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
         }
-
 
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
@@ -90,11 +90,11 @@ public class MohistMCStart {
         }
         new MohistModuleManager(DataParser.launchArgs);
 
-        if (!hasAcceptedEULA()) {
+        if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.get("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
             }
-            writeInfos();
+            EulaUtil.writeInfos();
         }
 
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
