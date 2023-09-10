@@ -41,15 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class DefaultLibraries {
     public static final HashMap<String, String> fail = new HashMap<>();
     public static final AtomicLong allSize = new AtomicLong(); // global
-    public static final String MAVENURL;
-
-    static {
-        try {
-            MAVENURL = DownloadSource.get().getUrl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final String MAVENURL = DownloadSource.get().getUrl();
 
     public static String libUrl(File lib) {
         return MAVENURL + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];

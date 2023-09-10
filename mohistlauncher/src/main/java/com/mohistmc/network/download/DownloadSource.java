@@ -42,11 +42,11 @@ public enum DownloadSource {
     final
     String url;
 
-    public static DownloadSource get() throws IOException {
+    public static DownloadSource get() {
         String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url) != 200) return GITHUB;
+                if (isDown(me.url)) return GITHUB;
                 return me;
             }
         }
@@ -57,11 +57,15 @@ public enum DownloadSource {
         return MohistMCStart.i18n.isCN();
     }
 
-    public static int isDown(String s) throws IOException {
-        URL url = new URL(s);
-        URLConnection rulConnection = url.openConnection();
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
-        httpUrlConnection.connect();
-        return httpUrlConnection.getResponseCode();
+    public static boolean isDown(String s) {
+        try {
+            URL url = new URL(s);
+            URLConnection rulConnection = url.openConnection();
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
+            httpUrlConnection.connect();
+            return httpUrlConnection.getResponseCode() != 200;
+        } catch (Exception e) {
+            return true;
+        }
     }
 }
