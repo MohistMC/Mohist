@@ -42,9 +42,18 @@ public enum DownloadSource {
 
     public static DownloadSource get() {
         String ds = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
+        DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url)) return GITHUB;
+                if (isDown(me.url)) {
+                    if (ds.equals("CHINA")) {
+                        urL = MOHIST;
+                        if (isDown(urL.url)) {
+                            return GITHUB;
+                        }
+                    }
+                    return GITHUB;
+                }
                 return me;
             }
         }
