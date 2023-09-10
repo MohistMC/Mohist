@@ -440,7 +440,7 @@
     }
  
     public ServerPlayerEntity func_148545_a(GameProfile p_148545_1_) {
-@@ -399,81 +_,174 @@
+@@ -399,81 +_,184 @@
        return new ServerPlayerEntity(this.field_72400_f, serverworld, p_148545_1_, playerinteractionmanager);
     }
  
@@ -453,6 +453,17 @@
 +   public Location mohist$location = null;
 +   public boolean avoidSuffocation = true;
 +   public ServerWorld mohist$worldserver;
++    // Mohist start - Fix mixin by apoli
++    public org.bukkit.World fromWorld;
++    public PlayerRespawnEvent respawnEvent;
++    public org.bukkit.entity.Player respawnPlayer;
++    BlockState blockstate;
++    Vector3d vector3d;
++    Vector3d vector3d1;
++    float f1;
++    boolean isBedSpawn;
++    boolean flag2;
++    // Mohist end
 +   public ServerPlayerEntity moveToWorld(ServerPlayerEntity p_232644_1_, ServerWorld serverWorld, boolean p_232644_2_, Location location, boolean avoidSuffocation) {
 +       this.mohist$location = location;
 +       this.mohist$worldserver = serverWorld;
@@ -543,33 +554,33 @@
 +       float f = p_232644_1_.func_242109_L();
 +       boolean flag = p_232644_1_.func_241142_M_();
 +
-+       org.bukkit.World fromWorld = p_232644_1_.getBukkitEntity().getWorld();
++       fromWorld = p_232644_1_.getBukkitEntity().getWorld();
 +       p_232644_1_.field_71136_j = false;
-+
-+       boolean flag2 = false;
++       flag2 = false;
 +
 +       // CraftBukkit start - fire PlayerRespawnEvent
 +
 +       ServerWorld worldserver1 = this.field_72400_f.func_71218_a(p_232644_1_.func_241141_L_());
++       Optional<Vector3d> optional;
++       if (blockpos != null) {
++           optional = PlayerEntity.func_242374_a(worldserver1, blockpos, f, flag, p_232644_2_);
++       } else {
++           optional = Optional.empty();
++       }
 +       if (mohist$location == null) {
-+           boolean isBedSpawn = false;
++           isBedSpawn = false;
 +           if (worldserver1 != null) {
-+               Optional<Vector3d> optional;
-+               if (blockpos != null) {
-+                   optional = PlayerEntity.func_242374_a(worldserver1, blockpos, f, flag, p_232644_2_);
-+               } else {
-+                   optional = Optional.empty();
-+               }
++
 +               if (optional.isPresent()) {
-+                   BlockState blockstate = worldserver1.func_180495_p(blockpos);
++                   blockstate = worldserver1.func_180495_p(blockpos);
 +                   boolean flag1 = blockstate.func_203425_a(Blocks.field_235400_nj_);
-+                   Vector3d vector3d = optional.get();
++                   vector3d = optional.get();
 +                   float f1;
 +
 +                   if (!blockstate.func_235714_a_(BlockTags.field_219747_F) && !flag1) {
 +                       f1 = f;
 +                   } else {
-+                       Vector3d vector3d1 = Vector3d.func_237492_c_(blockpos).func_178788_d(vector3d).func_72432_b();
++                       vector3d1 = Vector3d.func_237492_c_(blockpos).func_178788_d(vector3d).func_72432_b();
 +                       f1 = (float) MathHelper.func_76138_g(MathHelper.func_181159_b(vector3d1.field_72449_c, vector3d1.field_72450_a) * (double) (180F / (float) Math.PI) - 90.0D);
 +                   }
 +
@@ -588,8 +599,8 @@
 +               mohist$location = new Location(worldserver1.getWorld(), (double) (float) blockpos.func_177958_n() + 0.5F, (double) (float) blockpos.func_177956_o() + 0.1F, (double) ((float) blockpos.func_177952_p() + 0.5F));
 +           }
 +
-+           Player respawnPlayer = this.cserver.getPlayer(p_232644_1_);
-+           PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, mohist$location, isBedSpawn && !flag2, flag2);
++           respawnPlayer = this.cserver.getPlayer(p_232644_1_);
++           respawnEvent = new PlayerRespawnEvent(respawnPlayer, mohist$location, isBedSpawn && !flag2, flag2);
 +           cserver.getPluginManager().callEvent(respawnEvent);
 +           // Spigot Start
 +           if (p_232644_1_.field_71135_a.isDisconnected()) {
@@ -629,7 +640,6 @@
 +           serverplayerentity.func_184211_a(s);
 +       }
 +
-+       ServerWorld serverWorld = ((CraftWorld) mohist$location.getWorld()).getHandle();
 +       serverplayerentity.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
 +       // CraftBukkit end
 +

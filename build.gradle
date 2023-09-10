@@ -35,8 +35,6 @@ println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getPro
 
 if (System.getProperty("_JAVA_OPTIONS") == null) {
     System.setProperty("_JAVA_OPTIONS", "-Xmx3500M")
-    System.out.println("This programm use by default 3500M of RAM")
-    System.out.println("If you want to disable this, you can set '_JAVA_OPTIONS' proprety in your environment variable")
 }
 
 
