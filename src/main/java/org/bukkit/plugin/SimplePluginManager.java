@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
 import com.mohistmc.plugins.MohistPlugin;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -484,6 +485,7 @@ public final class SimplePluginManager implements PluginManager {
             }
 
             HandlerList.bakeAll();
+            UltraCosmetics.lockRegistries(plugin);
         }
     }
 
