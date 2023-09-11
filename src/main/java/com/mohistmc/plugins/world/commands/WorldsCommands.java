@@ -238,8 +238,8 @@ public class WorldsCommands extends Command {
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds delete <Name> " + MohistMC.i18n.get("worldmanage.command.delete"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds tp <Name> " + MohistMC.i18n.get("worldmanage.command.tp"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds tp <Player> <Name> " + MohistMC.i18n.get("worldmanage.command.tp0"));
-        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds import <Name> " + MohistMC.i18n.get("worldmanage.command.unload"));
-        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds unload <Name> " + MohistMC.i18n.get("worldmanage.command.import"));
+        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds import <Name> " + MohistMC.i18n.get("worldmanage.command.import"));
+        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds unload <Name> " + MohistMC.i18n.get("worldmanage.command.unload"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds info " + MohistMC.i18n.get("worldmanage.command.info"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds addinfo <Name> " + MohistMC.i18n.get("worldmanage.command.addinfo"));
         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "/worlds setname <Name> " + MohistMC.i18n.get("worldmanage.command.setname"));

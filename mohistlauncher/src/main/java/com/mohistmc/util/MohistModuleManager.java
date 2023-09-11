@@ -152,7 +152,7 @@ public class MohistModuleManager {
     }
 
     public void applyLaunchArgs(List<String> args) {
-        //Just read each lines of launch args
+        //Just read each line of launch args
         List<String> opens = new ArrayList<>();
         List<String> exports = new ArrayList<>();
 
@@ -218,7 +218,7 @@ public class MohistModuleManager {
         graphMap.putAll((Map<ResolvedModule, Set<ResolvedModule>>) graphGetter.invokeWithArguments(ModuleLayer.boot().configuration()));
         IMPL_LOOKUP.findSetter(Configuration.class, "graph", Map.class).invokeWithArguments(ModuleLayer.boot().configuration(), new HashMap<>(graphMap));
 
-        // Reset boot module layer resolved modules as new config resolved modules to prepare define modules
+        // Reset boot module layer resolved modules as new config-resolved modules to prepare to define modules
         Set<ResolvedModule> oldBootModules = ModuleLayer.boot().configuration().modules();
         MethodHandle modulesSetter = IMPL_LOOKUP.findSetter(Configuration.class, "modules", Set.class);
         HashSet<ResolvedModule> modulesSet = new HashSet<>(config.modules());
@@ -233,7 +233,7 @@ public class MohistModuleManager {
         // Define all extra modules and add all the new config "nameToModule" to boot module layer config
         ((Map<String, Module>) IMPL_LOOKUP.findGetter(ModuleLayer.class, "nameToModule", Map.class).invokeWithArguments(ModuleLayer.boot())).putAll((Map<String, Module>) IMPL_LOOKUP.findStatic(Module.class, "defineModules", MethodType.methodType(Map.class, Configuration.class, Function.class, ModuleLayer.class)).invokeWithArguments(ModuleLayer.boot().configuration(), (Function<String, ClassLoader>) name -> Thread.currentThread().getContextClassLoader(), ModuleLayer.boot()));
 
-        // Add all of resolved modules
+        // Add all the resolved modules
         modulesSet.addAll(oldBootModules);
         modulesSetter.invokeWithArguments(ModuleLayer.boot().configuration(), new HashSet<>(modulesSet));
 

@@ -33,9 +33,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class UpdateUtils {
 
@@ -56,7 +56,7 @@ public class UpdateUtils {
                 System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
                     downloadFile(json.at("url").asString(), JarTool.getFile());
-                    restartServer(new ArrayList<>(Arrays.asList("java", "-jar", JarTool.getJarName())), true);
+                    restartServer(Arrays.asList("java", "-jar", JarTool.getJarName()), true);
                 }
             }
         } catch (Throwable e) {
@@ -90,7 +90,7 @@ public class UpdateUtils {
         return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
     }
 
-    public static void restartServer(ArrayList<String> cmd, boolean shutdown) throws Exception {
+    public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
         System.out.println(MohistMCStart.i18n.get("jarfile.restart"));
         if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
             System.out.println(MohistMCStart.i18n.get("xmswarn"));

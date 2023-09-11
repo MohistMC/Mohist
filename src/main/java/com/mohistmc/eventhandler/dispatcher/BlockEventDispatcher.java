@@ -87,8 +87,6 @@ public class BlockEventDispatcher {
                 BlockState nmsData = serverLevel.getBlockState(pos);
                 Block nmsBlock = nmsData.getBlock();
 
-                ItemStack itemstack = serverPlayer.getItemBySlot(EquipmentSlot.MAINHAND);
-
                 if (nmsBlock != null
                         && !bukkitEvent.isCancelled()
                         && !event.isCanceled()
