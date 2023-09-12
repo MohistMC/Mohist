@@ -21,14 +21,14 @@ public class Message {
 
     public static String getLocale(int key) {
         File f = new File("mohist-config", "mohist.yml");
-        String locale = MohistConfigUtil.getString(f, "lang:", "xx_XX");
+        String locale = MohistConfigUtil.getString(f, "lang:", Locale.getDefault().toString());
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);
             String country = locale.substring(3, 5);
             if (key == 1) return language;
             if (key == 2) return country;
         }
-        return "xx_XX";
+        return Locale.getDefault().toString();
     }
 
     public static String getLanguage() {
@@ -45,6 +45,6 @@ public class Message {
 
     public static boolean isCN() {
         TimeZone timeZone = TimeZone.getDefault();
-        return Locale.getDefault().getCountry().equals("CN") ||timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
+        return Locale.getDefault().getCountry().equals("CN") || timeZone.getID().equals("Asia/Shanghai") || rb.getLocale().getCountry().equals("CN");
     }
 }

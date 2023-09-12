@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MohistConfig extends ConfigBase {
 
@@ -32,7 +33,7 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting requirementsModVersionRange = new StringSetting(this, "messages.Requirements-Mod-Version-range", Message.getString("requirements.mod.version-range"));
 
     public final StringSetting server_type = new StringSetting(this, "mohist.server-type", "FML");
-    public final StringSetting lang = new StringSetting(this, "mohist.lang", "xx_XX");
+    public final StringSetting lang = new StringSetting(this, "mohist.lang", Locale.getDefault().toString());
     public final StringSetting console_name = new StringSetting(this, "mohist.console_name", "Server");
     public final BoolSetting support_nocmd = new BoolSetting(this, "mohist.support_nocmd", false);
     // Bukkit Event Canceled
