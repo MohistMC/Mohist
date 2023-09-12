@@ -10,10 +10,12 @@ import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
 import com.mohistmc.bukkit.entity.MohistModsAnimals;
 import com.mohistmc.bukkit.entity.MohistModsChestHorse;
 import com.mohistmc.bukkit.entity.MohistModsEntity;
+import com.mohistmc.bukkit.entity.MohistModsGolem;
 import com.mohistmc.bukkit.entity.MohistModsMinecart;
 import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
 import com.mohistmc.bukkit.entity.MohistModsSkeleton;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
+import com.mohistmc.bukkit.entity.MohistModsThrowableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableProjectile;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -251,10 +253,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
                     else  { return new CraftMonster(server, (net.minecraft.world.entity.monster.Monster) entity); }
                 }
-                else if (entity instanceof AbstractGolem) {
+                else if (entity instanceof AbstractGolem abstractGolem) {
                     if (entity instanceof net.minecraft.world.entity.animal.SnowGolem) { return new CraftSnowman(server, (net.minecraft.world.entity.animal.SnowGolem) entity); }
                     else if (entity instanceof net.minecraft.world.entity.animal.IronGolem) { return new CraftIronGolem(server, (net.minecraft.world.entity.animal.IronGolem) entity); }
                     else if (entity instanceof net.minecraft.world.entity.monster.Shulker) { return new CraftShulker(server, (net.minecraft.world.entity.monster.Shulker) entity); }
+                    else { return new MohistModsGolem(server, abstractGolem); }
                 }
                 else if (entity instanceof AbstractVillager) {
                     if (entity instanceof Villager) { return new CraftVillager(server, (Villager) entity); }
@@ -302,14 +305,14 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             if (entity instanceof ChestBoat) { return new CraftChestBoat(server, (ChestBoat) entity); }
             else { return new CraftBoat(server, (Boat) entity); }
         }
-        else if (entity instanceof net.minecraft.world.entity.projectile.ThrowableProjectile) {
+        else if (entity instanceof net.minecraft.world.entity.projectile.ThrowableProjectile throwableProjectile) {
             if (entity instanceof net.minecraft.world.entity.projectile.ThrownEgg) { return new CraftEgg(server, (net.minecraft.world.entity.projectile.ThrownEgg) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.Snowball) { return new CraftSnowball(server, (net.minecraft.world.entity.projectile.Snowball) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownPotion) { return new CraftThrownPotion(server, (net.minecraft.world.entity.projectile.ThrownPotion) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownEnderpearl) { return new CraftEnderPearl(server, (net.minecraft.world.entity.projectile.ThrownEnderpearl) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownExperienceBottle) { return new CraftThrownExpBottle(server, (net.minecraft.world.entity.projectile.ThrownExperienceBottle) entity); }
             else if (entity instanceof ThrowableItemProjectile) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity); }
-            else { return new MohistModsEntity( server, entity ); }
+            else { return new MohistModsThrowableEntity( server, throwableProjectile); }
         }
         else if (entity instanceof FallingBlockEntity) { return new CraftFallingBlock(server, (FallingBlockEntity) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {
