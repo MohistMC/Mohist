@@ -99,17 +99,17 @@
           f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           witch.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
-@@ -722,7 +_,13 @@
+@@ -722,7 +_,14 @@
           }
  
           witch.m_21530_();
--         p_35409_.m_47205_(witch);
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +         // CraftBukkit start
 +         if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +            return;
 +         }
-+         p_35409_.addFreshEntityWithPassengers(witch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
++         witch.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
+          p_35409_.m_47205_(witch);
 +         // CraftBukkit end
           this.m_35524_();
           this.m_146870_();
@@ -128,12 +128,11 @@
           this.m_21053_(p_35467_);
           this.m_7938_(p_35467_, itemstack.m_41613_());
           ItemStack itemstack1 = simplecontainer.m_19173_(itemstack);
-@@ -843,7 +_,7 @@
+@@ -843,6 +_,7 @@
              IronGolem irongolem = EntityType.f_20460_.m_20655_(p_35491_, (CompoundTag)null, (Component)null, (Player)null, blockpos1, MobSpawnType.MOB_SUMMONED, false, false);
              if (irongolem != null) {
                 if (irongolem.m_5545_(p_35491_, MobSpawnType.MOB_SUMMONED) && irongolem.m_6914_(p_35491_)) {
--                  p_35491_.m_47205_(irongolem);
-+                  p_35491_.addFreshEntityWithPassengers(irongolem, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // CraftBukkit
++                  irongolem.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // CraftBukkit
+                   p_35491_.m_47205_(irongolem);
                    return irongolem;
                 }
- 

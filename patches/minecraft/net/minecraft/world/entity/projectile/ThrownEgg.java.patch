@@ -19,7 +19,7 @@
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -44,18 +_,38 @@
+@@ -44,18 +_,39 @@
     protected void m_6532_(HitResult p_37488_) {
        super.m_6532_(p_37488_);
        if (!this.f_19853_.f_46443_) {
@@ -54,11 +54,12 @@
 +
 +            if (hatching) {
 +               for (int j = 0; j < i; ++j) {
-+                  Entity entity = f_19853_.getWorld().createEntity(new org.bukkit.Location(f_19853_.getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
++                  Chicken entity = (Chicken) f_19853_.getWorld().createEntity(new org.bukkit.Location(f_19853_.getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
 +                  if (entity.getBukkitEntity() instanceof Ageable) {
 +                     ((Ageable) entity.getBukkitEntity()).setBaby();
 +                  }
-+                  f_19853_.getWorld().addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                  entity.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                  this.f_19853_.m_7967_(entity);
 +               }
 +            }
 +            // CraftBukkit end

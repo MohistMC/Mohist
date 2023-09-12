@@ -363,7 +363,7 @@
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -332,135 +_,287 @@
+@@ -332,135 +_,288 @@
        serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.m_8960_().m_135978_();
        this.f_11196_.remove(p_11287_);
@@ -699,6 +699,7 @@
 +
 +      // CraftBukkit end
 +      mohist$location = null; // Mohist
++      mohist$worldserver = null; // Mohist
        return serverplayer;
     }
  

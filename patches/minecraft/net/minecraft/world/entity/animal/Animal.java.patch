@@ -76,14 +76,14 @@
           if (serverplayer != null) {
              serverplayer.m_36220_(Stats.f_12937_);
              CriteriaTriggers.f_10581_.m_147278_(serverplayer, this, p_27565_, ageablemob);
-@@ -223,12 +_,14 @@
+@@ -223,12 +_,15 @@
           p_27565_.m_146762_(6000);
           this.m_27594_();
           p_27565_.m_27594_();
 -         ageablemob.m_6863_(true);
 -         ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);
--         p_27564_.m_47205_(ageablemob);
-+         p_27564_.addFreshEntityWithPassengers(ageablemob, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
++         ageablemob.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
+          p_27564_.m_47205_(ageablemob);
           p_27564_.m_7605_(this, (byte)18);
           if (p_27564_.m_46469_().m_46207_(GameRules.f_46135_)) {
 -            p_27564_.m_7967_(new ExperienceOrb(p_27564_, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_21187_().nextInt(7) + 1));
