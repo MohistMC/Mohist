@@ -28,6 +28,7 @@ public class ConfigByWorlds {
             if (config.getString("worlds." + world.getName()) != null) {
                 config.set("worlds." + world.getName() + ".info", info);
             }
+            init();
         }
     }
 

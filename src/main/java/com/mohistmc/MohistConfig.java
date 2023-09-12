@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -203,7 +204,7 @@ public class MohistConfig {
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
-        mohist_lang = getString("mohist.lang", "xx_XX");
+        mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
         mohist_vanilla_lang = getString("mohist.vanilla_lang", "en_us");
         check_update = getBoolean("mohist.check_update", true);
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);

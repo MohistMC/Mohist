@@ -45,6 +45,7 @@ public class WorldsCommands extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (args.length == 0) {
             this.sendHelp(sender);
+            return false;
         }
         if (sender instanceof Player player) {
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {

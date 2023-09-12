@@ -5,6 +5,8 @@ import com.mohistmc.plugins.ban.bans.BanEntity;
 import com.mohistmc.plugins.ban.bans.BanItem;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
+import com.mohistmc.plugins.warps.WarpsCommands;
+import com.mohistmc.plugins.warps.WarpsUtils;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
@@ -37,6 +39,7 @@ public class MohistPlugin {
     public static void init(Server server) {
         WorldManage.onEnable();
         ItemsConfig.init();
+        WarpsUtils.init();
         File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
         if (out.exists()) {
             String data = null;
@@ -60,6 +63,7 @@ public class MohistPlugin {
 
     public static void registerCommands(Map<String, Command> map) {
         map.put(WorldManage.command, new WorldsCommands(WorldManage.command));
+        map.put("warps", new WarpsCommands("warps"));
     }
 
     public static void registerListener(Event event) {
