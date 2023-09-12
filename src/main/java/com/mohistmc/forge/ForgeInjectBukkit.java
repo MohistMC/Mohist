@@ -15,6 +15,7 @@ import net.minecraft.stats.StatType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
@@ -90,6 +91,7 @@ public class ForgeInjectBukkit {
         addStatistic();
         addEnumEnvironment();
         loadSpawnCategory();
+        addPose();
     }
 
 
@@ -298,6 +300,15 @@ public class ForgeInjectBukkit {
                 String name = category.name();
                 SpawnCategory spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
                 MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
+            }
+        }
+    }
+
+    private static void addPose() {
+        for (Pose pose : Pose.values()) {
+            if (pose.ordinal() > 14) {
+                org.bukkit.entity.Pose bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.Pose.class, pose.name());
+                MohistMC.LOGGER.debug("Registered forge Pose as Pose(Bukkit) {}", bukkit);
             }
         }
     }

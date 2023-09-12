@@ -1,7 +1,6 @@
 package com.mohistmc.api;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.Pose;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.bukkit.Bukkit;
@@ -27,7 +26,6 @@ public class ServerAPI {
     public static List<Command> forgecmd = new ArrayList<>();
     public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
     public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
-    public static Map<Pose, org.bukkit.entity.Pose> poseMap = new ConcurrentHashMap<>();
 
     static {
         for (IModInfo modInfo : ModLoader.getModList().getMods()) {
