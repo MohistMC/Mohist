@@ -354,7 +354,7 @@
              InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
                 CriteriaTriggers.f_10562_.m_45482_(p_9266_, blockpos, itemstack);
-@@ -317,15 +_,16 @@
+@@ -317,8 +_,9 @@
              }
           }
  
@@ -366,15 +366,6 @@
              InteractionResult interactionresult1;
              if (this.m_9295_()) {
                 int i = p_9268_.m_41613_();
--               interactionresult1 = p_9268_.m_41661_(useoncontext);
-+               interactionresult1 = p_9268_.useOn(useoncontext, p_9269_);
-                p_9268_.m_41764_(i);
-             } else {
--               interactionresult1 = p_9268_.m_41661_(useoncontext);
-+               interactionresult1 = p_9268_.useOn(useoncontext, p_9269_);
-             }
- 
-             if (interactionresult1.m_19077_()) {
 @@ -333,10 +_,10 @@
              }
  

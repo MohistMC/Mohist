@@ -185,21 +185,15 @@
     }
  
     public boolean m_204117_(TagKey<Item> p_204118_) {
-@@ -205,17 +_,169 @@
-       return this.m_41720_().m_204114_().m_203616_();
+@@ -206,16 +_,164 @@
     }
  
--   public InteractionResult m_41661_(UseOnContext p_41662_) {
-+   public InteractionResult useOn(UseOnContext p_41662_, InteractionHand enumhand) { // CraftBukkit - add hand
+    public InteractionResult m_41661_(UseOnContext p_41662_) {
 +      if (!p_41662_.m_43725_().f_46443_) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
-+      return onItemUse(p_41662_, (c) -> m_41720_().m_6225_(p_41662_), enumhand);
++      return onItemUse(p_41662_, (c) -> m_41720_().m_6225_(p_41662_));
 +   }
 +
-+   public InteractionResult onItemUseFirst(UseOnContext p_41662_, InteractionHand enumhand) { // CraftBukkit - add hand
-+      return onItemUse(p_41662_, (c) -> m_41720_().onItemUseFirst(this, p_41662_), enumhand);
-+   }
-+
-+   private InteractionResult onItemUse(UseOnContext p_41662_, java.util.function.Function<UseOnContext, InteractionResult> callback, InteractionHand enumhand) { // CraftBukkit - add hand
++   private InteractionResult onItemUse(UseOnContext p_41662_, java.util.function.Function<UseOnContext, InteractionResult> callback) {
        Player player = p_41662_.m_43723_();
        BlockPos blockpos = p_41662_.m_8083_();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.m_43725_(), blockpos, false);
@@ -266,9 +260,9 @@
 +            List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(world.capturedBlockStates.values());
 +            world.capturedBlockStates.clear();
 +            if (blocks.size() > 1) {
-+               placeEvent = CraftEventFactory.callBlockMultiPlaceEvent(world, player, enumhand, blocks, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               placeEvent = CraftEventFactory.callBlockMultiPlaceEvent(world, player, p_41662_.m_43724_(), blocks, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +            } else if (blocks.size() == 1) {
-+               placeEvent = CraftEventFactory.callBlockPlaceEvent(world, player, enumhand, blocks.get(0), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++               placeEvent = CraftEventFactory.callBlockPlaceEvent(world, player, p_41662_.m_43724_(), blocks.get(0), blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
 +            }
 +
 +            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
