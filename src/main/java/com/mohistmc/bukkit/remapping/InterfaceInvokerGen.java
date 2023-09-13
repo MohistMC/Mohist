@@ -89,7 +89,7 @@ public class InterfaceInvokerGen implements PluginTransformer {
         ClassNode classNode = classRepo.findClass(internalName);
         if (classNode == null) return;
         interfaceMethods(classNode.superName, set, classRepo);
-        if (classNode.interfaces != null && classNode.interfaces.size() > 0) {
+        if (classNode.interfaces != null && !classNode.interfaces.isEmpty()) {
             for (String intf : classNode.interfaces) {
                 interfaceMethods(intf, set, classRepo);
             }

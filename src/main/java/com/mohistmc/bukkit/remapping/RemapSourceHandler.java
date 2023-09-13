@@ -58,7 +58,7 @@ public class RemapSourceHandler extends URLStreamHandler {
         public void connect() throws IOException {
             byte[] bytes = ByteStreams.toByteArray(url.openStream());
             String className = new ClassReader(bytes).getClassName();
-            if (className.startsWith("net/minecraft/") || className.equals("com/mojang/brigadier/tree/CommandNode")) {
+            if (className.startsWith("net/minecraft/")) {
                 try {
                     bytes = (byte[]) MH_TRANSFORM.invokeExact(bytes, className.replace('/', '.'), "source");
                 } catch (Throwable e) {

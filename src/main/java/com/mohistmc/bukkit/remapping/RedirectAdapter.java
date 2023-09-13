@@ -429,8 +429,7 @@ public class RedirectAdapter implements PluginTransformer {
         }
     }
 
-    private record ModifyHandler(String handlerName,
-                                 Class<?>[] handlerArgs) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
+    private record ModifyHandler(String handlerName, Class<?>[] handlerArgs) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         @Override
             public Object[] apply4(ClassLoaderRemapper remapper, Method method, Object src, Object[] param) {
@@ -453,8 +452,7 @@ public class RedirectAdapter implements PluginTransformer {
             }
         }
 
-    private record RedirectHandler(String handlerName,
-                                   Class<?>[] handlerArgs) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
+    private record RedirectHandler(String handlerName, Class<?>[] handlerArgs) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         @Override
             public Object[] apply4(ClassLoaderRemapper remapper, Method method, Object src, Object[] param) {
@@ -468,8 +466,7 @@ public class RedirectAdapter implements PluginTransformer {
             }
         }
 
-    private record BridgeHandler(Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> bridge,
-                                 Method targetMethod) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
+    private record BridgeHandler(Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> bridge, Method targetMethod) implements Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> {
 
         @Override
             public Object[] apply4(ClassLoaderRemapper remapper, Method method, Object src, Object[] param) {

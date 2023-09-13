@@ -34,8 +34,6 @@ import java.util.StringJoiner;
 @SuppressWarnings("unused")
 public class ReflectionHandler extends ClassLoader {
 
-    private static final String PREFIX = "net.minecraft.";
-
     public static ClassLoaderRemapper remapper;
 
     public static Method[] redirectGetDeclaredMethods(Class<?> cl) {
@@ -159,11 +157,7 @@ public class ReflectionHandler extends ClassLoader {
 
     // srg -> bukkit
     public static String handlePackageGetName(String name) {
-        if (name.startsWith(PREFIX)) {
-            return PREFIX + "server.v1_20_R1";
-        } else {
-            return name;
-        }
+        return name;
     }
 
     // srg -> bukkit
