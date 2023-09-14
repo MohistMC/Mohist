@@ -49,8 +49,8 @@ public class Remapper {
 
     public Remapper() throws Exception {
         this.toNmsMapping = new JarMapping();
-        this.toNmsMapping.packages.put("org/yaml/snakeyaml", "com/mohistmc/org/yaml/snakeyaml");
-        this.toNmsMapping.packages.put("javax/inject", "com/mohistmc/javax/inject");
+        this.toNmsMapping.packages.put("org/yaml/snakeyaml/", "com/mohistmc/org/yaml/snakeyaml/");
+        this.toNmsMapping.packages.put("javax/inject/", "com/mohistmc/javax/inject/");
         this.toNmsMapping.classes.put("io/netty/util/Version", "com/mohistmc/bukkit/pluginfix/ScriptBlockPlus");
         this.toBukkitMapping = new JarMapping();
         this.inheritanceMap = new InheritanceMap();
