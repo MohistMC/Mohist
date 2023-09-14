@@ -115,7 +115,7 @@ public class WorldsCommands extends Command {
                     if (loadWorld.exists()) {
                         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "worldcommands.world.loadworld");
                         World w = Bukkit.createWorld(new WorldCreator(worldName));
-                        Location location = Bukkit.getWorld(worldName).getSpawnLocation();
+                        Location location = w.getSpawnLocation();
                         player.teleport(location);
                         ConfigByWorlds.addWorld(worldName);
                         ConfigByWorlds.addSpawn(location);

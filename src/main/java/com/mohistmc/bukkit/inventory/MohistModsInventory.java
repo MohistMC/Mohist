@@ -33,7 +33,6 @@ public class MohistModsInventory implements Container {
         return container;
     }
 
-
     @Override
     public void clearContent() {
         for (Slot slot : this.container.slots) {
