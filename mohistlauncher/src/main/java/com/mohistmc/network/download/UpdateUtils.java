@@ -80,7 +80,7 @@ public class UpdateUtils {
         String MD5 = MD5Util.getMd5(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            if (showlog) System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             return;
         }
         if (showlog) System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));

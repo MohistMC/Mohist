@@ -10,11 +10,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +62,7 @@ class LibraryLoader {
             String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
             String mavenUrl = "https://repo.maven.apache.org/maven2/%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
 
-            File file = new File(new File("libraries", "spigot-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
+            File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
 
             if (file.exists()) {
                 MohistMC.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
@@ -68,15 +71,14 @@ class LibraryLoader {
             }
             try {
                 file.getParentFile().mkdirs();
-                file.createNewFile();
+
                 InputStream inputStream = new URL(mavenUrl).openStream();
-                try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                    byte[] buffer = new byte[8 * 1024];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-                }
+                ReadableByteChannel rbc = Channels.newChannel(inputStream);
+                FileChannel fc = FileChannel.open(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+
+                fc.transferFrom(rbc, 0, Long.MAX_VALUE);
+                fc.close();
+                rbc.close();
 
                 libraries.add(file);
             } catch (IOException e) {
