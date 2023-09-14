@@ -6,13 +6,22 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.ParameterNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
+import java.util.Random;
 import java.util.function.Consumer;
+
+import static org.objectweb.asm.Opcodes.ARETURN;
 
 public class PluginFixManager {
 
@@ -27,7 +36,7 @@ public class PluginFixManager {
             case "com.sk89q.worldedit.bukkit.BukkitAdapter" -> WorldEdit::handleBukkitAdapter;
             case "com.sk89q.worldedit.bukkit.adapter.Refraction" -> WorldEdit::handlePickName;
             case "com.sk89q.worldedit.bukkit.adapter.impl.v1_20_R1.PaperweightAdapter$SpigotWatchdog" -> WorldEdit::handleWatchdog;
-            case "com.earth2me.essentials.utils.VersionUtil" -> node -> helloWorld(node, "net.minecraftforge.common.MinecraftForge", "hello.World");
+            case "com.earth2me.essentials.utils.VersionUtil" -> node -> helloWorld(node, 110, 109);
             case "net.Zrips.CMILib.Reflections" -> node -> helloWorld(node, "bR", "f_36096_");
             default -> null;
         };
@@ -55,6 +64,20 @@ public class PluginFixManager {
         }
     }
 
+    private static void replaceReturn(ClassNode node, String methodName, Object idc) {
+        for (MethodNode methodNode : node.methods) {
+            if (methodNode.name.equals(methodName)) {
+                InsnList toInject = new InsnList();
+
+                toInject.add(new LdcInsnNode(idc));
+                toInject.add(new InsnNode(ARETURN));
+
+                methodNode.instructions = toInject;
+                methodNode.tryCatchBlocks.clear();
+            }
+        }
+    }
+
     public static boolean isPaper() {
         return false;
     }
@@ -67,6 +90,18 @@ public class PluginFixManager {
                         if (a.equals(str)) {
                             ldcInsnNode.cst = b;
                         }
+                    }
+                }
+            }
+        });
+    }
+
+    private static void helloWorld(ClassNode node, int a, int b) {
+        node.methods.forEach(method -> {
+            for (AbstractInsnNode next : method.instructions) {
+                if (next instanceof IntInsnNode ldcInsnNode) {
+                    if (ldcInsnNode.operand == a) {
+                        ldcInsnNode.operand = b;
                     }
                 }
             }
