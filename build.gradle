@@ -204,6 +204,8 @@ def sharedDeps = {
     installer 'org.apache.maven.resolver:maven-resolver-transport-http:1.7.3'
     installer 'org.apache.maven.resolver:maven-resolver-util:1.7.3'
     installer 'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.5'
+    installer 'org.codehaus.plexus:plexus-interpolation:1.25'
+    installer 'org.codehaus.plexus:plexus-utils:3.2.1'
     // LibraryLoader end
     installer 'org.joml:joml:1.10.5' // 1.19.4
     compileOnly 'org.jetbrains:annotations:24.0.1'
@@ -226,6 +228,13 @@ def sharedDeps = {
     installer 'com.mohistmc:i18n:0.3'
     installer 'com.mohistmc:brigadier:1.20.1'
     installer 'com.mohistmc:librariesvault:1.20.1'
+    installer 'com.mohistmc:mjson:1.4.2'
+    installer 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+    installer 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    installer 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    installer 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+    installer 'com.fasterxml.woodstox:woodstox-core:6.5.1'
+    installer 'org.codehaus.woodstox:stax2-api:4.2.1'
 
     compileOnly 'me.clip:placeholderapi:2.11.3'
 
@@ -700,8 +709,7 @@ project(':mohist') {
                     manifest.attributes(values += [
                             'Premain-Class': 'com.mohistmc.util.JarLoader',
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
-                            'Main-Class': 'com.mohistmc.MohistMCStart',
-                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
+                            'Main-Class': 'com.mohistmc.MohistMCStart'
                     ])
                 } else {
                     manifest.attributes(values, pkg)
