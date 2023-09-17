@@ -266,19 +266,21 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             if (entity instanceof net.minecraft.world.entity.projectile.ThrownTrident) { return new CraftTrident(server, (net.minecraft.world.entity.projectile.ThrownTrident) entity); }
             else { return new CraftArrow(server, (net.minecraft.world.entity.projectile.AbstractArrow) entity); }
         }
-        else if (entity instanceof net.minecraft.world.entity.vehicle.Boat) { return new CraftBoat(server, (net.minecraft.world.entity.vehicle.Boat) entity); }
-        else if (entity instanceof net.minecraft.world.entity.projectile.ThrowableProjectile) {
+        else if (entity instanceof net.minecraft.world.entity.vehicle.Boat) {
+            if (entity instanceof ChestBoat) {
+                return new CraftChestBoat(server, (ChestBoat) entity);
+            } else {
+                return new CraftBoat(server, (Boat) entity);
+            }
+        }
+        else if (entity instanceof net.minecraft.world.entity.projectile.ThrowableProjectile throwableProjectile) {
             if (entity instanceof net.minecraft.world.entity.projectile.ThrownEgg) { return new CraftEgg(server, (net.minecraft.world.entity.projectile.ThrownEgg) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.Snowball) { return new CraftSnowball(server, (net.minecraft.world.entity.projectile.Snowball) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownPotion) { return new CraftThrownPotion(server, (net.minecraft.world.entity.projectile.ThrownPotion) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownEnderpearl) { return new CraftEnderPearl(server, (net.minecraft.world.entity.projectile.ThrownEnderpearl) entity); }
             else if (entity instanceof net.minecraft.world.entity.projectile.ThrownExperienceBottle) { return new CraftThrownExpBottle(server, (net.minecraft.world.entity.projectile.ThrownExperienceBottle) entity); }
             else if (entity instanceof ThrowableItemProjectile) { return new MohistModsThrowableProjectile(server, (ThrowableItemProjectile) entity); }
-            else { return new MohistModsEntity( server, entity ); }
-        }
-        else if (entity instanceof Boat) {
-            if (entity instanceof ChestBoat) { return new CraftChestBoat(server, (ChestBoat) entity); }
-            else { return new CraftBoat(server, (Boat) entity); }
+            else { return new MohistModsThrowableEntity( server, throwableProjectile ); }
         }
         else if (entity instanceof net.minecraft.world.entity.projectile.AbstractHurtingProjectile) {
             if (entity instanceof net.minecraft.world.entity.projectile.SmallFireball) { return new CraftSmallFireball(server, (net.minecraft.world.entity.projectile.SmallFireball) entity); }
@@ -318,8 +320,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.world.entity.projectile.EvokerFangs) { return new CraftEvokerFangs(server, (net.minecraft.world.entity.projectile.EvokerFangs) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.LlamaSpit) { return new CraftLlamaSpit(server, (net.minecraft.world.entity.projectile.LlamaSpit) entity); }
         else if (entity instanceof Marker) { return new CraftMarker(server, (Marker) entity); }
-        else if (entity instanceof Projectile) { return new MohistModsProjectileEntity(server, (Projectile) entity);
-        }
         return new MohistModsEntity(server, entity);
     }
 
