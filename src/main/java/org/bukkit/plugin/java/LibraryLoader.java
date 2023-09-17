@@ -136,7 +136,7 @@ class LibraryLoader {
                             list.add(dependency);
                         }
                     } else {
-                        if (o.at("scope").asString().equals("compile")) {
+                        if (o.at("scope") != null && o.at("scope").asString().equals("compile")) {
                             URL mavenUrl = new URL("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml"));
                             Json compile_json2Json = xml2Json(mavenUrl);
 
