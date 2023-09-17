@@ -585,8 +585,9 @@ public class CraftEventFactory {
                     return false;
                 }
             }
-
-            event = CraftEventFactory.callCreatureSpawnEvent((LivingEntity) entity, spawnReason);
+            if (entity.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) { // Mohist TODO
+                event = CraftEventFactory.callCreatureSpawnEvent((LivingEntity) entity, spawnReason);
+            }
         } else if (entity instanceof ItemEntity) {
             event = CraftEventFactory.callItemSpawnEvent((ItemEntity) entity);
         } else if (entity.getBukkitEntity() instanceof org.bukkit.entity.Projectile) {
