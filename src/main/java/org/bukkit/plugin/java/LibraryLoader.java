@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
+import com.mohistmc.util.IOUtil;
 import mjson.Json;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +83,6 @@ class LibraryLoader {
 
                 libraries.add(file);
             } catch (IOException e) {
-                MohistMC.LOGGER.error(e);
             }
         }
 
@@ -107,15 +107,16 @@ class LibraryLoader {
                 String group = dependency.group().replace(".", "/");
                 String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
                 String pomUrl = "https://repo.maven.apache.org/maven2/%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
-                list.addAll(initDependencies(new URL(pomUrl)));
+                if (IOUtil.hasUrl(pomUrl)) list.addAll(initDependencies(new URL(pomUrl)));
             }
         }
         return list;
     }
 
-    public static List<Dependency> initDependencies(URL url) throws IOException {
-        Json json2Json = xml2Json(url);
+    public static List<Dependency> initDependencies(URL url) throws MalformedURLException {
         List<Dependency> list = new ArrayList<>();
+        Json json2Json = xml2Json(url);
+        if (json2Json == null) return list;
         String version = json2Json.at("parent") != null ? json2Json.at("parent").at("version").asString() : json2Json.at("version").asString();
 
         if (json2Json.at("dependencies") == null) return list;
@@ -144,28 +145,28 @@ class LibraryLoader {
 
                             Dependency dependency = new Dependency(groupId, artifactId, compile_version, true);
                             list.add(dependency);
-
                         }
                     }
-
                 }
             }
         } else {
             Dependency dependency = new Dependency(json3Json.at("groupId").asString(), json3Json.at("artifactId").asString(), json3Json.at("version").asString(), true);
             list.add(dependency);
         }
-
-
         return list;
     }
 
-    public static Json xml2Json(URL url) throws IOException {
-        XmlMapper compile_xmlMapper = new XmlMapper();
-        String compile_xml = compile_xmlMapper.readTree(url).toString();
-        ObjectMapper compile_objectMapper = new ObjectMapper();
-        Object compile_json = compile_objectMapper.readValue(compile_xml, Object.class);
-        String compile_jsonString = compile_objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(compile_json);
-        return Json.read(compile_jsonString);
+    public static Json xml2Json(URL url) {
+        try {
+            XmlMapper compile_xmlMapper = new XmlMapper();
+            String compile_xml = compile_xmlMapper.readTree(url).toString();
+            ObjectMapper compile_objectMapper = new ObjectMapper();
+            Object compile_json = compile_objectMapper.readValue(compile_xml, Object.class);
+            String compile_jsonString = compile_objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(compile_json);
+            return Json.read(compile_jsonString);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public record Dependency(String group, String name, String version, boolean extra) {

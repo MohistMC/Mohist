@@ -6,9 +6,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class IOUtil {
+
+    public static boolean hasUrl(String s) {
+        try {
+            URL url = new URL(s);
+            url.openStream();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public static boolean closeStream(Closeable... pSteams) {
         boolean pHasError = false;
