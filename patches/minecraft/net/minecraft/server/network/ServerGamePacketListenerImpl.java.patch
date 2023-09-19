@@ -502,10 +502,10 @@
 +   private AtomicInteger mohist$slot = new AtomicInteger(-1);
 +   private AtomicReference<ItemStack> mohist$handItem = new AtomicReference<>(null);
 +
-+   private void updateBookPages(List<FilteredText> pPages, UnaryOperator<String> p_143636_, ItemStack pBook, int slot, ItemStack handItem) { // CraftBukkit
++   private void updateBookPages(List<FilteredText> pPages, UnaryOperator<String> pUpdater, ItemStack pBook, int slot, ItemStack handItem) { // CraftBukkit
 +      mohist$slot.set(slot);
 +      mohist$handItem.set(handItem);
-+      m_143634_(pPages, p_143636_, pBook);
++      m_143634_(pPages, pUpdater, pBook);
     }
  
     private void m_143634_(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {

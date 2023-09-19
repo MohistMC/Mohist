@@ -337,7 +337,7 @@ public final class CraftBlockStates {
         FACTORIES.put(blockType, factory);
     }
 
-    private static <T extends BlockEntity, B extends CraftBlockEntityState<T>> void register(
+    public static <T extends BlockEntity, B extends CraftBlockEntityState<T>> void register(
             Material blockType,
             Class<B> blockStateType,
             BiFunction<World, T, B> blockStateConstructor,

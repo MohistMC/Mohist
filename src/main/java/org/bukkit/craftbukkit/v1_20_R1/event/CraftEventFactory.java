@@ -78,7 +78,6 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
-import org.bukkit.craftbukkit.v1_20_R1.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
@@ -273,12 +272,7 @@ public class CraftEventFactory {
     public static boolean callPlayerSignOpenEvent(net.minecraft.world.entity.player.Player player, SignBlockEntity tileEntitySign, boolean front, PlayerSignOpenEvent.Cause cause) {
 
         final Block block = CraftBlock.at(tileEntitySign.getLevel(), tileEntitySign.getBlockPos());
-        final Sign sign;
-        if (CraftBlockStates.getBlockState(block) instanceof Sign sign1) {
-            sign = sign1;
-        } else {
-            sign = new CraftSign<>(tileEntitySign);
-        }
+        Sign sign = (Sign) CraftBlockStates.getBlockState(block);
         final Side side = (front) ? Side.FRONT : Side.BACK;
         return callPlayerSignOpenEvent((Player) player.getBukkitEntity(), sign, side, cause);
     }
