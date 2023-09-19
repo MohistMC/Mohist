@@ -37,20 +37,10 @@
        return fallingblockentity;
     }
  
-@@ -108,7 +_,16 @@
-          this.m_146870_();
+@@ -109,6 +_,7 @@
        } else {
           Block block = this.f_31946_.m_60734_();
--         ++this.f_31942_;
-+         if (this.f_31942_++ == 0) {
-+            BlockPos blockpos = this.m_142538_();
-+            if (this.f_19853_.m_8055_(blockpos).m_60713_(block) && !CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.f_50016_.m_49966_()).isCancelled()) {
-+               this.f_19853_.m_7471_(blockpos, false);
-+            } else if (!this.f_19853_.f_46443_) {
-+               this.m_146870_();
-+               return;
-+            }
-+         }
+          ++this.f_31942_;
 +
           if (!this.m_20068_()) {
              this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.04D, 0.0D));

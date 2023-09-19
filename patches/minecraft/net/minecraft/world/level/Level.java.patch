@@ -53,7 +53,7 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -62,8 +_,20 @@
+@@ -62,8 +_,21 @@
  import net.minecraft.world.level.storage.WritableLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.scores.Scoreboard;
@@ -62,6 +62,7 @@
 +import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CapturedBlockState;
++import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftNamespacedKey;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftSpawnCategory;
@@ -229,10 +230,37 @@
     }
  
     public boolean m_46739_(BlockPos p_46740_) {
-@@ -180,17 +_,45 @@
+@@ -173,6 +_,17 @@
+    }
+ 
+    public boolean m_6933_(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
++      // CraftBukkit start - tree generation
++      if (this.captureTreeGeneration) {
++         CapturedBlockState blockstate = capturedBlockStates.get(p_46605_);
++         if (blockstate == null) {
++            blockstate = CapturedBlockState.getTreeBlockState(this, p_46605_, p_46607_);
++            this.capturedBlockStates.put(p_46605_.m_7949_(), blockstate);
++         }
++         blockstate.setData(p_46606_);
++         return true;
++      }
++      // CraftBukkit end
+       if (this.m_151570_(p_46605_)) {
+          return false;
+       } else if (!this.f_46443_ && this.m_46659_()) {
+@@ -180,17 +_,59 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
++
++         // CraftBukkit start - capture blockstates
++         boolean captured = false;
++         if (this.captureBlockStates && !this.capturedBlockStates.containsKey(p_46605_)) {
++            CapturedBlockState blockstate = CapturedBlockState.getBlockState(this, p_46605_, p_46607_);
++            this.capturedBlockStates.put(p_46605_.m_7949_(), blockstate);
++            captured = true;
++         }
++         // CraftBukkit end
 +
 +         p_46605_ = p_46605_.m_7949_(); // Forge - prevent mutable BlockPos leaks
 +         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
@@ -247,6 +275,11 @@
 +
           BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
           if (blockstate == null) {
++            // CraftBukkit start - remove blockstate if failed (or the same)
++            if (this.captureBlockStates && captured) {
++               this.capturedBlockStates.remove(p_46605_);
++            }
++            // CraftBukkit end
 +            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
              return false;
           } else {
@@ -280,16 +313,16 @@
                 if ((p_46607_ & 16) == 0 && p_46608_ > 0) {
                    int i = p_46607_ & -34;
                    blockstate.m_60762_(this, p_46605_, i, p_46608_ - 1);
-+                        // CraftBukkit start
-+                        CraftWorld world = ((ServerLevel) this).getWorld();
-+                        if (world != null) {
-+                            BlockPhysicsEvent event = new BlockPhysicsEvent( world.getBlockAt( p_46605_.m_123341_(), p_46605_.m_123342_(), p_46605_.m_123343_() ), CraftBlockData.fromData( p_46606_ ) );
-+                            this.getCraftServer().getPluginManager().callEvent( event );
-+                            if (event.isCancelled()) {
-+                                return;
-+                            }
-+                        }
-+                        // CraftBukkit end
++                  // CraftBukkit start
++                  CraftWorld world = ((ServerLevel) this).getWorld();
++                  if (world != null) {
++                     BlockPhysicsEvent event = new BlockPhysicsEvent(CraftBlock.at(this, p_46605_), CraftBlockData.fromData( p_46606_ ) );
++                     this.getCraftServer().getPluginManager().callEvent( event );
++                     if (event.isCancelled()) {
++                        return;
++                     }
++                  }
++                  // CraftBukkit end
                    p_46606_.m_60705_(this, p_46605_, i, p_46608_ - 1);
                    p_46606_.m_60762_(this, p_46605_, i, p_46608_ - 1);
                 }
@@ -328,22 +361,22 @@
  
           try {
 -            blockstate.m_60690_(this, p_46587_, p_46588_, p_46589_, false);
-+                // CraftBukkit start
-+                CraftWorld world = ((ServerLevel) this).getWorld();
-+                if (world != null) {
-+                    BlockPhysicsEvent event = new BlockPhysicsEvent( world.getBlockAt( p_46587_.m_123341_(), p_46587_.m_123342_(), p_46587_.m_123343_() ), CraftBlockData.fromData( blockstate ), world.getBlockAt( p_46589_.m_123341_(), p_46589_.m_123342_(), p_46589_.m_123343_() ) );
-+                    this.getCraftServer().getPluginManager().callEvent( event );
++            // CraftBukkit start
++            CraftWorld world = ((ServerLevel) this).getWorld();
++            if (world != null) {
++               BlockPhysicsEvent event = new BlockPhysicsEvent( world.getBlockAt( p_46587_.m_123341_(), p_46587_.m_123342_(), p_46587_.m_123343_() ), CraftBlockData.fromData( blockstate ), world.getBlockAt( p_46589_.m_123341_(), p_46589_.m_123342_(), p_46589_.m_123343_() ) );
++               this.getCraftServer().getPluginManager().callEvent( event );
 +
-+                    if (event.isCancelled()) {
-+                        return;
-+                    }
-+                }
-+                // CraftBukkit end
-+                blockstate.m_60690_( this, p_46587_, p_46588_, p_46589_, false );
-+                // Spigot Start
-+            } catch (StackOverflowError ex) {
-+                lastPhysicsProblem = new BlockPos(p_46587_);
-+                // Spigot End
++               if (event.isCancelled()) {
++                  return;
++               }
++            }
++            // CraftBukkit end
++            blockstate.m_60690_( this, p_46587_, p_46588_, p_46589_, false );
++            // Spigot Start
++         } catch (StackOverflowError ex) {
++            lastPhysicsProblem = new BlockPos(p_46587_);
++            // Spigot End
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception while updating neighbours");
              CrashReportCategory crashreportcategory = crashreport.m_127514_("Block being updated");
@@ -577,15 +610,3 @@
        int i = SectionPos.m_123171_(p_151516_.m_123341_() - p_151517_);
        int j = SectionPos.m_123171_(p_151516_.m_123343_() - p_151517_);
        int k = SectionPos.m_123171_(p_151516_.m_123341_() + p_151517_);
-@@ -900,4 +_,11 @@
-    public long m_183596_() {
-       return (long)(this.f_186455_++);
-    }
-+
-+   public boolean shouldDelayFallingBlockEntityRemoval(Entity.RemovalReason p_186457_) {
-+      return false;
-+   }
-+
-+    public void notifyAndUpdatePhysics(BlockPos position, Object o, BlockState oldBlock, BlockState newBlock, BlockState newBlock1, int flag, int i) {
-+    }
- }
