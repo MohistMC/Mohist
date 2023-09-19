@@ -1,5 +1,6 @@
 package org.bukkit.plugin;
 
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.Server;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -194,5 +195,8 @@ public interface Plugin extends TabExecutor {
     // Mohist start
     public boolean callForge();
     public void initCallForge();
+    public void registerForgeEvent(IEventBus bus, Object target);
+    public void registerForgeEvent(Object target);
+    public void unregisterForgeEvents();
     // Mohist end
 }

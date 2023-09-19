@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.bukkit.Bukkit;
 
+@Deprecated(forRemoval = true, since = "1.20.2")
 public class ForgeEventHandler implements IEventBusInvokeDispatcher {
 
     public static void init() {

@@ -2,6 +2,10 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.mohistmc.forge.MohistEventBus;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,7 +30,9 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,15 +54,53 @@ public abstract class JavaPlugin extends PluginBase {
     private File configFile = null;
     private PluginLogger logger = null;
 
+    // Mohist start
+    private IdentityHashMap<Object, IEventBus> forgeEvents = new IdentityHashMap<>();
     private boolean callForge = false;
 
+    @Override
     public boolean callForge() {
         return callForge;
     }
 
+    @Override
     public void initCallForge() {
         callForge = true;
     }
+
+    @Override
+    public void registerForgeEvent(IEventBus bus, Object target) {
+        try {
+            if (bus instanceof EventBus eventBus) {
+                MohistEventBus.register(eventBus, target);
+                forgeEvents.put(target, eventBus);
+            } else {
+                bus.register(target);
+                forgeEvents.put(target, bus);
+            }
+        } catch (Throwable t) {
+            t.fillInStackTrace();
+        }
+    }
+
+    @Override
+    public void registerForgeEvent(Object target) {
+        try {
+            IEventBus eventBus = MinecraftForge.EVENT_BUS;
+            MohistEventBus.register((EventBus) eventBus, target);
+            forgeEvents.put(target, eventBus);
+        } catch (Throwable t) {
+            t.fillInStackTrace();
+        }
+    }
+
+    @Override
+    public void unregisterForgeEvents() {
+        for (Map.Entry<Object, IEventBus> objectIEventBusMap : forgeEvents.entrySet()) {
+            objectIEventBusMap.getValue().unregister(objectIEventBusMap.getKey());
+        }
+    }
+    // Mohist end
 
     public JavaPlugin() {
         final ClassLoader classLoader = this.getClass().getClassLoader();

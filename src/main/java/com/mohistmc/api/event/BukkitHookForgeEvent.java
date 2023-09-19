@@ -25,6 +25,7 @@ import org.bukkit.event.HandlerList;
 /**
  * Using Bukkit to handle Forge's Event
  */
+@Deprecated(forRemoval = true, since = "1.20.2")
 public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     private static final HandlerList handlers = new HandlerList();
     private final Event event;

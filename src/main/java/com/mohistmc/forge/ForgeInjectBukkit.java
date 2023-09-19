@@ -235,7 +235,7 @@ public class ForgeInjectBukkit {
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity, entityType);
             } else {
-                ServerAPI.entityTypeMap.put(entity, normalizeName(resourceLocation.getPath().toString()));
+                ServerAPI.entityTypeMap.put(entity, normalizeName(resourceLocation.getPath()));
             }
         }
     }

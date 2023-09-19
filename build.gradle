@@ -171,7 +171,6 @@ def sharedDeps = {
     installer "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     installer "net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}"
     installer 'org.antlr:antlr4-runtime:4.9.1' // Dep of AccessTransformer
-    installer "net.minecraftforge:eventbus:${EVENTBUS_VERSION}"
     installer "net.minecraftforge:forgespi:${SPI_VERSION}"
     installer "net.minecraftforge:coremods:${COREMODS_VERSION}"
     installer "cpw.mods:modlauncher:${MODLAUNCHER_VERSION}"
@@ -206,6 +205,15 @@ def sharedDeps = {
     installer 'org.eclipse.sisu:org.eclipse.sisu.inject:0.3.5'
     installer 'org.codehaus.plexus:plexus-interpolation:1.25'
     installer 'org.codehaus.plexus:plexus-utils:3.2.1'
+
+    // Mohist start
+    installer 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+    installer 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    installer 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    installer 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+    installer 'com.fasterxml.woodstox:woodstox-core:6.5.1'
+    installer 'org.codehaus.woodstox:stax2-api:4.2.1'
+    // Mohist end
     // LibraryLoader end
     installer 'org.joml:joml:1.10.5' // 1.19.4
     compileOnly 'org.jetbrains:annotations:24.0.1'
@@ -229,12 +237,7 @@ def sharedDeps = {
     installer 'com.mohistmc:brigadier:1.20.1'
     installer 'com.mohistmc:librariesvault:1.20.1'
     installer 'com.mohistmc:mjson:1.4.2'
-    installer 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
-    installer 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-    installer 'com.fasterxml.jackson.core:jackson-core:2.15.2'
-    installer 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
-    installer 'com.fasterxml.woodstox:woodstox-core:6.5.1'
-    installer 'org.codehaus.woodstox:stax2-api:4.2.1'
+    installer "com.mohistmc:eventbus:${EVENTBUS_VERSION}"
 
     compileOnly 'me.clip:placeholderapi:2.11.3'
 
