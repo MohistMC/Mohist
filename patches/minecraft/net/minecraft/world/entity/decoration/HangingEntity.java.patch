@@ -160,3 +160,12 @@
           this.m_6074_();
           this.m_5553_((Entity)null);
        }
+@@ -187,7 +_,7 @@
+    public void m_7378_(CompoundTag p_31730_) {
+       BlockPos blockpos = new BlockPos(p_31730_.m_128451_("TileX"), p_31730_.m_128451_("TileY"), p_31730_.m_128451_("TileZ"));
+       if (!blockpos.m_123314_(this.m_20183_(), 16.0D)) {
+-         f_238173_.error("Hanging entity at invalid position: {}", (Object)blockpos);
++         f_238173_.debug("Hanging entity at invalid position: {}", (Object)blockpos);
+       } else {
+          this.f_31698_ = blockpos;
+       }

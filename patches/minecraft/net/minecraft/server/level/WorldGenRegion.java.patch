@@ -9,6 +9,15 @@
              BlockEntity blockentity = blockstate.m_155947_() ? this.m_7702_(p_9550_) : null;
              Block.m_49881_(blockstate, this.f_9479_, p_9550_, blockentity, p_9552_, ItemStack.f_41583_);
           }
+@@ -226,7 +_,7 @@
+          }
+ 
+          if (blockstate.m_155947_()) {
+-            f_9474_.warn("Tried to access a block entity before it was created. {}", (Object)p_9582_);
++            f_9474_.debug("Tried to access a block entity before it was created. {}", (Object)p_9582_);
+          }
+ 
+          return null;
 @@ -249,7 +_,7 @@
  
           return true;

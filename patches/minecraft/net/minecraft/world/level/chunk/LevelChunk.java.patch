@@ -260,6 +260,15 @@
           }
  
        });
+@@ -530,7 +_,7 @@
+          blockentity.m_142339_(this.f_62776_);
+          this.m_142170_(blockentity);
+       } else {
+-         f_62771_.warn("Tried to load a block entity for block {} but failed at location {}", blockstate, p_62871_);
++         f_62771_.debug("Tried to load a block entity for block {} but failed at location {}", blockstate, p_62871_);
+       }
+ 
+       return blockentity;
 @@ -564,6 +_,7 @@
     }
  
@@ -326,7 +335,13 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -649,10 +_,8 @@
+@@ -644,15 +_,13 @@
+                      this.f_156430_ = false;
+                   } else if (!this.f_156430_) {
+                      this.f_156430_ = true;
+-                     LevelChunk.f_62771_.warn("Block entity {} @ {} state {} invalid for ticking:", LogUtils.defer(this::m_142280_), LogUtils.defer(this::m_142689_), blockstate);
++                     LevelChunk.f_62771_.debug("Block entity {} @ {} state {} invalid for ticking:", LogUtils.defer(this::m_142280_), LogUtils.defer(this::m_142689_), blockstate);
+                   }
  
                    profilerfiller.m_7238_();
                 } catch (Throwable throwable) {
