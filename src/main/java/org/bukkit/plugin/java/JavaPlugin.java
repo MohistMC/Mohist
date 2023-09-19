@@ -125,7 +125,6 @@ public abstract class JavaPlugin extends PluginBase {
         for(IEventBus eventBus : forgeEvents.keySet()) {
             unregisterForgeEvents(eventBus);
         }
-        forgeEvents.clear();
     }
     // Mohist end
 
