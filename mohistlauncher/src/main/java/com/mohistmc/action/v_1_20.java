@@ -59,7 +59,7 @@ public class v_1_20 {
             this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
+            this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
             this.mojmap = new File(otherStart + "-mappings.txt");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
@@ -76,7 +76,7 @@ public class v_1_20 {
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(mohistplugin, "data/mohistplugins-1.20.1.jar");
+            copyFileFromJar(mohistplugin, "data/mohistplugins-" + mcVer + ".jar");
 
             if (!checkDependencies()) return;
             System.out.println(MohistMCStart.i18n.get("installation.start"));

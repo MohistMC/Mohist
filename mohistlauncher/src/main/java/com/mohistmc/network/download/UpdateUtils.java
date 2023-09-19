@@ -44,10 +44,10 @@ public class UpdateUtils {
         System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
 
         try {
-            Json json = Json.read(new URL("https://mohistmc.com/api/1.20.1/latest"));
+            Json json = Json.read(new URL("https://mohistmc.com/api/" + MohistMCStart.MCVERSION + "/latest"));
 
             String jar_sha = MohistMCStart.getVersion();
-            String build_number = "1.20.1-" + json.at("number").asInteger();
+            String build_number = MohistMCStart.MCVERSION + "-" + json.at("number").asInteger();
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.at("timeinmillis").asLong()));
 
             if (jar_sha.equals(build_number))

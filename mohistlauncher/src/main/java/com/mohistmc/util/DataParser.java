@@ -1,5 +1,7 @@
 package com.mohistmc.util;
 
+import com.mohistmc.MohistMCStart;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,8 @@ public class DataParser {
         versionMap.put("minecraft", FileUtil.readFileFromJar("versions/minecraft.txt").get(0));
         versionMap.put("mcp", FileUtil.readFileFromJar("versions/mcp.txt").get(0));
         versionMap.put("mohist", FileUtil.readFileFromJar("versions/mohist.txt").get(0));
+
+        MohistMCStart.MCVERSION = versionMap.get("minecraft");
     }
 
     public static void parseLaunchArgs() {

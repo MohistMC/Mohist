@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 public class MohistMCStart {
 
+    public static String MCVERSION;
     public static final List<String> mainArgs = new ArrayList<>();
     public static i18n i18n;
 
@@ -50,7 +51,6 @@ public class MohistMCStart {
         DataParser.parseLaunchArgs();
         MohistConfigUtil.copyMohistConfig();
         MohistConfigUtil.i18n();
-
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             String test = """
 
