@@ -30,9 +30,9 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +55,8 @@ public abstract class JavaPlugin extends PluginBase {
     private PluginLogger logger = null;
 
     // Mohist start
-    private IdentityHashMap<Object, IEventBus> forgeEvents = new IdentityHashMap<>();
+    private final IdentityHashMap<IEventBus, List<Object>> forgeEvents = new IdentityHashMap<>();
+    // Changed because there's a chance we may want to register the same object under multiple event busses
     private boolean callForge = false;
 
     @Override
@@ -73,14 +74,18 @@ public abstract class JavaPlugin extends PluginBase {
         try {
             if (bus instanceof EventBus eventBus) {
                 MohistEventBus.register(eventBus, target);
-                forgeEvents.put(target, eventBus);
+                getForgeEvents(bus).add(target);
             } else {
                 bus.register(target);
-                forgeEvents.put(target, bus);
+                getForgeEvents(bus).add(target);
             }
         } catch (Throwable t) {
             t.fillInStackTrace();
         }
+    }
+
+    private List<Object> getForgeEvents(IEventBus bus) {
+        return forgeEvents.computeIfAbsent(bus, eventBus -> new ArrayList<>());
     }
 
     @Override
@@ -88,17 +93,39 @@ public abstract class JavaPlugin extends PluginBase {
         try {
             IEventBus eventBus = MinecraftForge.EVENT_BUS;
             MohistEventBus.register((EventBus) eventBus, target);
-            forgeEvents.put(target, eventBus);
+            getForgeEvents(eventBus).add(target);
         } catch (Throwable t) {
             t.fillInStackTrace();
         }
     }
 
     @Override
-    public void unregisterForgeEvents() {
-        for (Map.Entry<Object, IEventBus> objectIEventBusMap : forgeEvents.entrySet()) {
-            objectIEventBusMap.getValue().unregister(objectIEventBusMap.getKey());
+    public void unregisterForgeEvents(IEventBus bus, Object target) {
+        // Added so we can unregister the listener and remove it if need be to stop Mohist from needing to unregister it later
+        List<Object> registeredForgeEvents = getForgeEvents(bus);
+        for(int i = 0; i < registeredForgeEvents.size(); i++) {
+            if(registeredForgeEvents.get(i) == target) {
+                bus.unregister(registeredForgeEvents.remove((int) i));;
+            }
         }
+        if(registeredForgeEvents.isEmpty()) forgeEvents.remove(bus);
+    }
+
+    @Override
+    public void unregisterForgeEvents(IEventBus bus) {
+        // Added so we can unregister the listener and remove it if need be to stop Mohist from needing to unregister it later
+        for(Object target : getForgeEvents(bus)) {
+            bus.unregister(target);
+        }
+        forgeEvents.remove(bus);
+    }
+
+    @Override
+    public void unregisterAllForgeEvents() { // Changed name for clarity
+        for(IEventBus eventBus : forgeEvents.keySet()) {
+            unregisterForgeEvents(eventBus);
+        }
+        forgeEvents.clear();
     }
     // Mohist end
 

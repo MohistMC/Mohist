@@ -197,6 +197,8 @@ public interface Plugin extends TabExecutor {
     public void initCallForge();
     public void registerForgeEvent(IEventBus bus, Object target);
     public void registerForgeEvent(Object target);
-    public void unregisterForgeEvents();
+    public void unregisterForgeEvents(IEventBus bus, Object target);
+    public void unregisterForgeEvents(IEventBus bus);
+    public void unregisterAllForgeEvents();
     // Mohist end
 }
