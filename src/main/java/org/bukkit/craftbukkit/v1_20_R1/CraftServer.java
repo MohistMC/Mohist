@@ -182,6 +182,7 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_20_R1.util.DatFileFilter;
 import org.bukkit.craftbukkit.v1_20_R1.util.Versioning;
+import org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID;
 import org.bukkit.craftbukkit.v1_20_R1.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -1020,7 +1021,7 @@ public final class CraftServer implements Server {
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-
+        Level2LevelStem.bukkit = folder;
         if (world != null) {
             return world;
         }

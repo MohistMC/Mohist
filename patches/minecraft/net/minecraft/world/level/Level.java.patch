@@ -69,7 +69,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,19 +_,63 @@
+@@ -101,19 +_,64 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -107,6 +107,7 @@
 +   public final it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<SpawnCategory> ticksPerSpawnCategory = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
 +   public boolean populating;
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
++
 +   public CraftWorld getWorld() {
 +      return this.world;
 +   }

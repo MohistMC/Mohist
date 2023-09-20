@@ -1,11 +1,12 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -2,6 +_,8 @@
+@@ -2,6 +_,9 @@
  
  import com.google.common.annotations.VisibleForTesting;
  import com.google.common.collect.Lists;
 +import com.mohistmc.forge.MohistDerivedWorldInfo;
 +import com.mohistmc.plugins.ban.bans.BanEntity;
++import com.mohistmc.util.Level2LevelStem;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
@@ -137,8 +138,8 @@
 +      this.pvpMode = p_214999_.m_129799_();
 +      convertable = p_215001_;
 +      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
-+      uuid = WorldUUID.getUUID(worldFile);
-+      name = worldFile.getName();
++      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
++      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit.getName() : worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
