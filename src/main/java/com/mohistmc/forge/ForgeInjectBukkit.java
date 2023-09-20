@@ -26,7 +26,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -140,8 +140,8 @@ public class ForgeInjectBukkit {
                         CraftBlockStates.register(material, CraftSign.class, CraftSign::new, SignBlockEntity::new);
                     } else if (block.defaultBlockState().is(BlockTags.ALL_HANGING_SIGNS)) {
                         CraftBlockStates.register(material, CraftHangingSign.class, CraftHangingSign::new, HangingSignBlockEntity::new);
-                    } else if (block instanceof EntityBlock) {
-                        BlockEntity blockEntity = ((EntityBlock) block).newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
+                    } else if (block instanceof SignBlock signBlock) {
+                        BlockEntity blockEntity = signBlock.newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
                         if (blockEntity instanceof HangingSignBlockEntity) {
                             CraftBlockStates.register(material, CraftHangingSign.class, CraftHangingSign::new, HangingSignBlockEntity::new);
                         } else if (blockEntity instanceof SignBlockEntity) {
