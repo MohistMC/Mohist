@@ -1,5 +1,6 @@
 package com.mohistmc.plugins;
 
+import com.mohistmc.MohistConfig;
 import com.mohistmc.plugins.ban.bans.BanEnchantment;
 import com.mohistmc.plugins.ban.bans.BanEntity;
 import com.mohistmc.plugins.ban.bans.BanItem;
@@ -37,7 +38,7 @@ public class MohistPlugin {
     public static Logger LOGGER = LogManager.getLogger("MohistPlugin");
 
     public static void init(Server server) {
-        WorldManage.onEnable();
+        if (MohistConfig.worldmanage) WorldManage.onEnable();
         ItemsConfig.init();
         WarpsUtils.init();
         File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
@@ -62,7 +63,7 @@ public class MohistPlugin {
     }
 
     public static void registerCommands(Map<String, Command> map) {
-        map.put(WorldManage.command, new WorldsCommands(WorldManage.command));
+        if (MohistConfig.worldmanage) map.put(WorldManage.command, new WorldsCommands(WorldManage.command));
         map.put("warps", new WarpsCommands("warps"));
     }
 

@@ -199,6 +199,7 @@ public class MohistConfig {
 
     // Ban events
     public static boolean doFireTick;
+    public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
 
@@ -241,5 +242,6 @@ public class MohistConfig {
 
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
+        worldmanage = getBoolean("worldmanage", true);
     }
 }
