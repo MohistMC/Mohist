@@ -1,7 +1,5 @@
 package org.bukkit.plugin.java;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
 import com.mohistmc.util.IOUtil;
@@ -115,8 +113,7 @@ class LibraryLoader {
 
     public static List<Dependency> initDependencies(URL url) throws MalformedURLException {
         List<Dependency> list = new ArrayList<>();
-        Json json2Json = xml2Json(url);
-        if (json2Json == null) return list;
+        Json json2Json = Json.readXml(url).at("project");
         String version = json2Json.at("parent") != null ? json2Json.at("parent").at("version").asString() : json2Json.at("version").asString();
 
         if (json2Json.at("dependencies") == null) return list;
@@ -139,7 +136,7 @@ class LibraryLoader {
                     } else {
                         if (o.at("scope") != null && o.at("scope").asString().equals("compile")) {
                             URL mavenUrl = new URL("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml"));
-                            Json compile_json2Json = xml2Json(mavenUrl);
+                            Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");;
 
                             String compile_version = compile_json2Json.at("versioning").at("release").asString();
 
@@ -154,19 +151,6 @@ class LibraryLoader {
             list.add(dependency);
         }
         return list;
-    }
-
-    public static Json xml2Json(URL url) {
-        try {
-            XmlMapper compile_xmlMapper = new XmlMapper();
-            String compile_xml = compile_xmlMapper.readTree(url).toString();
-            ObjectMapper compile_objectMapper = new ObjectMapper();
-            Object compile_json = compile_objectMapper.readValue(compile_xml, Object.class);
-            String compile_jsonString = compile_objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(compile_json);
-            return Json.read(compile_jsonString);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public record Dependency(String group, String name, String version, boolean extra) {
