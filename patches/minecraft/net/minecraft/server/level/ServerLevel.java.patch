@@ -105,7 +105,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,70 @@
+@@ -188,24 +_,72 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -121,6 +121,7 @@
 +   public PrimaryLevelData K;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++   public final String name;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.f_8547_.m_62227_(x, z, false);
@@ -137,6 +138,7 @@
 +      convertable = p_215001_;
 +      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
 +      uuid = WorldUUID.getUUID(worldFile);
++      name = worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
@@ -167,7 +169,7 @@
 +         generator = getCraftServer().getGenerator(p_215002_.m_5462_());
 +      }
 +
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(f_8549_.m_5462_()); // Spigot // Mohist
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
 +      // CraftBukkit end
        boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
