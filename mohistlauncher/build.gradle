@@ -15,9 +15,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     compileOnly 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'com.mohistmc:yaml:0.5'
-    implementation 'com.mohistmc:i18n:0.3'
-    implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'com.mohistmc:yaml:0.6'
+    implementation 'com.mohistmc:i18n:0.4'
+    implementation 'org.yaml:snakeyaml:2.2'
     implementation 'com.mohistmc:json:0.2'
     implementation "cpw.mods:bootstraplauncher:1.1.2"
     implementation 'me.tongfei:progressbar:0.10.0'
@@ -26,9 +26,9 @@ dependencies {
 
 shadowJar {
     dependencies {
-        include(dependency('com.mohistmc:yaml:0.5'))
-        include(dependency('org.yaml:snakeyaml:2.0'))
-        include(dependency('com.mohistmc:i18n:0.3'))
+        include(dependency('com.mohistmc:yaml:0.6'))
+        include(dependency('org.yaml:snakeyaml:2.2'))
+        include(dependency('com.mohistmc:i18n:0.4'))
         include(dependency('com.mohistmc:json:0.2'))
         include(dependency('me.tongfei:progressbar:0.10.0'))
         include(dependency('org.jline:jline:3.23.0'))

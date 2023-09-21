@@ -35,7 +35,9 @@ public interface DataPack extends Keyed {
      * This is related to the server version to work.
      *
      * @return the pack version
+     * @deprecated packs can support multiple versions
      */
+    @Deprecated
     public int getPackFormat();
 
     /**
