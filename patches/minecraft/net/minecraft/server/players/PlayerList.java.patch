@@ -98,22 +98,9 @@
        this.f_11195_ = p_203842_;
        this.f_243858_ = p_251844_;
        this.f_256838_ = (new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.m_257599_(p_251844_))).m_203557_();
-@@ -144,16 +_,16 @@
-    public void m_11261_(Connection p_11262_, ServerPlayer p_11263_) {
-       GameProfile gameprofile = p_11263_.m_36316_();
-       GameProfileCache gameprofilecache = this.f_11195_.m_129927_();
--      String s;
--      if (gameprofilecache != null) {
--         Optional<GameProfile> optional = gameprofilecache.m_11002_(gameprofile.getId());
--         s = optional.map(GameProfile::getName).orElse(gameprofile.getName());
--         gameprofilecache.m_10991_(gameprofile);
--      } else {
--         s = gameprofile.getName();
--      }
--
-+      Optional<GameProfile> optional = gameprofilecache.m_11002_(gameprofile.getId());
-+      String s = optional.map(GameProfile::getName).orElse(gameprofile.getName());
-+      gameprofilecache.m_10991_(gameprofile);
+@@ -154,6 +_,12 @@
+       }
+ 
        CompoundTag compoundtag = this.m_11224_(p_11263_);
 +      // CraftBukkit start - Better rename detection
 +      if (compoundtag != null && compoundtag.m_128441_("bukkit")) {
