@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/CraftingMenu.java
 +++ b/net/minecraft/world/inventory/CraftingMenu.java
-@@ -11,8 +_,12 @@
+@@ -11,8 +_,13 @@
  import net.minecraft.world.item.crafting.CraftingRecipe;
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.crafting.RecipeType;
@@ -10,6 +10,7 @@
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryCrafting;
 +import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryView;
++import org.spigotmc.AsyncCatcher;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int f_150539_ = 0;
@@ -43,12 +44,13 @@
        this.m_38897_(new ResultSlot(p_39357_.f_35978_, this.f_39348_, this.f_39349_, 0, 124, 35));
  
        for(int i = 0; i < 3; ++i) {
-@@ -70,6 +_,8 @@
+@@ -70,6 +_,9 @@
              }
           }
  
-+         itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof RepairItemRecipe); // CraftBukkit
-+
++         if (!AsyncCatcher.catchAsync()) {
++            itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.orElse(null) instanceof RepairItemRecipe); // CraftBukkit
++         }
           p_150551_.m_6836_(0, itemstack);
           p_150547_.m_150404_(0, itemstack);
           serverplayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(p_150547_.f_38840_, p_150547_.m_182425_(), 0, itemstack));

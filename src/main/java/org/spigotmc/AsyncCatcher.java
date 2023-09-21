@@ -5,7 +5,7 @@ import net.minecraft.server.MinecraftServer;
 public class AsyncCatcher
 {
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
 
     public static void catchOp(String reason)
     {
@@ -13,5 +13,14 @@ public class AsyncCatcher
         {
             throw new IllegalStateException( "Asynchronous " + reason + "!" );
         }
+    }
+
+    public static boolean catchAsync()
+    {
+        if ( enabled && Thread.currentThread() != MinecraftServer.getServer().serverThread )
+        {
+            return true;
+        }
+        return false;
     }
 }

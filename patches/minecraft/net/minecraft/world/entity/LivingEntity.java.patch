@@ -141,7 +141,7 @@
 -      this.m_21153_(this.m_21233_());
 +      this.craftAttributes = new CraftAttributeMap(f_20943_); // CraftBukkit
 +      // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
-+      this.f_19804_.m_135381_(LivingEntity.f_20961_, (float) this.m_21051_(Attributes.f_22276_).m_22135_());
++      this.f_19804_.m_135381_(LivingEntity.f_20961_,  (float) this.m_21172_(Attributes.f_22276_));
        this.f_19850_ = true;
        this.f_20928_ = (float)((Math.random() + 1.0D) * (double)0.01F);
        this.m_20090_();
