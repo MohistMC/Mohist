@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,7 +48,7 @@ public class BlockEventDispatcher {
     //For BlockBreakEvent
     @SubscribeEvent(receiveCanceled = true)
     public void onBreakBlockEvent(BlockEvent.BreakEvent event) {
-        if (!event.getWorld().isClientSide()) {
+        if (!event.getWorld().isClientSide() && event.getWorld() instanceof ServerWorld) {
             CraftBlock craftBlock = CraftBlock.at(event.getWorld(), event.getPos());
             BlockBreakEvent breakEvent = new BlockBreakEvent(craftBlock, ((ServerPlayerEntity) event.getPlayer()).getBukkitEntity());
             breakEvent.setCancelled(event.isCanceled());
