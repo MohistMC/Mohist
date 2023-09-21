@@ -29,7 +29,7 @@
  import net.minecraft.nbt.ListTag;
  import net.minecraft.nbt.NbtOps;
  import net.minecraft.nbt.Tag;
-@@ -116,14 +_,24 @@
+@@ -116,14 +_,25 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
@@ -42,6 +42,7 @@
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class LivingEntity extends Entity {
 +public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
@@ -87,7 +88,7 @@
 -      this.m_21153_(this.m_21233_());
 +      this.craftAttributes = new CraftAttributeMap(f_20943_); // CraftBukkit
 +      // CraftBukkit - setHealth(getMaxHealth()) inlined and simplified to skip the instanceof check for EntityPlayer, as getBukkitEntity() is not initialized in constructor
-+      this.f_19804_.m_135381_(LivingEntity.f_20961_, (float) this.m_21051_(Attributes.f_22276_).m_22135_());
++      this.f_19804_.m_135381_(LivingEntity.f_20961_, (float) this.m_21172_(Attributes.f_22276_));
        this.f_19850_ = true;
        this.f_20928_ = (float)((Math.random() + 1.0D) * (double)0.01F);
        this.m_20090_();
@@ -100,7 +101,7 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -292,13 +_,21 @@
+@@ -292,13 +_,22 @@
           if (!p_20992_.m_60795_()) {
              double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
              int i = (int)(150.0D * d0);
@@ -112,6 +113,7 @@
 +               } else {
 +                  ((ServerLevel) this.f_19853_).m_8767_(new BlockParticleOption(ParticleTypes.f_123794_, p_20992_).setPos(p_20993_), this.m_20185_(), this.m_20186_(), this.m_20189_(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
 +               }
++               // CraftBukkit end
 +            }
           }
        }
@@ -346,7 +348,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -899,25 +_,66 @@
+@@ -899,25 +_,67 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -361,6 +363,7 @@
 +      addEffectCause.set(cause);
 +   }
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
++      boolean isAsync = AsyncCatcher.catchAsync();
 +      if (isTickingEffects) {
 +         effectsToProcess.add(new ProcessableEffect(p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN)));
 +         return true;
@@ -377,18 +380,20 @@
 +            override = new MobEffectInstance(mobeffectinstance).m_19558_(p_147208_);
 +         }
 +
-+         EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
-+         if (event.isCancelled()) {
-+            return false;
++         if (!isAsync) {
++            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, mobeffectinstance, p_147208_, addEffectCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), override);
++            if (event.isCancelled()) {
++               return false;
++            }
++            override = event.isOverride();
 +         }
 +         // CraftBukkit end
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
              return true;
-          } else if (mobeffectinstance.m_19558_(p_147208_)) {
-+            // CraftBukkit start
-+         } else if (event.isOverride()) {
+-         } else if (mobeffectinstance.m_19558_(p_147208_)) {
++         } else if (override) {
 +            mobeffectinstance.m_19558_(p_147208_);
              this.m_141973_(mobeffectinstance, true, p_147209_);
 +            // CraftBukkit end
@@ -397,9 +402,7 @@
              return false;
           }
        }
--   }
-+      return false;
-+   }
+    }
 +
 +   public boolean addEffect(MobEffectInstance p_147208_, @Nullable Entity p_147209_, EntityPotionEffectEvent.Cause cause) {
 +      addEffectCause.set(cause);

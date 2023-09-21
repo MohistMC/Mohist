@@ -18,7 +18,7 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.BlockParticleOption;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -116,9 +_,38 @@
+@@ -116,9 +_,39 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -52,6 +52,7 @@
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
@@ -187,7 +188,7 @@
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
-@@ -338,12 +_,19 @@
+@@ -338,12 +_,21 @@
  
     public void m_142687_(Entity.RemovalReason p_146834_) {
        this.m_142467_(p_146834_);
@@ -202,7 +203,9 @@
 +      if (p_20125_ == this.m_20089_()) {
 +         return;
 +      }
-+      this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      if (!AsyncCatcher.catchAsync()) {
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      }
 +      // CraftBukkit end
        this.f_19804_.m_135381_(f_19806_, p_20125_);
     }
