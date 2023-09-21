@@ -114,18 +114,18 @@ class LibraryLoader {
     public static List<Dependency> initDependencies(URL url) throws MalformedURLException {
         List<Dependency> list = new ArrayList<>();
         Json json2Json = Json.readXml(url).at("project");
-        String version = json2Json.at("parent") != null ? json2Json.at("parent").at("version").asString() : json2Json.at("version").asString();
+        String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
 
-        if (json2Json.at("dependencies") == null) return list;
+        if (!json2Json.has("dependencies")) return list;
         if (!json2Json.at("dependencies").toString().startsWith("{\"dependency\"")) return list;
         Json json3Json = json2Json.at("dependencies").at("dependency");
         if (json3Json.isArray()) {
-            for (Json o : json2Json.at("dependencies").at("dependency").asJsonList()) {
+            for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
                 if (o.toString().contains("groupId") && o.toString().contains("artifactId")) {
-                    String groupId = o.at("groupId").asString();
-                    String artifactId = o.at("artifactId").asString();
+                    String groupId = o.asString("groupId");
+                    String artifactId = o.asString("artifactId");
                     if (o.toString().contains("version")) {
-                        String versionAsString = o.at("version").asString();
+                        String versionAsString = o.asString("version");
                         if (versionAsString.contains("${project.version}")) {
                             Dependency dependency = new Dependency(groupId, artifactId, version, true);
                             list.add(dependency);
@@ -134,11 +134,11 @@ class LibraryLoader {
                             list.add(dependency);
                         }
                     } else {
-                        if (o.at("scope") != null && o.at("scope").asString().equals("compile")) {
+                        if (o.has("scope") && o.asString("scope").equals("compile")) {
                             URL mavenUrl = new URL("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml"));
                             Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");;
 
-                            String compile_version = compile_json2Json.at("versioning").at("release").asString();
+                            String compile_version = compile_json2Json.at("versioning").asString("release");
 
                             Dependency dependency = new Dependency(groupId, artifactId, compile_version, true);
                             list.add(dependency);
@@ -147,7 +147,7 @@ class LibraryLoader {
                 }
             }
         } else {
-            Dependency dependency = new Dependency(json3Json.at("groupId").asString(), json3Json.at("artifactId").asString(), json3Json.at("version").asString(), true);
+            Dependency dependency = new Dependency(json3Json.asString("groupId"), json3Json.asString("artifactId"), json3Json.asString("version"), true);
             list.add(dependency);
         }
         return list;
