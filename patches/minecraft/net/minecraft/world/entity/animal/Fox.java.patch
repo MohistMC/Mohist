@@ -15,7 +15,7 @@
        ItemStack itemstack = p_28514_.m_32055_();
 -      if (this.m_7252_(itemstack)) {
 +      //if (this.canHoldItem(itemstack)) {
-+      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28514_, itemstack.m_41613_() - 1, !this.m_7252_(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
           int i = itemstack.m_41613_();
           if (i > 1) {
              this.m_28605_(itemstack.m_41620_(i - 1));
@@ -63,7 +63,7 @@
 +            fox.m_146762_(-24000);
 +            fox.m_7678_(this.f_25113_.m_20185_(), this.f_25113_.m_20186_(), this.f_25113_.m_20189_(), 0.0F, 0.0F);
 +            int experience = this.f_25113_.m_217043_().m_188503_(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityBreedEvent(fox, f_25113_, f_25115_, serverplayer, this.f_25113_.breedItem, experience);
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreedEvent(fox, f_25113_, f_25115_, serverplayer, this.f_25113_.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +               return;
 +            }
@@ -106,7 +106,7 @@
        private void m_148928_(BlockState p_148929_) {
           int i = p_148929_.m_61143_(SweetBerryBushBlock.f_57244_);
 +         // CraftBukkit start - call EntityChangeBlockEvent
-+         if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1))) {
++         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Fox.this, this.f_25602_, p_148929_.m_61124_(SweetBerryBushBlock.f_57244_, 1))) {
 +            return;
 +         }
 +         // CraftBukkit end

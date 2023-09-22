@@ -42,13 +42,13 @@ import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
-import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
-import org.bukkit.craftbukkit.v1_20_R1.block.CraftHangingSign;
-import org.bukkit.craftbukkit.v1_20_R1.block.CraftSign;
-import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftHangingSign;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
+import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.SpawnCategory;
@@ -194,7 +194,7 @@ public class ForgeInjectBukkit {
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 Particle particle = MohistDynamEnum.addEnum(Particle.class, name);
                 if (particle != null) {
-                    org.bukkit.craftbukkit.v1_20_R1.CraftParticle.putParticles(particle, resourceLocation);
+                    org.bukkit.craftbukkit.v1_20_R2.CraftParticle.putParticles(particle, resourceLocation);
                     MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
                 }
             }

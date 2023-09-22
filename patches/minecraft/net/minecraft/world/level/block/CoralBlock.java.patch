@@ -13,7 +13,7 @@
     public void m_213897_(BlockState p_221020_, ServerLevel p_221021_, BlockPos p_221022_, RandomSource p_221023_) {
        if (!this.m_52134_(p_221021_, p_221022_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.f_52128_.m_49966_()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.f_52128_.m_49966_()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

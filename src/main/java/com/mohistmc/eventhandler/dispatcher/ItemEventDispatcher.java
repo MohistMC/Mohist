@@ -20,7 +20,7 @@ package com.mohistmc.eventhandler.dispatcher;
 
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 
 public class ItemEventDispatcher {
 

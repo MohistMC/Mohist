@@ -7,7 +7,7 @@ import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.util.ListUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.List;

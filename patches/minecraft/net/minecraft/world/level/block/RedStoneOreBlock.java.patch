@@ -4,8 +4,8 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class RedStoneOreBlock extends Block {
@@ -24,7 +24,7 @@
 -         m_55492_(p_154301_, p_154299_, p_154300_);
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player player) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
 +            if (!event.isCancelled()) {
 +               interact(p_154299_.m_8055_(p_154300_), p_154299_, p_154300_, p_154302_); // add entity
 +            }

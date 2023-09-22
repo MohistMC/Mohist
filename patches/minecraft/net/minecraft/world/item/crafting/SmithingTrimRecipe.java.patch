@@ -25,9 +25,9 @@
  import net.minecraft.world.item.armortrim.TrimPatterns;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmithingTrimRecipe;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTrimRecipe;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
  
  public class SmithingTrimRecipe implements SmithingRecipe {
     final Ingredient f_265958_;

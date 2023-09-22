@@ -6,7 +6,7 @@
  import net.minecraft.server.level.ClientInformation;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.VisibleForDebug;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
  import org.slf4j.Logger;
  
  public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
@@ -34,7 +34,7 @@
 +   }
 +
 +   protected final ServerPlayer player;
-+   protected final org.bukkit.craftbukkit.v1_20_R1.CraftServer cserver;
++   protected final org.bukkit.craftbukkit.v1_20_R2.CraftServer cserver;
 +   public boolean processedDisconnect;
 +
 +   public CraftPlayer getCraftPlayer() {

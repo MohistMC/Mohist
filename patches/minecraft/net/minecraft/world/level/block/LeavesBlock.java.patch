@@ -13,7 +13,7 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
 -
 -public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.event.block.LeavesDecayEvent;
 +
 +import java.util.OptionalInt;

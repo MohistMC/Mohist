@@ -53,10 +53,10 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R1.attribute.CraftAttributeMap;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeMap;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
@@ -548,7 +548,7 @@
     public void m_21153_(float p_21154_) {
 +      // CraftBukkit start - Handle scaled health
 +      if (this instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
-+         org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer player = serverPlayer.getBukkitEntity();
++         org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = serverPlayer.getBukkitEntity();
 +         // Squeeze
 +         if (p_21154_ < 0.0F) {
 +            player.setRealHealth(0.0D);
@@ -705,7 +705,7 @@
 +            }
 +         }
 +
-+         org.bukkit.inventory.EquipmentSlot handSlot = (hand != null) ? org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(hand) : null;
++         org.bukkit.inventory.EquipmentSlot handSlot = (hand != null) ? org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(hand) : null;
 +         EntityResurrectEvent event = new EntityResurrectEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), handSlot);
 +         event.setCancelled(itemstack == null);
 +         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
@@ -767,7 +767,7 @@
 -                  flag = true;
 +               if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
 +                  // CraftBukkit start - call EntityBlockFormEvent for Wither Rose
-+                  flag = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos, blockstate, 3, this);
++                  flag = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockFormEvent(this.f_19853_, blockpos, blockstate, 3, this);
 +                  // CraftBukkit end
                 }
              }
@@ -1478,7 +1478,7 @@
 +               ItemStack itemstack;
 +               if (this instanceof ServerPlayer) {
 +                  org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(this.f_20935_);
-+                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getHand(interactionhand);
++                  org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(interactionhand);
 +                  PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((org.bukkit.entity.Player) this.getBukkitEntity(), craftItem, hand);
 +                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
 +

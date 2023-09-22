@@ -4,9 +4,9 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockState;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlockStates;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockFormEvent;
  
  public class ConcretePowderBlock extends FallingBlock {

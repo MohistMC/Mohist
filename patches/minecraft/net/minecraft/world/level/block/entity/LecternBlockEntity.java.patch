@@ -15,9 +15,9 @@
 -public class LecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
 +import java.util.List;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R1.command.CraftBlockCommandSender;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
 +

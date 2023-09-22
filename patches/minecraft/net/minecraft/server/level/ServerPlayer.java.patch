@@ -67,17 +67,17 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R1.CraftWorldBorder;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftPortalEvent;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R1.util.BlockStateListPopulator;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_20_R2.CraftWorldBorder;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -672,7 +672,7 @@
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
-+      bedResult = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
++      bedResult = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }

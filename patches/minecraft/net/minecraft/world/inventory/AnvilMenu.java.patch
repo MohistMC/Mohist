@@ -16,8 +16,8 @@
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.apache.commons.lang3.StringUtils;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
 +import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -44,7 +44,7 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryAnvil(
++      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryAnvil(
 +              f_39770_.getLocation(), this.f_39769_, this.f_39768_, this);
 +      bukkitEntity = new CraftInventoryView(this.f_39771_.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;

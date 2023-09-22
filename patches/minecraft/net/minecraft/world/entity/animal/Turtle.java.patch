@@ -4,7 +4,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  import org.joml.Vector3f;
  
  public class Turtle extends Animal {
@@ -22,9 +22,9 @@
     }
  
     public void m_8038_(ServerLevel p_30140_, LightningBolt p_30141_) {
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
        this.m_6469_(this.m_269291_().m_269548_(), Float.MAX_VALUE);
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
     protected Vector3f m_292594_(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {

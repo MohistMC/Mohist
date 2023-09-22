@@ -1,8 +1,8 @@
 package com.mohistmc.bukkit.entity;
 
 import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftChestedHorse;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftChestedHorse;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.Horse;
 

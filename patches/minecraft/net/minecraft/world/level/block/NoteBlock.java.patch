@@ -21,7 +21,7 @@
     private void m_260916_(@Nullable Entity p_261664_, BlockState p_261606_, Level p_261819_, BlockPos p_262042_) {
        if (p_261606_.m_61143_(f_55011_).m_280504_() || p_261819_.m_8055_(p_262042_.m_7494_()).m_60795_()) {
 +         // CraftBukkit start
-+         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callNotePlayEvent(p_261819_, p_262042_, p_261606_.m_61143_(f_55011_), p_261606_.m_61143_(f_55013_));
++         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callNotePlayEvent(p_261819_, p_262042_, p_261606_.m_61143_(f_55011_), p_261606_.m_61143_(f_55013_));
 +         if (event.isCancelled()) {
 +            return;
 +         }

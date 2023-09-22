@@ -49,7 +49,7 @@
              BlockPos blockpos = p_37384_.m_82425_().m_121945_(p_37384_.m_82434_());
 -            if (this.m_9236_().m_46859_(blockpos)) {
 -               this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.m_9236_(), blockpos));
-+            if (this.m_9236_().m_46859_(blockpos) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(m_9236_(), blockpos, this).isCancelled()) {
++            if (this.m_9236_().m_46859_(blockpos) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(m_9236_(), blockpos, this).isCancelled()) {
 +               this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.f_19853_, blockpos));
              }
           }

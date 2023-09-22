@@ -30,9 +30,9 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R1.util.LazyPlayerSet;
++import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet;
 +import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 +import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
@@ -153,7 +153,7 @@
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
        this.m_129841_(dimensiondatastorage);
-+      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R1.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_());
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_20_R2.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_());
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));

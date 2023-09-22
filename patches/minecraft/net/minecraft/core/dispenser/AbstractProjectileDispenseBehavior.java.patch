@@ -5,8 +5,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
 +import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public abstract class AbstractProjectileDispenseBehavior extends DefaultDispenseItemBehavior {
@@ -44,7 +44,7 @@
 +      }
 +
 +      projectile.m_6686_(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), this.m_7104_(), this.m_7101_());
-+      projectile.projectileSource = new org.bukkit.craftbukkit.v1_20_R1.projectiles.CraftBlockProjectileSource(p_123366_.f_301785_());
++      projectile.projectileSource = new org.bukkit.craftbukkit.v1_20_R2.projectiles.CraftBlockProjectileSource(p_123366_.f_301785_());
 +      // CraftBukkit end
        level.m_7967_(projectile);
 -      p_123367_.m_41774_(1);

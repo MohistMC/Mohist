@@ -54,9 +54,9 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftVector;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftVector;
 +import org.bukkit.entity.Item;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
@@ -870,7 +870,7 @@
           this.m_183634_();
 -         this.m_20115_(7, false);
 +         // CraftBukkit start
-+         if (m_20291_(7) && !org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (m_20291_(7) && !org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.m_20115_(7, false);
 +         }
 +         // CraftBukkit end
@@ -938,7 +938,7 @@
     public void m_36320_() {
 -      this.m_20115_(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.m_20115_(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -952,7 +952,7 @@
 -      this.m_20115_(7, true);
 -      this.m_20115_(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.m_20115_(7, true);
 +         this.m_20115_(7, false);
 +      }

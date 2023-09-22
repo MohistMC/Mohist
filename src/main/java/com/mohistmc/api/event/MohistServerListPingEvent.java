@@ -4,8 +4,8 @@ import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftIconCache;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftIconCache;
 import org.bukkit.entity.Player;
 
 import java.net.InetSocketAddress;
@@ -29,7 +29,7 @@ public class MohistServerListPingEvent extends org.bukkit.event.server.ServerLis
     @Override
     public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
         if (!(icon instanceof CraftIconCache)) {
-            throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.v1_20_R1.CraftServer.class);
+            throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.v1_20_R2.CraftServer.class);
         }
         this.icon = (CraftIconCache) icon;
     }

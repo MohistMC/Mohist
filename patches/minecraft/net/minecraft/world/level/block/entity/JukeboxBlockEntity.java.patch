@@ -14,7 +14,7 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.ticks.ContainerSingleItem;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem {

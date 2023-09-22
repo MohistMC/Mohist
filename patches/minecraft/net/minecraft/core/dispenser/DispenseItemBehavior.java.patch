@@ -39,8 +39,8 @@
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R1.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +import org.bukkit.event.block.BlockFertilizeEvent;
@@ -147,7 +147,7 @@
 +               org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123529_.f_301784_().m_123341_(), p_123529_.f_301784_().m_123342_(), p_123529_.f_301784_().m_123343_());
 +               CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
-+               BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
++               BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
 +               if (!DispenserBlock.eventFired) {
 +                  world.getCraftServer().getPluginManager().callEvent(event);
 +               }
@@ -189,7 +189,7 @@
 +                  Level world = p_123535_.f_301782_();
 +                  org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123535_.f_301784_().m_123341_(), p_123535_.f_301784_().m_123342_(), p_123535_.f_301784_().m_123343_());
 +                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
++                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     world.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -232,7 +232,7 @@
 +                  org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123541_.f_301784_().m_123341_(), p_123541_.f_301784_().m_123342_(), p_123541_.f_301784_().m_123343_());
 +                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
++                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     world.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -332,7 +332,7 @@
 +
 +            SmallFireball entitysmallfireball = new SmallFireball(level, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +            entitysmallfireball.m_37010_(itemstack1);
-+            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_20_R1.projectiles.CraftBlockProjectileSource(p_123556_.f_301785_());
++            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_20_R2.projectiles.CraftBlockProjectileSource(p_123556_.f_301785_());
 +
 +            level.m_7967_(entitysmallfireball);
              return p_123557_;
@@ -479,7 +479,7 @@
 -               level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
 -               level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
 +               // CraftBukkit start - Ignition by dispensing flint and steel
-+               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.f_301784_()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.f_301784_()).isCancelled()) {
 +                  level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
 +                  level.m_142346_((Entity) null, GameEvent.f_157797_, blockpos);
 +               }
@@ -490,7 +490,7 @@
 -                  level.m_7471_(blockpos, false);
 +               if (blockstate.isFlammable(level, blockpos, p_123412_.f_301783_().m_61143_(DispenserBlock.f_52659_).m_122424_())) {
 +                  blockstate.onCaughtFire(level, blockpos, p_123412_.f_301783_().m_61143_(DispenserBlock.f_52659_).m_122424_(), null);
-+                  if (blockstate.m_60734_() instanceof TntBlock && org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.f_301784_())) {
++                  if (blockstate.m_60734_() instanceof TntBlock && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.f_301784_())) {
 +                     level.m_7471_(blockpos, false);
 +                  }
                 } else {

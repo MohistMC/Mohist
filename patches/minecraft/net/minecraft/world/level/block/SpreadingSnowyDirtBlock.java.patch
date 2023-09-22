@@ -6,7 +6,7 @@
        if (!m_56823_(p_222508_, p_222509_, p_222510_)) {
 +         if (!p_222509_.isAreaLoaded(p_222510_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callBlockFadeEvent(p_222509_, p_222510_, Blocks.f_50493_.m_49966_()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_222509_, p_222510_, Blocks.f_50493_.m_49966_()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -20,7 +20,7 @@
                 BlockPos blockpos = p_222510_.m_7918_(p_222511_.m_188503_(3) - 1, p_222511_.m_188503_(5) - 3, p_222511_.m_188503_(3) - 1);
                 if (p_222509_.m_8055_(blockpos).m_60713_(Blocks.f_50493_) && m_56827_(blockstate, p_222509_, blockpos)) {
 -                  p_222509_.m_46597_(blockpos, blockstate.m_61124_(f_56637_, Boolean.valueOf(p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))));
-+                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, blockstate.m_61124_(f_56637_, p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, blockstate.m_61124_(f_56637_, p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))); // CraftBukkit
                 }
              }
           }

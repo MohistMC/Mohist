@@ -46,7 +46,7 @@
                 BlockState blockstate2 = Blocks.f_220855_.m_49966_();
 -               p_222377_.m_7731_(blockpos, blockstate2, 3);
 +               // CraftBukkit start - Call BlockSpreadEvent
-+               if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
++               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
 +                  return false;
 +               }
 +               // CraftBukkit end

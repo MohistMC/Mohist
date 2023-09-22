@@ -28,8 +28,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class PointedDripstoneBlock extends Block implements Fallable, SimpleWaterloggedBlock {
     public static final DirectionProperty f_154009_ = BlockStateProperties.f_155997_;
@@ -75,7 +75,7 @@
     private static void m_154087_(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_) {
        BlockState blockstate = Blocks.f_152588_.m_49966_().m_61124_(f_154009_, p_154090_).m_61124_(f_154010_, p_154091_).m_61124_(f_154011_, Boolean.valueOf(p_154088_.m_6425_(p_154089_).m_76152_() == Fluids.f_76193_));
 -      p_154088_.m_7731_(p_154089_, blockstate, 3);
-+      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
     }
  
     private static void m_154230_(BlockState p_154231_, LevelAccessor p_154232_, BlockPos p_154233_) {

@@ -1,8 +1,8 @@
 package com.mohistmc.bukkit.entity;
 
 import net.minecraft.world.entity.raid.Raider;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftRaider;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftRaider;
 import org.bukkit.entity.EntityCategory;
 
 public class MohistModsRaider extends CraftRaider {

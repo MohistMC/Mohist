@@ -19,12 +19,12 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.saveddata.SavedData;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R1.map.CraftMapView;
-+import org.bukkit.craftbukkit.v1_20_R1.map.RenderData;
-+import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
++import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
++import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R2.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_20_R2.map.RenderData;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
@@ -143,7 +143,7 @@
 +         });
 +      }
 +      private boolean shouldUseVanillaMap() {
-+         return mapView.getRenderers().size() == 1 && mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.v1_20_R1.map.CraftMapRenderer.class;
++         return mapView.getRenderers().size() == 1 && mapView.getRenderers().get(0).getClass() == org.bukkit.craftbukkit.v1_20_R2.map.CraftMapRenderer.class;
 +      }
 +
        @Nullable

@@ -14,7 +14,7 @@
                 Block block = blockstate.m_60734_();
                 if (block instanceof LeavesBlock) {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
++                  if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
 +                     continue;
 +                  }
 +                  // CraftBukkit end

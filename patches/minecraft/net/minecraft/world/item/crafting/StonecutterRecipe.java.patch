@@ -5,9 +5,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftStonecuttingRecipe;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftStonecuttingRecipe;
  
  public class StonecutterRecipe extends SingleItemRecipe {
     public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {

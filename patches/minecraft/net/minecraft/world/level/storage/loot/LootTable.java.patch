@@ -14,8 +14,8 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 +import org.apache.commons.lang3.ArrayUtils;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.world.LootGenerateEvent;
 +import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;

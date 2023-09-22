@@ -11,7 +11,7 @@
  import net.minecraft.world.level.block.FarmBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class HarvestFarmland extends Behavior<Villager> {
     private static final int f_147559_ = 200;
@@ -30,7 +30,7 @@
              if (block instanceof CropBlock && ((CropBlock)block).m_52307_(blockstate)) {
 -               p_23196_.m_46953_(this.f_23159_, true, p_23197_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_())) {
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_())) {
 +                  p_23196_.m_46953_(this.f_23159_, true, p_23197_);
 +               }
 +               // CraftBukkit end
