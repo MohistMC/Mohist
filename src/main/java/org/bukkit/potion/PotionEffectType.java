@@ -284,7 +284,7 @@ public abstract class PotionEffectType implements Keyed {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final PotionEffectType[] byId = new PotionEffectType[Integer.MAX_VALUE];
+    private static final PotionEffectType[] byId = new PotionEffectType[ForgeRegistries.MOB_EFFECTS.getValues().size() + 1];
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     private static final Map<NamespacedKey, PotionEffectType> byKey = new HashMap<NamespacedKey, PotionEffectType>();
     // will break on updates.
