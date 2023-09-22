@@ -14,11 +14,11 @@ import static net.minecraftforge.forge.tasks.Util.*
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '[2.0.13,)'
+    id 'net.minecraftforge.gradleutils' version '2+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
-    id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.13,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.13,6.2)' apply false
 }
 
 init() //Init all our extension methods!
@@ -52,11 +52,11 @@ ext {
     JARJAR_VERSION = '0.3.19'
     MOJANG_LOGGING_VERSION = '1.1.1'
     LOG4J_VERSION = '2.19.0'
-    GUAVA_VERSION = '31.1-jre'
-    GSON_VERSION = '2.10'
+    GUAVA_VERSION = '32.1.2-jre'
+    GSON_VERSION = '2.10.1'
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
     JOPT_SIMPLE_VERSION = '5.0.4'
-    COMMONS_IO_VERSION = '2.11.0'
+    COMMONS_IO_VERSION = '2.13.0'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = MC_VERSION + "-" + project.forge_version
@@ -98,7 +98,7 @@ subprojects {
             name = 'minecraft'
             url = 'https://libraries.minecraft.net/'
         }
-        maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url 'https://maven.neoforged.net/releases' }
         maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url 'https://maven.mohistmc.com/' }
         maven { url 'https://maven.izzel.io/releases' }
@@ -114,7 +114,7 @@ subprojects {
 }
 
 project(':mcp') {
-    apply plugin: 'net.neoforged.gradle.mcp'
+    apply plugin: 'net.minecraftforge.gradle.mcp'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
@@ -124,7 +124,7 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -135,7 +135,6 @@ project(':clean') {
         parent = project(':mcp')
         mcVersion = MC_VERSION
         patchedSrc = file('src/main/java')
-        srgPatches = false
 
         mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
 
@@ -356,9 +355,12 @@ def sharedFmlonlyForge = { Project prj ->
 project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
-    apply plugin: 'net.neoforged.gradle.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
 
-    applyPatches { level 'WARNING' }
+    applyPatches {
+        level 'WARNING'
+    }
+
 
     sourceSets {
         main {
@@ -427,6 +429,7 @@ project(':mohist') {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
+        srgPatches = false
         accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
@@ -461,12 +464,39 @@ project(':mohist') {
         }
     }
 
+    afterEvaluate {
+        if (!patcher.srgPatches) {
+            srg2mcpClean {
+                dependsOn = []
+                input = project(':mcp').setupMCP.output
+            }
+            userdevJar {
+                onlyIf = { t -> true }
+            }
+            def patches = project.file('build/genPatchesForUserdev/output/')
+            patches.mkdirs()
+            def genPatchesForUserdev = tasks.register('genPatchesForUserdev', GeneratePatches){
+                base = project(':mcp').setupMCP.output
+                modified = applyRangeMapBase.output
+                originalPrefix = genPatches.originalPrefix
+                modifiedPrefix = genPatches.modifiedPrefix
+                output = patches
+                autoHeader true
+                lineEnding = '\n'
+            }
+            bakePatches {
+                dependsOn = []
+                input = genPatchesForUserdev.get().output
+            }
+        }
+    }
+
     ext {
         MANIFESTS = [
                 '/': [
                         'Timestamp'      : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                         'GitCommit'      : gradleutils.gitInfo.abbreviatedId,
-                        'Git-Branch'     : '1.20.1',
+                        'Git-Branch'     : MC_VERSION,
                         'FML-System-Mods': 'forge',
                         'MixinConfigs': 'mohist.mixins.json'
                 ] as LinkedHashMap,
@@ -515,13 +545,13 @@ project(':mohist') {
                         'Specification-Vendor'  : 'MohistMC',
                         'Specification-Version' : MOHIST_VERSION,
                         'Implementation-Title'  : 'Mohist',
-                        'Implementation-Version': '1.20.1-' + MOHIST_VERSION,
+                        'Implementation-Version': MC_VERSION + '-' + MOHIST_VERSION,
                         'Implementation-Vendor' : 'MohistMC'
                 ] as LinkedHashMap,
                 'org/bukkit/craftbukkit/v1_20_R2/'          : [
                         'Specification-Title'   : MCP_VERSION,
                         'Specification-Vendor'  : 'SpigotMC',
-                        'Specification-Version' : '1.20.1',
+                        'Specification-Version' : MC_VERSION,
                         'Implementation-Title'  : 'Spigot',
                         'Implementation-Version': bukkit_version + '-' +  craftbukkit_version + '-' +  spigot_version + '-' + forge_version ,
                         'Implementation-Vendor' : 'SpigotMC'
@@ -574,7 +604,7 @@ project(':mohist') {
         group = 'checks'
     }
     tasks.register('checkAllAndFix') {
-        dependsOn 'findFieldInstanceChecks', 'findFieldInstanceChecks', 'checkLicenses'
+        dependsOn 'findFinalizeSpawnTargets', 'findFieldInstanceChecks', 'checkLicenses'
         group = 'checks'
     }
 
@@ -612,6 +642,7 @@ project(':mohist') {
     }
 
     genPatches {
+	    // finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }
@@ -671,7 +702,7 @@ project(':mohist') {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
         archiveBaseName = 'mohist'
-        archiveVersion = '1.20.1-' + MOHIST_VERSION
+        archiveVersion = MC_VERSION + '-' + MOHIST_VERSION
         destinationDirectory = file('build/libs')
 
         def CLASS_PATH = getArtifacts(project, project.configurations.installer, false).values().collect { "libraries/${it.downloads.artifact.path}" } +
@@ -680,8 +711,8 @@ project(':mohist') {
                         "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar",
                         "libraries/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
                         "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar",
-                        "libraries/io/netty/netty-transport-native-epoll/4.1.82.Final/netty-transport-native-epoll-4.1.82.Final-linux-x86_64.jar",
-                        "libraries/io/netty/netty-transport-native-epoll/4.1.82.Final/netty-transport-native-epoll-4.1.82.Final-linux-aarch_64.jar"
+                        "libraries/io/netty/netty-transport-native-epoll/4.1.82.Final/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar",
+                        "libraries/io/netty/netty-transport-native-epoll/4.1.82.Final/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar"
                 ]
         def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
@@ -733,9 +764,11 @@ project(':mohist') {
             rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
         }
 
+        /*
         from(project(':mohistplugins').tasks.jar.outputs) {
             rename { 'data/mohistplugins-' + MC_VERSION + '.jar' }
         }
+        */
 
         from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
             into ""
@@ -786,3 +819,16 @@ task setup() {  //These must be strings so that we can do lazy resolution. Else 
 }
 
 project.gradle.startParameter.excludedTaskNames.add(':clean:genPatches')
+
+allprojects { prj ->
+    prj.tasks.eclipse.doFirst {
+        rootProject.fileTree('ide/eclipse/template/.settings/').matching { include '**/*.prefs' }.each { file ->
+            def target = project.file('.settings/' + file.name)
+            def temp = new CleanProperties().load(file)
+            def exst = new CleanProperties().load(target)
+            exst.put('eclipse.preferences.version', '1')
+            temp.forEach(exst::put)
+            exst.store(target)
+        }
+    }
+}
