@@ -102,7 +102,7 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
         if (player instanceof CraftPlayer) {
             this.profile = ((CraftPlayer) player).getProfile();
         } else {
-            this.profile = new CraftGameProfile(player.getUniqueId(), player.getName());
+            this.profile = new GameProfile(player.getUniqueId(), player.getName());
         }
     }
 

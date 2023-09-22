@@ -20,10 +20,9 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
-import mjson.Json;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -36,12 +35,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import mjson.Json;
 
 public class UpdateUtils {
 
     public static void versionCheck() {
-        System.out.println(MohistMCStart.i18n.get("update.check"));
-        System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
+        System.out.println(I18n.as("update.check"));
+        System.out.println(I18n.as("update.stopcheck"));
 
         try {
             Json json = Json.read(new URL("https://mohistmc.com/api/" + MohistMCStart.MCVERSION + "/latest"));
@@ -51,16 +51,16 @@ public class UpdateUtils {
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("timeinmillis")));
 
             if (jar_sha.equals(build_number))
-                System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
+                System.out.println(I18n.as("update.latest", jar_sha, build_number));
             else {
-                System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
+                System.out.println(I18n.as("update.detect", build_number, jar_sha, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
                     downloadFile(json.asString("url"), JarTool.getFile());
                     restartServer(Arrays.asList("java", "-jar", JarTool.getJarName()), true);
                 }
             }
         } catch (Throwable e) {
-            System.out.println(MohistMCStart.i18n.get("check.update.noci"));
+            System.out.println(I18n.as("check.update.noci"));
         }
     }
 
@@ -70,7 +70,7 @@ public class UpdateUtils {
 
     public static void downloadFile(String URL, File f, String md5, boolean showlog) throws Exception {
         URLConnection conn = getConn(URL);
-        if (showlog) System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+        if (showlog) System.out.println(I18n.as("download.file", f.getName(), getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
@@ -80,10 +80,10 @@ public class UpdateUtils {
         String MD5 = MD5Util.getMd5(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            if (showlog) System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            if (showlog) System.out.println(I18n.as("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             return;
         }
-        if (showlog) System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
+        if (showlog) System.out.println(I18n.as("download.file.ok", f.getName()));
     }
 
     public static String getSize(long size) {
@@ -91,9 +91,9 @@ public class UpdateUtils {
     }
 
     public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
-        System.out.println(MohistMCStart.i18n.get("jarfile.restart"));
+        System.out.println(I18n.as("jarfile.restart"));
         if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
-            System.out.println(MohistMCStart.i18n.get("xmswarn"));
+            System.out.println(I18n.as("xmswarn"));
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(JarTool.getJarDir());
         pb.inheritIO().start().waitFor();

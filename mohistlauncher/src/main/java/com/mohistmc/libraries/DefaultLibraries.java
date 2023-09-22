@@ -18,18 +18,14 @@
 
 package com.mohistmc.libraries;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.v_1_20_R2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
-import me.tongfei.progressbar.ProgressBar;
-import me.tongfei.progressbar.ProgressBarBuilder;
-import me.tongfei.progressbar.ProgressBarStyle;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -39,6 +35,9 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 public class DefaultLibraries {
     public static final HashMap<String, String> fail = new HashMap<>();
@@ -50,7 +49,7 @@ public class DefaultLibraries {
     }
 
     public static void run() throws Exception {
-        System.out.println(MohistMCStart.i18n.get("libraries.checking.start"));
+        System.out.println(I18n.as("libraries.checking.start"));
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -67,8 +66,8 @@ public class DefaultLibraries {
         }
 
         if (!defaultLibs.isEmpty()) {
-            System.out.println(MohistMCStart.i18n.get("libraries.downloadsource", DownloadSource.get().name()));
-            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage"));
+            System.out.println(I18n.as("libraries.downloadsource", DownloadSource.get().name()));
+            System.out.println(I18n.as("libraries.global.percentage"));
             ProgressBarBuilder builder = new ProgressBarBuilder().setTaskName("")
                     .setStyle(ProgressBarStyle.ASCII)
                     .setUpdateIntervalMillis(100)
@@ -86,7 +85,7 @@ public class DefaultLibraries {
                         fail.remove(failKey);
                     } catch (Exception e) {
                         if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
-                            System.out.println(MohistMCStart.i18n.get("file.download.nook", u));
+                            System.out.println(I18n.as("file.download.nook", u));
                             lib.delete();
                         }
                         fail.put(failKey, lib.getAbsolutePath());
@@ -99,7 +98,7 @@ public class DefaultLibraries {
         if (!fail.isEmpty()) {
             run();
         } else {
-            System.out.println(MohistMCStart.i18n.get("libraries.check.end"));
+            System.out.println(I18n.as("libraries.check.end"));
         }
     }
 

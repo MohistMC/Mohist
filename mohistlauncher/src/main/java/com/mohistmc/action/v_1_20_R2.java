@@ -2,10 +2,10 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarTool;
 import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,13 +33,13 @@ public class v_1_20_R2 {
 
     public static void run() {
         try {
-            new Install_1_19();
+            new Install();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static class Install_1_19 extends Action {
+    public static class Install extends Action {
 
         public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
         public final File fmlloader;
@@ -52,7 +52,7 @@ public class v_1_20_R2 {
         public final File mc_unpacked;
         public final File mergedMapping;
 
-        protected Install_1_19() throws Exception {
+        protected Install() throws Exception {
             super();
             this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
             this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
@@ -79,7 +79,7 @@ public class v_1_20_R2 {
             copyFileFromJar(mohistplugin, "data/mohistplugins-" + mcVer + ".jar");
 
             if (!checkDependencies()) return;
-            System.out.println(MohistMCStart.i18n.get("installation.start"));
+            System.out.println(I18n.as("installation.start"));
 
             copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
 
@@ -102,7 +102,7 @@ public class v_1_20_R2 {
                     unmute();
                 }
             } else {
-                System.out.println(MohistMCStart.i18n.get("installation.minecraftserver"));
+                System.out.println(I18n.as("installation.minecraftserver"));
             }
 
             if (mcpZip.exists()) {
@@ -110,7 +110,7 @@ public class v_1_20_R2 {
 
                     // MAKE THE MAPPINGS TXT FILE
 
-                    System.out.println(MohistMCStart.i18n.get("installation.mcp"));
+                    System.out.println(I18n.as("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
@@ -118,7 +118,7 @@ public class v_1_20_R2 {
                     unmute();
                 }
             } else {
-                System.out.println(MohistMCStart.i18n.get("installation.mcpfilemissing"));
+                System.out.println(I18n.as("installation.mcpfilemissing"));
                 System.exit(0);
             }
 
@@ -205,7 +205,7 @@ public class v_1_20_R2 {
             fw.write(mohistMD5);
             fw.close();
 
-            System.out.println(MohistMCStart.i18n.get("installation.finished"));
+            System.out.println(I18n.as("installation.finished"));
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);

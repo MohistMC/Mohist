@@ -16,11 +16,11 @@
                       }).ifPresent((p_22464_) -> {
 -                        p_258310_.setVillagerData(p_258310_.getVillagerData().setProfession(p_22464_));
 +                        // CraftBukkit start - Fire VillagerCareerChangeEvent where Villager gets employed
-+                        VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_258310_, CraftVillager.nmsToBukkitProfession(p_22464_), VillagerCareerChangeEvent.ChangeReason.EMPLOYED);
++                        VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_258310_, CraftVillager.CraftProfession.minecraftToBukkit(p_22464_), VillagerCareerChangeEvent.ChangeReason.EMPLOYED);
 +                        if (event.isCancelled()) {
 +                           return;
 +                        }
-+                        p_258310_.setVillagerData(p_258310_.getVillagerData().setProfession(CraftVillager.bukkitToNmsProfession(event.getProfession())));
++                        p_258310_.setVillagerData(p_258310_.getVillagerData().setProfession(CraftVillager.CraftProfession.bukkitToMinecraft(event.getProfession())));
 +                        // CraftBukkit end
                          p_258310_.refreshBrain(p_258309_);
                       });

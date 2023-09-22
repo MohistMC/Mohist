@@ -16,11 +16,11 @@
                 if (villagerdata.getProfession() != VillagerProfession.NONE && villagerdata.getProfession() != VillagerProfession.NITWIT && p_260084_.getVillagerXp() == 0 && villagerdata.getLevel() <= 1) {
 -                  p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(VillagerProfession.NONE));
 +                  // CraftBukkit start
-+                  VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_260084_, CraftVillager.nmsToBukkitProfession(VillagerProfession.NONE), VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);
++                  VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_260084_, CraftVillager.CraftProfession.minecraftToBukkit(VillagerProfession.NONE), VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);
 +                  if (event.isCancelled()) {
 +                     return false;
 +                  }
-+                  p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(CraftVillager.bukkitToNmsProfession(event.getProfession())));
++                  p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(CraftVillager.CraftProfession.bukkitToMinecraft(event.getProfession())));
 +                  // CraftBukkit end
                    p_260084_.refreshBrain(p_260244_);
                    return true;
