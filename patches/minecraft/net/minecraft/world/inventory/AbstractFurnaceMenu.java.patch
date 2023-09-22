@@ -8,10 +8,10 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public abstract class AbstractFurnaceMenu extends RecipeBookMenu<Container> {
-    public static final int f_150453_ = 0;
+    public static final int INGREDIENT_SLOT = 0;
 @@ -30,6 +_,22 @@
-    private final RecipeType<? extends AbstractCookingRecipe> f_38957_;
-    private final RecipeBookType f_38958_;
+    private final RecipeType<? extends AbstractCookingRecipe> recipeType;
+    private final RecipeBookType recipeBookType;
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
@@ -23,8 +23,8 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryFurnace inventory = new CraftInventoryFurnace((AbstractFurnaceBlockEntity) this.f_38955_);
-+      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      CraftInventoryFurnace inventory = new CraftInventoryFurnace((AbstractFurnaceBlockEntity) this.container);
++      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -33,28 +33,28 @@
        this(p_38960_, p_38961_, p_38962_, p_38963_, p_38964_, new SimpleContainer(3), new SimpleContainerData(4));
     }
 @@ -46,7 +_,7 @@
-       this.m_38897_(new Slot(p_38971_, 0, 56, 17));
-       this.m_38897_(new FurnaceFuelSlot(this, p_38971_, 1, 56, 53));
-       this.m_38897_(new FurnaceResultSlot(p_38970_.f_35978_, p_38971_, 2, 116, 35));
+       this.addSlot(new Slot(p_38971_, 0, 56, 17));
+       this.addSlot(new FurnaceFuelSlot(this, p_38971_, 1, 56, 53));
+       this.addSlot(new FurnaceResultSlot(p_38970_.player, p_38971_, 2, 116, 35));
 -
 +      this.player = p_38970_; // CraftBukkit - save player
        for(int i = 0; i < 3; ++i) {
           for(int j = 0; j < 9; ++j) {
-             this.m_38897_(new Slot(p_38970_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+             this.addSlot(new Slot(p_38970_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 @@ -93,6 +_,7 @@
     }
  
-    public boolean m_6875_(Player p_38974_) {
+    public boolean stillValid(Player p_38974_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return this.f_38955_.m_6542_(p_38974_);
+       return this.container.stillValid(p_38974_);
     }
  
 @@ -149,7 +_,7 @@
     }
  
-    protected boolean m_38988_(ItemStack p_38989_) {
--      return AbstractFurnaceBlockEntity.m_58399_(p_38989_);
-+      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.f_38957_) > 0;
+    protected boolean isFuel(ItemStack p_38989_) {
+-      return AbstractFurnaceBlockEntity.isFuel(p_38989_);
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.recipeType) > 0;
     }
  
-    public float m_38995_() {
+    public float getBurnProgress() {

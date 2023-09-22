@@ -4,8 +4,8 @@
                    URI uri = url.toURI();
                    String s1 = uri.getScheme();
                    if (!"jar".equals(s1) && !"file".equals(s1)) {
--                     f_244501_.warn("Assets URL '{}' uses unexpected schema", (Object)uri);
-+                     f_244501_.debug("Assets URL '{}' uses unexpected schema", (Object)uri);
+-                     LOGGER.warn("Assets URL '{}' uses unexpected schema", (Object)uri);
++                     LOGGER.debug("Assets URL '{}' uses unexpected schema", (Object)uri);
                    }
  
-                   Path path = m_246045_(uri);
+                   Path path = safeGetPath(uri);

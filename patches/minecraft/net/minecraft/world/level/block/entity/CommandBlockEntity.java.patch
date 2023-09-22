@@ -8,16 +8,16 @@
 +import org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender;
  
  public class CommandBlockEntity extends BlockEntity {
-    private boolean f_59123_;
-    private boolean f_59124_;
-    private boolean f_59125_;
-    private final BaseCommandBlock f_59127_ = new BaseCommandBlock() {
+    private boolean powered;
+    private boolean auto;
+    private boolean conditionMet;
+    private final BaseCommandBlock commandBlock = new BaseCommandBlock() {
 +
 +      @Override
 +      public CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +         return new CraftBlockCommandSender(wrapper, CommandBlockEntity.this);
 +      }
 +
-       public void m_6590_(String p_59157_) {
-          super.m_6590_(p_59157_);
-          CommandBlockEntity.this.m_6596_();
+       public void setCommand(String p_59157_) {
+          super.setCommand(p_59157_);
+          CommandBlockEntity.this.setChanged();

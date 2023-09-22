@@ -28,85 +28,85 @@
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
 @@ -205,10 +_,25 @@
-       return this.f_35366_;
+       return this.assignProfessionWhenSpawned;
     }
  
 +   // Spigot Start
 +   @Override
 +   public void inactiveTick() {
 +      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
-+      if (this.m_9236_().spigotConfig.tickInactiveVillagers && this.m_21515_()) {
-+         this.m_8024_();
++      if (this.level().spigotConfig.tickInactiveVillagers && this.isEffectiveAi()) {
++         this.customServerAiStep();
 +      }
 +      super.inactiveTick();
 +   }
 +   // Spigot End
 +
-    protected void m_8024_() {
-       this.m_9236_().m_46473_().m_6180_("villagerBrain");
--      this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
--      this.m_9236_().m_46473_().m_7238_();
+    protected void customServerAiStep() {
+       this.level().getProfiler().push("villagerBrain");
+-      this.getBrain().tick((ServerLevel)this.level(), this);
+-      this.level().getProfiler().pop();
 +      // Mohist start
 +      if (OptVillager.getInstance().isLobotomized(this)) {
-+         this.m_6274_().m_21865_((ServerLevel)this.m_9236_(), this);
++         this.getBrain().tick((ServerLevel)this.level(), this);
 +      }
 +      // Mohist end
-+      this.f_19853_.m_46473_().m_7238_();
-       if (this.f_35366_) {
-          this.f_35366_ = false;
++      this.level.getProfiler().pop();
+       if (this.assignProfessionWhenSpawned) {
+          this.assignProfessionWhenSpawned = false;
        }
 @@ -221,7 +_,7 @@
-                this.f_35374_ = false;
+                this.increaseProfessionLevelOnUpdate = false;
              }
  
--            this.m_7292_(new MobEffectInstance(MobEffects.f_19605_, 200, 0));
-+            this.addEffect(new MobEffectInstance(MobEffects.f_19605_, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
+-            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
++            this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
           }
        }
  
 @@ -256,7 +_,7 @@
  
-    public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
-       ItemStack itemstack = p_35472_.m_21120_(p_35473_);
--      if (!itemstack.m_150930_(Items.f_42601_) && this.m_6084_() && !this.m_35306_() && !this.m_5803_()) {
-+      if (itemstack.m_41720_() != Items.f_42601_ && this.m_6084_() && !this.m_35306_() && !this.m_5803_() && !p_35472_.m_36341_()) {
-          if (this.m_6162_()) {
-             this.m_35518_();
-             return InteractionResult.m_19078_(this.m_9236_().f_46443_);
+    public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
+       ItemStack itemstack = p_35472_.getItemInHand(p_35473_);
+-      if (!itemstack.is(Items.VILLAGER_SPAWN_EGG) && this.isAlive() && !this.isTrading() && !this.isSleeping()) {
++      if (itemstack.getItem() != Items.VILLAGER_SPAWN_EGG && this.isAlive() && !this.isTrading() && !this.isSleeping() && !p_35472_.isSecondaryUseActive()) {
+          if (this.isBaby()) {
+             this.setUnhappy();
+             return InteractionResult.sidedSuccess(this.level().isClientSide);
 @@ -285,7 +_,7 @@
        }
     }
  
--   private void m_35518_() {
-+   public void m_35518_() {
-       this.m_35319_(40);
-       if (!this.m_9236_().m_5776_()) {
-          this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
+-   private void setUnhappy() {
++   public void setUnhappy() {
+       this.setUnhappyCounter(40);
+       if (!this.level().isClientSide()) {
+          this.playSound(SoundEvents.VILLAGER_NO, this.getSoundVolume(), this.getVoicePitch());
 @@ -332,7 +_,13 @@
-       this.m_35523_();
+       this.updateDemand();
  
-       for(MerchantOffer merchantoffer : this.m_6616_()) {
--         merchantoffer.m_45372_();
+       for(MerchantOffer merchantoffer : this.getOffers()) {
+-         merchantoffer.resetUses();
 +         // CraftBukkit start
 +         VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
 +         Bukkit.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
-+            merchantoffer.m_45372_();
++            merchantoffer.resetUses();
 +         }
 +         // CraftBukkit end
        }
  
-       this.m_275846_();
+       this.resendOffersToTradingPlayer();
 @@ -387,7 +_,13 @@
-       int i = 2 - this.f_35364_;
+       int i = 2 - this.numberOfRestocksToday;
        if (i > 0) {
-          for(MerchantOffer merchantoffer : this.m_6616_()) {
--            merchantoffer.m_45372_();
+          for(MerchantOffer merchantoffer : this.getOffers()) {
+-            merchantoffer.resetUses();
 +            // CraftBukkit start
 +            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
 +            Bukkit.getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
-+               merchantoffer.m_45372_();
++               merchantoffer.resetUses();
 +            }
 +            // CraftBukkit end
           }
@@ -115,66 +115,66 @@
 @@ -561,7 +_,7 @@
     }
  
-    public void m_6667_(DamageSource p_35419_) {
--      f_201976_.info("Villager {} died, message: '{}'", this, p_35419_.m_6157_(this).getString());
-+      if (org.spigotmc.SpigotConfig.logVillagerDeaths) f_201976_.info("Villager {} died, message: '{}'", this, p_35419_.m_6157_(this).getString());
-       Entity entity = p_35419_.m_7639_();
+    public void die(DamageSource p_35419_) {
+-      LOGGER.info("Villager {} died, message: '{}'", this, p_35419_.getLocalizedDeathMessage(this).getString());
++      if (org.spigotmc.SpigotConfig.logVillagerDeaths) LOGGER.info("Villager {} died, message: '{}'", this, p_35419_.getLocalizedDeathMessage(this).getString());
+       Entity entity = p_35419_.getEntity();
        if (entity != null) {
-          this.m_35420_(entity);
+          this.tellWitnessesThatIWasMurdered(entity);
 @@ -571,7 +_,7 @@
-       super.m_6667_(p_35419_);
+       super.die(p_35419_);
     }
  
--   private void m_35524_() {
-+   public void m_35524_() {
-       this.m_35428_(MemoryModuleType.f_26359_);
-       this.m_35428_(MemoryModuleType.f_26360_);
-       this.m_35428_(MemoryModuleType.f_26361_);
+-   private void releaseAllPois() {
++   public void releaseAllPois() {
+       this.releasePoi(MemoryModuleType.HOME);
+       this.releasePoi(MemoryModuleType.JOB_SITE);
+       this.releasePoi(MemoryModuleType.POTENTIAL_JOB_SITE);
 @@ -664,13 +_,14 @@
-       return VillagerData.m_35582_(i) && this.f_35362_ >= VillagerData.m_35577_(i);
+       return VillagerData.canLevelUp(i) && this.villagerXp >= VillagerData.getMaxXpPerLevel(i);
     }
  
--   private void m_35528_() {
-+   public void m_35528_() {
-       this.m_34375_(this.m_7141_().m_35561_(this.m_7141_().m_35576_() + 1));
-       this.m_7604_();
+-   private void increaseMerchantCareer() {
++   public void increaseMerchantCareer() {
+       this.setVillagerData(this.getVillagerData().setLevel(this.getVillagerData().getLevel() + 1));
+       this.updateTrades();
     }
  
-    protected Component m_5677_() {
--      return Component.m_237115_(this.m_6095_().m_20675_() + "." + BuiltInRegistries.f_256735_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
-+      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getKey(this.m_7141_().m_35571_());
-+      return Component.m_237115_(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
+    protected Component getTypeName() {
+-      return Component.translatable(this.getType().getDescriptionId() + "." + BuiltInRegistries.VILLAGER_PROFESSION.getKey(this.getVillagerData().getProfession()).getPath());
++      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getKey(this.getVillagerData().getProfession());
++      return Component.translatable(this.getType().getDescriptionId() + '.' + (!"minecraft".equals(profName.getNamespace()) ? profName.getNamespace() + '.' : "") + profName.getPath());
     }
  
-    public void m_7822_(byte p_35391_) {
+    public void handleEntityEvent(byte p_35391_) {
 @@ -723,7 +_,7 @@
     }
  
-    public void m_8038_(ServerLevel p_35409_, LightningBolt p_35410_) {
--      if (p_35409_.m_46791_() != Difficulty.PEACEFUL) {
-+      if (p_35409_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20495_, (timer) -> {})) {
-          f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
-          Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
+    public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
+-      if (p_35409_.getDifficulty() != Difficulty.PEACEFUL) {
++      if (p_35409_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.WITCH, (timer) -> {})) {
+          LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
+          Witch witch = EntityType.WITCH.create(p_35409_);
           if (witch != null) {
 @@ -736,6 +_,12 @@
              }
  
-             witch.m_21530_();
+             witch.setPersistenceRequired();
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callEntityTransformEvent(this, witch, EntityTransformEvent.TransformReason.LIGHTNING).isCancelled()) {
 +               return;
 +            }
 +            witch.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
-             p_35409_.m_47205_(witch);
-             this.m_35524_();
-             this.m_146870_();
+             p_35409_.addFreshEntityWithPassengers(witch);
+             this.releaseAllPois();
+             this.discard();
 @@ -824,7 +_,7 @@
-             return p_186293_.m_35392_(p_35399_);
+             return p_186293_.wantsToSpawnGolem(p_35399_);
           }).limit(5L).collect(Collectors.toList());
           if (list1.size() >= p_35400_) {
--            if (!SpawnUtil.m_216403_(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_).isEmpty()) {
-+            if (SpawnUtil.trySpawnMob(EntityType.f_20460_, MobSpawnType.MOB_SUMMONED, p_35398_, this.m_20183_(), 10, 8, 6, SpawnUtil.Strategy.f_216412_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isPresent()) {
-                list.forEach(GolemSensor::m_26649_);
+-            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM).isEmpty()) {
++            if (SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isPresent()) {
+                list.forEach(GolemSensor::golemDetected);
              }
           }

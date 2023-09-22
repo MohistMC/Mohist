@@ -8,16 +8,16 @@
 +import org.bukkit.event.hanging.HangingPlaceEvent;
  
  public class HangingEntityItem extends Item {
-    private static final Component f_268736_ = Component.m_237115_("painting.random").m_130940_(ChatFormatting.GRAY);
+    private static final Component TOOLTIP_RANDOM_VARIANT = Component.translatable("painting.random").withStyle(ChatFormatting.GRAY);
 @@ -64,6 +_,19 @@
  
-          if (hangingentity.m_7088_()) {
-             if (!level.f_46443_) {
+          if (hangingentity.survives()) {
+             if (!level.isClientSide) {
 +               // CraftBukkit start - fire HangingPlaceEvent
-+               org.bukkit.entity.Player who = (p_41331_.m_43723_() == null) ? null : (org.bukkit.entity.Player) p_41331_.m_43723_().getBukkitEntity();
++               org.bukkit.entity.Player who = (p_41331_.getPlayer() == null) ? null : (org.bukkit.entity.Player) p_41331_.getPlayer().getBukkitEntity();
 +               org.bukkit.block.Block blockClicked = CraftBlock.at(level, blockpos);
 +               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.notchToBlockFace(direction);
-+               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_41331_.m_43724_());
++               org.bukkit.inventory.EquipmentSlot hand = org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot.getHand(p_41331_.getHand());
 +
 +               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) hangingentity.getBukkitEntity(), who, blockClicked, blockFace, hand, org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack.asBukkitCopy(itemstack));
 +               level.getCraftServer().getPluginManager().callEvent(event);
@@ -26,6 +26,6 @@
 +                  return InteractionResult.FAIL;
 +               }
 +               // CraftBukkit end
-                hangingentity.m_7084_();
-                level.m_220400_(player, GameEvent.f_157810_, hangingentity.m_20182_());
-                level.m_7967_(hangingentity);
+                hangingentity.playPlacementSound();
+                level.gameEvent(player, GameEvent.ENTITY_PLACE, hangingentity.position());
+                level.addFreshEntity(hangingentity);

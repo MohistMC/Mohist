@@ -11,15 +11,15 @@
 +import org.bukkit.entity.HumanEntity;
  
  public class ResultContainer implements Container, RecipeCraftingHolder {
-    private final NonNullList<ItemStack> f_40140_ = NonNullList.m_122780_(1, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> itemStacks = NonNullList.withSize(1, ItemStack.EMPTY);
     @Nullable
-    private RecipeHolder<?> f_40141_;
+    private RecipeHolder<?> recipeUsed;
 +
 +   // CraftBukkit start
 +   private int maxStack = MAX_STACK;
 +
 +   public java.util.List<ItemStack> getContents() {
-+      return this.f_40140_;
++      return this.itemStacks;
 +   }
 +
 +   public org.bukkit.inventory.InventoryHolder getOwner() {
@@ -34,7 +34,7 @@
 +   }
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +
@@ -48,5 +48,5 @@
 +   }
 +   // CraftBukkit end
  
-    public int m_6643_() {
+    public int getContainerSize() {
        return 1;

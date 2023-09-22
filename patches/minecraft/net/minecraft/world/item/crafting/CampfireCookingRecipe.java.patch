@@ -13,18 +13,18 @@
  public class CampfireCookingRecipe extends AbstractCookingRecipe {
     public CampfireCookingRecipe(String p_250140_, CookingBookCategory p_251808_, Ingredient p_249826_, ItemStack p_251839_, float p_251432_, int p_251471_) {
 @@ -15,4 +_,17 @@
-    public RecipeSerializer<?> m_7707_() {
-       return RecipeSerializer.f_44094_;
+    public RecipeSerializer<?> getSerializer() {
+       return RecipeSerializer.CAMPFIRE_COOKING_RECIPE;
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_43730_);
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftCampfireRecipe recipe = new CraftCampfireRecipe(id, result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
-+      recipe.setGroup(this.f_43728_);
-+      recipe.setCategory(CraftRecipe.getCategory(this.m_245534_()));
++      CraftCampfireRecipe recipe = new CraftCampfireRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
++      recipe.setGroup(this.group);
++      recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +      
 +      return recipe;
 +   }

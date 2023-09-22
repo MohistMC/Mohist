@@ -15,23 +15,23 @@
 +import org.bukkit.event.player.PlayerSignOpenEvent;
  
  public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    public static final BooleanProperty f_56268_ = BlockStateProperties.f_61362_;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 @@ -89,7 +_,7 @@
-             boolean flag = signblockentity.m_278155_(p_56281_, p_56279_, p_56280_, flag2);
-             if (signblockentity.m_277118_()) {
-                p_56279_.m_247517_((Player)null, signblockentity.m_58899_(), SoundEvents.f_276627_, SoundSource.BLOCKS);
--               return this.m_293177_(flag1);
+             boolean flag = signblockentity.executeClickCommandsIfPresent(p_56281_, p_56279_, p_56280_, flag2);
+             if (signblockentity.isWaxed()) {
+                p_56279_.playSound((Player)null, signblockentity.getBlockPos(), SoundEvents.WAXED_SIGN_INTERACT_FAIL, SoundSource.BLOCKS);
+-               return this.getInteractionResult(flag1);
 +               return InteractionResult.PASS;
-             } else if (flag1 && !this.m_277189_(p_56281_, signblockentity) && signapplicator.m_277072_(signtext, p_56281_) && signapplicator.m_276787_(p_56279_, signblockentity, flag2, p_56281_)) {
-                if (!p_56281_.m_7500_()) {
-                   itemstack.m_41774_(1);
+             } else if (flag1 && !this.otherPlayerIsEditingSign(p_56281_, signblockentity) && signapplicator.canApplyToSign(signtext, p_56281_) && signapplicator.tryApplyToSign(p_56279_, signblockentity, flag2, p_56281_)) {
+                if (!p_56281_.isCreative()) {
+                   itemstack.shrink(1);
 @@ -101,8 +_,9 @@
              } else if (flag) {
                 return InteractionResult.SUCCESS;
-             } else if (!this.m_277189_(p_56281_, signblockentity) && p_56281_.m_36326_() && this.m_278656_(p_56281_, signblockentity, flag2)) {
+             } else if (!this.otherPlayerIsEditingSign(p_56281_, signblockentity) && p_56281_.mayBuild() && this.hasEditableText(p_56281_, signblockentity, flag2)) {
 +               openTextEditcause.set(PlayerSignOpenEvent.Cause.INTERACT); // CraftBukkit
-                this.m_276926_(p_56281_, signblockentity, flag2);
--               return this.m_293177_(flag1);
+                this.openTextEdit(p_56281_, signblockentity, flag2);
+-               return this.getInteractionResult(flag1);
 +               return InteractionResult.SUCCESS;
              } else {
                 return InteractionResult.PASS;
@@ -41,17 +41,17 @@
     }
  
 +   public AtomicReference<PlayerSignOpenEvent.Cause> openTextEditcause = new AtomicReference<>(PlayerSignOpenEvent.Cause.UNKNOWN);
-    public void m_276926_(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
+    public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
 +      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, openTextEditcause.getAndSet(PlayerSignOpenEvent.Cause.UNKNOWN))) {
 +         return;
 +      }
-       p_277467_.m_155713_(p_277738_.m_20148_());
-       p_277738_.m_7739_(p_277467_, p_277771_);
+       p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());
+       p_277738_.openTextEdit(p_277467_, p_277771_);
 +   }
 +
 +   public void openTextEdit(Player entityhuman, SignBlockEntity tileentitysign, boolean flag, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
 +      openTextEditcause.set(cause);
-+      m_276926_(entityhuman, tileentitysign, flag);
++      openTextEdit(entityhuman, tileentitysign, flag);
     }
  
-    private boolean m_277189_(Player p_277952_, SignBlockEntity p_277599_) {
+    private boolean otherPlayerIsEditingSign(Player p_277952_, SignBlockEntity p_277599_) {

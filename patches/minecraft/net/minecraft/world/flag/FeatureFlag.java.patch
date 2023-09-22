@@ -4,8 +4,8 @@
  package net.minecraft.world.flag;
  
  public class FeatureFlag {
--   final FeatureFlagUniverse f_243952_;
-+   public final FeatureFlagUniverse f_243952_;
-    final long f_244012_;
+-   final FeatureFlagUniverse universe;
++   public final FeatureFlagUniverse universe;
+    final long mask;
  
     FeatureFlag(FeatureFlagUniverse p_249115_, int p_251067_) {

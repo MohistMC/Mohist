@@ -3,8 +3,8 @@
 @@ -204,6 +_,7 @@
  
     @Nullable
-    public Tag m_128365_(String p_128366_, Tag p_128367_) {
+    public Tag put(String p_128366_, Tag p_128367_) {
 +      if (p_128367_ == null) throw new IllegalArgumentException("Invalid null NBT value with key " + p_128366_);
-       return this.f_128329_.put(p_128366_, p_128367_);
+       return this.tags.put(p_128366_, p_128367_);
     }
  

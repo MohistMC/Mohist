@@ -9,11 +9,11 @@
 +import org.bukkit.generator.BlockPopulator;
  
  public abstract class ChunkGenerator {
-    public static final Codec<ChunkGenerator> f_62136_ = BuiltInRegistries.f_256914_.m_194605_().dispatchStable(ChunkGenerator::m_6909_, Function.identity());
-    protected final BiomeSource f_62137_;
-    private final Supplier<List<FeatureSorter.StepFeatureData>> f_223020_;
--   private final Function<Holder<Biome>, BiomeGenerationSettings> f_223021_;
-+   public final Function<Holder<Biome>, BiomeGenerationSettings> f_223021_;
+    public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
+    protected final BiomeSource biomeSource;
+    private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
+-   private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
++   public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
  
     public ChunkGenerator(BiomeSource p_256133_) {
        this(p_256133_, (p_223234_) -> {
@@ -22,7 +22,7 @@
     }
  
 +   public void addVanillaDecorations(WorldGenLevel pLevel, ChunkAccess pChunk, StructureManager pStructureManager) { // CraftBukkit
-+      this.m_213609_(pLevel, pChunk, pStructureManager);
++      this.applyBiomeDecoration(pLevel, pChunk, pStructureManager);
 +   }
 +
 +   public void applyBiomeDecoration(WorldGenLevel pLevel, ChunkAccess pChunk, StructureManager pStructureManager, boolean vanilla) {
@@ -32,12 +32,12 @@
 +      org.bukkit.World world = pLevel.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(pLevel, pChunk.m_7697_());
-+         int x = pChunk.m_7697_().f_45578_;
-+         int z = pChunk.m_7697_().f_45579_;
++         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(pLevel, pChunk.getPos());
++         int x = pChunk.getPos().x;
++         int z = pChunk.getPos().z;
 +         for (BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(pLevel.m_7328_()));
-+            seededrandom.m_64690_(pLevel.m_7328_(), x, z);
++            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(pLevel.getSeed()));
++            seededrandom.setDecorationSeed(pLevel.getSeed(), x, z);
 +            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
 +         }
 +         limitedRegion.saveEntities();
@@ -46,9 +46,9 @@
 +      // CraftBukkit end
 +   }
 +
-    public void m_213609_(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
-       ChunkPos chunkpos = p_223088_.m_7697_();
-       if (!SharedConstants.m_183707_(chunkpos)) {
+    public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
+       ChunkPos chunkpos = p_223088_.getPos();
+       if (!SharedConstants.debugVoidTerrain(chunkpos)) {
 @@ -363,6 +_,21 @@
              throw new ReportedException(crashreport);
           }
@@ -56,12 +56,12 @@
 +      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
 +      // only call when a populator is present (prevents unnecessary entity conversion)
 +      if (!world.getPopulators().isEmpty()) {
-+         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.m_7697_());
-+         int x = p_223088_.m_7697_().f_45578_;
-+         int z = p_223088_.m_7697_().f_45579_;
++         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.getPos());
++         int x = p_223088_.getPos().x;
++         int z = p_223088_.getPos().z;
 +         for (BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.m_7328_()));
-+            seededrandom.m_64690_(p_223087_.m_7328_(), x, z);
++            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.getSeed()));
++            seededrandom.setDecorationSeed(p_223087_.getSeed(), x, z);
 +            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
 +         }
 +         limitedRegion.saveEntities();
@@ -70,19 +70,19 @@
 +      // CraftBukkit end
     }
  
-    private static BoundingBox m_187717_(ChunkAccess p_187718_) {
+    private static BoundingBox getWritableArea(ChunkAccess p_187718_) {
 @@ -480,6 +_,14 @@
-       Predicate<Holder<Biome>> predicate = holderset::m_203333_;
-       StructureStart structurestart = structure.m_226596_(p_223107_, this, this.f_62137_, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
-       if (structurestart.m_73603_()) {
+       Predicate<Holder<Biome>> predicate = holderset::contains;
+       StructureStart structurestart = structure.generate(p_223107_, this, this.biomeSource, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
+       if (structurestart.isValid()) {
 +         // CraftBukkit start
-+         BoundingBox box = structurestart.m_73601_();
-+         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.f_220460_.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R2.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.m_162395_(), box.m_162396_(), box.m_162398_(), box.m_162399_(), box.m_162400_(), box.m_162401_()), p_223112_.f_45578_, p_223112_.f_45579_);
++         BoundingBox box = structurestart.getBoundingBox();
++         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.level.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R2.generator.structure.CraftStructure.minecraftToBukkit(structure, p_223107_), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), p_223112_.x, p_223112_.z);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return true;
 +         }
 +         // CraftBukkit end
-          p_223106_.m_220516_(p_223113_, structure, structurestart, p_223111_);
+          p_223106_.setStartForStructure(p_223113_, structure, structurestart, p_223111_);
           return true;
        } else {

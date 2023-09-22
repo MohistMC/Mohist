@@ -8,9 +8,9 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TripWireHookBlock extends Block {
-    public static final DirectionProperty f_57667_ = HorizontalDirectionalBlock.f_54117_;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 @@ -143,6 +_,17 @@
-          this.m_222602_(p_57686_, blockpos1, flag2, flag3, flag, flag1);
+          this.emitState(p_57686_, blockpos1, flag2, flag3, flag, flag1);
        }
  
 +      // CraftBukkit start
@@ -24,17 +24,17 @@
 +      }
 +      // CraftBukkit end
 +
-       this.m_222602_(p_57686_, p_57687_, flag2, flag3, flag, flag1);
+       this.emitState(p_57686_, p_57687_, flag2, flag3, flag, flag1);
        if (!p_57689_) {
-          p_57686_.m_7731_(p_57687_, blockstate1.m_61124_(f_57667_, direction), 3);
+          p_57686_.setBlock(p_57687_, blockstate1.setValue(FACING, direction), 3);
 @@ -156,8 +_,8 @@
-             BlockPos blockpos2 = p_57687_.m_5484_(direction, k);
+             BlockPos blockpos2 = p_57687_.relative(direction, k);
              BlockState blockstate2 = ablockstate[k];
              if (blockstate2 != null) {
--               p_57686_.m_7731_(blockpos2, blockstate2.m_61124_(f_57669_, Boolean.valueOf(flag2)), 3);
--               if (!p_57686_.m_8055_(blockpos2).m_60795_()) {
-+               if (!p_57686_.m_8055_(blockpos2).m_60795_()) { // FORGE: fix MC-129055
-+                  p_57686_.m_7731_(blockpos2, blockstate2.m_61124_(f_57669_, Boolean.valueOf(flag2)), 3);
+-               p_57686_.setBlock(blockpos2, blockstate2.setValue(ATTACHED, Boolean.valueOf(flag2)), 3);
+-               if (!p_57686_.getBlockState(blockpos2).isAir()) {
++               if (!p_57686_.getBlockState(blockpos2).isAir()) { // FORGE: fix MC-129055
++                  p_57686_.setBlock(blockpos2, blockstate2.setValue(ATTACHED, Boolean.valueOf(flag2)), 3);
                 }
              }
           }

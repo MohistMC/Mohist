@@ -20,38 +20,38 @@
 +import org.bukkit.event.entity.SlimeSplitEvent;
  
  public class Slime extends Mob implements Enemy {
-    private static final EntityDataAccessor<Integer> f_33582_ = SynchedEntityData.m_135353_(Slime.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Integer> ID_SIZE = SynchedEntityData.defineId(Slime.class, EntityDataSerializers.INT);
 @@ -130,6 +_,8 @@
-       if (this.m_20096_() && !this.f_33583_) {
-          int i = this.m_33632_();
+       if (this.onGround() && !this.wasOnGround) {
+          int i = this.getSize();
  
 +         // Forge: Don't spawn particles if it's handled by the implementation itself
 +         if (!spawnCustomParticles())
           for(int j = 0; j < i * 8; ++j) {
-             float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
-             float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
+             float f = this.random.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.random.nextFloat() * 0.5F + 0.5F;
 @@ -181,6 +_,9 @@
-       return (EntityType<? extends Slime>)super.m_6095_();
+       return (EntityType<? extends Slime>)super.getType();
     }
  
 +   // Mohist start - fix mixin(locals = LocalCapture.CAPTURE_FAILHARD)
 +   public SlimeSplitEvent event;
 +
-    public void m_142687_(Entity.RemovalReason p_149847_) {
-       int i = this.m_33632_();
-       if (!this.m_9236_().f_46443_ && i > 1 && this.m_21224_()) {
+    public void remove(Entity.RemovalReason p_149847_) {
+       int i = this.getSize();
+       if (!this.level().isClientSide && i > 1 && this.isDeadOrDying()) {
 @@ -190,6 +_,18 @@
           int j = i / 2;
-          int k = 2 + this.f_19796_.m_188503_(3);
+          int k = 2 + this.random.nextInt(3);
  
 +         // CraftBukkit start
 +         event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.level.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled() && event.getCount() > 0) {
 +            k = event.getCount();
 +         } else {
-+            super.m_142687_(p_149847_);
++            super.remove(p_149847_);
 +            return;
 +         }
 +         // CraftBukkit end
@@ -60,24 +60,24 @@
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
 @@ -204,7 +_,14 @@
-                slime.m_20331_(this.m_20147_());
-                slime.m_7839_(j, true);
-                slime.m_7678_(this.m_20185_() + (double)f1, this.m_20186_() + 0.5D, this.m_20189_() + (double)f2, this.f_19796_.m_188501_() * 360.0F, 0.0F);
--               this.m_9236_().m_7967_(slime);
+                slime.setInvulnerable(this.isInvulnerable());
+                slime.setSize(j, true);
+                slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
+-               this.level().addFreshEntity(slime);
 +               // CraftBukkit start
 +               if (CraftEventFactory.callEntityTransformEvent(this, slime, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
-+                  super.m_142687_(p_149847_);
++                  super.remove(p_149847_);
 +                  return;
 +               }
 +               // CraftBukkit end
 +               slime.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
-+               this.f_19853_.m_7967_(slime);
++               this.level.addFreshEntity(slime);
              }
           }
        }
 @@ -329,6 +_,12 @@
-    public EntityDimensions m_6972_(Pose p_33597_) {
-       return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
+    public EntityDimensions getDimensions(Pose p_33597_) {
+       return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }
 +
 +   /**
@@ -87,4 +87,4 @@
 +   protected boolean spawnCustomParticles() { return false; }
  
     static class SlimeAttackGoal extends Goal {
-       private final Slime f_33645_;
+       private final Slime slime;

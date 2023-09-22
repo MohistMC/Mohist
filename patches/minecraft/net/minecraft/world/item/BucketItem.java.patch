@@ -22,13 +22,13 @@
 +import java.util.concurrent.atomic.AtomicReference;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
-    private final Fluid f_40687_;
+    private final Fluid content;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated
     public BucketItem(Fluid p_40689_, Item.Properties p_40690_) {
        super(p_40690_);
-       this.f_40687_ = p_40689_;
+       this.content = p_40689_;
 +      this.fluidSupplier = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_40689_);
 +   }
 +
@@ -37,94 +37,94 @@
 +    */
 +   public BucketItem(java.util.function.Supplier<? extends Fluid> supplier, Item.Properties builder) {
 +      super(builder);
-+      this.f_40687_ = null;
++      this.content = null;
 +      this.fluidSupplier = supplier;
     }
  
-    public InteractionResultHolder<ItemStack> m_7203_(Level p_40703_, Player p_40704_, InteractionHand p_40705_) {
-       ItemStack itemstack = p_40704_.m_21120_(p_40705_);
-       BlockHitResult blockhitresult = m_41435_(p_40703_, p_40704_, this.f_40687_ == Fluids.f_76191_ ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
+    public InteractionResultHolder<ItemStack> use(Level p_40703_, Player p_40704_, InteractionHand p_40705_) {
+       ItemStack itemstack = p_40704_.getItemInHand(p_40705_);
+       BlockHitResult blockhitresult = getPlayerPOVHitResult(p_40703_, p_40704_, this.content == Fluids.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 +      InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_40704_, p_40703_, itemstack, blockhitresult);
 +      if (ret != null) return ret;
-       if (blockhitresult.m_6662_() == HitResult.Type.MISS) {
-          return InteractionResultHolder.m_19098_(itemstack);
-       } else if (blockhitresult.m_6662_() != HitResult.Type.BLOCK) {
+       if (blockhitresult.getType() == HitResult.Type.MISS) {
+          return InteractionResultHolder.pass(itemstack);
+       } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
 @@ -50,30 +_,43 @@
-          if (p_40703_.m_7966_(p_40704_, blockpos) && p_40704_.m_36204_(blockpos1, direction, itemstack)) {
-             if (this.f_40687_ == Fluids.f_76191_) {
-                BlockState blockstate1 = p_40703_.m_8055_(blockpos);
--               Block $$10 = blockstate1.m_60734_();
+          if (p_40703_.mayInteract(p_40704_, blockpos) && p_40704_.mayUseItemAt(blockpos1, direction, itemstack)) {
+             if (this.content == Fluids.EMPTY) {
+                BlockState blockstate1 = p_40703_.getBlockState(blockpos);
+-               Block $$10 = blockstate1.getBlock();
 -               if ($$10 instanceof BucketPickup) {
 -                  BucketPickup bucketpickup = (BucketPickup)$$10;
--                  ItemStack itemstack2 = bucketpickup.m_142598_(p_40704_, p_40703_, blockpos, blockstate1);
--                  if (!itemstack2.m_41619_()) {
-+               if (blockstate1.m_60734_() instanceof BucketPickup) {
-+                  BucketPickup bucketpickup = (BucketPickup)blockstate1.m_60734_();
+-                  ItemStack itemstack2 = bucketpickup.pickupBlock(p_40704_, p_40703_, blockpos, blockstate1);
+-                  if (!itemstack2.isEmpty()) {
++               if (blockstate1.getBlock() instanceof BucketPickup) {
++                  BucketPickup bucketpickup = (BucketPickup)blockstate1.getBlock();
 +                  // CraftBukkit start
-+                  ItemStack dummyFluid = bucketpickup.m_142598_(p_40704_, DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
-+                  if (dummyFluid.m_41619_()) return InteractionResultHolder.m_19100_(itemstack); // Don't fire event if the bucket won't be filled.
-+                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.m_82434_(), itemstack, dummyFluid.m_41720_(), p_40705_);
++                  ItemStack dummyFluid = bucketpickup.pickupBlock(p_40704_, DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  if (dummyFluid.isEmpty()) return InteractionResultHolder.fail(itemstack); // Don't fire event if the bucket won't be filled.
++                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_40703_, p_40704_, blockpos, blockpos, blockhitresult.getDirection(), itemstack, dummyFluid.getItem(), p_40705_);
 +
 +                  if (event.isCancelled()) {
-+                     ((ServerPlayer) p_40704_).f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_40703_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
++                     ((ServerPlayer) p_40704_).connection.send(new ClientboundBlockUpdatePacket(p_40703_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
 +                     ((ServerPlayer) p_40704_).getBukkitEntity().updateInventory(); // SPIGOT-4541
-+                     return InteractionResultHolder.m_19100_(itemstack);
++                     return InteractionResultHolder.fail(itemstack);
 +                  }
 +                  // CraftBukkit end
-+                  ItemStack itemstack1 = bucketpickup.m_142598_(p_40704_, p_40703_, blockpos, blockstate1);
-+                  if (!itemstack1.m_41619_()) {
-                      p_40704_.m_36246_(Stats.f_12982_.m_12902_(this));
--                     bucketpickup.m_142298_().ifPresent((p_150709_) -> {
++                  ItemStack itemstack1 = bucketpickup.pickupBlock(p_40704_, p_40703_, blockpos, blockstate1);
++                  if (!itemstack1.isEmpty()) {
+                      p_40704_.awardStat(Stats.ITEM_USED.get(this));
+-                     bucketpickup.getPickupSound().ifPresent((p_150709_) -> {
 +                     bucketpickup.getPickupSound(blockstate1).ifPresent((p_150709_) -> {
-                         p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
+                         p_40704_.playSound(p_150709_, 1.0F, 1.0F);
                       });
-                      p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
--                     ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_40704_, itemstack2);
-+                     ItemStack itemstack2 = ItemUtils.m_41813_(itemstack, p_40704_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
-                      if (!p_40703_.f_46443_) {
--                        CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack2);
-+                        CriteriaTriggers.f_10576_.m_38772_((ServerPlayer)p_40704_, itemstack1);
+                      p_40703_.gameEvent(p_40704_, GameEvent.FLUID_PICKUP, blockpos);
+-                     ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, itemstack2);
++                     ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, p_40704_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+                      if (!p_40703_.isClientSide) {
+-                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)p_40704_, itemstack2);
++                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)p_40704_, itemstack1);
                       }
  
--                     return InteractionResultHolder.m_19092_(itemstack1, p_40703_.m_5776_());
-+                     return InteractionResultHolder.m_19092_(itemstack2, p_40703_.m_5776_());
+-                     return InteractionResultHolder.sidedSuccess(itemstack1, p_40703_.isClientSide());
++                     return InteractionResultHolder.sidedSuccess(itemstack2, p_40703_.isClientSide());
                    }
                 }
  
-                return InteractionResultHolder.m_19100_(itemstack);
+                return InteractionResultHolder.fail(itemstack);
              } else {
-                BlockState blockstate = p_40703_.m_8055_(blockpos);
--               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
--               if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
+                BlockState blockstate = p_40703_.getBlockState(blockpos);
+-               BlockPos blockpos2 = blockstate.getBlock() instanceof LiquidBlockContainer && this.content == Fluids.WATER ? blockpos : blockpos1;
+-               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
-+               mohist$direction.set(blockhitresult.m_82434_());
++               mohist$direction.set(blockhitresult.getDirection());
 +               mohist$clickedPos.set(blockpos);
 +               mohist$hand.set(p_40705_);
 +               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack)) {
-                   this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
+                   this.checkExtraContent(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
-                      CriteriaTriggers.f_10591_.m_285767_((ServerPlayer)p_40704_, blockpos2, itemstack);
+                      CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)p_40704_, blockpos2, itemstack);
 @@ -98,59 +_,69 @@
-    public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
+    public void checkExtraContent(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
  
 +   @Deprecated //Forge: use the ItemStack sensitive version
-    public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
--      Fluid $$6 = this.f_40687_;
+    public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
+-      Fluid $$6 = this.content;
 -      if ($$6 instanceof FlowingFluid flowingfluid) {
 -         BlockState blockstate;
 -         Block $$7;
 -         boolean $$8;
 -         boolean flag2;
 -         label82: {
--            blockstate = p_150717_.m_8055_(p_150718_);
--            $$7 = blockstate.m_60734_();
--            $$8 = blockstate.m_60722_(this.f_40687_);
--            if (!blockstate.m_60795_() && !$$8) {
+-            blockstate = p_150717_.getBlockState(p_150718_);
+-            $$7 = blockstate.getBlock();
+-            $$8 = blockstate.canBeReplaced(this.content);
+-            if (!blockstate.isAir() && !$$8) {
 -               label80: {
 -                  if ($$7 instanceof LiquidBlockContainer) {
 -                     LiquidBlockContainer liquidblockcontainer = (LiquidBlockContainer)$$7;
--                     if (liquidblockcontainer.m_6044_(p_150716_, p_150717_, p_150718_, blockstate, this.f_40687_)) {
+-                     if (liquidblockcontainer.canPlaceLiquid(p_150716_, p_150717_, p_150718_, blockstate, this.content)) {
 -                        break label80;
 -                     }
 -                  }
@@ -148,13 +148,13 @@
 +   }
 +
 +   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {
-+      if (!(this.f_40687_ instanceof FlowingFluid)) {
++      if (!(this.content instanceof FlowingFluid)) {
 +         return false;
 +      } else {
-+         BlockState blockstate = p_150717_.m_8055_(p_150718_);
-+         Block block = blockstate.m_60734_();
-+         boolean flag = blockstate.m_60722_(this.f_40687_);
-+         boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150716_, p_150717_, p_150718_, blockstate, this.f_40687_);
++         BlockState blockstate = p_150717_.getBlockState(p_150718_);
++         Block block = blockstate.getBlock();
++         boolean flag = blockstate.canBeReplaced(this.content);
++         boolean flag1 = blockstate.isAir() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(p_150716_, p_150717_, p_150718_, blockstate, this.content);
 +         java.util.Optional<net.minecraftforge.fluids.FluidStack> containedFluidStack = java.util.Optional.ofNullable(container).flatMap(net.minecraftforge.fluids.FluidUtil::getFluidContained);
 +         // Mohist start - handle bukkit added field
 +         Direction enumdirection = mohist$direction.getAndSet(null);
@@ -165,7 +165,7 @@
 +         if (flag1 && p_150716_ != null) {
 +            PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent((ServerLevel) p_150717_, p_150716_, p_150718_, clicked, enumdirection, container, enumhand);
 +            if (event.isCancelled()) {
-+               ((ServerPlayer) p_150716_).f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
++               ((ServerPlayer) p_150716_).connection.send(new ClientboundBlockUpdatePacket(p_150717_, p_150718_)); // SPIGOT-4238: needed when looking through entity
 +               ((ServerPlayer) p_150716_).getBukkitEntity().updateInventory(); // SPIGOT-4541
 +               return false;
              }
@@ -176,44 +176,44 @@
 -         boolean flag1 = flag2;
 +         // CraftBukkit end
           if (!flag1) {
--            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null);
-+            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null, enumdirection, clicked, container, enumhand); // CraftBukkit
-+         } else if (containedFluidStack.isPresent() && this.f_40687_.getFluidType().isVaporizedOnPlacement(p_150717_, p_150718_, containedFluidStack.get())) {
-+            this.f_40687_.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
+-            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.getBlockPos().relative(p_150719_.getDirection()), (BlockHitResult)null);
++            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.getBlockPos().relative(p_150719_.getDirection()), (BlockHitResult)null, enumdirection, clicked, container, enumhand); // CraftBukkit
++         } else if (containedFluidStack.isPresent() && this.content.getFluidType().isVaporizedOnPlacement(p_150717_, p_150718_, containedFluidStack.get())) {
++            this.content.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
 +            return true;
-          } else if (p_150717_.m_6042_().f_63857_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
--            int l = p_150718_.m_123341_();
--            int i = p_150718_.m_123342_();
--            int j = p_150718_.m_123343_();
-+            int i = p_150718_.m_123341_();
-+            int j = p_150718_.m_123342_();
-+            int k = p_150718_.m_123343_();
-             p_150717_.m_5594_(p_150716_, p_150718_, SoundEvents.f_11937_, SoundSource.BLOCKS, 0.5F, 2.6F + (p_150717_.f_46441_.m_188501_() - p_150717_.f_46441_.m_188501_()) * 0.8F);
+          } else if (p_150717_.dimensionType().ultraWarm() && this.content.is(FluidTags.WATER)) {
+-            int l = p_150718_.getX();
+-            int i = p_150718_.getY();
+-            int j = p_150718_.getZ();
++            int i = p_150718_.getX();
++            int j = p_150718_.getY();
++            int k = p_150718_.getZ();
+             p_150717_.playSound(p_150716_, p_150718_, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (p_150717_.random.nextFloat() - p_150717_.random.nextFloat()) * 0.8F);
  
 -            for(int k = 0; k < 8; ++k) {
--               p_150717_.m_7106_(ParticleTypes.f_123755_, (double)l + Math.random(), (double)i + Math.random(), (double)j + Math.random(), 0.0D, 0.0D, 0.0D);
+-               p_150717_.addParticle(ParticleTypes.LARGE_SMOKE, (double)l + Math.random(), (double)i + Math.random(), (double)j + Math.random(), 0.0D, 0.0D, 0.0D);
 +            for(int l = 0; l < 8; ++l) {
-+               p_150717_.m_7106_(ParticleTypes.f_123755_, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
++               p_150717_.addParticle(ParticleTypes.LARGE_SMOKE, (double)i + Math.random(), (double)j + Math.random(), (double)k + Math.random(), 0.0D, 0.0D, 0.0D);
              }
  
 +            return true;
-+         } else if (block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150716_, p_150717_,p_150718_,blockstate,f_40687_)) {
-+            ((LiquidBlockContainer)block).m_7361_(p_150717_, p_150718_, blockstate, ((FlowingFluid)this.f_40687_).m_76068_(false));
-+            this.m_7718_(p_150716_, p_150717_, p_150718_);
++         } else if (block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(p_150716_, p_150717_,p_150718_,blockstate,content)) {
++            ((LiquidBlockContainer)block).placeLiquid(p_150717_, p_150718_, blockstate, ((FlowingFluid)this.content).getSource(false));
++            this.playEmptySound(p_150716_, p_150717_, p_150718_);
              return true;
           } else {
 -            if ($$7 instanceof LiquidBlockContainer) {
 -               LiquidBlockContainer liquidblockcontainer1 = (LiquidBlockContainer)$$7;
--               if (this.f_40687_ == Fluids.f_76193_) {
--                  liquidblockcontainer1.m_7361_(p_150717_, p_150718_, blockstate, flowingfluid.m_76068_(false));
--                  this.m_7718_(p_150716_, p_150717_, p_150718_);
+-               if (this.content == Fluids.WATER) {
+-                  liquidblockcontainer1.placeLiquid(p_150717_, p_150718_, blockstate, flowingfluid.getSource(false));
+-                  this.playEmptySound(p_150716_, p_150717_, p_150718_);
 -                  return true;
 -               }
 -            }
 -
--            if (!p_150717_.f_46443_ && $$8 && !blockstate.m_278721_()) {
-+            if (!p_150717_.f_46443_ && flag && !blockstate.m_278721_()) {
-                p_150717_.m_46961_(p_150718_, true);
+-            if (!p_150717_.isClientSide && $$8 && !blockstate.liquid()) {
++            if (!p_150717_.isClientSide && flag && !blockstate.liquid()) {
+                p_150717_.destroyBlock(p_150718_, true);
              }
  
 @@ -162,12 +_,27 @@
@@ -223,12 +223,12 @@
 -      return false;
     }
  
-    protected void m_7718_(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
--      SoundEvent soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
-+      SoundEvent soundevent = this.f_40687_.getFluidType().getSound(p_40696_, p_40697_, p_40698_, net.minecraftforge.common.SoundActions.BUCKET_EMPTY);
-+      if(soundevent == null) soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
-       p_40697_.m_5594_(p_40696_, p_40698_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
-       p_40697_.m_142346_(p_40696_, GameEvent.f_157769_, p_40698_);
+    protected void playEmptySound(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
+-      SoundEvent soundevent = this.content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
++      SoundEvent soundevent = this.content.getFluidType().getSound(p_40696_, p_40697_, p_40698_, net.minecraftforge.common.SoundActions.BUCKET_EMPTY);
++      if(soundevent == null) soundevent = this.content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
+       p_40697_.playSound(p_40696_, p_40698_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+       p_40697_.gameEvent(p_40696_, GameEvent.FLUID_PLACE, p_40698_);
 +   }
 +
 +   @Override
@@ -243,6 +243,6 @@
 +   public Fluid getFluid() { return fluidSupplier.get(); }
 +
 +   protected boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate) {
-+      return blockstate.m_60734_() instanceof LiquidBlockContainer liquid && liquid.m_6044_(null, worldIn, posIn, blockstate, this.f_40687_);
++      return blockstate.getBlock() instanceof LiquidBlockContainer liquid && liquid.canPlaceLiquid(null, worldIn, posIn, blockstate, this.content);
     }
  }

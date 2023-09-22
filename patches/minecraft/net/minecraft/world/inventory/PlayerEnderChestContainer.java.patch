@@ -10,7 +10,7 @@
  
  public class PlayerEnderChestContainer extends SimpleContainer {
     @Nullable
-    private EnderChestBlockEntity f_40101_;
+    private EnderChestBlockEntity activeChest;
 -
 -   public PlayerEnderChestContainer() {
 +   // CraftBukkit start
@@ -22,7 +22,7 @@
 +
 +   @Override
 +    public Location getLocation() {
-+      return this.f_40101_ != null ? CraftLocation.toBukkit(this.f_40101_.m_58899_(), this.f_40101_.m_58904_().getWorld()) : null;
++      return this.activeChest != null ? CraftLocation.toBukkit(this.activeChest.getBlockPos(), this.activeChest.getLevel().getWorld()) : null;
 +   }
 +
 +   public PlayerEnderChestContainer(Player owner) {
@@ -30,4 +30,4 @@
 +      this.owner = owner;
     }
  
-    public void m_40105_(EnderChestBlockEntity p_40106_) {
+    public void setActiveChest(EnderChestBlockEntity p_40106_) {

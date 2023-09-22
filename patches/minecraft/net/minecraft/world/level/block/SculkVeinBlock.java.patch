@@ -16,17 +16,17 @@
 +import net.minecraft.world.level.material.PushReaction;
  
  public class SculkVeinBlock extends MultifaceBlock implements SculkBehaviour, SimpleWaterloggedBlock {
-    private static final BooleanProperty f_222348_ = BlockStateProperties.f_61362_;
+    private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 @@ -83,7 +_,10 @@
        }
     }
  
 +   // Mohist start
 +   public AtomicReference<BlockPos> sourceBlock = new AtomicReference<>();
-    public int m_213628_(SculkSpreader.ChargeCursor p_222369_, LevelAccessor p_222370_, BlockPos p_222371_, RandomSource p_222372_, SculkSpreader p_222373_, boolean p_222374_) {
+    public int attemptUseCharge(SculkSpreader.ChargeCursor p_222369_, LevelAccessor p_222370_, BlockPos p_222371_, RandomSource p_222372_, SculkSpreader p_222373_, boolean p_222374_) {
 +      this.sourceBlock.set(p_222371_);
-       if (p_222374_ && this.m_222375_(p_222373_, p_222370_, p_222369_.m_222304_(), p_222372_)) {
-          return p_222369_.m_222341_() - 1;
+       if (p_222374_ && this.attemptPlaceSculk(p_222373_, p_222370_, p_222369_.getPos(), p_222372_)) {
+          return p_222369_.getCharge() - 1;
        } else {
 @@ -91,6 +_,11 @@
        }
@@ -34,23 +34,23 @@
  
 +   private boolean attemptPlaceSculk(SculkSpreader pSpreader, LevelAccessor pLevel, BlockPos pPos, RandomSource pRandom, BlockPos sourceBlock0) {
 +      this.sourceBlock.set(sourceBlock0);
-+      return m_222375_(pSpreader, pLevel, pPos, pRandom);
++      return attemptPlaceSculk(pSpreader, pLevel, pPos, pRandom);
 +   }
 +
-    private boolean m_222375_(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_) {
-       BlockState blockstate = p_222377_.m_8055_(p_222378_);
-       TagKey<Block> tagkey = p_222376_.m_222277_();
+    private boolean attemptPlaceSculk(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_) {
+       BlockState blockstate = p_222377_.getBlockState(p_222378_);
+       TagKey<Block> tagkey = p_222376_.replaceableBlocks();
 @@ -101,7 +_,12 @@
-             BlockState blockstate1 = p_222377_.m_8055_(blockpos);
-             if (blockstate1.m_204336_(tagkey)) {
-                BlockState blockstate2 = Blocks.f_220855_.m_49966_();
--               p_222377_.m_7731_(blockpos, blockstate2, 3);
+             BlockState blockstate1 = p_222377_.getBlockState(blockpos);
+             if (blockstate1.is(tagkey)) {
+                BlockState blockstate2 = Blocks.SCULK.defaultBlockState();
+-               p_222377_.setBlock(blockpos, blockstate2, 3);
 +               // CraftBukkit start - Call BlockSpreadEvent
 +               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
 +                  return false;
 +               }
 +               // CraftBukkit end
 +               // Mohist end
-                Block.m_49897_(blockstate1, blockstate2, p_222377_, blockpos);
-                p_222377_.m_5594_((Player)null, blockpos, SoundEvents.f_215753_, SoundSource.BLOCKS, 1.0F, 1.0F);
-                this.f_222349_.m_221657_(blockstate2, p_222377_, blockpos, p_222376_.m_222282_());
+                Block.pushEntitiesUp(blockstate1, blockstate2, p_222377_, blockpos);
+                p_222377_.playSound((Player)null, blockpos, SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.BLOCKS, 1.0F, 1.0F);
+                this.veinSpreader.spreadAll(blockstate2, p_222377_, blockpos, p_222376_.isWorldGeneration());

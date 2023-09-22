@@ -2,34 +2,34 @@
 +++ b/net/minecraft/world/level/block/entity/SculkCatalystBlockEntity.java
 @@ -31,6 +_,7 @@
     public SculkCatalystBlockEntity(BlockPos p_222774_, BlockState p_222775_) {
-       super(BlockEntityType.f_222758_, p_222774_, p_222775_);
-       this.f_279609_ = new SculkCatalystBlockEntity.CatalystListener(p_222775_, new BlockPositionSource(p_222774_));
-+      f_279609_.level = f_58857_; // CraftBukkit
+       super(BlockEntityType.SCULK_CATALYST, p_222774_, p_222775_);
+       this.catalystListener = new SculkCatalystBlockEntity.CatalystListener(p_222775_, new BlockPositionSource(p_222774_));
++      catalystListener.level = level; // CraftBukkit
     }
  
-    public static void m_222779_(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
+    public static void serverTick(Level p_222780_, BlockPos p_222781_, BlockState p_222782_, SculkCatalystBlockEntity p_222783_) {
 @@ -38,6 +_,7 @@
     }
  
-    public void m_142466_(CompoundTag p_222787_) {
-+      super.m_142466_(p_222787_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
-       this.f_279609_.f_279632_.m_222269_(p_222787_);
+    public void load(CompoundTag p_222787_) {
++      super.load(p_222787_); // CraftBukkit - SPIGOT-7393: Load super Bukkit data
+       this.catalystListener.sculkSpreader.load(p_222787_);
     }
  
 @@ -55,6 +_,7 @@
-       final SculkSpreader f_279632_;
-       private final BlockState f_279646_;
-       private final PositionSource f_279622_;
+       final SculkSpreader sculkSpreader;
+       private final BlockState blockState;
+       private final PositionSource positionSource;
 +      private Level level; // CraftBukkit
  
        public CatalystListener(BlockState p_283224_, PositionSource p_283095_) {
-          this.f_279646_ = p_283224_;
+          this.blockState = p_283224_;
 @@ -104,7 +_,7 @@
-          return this.f_279632_;
+          return this.sculkSpreader;
        }
  
--      private void m_280309_(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
-+      public void m_280309_(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
-          p_281501_.m_7731_(p_281448_, p_281966_.m_61124_(SculkCatalystBlock.f_222086_, Boolean.valueOf(true)), 3);
-          p_281501_.m_186460_(p_281448_, p_281966_.m_60734_(), 8);
-          p_281501_.m_8767_(ParticleTypes.f_235898_, (double)p_281448_.m_123341_() + 0.5D, (double)p_281448_.m_123342_() + 1.15D, (double)p_281448_.m_123343_() + 0.5D, 2, 0.2D, 0.0D, 0.2D, 0.0D);
+-      private void bloom(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
++      public void bloom(ServerLevel p_281501_, BlockPos p_281448_, BlockState p_281966_, RandomSource p_283606_) {
+          p_281501_.setBlock(p_281448_, p_281966_.setValue(SculkCatalystBlock.PULSE, Boolean.valueOf(true)), 3);
+          p_281501_.scheduleTick(p_281448_, p_281966_.getBlock(), 8);
+          p_281501_.sendParticles(ParticleTypes.SCULK_SOUL, (double)p_281448_.getX() + 0.5D, (double)p_281448_.getY() + 1.15D, (double)p_281448_.getZ() + 0.5D, 2, 0.2D, 0.0D, 0.2D, 0.0D);

@@ -17,74 +17,74 @@
  
  public class FallingBlockEntity extends Entity {
 @@ -51,10 +_,10 @@
-    private BlockState f_31946_ = Blocks.f_49992_.m_49966_();
-    public int f_31942_;
-    public boolean f_31943_ = true;
--   private boolean f_31947_;
-+   public boolean f_31947_;
-    public boolean f_31939_;
--   private int f_31940_ = 40;
--   private float f_149641_;
-+   public int f_31940_ = 40;
-+   public float f_149641_;
+    private BlockState blockState = Blocks.SAND.defaultBlockState();
+    public int time;
+    public boolean dropItem = true;
+-   private boolean cancelDrop;
++   public boolean cancelDrop;
+    public boolean hurtEntities;
+-   private int fallDamageMax = 40;
+-   private float fallDamagePerDistance;
++   public int fallDamageMax = 40;
++   public float fallDamagePerDistance;
     @Nullable
-    public CompoundTag f_31944_;
-    protected static final EntityDataAccessor<BlockPos> f_31945_ = SynchedEntityData.m_135353_(FallingBlockEntity.class, EntityDataSerializers.f_135038_);
+    public CompoundTag blockData;
+    protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(FallingBlockEntity.class, EntityDataSerializers.BLOCK_POS);
 @@ -76,9 +_,16 @@
     }
  
-    public static FallingBlockEntity m_201971_(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
--      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.m_123341_() + 0.5D, (double)p_201973_.m_123342_(), (double)p_201973_.m_123343_() + 0.5D, p_201974_.m_61138_(BlockStateProperties.f_61362_) ? p_201974_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(false)) : p_201974_);
--      p_201972_.m_7731_(p_201973_, p_201974_.m_60819_().m_76188_(), 3);
--      p_201972_.m_7967_(fallingblockentity);
+    public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
+-      FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.getX() + 0.5D, (double)p_201973_.getY(), (double)p_201973_.getZ() + 0.5D, p_201974_.hasProperty(BlockStateProperties.WATERLOGGED) ? p_201974_.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(false)) : p_201974_);
+-      p_201972_.setBlock(p_201973_, p_201974_.getFluidState().createLegacyBlock(), 3);
+-      p_201972_.addFreshEntity(fallingblockentity);
 +      // CraftBukkit start
 +      return fall(p_201972_, p_201973_, p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
 +
 +   public static FallingBlockEntity fall(Level pLevel, BlockPos pPos, BlockState pBlockState, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      // CraftBukkit end
-+      FallingBlockEntity fallingblockentity = new FallingBlockEntity(pLevel, (double)pPos.m_123341_() + 0.5D, (double)pPos.m_123342_(), (double)pPos.m_123343_() + 0.5D, pBlockState.m_61138_(BlockStateProperties.f_61362_) ? pBlockState.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(false)) : pBlockState);
-+      if (!CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, pPos, pBlockState.m_60819_().m_76188_())) return fallingblockentity; // CraftBukkit
-+      pLevel.m_7731_(pPos, pBlockState.m_60819_().m_76188_(), 3);
++      FallingBlockEntity fallingblockentity = new FallingBlockEntity(pLevel, (double)pPos.getX() + 0.5D, (double)pPos.getY(), (double)pPos.getZ() + 0.5D, pBlockState.hasProperty(BlockStateProperties.WATERLOGGED) ? pBlockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(false)) : pBlockState);
++      if (!CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, pPos, pBlockState.getFluidState().createLegacyBlock())) return fallingblockentity; // CraftBukkit
++      pLevel.setBlock(pPos, pBlockState.getFluidState().createLegacyBlock(), 3);
 +      pLevel.addFreshEntity(fallingblockentity, spawnReason); // CraftBukkit
        return fallingblockentity;
     }
  
 @@ -120,11 +_,11 @@
-          if (!this.m_9236_().f_46443_) {
-             BlockPos blockpos = this.m_20183_();
-             boolean flag = this.f_31946_.m_60734_() instanceof ConcretePowderBlock;
--            boolean flag1 = flag && this.m_9236_().m_6425_(blockpos).m_205070_(FluidTags.f_13131_);
-+            boolean flag1 = flag && this.f_31946_.canBeHydrated(this.m_9236_(), blockpos, this.m_9236_().m_6425_(blockpos), blockpos);
-             double d0 = this.m_20184_().m_82556_();
+          if (!this.level().isClientSide) {
+             BlockPos blockpos = this.blockPosition();
+             boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
+-            boolean flag1 = flag && this.level().getFluidState(blockpos).is(FluidTags.WATER);
++            boolean flag1 = flag && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockpos), blockpos);
+             double d0 = this.getDeltaMovement().lengthSqr();
              if (flag && d0 > 1.0D) {
-                BlockHitResult blockhitresult = this.m_9236_().m_45547_(new ClipContext(new Vec3(this.f_19854_, this.f_19855_, this.f_19856_), this.m_20182_(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
--               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.m_9236_().m_6425_(blockhitresult.m_82425_()).m_205070_(FluidTags.f_13131_)) {
-+               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.f_31946_.canBeHydrated(this.m_9236_(), blockpos, this.m_9236_().m_6425_(blockhitresult.m_82425_()), blockhitresult.m_82425_())) {
-                   blockpos = blockhitresult.m_82425_();
+                BlockHitResult blockhitresult = this.level().clip(new ClipContext(new Vec3(this.xo, this.yo, this.zo), this.position(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
+-               if (blockhitresult.getType() != HitResult.Type.MISS && this.level().getFluidState(blockhitresult.getBlockPos()).is(FluidTags.WATER)) {
++               if (blockhitresult.getType() != HitResult.Type.MISS && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockhitresult.getBlockPos()), blockhitresult.getBlockPos())) {
+                   blockpos = blockhitresult.getBlockPos();
                    flag1 = true;
                 }
 @@ -151,6 +_,13 @@
-                            this.f_31946_ = this.f_31946_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(true));
+                            this.blockState = this.blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(true));
                          }
  
 +                        // CraftBukkit start
-+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_)) {
-+                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
++                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.blockState)) {
++                           this.discard(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }
 +                        // CraftBukkit end
 +
-                         if (this.m_9236_().m_7731_(blockpos, this.f_31946_, 3)) {
-                            ((ServerLevel)this.m_9236_()).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.m_9236_().m_8055_(blockpos)));
-                            this.m_146870_();
+                         if (this.level().setBlock(blockpos, this.blockState, 3)) {
+                            ((ServerLevel)this.level()).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos, this.level().getBlockState(blockpos)));
+                            this.discard();
 @@ -228,7 +_,9 @@
              DamageSource damagesource = damagesource1;
-             float f = (float)Math.min(Mth.m_14143_((float)i * this.f_149641_), this.f_31940_);
-             this.m_9236_().m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
+             float f = (float)Math.min(Mth.floor((float)i * this.fallDamagePerDistance), this.fallDamageMax);
+             this.level().getEntities(this, this.getBoundingBox(), predicate).forEach((p_149649_) -> {
 +               CraftEventFactory.entityDamage = this; // CraftBukkit
-                p_149649_.m_6469_(damagesource, f);
+                p_149649_.hurt(damagesource, f);
 +               CraftEventFactory.entityDamage = null; // CraftBukkit
              });
-             boolean flag = this.f_31946_.m_204336_(BlockTags.f_13033_);
-             if (flag && f > 0.0F && this.f_19796_.m_188501_() < 0.05F + (float)i * 0.05F) {
+             boolean flag = this.blockState.is(BlockTags.ANVIL);
+             if (flag && f > 0.0F && this.random.nextFloat() < 0.05F + (float)i * 0.05F) {

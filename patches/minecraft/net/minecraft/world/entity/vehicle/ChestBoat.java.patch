@@ -17,9 +17,9 @@
 +import org.bukkit.inventory.InventoryHolder;
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
-    private static final int f_219867_ = 27;
+    private static final int CONTAINER_SIZE = 27;
 @@ -165,6 +_,53 @@
-       return this.m_219954_(p_219896_);
+       return this.isChestVehicleStillValid(p_219896_);
     }
  
 +   // CraftBukkit start
@@ -28,7 +28,7 @@
 +
 +   @Override
 +   public List<ItemStack> getContents() {
-+      return this.f_219864_;
++      return this.itemStacks;
 +   }
 +
 +   @Override
@@ -54,7 +54,7 @@
 +   }
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +
@@ -70,12 +70,12 @@
 +   // CraftBukkit end
 +
     @Nullable
-    public AbstractContainerMenu m_7208_(int p_219910_, Inventory p_219911_, Player p_219912_) {
-       if (this.f_219865_ != null && p_219912_.m_5833_()) {
+    public AbstractContainerMenu createMenu(int p_219910_, Inventory p_219911_, Player p_219912_) {
+       if (this.lootTable != null && p_219912_.isSpectator()) {
 @@ -202,6 +_,28 @@
  
-    public void m_213775_() {
-       this.f_219864_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+    public void clearItemStacks() {
+       this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 +   }
 +
 +   // Forge Start
@@ -83,7 +83,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++      if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
@@ -100,4 +100,4 @@
 +      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
     }
  
-    public void m_5785_(Player p_270286_) {
+    public void stopOpen(Player p_270286_) {

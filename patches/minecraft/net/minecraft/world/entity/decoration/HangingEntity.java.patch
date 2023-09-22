@@ -19,41 +19,41 @@
  
  public abstract class HangingEntity extends Entity {
 @@ -47,7 +_,7 @@
-    protected void m_8097_() {
+    protected void defineSynchedData() {
     }
  
--   protected void m_6022_(Direction p_31728_) {
-+   public void m_6022_(Direction p_31728_) {
+-   protected void setDirection(Direction p_31728_) {
++   public void setDirection(Direction p_31728_) {
        Validate.notNull(p_31728_);
-       Validate.isTrue(p_31728_.m_122434_().m_122479_());
-       this.f_31699_ = p_31728_;
+       Validate.isTrue(p_31728_.getAxis().isHorizontal());
+       this.direction = p_31728_;
 @@ -87,16 +_,69 @@
        }
     }
  
--   private double m_31709_(int p_31710_) {
+-   private double offs(int p_31710_) {
 +   // CraftBukkit start - break out BB calc into own method
 +   public static AABB calculateBoundingBox(Entity entity, BlockPos pos, Direction direction, int width, int height) {
-+      double d0 = (double) pos.m_123341_() + 0.5D;
-+      double d1 = (double) pos.m_123342_() + 0.5D;
-+      double d2 = (double) pos.m_123343_() + 0.5D;
++      double d0 = (double) pos.getX() + 0.5D;
++      double d1 = (double) pos.getY() + 0.5D;
++      double d2 = (double) pos.getZ() + 0.5D;
 +      double d3 = 0.46875D;
-+      double d4 = m_31709_(width);
-+      double d5 = m_31709_(height);
-+      d0 -= (double) direction.m_122429_() * 0.46875D;
-+      d2 -= (double) direction.m_122431_() * 0.46875D;
++      double d4 = offs(width);
++      double d5 = offs(height);
++      d0 -= (double) direction.getStepX() * 0.46875D;
++      d2 -= (double) direction.getStepZ() * 0.46875D;
 +      d1 += d5;
-+      Direction enumdirection = direction.m_122428_();
-+      d0 += d4 * (double)enumdirection.m_122429_();
-+      d2 += d4 * (double)enumdirection.m_122431_();
++      Direction enumdirection = direction.getCounterClockWise();
++      d0 += d4 * (double)enumdirection.getStepX();
++      d2 += d4 * (double)enumdirection.getStepZ();
 +      if(entity != null)
 +      {
-+         entity.m_20343_( d0, d1, d2 );
++         entity.setPosRaw( d0, d1, d2 );
 +      }
 +      double d6 = (double)width;
 +      double d7 = (double)height;
 +      double d8 = (double)width;
-+      if (direction.m_122434_() == Direction.Axis.Z) {
++      if (direction.getAxis() == Direction.Axis.Z) {
 +         d8 = 1.0D;
 +      } else {
 +         d6 = 1.0D;
@@ -67,22 +67,22 @@
 +   }
 +   // CraftBukkit end
 +
-+   private static double m_31709_(int p_31710_) {
++   private static double offs(int p_31710_) {
        return p_31710_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
-    public void m_8119_() {
-       if (!this.m_9236_().f_46443_) {
-          this.m_146871_();
--         if (this.f_31700_++ == 100) {
-+         if (this.f_31700_++ == this.f_19853_.spigotConfig.hangingTickFrequency) { // Spigot
-             this.f_31700_ = 0;
-             if (!this.m_213877_() && !this.m_7088_()) {
+    public void tick() {
+       if (!this.level().isClientSide) {
+          this.checkBelowWorld();
+-         if (this.checkInterval++ == 100) {
++         if (this.checkInterval++ == this.level.spigotConfig.hangingTickFrequency) { // Spigot
+             this.checkInterval = 0;
+             if (!this.isRemoved() && !this.survives()) {
 +               // CraftBukkit start - fire break events
-+               BlockState material = this.f_19853_.m_8055_(this.m_20183_());
++               BlockState material = this.level.getBlockState(this.blockPosition());
 +               HangingBreakEvent.RemoveCause cause;
 +
-+               if (!material.m_60795_()) {
++               if (!material.isAir()) {
 +                  // TODO: This feels insufficient to catch 100% of suffocation cases
 +                  cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
 +               } else {
@@ -90,82 +90,82 @@
 +               }
 +
 +               HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
-+               this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++               this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+               if (this.m_213877_() || event.isCancelled()) {
++               if (this.isRemoved() || event.isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end
-                this.m_146870_();
-                this.m_5553_((Entity)null);
+                this.discard();
+                this.dropItem((Entity)null);
              }
 @@ -121,6 +_,8 @@
                 int j1 = (j - 1) / -2;
-                blockpos$mutableblockpos.m_122190_(blockpos).m_122175_(direction, k + i1).m_122175_(Direction.UP, l + j1);
-                BlockState blockstate = this.m_9236_().m_8055_(blockpos$mutableblockpos);
-+               if (net.minecraft.world.level.block.Block.m_49863_(this.m_9236_(), blockpos$mutableblockpos, this.f_31699_))
+                blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
+                BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
++               if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
 +                  continue;
-                if (!blockstate.m_280296_() && !DiodeBlock.m_52586_(blockstate)) {
+                if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
                    return false;
                 }
 @@ -151,7 +_,23 @@
-       if (this.m_6673_(p_31715_)) {
+       if (this.isInvulnerableTo(p_31715_)) {
           return false;
        } else {
--         if (!this.m_213877_() && !this.m_9236_().f_46443_) {
-+         if (!this.m_213877_() && !this.f_19853_.f_46443_) {
+-         if (!this.isRemoved() && !this.level().isClientSide) {
++         if (!this.isRemoved() && !this.level.isClientSide) {
 +            // CraftBukkit start - fire break events
-+            Entity damager = (p_31715_.m_269014_()) ? p_31715_.m_7639_() : p_31715_.m_7640_();
++            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
 +            HangingBreakEvent event;
 +            if (damager != null) {
-+               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.m_269533_(DamageTypeTags.f_268415_) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
++               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
 +            } else {
-+               event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), p_31715_.m_269533_(DamageTypeTags.f_268415_) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
++               event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
 +            }
 +
-+            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++            this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+            if (this.m_213877_() || event.isCancelled()) {
++            if (this.isRemoved() || event.isCancelled()) {
 +               return true;
 +            }
 +            // CraftBukkit end
 +
-             this.m_6074_();
-             this.m_5834_();
-             this.m_5553_(p_31715_.m_7639_());
+             this.kill();
+             this.markHurt();
+             this.dropItem(p_31715_.getEntity());
 @@ -163,6 +_,17 @@
  
-    public void m_6478_(MoverType p_31719_, Vec3 p_31720_) {
-       if (!this.m_9236_().f_46443_ && !this.m_213877_() && p_31720_.m_82556_() > 0.0D) {
-+         if (this.m_213877_()) return; // CraftBukkit
+    public void move(MoverType p_31719_, Vec3 p_31720_) {
+       if (!this.level().isClientSide && !this.isRemoved() && p_31720_.lengthSqr() > 0.0D) {
++         if (this.isRemoved()) return; // CraftBukkit
 +
 +         // CraftBukkit start - fire break events
 +         // TODO - Does this need its own cause? Seems to only be triggered by pistons
 +         HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.level.getCraftServer().getPluginManager().callEvent(event);
 +
-+         if (this.m_213877_() || event.isCancelled()) {
++         if (this.isRemoved() || event.isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          this.m_6074_();
-          this.m_5553_((Entity)null);
+          this.kill();
+          this.dropItem((Entity)null);
        }
 @@ -170,7 +_,7 @@
     }
  
-    public void m_5997_(double p_31744_, double p_31745_, double p_31746_) {
--      if (!this.m_9236_().f_46443_ && !this.m_213877_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
-+      if (false && !this.m_9236_().f_46443_ && !this.m_213877_() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) { // CraftBukkit - not needed
-          this.m_6074_();
-          this.m_5553_((Entity)null);
+    public void push(double p_31744_, double p_31745_, double p_31746_) {
+-      if (!this.level().isClientSide && !this.isRemoved() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
++      if (false && !this.level().isClientSide && !this.isRemoved() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) { // CraftBukkit - not needed
+          this.kill();
+          this.dropItem((Entity)null);
        }
 @@ -187,7 +_,7 @@
-    public void m_7378_(CompoundTag p_31730_) {
-       BlockPos blockpos = new BlockPos(p_31730_.m_128451_("TileX"), p_31730_.m_128451_("TileY"), p_31730_.m_128451_("TileZ"));
-       if (!blockpos.m_123314_(this.m_20183_(), 16.0D)) {
--         f_238173_.error("Hanging entity at invalid position: {}", (Object)blockpos);
-+         f_238173_.debug("Hanging entity at invalid position: {}", (Object)blockpos);
+    public void readAdditionalSaveData(CompoundTag p_31730_) {
+       BlockPos blockpos = new BlockPos(p_31730_.getInt("TileX"), p_31730_.getInt("TileY"), p_31730_.getInt("TileZ"));
+       if (!blockpos.closerThan(this.blockPosition(), 16.0D)) {
+-         LOGGER.error("Hanging entity at invalid position: {}", (Object)blockpos);
++         LOGGER.debug("Hanging entity at invalid position: {}", (Object)blockpos);
        } else {
-          this.f_31698_ = blockpos;
+          this.pos = blockpos;
        }

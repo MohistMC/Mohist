@@ -2,17 +2,17 @@
 +++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
 @@ -43,10 +_,15 @@
        if (player instanceof ServerPlayer serverplayer) {
-          Container container = this.f_40218_;
+          Container container = this.container;
           if (container instanceof AbstractFurnaceBlockEntity abstractfurnaceblockentity) {
 +            // Mohist start
 +            AbstractFurnaceBlockEntity.stackAtomicReference.set(p_39558_);
-+            AbstractFurnaceBlockEntity.amount.set(this.f_39540_);
-             abstractfurnaceblockentity.m_155003_(serverplayer);
++            AbstractFurnaceBlockEntity.amount.set(this.removeCount);
+             abstractfurnaceblockentity.awardUsedRecipesAndPopExperience(serverplayer);
 +            // Mohist end
           }
        }
  
-       this.f_39540_ = 0;
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
+       this.removeCount = 0;
++      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, p_39558_);
     }
  }

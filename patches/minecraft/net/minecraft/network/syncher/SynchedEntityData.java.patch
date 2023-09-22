@@ -16,38 +16,38 @@
 @@ -123,6 +_,10 @@
     }
  
-    public <T> void m_276349_(EntityDataAccessor<T> p_276368_, T p_276363_, boolean p_276370_) {
-+      if (p_276368_ == LivingEntity.f_20961_ && this.f_135344_ instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
+    public <T> void set(EntityDataAccessor<T> p_276368_, T p_276363_, boolean p_276370_) {
++      if (p_276368_ == LivingEntity.DATA_HEALTH_ID && this.entity instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
 +         CraftPlayer player = serverPlayer.getBukkitEntity();
 +         player.setRealHealth(((Float) p_276363_));
 +      }
-       SynchedEntityData.DataItem<T> dataitem = this.m_135379_(p_276368_);
-       if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.m_135403_())) {
-          dataitem.m_135397_(p_276363_);
+       SynchedEntityData.DataItem<T> dataitem = this.getItem(p_276368_);
+       if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.getValue())) {
+          dataitem.setValue(p_276363_);
 @@ -209,6 +_,26 @@
-    public boolean m_135388_() {
-       return this.f_135345_.isEmpty();
+    public boolean isEmpty() {
+       return this.itemsById.isEmpty();
     }
 +
 +   // CraftBukkit start - add method from above
 +   public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
-+      this.m_135379_(datawatcherobject).m_135401_(true);
-+      this.f_135348_ = true;
++      this.getItem(datawatcherobject).setDirty(true);
++      this.isDirty = true;
 +   }
 +   // CraftBukkit end
 +
 +
 +   // CraftBukkit start
 +   public void refresh(ServerPlayer to) {
-+      if (!this.m_135388_()) {
-+         List<SynchedEntityData.DataValue<?>> list = this.m_252804_();
++      if (!this.isEmpty()) {
++         List<SynchedEntityData.DataValue<?>> list = this.getNonDefaultValues();
 +
 +         if (list != null) {
-+            to.f_8906_.m_141995_(new ClientboundSetEntityDataPacket(this.f_135344_.m_19879_(), list));
++            to.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), list));
 +         }
 +      }
 +   }
 +    // CraftBukkit end
  
     public static class DataItem<T> {
-       final EntityDataAccessor<T> f_135390_;
+       final EntityDataAccessor<T> accessor;

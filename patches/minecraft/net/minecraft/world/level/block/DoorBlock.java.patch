@@ -14,15 +14,15 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class DoorBlock extends Block {
-    public static final DirectionProperty f_52726_ = HorizontalDirectionalBlock.f_54117_;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 @@ -178,8 +_,22 @@
     }
  
-    public void m_6861_(BlockState p_52776_, Level p_52777_, BlockPos p_52778_, Block p_52779_, BlockPos p_52780_, boolean p_52781_) {
--      boolean flag = p_52777_.m_276867_(p_52778_) || p_52777_.m_276867_(p_52778_.m_121945_(p_52776_.m_61143_(f_52730_) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN));
--      if (!this.m_49966_().m_60713_(p_52779_) && flag != p_52776_.m_61143_(f_52729_)) {
+    public void neighborChanged(BlockState p_52776_, Level p_52777_, BlockPos p_52778_, Block p_52779_, BlockPos p_52780_, boolean p_52781_) {
+-      boolean flag = p_52777_.hasNeighborSignal(p_52778_) || p_52777_.hasNeighborSignal(p_52778_.relative(p_52776_.getValue(HALF) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN));
+-      if (!this.defaultBlockState().is(p_52779_) && flag != p_52776_.getValue(POWERED)) {
 +      // CraftBukkit start
-+      BlockPos otherHalf = p_52778_.m_121945_(p_52776_.m_61143_(f_52730_) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
++      BlockPos otherHalf = p_52778_.relative(p_52776_.getValue(HALF) == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
 +
 +      org.bukkit.block.Block bukkitBlock = CraftBlock.at(p_52777_, p_52778_);
 +      org.bukkit.block.Block blockTop = CraftBlock.at(p_52777_, otherHalf);
@@ -30,13 +30,13 @@
 +      int power = bukkitBlock.getBlockPower();
 +      int powerTop = blockTop.getBlockPower();
 +      if (powerTop > power) power = powerTop;
-+      int oldPower = (Boolean) p_52776_.m_61143_(f_52729_) ? 15 : 0;
++      int oldPower = (Boolean) p_52776_.getValue(POWERED) ? 15 : 0;
 +
 +      if (oldPower == 0 ^ power == 0) {
 +         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, oldPower, power);
 +         p_52777_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +         boolean flag = eventRedstone.getNewCurrent() > 0;
 +         // CraftBukkit end
-          if (flag != p_52776_.m_61143_(f_52727_)) {
-             this.m_245755_((Entity)null, p_52777_, p_52778_, flag);
-             p_52777_.m_142346_((Entity)null, flag ? GameEvent.f_157796_ : GameEvent.f_157793_, p_52778_);
+          if (flag != p_52776_.getValue(OPEN)) {
+             this.playSound((Entity)null, p_52777_, p_52778_, flag);
+             p_52777_.gameEvent((Entity)null, flag ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, p_52778_);

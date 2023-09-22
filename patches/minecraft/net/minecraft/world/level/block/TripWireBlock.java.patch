@@ -16,15 +16,15 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class TripWireBlock extends Block {
-    public static final BooleanProperty f_57590_ = BlockStateProperties.f_61448_;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 @@ -69,7 +_,7 @@
     }
  
-    public void m_5707_(Level p_57615_, BlockPos p_57616_, BlockState p_57617_, Player p_57618_) {
--      if (!p_57615_.f_46443_ && !p_57618_.m_21205_().m_41619_() && p_57618_.m_21205_().m_150930_(Items.f_42574_)) {
-+      if (!p_57615_.f_46443_ && !p_57618_.m_21205_().m_41619_() && p_57618_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_DISARM)) {
-          p_57615_.m_7731_(p_57616_, p_57617_.m_61124_(f_57592_, Boolean.valueOf(true)), 4);
-          p_57615_.m_142346_(p_57618_, GameEvent.f_157781_, p_57616_);
+    public void playerWillDestroy(Level p_57615_, BlockPos p_57616_, BlockState p_57617_, Player p_57618_) {
+-      if (!p_57615_.isClientSide && !p_57618_.getMainHandItem().isEmpty() && p_57618_.getMainHandItem().is(Items.SHEARS)) {
++      if (!p_57615_.isClientSide && !p_57618_.getMainHandItem().isEmpty() && p_57618_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_DISARM)) {
+          p_57615_.setBlock(p_57616_, p_57617_.setValue(DISARMED, Boolean.valueOf(true)), 4);
+          p_57615_.gameEvent(p_57618_, GameEvent.SHEAR, p_57616_);
        }
 @@ -124,6 +_,39 @@
              }
@@ -32,7 +32,7 @@
        }
 +
 +      // CraftBukkit start - Call interact even when triggering connected tripwire
-+      if (flag != flag1 && flag1 && (Boolean)blockstate.m_61143_(f_57591_)) {
++      if (flag != flag1 && flag1 && (Boolean)blockstate.getValue(ATTACHED)) {
 +         org.bukkit.plugin.PluginManager manager = p_57608_.getCraftServer().getPluginManager();
 +         org.bukkit.block.Block block = CraftBlock.at(p_57608_, p_57609_);
 +         boolean allowed = false;
@@ -65,4 +65,4 @@
 +      // CraftBukkit end
  
        if (flag1 != flag) {
-          blockstate = blockstate.m_61124_(f_57590_, Boolean.valueOf(flag1));
+          blockstate = blockstate.setValue(POWERED, Boolean.valueOf(flag1));

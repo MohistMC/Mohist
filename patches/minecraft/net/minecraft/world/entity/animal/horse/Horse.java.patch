@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/entity/animal/horse/Horse.java
 +++ b/net/minecraft/world/entity/animal/horse/Horse.java
 @@ -90,7 +_,7 @@
-       return this.f_19804_.m_135370_(f_30686_);
+       return this.entityData.get(DATA_ID_TYPE_VARIANT);
     }
  
--   private void m_30699_(Variant p_30700_, Markings p_30701_) {
-+   public void m_30699_(Variant p_30700_, Markings p_30701_) {
-       this.m_30736_(p_30700_.m_30985_() & 255 | p_30701_.m_30869_() << 8 & '\uff00');
+-   private void setVariantAndMarkings(Variant p_30700_, Markings p_30701_) {
++   public void setVariantAndMarkings(Variant p_30700_, Markings p_30701_) {
+       this.setTypeVariant(p_30700_.getId() & 255 | p_30701_.getId() << 8 & '\uff00');
     }
  
 @@ -144,6 +_,8 @@
-          this.m_5496_(SoundEvents.f_11974_, p_30709_.m_56773_() * 0.6F, p_30709_.m_56774_());
+          this.playSound(SoundEvents.HORSE_BREATHE, p_30709_.getVolume() * 0.6F, p_30709_.getPitch());
        }
  
-+      ItemStack stack = this.f_30520_.m_8020_(1);
-+      if (m_6010_(stack)) stack.onHorseArmorTick(m_9236_(), this);
++      ItemStack stack = this.inventory.getItem(1);
++      if (isArmor(stack)) stack.onHorseArmorTick(level(), this);
     }
  
-    protected SoundEvent m_7515_() {
+    protected SoundEvent getAmbientSound() {

@@ -7,35 +7,35 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class EatBlockGoal extends Goal {
-    private static final int f_148085_ = 40;
+    private static final int EAT_ANIMATION_TICKS = 40;
 @@ -25,6 +_,12 @@
     }
  
-    public boolean m_8036_() {
+    public boolean canUse() {
 +      // Purpur start
-+      net.minecraft.world.level.chunk.LevelChunk chunk = this.f_25202_.f_19853_.m_46745_(this.f_25202_.m_20183_());
-+      if (chunk == null || !((net.minecraft.server.level.ServerLevel) this.f_25202_.f_19853_).m_7726_().f_8325_.anyPlayerCloseEnoughForSpawning(this.f_25202_.m_146902_(), false)) {
++      net.minecraft.world.level.chunk.LevelChunk chunk = this.mob.level.getChunkAt(this.mob.blockPosition());
++      if (chunk == null || !((net.minecraft.server.level.ServerLevel) this.mob.level).getChunkSource().chunkMap.anyPlayerCloseEnoughForSpawning(this.mob.chunkPosition(), false)) {
 +         return false;
 +      }
 +      // Purpur end
-       if (this.f_25202_.m_217043_().m_188503_(this.f_25202_.m_6162_() ? 50 : 1000) != 0) {
+       if (this.mob.getRandom().nextInt(this.mob.isBaby() ? 50 : 1000) != 0) {
           return false;
        } else {
 @@ -60,7 +_,7 @@
-       if (this.f_25204_ == this.m_183277_(4)) {
-          BlockPos blockpos = this.f_25202_.m_20183_();
-          if (f_25201_.test(this.f_25203_.m_8055_(blockpos))) {
--            if (this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25203_, this.f_25202_) ||CraftEventFactory.callEntityChangeBlockEvent(this.f_25202_, blockpos, Blocks.f_50016_.m_49966_(), !this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_))) {
-                this.f_25203_.m_46961_(blockpos, false);
+       if (this.eatAnimationTick == this.adjustedTickDelay(4)) {
+          BlockPos blockpos = this.mob.blockPosition();
+          if (IS_TALL_GRASS.test(this.level.getBlockState(blockpos))) {
+-            if (this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.mob) ||CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) {
+                this.level.destroyBlock(blockpos, false);
              }
  
 @@ -68,7 +_,7 @@
           } else {
-             BlockPos blockpos1 = blockpos.m_7495_();
-             if (this.f_25203_.m_8055_(blockpos1).m_60713_(Blocks.f_50440_)) {
--               if (this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+               if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25203_, this.f_25202_) || CraftEventFactory.callEntityChangeBlockEvent(this.f_25202_, blockpos1, Blocks.f_50016_.m_49966_(), !this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_))) {
-                   this.f_25203_.m_46796_(2001, blockpos1, Block.m_49956_(Blocks.f_50440_.m_49966_()));
-                   this.f_25203_.m_7731_(blockpos1, Blocks.f_50493_.m_49966_(), 2);
+             BlockPos blockpos1 = blockpos.below();
+             if (this.level.getBlockState(blockpos1).is(Blocks.GRASS_BLOCK)) {
+-               if (this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++               if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.mob) || CraftEventFactory.callEntityChangeBlockEvent(this.mob, blockpos1, Blocks.AIR.defaultBlockState(), !this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) {
+                   this.level.levelEvent(2001, blockpos1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
+                   this.level.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
                 }

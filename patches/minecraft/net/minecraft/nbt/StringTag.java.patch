@@ -1,10 +1,10 @@
 --- a/net/minecraft/nbt/StringTag.java
 +++ b/net/minecraft/nbt/StringTag.java
 @@ -21,7 +_,7 @@
-       private static String m_301657_(DataInput p_301750_, NbtAccounter p_301732_) throws IOException {
-          p_301732_.m_263468_(36L);
+       private static String readAccounted(DataInput p_301750_, NbtAccounter p_301732_) throws IOException {
+          p_301732_.accountBytes(36L);
           String s = p_301750_.readUTF();
--         p_301732_.m_301853_(2L, (long)s.length());
+-         p_301732_.accountBytes(2L, (long)s.length());
 +         p_301732_.readUTF(s);
           return s;
        }

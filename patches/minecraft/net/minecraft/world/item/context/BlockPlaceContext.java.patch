@@ -12,8 +12,8 @@
 @@ -37,6 +_,7 @@
     }
  
-    public boolean m_7059_() {
-+      if (BanItem.check(this.m_43723_(), this.m_43722_())) return false;
-       return this.f_43628_ || this.m_43725_().m_8055_(this.m_8083_()).m_60629_(this);
+    public boolean canPlace() {
++      if (BanItem.check(this.getPlayer(), this.getItemInHand())) return false;
+       return this.replaceClicked || this.getLevel().getBlockState(this.getClickedPos()).canBeReplaced(this);
     }
  

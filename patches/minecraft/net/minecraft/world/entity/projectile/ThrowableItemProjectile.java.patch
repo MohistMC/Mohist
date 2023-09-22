@@ -9,16 +9,16 @@
  import net.minecraft.network.syncher.EntityDataSerializers;
 @@ -34,7 +_,13 @@
  
-    protected abstract Item m_7881_();
+    protected abstract Item getDefaultItem();
  
--   protected ItemStack m_37454_() {
+-   protected ItemStack getItemRaw() {
 +   // CraftBukkit start
 +   public Item getDefaultItemPublic() {
-+      return m_7881_();
++      return getDefaultItem();
 +   }
 +   // CraftBukkit end
 +
-+   public ItemStack m_37454_() {
-       return this.m_20088_().m_135370_(f_37429_);
++   public ItemStack getItemRaw() {
+       return this.getEntityData().get(DATA_ITEM_STACK);
     }
  

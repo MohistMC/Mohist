@@ -22,10 +22,10 @@
 +import org.spigotmc.AsyncCatcher;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {
-    public static final int f_150539_ = 0;
+    public static final int RESULT_SLOT = 0;
 @@ -28,6 +_,20 @@
-    public final ContainerLevelAccess f_39350_;
-    private final Player f_39351_;
+    public final ContainerLevelAccess access;
+    private final Player player;
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
@@ -35,32 +35,32 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.f_39348_, this.f_39349_);
-+      bukkitEntity = new CraftInventoryView(this.f_39351_.getBukkitEntity(), inventory, this);
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
 +
     public CraftingMenu(int p_39353_, Inventory p_39354_) {
-       this(p_39353_, p_39354_, ContainerLevelAccess.f_39287_);
+       this(p_39353_, p_39354_, ContainerLevelAccess.NULL);
     }
 @@ -36,6 +_,8 @@
-       super(MenuType.f_39968_, p_39356_);
-       this.f_39350_ = p_39358_;
-       this.f_39351_ = p_39357_.f_35978_;
-+      ((TransientCraftingContainer)this.f_39348_).setOwner(p_39357_.f_35978_); // CraftBukkit - pass player // Mohist
-+      ((TransientCraftingContainer)this.f_39348_).resultInventory = this.f_39349_;
-       this.m_38897_(new ResultSlot(p_39357_.f_35978_, this.f_39348_, this.f_39349_, 0, 124, 35));
+       super(MenuType.CRAFTING, p_39356_);
+       this.access = p_39358_;
+       this.player = p_39357_.player;
++      ((TransientCraftingContainer)this.craftSlots).setOwner(p_39357_.player); // CraftBukkit - pass player // Mohist
++      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots;
+       this.addSlot(new ResultSlot(p_39357_.player, this.craftSlots, this.resultSlots, 0, 124, 35));
  
        for(int i = 0; i < 3; ++i) {
 @@ -66,12 +_,17 @@
-             CraftingRecipe craftingrecipe = recipeholder.f_291008_();
-             if (p_150551_.m_294416_(p_150548_, serverplayer, recipeholder)) {
-                ItemStack itemstack1 = craftingrecipe.m_5874_(p_150550_, p_150548_.m_9598_());
--               if (itemstack1.m_246617_(p_150548_.m_246046_())) {
+             CraftingRecipe craftingrecipe = recipeholder.value();
+             if (p_150551_.setRecipeUsed(p_150548_, serverplayer, recipeholder)) {
+                ItemStack itemstack1 = craftingrecipe.assemble(p_150550_, p_150548_.registryAccess());
+-               if (itemstack1.isItemEnabled(p_150548_.enabledFeatures())) {
 -                  itemstack = itemstack1;
 +               if (!BanItem.check(itemstack1)) {
-+                  if (itemstack1.m_246617_(p_150548_.m_246046_())) {
++                  if (itemstack1.isItemEnabled(p_150548_.enabledFeatures())) {
 +                     itemstack = itemstack1;
 +                  }
                 }
@@ -70,14 +70,14 @@
 +         if (!AsyncCatcher.catchAsync()) {
 +            itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
 +         }
-          p_150551_.m_6836_(0, itemstack);
-          p_150547_.m_150404_(0, itemstack);
-          serverplayer.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(p_150547_.f_38840_, p_150547_.m_182425_(), 0, itemstack));
+          p_150551_.setItem(0, itemstack);
+          p_150547_.setRemoteSlot(0, itemstack);
+          serverplayer.connection.send(new ClientboundContainerSetSlotPacket(p_150547_.containerId, p_150547_.incrementStateId(), 0, itemstack));
 @@ -105,6 +_,7 @@
     }
  
-    public boolean m_6875_(Player p_39368_) {
+    public boolean stillValid(Player p_39368_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return m_38889_(this.f_39350_, p_39368_, Blocks.f_50091_);
+       return stillValid(this.access, p_39368_, Blocks.CRAFTING_TABLE);
     }
  

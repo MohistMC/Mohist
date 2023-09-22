@@ -9,78 +9,78 @@
  import com.mojang.brigadier.arguments.BoolArgumentType;
  import com.mojang.brigadier.arguments.IntegerArgumentType;
 @@ -30,7 +_,7 @@
-    private static final Map<GameRules.Key<?>, GameRules.Type<?>> f_46129_ = Maps.newTreeMap(Comparator.comparing((p_46218_) -> {
-       return p_46218_.f_46323_;
+    private static final Map<GameRules.Key<?>, GameRules.Type<?>> GAME_RULE_TYPES = Maps.newTreeMap(Comparator.comparing((p_46218_) -> {
+       return p_46218_.id;
     }));
--   public static final GameRules.Key<GameRules.BooleanValue> f_46131_ = m_46189_("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.m_46250_(true));
-+   public static final GameRules.Key<GameRules.BooleanValue> f_46131_ = m_46189_("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.m_46250_(!BanEvents.banFireTick()));
-    public static final GameRules.Key<GameRules.BooleanValue> f_46132_ = m_46189_("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.m_46250_(true));
-    public static final GameRules.Key<GameRules.BooleanValue> f_46133_ = m_46189_("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.m_46250_(false));
-    public static final GameRules.Key<GameRules.BooleanValue> f_46134_ = m_46189_("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.m_46250_(true));
+-   public static final GameRules.Key<GameRules.BooleanValue> RULE_DOFIRETICK = register("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.create(true));
++   public static final GameRules.Key<GameRules.BooleanValue> RULE_DOFIRETICK = register("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.create(!BanEvents.banFireTick()));
+    public static final GameRules.Key<GameRules.BooleanValue> RULE_MOBGRIEFING = register("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.create(true));
+    public static final GameRules.Key<GameRules.BooleanValue> RULE_KEEPINVENTORY = register("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
+    public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBSPAWNING = register("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.create(true));
 @@ -177,13 +_,13 @@
     public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
-       private boolean f_46219_;
+       private boolean value;
  
--      public static GameRules.Type<GameRules.BooleanValue> m_46252_(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
-+      static GameRules.Type<GameRules.BooleanValue> m_46252_(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
+-      public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
++      static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
           return new GameRules.Type<>(BoolArgumentType::bool, (p_46242_) -> {
              return new GameRules.BooleanValue(p_46242_, p_46253_);
-          }, p_46254_, GameRules.GameRuleTypeVisitor::m_6891_);
+          }, p_46254_, GameRules.GameRuleTypeVisitor::visitBoolean);
        }
  
--      public static GameRules.Type<GameRules.BooleanValue> m_46250_(boolean p_46251_) {
-+      static GameRules.Type<GameRules.BooleanValue> m_46250_(boolean p_46251_) {
-          return m_46252_(p_46251_, (p_46236_, p_46237_) -> {
+-      public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46251_) {
++      static GameRules.Type<GameRules.BooleanValue> create(boolean p_46251_) {
+          return create(p_46251_, (p_46236_, p_46237_) -> {
           });
        }
 @@ -210,7 +_,7 @@
-          return Boolean.toString(this.f_46219_);
+          return Boolean.toString(this.value);
        }
  
--      protected void m_7377_(String p_46234_) {
-+      public void m_7377_(String p_46234_) {
-          this.f_46219_ = Boolean.parseBoolean(p_46234_);
+-      protected void deserialize(String p_46234_) {
++      public void deserialize(String p_46234_) {
+          this.value = Boolean.parseBoolean(p_46234_);
        }
  
 @@ -266,13 +_,13 @@
     public static class IntegerValue extends GameRules.Value<GameRules.IntegerValue> {
-       private int f_46284_;
+       private int value;
  
--      public static GameRules.Type<GameRules.IntegerValue> m_46294_(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
-+      private static GameRules.Type<GameRules.IntegerValue> m_46294_(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
+-      public static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
++      private static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
           return new GameRules.Type<>(IntegerArgumentType::integer, (p_46293_) -> {
              return new GameRules.IntegerValue(p_46293_, p_46295_);
-          }, p_46296_, GameRules.GameRuleTypeVisitor::m_6894_);
+          }, p_46296_, GameRules.GameRuleTypeVisitor::visitInteger);
        }
  
--      public static GameRules.Type<GameRules.IntegerValue> m_46312_(int p_46313_) {
-+      static GameRules.Type<GameRules.IntegerValue> m_46312_(int p_46313_) {
-          return m_46294_(p_46313_, (p_46309_, p_46310_) -> {
+-      public static GameRules.Type<GameRules.IntegerValue> create(int p_46313_) {
++      static GameRules.Type<GameRules.IntegerValue> create(int p_46313_) {
+          return create(p_46313_, (p_46309_, p_46310_) -> {
           });
        }
 @@ -299,7 +_,7 @@
-          return Integer.toString(this.f_46284_);
+          return Integer.toString(this.value);
        }
  
--      protected void m_7377_(String p_46307_) {
-+      public void m_7377_(String p_46307_) {
-          this.f_46284_ = m_46317_(p_46307_);
+-      protected void deserialize(String p_46307_) {
++      public void deserialize(String p_46307_) {
+          this.value = safeParse(p_46307_);
        }
  
 @@ -420,14 +_,14 @@
-          this.m_46368_(p_46371_.getSource().m_81377_());
+          this.onChanged(p_46371_.getSource().getServer());
        }
  
--      protected void m_46368_(@Nullable MinecraftServer p_46369_) {
-+      public void m_46368_(@Nullable MinecraftServer p_46369_) {
+-      protected void onChanged(@Nullable MinecraftServer p_46369_) {
++      public void onChanged(@Nullable MinecraftServer p_46369_) {
           if (p_46369_ != null) {
-             this.f_46360_.f_46339_.accept(p_46369_, this.m_5589_());
+             this.type.callback.accept(p_46369_, this.getSelf());
           }
  
        }
  
--      protected abstract void m_7377_(String p_46367_);
-+      public abstract void m_7377_(String p_46367_);
+-      protected abstract void deserialize(String p_46367_);
++      public abstract void deserialize(String p_46367_);
  
-       public abstract String m_5831_();
+       public abstract String serialize();
  

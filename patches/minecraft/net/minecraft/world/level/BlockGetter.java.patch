@@ -7,37 +7,37 @@
 -public interface BlockGetter extends LevelHeightAccessor {
 +public interface BlockGetter extends LevelHeightAccessor, net.minecraftforge.common.extensions.IForgeBlockGetter {
     @Nullable
-    BlockEntity m_7702_(BlockPos p_45570_);
+    BlockEntity getBlockEntity(BlockPos p_45570_);
  
 @@ -32,7 +_,7 @@
-    FluidState m_6425_(BlockPos p_45569_);
+    FluidState getFluidState(BlockPos p_45569_);
  
-    default int m_7146_(BlockPos p_45572_) {
--      return this.m_8055_(p_45572_).m_60791_();
-+      return this.m_8055_(p_45572_).getLightEmission(this, p_45572_);
+    default int getLightEmission(BlockPos p_45572_) {
+-      return this.getBlockState(p_45572_).getLightEmission();
++      return this.getBlockState(p_45572_).getLightEmission(this, p_45572_);
     }
  
-    default int m_7469_() {
+    default int getMaxLightLevel() {
 @@ -72,6 +_,22 @@
-          return BlockHitResult.m_82426_(p_275153_.m_45693_(), Direction.m_122366_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_), BlockPos.m_274446_(p_275153_.m_45693_()));
+          return BlockHitResult.miss(p_275153_.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(p_275153_.getTo()));
        });
     }
 +
 +   // CraftBukkit start
 +   default BlockHitResult clip(ClipContext pContext, BlockPos p_217297_2_) {
-+      BlockState blockstate = this.m_8055_(p_217297_2_);
-+      FluidState fluidstate = this.m_6425_(p_217297_2_);
-+      Vec3 vec3 = pContext.m_45702_();
-+      Vec3 vec31 = pContext.m_45693_();
-+      VoxelShape voxelshape = pContext.m_45694_(blockstate, this, p_217297_2_);
-+      BlockHitResult blockraytraceresult = this.m_45558_(vec3, vec31, p_217297_2_, voxelshape, blockstate);
-+      VoxelShape voxelshape1 = pContext.m_45698_(fluidstate, this, p_217297_2_);
-+      BlockHitResult blockraytraceresult1 = voxelshape1.m_83220_(vec3, vec31, p_217297_2_);
-+      double d0 = blockraytraceresult == null ? Double.MAX_VALUE : pContext.m_45702_().m_82557_(blockraytraceresult.m_82450_());
-+      double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : pContext.m_45702_().m_82557_(blockraytraceresult1.m_82450_());
++      BlockState blockstate = this.getBlockState(p_217297_2_);
++      FluidState fluidstate = this.getFluidState(p_217297_2_);
++      Vec3 vec3 = pContext.getFrom();
++      Vec3 vec31 = pContext.getTo();
++      VoxelShape voxelshape = pContext.getBlockShape(blockstate, this, p_217297_2_);
++      BlockHitResult blockraytraceresult = this.clipWithInteractionOverride(vec3, vec31, p_217297_2_, voxelshape, blockstate);
++      VoxelShape voxelshape1 = pContext.getFluidShape(fluidstate, this, p_217297_2_);
++      BlockHitResult blockraytraceresult1 = voxelshape1.clip(vec3, vec31, p_217297_2_);
++      double d0 = blockraytraceresult == null ? Double.MAX_VALUE : pContext.getFrom().distanceToSqr(blockraytraceresult.getLocation());
++      double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : pContext.getFrom().distanceToSqr(blockraytraceresult1.getLocation());
 +      return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
 +   }
 +   // CraftBukkit end
  
     @Nullable
-    default BlockHitResult m_45558_(Vec3 p_45559_, Vec3 p_45560_, BlockPos p_45561_, VoxelShape p_45562_, BlockState p_45563_) {
+    default BlockHitResult clipWithInteractionOverride(Vec3 p_45559_, Vec3 p_45560_, BlockPos p_45561_, VoxelShape p_45562_, BlockState p_45563_) {

@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/flag/FeatureFlagRegistry.java
 @@ -17,7 +_,7 @@
  public class FeatureFlagRegistry {
-    private static final Logger f_244528_ = LogUtils.getLogger();
-    private final FeatureFlagUniverse f_244444_;
--   private final Map<ResourceLocation, FeatureFlag> f_244560_;
-+   public final Map<ResourceLocation, FeatureFlag> f_244560_;
-    private final FeatureFlagSet f_243770_;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private final FeatureFlagUniverse universe;
+-   private final Map<ResourceLocation, FeatureFlag> names;
++   public final Map<ResourceLocation, FeatureFlag> names;
+    private final FeatureFlagSet allFlags;
  
     FeatureFlagRegistry(FeatureFlagUniverse p_249715_, FeatureFlagSet p_249277_, Map<ResourceLocation, FeatureFlag> p_249557_) {

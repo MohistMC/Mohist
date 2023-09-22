@@ -11,10 +11,10 @@
 +import org.bukkit.event.block.BlockPhysicsEvent;
  
  public interface NeighborUpdater {
-    Direction[] f_230761_ = new Direction[]{Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH};
+    Direction[] UPDATE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH};
 @@ -39,6 +_,17 @@
  
-    static void m_230763_(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
+    static void executeUpdate(Level p_230764_, BlockState p_230765_, BlockPos p_230766_, Block p_230767_, BlockPos p_230768_, boolean p_230769_) {
        try {
 +         // CraftBukkit start
 +         CraftWorld cworld = p_230764_.getWorld();
@@ -27,6 +27,6 @@
 +            }
 +         }
 +         // CraftBukkit end
-          p_230765_.m_60690_(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
+          p_230765_.neighborChanged(p_230764_, p_230766_, p_230767_, p_230768_, p_230769_);
        } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception while updating neighbours");
+          CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception while updating neighbours");

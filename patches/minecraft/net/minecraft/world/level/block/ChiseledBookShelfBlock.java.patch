@@ -15,23 +15,23 @@
 +import org.jetbrains.annotations.Nullable;
  
  public class ChiseledBookShelfBlock extends BaseEntityBlock {
-    private static final int f_260522_ = 6;
+    private static final int MAX_BOOKS_IN_STORAGE = 6;
 @@ -112,7 +_,7 @@
        }
     }
  
--   private static int m_261279_(Vec2 p_261991_) {
-+   public static int m_261279_(Vec2 p_261991_) {
-       int i = p_261991_.f_82471_ >= 0.5F ? 0 : 1;
-       int j = m_261181_(p_261991_.f_82470_);
+-   private static int getHitSlot(Vec2 p_261991_) {
++   public static int getHitSlot(Vec2 p_261991_) {
+       int i = p_261991_.y >= 0.5F ? 0 : 1;
+       int j = getSection(p_261991_.x);
        return j + i * 3;
 @@ -155,8 +_,7 @@
        }
     }
  
 -   @Nullable
--   public BlockEntity m_142194_(BlockPos p_250440_, BlockState p_248729_) {
-+   public @Nullable BlockEntity m_142194_(BlockPos p_250440_, BlockState p_248729_) {
+-   public BlockEntity newBlockEntity(BlockPos p_250440_, BlockState p_248729_) {
++   public @Nullable BlockEntity newBlockEntity(BlockPos p_250440_, BlockState p_248729_) {
        return new ChiseledBookShelfBlockEntity(p_250440_, p_248729_);
     }
  

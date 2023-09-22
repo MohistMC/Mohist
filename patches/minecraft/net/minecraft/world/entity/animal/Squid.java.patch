@@ -3,9 +3,9 @@
 @@ -126,6 +_,8 @@
           }
  
-          if (!this.m_9236_().f_46443_) {
-+            Vec3 vec3 = m_20182_().m_82520_(f_29947_, f_29948_, f_29949_); // Mohist
-+            if ((f_29947_ != 0 || f_29948_ != 0 || f_29949_ != 0) && !((ServerLevel) this.f_19853_).m_143340_(BlockPos.m_274561_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_))) f_29947_ = f_29948_ = f_29949_ = 0; // MultiPaper - don't allow squids to wander into non-ticking chunks
-             this.m_20334_((double)(this.f_29947_ * this.f_29944_), (double)(this.f_29948_ * this.f_29944_), (double)(this.f_29949_ * this.f_29944_));
+          if (!this.level().isClientSide) {
++            Vec3 vec3 = position().add(tx, ty, tz); // Mohist
++            if ((tx != 0 || ty != 0 || tz != 0) && !((ServerLevel) this.level).isPositionEntityTicking(BlockPos.containing(vec3.x, vec3.y, vec3.z))) tx = ty = tz = 0; // MultiPaper - don't allow squids to wander into non-ticking chunks
+             this.setDeltaMovement((double)(this.tx * this.speed), (double)(this.ty * this.speed), (double)(this.tz * this.speed));
           }
  

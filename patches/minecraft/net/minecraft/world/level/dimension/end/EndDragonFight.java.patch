@@ -4,33 +4,33 @@
  
     }
  
--   private void m_64091_(List<EndCrystal> p_64092_) {
+-   private void respawnDragon(List<EndCrystal> p_64092_) {
 +   public boolean respawnDragon = false;
-+   public void m_64091_(List<EndCrystal> p_64092_) {
-       if (this.f_64068_ && this.f_64073_ == null) {
-          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.m_64105_(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.m_64105_()) {
-             for(int i = 0; i < this.f_64063_.m_61203_(); ++i) {
++   public void respawnDragon(List<EndCrystal> p_64092_) {
+       if (this.dragonKilled && this.respawnStage == null) {
+          for(BlockPattern.BlockPatternMatch blockpattern$blockpatternmatch = this.findExitPortal(); blockpattern$blockpatternmatch != null; blockpattern$blockpatternmatch = this.findExitPortal()) {
+             for(int i = 0; i < this.exitPortalPattern.getWidth(); ++i) {
 @@ -506,6 +_,7 @@
-          this.f_64074_ = 0;
-          this.m_64093_(false);
-          this.f_64075_ = p_64092_;
+          this.respawnTime = 0;
+          this.spawnExitPortal(false);
+          this.respawnCrystals = p_64092_;
 +         respawnDragon = true;
        }
  
     }
 @@ -517,7 +_,14 @@
-             endcrystal.m_31052_((BlockPos)null);
+             endcrystal.setBeamTarget((BlockPos)null);
           }
        }
 -
 +   }
 +
 +   public void addPlayer(ServerPlayer player) {
-+      this.f_64060_.m_6543_(player);
++      this.dragonEvent.addPlayer(player);
 +   }
 +
 +   public void removePlayer(ServerPlayer player) {
-+      this.f_64060_.m_6539_(player);
++      this.dragonEvent.removePlayer(player);
     }
  
     @Nullable

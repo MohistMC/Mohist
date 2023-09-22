@@ -16,16 +16,16 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
-    public static final IntegerProperty f_58198_ = BlockStateProperties.f_61426_;
+    public static final IntegerProperty POWER = BlockStateProperties.POWER;
 @@ -22,7 +_,31 @@
     }
  
-    protected int m_6693_(Level p_58213_, BlockPos p_58214_) {
--      int i = Math.min(m_289607_(p_58213_, f_49287_.m_82338_(p_58214_), Entity.class), this.f_58199_);
+    protected int getSignalStrength(Level p_58213_, BlockPos p_58214_) {
+-      int i = Math.min(getEntityCount(p_58213_, TOUCH_AABB.move(p_58214_), Entity.class), this.maxWeight);
 +      // CraftBukkit start
 +      // int i = Math.min(pLevel.getEntitiesOfClass(Entity.class, TOUCH_AABB.move(pPos)).size(), this.maxWeight);
 +      int i = 0;
-+      java.util.Iterator iterator = p_58213_.m_45976_(Entity.class, f_49287_.m_82338_(p_58214_)).iterator();
++      java.util.Iterator iterator = p_58213_.getEntitiesOfClass(Entity.class, TOUCH_AABB.move(p_58214_)).iterator();
 +
 +      while (iterator.hasNext()) {
 +         Entity entity = (Entity) iterator.next();
@@ -45,8 +45,8 @@
 +         }
 +      }
 +
-+      i = Math.min(i, this.f_58199_);
++      i = Math.min(i, this.maxWeight);
 +      // CraftBukkit end
        if (i > 0) {
-          float f = (float)Math.min(this.f_58199_, i) / (float)this.f_58199_;
-          return Mth.m_14167_(f * 15.0F);
+          float f = (float)Math.min(this.maxWeight, i) / (float)this.maxWeight;
+          return Mth.ceil(f * 15.0F);

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/server/dedicated/Settings.java
 @@ -33,6 +_,11 @@
  
-    public static Properties m_139839_(Path p_139840_) {
+    public static Properties loadFromFile(Path p_139840_) {
        try {
 +         // CraftBukkit start - SPIGOT-7465, MC-264979: Don't load if file doesn't exist
 +         if (!p_139840_.toFile().exists()) {
@@ -16,15 +16,15 @@
              }
           }
        } catch (IOException ioexception) {
--         f_139797_.error("Failed to load properties from file: {}", p_139840_, ioexception);
+-         LOGGER.error("Failed to load properties from file: {}", p_139840_, ioexception);
           return new Properties();
        }
     }
  
-    public void m_139876_(Path p_139877_) {
+    public void store(Path p_139877_) {
        try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {
--         this.f_139798_.store(writer, "Minecraft server properties");
-+         net.minecraftforge.common.util.SortedProperties.store(this.f_139798_, writer, "Minecraft server properties");
+-         this.properties.store(writer, "Minecraft server properties");
++         net.minecraftforge.common.util.SortedProperties.store(this.properties, writer, "Minecraft server properties");
        } catch (IOException ioexception) {
-          f_139797_.error("Failed to store properties to file: {}", (Object)p_139877_);
+          LOGGER.error("Failed to store properties to file: {}", (Object)p_139877_);
        }

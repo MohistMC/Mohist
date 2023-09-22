@@ -7,9 +7,9 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public abstract class AbstractHurtingProjectile extends Projectile {
-    public double f_36813_;
-    public double f_36814_;
-    public double f_36815_;
+    public double xPower;
+    public double yPower;
+    public double zPower;
  
 +   public float bukkitYield = 1; // CraftBukkit
 +   public boolean isIncendiary = true; // CraftBukkit
@@ -24,41 +24,41 @@
 +   public void setDirection(double pOffsetX, double pOffsetY, double pOffsetZ) {
 +      double d0 = Math.sqrt(pOffsetX * pOffsetX + pOffsetY * pOffsetY + pOffsetZ * pOffsetZ);
 +      if (d0 != 0.0D) {
-+         this.f_36813_ = pOffsetX / d0 * 0.1D;
-+         this.f_36814_ = pOffsetY / d0 * 0.1D;
-+         this.f_36815_ = pOffsetZ / d0 * 0.1D;
++         this.xPower = pOffsetX / d0 * 0.1D;
++         this.yPower = pOffsetY / d0 * 0.1D;
++         this.zPower = pOffsetZ / d0 * 0.1D;
 +      }
 +   }
 +
     public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36826_, LivingEntity p_36827_, double p_36828_, double p_36829_, double p_36830_, Level p_36831_) {
-       this(p_36826_, p_36827_.m_20185_(), p_36827_.m_20186_(), p_36827_.m_20189_(), p_36828_, p_36829_, p_36830_, p_36831_);
-       this.m_5602_(p_36827_);
+       this(p_36826_, p_36827_.getX(), p_36827_.getY(), p_36827_.getZ(), p_36828_, p_36829_, p_36830_, p_36831_);
+       this.setOwner(p_36827_);
 @@ -65,8 +_,14 @@
           }
  
-          HitResult hitresult = ProjectileUtil.m_278158_(this, this::m_5603_);
--         if (hitresult.m_6662_() != HitResult.Type.MISS) {
--            this.m_6532_(hitresult);
-+         if (hitresult.m_6662_() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+-         if (hitresult.getType() != HitResult.Type.MISS) {
+-            this.onHit(hitresult);
++         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
 +            this.preOnHit(hitresult); // CraftBukkit - projectile hit event
 +
 +            // CraftBukkit start - Fire ProjectileHitEvent
-+            if (this.m_213877_()) {
++            if (this.isRemoved()) {
 +               CraftEventFactory.callProjectileHitEvent(this, hitresult);
 +            }
 +            // CraftBukkit end
           }
  
-          this.m_20101_();
+          this.checkInsideBlocks();
 @@ -143,6 +_,11 @@
-          Entity entity = p_36839_.m_7639_();
+          Entity entity = p_36839_.getEntity();
           if (entity != null) {
-             if (!this.m_9236_().f_46443_) {
+             if (!this.level().isClientSide) {
 +               // CraftBukkit start
 +               if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_36839_, p_36840_, false)) {
 +                  return false;
 +               }
 +               // CraftBukkit end
-                Vec3 vec3 = entity.m_20154_();
-                this.m_20256_(vec3);
-                this.f_36813_ = vec3.f_82479_ * 0.1D;
+                Vec3 vec3 = entity.getLookAngle();
+                this.setDeltaMovement(vec3);
+                this.xPower = vec3.x * 0.1D;

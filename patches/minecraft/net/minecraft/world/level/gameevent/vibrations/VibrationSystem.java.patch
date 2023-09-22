@@ -15,18 +15,18 @@
 +import org.bukkit.event.block.BlockReceiveGameEvent;
  
  public interface VibrationSystem {
-    GameEvent[] f_279664_ = new GameEvent[]{GameEvent.f_276553_, GameEvent.f_276530_, GameEvent.f_276691_, GameEvent.f_276533_, GameEvent.f_276695_, GameEvent.f_276518_, GameEvent.f_276655_, GameEvent.f_276494_, GameEvent.f_276419_, GameEvent.f_276431_, GameEvent.f_276621_, GameEvent.f_276548_, GameEvent.f_276569_, GameEvent.f_276454_, GameEvent.f_276436_};
+    GameEvent[] RESONANCE_EVENTS = new GameEvent[]{GameEvent.RESONATE_1, GameEvent.RESONATE_2, GameEvent.RESONATE_3, GameEvent.RESONATE_4, GameEvent.RESONATE_5, GameEvent.RESONATE_6, GameEvent.RESONATE_7, GameEvent.RESONATE_8, GameEvent.RESONATE_9, GameEvent.RESONATE_10, GameEvent.RESONATE_11, GameEvent.RESONATE_12, GameEvent.RESONATE_13, GameEvent.RESONATE_14, GameEvent.RESONATE_15};
 @@ -184,7 +_,12 @@
                 return false;
              } else {
                 Vec3 vec3 = optional.get();
--               if (!vibrationsystem$user.m_280080_(p_282254_, BlockPos.m_274446_(p_282426_), p_283599_, p_283664_)) {
-+               boolean defaultCancel = !vibrationsystem$user.m_280080_(p_282254_, BlockPos.m_274446_(p_282426_), p_283599_, p_283664_);
-+               Entity entity = p_283664_.f_223711_();
-+               BlockReceiveGameEvent event = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(p_283599_), CraftBlock.at(p_282254_, BlockPos.m_274446_(vec3)), (entity == null) ? null : entity.getBukkitEntity());
+-               if (!vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_283599_, p_283664_)) {
++               boolean defaultCancel = !vibrationsystem$user.canReceiveVibration(p_282254_, BlockPos.containing(p_282426_), p_283599_, p_283664_);
++               Entity entity = p_283664_.sourceEntity();
++               BlockReceiveGameEvent event = new BlockReceiveGameEvent(CraftGameEvent.minecraftToBukkit(p_283599_), CraftBlock.at(p_282254_, BlockPos.containing(vec3)), (entity == null) ? null : entity.getBukkitEntity());
 +               event.setCancelled(defaultCancel);
 +               p_282254_.getCraftServer().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {
                    return false;
-                } else if (m_280258_(p_282254_, p_282426_, vec3)) {
+                } else if (isOccluded(p_282254_, p_282426_, vec3)) {
                    return false;

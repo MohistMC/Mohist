@@ -7,20 +7,20 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class Pig extends Animal implements ItemSteerable, Saddleable {
-    private static final EntityDataAccessor<Boolean> f_29456_ = SynchedEntityData.m_135353_(Pig.class, EntityDataSerializers.f_135035_);
+    private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(Pig.class, EntityDataSerializers.BOOLEAN);
 @@ -203,7 +_,7 @@
     }
  
-    public void m_8038_(ServerLevel p_29473_, LightningBolt p_29474_) {
--      if (p_29473_.m_46791_() != Difficulty.PEACEFUL) {
-+      if (p_29473_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> {})) {
-          ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
+    public void thunderHit(ServerLevel p_29473_, LightningBolt p_29474_) {
+-      if (p_29473_.getDifficulty() != Difficulty.PEACEFUL) {
++      if (p_29473_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> {})) {
+          ZombifiedPiglin zombifiedpiglin = EntityType.ZOMBIFIED_PIGLIN.create(p_29473_);
           if (zombifiedpiglin != null) {
-             zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
+             zombifiedpiglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
 @@ -216,7 +_,15 @@
              }
  
-             zombifiedpiglin.m_21530_();
+             zombifiedpiglin.setPersistenceRequired();
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callPigZapEvent(this, p_29474_, zombifiedpiglin).isCancelled()) {
@@ -28,8 +28,8 @@
 +            }
 +            // CraftBukkit - added a reason for spawning this creature
 +            zombifiedpiglin.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.LIGHTNING);
-             p_29473_.m_7967_(zombifiedpiglin);
+             p_29473_.addFreshEntity(zombifiedpiglin);
 +            // CraftBukkit end
-             this.m_146870_();
+             this.discard();
           } else {
-             super.m_8038_(p_29473_, p_29474_);
+             super.thunderHit(p_29473_, p_29474_);

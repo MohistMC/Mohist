@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/entity/ai/goal/SitWhenOrderedToGoal.java
 @@ -18,7 +_,7 @@
  
-    public boolean m_8036_() {
-       if (!this.f_25896_.m_21824_()) {
+    public boolean canUse() {
+       if (!this.mob.isTame()) {
 -         return false;
-+         return this.f_25896_.m_21827_() && this.f_25896_.m_5448_() == null; // CraftBukkit - Allow sitting for wild animals
-       } else if (this.f_25896_.m_20072_()) {
++         return this.mob.isOrderedToSit() && this.mob.getTarget() == null; // CraftBukkit - Allow sitting for wild animals
+       } else if (this.mob.isInWaterOrBubble()) {
           return false;
-       } else if (!this.f_25896_.m_20096_()) {
+       } else if (!this.mob.onGround()) {

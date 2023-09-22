@@ -7,41 +7,41 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
-    public static final EnumProperty<ComparatorMode> f_51854_ = BlockStateProperties.f_61393_;
+    public static final EnumProperty<ComparatorMode> MODE = BlockStateProperties.MODE_COMPARATOR;
 @@ -143,8 +_,18 @@
-          boolean flag1 = this.m_7320_(p_51908_, p_51909_, p_51910_);
-          boolean flag = p_51910_.m_61143_(f_52496_);
+          boolean flag1 = this.shouldTurnOn(p_51908_, p_51909_, p_51910_);
+          boolean flag = p_51910_.getValue(POWERED);
           if (flag && !flag1) {
 +            // CraftBukkit start
 +            if (CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 15, 0).getNewCurrent() != 0) {
 +               return;
 +            }
 +            // CraftBukkit end
-             p_51908_.m_7731_(p_51909_, p_51910_.m_61124_(f_52496_, Boolean.valueOf(false)), 2);
+             p_51908_.setBlock(p_51909_, p_51910_.setValue(POWERED, Boolean.valueOf(false)), 2);
           } else if (!flag && flag1) {
 +            // CraftBukkit start
 +            if (CraftEventFactory.callRedstoneChange(p_51908_, p_51909_, 0, 15).getNewCurrent() != 15) {
 +               return;
 +            }
 +            // CraftBukkit end
-             p_51908_.m_7731_(p_51909_, p_51910_.m_61124_(f_52496_, Boolean.valueOf(true)), 2);
+             p_51908_.setBlock(p_51909_, p_51910_.setValue(POWERED, Boolean.valueOf(true)), 2);
           }
  
 @@ -169,5 +_,17 @@
  
-    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51887_) {
-       p_51887_.m_61104_(f_54117_, f_51854_, f_52496_);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51887_) {
+       p_51887_.add(FACING, MODE, POWERED);
 +   }
 +
 +   @Override
 +   public boolean getWeakChanges(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos) {
-+      return state.m_60713_(Blocks.f_50328_);
++      return state.is(Blocks.COMPARATOR);
 +   }
 +
 +   @Override
 +   public void onNeighborChange(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, BlockPos neighbor) {
-+      if (pos.m_123342_() == neighbor.m_123342_() && world instanceof Level && !((Level)world).m_5776_()) {
-+         state.m_60690_((Level)world, pos, world.m_8055_(neighbor).m_60734_(), neighbor, false);
++      if (pos.getY() == neighbor.getY() && world instanceof Level && !((Level)world).isClientSide()) {
++         state.neighborChanged((Level)world, pos, world.getBlockState(neighbor).getBlock(), neighbor, false);
 +      }
     }
  }

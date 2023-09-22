@@ -17,10 +17,10 @@
 +import org.bukkit.event.inventory.InventoryType;
  
  public class TransientCraftingContainer implements CraftingContainer {
-    private final NonNullList<ItemStack> f_286951_;
-    private final int f_286956_;
-    private final int f_286972_;
-    private final AbstractContainerMenu f_286998_;
+    private final NonNullList<ItemStack> items;
+    private final int width;
+    private final int height;
+    private final AbstractContainerMenu menu;
 +
 +   // CraftBukkit start - add fields
 +   public List<HumanEntity> transaction = new java.util.ArrayList<>();
@@ -30,7 +30,7 @@
 +   private int maxStack = MAX_STACK;
 +
 +   public List<ItemStack> getContents() {
-+      return this.f_286951_;
++      return this.items;
 +   }
 +
 +   public void onOpen(CraftHumanEntity who) {
@@ -38,7 +38,7 @@
 +   }
 +
 +   public InventoryType getInvType() {
-+      return f_286951_.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
++      return items.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
 +   }
 +
 +   public void onClose(CraftHumanEntity who) {
@@ -60,7 +60,7 @@
 +   // Mohist end
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return this.maxStack;
 +   }
 +
@@ -71,7 +71,7 @@
 +
 +   @Override
 +   public Location getLocation() {
-+      return this.f_286998_ instanceof CraftingMenu ? ((CraftingMenu) this.f_286998_).f_39350_.getLocation() : this.owner.getBukkitEntity().getLocation();
++      return this.menu instanceof CraftingMenu ? ((CraftingMenu) this.menu).access.getLocation() : this.owner.getBukkitEntity().getLocation();
 +   }
 +
 +   @Override
@@ -92,4 +92,4 @@
 +
  
     public TransientCraftingContainer(AbstractContainerMenu p_287684_, int p_287629_, int p_287593_) {
-       this(p_287684_, p_287629_, p_287593_, NonNullList.m_122780_(p_287629_ * p_287593_, ItemStack.f_41583_));
+       this(p_287684_, p_287629_, p_287593_, NonNullList.withSize(p_287629_ * p_287593_, ItemStack.EMPTY));

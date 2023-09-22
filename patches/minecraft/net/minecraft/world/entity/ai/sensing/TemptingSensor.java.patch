@@ -11,23 +11,23 @@
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
  public class TemptingSensor extends Sensor<PathfinderMob> {
-    public static final int f_148320_ = 10;
+    public static final int TEMPTATION_RANGE = 10;
 @@ -35,7 +_,17 @@
-       }).sorted(Comparator.comparingDouble(p_148332_::m_20280_)).collect(Collectors.toList());
+       }).sorted(Comparator.comparingDouble(p_148332_::distanceToSqr)).collect(Collectors.toList());
        if (!list.isEmpty()) {
           Player player = list.get(0);
--         brain.m_21879_(MemoryModuleType.f_148196_, player);
+-         brain.setMemory(MemoryModuleType.TEMPTING_PLAYER, player);
 +         // CraftBukkit start
 +         EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(p_148332_, player, EntityTargetEvent.TargetReason.TEMPT);
 +         if (event.isCancelled()) {
 +            return;
 +         }
 +         if (event.getTarget() instanceof HumanEntity) {
-+            brain.m_21879_(MemoryModuleType.f_148196_, ((CraftHumanEntity) event.getTarget()).getHandle());
++            brain.setMemory(MemoryModuleType.TEMPTING_PLAYER, ((CraftHumanEntity) event.getTarget()).getHandle());
 +         } else {
-+            brain.m_21936_(MemoryModuleType.f_148196_);
++            brain.eraseMemory(MemoryModuleType.TEMPTING_PLAYER);
 +         }
 +         // CraftBukkit end
        } else {
-          brain.m_21936_(MemoryModuleType.f_148196_);
+          brain.eraseMemory(MemoryModuleType.TEMPTING_PLAYER);
        }

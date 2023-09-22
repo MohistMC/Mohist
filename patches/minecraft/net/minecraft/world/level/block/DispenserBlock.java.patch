@@ -9,32 +9,32 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.inventory.AbstractContainerMenu;
 @@ -42,10 +_,11 @@
-    private static final Logger f_301786_ = LogUtils.getLogger();
-    public static final DirectionProperty f_52659_ = DirectionalBlock.f_52588_;
-    public static final BooleanProperty f_52660_ = BlockStateProperties.f_61360_;
--   private static final Map<Item, DispenseItemBehavior> f_52661_ = Util.m_137469_(new Object2ObjectOpenHashMap<>(), (p_52723_) -> {
-+   public static final Map<Item, DispenseItemBehavior> f_52661_ = Util.m_137469_(new Object2ObjectOpenHashMap<>(), (p_52723_) -> {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final DirectionProperty FACING = DirectionalBlock.FACING;
+    public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
+-   private static final Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY = Util.make(new Object2ObjectOpenHashMap<>(), (p_52723_) -> {
++   public static final Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY = Util.make(new Object2ObjectOpenHashMap<>(), (p_52723_) -> {
        p_52723_.defaultReturnValue(new DefaultDispenseItemBehavior());
     });
-    private static final int f_153160_ = 4;
+    private static final int TRIGGER_DURATION = 4;
 +   public static boolean eventFired = false; // CraftBukkit
  
-    public static void m_52672_(ItemLike p_52673_, DispenseItemBehavior p_52674_) {
-       f_52661_.put(p_52673_.m_5456_(), p_52674_);
+    public static void registerBehavior(ItemLike p_52673_, DispenseItemBehavior p_52674_) {
+       DISPENSER_REGISTRY.put(p_52673_.asItem(), p_52674_);
 @@ -74,7 +_,7 @@
        }
     }
  
--   protected void m_5824_(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
-+   public void m_5824_(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
-       DispenserBlockEntity dispenserblockentity = p_52665_.m_141902_(p_52666_, BlockEntityType.f_58922_).orElse((DispenserBlockEntity)null);
+-   protected void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
++   public void dispenseFrom(ServerLevel p_52665_, BlockState p_301828_, BlockPos p_52666_) {
+       DispenserBlockEntity dispenserblockentity = p_52665_.getBlockEntity(p_52666_, BlockEntityType.DISPENSER).orElse((DispenserBlockEntity)null);
        if (dispenserblockentity == null) {
-          f_301786_.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", (Object)p_52666_);
+          LOGGER.warn("Ignoring dispensing attempt for Dispenser without matching block entity at {}", (Object)p_52666_);
 @@ -88,6 +_,7 @@
-             ItemStack itemstack = dispenserblockentity.m_8020_(i);
-             DispenseItemBehavior dispenseitembehavior = this.m_7216_(itemstack);
-             if (dispenseitembehavior != DispenseItemBehavior.f_123393_) {
+             ItemStack itemstack = dispenserblockentity.getItem(i);
+             DispenseItemBehavior dispenseitembehavior = this.getDispenseMethod(itemstack);
+             if (dispenseitembehavior != DispenseItemBehavior.NOOP) {
 +               eventFired = false; // CraftBukkit - reset event status
-                dispenserblockentity.m_6836_(i, dispenseitembehavior.m_6115_(blocksource, itemstack));
+                dispenserblockentity.setItem(i, dispenseitembehavior.dispense(blocksource, itemstack));
              }
  

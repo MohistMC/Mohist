@@ -28,25 +28,25 @@
  
  public class AreaEffectCloud extends Entity implements TraceableEntity {
 @@ -41,7 +_,7 @@
-    public static final float f_252512_ = 6.0F;
-    public static final float f_252504_ = 0.5F;
-    private static final String f_291475_ = "effects";
--   private Potion f_19701_ = Potions.f_43598_;
-+   public Potion f_19701_ = Potions.f_43598_;
-    public final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
-    private final Map<Entity, Integer> f_19686_ = Maps.newHashMap();
-    private int f_19687_ = 600;
+    public static final float DEFAULT_WIDTH = 6.0F;
+    public static final float HEIGHT = 0.5F;
+    private static final String TAG_EFFECTS = "effects";
+-   private Potion potion = Potions.EMPTY;
++   public Potion potion = Potions.EMPTY;
+    public final List<MobEffectInstance> effects = Lists.newArrayList();
+    private final Map<Entity, Integer> victims = Maps.newHashMap();
+    private int duration = 600;
 @@ -100,7 +_,7 @@
  
     }
  
--   private void m_19750_() {
-+   public void m_19750_() {
-       if (this.f_19701_ == Potions.f_43598_ && this.f_19685_.isEmpty()) {
-          this.m_20088_().m_135381_(f_19698_, 0);
+-   private void updateColor() {
++   public void updateColor() {
+       if (this.potion == Potions.EMPTY && this.effects.isEmpty()) {
+          this.getEntityData().set(DATA_COLOR, 0);
        } else {
 @@ -150,6 +_,18 @@
-       this.f_19687_ = p_19735_;
+       this.duration = p_19735_;
     }
  
 +   // Spigot start - copied from below
@@ -54,25 +54,25 @@
 +   public void inactiveTick() {
 +      super.inactiveTick();
 +
-+      if (this.f_19797_ >= this.f_19688_ + this.f_19687_) {
-+         this.m_146870_();
++      if (this.tickCount >= this.waitTime + this.duration) {
++         this.discard();
 +         return;
 +      }
 +   }
 +   // Spigot end
 +
-    public void m_8119_() {
-       super.m_8119_();
-       boolean flag = this.m_19747_();
+    public void tick() {
+       super.tick();
+       boolean flag = this.isWaiting();
 @@ -239,18 +_,31 @@
              } else {
-                List<LivingEntity> list1 = this.m_9236_().m_45976_(LivingEntity.class, this.m_20191_());
+                List<LivingEntity> list1 = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
                 if (!list1.isEmpty()) {
 +                  List<org.bukkit.entity.LivingEntity> entities = new java.util.ArrayList<>(); // CraftBukkit
                    for(LivingEntity livingentity : list1) {
-                      if (!this.f_19686_.containsKey(livingentity) && livingentity.m_5801_()) {
-                         double d8 = livingentity.m_20185_() - this.m_20185_();
-                         double d1 = livingentity.m_20189_() - this.m_20189_();
+                      if (!this.victims.containsKey(livingentity) && livingentity.isAffectedByPotions()) {
+                         double d8 = livingentity.getX() - this.getX();
+                         double d1 = livingentity.getZ() - this.getZ();
                          double d3 = d8 * d8 + d1 * d1;
                          if (d3 <= (double)(f * f)) {
 +                           // CraftBukkit start
@@ -86,13 +86,13 @@
 +                        if (entity instanceof CraftLivingEntity) {
 +                           LivingEntity livingentity = ((CraftLivingEntity) entity).getHandle();
 +                           // CraftBukkit end
-                            this.f_19686_.put(livingentity, this.f_19797_ + this.f_19689_);
+                            this.victims.put(livingentity, this.tickCount + this.reapplicationDelay);
  
                             for(MobEffectInstance mobeffectinstance1 : list) {
-                               if (mobeffectinstance1.m_19544_().m_8093_()) {
-                                  mobeffectinstance1.m_19544_().m_19461_(this, this.m_19749_(), livingentity, mobeffectinstance1.m_19564_(), 0.5D);
+                               if (mobeffectinstance1.getEffect().isInstantenous()) {
+                                  mobeffectinstance1.getEffect().applyInstantenousEffect(this, this.getOwner(), livingentity, mobeffectinstance1.getAmplifier(), 0.5D);
                                } else {
 +                                 livingentity.addEffectCause.set(EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // Mohist
-                                  livingentity.m_147207_(new MobEffectInstance(mobeffectinstance1), this);
+                                  livingentity.addEffect(new MobEffectInstance(mobeffectinstance1), this);
                                }
                             }

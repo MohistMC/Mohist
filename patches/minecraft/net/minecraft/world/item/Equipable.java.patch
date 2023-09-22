@@ -11,9 +11,9 @@
  import net.minecraft.stats.Stats;
 @@ -22,6 +_,7 @@
  
-    default InteractionResultHolder<ItemStack> m_269277_(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
-       ItemStack itemstack = p_270300_.m_21120_(p_270262_);
-+      if (BanItem.check(p_270300_, itemstack)) return InteractionResultHolder.m_19100_(itemstack);
-       EquipmentSlot equipmentslot = Mob.m_147233_(itemstack);
-       ItemStack itemstack1 = p_270300_.m_6844_(equipmentslot);
-       if ((!EnchantmentHelper.m_44920_(itemstack1) || p_270300_.m_7500_()) && !ItemStack.m_41728_(itemstack, itemstack1)) {
+    default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
+       ItemStack itemstack = p_270300_.getItemInHand(p_270262_);
++      if (BanItem.check(p_270300_, itemstack)) return InteractionResultHolder.fail(itemstack);
+       EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
+       ItemStack itemstack1 = p_270300_.getItemBySlot(equipmentslot);
+       if ((!EnchantmentHelper.hasBindingCurse(itemstack1) || p_270300_.isCreative()) && !ItemStack.matches(itemstack, itemstack1)) {

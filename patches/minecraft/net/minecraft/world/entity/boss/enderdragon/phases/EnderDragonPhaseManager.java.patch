@@ -10,22 +10,22 @@
  
  public class EnderDragonPhaseManager {
 @@ -22,6 +_,19 @@
-          if (this.f_31411_ != null) {
-             this.f_31411_.m_7081_();
+          if (this.currentPhase != null) {
+             this.currentPhase.end();
           }
 +
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
 +         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
-+                 (CraftEnderDragon) this.f_31409_.getBukkitEntity(),
-+                 (this.f_31411_ == null) ? null : CraftEnderDragon.getBukkitPhase(this.f_31411_.m_7309_()),
++                 (CraftEnderDragon) this.dragon.getBukkitEntity(),
++                 (this.currentPhase == null) ? null : CraftEnderDragon.getBukkitPhase(this.currentPhase.getPhase()),
 +                 CraftEnderDragon.getBukkitPhase(p_31417_)
 +         );
-+         this.f_31409_.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.dragon.level.getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
 +         }
 +         p_31417_ = CraftEnderDragon.getMinecraftPhase(event.getNewPhase());
 +         // CraftBukkit end
  
-          this.f_31411_ = this.m_31418_(p_31417_);
-          if (!this.f_31409_.m_9236_().f_46443_) {
+          this.currentPhase = this.getPhase(p_31417_);
+          if (!this.dragon.level().isClientSide) {

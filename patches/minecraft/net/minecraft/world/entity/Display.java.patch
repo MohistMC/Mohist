@@ -24,114 +24,114 @@
  import net.minecraft.network.syncher.EntityDataSerializers;
  import net.minecraft.network.syncher.SynchedEntityData;
 @@ -320,19 +_,19 @@
-       return this.f_276646_;
+       return this.renderState;
     }
  
--   private void m_294351_(int p_297488_) {
-+   public void m_294351_(int p_297488_) {
-       this.f_19804_.m_135381_(f_290650_, p_297488_);
+-   private void setTransformationInterpolationDuration(int p_297488_) {
++   public void setTransformationInterpolationDuration(int p_297488_) {
+       this.entityData.set(DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID, p_297488_);
     }
  
--   private int m_295061_() {
-+   public int m_295061_() {
-       return this.f_19804_.m_135370_(f_290650_);
+-   private int getTransformationInterpolationDuration() {
++   public int getTransformationInterpolationDuration() {
+       return this.entityData.get(DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID);
     }
  
--   private void m_294622_(int p_300640_) {
-+   public void m_294622_(int p_300640_) {
-       this.f_19804_.m_276349_(f_291687_, p_300640_, true);
+-   private void setTransformationInterpolationDelay(int p_300640_) {
++   public void setTransformationInterpolationDelay(int p_300640_) {
+       this.entityData.set(DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID, p_300640_, true);
     }
  
--   private int m_294688_() {
-+   public int m_294688_() {
-       return this.f_19804_.m_135370_(f_291687_);
+-   private int getTransformationInterpolationDelay() {
++   public int getTransformationInterpolationDelay() {
+       return this.entityData.get(DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID);
     }
  
 @@ -348,7 +_,7 @@
-       this.f_19804_.m_135381_(f_268593_, p_270345_.m_269016_());
+       this.entityData.set(DATA_BILLBOARD_RENDER_CONSTRAINTS_ID, p_270345_.getId());
     }
  
--   private Display.BillboardConstraints m_269218_() {
-+   public Display.BillboardConstraints m_269218_() {
-       return Display.BillboardConstraints.f_268544_.apply(this.f_19804_.m_135370_(f_268593_));
+-   private Display.BillboardConstraints getBillboardConstraints() {
++   public Display.BillboardConstraints getBillboardConstraints() {
+       return Display.BillboardConstraints.BY_ID.apply(this.entityData.get(DATA_BILLBOARD_RENDER_CONSTRAINTS_ID));
     }
  
 @@ -362,7 +_,7 @@
-       return i != -1 ? Brightness.m_269373_(i) : null;
+       return i != -1 ? Brightness.unpack(i) : null;
     }
  
--   private int m_269041_() {
-+   public int m_269041_() {
-       return this.f_19804_.m_135370_(f_268599_);
+-   private int getPackedBrightnessOverride() {
++   public int getPackedBrightnessOverride() {
+       return this.entityData.get(DATA_BRIGHTNESS_OVERRIDE_ID);
     }
  
 @@ -516,11 +_,11 @@
  
        }
  
--      private BlockState m_269134_() {
-+      public BlockState m_269134_() {
-          return this.f_19804_.m_135370_(f_268543_);
+-      private BlockState getBlockState() {
++      public BlockState getBlockState() {
+          return this.entityData.get(DATA_BLOCK_STATE_ID);
        }
  
--      private void m_269329_(BlockState p_270267_) {
-+      public void m_269329_(BlockState p_270267_) {
-          this.f_19804_.m_135381_(f_268543_, p_270267_);
+-      private void setBlockState(BlockState p_270267_) {
++      public void setBlockState(BlockState p_270267_) {
+          this.entityData.set(DATA_BLOCK_STATE_ID, p_270267_);
        }
  
 @@ -622,7 +_,7 @@
  
        }
  
--      ItemStack m_269568_() {
-+      public ItemStack m_269568_() {
-          return this.f_19804_.m_135370_(f_268455_);
+-      ItemStack getItemStack() {
++      public ItemStack getItemStack() {
+          return this.entityData.get(DATA_ITEM_STACK_ID);
        }
  
 @@ -634,7 +_,7 @@
-          this.f_19804_.m_135381_(f_268601_, p_270370_.m_269462_());
+          this.entityData.set(DATA_ITEM_DISPLAY_ID, p_270370_.getId());
        }
  
--      private ItemDisplayContext m_269386_() {
-+      public ItemDisplayContext m_269386_() {
-          return ItemDisplayContext.f_268648_.apply(this.f_19804_.m_135370_(f_268601_));
+-      private ItemDisplayContext getItemTransform() {
++      public ItemDisplayContext getItemTransform() {
+          return ItemDisplayContext.BY_ID.apply(this.entityData.get(DATA_ITEM_DISPLAY_ID));
        }
  
 @@ -733,8 +_,8 @@
-       private static final byte f_268541_ = -1;
-       public static final int f_268744_ = 1073741824;
-       private static final EntityDataAccessor<Component> f_268542_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135031_);
--      private static final EntityDataAccessor<Integer> f_268476_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
--      private static final EntityDataAccessor<Integer> f_268494_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
-+      public static final EntityDataAccessor<Integer> f_268476_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
-+      public static final EntityDataAccessor<Integer> f_268494_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135028_);
-       private static final EntityDataAccessor<Byte> f_268481_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
-       private static final EntityDataAccessor<Byte> f_268636_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
-       private static final IntSet f_276462_ = IntSet.of(f_268542_.m_135015_(), f_268476_.m_135015_(), f_268494_.m_135015_(), f_268481_.m_135015_(), f_268636_.m_135015_());
+       private static final byte INITIAL_TEXT_OPACITY = -1;
+       public static final int INITIAL_BACKGROUND = 1073741824;
+       private static final EntityDataAccessor<Component> DATA_TEXT_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.COMPONENT);
+-      private static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+-      private static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++      public static final EntityDataAccessor<Integer> DATA_LINE_WIDTH_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
++      public static final EntityDataAccessor<Integer> DATA_BACKGROUND_COLOR_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.INT);
+       private static final EntityDataAccessor<Byte> DATA_TEXT_OPACITY_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+       private static final EntityDataAccessor<Byte> DATA_STYLE_FLAGS_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
+       private static final IntSet TEXT_RENDER_STATE_IDS = IntSet.of(DATA_TEXT_ID.getId(), DATA_LINE_WIDTH_ID.getId(), DATA_BACKGROUND_COLOR_ID.getId(), DATA_TEXT_OPACITY_ID.getId(), DATA_STYLE_FLAGS_ID.getId());
 @@ -764,7 +_,7 @@
  
        }
  
--      private Component m_269000_() {
-+      public Component m_269000_() {
-          return this.f_19804_.m_135370_(f_268542_);
+-      private Component getText() {
++      public Component getText() {
+          return this.entityData.get(DATA_TEXT_ID);
        }
  
 @@ -772,7 +_,7 @@
-          this.f_19804_.m_135381_(f_268542_, p_270902_);
+          this.entityData.set(DATA_TEXT_ID, p_270902_);
        }
  
--      private int m_269517_() {
-+      public int m_269517_() {
-          return this.f_19804_.m_135370_(f_268476_);
+-      private int getLineWidth() {
++      public int getLineWidth() {
+          return this.entityData.get(DATA_LINE_WIDTH_ID);
        }
  
 @@ -796,7 +_,7 @@
-          this.f_19804_.m_135381_(f_268494_, p_270241_);
+          this.entityData.set(DATA_BACKGROUND_COLOR_ID, p_270241_);
        }
  
--      private byte m_269327_() {
-+      public byte m_269327_() {
-          return this.f_19804_.m_135370_(f_268636_);
+-      private byte getFlags() {
++      public byte getFlags() {
+          return this.entityData.get(DATA_STYLE_FLAGS_ID);
        }
  

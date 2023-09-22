@@ -8,7 +8,7 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class RedstoneTorchBlock extends TorchBlock {
-    public static final BooleanProperty f_55674_ = BlockStateProperties.f_61443_;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 @@ -62,8 +_,24 @@
           list.remove(0);
        }
@@ -16,11 +16,11 @@
 +      // CraftBukkit start
 +      org.bukkit.plugin.PluginManager manager = p_221950_.getCraftServer().getPluginManager();
 +      org.bukkit.block.Block block = CraftBlock.at(p_221950_, p_221951_);
-+      int oldCurrent = ((Boolean) p_221949_.m_61143_(f_55674_)).booleanValue() ? 15 : 0;
++      int oldCurrent = ((Boolean) p_221949_.getValue(LIT)).booleanValue() ? 15 : 0;
 +
 +      BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);
 +      // CraftBukkit end
-       if (p_221949_.m_61143_(f_55674_)) {
+       if (p_221949_.getValue(LIT)) {
           if (flag) {
 +            // CraftBukkit start
 +            if (oldCurrent != 0) {
@@ -31,13 +31,13 @@
 +               }
 +            }
 +            // CraftBukkit end
-             p_221950_.m_7731_(p_221951_, p_221949_.m_61124_(f_55674_, Boolean.valueOf(false)), 3);
-             if (m_55684_(p_221950_, p_221951_, true)) {
-                p_221950_.m_46796_(1502, p_221951_, 0);
+             p_221950_.setBlock(p_221951_, p_221949_.setValue(LIT, Boolean.valueOf(false)), 3);
+             if (isToggledTooFrequently(p_221950_, p_221951_, true)) {
+                p_221950_.levelEvent(1502, p_221951_, 0);
 @@ -71,6 +_,15 @@
              }
           }
-       } else if (!flag && !m_55684_(p_221950_, p_221951_, false)) {
+       } else if (!flag && !isToggledTooFrequently(p_221950_, p_221951_, false)) {
 +         // CraftBukkit start
 +         if (oldCurrent != 15) {
 +            event.setNewCurrent(15);
@@ -47,6 +47,6 @@
 +            }
 +         }
 +         // CraftBukkit end
-          p_221950_.m_7731_(p_221951_, p_221949_.m_61124_(f_55674_, Boolean.valueOf(true)), 3);
+          p_221950_.setBlock(p_221951_, p_221949_.setValue(LIT, Boolean.valueOf(true)), 3);
        }
  

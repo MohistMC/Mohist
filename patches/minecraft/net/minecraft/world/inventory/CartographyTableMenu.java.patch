@@ -20,35 +20,35 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryCartography inventory = new CraftInventoryCartography(this.f_39135_, this.f_39138_);
++      CraftInventoryCartography inventory = new CraftInventoryCartography(this.container, this.resultContainer);
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
-    public static final int f_150501_ = 0;
-    public static final int f_150502_ = 1;
-    public static final int f_150503_ = 2;
+    public static final int MAP_SLOT = 0;
+    public static final int ADDITIONAL_SLOT = 1;
+    public static final int RESULT_SLOT = 2;
 @@ -27,12 +_,25 @@
-          CartographyTableMenu.this.m_6199_(this);
-          super.m_6596_();
+          CartographyTableMenu.this.slotsChanged(this);
+          super.setChanged();
        }
 +
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return f_39136_.getLocation();
++         return access.getLocation();
 +      }
 +      // CraftBukkit end
     };
-    private final ResultContainer f_39138_ = new ResultContainer() {
-       public void m_6596_() {
-          CartographyTableMenu.this.m_6199_(this);
-          super.m_6596_();
+    private final ResultContainer resultContainer = new ResultContainer() {
+       public void setChanged() {
+          CartographyTableMenu.this.slotsChanged(this);
+          super.setChanged();
        }
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return f_39136_.getLocation();
++         return access.getLocation();
 +      }
 +      // CraftBukkit end
     };
@@ -56,14 +56,14 @@
     public CartographyTableMenu(int p_39140_, Inventory p_39141_) {
 @@ -82,10 +_,11 @@
        for(int k = 0; k < 9; ++k) {
-          this.m_38897_(new Slot(p_39144_, k, 8 + k * 18, 142));
+          this.addSlot(new Slot(p_39144_, k, 8 + k * 18, 142));
        }
 -
-+      player = (org.bukkit.entity.Player) p_39144_.f_35978_.getBukkitEntity(); // CraftBukkit
++      player = (org.bukkit.entity.Player) p_39144_.player.getBukkitEntity(); // CraftBukkit
     }
  
-    public boolean m_6875_(Player p_39149_) {
+    public boolean stillValid(Player p_39149_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return m_38889_(this.f_39136_, p_39149_, Blocks.f_50621_);
+       return stillValid(this.access, p_39149_, Blocks.CARTOGRAPHY_TABLE);
     }
  

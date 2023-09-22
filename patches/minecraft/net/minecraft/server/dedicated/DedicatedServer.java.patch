@@ -23,29 +23,29 @@
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
 @@ -60,7 +_,7 @@
-    public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
+    public final List<ConsoleInput> consoleInput = Collections.synchronizedList(Lists.newArrayList());
     @Nullable
-    private QueryThreadGs4 f_139601_;
--   public final RconConsoleSource f_139602_;
+    private QueryThreadGs4 queryThreadGs4;
+-   public final RconConsoleSource rconConsoleSource;
 +   // public final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field // Mohist TODO
     @Nullable
-    private RconThread f_139603_;
-    public DedicatedServerSettings f_139604_;
+    private RconThread rconThread;
+    public DedicatedServerSettings settings;
 @@ -68,23 +_,48 @@
-    private MinecraftServerGui f_139605_;
+    private MinecraftServerGui gui;
     @Nullable
-    private final TextFilterClient f_139606_;
+    private final TextFilterClient textFilterClient;
 +   @Nullable
 +   private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
     public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
-       this.f_139604_ = p_214793_;
--      this.f_139602_ = new RconConsoleSource(this);
-       this.f_139606_ = TextFilterClient.m_143736_(p_214793_.m_139777_().f_139724_);
+       this.settings = p_214793_;
+-      this.rconConsoleSource = new RconConsoleSource(this);
+       this.textFilterClient = TextFilterClient.createFromConfig(p_214793_.getProperties().textFilteringConfig);
     }
  
-    public boolean m_7038_() throws IOException {
+    public boolean initServer() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
@@ -54,8 +54,8 @@
  
 -            String s1;
 -            try {
--               while(!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_() && (s1 = bufferedreader.readLine()) != null) {
--                  DedicatedServer.this.m_139645_(s1, DedicatedServer.this.m_129893_());
+-               while(!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning() && (s1 = bufferedreader.readLine()) != null) {
+-                  DedicatedServer.this.handleConsoleInput(s1, DedicatedServer.this.createCommandSourceStack());
 +            // MC-33041, SPIGOT-5538: if System.in is not valid due to javaw, then return
 +            try {
 +               System.in.available();
@@ -66,7 +66,7 @@
 +            String s;
 +            try {
 +               // CraftBukkit start - JLine disabling compatibility
-+               while (!DedicatedServer.this.m_129918_() && DedicatedServer.this.m_130010_()) {
++               while (!DedicatedServer.this.isStopped() && DedicatedServer.this.isRunning()) {
 +                  s = bufferedreader.readLine();
 +
 +                  // SPIGOT-5220: Throttle if EOF (ctrl^d) or stdin is /dev/null
@@ -79,12 +79,12 @@
 +                     continue;
 +                  }
 +                  if (s.trim().length() > 0) { // Trim to filter lines which are just spaces
-+                     DedicatedServer.this.m_139645_(s, DedicatedServer.this.m_129893_());
++                     DedicatedServer.this.handleConsoleInput(s, DedicatedServer.this.createCommandSourceStack());
 +                  }
 +                  // CraftBukkit end
                 }
              } catch (IOException ioexception1) {
-                DedicatedServer.f_139598_.error("Exception handling console input", (Throwable)ioexception1);
+                DedicatedServer.LOGGER.error("Exception handling console input", (Throwable)ioexception1);
 @@ -92,6 +_,19 @@
  
           }
@@ -103,12 +103,12 @@
 +      System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
 +      // CraftBukkit end
        thread.setDaemon(true);
-       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_139598_));
+       thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
        thread.start();
 @@ -153,14 +_,29 @@
           return false;
        } else {
-          this.m_129823_(new DedicatedPlayerList(this, this.m_247573_(), this.f_129745_));
+          this.setPlayerList(new DedicatedPlayerList(this, this.registries(), this.playerDataStorage));
 +         // Spigot start
 +         org.spigotmc.SpigotConfig.init((java.io.File) options.valueOf("spigot-settings"));
 +         org.spigotmc.SpigotConfig.registerCommands();
@@ -121,36 +121,36 @@
 +         server.loadPlugins();
 +         server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
 +         // CraftBukkit end
-          long i = Util.m_137569_();
-          SkullBlockEntity.m_222885_(this.f_236721_, this);
-          GameProfileCache.m_11004_(this.m_129797_());
+          long i = Util.getNanos();
+          SkullBlockEntity.setup(this.services, this);
+          GameProfileCache.setUsesAuthentication(this.usesAuthentication());
 +         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-          f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
-          this.m_130006_();
-          long j = Util.m_137569_() - i;
+          LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
+          this.loadLevel();
+          long j = Util.getNanos() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-          f_139598_.info("Done ({})! For help, type \"help\"", (Object)s);
+          LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
 +         Metrics.MohistMetrics.startMetrics();
-+         this.f_129726_ = Util.m_137550_(); //Forge: Update server time to prevent watchdog/spaming during long load.
-          if (dedicatedserverproperties.f_139744_ != null) {
-             this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
++         this.nextTickTime = Util.getMillis(); //Forge: Update server time to prevent watchdog/spaming during long load.
+          if (dedicatedserverproperties.announcePlayerAchievements != null) {
+             this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
           }
 @@ -175,7 +_,7 @@
-             this.f_139603_ = RconThread.m_11615_(this);
+             this.rconThread = RconThread.create(this);
           }
  
--         if (this.m_139669_() > 0L) {
-+         if (false && this.m_139669_() > 0L) { // Spigot - disable
+-         if (this.getMaxTickLength() > 0L) {
++         if (false && this.getMaxTickLength() > 0L) { // Spigot - disable
              Thread thread1 = new Thread(new ServerWatchdog(this));
-             thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(f_139598_));
+             thread1.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandlerWithName(LOGGER));
              thread1.setName("Server Watchdog");
 @@ -188,7 +_,12 @@
-             f_139598_.info("JMX monitoring enabled");
+             LOGGER.info("JMX monitoring enabled");
           }
  
 -         return true;
 +         if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
-+            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.m_129916_(), String.valueOf(this.m_7448_()));
++            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
 +            this.dediLanPinger.start();
 +         }
 +
@@ -159,7 +159,7 @@
     }
  
 @@ -263,6 +_,12 @@
-          this.f_139601_.m_7530_();
+          this.queryThreadGs4.stop();
        }
  
 +      if (this.dediLanPinger != null) {
@@ -170,18 +170,18 @@
 +      Runtime.getRuntime().halt(0);
     }
  
-    public void m_5703_(BooleanSupplier p_139661_) {
+    public void tickChildren(BooleanSupplier p_139661_) {
 @@ -281,7 +_,16 @@
-    public void m_139665_() {
-       while(!this.f_139600_.isEmpty()) {
-          ConsoleInput consoleinput = this.f_139600_.remove(0);
--         this.m_129892_().m_230957_(consoleinput.f_135929_, consoleinput.f_135928_);
+    public void handleConsoleInputs() {
+       while(!this.consoleInput.isEmpty()) {
+          ConsoleInput consoleinput = this.consoleInput.remove(0);
+-         this.getCommands().performPrefixedCommand(consoleinput.source, consoleinput.msg);
 +
 +         // CraftBukkit start - ServerCommand for preprocessing
-+         ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.f_135928_);
++         ServerCommandEvent event = new ServerCommandEvent(console, consoleinput.msg);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) continue;
-+         consoleinput = new ConsoleInput(event.getCommand(), consoleinput.f_135929_);
++         consoleinput = new ConsoleInput(event.getCommand(), consoleinput.source);
 +
 +         // this.getCommands().performCommand(servercommand.source, servercommand.msg); // Called in dispatchServerCommand
 +         server.dispatchServerCommand(console, consoleinput);
@@ -192,21 +192,21 @@
 @@ -395,12 +_,7 @@
     }
  
-    public boolean m_214005_() {
--      DedicatedServerProperties dedicatedserverproperties = this.m_7913_();
--      return dedicatedserverproperties.f_214804_ && dedicatedserverproperties.f_139728_ && this.f_236721_.m_284133_() != null;
+    public boolean enforceSecureProfile() {
+-      DedicatedServerProperties dedicatedserverproperties = this.getProperties();
+-      return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
 -   }
 -
--   public boolean m_292975_() {
--      return this.m_7913_().f_290960_;
+-   public boolean logIPs() {
+-      return this.getProperties().logIPs;
 +      return false; // Mohist chat verify
     }
  
-    protected boolean m_139668_() {
+    protected boolean convertOldUsers() {
 @@ -478,15 +_,49 @@
     }
  
-    public String m_7138_() {
+    public String getPluginNames() {
 -      return "";
 +      // CraftBukkit start - Whole method
 +      StringBuilder result = new StringBuilder();
@@ -233,17 +233,17 @@
 +      // CraftBukkit end
     }
  
-    public String m_7261_(String p_139644_) {
--      this.f_139602_.m_11512_();
+    public String runCommand(String p_139644_) {
+-      this.rconConsoleSource.prepareForCommand();
 +      // CraftBukkit start - fire RemoteServerCommandEvent
 +      throw new UnsupportedOperationException("Not supported - remote source required.");
 +   }
 +
 +   public String runCommand(RconConsoleSource rconConsoleSource, String pCommand) {
-+      rconConsoleSource.m_11512_();
-       this.m_18709_(() -> {
--         this.m_129892_().m_230957_(this.f_139602_.m_11514_(), p_139644_);
-+         CommandSourceStack wrapper = rconConsoleSource.m_11514_();
++      rconConsoleSource.prepareForCommand();
+       this.executeBlocking(() -> {
+-         this.getCommands().performPrefixedCommand(this.rconConsoleSource.createCommandSourceStack(), p_139644_);
++         CommandSourceStack wrapper = rconConsoleSource.createCommandSourceStack();
 +         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), pCommand);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
@@ -252,33 +252,33 @@
 +         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), wrapper);
 +         server.dispatchServerCommand(event.getSender(), serverCommand);
        });
--      return this.f_139602_.m_11513_();
-+      return rconConsoleSource.m_11513_();
+-      return this.rconConsoleSource.getCommandResponse();
++      return rconConsoleSource.getCommandResponse();
     }
  
-    public void m_139688_(boolean p_139689_) {
+    public void storeUsingWhiteList(boolean p_139689_) {
 @@ -496,7 +_,12 @@
     }
  
-    public void m_7041_() {
+    public void stopServer() {
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
-       super.m_7041_();
+       super.stopServer();
 +      if (this.dediLanPinger != null) {
 +         this.dediLanPinger.interrupt();
 +         this.dediLanPinger = null;
 +      }
-       Util.m_137580_();
-       SkullBlockEntity.m_196704_();
+       Util.shutdownExecutors();
+       SkullBlockEntity.clear();
     }
 @@ -528,5 +_,15 @@
  
-    public Optional<MinecraftServer.ServerResourcePackInfo> m_214042_() {
-       return this.f_139604_.m_139777_().f_214802_;
+    public Optional<MinecraftServer.ServerResourcePackInfo> getServerResourcePack() {
+       return this.settings.getProperties().serverResourcePackInfo;
 +   }
 +
 +   // CraftBukkit start
 +   public boolean isDebugging() {
-+      return this.m_7913_().debug;
++      return this.getProperties().debug;
 +   }
 +
 +   @Override

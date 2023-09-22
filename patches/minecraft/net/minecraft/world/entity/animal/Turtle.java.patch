@@ -9,11 +9,11 @@
  
  public class Turtle extends Animal {
 @@ -287,7 +_,9 @@
-    protected void m_30232_() {
-       super.m_30232_();
-       if (!this.m_6162_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_)) {
+    protected void ageBoundaryReached() {
+       super.ageBoundaryReached();
+       if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
 +         this.forceDrops = true; // CraftBukkit
-          this.m_20000_(Items.f_42355_, 1);
+          this.spawnAtLocation(Items.SCUTE, 1);
 +         this.forceDrops = false; // CraftBukkit
        }
  
@@ -21,31 +21,31 @@
 @@ -311,7 +_,9 @@
     }
  
-    public void m_8038_(ServerLevel p_30140_, LightningBolt p_30141_) {
+    public void thunderHit(ServerLevel p_30140_, LightningBolt p_30141_) {
 +      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
-       this.m_6469_(this.m_269291_().m_269548_(), Float.MAX_VALUE);
+       this.hurt(this.damageSources().lightningBolt(), Float.MAX_VALUE);
 +      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
-    protected Vector3f m_292594_(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {
+    protected Vector3f getPassengerAttachmentPoint(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {
 @@ -476,11 +_,15 @@
-                this.f_30274_.m_30236_(true);
-             } else if (this.f_30274_.f_30129_ > this.m_183277_(200)) {
-                Level level = this.f_30274_.m_9236_();
--               level.m_5594_((Player)null, blockpos, SoundEvents.f_12486_, SoundSource.BLOCKS, 0.3F, 0.9F + level.f_46441_.m_188501_() * 0.2F);
--               BlockPos blockpos1 = this.f_25602_.m_7494_();
--               BlockState blockstate = Blocks.f_50578_.m_49966_().m_61124_(TurtleEggBlock.f_57754_, Integer.valueOf(this.f_30274_.f_19796_.m_188503_(4) + 1));
--               level.m_7731_(blockpos1, blockstate, 3);
--               level.m_220407_(GameEvent.f_157797_, blockpos1, GameEvent.Context.m_223719_(this.f_30274_, blockstate));
+                this.turtle.setLayingEgg(true);
+             } else if (this.turtle.layEggCounter > this.adjustedTickDelay(200)) {
+                Level level = this.turtle.level();
+-               level.playSound((Player)null, blockpos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3F, 0.9F + level.random.nextFloat() * 0.2F);
+-               BlockPos blockpos1 = this.blockPos.above();
+-               BlockState blockstate = Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, Integer.valueOf(this.turtle.random.nextInt(4) + 1));
+-               level.setBlock(blockpos1, blockstate, 3);
+-               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos1, GameEvent.Context.of(this.turtle, blockstate));
 +
 +               // CraftBukkit start
-+               if (CraftEventFactory.callEntityChangeBlockEvent(this.f_30274_, this.f_25602_.m_7494_(), Blocks.f_50578_.m_49966_().m_61124_(TurtleEggBlock.f_57754_, this.f_30274_.f_19796_.m_188503_(4) + 1))) {
-+                  level.m_5594_((Player) null, blockpos, SoundEvents.f_12486_, SoundSource.BLOCKS, 0.3F, 0.9F + level.f_46441_.m_188501_() * 0.2F);
-+                  BlockPos blockpos1 = this.f_25602_.m_7494_();
-+                  BlockState blockstate = Blocks.f_50578_.m_49966_().m_61124_(TurtleEggBlock.f_57754_, Integer.valueOf(this.f_30274_.f_19796_.m_188503_(4) + 1));
-+                  level.m_7731_(blockpos1, blockstate, 3);
-+                  level.m_220407_(GameEvent.f_157797_, blockpos1, GameEvent.Context.m_223719_(this.f_30274_, blockstate));
++               if (CraftEventFactory.callEntityChangeBlockEvent(this.turtle, this.blockPos.above(), Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, this.turtle.random.nextInt(4) + 1))) {
++                  level.playSound((Player) null, blockpos, SoundEvents.TURTLE_LAY_EGG, SoundSource.BLOCKS, 0.3F, 0.9F + level.random.nextFloat() * 0.2F);
++                  BlockPos blockpos1 = this.blockPos.above();
++                  BlockState blockstate = Blocks.TURTLE_EGG.defaultBlockState().setValue(TurtleEggBlock.EGGS, Integer.valueOf(this.turtle.random.nextInt(4) + 1));
++                  level.setBlock(blockpos1, blockstate, 3);
++                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos1, GameEvent.Context.of(this.turtle, blockstate));
 +               } // CraftBukkit end
-                this.f_30274_.m_30234_(false);
-                this.f_30274_.m_30236_(false);
-                this.f_30274_.m_27601_(600);
+                this.turtle.setHasEgg(false);
+                this.turtle.setLayingEgg(false);
+                this.turtle.setInLoveTime(600);

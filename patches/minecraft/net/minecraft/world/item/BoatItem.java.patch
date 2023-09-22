@@ -10,44 +10,44 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class BoatItem extends Item {
-    private static final Predicate<Entity> f_40615_ = EntitySelector.f_20408_.and(Entity::m_6087_);
+    private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
 @@ -30,7 +_,7 @@
  
-    public InteractionResultHolder<ItemStack> m_7203_(Level p_40622_, Player p_40623_, InteractionHand p_40624_) {
-       ItemStack itemstack = p_40623_.m_21120_(p_40624_);
--      HitResult hitresult = m_41435_(p_40622_, p_40623_, ClipContext.Fluid.ANY);
-+      BlockHitResult hitresult = m_41435_(p_40622_, p_40623_, ClipContext.Fluid.ANY);
-       if (hitresult.m_6662_() == HitResult.Type.MISS) {
-          return InteractionResultHolder.m_19098_(itemstack);
+    public InteractionResultHolder<ItemStack> use(Level p_40622_, Player p_40623_, InteractionHand p_40624_) {
+       ItemStack itemstack = p_40623_.getItemInHand(p_40624_);
+-      HitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
++      BlockHitResult hitresult = getPlayerPOVHitResult(p_40622_, p_40623_, ClipContext.Fluid.ANY);
+       if (hitresult.getType() == HitResult.Type.MISS) {
+          return InteractionResultHolder.pass(itemstack);
        } else {
 @@ -49,6 +_,13 @@
           }
  
-          if (hitresult.m_6662_() == HitResult.Type.BLOCK) {
+          if (hitresult.getType() == HitResult.Type.BLOCK) {
 +            // CraftBukkit start - Boat placement
-+            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresult.m_82425_(), hitresult.m_82434_(), itemstack, false, p_40624_, hitresult.m_82450_());
++            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(p_40623_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, hitresult.getBlockPos(), hitresult.getDirection(), itemstack, false, p_40624_, hitresult.getLocation());
 +
 +            if (event.isCancelled()) {
-+               return InteractionResultHolder.m_19098_(itemstack);
++               return InteractionResultHolder.pass(itemstack);
 +            }
 +            // CraftBukkit end
-             Boat boat = this.m_220016_(p_40622_, hitresult);
-             boat.m_28464_(this.f_40616_);
-             boat.m_146922_(p_40623_.m_146908_());
+             Boat boat = this.getBoat(p_40622_, hitresult);
+             boat.setVariant(this.type);
+             boat.setYRot(p_40623_.getYRot());
 @@ -56,7 +_,15 @@
-                return InteractionResultHolder.m_19100_(itemstack);
+                return InteractionResultHolder.fail(itemstack);
              } else {
-                if (!p_40622_.f_46443_) {
--                  p_40622_.m_7967_(boat);
+                if (!p_40622_.isClientSide) {
+-                  p_40622_.addFreshEntity(boat);
 +                  // CraftBukkit start
-+                  if (CraftEventFactory.callEntityPlaceEvent(p_40622_, hitresult.m_82425_(), hitresult.m_82434_(), p_40623_, boat, p_40624_).isCancelled()) {
-+                     return InteractionResultHolder.m_19100_(itemstack);
++                  if (CraftEventFactory.callEntityPlaceEvent(p_40622_, hitresult.getBlockPos(), hitresult.getDirection(), p_40623_, boat, p_40624_).isCancelled()) {
++                     return InteractionResultHolder.fail(itemstack);
 +                  }
 +
-+                  if (!p_40622_.m_7967_(boat)) {
-+                     return InteractionResultHolder.m_19098_(itemstack);
++                  if (!p_40622_.addFreshEntity(boat)) {
++                     return InteractionResultHolder.pass(itemstack);
 +                  }
 +                  // CraftBukkit end
-                   p_40622_.m_220400_(p_40623_, GameEvent.f_157810_, hitresult.m_82450_());
-                   if (!p_40623_.m_150110_().f_35937_) {
-                      itemstack.m_41774_(1);
+                   p_40622_.gameEvent(p_40623_, GameEvent.ENTITY_PLACE, hitresult.getLocation());
+                   if (!p_40623_.getAbilities().instabuild) {
+                      itemstack.shrink(1);

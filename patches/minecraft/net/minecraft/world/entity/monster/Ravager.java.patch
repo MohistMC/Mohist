@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/entity/monster/Ravager.java
 +++ b/net/minecraft/world/entity/monster/Ravager.java
 @@ -129,7 +_,7 @@
-             this.m_21051_(Attributes.f_22279_).m_22100_(Mth.m_14139_(0.1D, d1, d0));
+             this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(Mth.lerp(0.1D, d1, d0));
           }
  
--         if (this.f_19862_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+         if (this.f_19862_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this)) {
+-         if (this.horizontalCollision && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++         if (this.horizontalCollision && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
              boolean flag = false;
-             AABB aabb = this.m_20191_().m_82400_(0.2D);
+             AABB aabb = this.getBoundingBox().inflate(0.2D);
  
 @@ -137,6 +_,11 @@
-                BlockState blockstate = this.m_9236_().m_8055_(blockpos);
-                Block block = blockstate.m_60734_();
+                BlockState blockstate = this.level().getBlockState(blockpos);
+                Block block = blockstate.getBlock();
                 if (block instanceof LeavesBlock) {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.f_50016_.m_49966_())) {
++                  if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                     continue;
 +                  }
 +                  // CraftBukkit end
-                   flag = this.m_9236_().m_46953_(blockpos, true, this) || flag;
+                   flag = this.level().destroyBlock(blockpos, true, this) || flag;
                 }
              }

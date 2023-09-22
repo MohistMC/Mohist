@@ -7,43 +7,43 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class Bat extends AmbientCreature {
-    public static final float f_148698_ = 74.48451F;
+    public static final float FLAP_DEGREES_PER_TICK = 74.48451F;
 @@ -125,16 +_,16 @@
-                this.f_20885_ = (float)this.f_19796_.m_188503_(360);
+                this.yHeadRot = (float)this.random.nextInt(360);
              }
  
--            if (this.m_9236_().m_45946_(f_27408_, this) != null) {
-+            if (this.m_9236_().m_45946_(f_27408_, this) != null && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
-                this.m_27456_(false);
+-            if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null) {
++            if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
+                this.setResting(false);
                 if (!flag) {
--                  this.m_9236_().m_5898_((Player)null, 1025, blockpos, 0);
-+                  this.m_9236_().m_5898_((Player) null, 1025, blockpos, 0);
+-                  this.level().levelEvent((Player)null, 1025, blockpos, 0);
++                  this.level().levelEvent((Player) null, 1025, blockpos, 0);
                 }
              }
 -         } else {
 +         } else if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
-             this.m_27456_(false);
+             this.setResting(false);
              if (!flag) {
--               this.m_9236_().m_5898_((Player)null, 1025, blockpos, 0);
-+               this.m_9236_().m_5898_((Player) null, 1025, blockpos, 0);
+-               this.level().levelEvent((Player)null, 1025, blockpos, 0);
++               this.level().levelEvent((Player) null, 1025, blockpos, 0);
              }
           }
        } else {
 @@ -156,7 +_,7 @@
-          float f1 = Mth.m_14177_(f - this.m_146908_());
-          this.f_20902_ = 0.5F;
-          this.m_146922_(this.m_146908_() + f1);
--         if (this.f_19796_.m_188503_(100) == 0 && this.m_9236_().m_8055_(blockpos1).m_60796_(this.m_9236_(), blockpos1)) {
-+         if (this.f_19796_.m_188503_(100) == 0 && this.m_9236_().m_8055_(blockpos1).m_60796_(this.m_9236_(), blockpos1) && CraftEventFactory.handleBatToggleSleepEvent(this, false)) {
-             this.m_27456_(true);
+          float f1 = Mth.wrapDegrees(f - this.getYRot());
+          this.zza = 0.5F;
+          this.setYRot(this.getYRot() + f1);
+-         if (this.random.nextInt(100) == 0 && this.level().getBlockState(blockpos1).isRedstoneConductor(this.level(), blockpos1)) {
++         if (this.random.nextInt(100) == 0 && this.level().getBlockState(blockpos1).isRedstoneConductor(this.level(), blockpos1) && CraftEventFactory.handleBatToggleSleepEvent(this, false)) {
+             this.setResting(true);
           }
        }
 @@ -178,7 +_,7 @@
-       if (this.m_6673_(p_27424_)) {
+       if (this.isInvulnerableTo(p_27424_)) {
           return false;
        } else {
--         if (!this.m_9236_().f_46443_ && this.m_27452_()) {
-+         if (!this.m_9236_().f_46443_ && this.m_27452_() && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
-             this.m_27456_(false);
+-         if (!this.level().isClientSide && this.isResting()) {
++         if (!this.level().isClientSide && this.isResting() && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
+             this.setResting(false);
           }
  

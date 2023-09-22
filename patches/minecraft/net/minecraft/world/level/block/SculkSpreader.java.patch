@@ -14,29 +14,29 @@
  
  public class SculkSpreader {
 @@ -49,6 +_,7 @@
-    private final int f_222243_;
-    private List<SculkSpreader.ChargeCursor> f_222244_ = new ArrayList<>();
-    private static final Logger f_222245_ = LogUtils.getLogger();
+    private final int additionalDecayRate;
+    private List<SculkSpreader.ChargeCursor> cursors = new ArrayList<>();
+    private static final Logger LOGGER = LogUtils.getLogger();
 +   Level level; // CraftBukkit
  
     public SculkSpreader(boolean p_222248_, TagKey<Block> p_222249_, int p_222250_, int p_222251_, int p_222252_, int p_222253_) {
-       this.f_222238_ = p_222248_;
+       this.isWorldGeneration = p_222248_;
 @@ -130,6 +_,18 @@
  
-    private void m_222260_(SculkSpreader.ChargeCursor p_222261_) {
-       if (this.f_222244_.size() < 32) {
+    private void addCursor(SculkSpreader.ChargeCursor p_222261_) {
+       if (this.cursors.size() < 32) {
 +         // CraftBukkit start
-+         if (!m_222282_()) { // CraftBukkit - SPIGOT-7475: Don't call event during world generation
-+            CraftBlock bukkitBlock = CraftBlock.at(level, p_222261_.f_222288_);
-+            SculkBloomEvent event = new SculkBloomEvent(bukkitBlock, p_222261_.m_222341_());
++         if (!isWorldGeneration()) { // CraftBukkit - SPIGOT-7475: Don't call event during world generation
++            CraftBlock bukkitBlock = CraftBlock.at(level, p_222261_.pos);
++            SculkBloomEvent event = new SculkBloomEvent(bukkitBlock, p_222261_.getCharge());
 +            Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               return;
 +            }
 +
-+            p_222261_.f_222289_ = event.getCharge();
++            p_222261_.charge = event.getCharge();
 +         }
 +         // CraftBukkit end
-          this.f_222244_.add(p_222261_);
+          this.cursors.add(p_222261_);
        }
     }

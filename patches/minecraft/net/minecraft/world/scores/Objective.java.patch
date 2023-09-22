@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/scores/Objective.java
 +++ b/net/minecraft/world/scores/Objective.java
 @@ -9,7 +_,7 @@
-    private final Scoreboard f_83301_;
-    private final String f_83302_;
-    private final ObjectiveCriteria f_83303_;
--   public Component f_83304_;
-+   private Component f_83304_;
-    private Component f_83305_;
-    private ObjectiveCriteria.RenderType f_83306_;
+    private final Scoreboard scoreboard;
+    private final String name;
+    private final ObjectiveCriteria criteria;
+-   public Component displayName;
++   private Component displayName;
+    private Component formattedDisplayName;
+    private ObjectiveCriteria.RenderType renderType;
  

@@ -9,10 +9,10 @@
  import java.util.List;
  import java.util.Locale;
 @@ -26,6 +_,7 @@
-    private final Map<String, String> f_143512_ = Maps.newLinkedHashMap();
+    private final Map<String, String> entries = Maps.newLinkedHashMap();
  
     public SystemReport() {
-+      this.m_143519_("Mohist Version", MohistMC.versionInfo.mohist());
-       this.m_143519_("Minecraft Version", SharedConstants.m_183709_().m_132493_());
-       this.m_143519_("Minecraft Version ID", SharedConstants.m_183709_().m_132492_());
-       this.m_143519_("Operating System", f_143509_);
++      this.setDetail("Mohist Version", MohistMC.versionInfo.mohist());
+       this.setDetail("Minecraft Version", SharedConstants.getCurrentVersion().getName());
+       this.setDetail("Minecraft Version ID", SharedConstants.getCurrentVersion().getId());
+       this.setDetail("Operating System", OPERATING_SYSTEM);

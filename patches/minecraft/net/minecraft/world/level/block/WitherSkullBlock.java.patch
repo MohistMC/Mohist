@@ -11,34 +11,34 @@
 @@ -42,6 +_,7 @@
     }
  
-    public static void m_58255_(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
+    public static void checkSpawn(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
 +      if (p_58256_.captureBlockStates) return; // CraftBukkit
-       if (!p_58256_.f_46443_) {
-          BlockState blockstate = p_58258_.m_58900_();
-          boolean flag = blockstate.m_60713_(Blocks.f_50312_) || blockstate.m_60713_(Blocks.f_50313_);
+       if (!p_58256_.isClientSide) {
+          BlockState blockstate = p_58258_.getBlockState();
+          boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
 @@ -50,17 +_,22 @@
              if (blockpattern$blockpatternmatch != null) {
-                WitherBoss witherboss = EntityType.f_20496_.m_20615_(p_58256_);
+                WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
                 if (witherboss != null) {
--                  CarvedPumpkinBlock.m_245585_(p_58256_, blockpattern$blockpatternmatch);
+-                  CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch);
 +                  // CarvedPumpkinBlock.clearPatternBlocks(pLevel, blockpattern$blockpatternmatch);
-                   BlockPos blockpos = blockpattern$blockpatternmatch.m_61229_(1, 2, 0).m_61176_();
-                   witherboss.m_7678_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.55D, (double)blockpos.m_123343_() + 0.5D, blockpattern$blockpatternmatch.m_61233_().m_122434_() == Direction.Axis.X ? 0.0F : 90.0F, 0.0F);
-                   witherboss.f_20883_ = blockpattern$blockpatternmatch.m_61233_().m_122434_() == Direction.Axis.X ? 0.0F : 90.0F;
-                   witherboss.m_31506_();
+                   BlockPos blockpos = blockpattern$blockpatternmatch.getBlock(1, 2, 0).getPos();
+                   witherboss.moveTo((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.55D, (double)blockpos.getZ() + 0.5D, blockpattern$blockpatternmatch.getForwards().getAxis() == Direction.Axis.X ? 0.0F : 90.0F, 0.0F);
+                   witherboss.yBodyRot = blockpattern$blockpatternmatch.getForwards().getAxis() == Direction.Axis.X ? 0.0F : 90.0F;
+                   witherboss.makeInvulnerable();
 -
 +                  // CraftBukkit start
 +                  if (!p_58256_.addFreshEntity(witherboss, CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
 +                     return;
 +                  }
-+                  CarvedPumpkinBlock.m_245585_(p_58256_, blockpattern$blockpatternmatch); // CraftBukkit - from above
++                  CarvedPumpkinBlock.clearPatternBlocks(p_58256_, blockpattern$blockpatternmatch); // CraftBukkit - from above
 +                  // CraftBukkit end
-                   for(ServerPlayer serverplayer : p_58256_.m_45976_(ServerPlayer.class, witherboss.m_20191_().m_82400_(50.0D))) {
-                      CriteriaTriggers.f_10580_.m_68256_(serverplayer, witherboss);
+                   for(ServerPlayer serverplayer : p_58256_.getEntitiesOfClass(ServerPlayer.class, witherboss.getBoundingBox().inflate(50.0D))) {
+                      CriteriaTriggers.SUMMONED_ENTITY.trigger(serverplayer, witherboss);
                    }
  
--                  p_58256_.m_7967_(witherboss);
+-                  p_58256_.addFreshEntity(witherboss);
 +                  // pLevel.addFreshEntity(witherboss);
-                   CarvedPumpkinBlock.m_246758_(p_58256_, blockpattern$blockpatternmatch);
+                   CarvedPumpkinBlock.updatePatternBlocks(p_58256_, blockpattern$blockpatternmatch);
                 }
  

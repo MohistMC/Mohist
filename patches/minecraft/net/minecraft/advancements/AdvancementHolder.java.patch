@@ -6,11 +6,11 @@
  import net.minecraft.resources.ResourceLocation;
 +import org.bukkit.craftbukkit.v1_20_R2.advancement.CraftAdvancement;
  
- public record AdvancementHolder(ResourceLocation f_291758_, Advancement f_290952_) {
-    public void m_292675_(FriendlyByteBuf p_299066_) {
+ public record AdvancementHolder(ResourceLocation id, Advancement value) {
+    public void write(FriendlyByteBuf p_299066_) {
 @@ -35,4 +_,10 @@
     public String toString() {
-       return this.f_291758_.toString();
+       return this.id.toString();
     }
 +
 +   // CraftBukkit start

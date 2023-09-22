@@ -8,8 +8,8 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class HopperMenu extends AbstractContainerMenu {
-    public static final int f_150576_ = 5;
-    private final Container f_39638_;
+    public static final int CONTAINER_SIZE = 5;
+    private final Container hopper;
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
@@ -21,8 +21,8 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventory inventory = new CraftInventory(this.f_39638_);
-+      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      CraftInventory inventory = new CraftInventory(this.hopper);
++      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
@@ -32,17 +32,17 @@
     }
 @@ -17,6 +_,7 @@
     public HopperMenu(int p_39643_, Inventory p_39644_, Container p_39645_) {
-       super(MenuType.f_39972_, p_39643_);
-       this.f_39638_ = p_39645_;
+       super(MenuType.HOPPER, p_39643_);
+       this.hopper = p_39645_;
 +      this.player = p_39644_; // CraftBukkit - save player
-       m_38869_(p_39645_, 5);
-       p_39645_.m_5856_(p_39644_.f_35978_);
+       checkContainerSize(p_39645_, 5);
+       p_39645_.startOpen(p_39644_.player);
        int i = 51;
 @@ -38,6 +_,7 @@
     }
  
-    public boolean m_6875_(Player p_39647_) {
+    public boolean stillValid(Player p_39647_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return this.f_39638_.m_6542_(p_39647_);
+       return this.hopper.stillValid(p_39647_);
     }
  

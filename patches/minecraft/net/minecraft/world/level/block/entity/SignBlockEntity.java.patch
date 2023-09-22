@@ -28,54 +28,54 @@
  
 -public class SignBlockEntity extends BlockEntity {
 +public class SignBlockEntity extends BlockEntity implements CommandSource { // CraftBukkit - implements
-    private static final Logger f_276608_ = LogUtils.getLogger();
-    private static final int f_243840_ = 90;
-    private static final int f_243968_ = 10;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int MAX_TEXT_LINE_WIDTH = 90;
+    private static final int TEXT_LINE_HEIGHT = 10;
     @Nullable
--   private UUID f_59722_;
-+   public UUID f_59722_;
-    private SignText f_276598_ = this.m_277006_();
-    private SignText f_276476_ = this.m_277006_();
-    private boolean f_276544_;
+-   private UUID playerWhoMayEdit;
++   public UUID playerWhoMayEdit;
+    private SignText frontText = this.createDefaultSignText();
+    private SignText backText = this.createDefaultSignText();
+    private boolean isWaxed;
 @@ -142,12 +_,13 @@
-    public void m_277134_(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
-       if (!this.m_277118_() && p_278048_.m_20148_().equals(this.m_155726_()) && this.f_58857_ != null) {
-          this.m_277073_((p_277776_) -> {
--            return this.m_276929_(p_278048_, p_277990_, p_277776_);
+    public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
+       if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {
+          this.updateText((p_277776_) -> {
+-            return this.setMessages(p_278048_, p_277990_, p_277776_);
 +            return this.setMessages(p_278048_, p_277990_, p_277776_, p_278103_); // CraftBukkit
           }, p_278103_);
-          this.m_155713_((UUID)null);
-          this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3);
+          this.setAllowedPlayerEditor((UUID)null);
+          this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
        } else {
-          f_276608_.warn("Player {} just tried to change non-editable sign", (Object)p_278048_.m_7755_().getString());
-+         ((ServerPlayer) p_278048_).f_8906_.m_141995_(this.m_58483_()); // CraftBukkit
+          LOGGER.warn("Player {} just tried to change non-editable sign", (Object)p_278048_.getName().getString());
++         ((ServerPlayer) p_278048_).connection.send(this.getUpdatePacket()); // CraftBukkit
        }
     }
  
 @@ -156,18 +_,42 @@
-       return this.m_276956_(p_277877_.apply(signtext), p_277426_);
+       return this.setText(p_277877_.apply(signtext), p_277426_);
     }
  
--   private SignText m_276929_(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_) {
+-   private SignText setMessages(Player p_277396_, List<FilteredText> p_277744_, SignText p_277359_) {
 -      for(int i = 0; i < p_277744_.size(); ++i) {
 -         FilteredText filteredtext = p_277744_.get(i);
--         Style style = p_277359_.m_277138_(i, p_277396_.m_143387_()).m_7383_();
--         if (p_277396_.m_143387_()) {
--            p_277359_ = p_277359_.m_276913_(i, Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
+-         Style style = p_277359_.getMessage(i, p_277396_.isTextFilteringEnabled()).getStyle();
+-         if (p_277396_.isTextFilteringEnabled()) {
+-            p_277359_ = p_277359_.setMessage(i, Component.literal(filteredtext.filteredOrEmpty()).setStyle(style));
 +   private SignText setMessages(Player pPlayer, List<FilteredText> pFilteredText, SignText pText, boolean front) { // CraftBukkit
 +      SignText originalText = pText; // CraftBukkit
 +      for(int i = 0; i < pFilteredText.size(); ++i) {
 +         FilteredText filteredtext = pFilteredText.get(i);
-+         Style style = pText.m_277138_(i, pPlayer.m_143387_()).m_7383_();
-+         if (pPlayer.m_143387_()) {
-+            pText = pText.m_276913_(i, Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
++         Style style = pText.getMessage(i, pPlayer.isTextFilteringEnabled()).getStyle();
++         if (pPlayer.isTextFilteringEnabled()) {
++            pText = pText.setMessage(i, Component.literal(filteredtext.filteredOrEmpty()).setStyle(style));
           } else {
--            p_277359_ = p_277359_.m_276948_(i, Component.m_237113_(filteredtext.f_215168_()).m_6270_(style), Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
+-            p_277359_ = p_277359_.setMessage(i, Component.literal(filteredtext.raw()).setStyle(style), Component.literal(filteredtext.filteredOrEmpty()).setStyle(style));
 -         }
 -      }
 -
 -      return p_277359_;
-+            pText = pText.m_276948_(i, Component.m_237113_(filteredtext.f_215168_()).m_6270_(style), Component.m_237113_(filteredtext.m_243113_()).m_6270_(style));
++            pText = pText.setMessage(i, Component.literal(filteredtext.raw()).setStyle(style), Component.literal(filteredtext.filteredOrEmpty()).setStyle(style));
 +         }
 +      }
 +
@@ -84,11 +84,11 @@
 +      String[] lines = new String[4];
 +
 +      for (int i = 0; i < pFilteredText.size(); ++i) {
-+         lines[i] = CraftChatMessage.fromComponent(pText.m_277138_(i, pPlayer.m_143387_()));
++         lines[i] = CraftChatMessage.fromComponent(pText.getMessage(i, pPlayer.isTextFilteringEnabled()));
 +      }
 +
-+      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.f_58857_, this.f_58858_), player, lines.clone(), (front) ? Side.FRONT : Side.BACK);
-+      pPlayer.m_9236_().getCraftServer().getPluginManager().callEvent(event);
++      SignChangeEvent event = new SignChangeEvent(CraftBlock.at(this.level, this.worldPosition), player, lines.clone(), (front) ? Side.FRONT : Side.BACK);
++      pPlayer.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
 +         return originalText;
@@ -97,7 +97,7 @@
 +      Component[] components = org.bukkit.craftbukkit.v1_20_R2.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!Objects.equals(lines[i], event.getLine(i))) {
-+            pText = pText.m_276913_(i, components[i]);
++            pText = pText.setMessage(i, components[i]);
 +         }
 +      }
 +      // CraftBukkit end
@@ -105,60 +105,60 @@
 +      return pText;
     }
  
-    public boolean m_276956_(SignText p_277733_, boolean p_277720_) {
+    public boolean setText(SignText p_277733_, boolean p_277720_) {
 @@ -213,10 +_,33 @@
        return flag;
     }
  
--   private static CommandSourceStack m_278808_(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
+-   private static CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
 +   // CraftBukkit start
 +   @Override
-+   public void m_213846_(Component ichatbasecomponent) {}
++   public void sendSystemMessage(Component ichatbasecomponent) {}
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.m_81373_() != null ? wrapper.m_81373_().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override
-+   public boolean m_6999_() {
++   public boolean acceptsSuccess() {
 +      return false;
 +   }
 +
 +   @Override
-+   public boolean m_7028_() {
++   public boolean acceptsFailure() {
 +      return false;
 +   }
 +
 +   @Override
-+   public boolean m_6102_() {
++   public boolean shouldInformAdmins() {
 +      return false;
 +   }
-+   private CommandSourceStack m_278808_(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
-       String s = p_279428_ == null ? "Sign" : p_279428_.m_7755_().getString();
-       Component component = (Component)(p_279428_ == null ? Component.m_237113_("Sign") : p_279428_.m_5446_());
--      return new CommandSourceStack(CommandSource.f_80164_, Vec3.m_82512_(p_279430_), Vec2.f_82462_, (ServerLevel)p_279359_, 2, s, component, p_279359_.m_7654_(), p_279428_);
-+      return new CommandSourceStack(this, Vec3.m_82512_(p_279430_), Vec2.f_82462_, (ServerLevel)p_279359_, 2, s, component, p_279359_.m_7654_(), p_279428_);
++   private CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
+       String s = p_279428_ == null ? "Sign" : p_279428_.getName().getString();
+       Component component = (Component)(p_279428_ == null ? Component.literal("Sign") : p_279428_.getDisplayName());
+-      return new CommandSourceStack(CommandSource.NULL, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
++      return new CommandSourceStack(this, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
     }
  
-    public ClientboundBlockEntityDataPacket m_58483_() {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
 @@ -242,7 +_,7 @@
  
-    private void m_155728_() {
-       this.m_6596_();
--      this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3);
-+      if (this.f_58857_ != null) this.f_58857_.m_7260_(this.m_58899_(), this.m_58900_(), this.m_58900_(), 3); // CraftBukkit - skip notify if world is null (SPIGOT-5122)
+    private void markUpdated() {
+       this.setChanged();
+-      this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
++      if (this.level != null) this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3); // CraftBukkit - skip notify if world is null (SPIGOT-5122)
     }
  
-    public boolean m_277118_() {
+    public boolean isWaxed() {
 @@ -277,5 +_,10 @@
-          p_277656_.m_155713_((UUID)null);
+          p_277656_.setAllowedPlayerEditor((UUID)null);
        }
  
 +   }
 +
 +   @Override
 +   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
-+      return new net.minecraft.world.phys.AABB(this.m_58899_(), this.m_58899_().m_7918_(1, 1, 1));
++      return new net.minecraft.world.phys.AABB(this.getBlockPos(), this.getBlockPos().offset(1, 1, 1));
     }
  }

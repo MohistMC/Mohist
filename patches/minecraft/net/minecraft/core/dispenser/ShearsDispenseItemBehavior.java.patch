@@ -23,10 +23,10 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
-    protected ItemStack m_7498_(BlockSource p_301806_, ItemStack p_123581_) {
-       ServerLevel serverlevel = p_301806_.f_301782_();
+    protected ItemStack execute(BlockSource p_301806_, ItemStack p_123581_) {
+       ServerLevel serverlevel = p_301806_.level();
 +      // CraftBukkit start
-+      org.bukkit.block.Block bukkitBlock = serverlevel.getWorld().getBlockAt(p_301806_.f_301784_().m_123341_(), p_301806_.f_301784_().m_123342_(), p_301806_.f_301784_().m_123343_());
++      org.bukkit.block.Block bukkitBlock = serverlevel.getWorld().getBlockAt(p_301806_.pos().getX(), p_301806_.pos().getY(), p_301806_.pos().getZ());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123581_);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
@@ -41,31 +41,31 @@
 +      if (!event.getItem().equals(craftItem)) {
 +         // Chain to handler for new item
 +         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+         DispenseItemBehavior idispensebehavior = DispenserBlock.f_52661_.get(eventStack.m_41720_());
-+         if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
-+            idispensebehavior.m_6115_(p_301806_, eventStack);
++         DispenseItemBehavior idispensebehavior = DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++         if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
++            idispensebehavior.dispense(p_301806_, eventStack);
 +            return p_123581_;
 +         }
 +      }
 +      // CraftBukkit end
 +
-       if (!serverlevel.m_5776_()) {
-          BlockPos blockpos = p_301806_.f_301784_().m_121945_(p_301806_.f_301783_().m_61143_(DispenserBlock.f_52659_));
+       if (!serverlevel.isClientSide()) {
+          BlockPos blockpos = p_301806_.pos().relative(p_301806_.state().getValue(DispenserBlock.FACING));
 +         bukkitBlockAndcraftItem(bukkitBlock, craftItem); // Mohist
-          this.m_123573_(m_123576_(serverlevel, blockpos) || m_123582_(serverlevel, blockpos));
-          if (this.m_123570_() && p_123581_.m_220157_(1, serverlevel.m_213780_(), (ServerPlayer)null)) {
-             p_123581_.m_41764_(0);
+          this.setSuccess(tryShearBeehive(serverlevel, blockpos) || tryShearLivingEntity(serverlevel, blockpos));
+          if (this.isSuccess() && p_123581_.hurt(1, serverlevel.getRandom(), (ServerPlayer)null)) {
+             p_123581_.setCount(0);
 @@ -55,6 +_,11 @@
-       for(LivingEntity livingentity : p_123583_.m_6443_(LivingEntity.class, new AABB(p_123584_), EntitySelector.f_20408_)) {
+       for(LivingEntity livingentity : p_123583_.getEntitiesOfClass(LivingEntity.class, new AABB(p_123584_), EntitySelector.NO_SPECTATORS)) {
           if (livingentity instanceof Shearable shearable) {
-             if (shearable.m_6220_()) {
+             if (shearable.readyForShearing()) {
 +               // CraftBukkit start
 +               if (bukkitBlock0.get() != null && craftItem0.get() != null && CraftEventFactory.callBlockShearEntityEvent(livingentity, bukkitBlock0.getAndSet(null), craftItem0.getAndSet(null)).isCancelled()) {
 +                  continue;
 +               }
 +               // CraftBukkit end
-                shearable.m_5851_(SoundSource.BLOCKS);
-                p_123583_.m_142346_((Entity)null, GameEvent.f_157781_, p_123584_);
+                shearable.shear(SoundSource.BLOCKS);
+                p_123583_.gameEvent((Entity)null, GameEvent.SHEAR, p_123584_);
                 return true;
 @@ -64,4 +_,18 @@
  
@@ -82,7 +82,7 @@
 +   // CraftBukkit - add args
 +   private static boolean tryShearLivingEntity(ServerLevel pLevel, BlockPos pPos, org.bukkit.block.Block bukkitBlock, CraftItemStack craftItem) {
 +      bukkitBlockAndcraftItem(bukkitBlock, craftItem);
-+      return m_123582_(pLevel, pPos);
++      return tryShearLivingEntity(pLevel, pPos);
 +   }
 +   // Mohist end
  }

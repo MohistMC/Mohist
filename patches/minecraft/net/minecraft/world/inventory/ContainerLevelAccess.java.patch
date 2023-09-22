@@ -7,9 +7,9 @@
 +import org.bukkit.World;
  
  public interface ContainerLevelAccess {
-    ContainerLevelAccess f_39287_ = new ContainerLevelAccess() {
+    ContainerLevelAccess NULL = new ContainerLevelAccess() {
 @@ -18,6 +_,17 @@
-          public <T> Optional<T> m_6721_(BiFunction<Level, BlockPos, T> p_39311_) {
+          public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
              return Optional.of(p_39311_.apply(p_39290_, p_39291_));
           }
 +         // CraftBukkit start
@@ -33,15 +33,15 @@
 +
 +   // CraftBukkit start
 +   default Level getWorld() {
-+     return this.m_6721_((level, blockpos) -> level).orElse(null); // Mohist
++     return this.evaluate((level, blockpos) -> level).orElse(null); // Mohist
 +   }
 +
 +   default BlockPos getPosition() {
-+      return this.m_6721_((level, blockpos) -> blockpos).orElse(null); // Mohist
++      return this.evaluate((level, blockpos) -> blockpos).orElse(null); // Mohist
 +   }
 +
 +   default org.bukkit.Location getLocation() {
-+      return new org.bukkit.Location(getWorld().getWorld(), getPosition().m_123341_(), getPosition().m_123342_(), getPosition().m_123343_());
++      return new org.bukkit.Location(getWorld().getWorld(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
 +   }
 +   // CraftBukkit end
  }

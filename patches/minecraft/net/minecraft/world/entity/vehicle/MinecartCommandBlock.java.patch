@@ -8,20 +8,20 @@
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftMinecartCommand;
  
  public class MinecartCommandBlock extends AbstractMinecart {
-    public static final EntityDataAccessor<String> f_38503_ = SynchedEntityData.m_135353_(MinecartCommandBlock.class, EntityDataSerializers.f_135030_);
+    public static final EntityDataAccessor<String> DATA_ID_COMMAND_NAME = SynchedEntityData.defineId(MinecartCommandBlock.class, EntityDataSerializers.STRING);
 @@ -78,6 +_,8 @@
     }
  
-    public InteractionResult m_6096_(Player p_38522_, InteractionHand p_38523_) {
-+      InteractionResult ret = super.m_6096_(p_38522_, p_38523_);
-+      if (ret.m_19077_()) return ret;
-       return this.f_38505_.m_45412_(p_38522_);
+    public InteractionResult interact(Player p_38522_, InteractionHand p_38523_) {
++      InteractionResult ret = super.interact(p_38522_, p_38523_);
++      if (ret.consumesAction()) return ret;
+       return this.commandBlock.usedBy(p_38522_);
     }
  
 @@ -122,6 +_,11 @@
  
-       public boolean m_288209_() {
-          return !MinecartCommandBlock.this.m_213877_();
+       public boolean isValid() {
+          return !MinecartCommandBlock.this.isRemoved();
 +      }
 +
 +      @Override

@@ -26,29 +26,29 @@
  
 -public class PortalForcer {
 +public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
-    private static final int f_164734_ = 3;
-    private static final int f_164735_ = 128;
-    private static final int f_164736_ = 16;
+    private static final int TICKET_RADIUS = 3;
+    private static final int SEARCH_RADIUS = 128;
+    private static final int CREATE_RADIUS = 16;
 @@ -39,10 +_,19 @@
-       this.f_77648_ = p_77650_;
+       this.level = p_77650_;
     }
  
 +   private AtomicInteger searchRadius = new AtomicInteger(-1);
 +
 +   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pPos, WorldBorder pWorldBorder, int i) {
 +      searchRadius.set(i);
-+      return m_192985_(pPos, false, pWorldBorder); // Search Radius
++      return findPortalAround(pPos, false, pWorldBorder); // Search Radius
 +   }
 +
-    public Optional<BlockUtil.FoundRectangle> m_192985_(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
-       PoiManager poimanager = this.f_77648_.m_8904_();
+    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
+       PoiManager poimanager = this.level.getPoiManager();
        int i = p_192987_ ? 16 : 128;
--      poimanager.m_27056_(this.f_77648_, p_192986_, i);
+-      poimanager.ensureLoadedAndValid(this.level, p_192986_, i);
 +      int newi = searchRadius.get() == -1 ? i : searchRadius.getAndSet(-1);
 +      // CraftBukkit end
-+      poimanager.m_27056_(this.f_77648_, p_192986_, newi);
-       Optional<PoiRecord> optional = poimanager.m_27166_((p_230634_) -> {
-          return p_230634_.m_203565_(PoiTypes.f_218064_);
++      poimanager.ensureLoadedAndValid(this.level, p_192986_, newi);
+       Optional<PoiRecord> optional = poimanager.getInSquare((p_230634_) -> {
+          return p_230634_.is(PoiTypes.NETHER_PORTAL);
        }, p_192986_, i, PoiManager.Occupancy.ANY).filter((p_192981_) -> {
 @@ -64,6 +_,15 @@
        });
@@ -60,67 +60,67 @@
 +   public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos pPos, Direction.Axis pAxis, Entity entity, int createRadius) {
 +      mohist$entity.set(entity);
 +      mohist$createRedius.set(createRadius);
-+      return m_77666_(pPos, pAxis);
++      return createPortal(pPos, pAxis);
 +   }
 +
-    public Optional<BlockUtil.FoundRectangle> m_77666_(BlockPos p_77667_, Direction.Axis p_77668_) {
-       Direction direction = Direction.m_122390_(Direction.AxisDirection.POSITIVE, p_77668_);
+    public Optional<BlockUtil.FoundRectangle> createPortal(BlockPos p_77667_, Direction.Axis p_77668_) {
+       Direction direction = Direction.get(Direction.AxisDirection.POSITIVE, p_77668_);
        double d0 = -1.0D;
 @@ -74,7 +_,7 @@
-       int i = Math.min(this.f_77648_.m_151558_(), this.f_77648_.m_141937_() + this.f_77648_.m_143344_()) - 1;
-       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_77667_.m_122032_();
+       int i = Math.min(this.level.getMaxBuildHeight(), this.level.getMinBuildHeight() + this.level.getLogicalHeight()) - 1;
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_77667_.mutable();
  
--      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.m_121935_(p_77667_, 16, Direction.EAST, Direction.SOUTH)) {
-+      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.m_121935_(p_77667_, mohist$createRedius.get(), Direction.EAST, Direction.SOUTH)) {
-          int j = Math.min(i, this.f_77648_.m_6924_(Heightmap.Types.MOTION_BLOCKING, blockpos$mutableblockpos1.m_123341_(), blockpos$mutableblockpos1.m_123343_()));
+-      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, 16, Direction.EAST, Direction.SOUTH)) {
++      for(BlockPos.MutableBlockPos blockpos$mutableblockpos1 : BlockPos.spiralAround(p_77667_, mohist$createRedius.get(), Direction.EAST, Direction.SOUTH)) {
+          int j = Math.min(i, this.level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockpos$mutableblockpos1.getX(), blockpos$mutableblockpos1.getZ()));
           int k = 1;
-          if (worldborder.m_61937_(blockpos$mutableblockpos1) && worldborder.m_61937_(blockpos$mutableblockpos1.m_122175_(direction, 1))) {
+          if (worldborder.isWithinBounds(blockpos$mutableblockpos1) && worldborder.isWithinBounds(blockpos$mutableblockpos1.move(direction, 1))) {
 @@ -114,7 +_,7 @@
           blockpos = blockpos1;
           d0 = d1;
        }
 -
-+      BlockStateListPopulator blockList = new BlockStateListPopulator(this.f_77648_); // CraftBukkit - Use BlockStateListPopulator
++      BlockStateListPopulator blockList = new BlockStateListPopulator(this.level); // CraftBukkit - Use BlockStateListPopulator
        if (d0 == -1.0D) {
-          int k1 = Math.max(this.f_77648_.m_141937_() - -1, 70);
+          int k1 = Math.max(this.level.getMinBuildHeight() - -1, 70);
           int i2 = i - 9;
 @@ -133,7 +_,7 @@
                 for(int k3 = -1; k3 < 3; ++k3) {
-                   BlockState blockstate1 = k3 < 0 ? Blocks.f_50080_.m_49966_() : Blocks.f_50016_.m_49966_();
-                   blockpos$mutableblockpos.m_122154_(blockpos, j3 * direction.m_122429_() + i3 * direction1.m_122429_(), k3, j3 * direction.m_122431_() + i3 * direction1.m_122431_());
--                  this.f_77648_.m_46597_(blockpos$mutableblockpos, blockstate1);
-+                  blockList.m_7731_(blockpos$mutableblockpos, blockstate1, 3); // CraftBukkit
+                   BlockState blockstate1 = k3 < 0 ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.AIR.defaultBlockState();
+                   blockpos$mutableblockpos.setWithOffset(blockpos, j3 * direction.getStepX() + i3 * direction1.getStepX(), k3, j3 * direction.getStepZ() + i3 * direction1.getStepZ());
+-                  this.level.setBlockAndUpdate(blockpos$mutableblockpos, blockstate1);
++                  blockList.setBlock(blockpos$mutableblockpos, blockstate1, 3); // CraftBukkit
                 }
              }
           }
 @@ -143,7 +_,7 @@
           for(int j2 = -1; j2 < 4; ++j2) {
              if (l1 == -1 || l1 == 2 || j2 == -1 || j2 == 3) {
-                blockpos$mutableblockpos.m_122154_(blockpos, l1 * direction.m_122429_(), j2, l1 * direction.m_122431_());
--               this.f_77648_.m_7731_(blockpos$mutableblockpos, Blocks.f_50080_.m_49966_(), 3);
-+               blockList.m_7731_(blockpos$mutableblockpos, Blocks.f_50080_.m_49966_(), 3);// CraftBukkit
+                blockpos$mutableblockpos.setWithOffset(blockpos, l1 * direction.getStepX(), j2, l1 * direction.getStepZ());
+-               this.level.setBlock(blockpos$mutableblockpos, Blocks.OBSIDIAN.defaultBlockState(), 3);
++               blockList.setBlock(blockpos$mutableblockpos, Blocks.OBSIDIAN.defaultBlockState(), 3);// CraftBukkit
              }
           }
        }
 @@ -153,10 +_,20 @@
        for(int k2 = 0; k2 < 2; ++k2) {
           for(int l2 = 0; l2 < 3; ++l2) {
-             blockpos$mutableblockpos.m_122154_(blockpos, k2 * direction.m_122429_(), l2, k2 * direction.m_122431_());
--            this.f_77648_.m_7731_(blockpos$mutableblockpos, blockstate, 18);
-+            blockList.m_7731_(blockpos$mutableblockpos, blockstate, 18);// CraftBukkit
+             blockpos$mutableblockpos.setWithOffset(blockpos, k2 * direction.getStepX(), l2, k2 * direction.getStepZ());
+-            this.level.setBlock(blockpos$mutableblockpos, blockstate, 18);
++            blockList.setBlock(blockpos$mutableblockpos, blockstate, 18);// CraftBukkit
           }
        }
  
 +      // CraftBukkit start
-+      org.bukkit.World bworld = this.f_77648_.getWorld();
++      org.bukkit.World bworld = this.level.getWorld();
 +      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blockList.getList(), bworld, (mohist$entity.get() == null) ? null : mohist$entity.get().getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
 +
-+      this.f_77648_.getCraftServer().getPluginManager().callEvent(event);
++      this.level.getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return Optional.empty();
 +      }
 +      blockList.updateList();
 +      // CraftBukkit end
-       return Optional.of(new BlockUtil.FoundRectangle(blockpos.m_7949_(), 2, 3));
+       return Optional.of(new BlockUtil.FoundRectangle(blockpos.immutable(), 2, 3));
     }
  

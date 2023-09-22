@@ -14,4 +14,4 @@
 +import org.jetbrains.annotations.Nullable;
  
  public interface LiquidBlockContainer {
-    boolean m_6044_(@Nullable Player p_300220_, BlockGetter p_54766_, BlockPos p_54767_, BlockState p_54768_, Fluid p_54769_);
+    boolean canPlaceLiquid(@Nullable Player p_300220_, BlockGetter p_54766_, BlockPos p_54767_, BlockState p_54768_, Fluid p_54769_);

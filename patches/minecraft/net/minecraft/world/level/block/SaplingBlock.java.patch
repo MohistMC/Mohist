@@ -7,10 +7,10 @@
 +import org.bukkit.TreeType;
  
  public class SaplingBlock extends BushBlock implements BonemealableBlock {
-    public static final IntegerProperty f_55973_ = BlockStateProperties.f_61387_;
-    protected static final float f_154380_ = 6.0F;
-    protected static final VoxelShape f_55974_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
-    private final AbstractTreeGrower f_55975_;
+    public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
+    protected static final float AABB_OFFSET = 6.0F;
+    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+    private final AbstractTreeGrower treeGrower;
 +   public static TreeType treeType; // CraftBukkit
  
     public SaplingBlock(AbstractTreeGrower p_55978_, BlockBehaviour.Properties p_55979_) {
@@ -18,10 +18,10 @@
 @@ -32,7 +_,8 @@
     }
  
-    public void m_213898_(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {
--      if (p_222012_.m_46803_(p_222013_.m_7494_()) >= 9 && p_222014_.m_188503_(7) == 0) {
+    public void randomTick(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {
+-      if (p_222012_.getMaxLocalRawBrightness(p_222013_.above()) >= 9 && p_222014_.nextInt(7) == 0) {
 +      if (!p_222012_.isAreaLoaded(p_222013_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-+      if (p_222012_.m_46803_(p_222013_.m_7494_()) >= 9 && p_222014_.m_188501_() < (p_222012_.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
-          this.m_222000_(p_222012_, p_222013_, p_222011_, p_222014_);
++      if (p_222012_.getMaxLocalRawBrightness(p_222013_.above()) >= 9 && p_222014_.nextFloat() < (p_222012_.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
+          this.advanceTree(p_222012_, p_222013_, p_222011_, p_222014_);
        }
  

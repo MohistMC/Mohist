@@ -20,47 +20,47 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class BeaconMenu extends AbstractContainerMenu {
-    private static final int f_150481_ = 0;
+    private static final int PAYMENT_SLOT = 0;
 @@ -33,6 +_,10 @@
-    private final BeaconMenu.PaymentSlot f_39032_;
-    private final ContainerLevelAccess f_39033_;
-    private final ContainerData f_39034_;
+    private final BeaconMenu.PaymentSlot paymentSlot;
+    private final ContainerLevelAccess access;
+    private final ContainerData beaconData;
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   // CraftBukkit end
  
     public BeaconMenu(int p_39036_, Container p_39037_) {
-       this(p_39036_, p_39037_, new SimpleContainerData(3), ContainerLevelAccess.f_39287_);
+       this(p_39036_, p_39037_, new SimpleContainerData(3), ContainerLevelAccess.NULL);
 @@ -40,6 +_,7 @@
  
     public BeaconMenu(int p_39039_, Container p_39040_, ContainerData p_39041_, ContainerLevelAccess p_39042_) {
-       super(MenuType.f_39965_, p_39039_);
+       super(MenuType.BEACON, p_39039_);
 +      player = (Inventory) p_39040_; // CraftBukkit - TODO: check this
-       m_38886_(p_39041_, 3);
-       this.f_39034_ = p_39041_;
-       this.f_39033_ = p_39042_;
+       checkContainerDataCount(p_39041_, 3);
+       this.beaconData = p_39041_;
+       this.access = p_39042_;
 @@ -73,6 +_,7 @@
     }
  
-    public boolean m_6875_(Player p_39047_) {
+    public boolean stillValid(Player p_39047_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return m_38889_(this.f_39033_, p_39047_, Blocks.f_50273_);
+       return stillValid(this.access, p_39047_, Blocks.BEACON);
     }
  
 @@ -93,10 +_,8 @@
              }
  
-             slot.m_40234_(itemstack1, itemstack);
--         } else if (!this.f_39032_.m_6657_() && this.f_39032_.m_5857_(itemstack1) && itemstack1.m_41613_() == 1) {
--            if (!this.m_38903_(itemstack1, 0, 1, false)) {
--               return ItemStack.f_41583_;
+             slot.onQuickCraft(itemstack1, itemstack);
+-         } else if (!this.paymentSlot.hasItem() && this.paymentSlot.mayPlace(itemstack1) && itemstack1.getCount() == 1) {
+-            if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
+-               return ItemStack.EMPTY;
 -            }
-+         } else if (this.m_38903_(itemstack1, 0, 1, false)) { //Forge Fix Shift Clicking in beacons with stacks larger then 1.
-+            return ItemStack.f_41583_;
++         } else if (this.moveItemStackTo(itemstack1, 0, 1, false)) { //Forge Fix Shift Clicking in beacons with stacks larger then 1.
++            return ItemStack.EMPTY;
           } else if (p_39052_ >= 1 && p_39052_ < 28) {
-             if (!this.m_38903_(itemstack1, 28, 37, false)) {
-                return ItemStack.f_41583_;
+             if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
+                return ItemStack.EMPTY;
 @@ -175,4 +_,17 @@
           return 1;
        }
@@ -73,8 +73,8 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventory inventory = new CraftInventoryBeacon(this.f_39031_);
-+      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      CraftInventory inventory = new CraftInventoryBeacon(this.beacon);
++      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end

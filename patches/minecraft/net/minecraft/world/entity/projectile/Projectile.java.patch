@@ -17,8 +17,8 @@
  public abstract class Projectile extends Entity implements TraceableEntity {
     @Nullable
 @@ -31,6 +_,10 @@
-    private boolean f_37246_;
-    private boolean f_150164_;
+    private boolean leftOwner;
+    private boolean hasBeenShot;
  
 +   // CraftBukkit start
 +   private boolean hitCancelled = false;
@@ -28,47 +28,47 @@
        super(p_37248_, p_37249_);
     }
 @@ -40,6 +_,7 @@
-          this.f_37244_ = p_37263_.m_20148_();
-          this.f_150163_ = p_37263_;
+          this.ownerUUID = p_37263_.getUUID();
+          this.cachedOwner = p_37263_;
        }
 +      this.projectileSource = (p_37263_ != null && p_37263_.getBukkitEntity() instanceof ProjectileSource) ? (ProjectileSource) p_37263_.getBukkitEntity() : null; // CraftBukkit
  
     }
  
 @@ -132,6 +_,16 @@
-       this.m_20256_(this.m_20184_().m_82520_(vec3.f_82479_, p_37252_.m_20096_() ? 0.0D : vec3.f_82480_, vec3.f_82481_));
+       this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
     }
  
 +   // CraftBukkit start - call projectile hit event
 +   protected void preOnHit(HitResult movingobjectposition) {
 +      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
 +      this.hitCancelled = event != null && event.isCancelled();
-+      if (movingobjectposition.m_6662_() == HitResult.Type.BLOCK || !this.hitCancelled) {
-+         this.m_6532_(movingobjectposition);
++      if (movingobjectposition.getType() == HitResult.Type.BLOCK || !this.hitCancelled) {
++         this.onHit(movingobjectposition);
 +      }
 +   }
 +   // CraftBukkit end
 +
-    protected void m_6532_(HitResult p_37260_) {
-       HitResult.Type hitresult$type = p_37260_.m_6662_();
+    protected void onHit(HitResult p_37260_) {
+       HitResult.Type hitresult$type = p_37260_.getType();
        if (hitresult$type == HitResult.Type.ENTITY) {
 @@ -150,6 +_,11 @@
     }
  
-    protected void m_8060_(BlockHitResult p_37258_) {
+    protected void onHitBlock(BlockHitResult p_37258_) {
 +      // CraftBukkit start - cancellable hit event
 +      if (hitCancelled) {
 +         return;
 +      }
 +      // CraftBukkit end
-       BlockState blockstate = this.m_9236_().m_8055_(p_37258_.m_82425_());
-       blockstate.m_60669_(this.m_9236_(), blockstate, p_37258_, this);
+       BlockState blockstate = this.level().getBlockState(p_37258_.getBlockPos());
+       blockstate.onProjectileHit(this.level(), blockstate, p_37258_, this);
     }
 @@ -214,7 +_,7 @@
        if (entity instanceof Player) {
-          return entity.m_142265_(p_150167_, p_150168_);
+          return entity.mayInteract(p_150167_, p_150168_);
        } else {
--         return entity == null || p_150167_.m_46469_().m_46207_(GameRules.f_46132_);
+-         return entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 +         return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
        }
     }

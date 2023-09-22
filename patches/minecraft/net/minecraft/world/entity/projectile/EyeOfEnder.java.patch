@@ -9,10 +9,10 @@
  import net.minecraft.nbt.CompoundTag;
 @@ -159,7 +_,7 @@
  
-    public void m_7378_(CompoundTag p_36970_) {
-       ItemStack itemstack = ItemStack.m_41712_(p_36970_.m_128469_("Item"));
--      this.m_36972_(itemstack);
-+      if (!itemstack.m_41619_()) this.m_36972_(itemstack); // CraftBukkit - SPIGOT-6103 summon, see also SPIGOT-5474
+    public void readAdditionalSaveData(CompoundTag p_36970_) {
+       ItemStack itemstack = ItemStack.of(p_36970_.getCompound("Item"));
+-      this.setItem(itemstack);
++      if (!itemstack.isEmpty()) this.setItem(itemstack); // CraftBukkit - SPIGOT-6103 summon, see also SPIGOT-5474
     }
  
-    public float m_213856_() {
+    public float getLightLevelDependentMagicValue() {

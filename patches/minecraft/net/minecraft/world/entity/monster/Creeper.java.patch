@@ -9,67 +9,67 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class Creeper extends Monster implements PowerableMob {
-    private static final EntityDataAccessor<Integer> f_32268_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
 @@ -196,9 +_,19 @@
  
-    public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
-       super.m_8038_(p_32286_, p_32287_);
+    public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
+       super.thunderHit(p_32286_, p_32287_);
 +      // CraftBukkit start
 +      if (CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +
-       this.f_19804_.m_135381_(f_32274_, true);
+       this.entityData.set(DATA_IS_POWERED, true);
     }
  
 +   public void setPowered(boolean powered) {
-+      this.f_19804_.m_135381_(f_32274_, powered);
++      this.entityData.set(DATA_IS_POWERED, powered);
 +   }
 +   // CraftBukkit end
 +
-    protected InteractionResult m_6071_(Player p_32301_, InteractionHand p_32302_) {
-       ItemStack itemstack = p_32301_.m_21120_(p_32302_);
-       if (itemstack.m_204117_(ItemTags.f_262757_)) {
+    protected InteractionResult mobInteract(Player p_32301_, InteractionHand p_32302_) {
+       ItemStack itemstack = p_32301_.getItemInHand(p_32302_);
+       if (itemstack.is(ItemTags.CREEPER_IGNITERS)) {
 @@ -221,13 +_,20 @@
        }
     }
  
--   private void m_32315_() {
-+   public void m_32315_() {
-       if (!this.m_9236_().f_46443_) {
-          float f = this.m_7090_() ? 2.0F : 1.0F;
--         this.f_20890_ = true;
--         this.m_9236_().m_254849_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)this.f_32272_ * f, Level.ExplosionInteraction.MOB);
--         this.m_146870_();
--         this.m_32316_();
+-   private void explodeCreeper() {
++   public void explodeCreeper() {
+       if (!this.level().isClientSide) {
+          float f = this.isPowered() ? 2.0F : 1.0F;
+-         this.dead = true;
+-         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionRadius * f, Level.ExplosionInteraction.MOB);
+-         this.discard();
+-         this.spawnLingeringCloud();
 +         // CraftBukkit start
-+         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.f_32272_ * f, false);
++         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
 +         if (!event.isCancelled()) {
-+            this.f_20890_ = true;
-+            this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
-+            this.m_146870_();
-+            this.m_32316_();
++            this.dead = true;
++            this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.discard();
++            this.spawnLingeringCloud();
 +         } else {
-+            f_32270_ = 0;
++            swell = 0;
 +         }
 +         // CraftBukkit end
        }
  
     }
 @@ -236,6 +_,7 @@
-       Collection<MobEffectInstance> collection = this.m_21220_();
+       Collection<MobEffectInstance> collection = this.getActiveEffects();
        if (!collection.isEmpty()) {
-          AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.m_9236_(), this.m_20185_(), this.m_20186_(), this.m_20189_());
-+         areaeffectcloud.m_19718_(this); // CraftBukkit
-          areaeffectcloud.m_19712_(2.5F);
-          areaeffectcloud.m_19732_(-0.5F);
-          areaeffectcloud.m_19740_(10);
+          AreaEffectCloud areaeffectcloud = new AreaEffectCloud(this.level(), this.getX(), this.getY(), this.getZ());
++         areaeffectcloud.setOwner(this); // CraftBukkit
+          areaeffectcloud.setRadius(2.5F);
+          areaeffectcloud.setRadiusOnUse(-0.5F);
+          areaeffectcloud.setWaitTime(10);
 @@ -245,7 +_,7 @@
           for(MobEffectInstance mobeffectinstance : collection) {
-             areaeffectcloud.m_19716_(new MobEffectInstance(mobeffectinstance));
+             areaeffectcloud.addEffect(new MobEffectInstance(mobeffectinstance));
           }
 -
 +         areaeffectcloud.spawnReason(CreatureSpawnEvent.SpawnReason.EXPLOSION); // CraftBukkit
-          this.m_9236_().m_7967_(areaeffectcloud);
+          this.level().addFreshEntity(areaeffectcloud);
        }
  

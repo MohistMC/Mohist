@@ -9,15 +9,15 @@
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
  
  public class ArmorItem extends Item implements Equipable {
-    private static final EnumMap<ArmorItem.Type, UUID> f_265987_ = Util.m_137469_(new EnumMap<>(ArmorItem.Type.class), (p_266744_) -> {
+    private static final EnumMap<ArmorItem.Type, UUID> ARMOR_MODIFIER_UUID_PER_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), (p_266744_) -> {
 @@ -53,7 +_,33 @@
           LivingEntity livingentity = list.get(0);
-          EquipmentSlot equipmentslot = Mob.m_147233_(p_40400_);
-          ItemStack itemstack = p_40400_.m_41620_(1);
--         livingentity.m_8061_(equipmentslot, itemstack);
+          EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(p_40400_);
+          ItemStack itemstack = p_40400_.split(1);
+-         livingentity.setItemSlot(equipmentslot, itemstack);
 +         // CraftBukkit start
-+         Level world = p_40399_.f_301782_();
-+         org.bukkit.block.Block block = CraftBlock.at(world, p_40399_.f_301784_());
++         Level world = p_40399_.level();
++         org.bukkit.block.Block block = CraftBlock.at(world, p_40399_.pos());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +
 +         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) livingentity.getBukkitEntity());
@@ -26,31 +26,31 @@
 +         }
 +
 +         if (event.isCancelled()) {
-+            p_40400_.m_41769_(1);
++            p_40400_.grow(1);
 +            return false;
 +         }
 +
 +         if (!event.getItem().equals(craftItem)) {
-+            p_40400_.m_41769_(1);
++            p_40400_.grow(1);
 +            // Chain to handler for new item
 +            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.f_52661_.get(eventStack.m_41720_());
-+            if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != ArmorItem.f_40376_) {
-+               idispensebehavior.m_6115_(p_40399_, eventStack);
++            DispenseItemBehavior idispensebehavior = (DispenseItemBehavior) DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != ArmorItem.DISPENSE_ITEM_BEHAVIOR) {
++               idispensebehavior.dispense(p_40399_, eventStack);
 +               return true;
 +            }
 +         }
-+         livingentity.m_8061_(equipmentslot, CraftItemStack.asNMSCopy(event.getItem()));
++         livingentity.setItemSlot(equipmentslot, CraftItemStack.asNMSCopy(event.getItem()));
 +         // CraftBukkit end
           if (livingentity instanceof Mob) {
-             ((Mob)livingentity).m_21409_(equipmentslot, 2.0F);
-             ((Mob)livingentity).m_21530_();
+             ((Mob)livingentity).setDropChance(equipmentslot, 2.0F);
+             ((Mob)livingentity).setPersistenceRequired();
 @@ -75,7 +_,7 @@
-       UUID uuid = f_265987_.get(p_266831_);
-       builder.put(Attributes.f_22284_, new AttributeModifier(uuid, "Armor modifier", (double)this.f_40381_, AttributeModifier.Operation.ADDITION));
-       builder.put(Attributes.f_22285_, new AttributeModifier(uuid, "Armor toughness", (double)this.f_40382_, AttributeModifier.Operation.ADDITION));
+       UUID uuid = ARMOR_MODIFIER_UUID_PER_TYPE.get(p_266831_);
+       builder.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", (double)this.defense, AttributeModifier.Operation.ADDITION));
+       builder.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", (double)this.toughness, AttributeModifier.Operation.ADDITION));
 -      if (p_40386_ == ArmorMaterials.NETHERITE) {
-+      if (this.f_40378_ > 0) {
-          builder.put(Attributes.f_22278_, new AttributeModifier(uuid, "Armor knockback resistance", (double)this.f_40378_, AttributeModifier.Operation.ADDITION));
++      if (this.knockbackResistance > 0) {
+          builder.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", (double)this.knockbackResistance, AttributeModifier.Operation.ADDITION));
        }
  

@@ -44,133 +44,133 @@
  
  public class ServerPlayerGameMode {
 @@ -51,9 +_,16 @@
-       if (p_143474_ == this.f_9247_) {
+       if (p_143474_ == this.gameModeForPlayer) {
           return false;
        } else {
 +         // CraftBukkit start
-+         PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(f_9245_.getBukkitEntity(), GameMode.getByValue(p_143474_.m_46392_()));
-+         f_9244_.getCraftServer().getPluginManager().callEvent(event);
++         PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent(player.getBukkitEntity(), GameMode.getByValue(p_143474_.getId()));
++         level.getCraftServer().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return false;
 +         }
 +         // CraftBukkit end
-          this.m_9273_(p_143474_, this.f_9248_);
-          this.f_9245_.m_6885_();
--         this.f_9245_.f_8924_.m_6846_().m_11268_(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.f_9245_));
-+         this.f_9245_.f_8924_.m_6846_().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.f_9245_), this.f_9245_); // CraftBukkit
-          this.f_9244_.m_8878_();
+          this.setGameModeForPlayer(p_143474_, this.previousGameModeForPlayer);
+          this.player.onUpdateAbilities();
+-         this.player.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.player));
++         this.player.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE, this.player), this.player); // CraftBukkit
+          this.level.updateSleepingPlayerList();
           return true;
        }
 @@ -83,7 +_,7 @@
     }
  
-    public void m_7712_() {
--      ++this.f_9252_;
-+      this.f_9252_ = MinecraftServer.currentTick; // CraftBukkit;
-       if (this.f_9253_) {
-          BlockState blockstate = this.f_9244_.m_8055_(this.f_9254_);
-          if (blockstate.m_60795_()) {
+    public void tick() {
+-      ++this.gameTicks;
++      this.gameTicks = MinecraftServer.currentTick; // CraftBukkit;
+       if (this.hasDelayedDestroy) {
+          BlockState blockstate = this.level.getBlockState(this.delayedDestroyPos);
+          if (blockstate.isAir()) {
 @@ -124,7 +_,15 @@
     }
  
-    public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
--      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
-+      if (BanItem.check(f_9245_)) {
-+         this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
+    public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
+-      if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(p_215120_)) > ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++      if (BanItem.check(player)) {
++         this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +         return;
 +      }
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_, p_215121_);
-+      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(player, p_215120_, p_215122_, p_215121_);
++      if (event.isCanceled() || (!this.isCreative() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }
-+      if (!this.f_9245_.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
-          this.m_215125_(p_215120_, false, p_215124_, "too far");
-       } else if (p_215120_.m_123342_() >= p_215123_) {
-          this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
++      if (!this.player.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
+          this.debugLogging(p_215120_, false, p_215124_, "too far");
+       } else if (p_215120_.getY() >= p_215123_) {
+          this.player.connection.send(new ClientboundBlockUpdatePacket(p_215120_, this.level.getBlockState(p_215120_)));
 @@ -132,16 +_,46 @@
        } else {
           if (p_215121_ == ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) {
-             if (!this.f_9244_.m_7966_(this.f_9245_, p_215120_)) {
+             if (!this.level.mayInteract(this.player, p_215120_)) {
 +               // CraftBukkit start - fire PlayerInteractEvent
-+               CraftEventFactory.callPlayerInteractEvent(this.f_9245_, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
-                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
-                this.m_215125_(p_215120_, false, p_215124_, "may not interact");
++               CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.player.getInventory().getSelected(), InteractionHand.MAIN_HAND);
+                this.player.connection.send(new ClientboundBlockUpdatePacket(p_215120_, this.level.getBlockState(p_215120_)));
+                this.debugLogging(p_215120_, false, p_215124_, "may not interact");
 -               return;
 -            }
 +               // Update any tile entity data for this block
-+               BlockEntity tileentity = f_9244_.m_7702_(p_215120_);
++               BlockEntity tileentity = level.getBlockEntity(p_215120_);
 +               if (tileentity != null) {
-+                  this.f_9245_.f_8906_.m_141995_(tileentity.m_58483_());
++                  this.player.connection.send(tileentity.getUpdatePacket());
 +               }
 +               // CraftBukkit end
 +               return;
 +            }
 +
 +            // CraftBukkit start
-+            PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(this.f_9245_, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
++            PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.player.getInventory().getSelected(), InteractionHand.MAIN_HAND);
 +            if (eventCB.isCancelled()) {
 +               // Let the client know the block still exists
-+               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +               // Update any tile entity data for this block
-+               BlockEntity tileentity = this.f_9244_.m_7702_(p_215120_);
++               BlockEntity tileentity = this.level.getBlockEntity(p_215120_);
 +               if (tileentity != null) {
-+                  this.f_9245_.f_8906_.m_141995_(tileentity.m_58483_());
++                  this.player.connection.send(tileentity.getUpdatePacket());
 +               }
 +               return;
 +            }
 +            // CraftBukkit end
  
-             if (this.m_9295_()) {
-                this.m_215116_(p_215120_, p_215124_, "creative destroy");
+             if (this.isCreative()) {
+                this.destroyAndAck(p_215120_, p_215124_, "creative destroy");
                 return;
              }
  
 +            // Spigot start - handle debug stick left click for non-creative
-+            if (this.f_9245_.m_21205_().m_150930_(net.minecraft.world.item.Items.f_42751_)
-+                    && ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.f_42751_).m_150802_(this.f_9245_, this.f_9244_.m_8055_(p_215120_), this.f_9244_, p_215120_, false, this.f_9245_.m_21205_())) {
-+               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++            if (this.player.getMainHandItem().is(net.minecraft.world.item.Items.DEBUG_STICK)
++                    && ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.DEBUG_STICK).handleInteraction(this.player, this.level.getBlockState(p_215120_), this.level, p_215120_, false, this.player.getMainHandItem())) {
++               this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +               return;
 +            }
 +            // Spigot end
 +
-             if (this.f_9245_.m_36187_(this.f_9244_, p_215120_, this.f_9247_)) {
-                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
-                this.m_215125_(p_215120_, false, p_215124_, "block action restricted");
+             if (this.player.blockActionRestricted(this.level, p_215120_, this.gameModeForPlayer)) {
+                this.player.connection.send(new ClientboundBlockUpdatePacket(p_215120_, this.level.getBlockState(p_215120_)));
+                this.debugLogging(p_215120_, false, p_215124_, "block action restricted");
 @@ -151,11 +_,43 @@
-             this.f_9250_ = this.f_9252_;
+             this.destroyProgressStart = this.gameTicks;
              float f = 1.0F;
-             BlockState blockstate = this.f_9244_.m_8055_(p_215120_);
--            if (!blockstate.m_60795_()) {
+             BlockState blockstate = this.level.getBlockState(p_215120_);
+-            if (!blockstate.isAir()) {
 +            // CraftBukkit start - Swings at air do *NOT* exist.
 +            if (eventCB.useInteractedBlock() == Event.Result.DENY) {
 +               // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
-+               BlockState data = this.f_9244_.m_8055_(p_215120_);
-+               if (data.m_60734_() instanceof DoorBlock) {
++               BlockState data = this.level.getBlockState(p_215120_);
++               if (data.getBlock() instanceof DoorBlock) {
 +                  // For some reason *BOTH* the bottom/top part have to be marked updated.
-+                  boolean bottom = data.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
-+                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
-+                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, bottom ? p_215120_.m_7494_() : p_215120_.m_7495_()));
-+               } else if (data.m_60734_() instanceof TrapDoorBlock) {
-+                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++                  boolean bottom = data.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
++                  this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
++                  this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, bottom ? p_215120_.above() : p_215120_.below()));
++               } else if (data.getBlock() instanceof TrapDoorBlock) {
++                  this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +               }
-+            } else if (!blockstate.m_60795_()) {
++            } else if (!blockstate.isAir()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
-                blockstate.m_60686_(this.f_9244_, p_215120_, this.f_9245_);
-                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.m_9236_(), p_215120_);
+                blockstate.attack(this.level, p_215120_, this.player);
+                f = blockstate.getDestroyProgress(this.player, this.player.level(), p_215120_);
              }
  
 +            if (eventCB.useItemInHand() == Event.Result.DENY) {
 +               // If we 'insta destroyed' then the client needs to be informed.
 +               if (f > 1.0f) {
-+                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++                  this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +               }
 +               return;
 +            }
-+            org.bukkit.event.block.BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_(), f >= 1.0f);
++            org.bukkit.event.block.BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.player, p_215120_, this.player.getInventory().getSelected(), f >= 1.0f);
 +
 +            if (blockEvent.isCancelled()) {
 +               // Let the client know the block still exists
-+               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.player.connection.send(new ClientboundBlockUpdatePacket(this.level, p_215120_));
 +               return;
 +            }
 +            if (blockEvent.getInstaBreak()) {
@@ -178,74 +178,74 @@
 +            }
 +            // CraftBukkit end
 +
-             if (!blockstate.m_60795_() && f >= 1.0F) {
-                this.m_215116_(p_215120_, p_215124_, "insta mine");
+             if (!blockstate.isAir() && f >= 1.0F) {
+                this.destroyAndAck(p_215120_, p_215124_, "insta mine");
              } else {
 @@ -197,13 +_,15 @@
           } else if (p_215121_ == ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK) {
-             this.f_9249_ = false;
-             if (!Objects.equals(this.f_9251_, p_215120_)) {
--               f_9246_.warn("Mismatch in destroy block pos: {} {}", this.f_9251_, p_215120_);
-+               f_9246_.debug("Mismatch in destroy block pos: {} {}", this.f_9251_, p_215120_); // CraftBukkit - SPIGOT-5457 sent by client when interact event cancelled
-                this.f_9244_.m_6801_(this.f_9245_.m_19879_(), this.f_9251_, -1);
-                this.m_215125_(p_215120_, true, p_215124_, "aborted mismatched destroying");
+             this.isDestroyingBlock = false;
+             if (!Objects.equals(this.destroyPos, p_215120_)) {
+-               LOGGER.warn("Mismatch in destroy block pos: {} {}", this.destroyPos, p_215120_);
++               LOGGER.debug("Mismatch in destroy block pos: {} {}", this.destroyPos, p_215120_); // CraftBukkit - SPIGOT-5457 sent by client when interact event cancelled
+                this.level.destroyBlockProgress(this.player.getId(), this.destroyPos, -1);
+                this.debugLogging(p_215120_, true, p_215124_, "aborted mismatched destroying");
              }
  
-             this.f_9244_.m_6801_(this.f_9245_.m_19879_(), p_215120_, -1);
-             this.m_215125_(p_215120_, true, p_215124_, "aborted destroying");
+             this.level.destroyBlockProgress(this.player.getId(), p_215120_, -1);
+             this.debugLogging(p_215120_, true, p_215124_, "aborted destroying");
 +
-+            CraftEventFactory.callBlockDamageAbortEvent(this.f_9245_, p_215120_, this.f_9245_.m_150109_().m_36056_()); // CraftBukkit
++            CraftEventFactory.callBlockDamageAbortEvent(this.player, p_215120_, this.player.getInventory().getSelected()); // CraftBukkit
           }
  
        }
 @@ -220,8 +_,12 @@
     }
  
-    public boolean m_9280_(BlockPos p_9281_) {
-+      if (BanItem.check(f_9245_)) {
+    public boolean destroyBlock(BlockPos p_9281_) {
++      if (BanItem.check(player)) {
 +         return false;
 +      }
-       BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
--      if (!this.f_9245_.m_21205_().m_41720_().m_6777_(blockstate, this.f_9244_, p_9281_, this.f_9245_)) {
-+      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(f_9244_, f_9247_, f_9245_, p_9281_);
+       BlockState blockstate = this.level.getBlockState(p_9281_);
+-      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) {
++      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(level, gameModeForPlayer, player, p_9281_);
 +      if (exp == -1) {
           return false;
        } else {
-          BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
+          BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
 @@ -229,30 +_,42 @@
-          if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
-             this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
+          if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
+             this.level.sendBlockUpdated(p_9281_, blockstate, blockstate, 3);
              return false;
-+         } else if (f_9245_.m_21205_().onBlockStartBreak(p_9281_, f_9245_)) {
++         } else if (player.getMainHandItem().onBlockStartBreak(p_9281_, player)) {
 +            return false;
-          } else if (this.f_9245_.m_36187_(this.f_9244_, p_9281_, this.f_9247_)) {
+          } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
              return false;
           } else {
--            block.m_5707_(this.f_9244_, p_9281_, blockstate, this.f_9245_);
--            boolean flag = this.f_9244_.m_7471_(p_9281_, false);
+-            block.playerWillDestroy(this.level, p_9281_, blockstate, this.player);
+-            boolean flag = this.level.removeBlock(p_9281_, false);
 -            if (flag) {
--               block.m_6786_(this.f_9244_, p_9281_, blockstate);
+-               block.destroy(this.level, p_9281_, blockstate);
 -            }
 -
-             if (this.m_9295_()) {
+             if (this.isCreative()) {
 +               removeBlock(p_9281_, false);
                 return true;
              } else {
-                ItemStack itemstack = this.f_9245_.m_21205_();
-                ItemStack itemstack1 = itemstack.m_41777_();
--               boolean flag1 = this.f_9245_.m_36298_(blockstate);
-+               boolean flag1 = blockstate.canHarvestBlock(this.f_9244_, p_9281_, this.f_9245_); // previously player.hasCorrectToolForDrops(blockstate)
-                itemstack.m_41686_(this.f_9244_, blockstate, p_9281_, this.f_9245_);
-+               if (itemstack.m_41619_() && !itemstack1.m_41619_())
-+                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.f_9245_, itemstack1, InteractionHand.MAIN_HAND);
+                ItemStack itemstack = this.player.getMainHandItem();
+                ItemStack itemstack1 = itemstack.copy();
+-               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
++               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
+                itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
++               if (itemstack.isEmpty() && !itemstack1.isEmpty())
++                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
 +               boolean flag = removeBlock(p_9281_, flag1);
 +
                 if (flag && flag1) {
-                   block.m_6240_(this.f_9244_, this.f_9245_, p_9281_, blockstate, blockentity, itemstack1);
+                   block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
 +               if (flag && exp > 0)
-+                  blockstate.m_60734_().m_49805_(f_9244_, p_9281_, exp);
++                  blockstate.getBlock().popExperience(level, p_9281_, exp);
 +
                 return true;
              }
@@ -254,23 +254,23 @@
 +   }
 +
 +   private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
-+      BlockState state = this.f_9244_.m_8055_(p_180235_1_);
-+      boolean removed = state.onDestroyedByPlayer(this.f_9244_, p_180235_1_, this.f_9245_, canHarvest, this.f_9244_.m_6425_(p_180235_1_));
++      BlockState state = this.level.getBlockState(p_180235_1_);
++      boolean removed = state.onDestroyedByPlayer(this.level, p_180235_1_, this.player, canHarvest, this.level.getFluidState(p_180235_1_));
 +      if (removed)
-+         state.m_60734_().m_6786_(this.f_9244_, p_180235_1_, state);
++         state.getBlock().destroy(this.level, p_180235_1_, state);
 +      return removed;
     }
  
-    public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
+    public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
 @@ -261,6 +_,8 @@
-       } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
+       } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
           return InteractionResult.PASS;
        } else {
 +         InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_9262_, p_9265_);
 +         if (cancelResult != null) return cancelResult;
-          int i = p_9264_.m_41613_();
-          int j = p_9264_.m_41773_();
-          InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
+          int i = p_9264_.getCount();
+          int j = p_9264_.getDamageValue();
+          InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
 @@ -294,13 +_,61 @@
        }
     }
@@ -282,56 +282,56 @@
 +   public BlockPos interactPosition;
 +   public InteractionHand interactHand;
 +   public ItemStack interactItemStack;
-    public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
+    public InteractionResult useItemOn(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
 +      if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
-       BlockPos blockpos = p_9270_.m_82425_();
-       BlockState blockstate = p_9267_.m_8055_(blockpos);
+       BlockPos blockpos = p_9270_.getBlockPos();
+       BlockState blockstate = p_9267_.getBlockState(blockpos);
 +      if (BanItem.check(p_9266_, ItemAPI.toNMSItem(CraftBlock.at(p_9267_, blockpos).getType()))) return InteractionResult.FAIL; // Block
 +      InteractionResult enuminteractionresult = InteractionResult.PASS;
 +      boolean cancelledBlock = false;
 +
-       if (!blockstate.m_60734_().m_245993_(p_9267_.m_246046_())) {
+       if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
           return InteractionResult.FAIL;
 +      }
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
 +      if (event.isCanceled()) return event.getCancellationResult();
-+      if (this.f_9247_ == GameType.SPECTATOR) {
-+         MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
++      if (this.gameModeForPlayer == GameType.SPECTATOR) {
++         MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
 +         cancelledBlock = !(menuprovider instanceof MenuProvider);
 +      }
 +
-+      if (p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
++      if (p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 +         cancelledBlock = true;
 +      }
 +
-+      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock, p_9269_, p_9270_.m_82450_());
++      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.getDirection(), p_9268_, cancelledBlock, p_9269_, p_9270_.getLocation());
 +      firedInteract = true;
 +      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
-+      interactPosition = blockpos.m_7949_();
++      interactPosition = blockpos.immutable();
 +      interactHand = p_9269_;
-+      interactItemStack = p_9268_.m_41777_();
++      interactItemStack = p_9268_.copy();
 +
 +      if (eventCB.useInteractedBlock() == Event.Result.DENY) {
 +         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
-+         if (blockstate.m_60734_() instanceof DoorBlock) {
-+            boolean bottom = blockstate.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
-+            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.m_7494_() : blockpos.m_7495_()));
-+         } else if (blockstate.m_60734_() instanceof CakeBlock) {
++         if (blockstate.getBlock() instanceof DoorBlock) {
++            boolean bottom = blockstate.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
++            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.above() : blockpos.below()));
++         } else if (blockstate.getBlock() instanceof CakeBlock) {
 +            p_9266_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
-+         } else if (interactItemStack.m_41720_() instanceof DoubleHighBlockItem) {
++         } else if (interactItemStack.getItem() instanceof DoubleHighBlockItem) {
 +            // send a correcting update to the client, as it already placed the upper half of the bisected item
-+            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_121945_(p_9270_.m_82434_()).m_7494_()));
++            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.relative(p_9270_.getDirection()).above()));
 +
 +            // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
-+            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_7494_()));
++            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.above()));
 +         }
 +         p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
 +         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
-       } else if (this.f_9247_ == GameType.SPECTATOR) {
-          MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
+       } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
+          MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
 +
           if (menuprovider != null) {
-             p_9266_.m_5893_(menuprovider);
+             p_9266_.openMenu(menuprovider);
              return InteractionResult.SUCCESS;
 @@ -308,10 +_,15 @@
              return InteractionResult.PASS;
@@ -342,26 +342,26 @@
 +            InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
 +            if (result != InteractionResult.PASS) return result;
 +         }
-          boolean flag = !p_9266_.m_21205_().m_41619_() || !p_9266_.m_21206_().m_41619_();
--         boolean flag1 = p_9266_.m_36341_() && flag;
-+         boolean flag1 = (p_9266_.m_36341_() && flag) && !(p_9266_.m_21205_().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.m_21206_().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
-          ItemStack itemstack = p_9268_.m_41777_();
+          boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
+-         boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
++         boolean flag1 = (p_9266_.isSecondaryUseActive() && flag) && !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
+          ItemStack itemstack = p_9268_.copy();
 -         if (!flag1) {
 +         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-             InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
-             if (interactionresult.m_19077_()) {
-                CriteriaTriggers.f_10562_.m_285767_(p_9266_, blockpos, itemstack);
+             InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
+             if (interactionresult.consumesAction()) {
+                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
 @@ -319,8 +_,8 @@
              }
           }
  
--         if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
+-         if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 -            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))) {
++         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
              InteractionResult interactionresult1;
-             if (this.m_9295_()) {
-                int i = p_9268_.m_41613_();
+             if (this.isCreative()) {
+                int i = p_9268_.getCount();
 @@ -335,10 +_,9 @@
              }
  
@@ -373,4 +373,4 @@
 +      return enuminteractionresult;
     }
  
-    public void m_9260_(ServerLevel p_9261_) {
+    public void setLevel(ServerLevel p_9261_) {

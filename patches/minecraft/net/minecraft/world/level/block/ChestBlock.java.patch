@@ -10,26 +10,26 @@
  import net.minecraft.network.chat.Component;
 @@ -80,27 +_,8 @@
     };
-    private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> f_51487_ = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
-       public Optional<MenuProvider> m_6959_(final ChestBlockEntity p_51604_, final ChestBlockEntity p_51605_) {
+    private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
+       public Optional<MenuProvider> acceptDouble(final ChestBlockEntity p_51604_, final ChestBlockEntity p_51605_) {
 -         final Container container = new CompoundContainer(p_51604_, p_51605_);
 -         return Optional.of(new MenuProvider() {
 -            @Nullable
--            public AbstractContainerMenu m_7208_(int p_51622_, Inventory p_51623_, Player p_51624_) {
--               if (p_51604_.m_7525_(p_51624_) && p_51605_.m_7525_(p_51624_)) {
--                  p_51604_.m_59640_(p_51623_.f_35978_);
--                  p_51605_.m_59640_(p_51623_.f_35978_);
--                  return ChestMenu.m_39246_(p_51622_, p_51623_, container);
+-            public AbstractContainerMenu createMenu(int p_51622_, Inventory p_51623_, Player p_51624_) {
+-               if (p_51604_.canOpen(p_51624_) && p_51605_.canOpen(p_51624_)) {
+-                  p_51604_.unpackLootTable(p_51623_.player);
+-                  p_51605_.unpackLootTable(p_51623_.player);
+-                  return ChestMenu.sixRows(p_51622_, p_51623_, container);
 -               } else {
 -                  return null;
 -               }
 -            }
 -
--            public Component m_5446_() {
--               if (p_51604_.m_8077_()) {
--                  return p_51604_.m_5446_();
+-            public Component getDisplayName() {
+-               if (p_51604_.hasCustomName()) {
+-                  return p_51604_.getDisplayName();
 -               } else {
--                  return (Component)(p_51605_.m_8077_() ? p_51605_.m_5446_() : Component.m_237115_("container.chestDouble"));
+-                  return (Component)(p_51605_.hasCustomName() ? p_51605_.getDisplayName() : Component.translatable("container.chestDouble"));
 -               }
 -            }
 -         });
@@ -37,31 +37,31 @@
 +         return Optional.of(new DoubleInventory(p_51604_, p_51605_, container)); // CraftBukkit
        }
  
-       public Optional<MenuProvider> m_7693_(ChestBlockEntity p_51602_) {
+       public Optional<MenuProvider> acceptSingle(ChestBlockEntity p_51602_) {
 @@ -273,6 +_,13 @@
-       return this.m_5641_(p_51574_, p_51575_, p_51576_, false).m_5649_(f_51487_).orElse((MenuProvider)null);
+       return this.combine(p_51574_, p_51575_, p_51576_, false).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider)null);
     }
  
 +   // CraftBukkit start
 +   @Nullable
 +   public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos, boolean ignoreObstructions) {
-+      return this.m_5641_(pState, pLevel, pPos, ignoreObstructions).m_5649_(f_51487_).orElse((MenuProvider) null);
++      return this.combine(pState, pLevel, pPos, ignoreObstructions).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider) null);
 +   }
 +   // CraftBukkit end
 +
-    public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> m_51517_(final LidBlockEntity p_51518_) {
+    public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(final LidBlockEntity p_51518_) {
        return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {
-          public Float2FloatFunction m_6959_(ChestBlockEntity p_51633_, ChestBlockEntity p_51634_) {
+          public Float2FloatFunction acceptDouble(ChestBlockEntity p_51633_, ChestBlockEntity p_51634_) {
 @@ -335,7 +_,8 @@
     }
  
-    public BlockState m_6943_(BlockState p_51549_, Mirror p_51550_) {
--      return p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
-+      BlockState rotated = p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
-+      return p_51550_ == Mirror.NONE ? rotated : rotated.m_61124_(f_51479_, rotated.m_61143_(f_51479_).m_61486_());  // Forge: Fixed MC-134110 Structure mirroring breaking apart double chests
+    public BlockState mirror(BlockState p_51549_, Mirror p_51550_) {
+-      return p_51549_.rotate(p_51550_.getRotation(p_51549_.getValue(FACING)));
++      BlockState rotated = p_51549_.rotate(p_51550_.getRotation(p_51549_.getValue(FACING)));
++      return p_51550_ == Mirror.NONE ? rotated : rotated.setValue(TYPE, rotated.getValue(TYPE).getOpposite());  // Forge: Fixed MC-134110 Structure mirroring breaking apart double chests
     }
  
-    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51562_) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51562_) {
 @@ -353,4 +_,35 @@
        }
  
@@ -82,18 +82,18 @@
 +
 +      @Nullable
 +      @Override
-+      public AbstractContainerMenu m_7208_(int i, net.minecraft.world.entity.player.Inventory playerinventory, net.minecraft.world.entity.player.Player entityhuman) {
-+         if (this.tileentitychest.m_7525_(entityhuman) && this.tileentitychest1.m_7525_(entityhuman)) {
-+            this.tileentitychest.m_59640_(playerinventory.f_35978_);
-+            this.tileentitychest1.m_59640_(playerinventory.f_35978_);
-+            return ChestMenu.m_39246_(i, playerinventory, this.inventorylargechest);
++      public AbstractContainerMenu createMenu(int i, net.minecraft.world.entity.player.Inventory playerinventory, net.minecraft.world.entity.player.Player entityhuman) {
++         if (this.tileentitychest.canOpen(entityhuman) && this.tileentitychest1.canOpen(entityhuman)) {
++            this.tileentitychest.unpackLootTable(playerinventory.player);
++            this.tileentitychest1.unpackLootTable(playerinventory.player);
++            return ChestMenu.sixRows(i, playerinventory, this.inventorylargechest);
 +         }
 +         return null;
 +      }
 +
 +      @Override
-+      public net.minecraft.network.chat.Component m_5446_() {
-+         return this.tileentitychest.m_8077_() ? this.tileentitychest.m_5446_() : (this.tileentitychest1.m_8077_() ? this.tileentitychest1.m_5446_() : (tileentitychest1.m_8077_() ? tileentitychest1.m_5446_() : Component.m_237115_("container.chestDouble")));
++      public net.minecraft.network.chat.Component getDisplayName() {
++         return this.tileentitychest.hasCustomName() ? this.tileentitychest.getDisplayName() : (this.tileentitychest1.hasCustomName() ? this.tileentitychest1.getDisplayName() : (tileentitychest1.hasCustomName() ? tileentitychest1.getDisplayName() : Component.translatable("container.chestDouble")));
 +      }
 +   }
 +   // CraftBukkit end

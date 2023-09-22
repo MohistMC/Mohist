@@ -1,19 +1,19 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
 @@ -103,6 +_,7 @@
-    public final boolean f_290960_ = this.m_139836_("log-ips", true);
-    private final DedicatedServerProperties.WorldDimensionData f_244504_;
-    public final WorldOptions f_243824_;
-+   public final boolean debug = this.m_139836_("debug", false); // CraftBukkit
+    public final boolean logIPs = this.get("log-ips", true);
+    private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
+    public final WorldOptions worldOptions;
++   public final boolean debug = this.get("debug", false); // CraftBukkit
  
     public DedicatedServerProperties(Properties p_180926_) {
        super(p_180926_);
 @@ -190,7 +_,7 @@
-       return this.f_244504_.m_247373_(p_250466_);
+       return this.worldDimensionData.create(p_250466_);
     }
  
--   static record WorldDimensionData(JsonObject f_244404_, String f_243780_) {
-+   public static record WorldDimensionData(JsonObject f_244404_, String f_243780_) {
-       private static final Map<String, ResourceKey<WorldPreset>> f_244358_ = Map.of("default", WorldPresets.f_226437_, "largebiomes", WorldPresets.f_226439_);
+-   static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
++   public static record WorldDimensionData(JsonObject generatorSettings, String levelType) {
+       private static final Map<String, ResourceKey<WorldPreset>> LEGACY_PRESET_NAMES = Map.of("default", WorldPresets.NORMAL, "largebiomes", WorldPresets.LARGE_BIOMES);
  
-       public WorldDimensions m_247373_(RegistryAccess p_248812_) {
+       public WorldDimensions create(RegistryAccess p_248812_) {

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/world/damagesource/DamageSource.java
 @@ -20,6 +_,39 @@
     @Nullable
-    private final Vec3 f_268454_;
+    private final Vec3 damageSourcePosition;
  
 +   // CraftBukkit start
 +   private boolean sweep;
@@ -38,5 +38,5 @@
 +   // CraftBukkit end
 +   
     public String toString() {
-       return "DamageSource (" + this.m_269415_().f_268677_() + ")";
+       return "DamageSource (" + this.type().msgId() + ")";
     }

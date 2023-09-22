@@ -7,10 +7,10 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantRecipe;
  
  public class MerchantOffer {
-    public ItemStack f_45310_;
+    public ItemStack baseCostA;
 @@ -17,6 +_,23 @@
-    public float f_45318_;
-    public int f_45319_ = 1;
+    public float priceMultiplier;
+    public int xp = 1;
  
 +   // CraftBukkit start
 +   private CraftMerchantRecipe bukkitHandle; // CraftBukkit
@@ -30,36 +30,36 @@
 +   // CraftBukkit end
 +
     public MerchantOffer(CompoundTag p_45351_) {
-       this.f_45310_ = ItemStack.m_41712_(p_45351_.m_128469_("buy"));
-       this.f_45311_ = ItemStack.m_41712_(p_45351_.m_128469_("buyB"));
+       this.baseCostA = ItemStack.of(p_45351_.getCompound("buy"));
+       this.costB = ItemStack.of(p_45351_.getCompound("buyB"));
 @@ -90,7 +_,7 @@
        } else {
-          int i = this.f_45310_.m_41613_();
-          int j = Math.max(0, Mth.m_14143_((float)(i * this.f_45317_) * this.f_45318_));
--         return this.f_45310_.m_255036_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41720_().m_41459_()));
-+         return this.f_45310_.m_255036_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41741_()));
+          int i = this.baseCostA.getCount();
+          int j = Math.max(0, Mth.floor((float)(i * this.demand) * this.priceMultiplier));
+-         return this.baseCostA.copyWithCount(Mth.clamp(i + j + this.specialPriceDiff, 1, this.baseCostA.getItem().getMaxStackSize()));
++         return this.baseCostA.copyWithCount(Mth.clamp(i + j + this.specialPriceDiff, 1, this.baseCostA.getMaxStackSize()));
        }
     }
  
 @@ -194,7 +_,7 @@
           return true;
        } else {
-          ItemStack itemstack = p_45366_.m_41777_();
--         if (itemstack.m_41720_().m_41465_()) {
-+         if (itemstack.m_41720_().isDamageable(itemstack)) {
-             itemstack.m_41721_(itemstack.m_41773_());
+          ItemStack itemstack = p_45366_.copy();
+-         if (itemstack.getItem().canBeDepleted()) {
++         if (itemstack.getItem().isDamageable(itemstack)) {
+             itemstack.setDamageValue(itemstack.getDamageValue());
           }
  
 @@ -206,7 +_,11 @@
-       if (!this.m_45355_(p_45362_, p_45363_)) {
+       if (!this.satisfiedBy(p_45362_, p_45363_)) {
           return false;
        } else {
--         p_45362_.m_41774_(this.m_45358_().m_41613_());
+-         p_45362_.shrink(this.getCostA().getCount());
 +         // CraftBukkit start
-+         if (!this.m_45358_().m_41619_()) {
-+            p_45362_.m_41774_(this.m_45358_().m_41613_());
++         if (!this.getCostA().isEmpty()) {
++            p_45362_.shrink(this.getCostA().getCount());
 +         }
 +         // CraftBukkit end
-          if (!this.m_45364_().m_41619_()) {
-             p_45363_.m_41774_(this.m_45364_().m_41613_());
+          if (!this.getCostB().isEmpty()) {
+             p_45363_.shrink(this.getCostB().getCount());
           }

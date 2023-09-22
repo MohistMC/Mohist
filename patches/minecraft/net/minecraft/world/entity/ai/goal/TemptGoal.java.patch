@@ -10,20 +10,20 @@
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
  public class TemptGoal extends Goal {
-    private static final TargetingConditions f_25926_ = TargetingConditions.m_148353_().m_26883_(10.0D).m_148355_();
+    private static final TargetingConditions TEMP_TARGETING = TargetingConditions.forNonCombat().range(10.0D).ignoreLineOfSight();
 @@ -40,6 +_,15 @@
           return false;
        } else {
-          this.f_25925_ = this.f_25924_.m_9236_().m_45946_(this.f_148137_, this.f_25924_);
+          this.player = this.mob.level().getNearestPlayer(this.targetingConditions, this.mob);
 +         // CraftBukkit start
-+         if (this.f_25925_ != null) {
-+            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.f_25924_, this.f_25925_, EntityTargetEvent.TargetReason.TEMPT);
++         if (this.player != null) {
++            EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.mob, this.player, EntityTargetEvent.TargetReason.TEMPT);
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+            this.f_25925_ = (event.getTarget() == null) ? null : ((CraftPlayer) event.getTarget()).getHandle();
++            this.player = (event.getTarget() == null) ? null : ((CraftPlayer) event.getTarget()).getHandle();
 +         }
 +         // CraftBukkit end
-          return this.f_25925_ != null;
+          return this.player != null;
        }
     }

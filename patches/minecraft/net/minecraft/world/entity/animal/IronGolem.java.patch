@@ -19,10 +19,10 @@
  import net.minecraft.world.InteractionHand;
 @@ -96,7 +_,7 @@
  
-    protected void m_7324_(Entity p_28839_) {
-       if (p_28839_ instanceof Enemy && !(p_28839_ instanceof Creeper) && this.m_217043_().m_188503_(20) == 0) {
--         this.m_6710_((LivingEntity)p_28839_);
+    protected void doPush(Entity p_28839_) {
+       if (p_28839_ instanceof Enemy && !(p_28839_ instanceof Creeper) && this.getRandom().nextInt(20) == 0) {
+-         this.setTarget((LivingEntity)p_28839_);
 +         this.setTarget((LivingEntity)p_28839_, org.bukkit.event.entity.EntityTargetLivingEntityEvent.TargetReason.COLLISION, true); // CraftBukkit - set reason
        }
  
-       super.m_7324_(p_28839_);
+       super.doPush(p_28839_);

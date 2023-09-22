@@ -7,22 +7,22 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class Panda extends Animal {
-    private static final EntityDataAccessor<Integer> f_29073_ = SynchedEntityData.m_135353_(Panda.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Integer> UNHAPPY_COUNTER = SynchedEntityData.defineId(Panda.class, EntityDataSerializers.INT);
 @@ -508,7 +_,8 @@
     }
  
-    protected void m_7581_(ItemEntity p_29121_) {
--      if (this.m_6844_(EquipmentSlot.MAINHAND).m_41619_() && f_29071_.test(p_29121_)) {
+    protected void pickUpItem(ItemEntity p_29121_) {
+-      if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_)) {
 +      //if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(pItemEntity)) {
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.m_6844_(EquipmentSlot.MAINHAND).m_41619_() && f_29071_.test(p_29121_))).isCancelled()) { // CraftBukkit
-          this.m_21053_(p_29121_);
-          ItemStack itemstack = p_29121_.m_32055_();
-          this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
++      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_))).isCancelled()) { // CraftBukkit
+          this.onItemPickup(p_29121_);
+          ItemStack itemstack = p_29121_.getItem();
+          this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
 @@ -834,7 +_,7 @@
  
-       protected void m_5766_(Mob p_29295_, LivingEntity p_29296_) {
-          if (p_29295_ instanceof Panda && p_29295_.m_5912_()) {
--            p_29295_.m_6710_(p_29296_);
+       protected void alertOther(Mob p_29295_, LivingEntity p_29296_) {
+          if (p_29295_ instanceof Panda && p_29295_.isAggressive()) {
+-            p_29295_.setTarget(p_29296_);
 +            p_29295_.setTarget(p_29296_, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit
           }
  

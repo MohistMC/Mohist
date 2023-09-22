@@ -7,21 +7,21 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class WitherSkull extends AbstractHurtingProjectile {
-    private static final EntityDataAccessor<Boolean> f_37595_ = SynchedEntityData.m_135353_(WitherSkull.class, EntityDataSerializers.f_135035_);
+    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
 @@ -40,7 +_,7 @@
     }
  
-    public float m_7077_(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
--      return this.m_37635_() && WitherBoss.m_31491_(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
-+      return this.m_37635_() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
+    public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
+-      return this.isDangerous() && WitherBoss.canDestroy(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
++      return this.isDangerous() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
     }
  
-    protected void m_5790_(EntityHitResult p_37626_) {
+    protected void onHitEntity(EntityHitResult p_37626_) {
 @@ -56,7 +_,7 @@
-                if (entity.m_6084_()) {
-                   this.m_19970_(livingentity, entity);
+                if (entity.isAlive()) {
+                   this.doEnchantDamageEffects(livingentity, entity);
                 } else {
--                  livingentity.m_5634_(5.0F);
+-                  livingentity.heal(5.0F);
 +                  livingentity.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
                 }
              }
@@ -30,24 +30,24 @@
              }
  
              if (i > 0) {
--               livingentity1.m_147207_(new MobEffectInstance(MobEffects.f_19615_, 20 * i, 1), this.m_150173_());
-+               livingentity1.addEffect(new MobEffectInstance(MobEffects.f_19615_, 20 * i, 1), this.m_150173_(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+-               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource());
++               livingentity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 20 * i, 1), this.getEffectSource(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
              }
           }
  
 @@ -83,7 +_,14 @@
-    protected void m_6532_(HitResult p_37628_) {
-       super.m_6532_(p_37628_);
-       if (!this.m_9236_().f_46443_) {
--         this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), 1.0F, false, Level.ExplosionInteraction.MOB);
+    protected void onHit(HitResult p_37628_) {
+       super.onHit(p_37628_);
+       if (!this.level().isClientSide) {
+-         this.level().explode(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, Level.ExplosionInteraction.MOB);
 +         // CraftBukkit start
 +         ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.level.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
-+            this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +         }
 +         // CraftBukkit end
-          this.m_146870_();
+          this.discard();
        }
  

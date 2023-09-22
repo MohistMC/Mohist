@@ -12,12 +12,12 @@
  
  public class EnderDragonPhase<T extends DragonPhaseInstance> {
 @@ -60,6 +_,21 @@
-       EnderDragonPhase<T> enderdragonphase = new EnderDragonPhase<>(f_31388_.length, p_31403_, p_31404_);
-       f_31388_ = Arrays.copyOf(f_31388_, f_31388_.length + 1);
-       f_31388_[enderdragonphase.m_31405_()] = enderdragonphase;
-+      if (enderdragonphase.m_31405_() > 10) {
+       EnderDragonPhase<T> enderdragonphase = new EnderDragonPhase<>(phases.length, p_31403_, p_31404_);
+       phases = Arrays.copyOf(phases, phases.length + 1);
+       phases[enderdragonphase.getId()] = enderdragonphase;
++      if (enderdragonphase.getId() > 10) {
 +         org.bukkit.entity.EnderDragon.Phase bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.EnderDragon.Phase.class, enderdragonphase.getName());
-+         ServerAPI.phasetypeMap.put(enderdragonphase.m_31405_(), bukkit);
++         ServerAPI.phasetypeMap.put(enderdragonphase.getId(), bukkit);
 +         MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
 +      }
        return enderdragonphase;
@@ -25,11 +25,11 @@
 +
 +   // Mohist start
 +   public static EnderDragonPhase<?>[] getPhases() {
-+      return f_31388_;
++      return phases;
 +   }
 +
 +   public String getName() {
-+      return f_31391_;
++      return name;
 +   }
 +   // Mohist end
  }

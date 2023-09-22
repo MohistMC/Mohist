@@ -17,23 +17,23 @@
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
 @@ -154,7 +_,7 @@
-    public static void m_155828_(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
-       if (p_155829_ instanceof ServerLevel serverlevel && !p_155833_.m_59972_()) {
-          p_155833_.f_59927_ = 100;
--         if (p_155833_.f_59928_ == null && p_155829_.m_46472_() == Level.f_46430_) {
-+         if (p_155833_.f_59928_ == null && p_155829_.getTypeKey() == LevelStem.f_63973_) {
-             BlockPos blockpos = m_155818_(serverlevel, p_155830_);
-             blockpos = blockpos.m_6630_(10);
-             f_59925_.debug("Creating portal at {}", (Object)blockpos);
+    public static void teleportEntity(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
+       if (p_155829_ instanceof ServerLevel serverlevel && !p_155833_.isCoolingDown()) {
+          p_155833_.teleportCooldown = 100;
+-         if (p_155833_.exitPortal == null && p_155829_.dimension() == Level.END) {
++         if (p_155833_.exitPortal == null && p_155829_.getTypeKey() == LevelStem.END) {
+             BlockPos blockpos = findOrCreateValidTeleportPos(serverlevel, p_155830_);
+             blockpos = blockpos.above(10);
+             LOGGER.debug("Creating portal at {}", (Object)blockpos);
 @@ -180,6 +_,27 @@
              } else {
-                entity = p_155832_.m_20201_();
+                entity = p_155832_.getRootVehicle();
              }
 +
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (entity instanceof ServerPlayer serverPlayer) {
 +               org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
-+               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.m_123341_() + 0.5D, (double) blockpos1.m_123342_() + 0.5D, (double) blockpos1.m_123343_() + 0.5D);
++               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());
 +
@@ -43,13 +43,13 @@
 +                  return;
 +               }
 +
-+               entity.m_20091_();
-+               serverPlayer.f_8906_.teleport(teleEvent.getTo());
-+               m_155849_(p_155829_, p_155830_, p_155831_, p_155833_); // CraftBukkit - call at end of method
++               entity.setPortalCooldown();
++               serverPlayer.connection.teleport(teleEvent.getTo());
++               triggerCooldown(p_155829_, p_155830_, p_155831_, p_155833_); // CraftBukkit - call at end of method
 +               return;
 +
 +            }
 +            // CraftBukkit end
  
-             entity.m_20091_();
-             entity.m_20324_((double)blockpos1.m_123341_() + 0.5D, (double)blockpos1.m_123342_(), (double)blockpos1.m_123343_() + 0.5D);
+             entity.setPortalCooldown();
+             entity.teleportToWithTicket((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D);

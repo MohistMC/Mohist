@@ -12,8 +12,8 @@
 @@ -46,6 +_,7 @@
     }
  
-    public static void m_155503_(Level p_155504_, BlockPos p_155505_, BlockState p_155506_, EnchantmentTableBlockEntity p_155507_) {
+    public static void bookAnimationTick(Level p_155504_, BlockPos p_155505_, BlockState p_155506_, EnchantmentTableBlockEntity p_155507_) {
 +      if (!MohistConfig.bookAnimationTick) return; // Mirai - skip enchantment table book tick
-       p_155507_.f_59257_ = p_155507_.f_59256_;
-       p_155507_.f_59259_ = p_155507_.f_59258_;
-       Player player = p_155504_.m_45924_((double)p_155505_.m_123341_() + 0.5D, (double)p_155505_.m_123342_() + 0.5D, (double)p_155505_.m_123343_() + 0.5D, 3.0D, false);
+       p_155507_.oOpen = p_155507_.open;
+       p_155507_.oRot = p_155507_.rot;
+       Player player = p_155504_.getNearestPlayer((double)p_155505_.getX() + 0.5D, (double)p_155505_.getY() + 0.5D, (double)p_155505_.getZ() + 0.5D, 3.0D, false);

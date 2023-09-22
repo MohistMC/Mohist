@@ -8,15 +8,15 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class EndCrystal extends Entity {
-    private static final EntityDataAccessor<Optional<BlockPos>> f_31033_ = SynchedEntityData.m_135353_(EndCrystal.class, EntityDataSerializers.f_135039_);
+    private static final EntityDataAccessor<Optional<BlockPos>> DATA_BEAM_TARGET = SynchedEntityData.defineId(EndCrystal.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
 @@ -50,7 +_,11 @@
-       if (this.m_9236_() instanceof ServerLevel) {
-          BlockPos blockpos = this.m_20183_();
-          if (((ServerLevel)this.m_9236_()).m_8586_() != null && this.m_9236_().m_8055_(blockpos).m_60795_()) {
--            this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.m_9236_(), blockpos));
+       if (this.level() instanceof ServerLevel) {
+          BlockPos blockpos = this.blockPosition();
+          if (((ServerLevel)this.level()).getDragonFight() != null && this.level().getBlockState(blockpos).isAir()) {
+-            this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
 +            // CraftBukkit start
-+            if (!CraftEventFactory.callBlockIgniteEvent(this.m_9236_(), blockpos, this).isCancelled()) {
-+               this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.f_19853_, blockpos));
++            if (!CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
++               this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level, blockpos));
 +            }
 +            // CraftBukkit end
           }
@@ -25,24 +25,24 @@
 @@ -86,10 +_,22 @@
           return false;
        } else {
-          if (!this.m_213877_() && !this.m_9236_().f_46443_) {
+          if (!this.isRemoved() && !this.level().isClientSide) {
 +            // CraftBukkit start - All non-living entities need this
 +            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31050_, p_31051_, false)) {
 +               return false;
 +            }
 +            // CraftBukkit end
-             this.m_142687_(Entity.RemovalReason.KILLED);
-             if (!p_31050_.m_269533_(DamageTypeTags.f_268415_)) {
-                DamageSource damagesource = p_31050_.m_7639_() != null ? this.m_269291_().m_269036_(this, p_31050_.m_7639_()) : null;
--               this.m_9236_().m_254877_(this, damagesource, (ExplosionDamageCalculator)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), 6.0F, false, Level.ExplosionInteraction.BLOCK);
+             this.remove(Entity.RemovalReason.KILLED);
+             if (!p_31050_.is(DamageTypeTags.IS_EXPLOSION)) {
+                DamageSource damagesource = p_31050_.getEntity() != null ? this.damageSources().explosion(this, p_31050_.getEntity()) : null;
+-               this.level().explode(this, damagesource, (ExplosionDamageCalculator)null, this.getX(), this.getY(), this.getZ(), 6.0F, false, Level.ExplosionInteraction.BLOCK);
 +               // CraftBukkit start
 +               ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, 6.0F, false);
 +               if (event.isCancelled()) {
-+                  this.m_146912_();
++                  this.unsetRemoved();
 +                  return false;
 +               }
-+               this.m_9236_().m_254877_(this, damagesource, (ExplosionDamageCalculator) null, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.BLOCK);
++               this.level().explode(this, damagesource, (ExplosionDamageCalculator) null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.BLOCK);
 +               // CraftBukkit end
              }
  
-             this.m_31047_(p_31050_);
+             this.onDestroyedBy(p_31050_);

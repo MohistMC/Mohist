@@ -15,12 +15,12 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class StartAttacking {
-    public static <E extends Mob> BehaviorControl<E> m_257710_(Function<E, Optional<? extends LivingEntity>> p_259868_) {
+    public static <E extends Mob> BehaviorControl<E> create(Function<E, Optional<? extends LivingEntity>> p_259868_) {
 @@ -30,7 +_,22 @@
-                      if (!p_258774_.m_6779_(livingentity)) {
+                      if (!p_258774_.canAttack(livingentity)) {
                          return false;
                       } else {
--                        p_258778_.m_257512_(livingentity);
+-                        p_258778_.set(livingentity);
 +                        net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_258774_, livingentity, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
 +                        if (changeTargetEvent.isCanceled())
 +                           return false;
@@ -30,13 +30,13 @@
 +                           return false;
 +                        }
 +                        if (event.getTarget() == null) {
-+                           p_258779_.m_257971_();
++                           p_258779_.erase();
 +                           return true;
 +                        }
 +                        changeTargetEvent.setNewTarget(((CraftLivingEntity) event.getTarget()).getHandle()); // Mohist
 +                        // CraftBukkit end
 +
-+                        p_258778_.m_257512_(changeTargetEvent.getNewTarget());
-                         p_258779_.m_257971_();
++                        p_258778_.set(changeTargetEvent.getNewTarget());
+                         p_258779_.erase();
                          return true;
                       }

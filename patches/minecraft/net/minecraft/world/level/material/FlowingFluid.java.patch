@@ -13,11 +13,11 @@
 +import org.bukkit.event.block.FluidLevelChangeEvent;
  
  public abstract class FlowingFluid extends Fluid {
-    public static final BooleanProperty f_75947_ = BlockStateProperties.f_61434_;
+    public static final BooleanProperty FALLING = BlockStateProperties.FALLING;
 @@ -118,6 +_,15 @@
-          BlockState blockstate1 = p_255851_.m_8055_(blockpos);
-          FluidState fluidstate = this.m_76035_(p_255851_, blockpos, blockstate1);
-          if (this.m_75977_(p_255851_, p_76012_, blockstate, Direction.DOWN, blockpos, blockstate1, p_255851_.m_6425_(blockpos), fluidstate.m_76152_())) {
+          BlockState blockstate1 = p_255851_.getBlockState(blockpos);
+          FluidState fluidstate = this.getNewLiquid(p_255851_, blockpos, blockstate1);
+          if (this.canSpreadTo(p_255851_, p_76012_, blockstate, Direction.DOWN, blockpos, blockstate1, p_255851_.getFluidState(blockpos), fluidstate.getType())) {
 +            // CraftBukkit start
 +            org.bukkit.block.Block source = CraftBlock.at(p_255851_, p_76012_);
 +            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
@@ -27,13 +27,13 @@
 +               return;
 +            }
 +            // CraftBukkit end
-             this.m_6364_(p_255851_, blockpos, blockstate1, Direction.DOWN, fluidstate);
-             if (this.m_76019_(p_255851_, p_76012_) >= 3) {
-                this.m_76014_(p_255851_, p_76012_, p_76013_, blockstate);
+             this.spreadTo(p_255851_, blockpos, blockstate1, Direction.DOWN, fluidstate);
+             if (this.sourceNeighborCount(p_255851_, p_76012_) >= 3) {
+                this.spreadToSides(p_255851_, p_76012_, p_76013_, blockstate);
 @@ -144,6 +_,15 @@
-             BlockPos blockpos = p_76016_.m_121945_(direction);
-             BlockState blockstate = p_256644_.m_8055_(blockpos);
-             if (this.m_75977_(p_256644_, p_76016_, p_76018_, direction, blockpos, blockstate, p_256644_.m_6425_(blockpos), fluidstate.m_76152_())) {
+             BlockPos blockpos = p_76016_.relative(direction);
+             BlockState blockstate = p_256644_.getBlockState(blockpos);
+             if (this.canSpreadTo(p_256644_, p_76016_, p_76018_, direction, blockpos, blockstate, p_256644_.getFluidState(blockpos), fluidstate.getType())) {
 +               // CraftBukkit start
 +               org.bukkit.block.Block source = CraftBlock.at(p_256644_, p_76016_);
 +               BlockFromToEvent event = new BlockFromToEvent(source, CraftBlock.notchToBlockFace(direction));
@@ -43,15 +43,15 @@
 +                  continue;
 +               }
 +               // CraftBukkit end
-                this.m_6364_(p_256644_, blockpos, blockstate, direction, fluidstate);
+                this.spreadTo(p_256644_, blockpos, blockstate, direction, fluidstate);
              }
           }
 @@ -160,7 +_,7 @@
-          BlockState blockstate = p_256464_.m_8055_(blockpos);
-          FluidState fluidstate = blockstate.m_60819_();
-          if (fluidstate.m_76152_().m_6212_(this) && this.m_76061_(direction, p_256464_, p_76037_, p_76038_, blockpos, blockstate)) {
--            if (fluidstate.m_76170_()) {
-+            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_256464_, blockpos, blockstate, fluidstate.canConvertToSource(p_256464_, blockpos))) {
+          BlockState blockstate = p_256464_.getBlockState(blockpos);
+          FluidState fluidstate = blockstate.getFluidState();
+          if (fluidstate.getType().isSame(this) && this.canPassThroughWall(direction, p_256464_, p_76037_, p_76038_, blockpos, blockstate)) {
+-            if (fluidstate.isSource()) {
++            if (fluidstate.isSource() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_256464_, blockpos, blockstate, fluidstate.canConvertToSource(p_256464_, blockpos))) {
                 ++j;
              }
  
@@ -59,50 +59,50 @@
           }
        }
  
--      if (this.m_6760_(p_256464_) && j >= 2) {
+-      if (this.canConvertToSource(p_256464_) && j >= 2) {
 +      if (j >= 2) {
-          BlockState blockstate1 = p_256464_.m_8055_(p_76037_.m_7495_());
-          FluidState fluidstate1 = blockstate1.m_60819_();
-          if (blockstate1.m_280296_() || this.m_76096_(fluidstate1)) {
+          BlockState blockstate1 = p_256464_.getBlockState(p_76037_.below());
+          FluidState fluidstate1 = blockstate1.getFluidState();
+          if (blockstate1.isSolid() || this.isSourceBlockOfThisType(fluidstate1)) {
 @@ -232,6 +_,15 @@
-       return this.m_5613_().m_76145_().m_61124_(f_75947_, Boolean.valueOf(p_76069_));
+       return this.getSource().defaultFluidState().setValue(FALLING, Boolean.valueOf(p_76069_));
     }
  
 +   @Override
 +   public boolean canConvertToSource(FluidState state, Level level, BlockPos pos) {
-+      return this.m_6760_(level);
++      return this.canConvertToSource(level);
 +   }
 +
 +   /**
 +    * @deprecated Forge: Use {@link #canConvertToSource(FluidState, Level, BlockPos)} instead.
 +    */
 +   @Deprecated
-    protected abstract boolean m_6760_(Level p_256009_);
+    protected abstract boolean canConvertToSource(Level p_256009_);
  
-    protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
+    protected void spreadTo(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
 @@ -397,11 +_,23 @@
-          int i = this.m_6886_(p_75995_, p_75996_, p_75997_, fluidstate);
-          if (fluidstate.m_76178_()) {
+          int i = this.getSpreadDelay(p_75995_, p_75996_, p_75997_, fluidstate);
+          if (fluidstate.isEmpty()) {
              p_75997_ = fluidstate;
--            p_75995_.m_7731_(p_75996_, Blocks.f_50016_.m_49966_(), 3);
+-            p_75995_.setBlock(p_75996_, Blocks.AIR.defaultBlockState(), 3);
 +            // CraftBukkit start
-+            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.f_50016_.m_49966_());
++            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, Blocks.AIR.defaultBlockState());
 +            if (event.isCancelled()) {
 +               return;
 +            }
-+            p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
++            p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 3);
 +            // CraftBukkit end
           } else if (!fluidstate.equals(p_75997_)) {
              p_75997_ = fluidstate;
-             BlockState blockstate = fluidstate.m_76188_();
--            p_75995_.m_7731_(p_75996_, blockstate, 2);
+             BlockState blockstate = fluidstate.createLegacyBlock();
+-            p_75995_.setBlock(p_75996_, blockstate, 2);
 +            // CraftBukkit start
 +            FluidLevelChangeEvent event = CraftEventFactory.callFluidLevelChangeEvent(p_75995_, p_75996_, blockstate);
 +            if (event.isCancelled()) {
 +               return;
 +            }
-+            p_75995_.m_7731_(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
++            p_75995_.setBlock(p_75996_, ((CraftBlockData) event.getNewData()).getState(), 2);
 +            // CraftBukkit end
-             p_75995_.m_186469_(p_75996_, fluidstate.m_76152_(), i);
-             p_75995_.m_46672_(p_75996_, blockstate.m_60734_());
+             p_75995_.scheduleTick(p_75996_, fluidstate.getType(), i);
+             p_75995_.updateNeighborsAt(p_75996_, blockstate.getBlock());
           }

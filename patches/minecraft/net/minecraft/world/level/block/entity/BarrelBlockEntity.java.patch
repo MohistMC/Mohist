@@ -16,28 +16,28 @@
 +import org.bukkit.entity.HumanEntity;
  
  public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
-    private NonNullList<ItemStack> f_58591_ = NonNullList.m_122780_(27, ItemStack.f_41583_);
--   public final ContainerOpenersCounter f_155050_ = new ContainerOpenersCounter() {
-+   public ContainerOpenersCounter f_155050_ = new ContainerOpenersCounter() {
-       protected void m_142292_(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
-          BarrelBlockEntity.this.m_58600_(p_155064_, SoundEvents.f_11725_);
-          BarrelBlockEntity.this.m_58606_(p_155064_, true);
+    private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+-   public final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
++   public ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+       protected void onOpen(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
+          BarrelBlockEntity.this.playSound(p_155064_, SoundEvents.BARREL_OPEN);
+          BarrelBlockEntity.this.updateBlockState(p_155064_, true);
 @@ -107,15 +_,51 @@
  
     }
  
--   void m_58606_(BlockState p_58607_, boolean p_58608_) {
-+   public void m_58606_(BlockState p_58607_, boolean p_58608_) {
-       this.f_58857_.m_7731_(this.m_58899_(), p_58607_.m_61124_(BarrelBlock.f_49043_, Boolean.valueOf(p_58608_)), 3);
+-   void updateBlockState(BlockState p_58607_, boolean p_58608_) {
++   public void updateBlockState(BlockState p_58607_, boolean p_58608_) {
+       this.level.setBlock(this.getBlockPos(), p_58607_.setValue(BarrelBlock.OPEN, Boolean.valueOf(p_58608_)), 3);
     }
  
--   void m_58600_(BlockState p_58601_, SoundEvent p_58602_) {
-+   public void m_58600_(BlockState p_58601_, SoundEvent p_58602_) {
-       Vec3i vec3i = p_58601_.m_61143_(BarrelBlock.f_49042_).m_122436_();
-       double d0 = (double)this.f_58858_.m_123341_() + 0.5D + (double)vec3i.m_123341_() / 2.0D;
-       double d1 = (double)this.f_58858_.m_123342_() + 0.5D + (double)vec3i.m_123342_() / 2.0D;
-       double d2 = (double)this.f_58858_.m_123343_() + 0.5D + (double)vec3i.m_123343_() / 2.0D;
-       this.f_58857_.m_6263_((Player)null, d0, d1, d2, p_58602_, SoundSource.BLOCKS, 0.5F, this.f_58857_.f_46441_.m_188501_() * 0.1F + 0.9F);
+-   void playSound(BlockState p_58601_, SoundEvent p_58602_) {
++   public void playSound(BlockState p_58601_, SoundEvent p_58602_) {
+       Vec3i vec3i = p_58601_.getValue(BarrelBlock.FACING).getNormal();
+       double d0 = (double)this.worldPosition.getX() + 0.5D + (double)vec3i.getX() / 2.0D;
+       double d1 = (double)this.worldPosition.getY() + 0.5D + (double)vec3i.getY() / 2.0D;
+       double d2 = (double)this.worldPosition.getZ() + 0.5D + (double)vec3i.getZ() / 2.0D;
+       this.level.playSound((Player)null, d0, d1, d2, p_58602_, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
 +
 +   // CraftBukkit start - add fields and methods
@@ -46,7 +46,7 @@
 +
 +   @Override
 +   public List<ItemStack> getContents() {
-+      return this.f_58591_;
++      return this.items;
 +   }
 +
 +   @Override
@@ -65,7 +65,7 @@
 +   }
 +
 +   @Override
-+   public int m_6893_() {
++   public int getMaxStackSize() {
 +      return maxStack;
 +   }
 +

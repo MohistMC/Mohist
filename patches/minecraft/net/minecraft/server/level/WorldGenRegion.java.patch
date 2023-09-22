@@ -1,20 +1,20 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
 @@ -190,7 +_,7 @@
-       if (blockstate.m_60795_()) {
+       if (blockstate.isAir()) {
           return false;
        } else {
 -         if (p_9551_) {
 +         if (false) { // CraftBukkit - SPIGOT-6833: Do not drop during world generation
-             BlockEntity blockentity = blockstate.m_155947_() ? this.m_7702_(p_9550_) : null;
-             Block.m_49881_(blockstate, this.f_9479_, p_9550_, blockentity, p_9552_, ItemStack.f_41583_);
+             BlockEntity blockentity = blockstate.hasBlockEntity() ? this.getBlockEntity(p_9550_) : null;
+             Block.dropResources(blockstate, this.level, p_9550_, blockentity, p_9552_, ItemStack.EMPTY);
           }
 @@ -226,7 +_,7 @@
           }
  
-          if (blockstate.m_155947_()) {
--            f_9474_.warn("Tried to access a block entity before it was created. {}", (Object)p_9582_);
-+            f_9474_.debug("Tried to access a block entity before it was created. {}", (Object)p_9582_);
+          if (blockstate.hasBlockEntity()) {
+-            LOGGER.warn("Tried to access a block entity before it was created. {}", (Object)p_9582_);
++            LOGGER.debug("Tried to access a block entity before it was created. {}", (Object)p_9582_);
           }
  
           return null;
@@ -22,7 +22,7 @@
  
           return true;
        } else {
--         Util.m_143785_("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + p_181031_ + ", status: " + this.f_143480_ + (this.f_143482_ == null ? "" : ", currently generating: " + (String)this.f_143482_.get()));
+-         Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + p_181031_ + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String)this.currentlyGenerating.get()));
 +         // Util.logAndPauseIfInIde("Detected setBlock in a far chunk [" + i + ", " + j + "], pos: " + pPos + ", status: " + this.generatingStatus + (this.currentlyGenerating == null ? "" : ", currently generating: " + (String)this.currentlyGenerating.get()));
           return false;
        }
@@ -30,10 +30,10 @@
 @@ -297,9 +_,17 @@
     }
  
-    public boolean m_7967_(Entity p_9580_) {
--      int i = SectionPos.m_123171_(p_9580_.m_146903_());
--      int j = SectionPos.m_123171_(p_9580_.m_146907_());
--      this.m_6325_(i, j).m_6286_(p_9580_);
+    public boolean addFreshEntity(Entity p_9580_) {
+-      int i = SectionPos.blockToSectionCoord(p_9580_.getBlockX());
+-      int j = SectionPos.blockToSectionCoord(p_9580_.getBlockZ());
+-      this.getChunk(i, j).addEntity(p_9580_);
 +      // CraftBukkit start
 +      return addFreshEntity(p_9580_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
@@ -42,9 +42,9 @@
 +   public boolean addFreshEntity(Entity pEntity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      // CraftBukkit end
 +      if (pEntity instanceof net.minecraft.world.entity.Mob mob && mob.isSpawnCancelled()) return false;
-+      int i = SectionPos.m_123171_(pEntity.m_146903_());
-+      int j = SectionPos.m_123171_(pEntity.m_146907_());
-+      this.m_6325_(i, j).m_6286_(pEntity);
++      int i = SectionPos.blockToSectionCoord(pEntity.getBlockX());
++      int j = SectionPos.blockToSectionCoord(pEntity.getBlockZ());
++      this.getChunk(i, j).addEntity(pEntity);
        return true;
     }
  

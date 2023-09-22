@@ -3,9 +3,9 @@
 @@ -64,7 +_,7 @@
     }
  
-    public void m_8056_() {
--      this.f_26135_.m_6710_(this.f_26050_);
-+      this.f_26135_.setTarget(this.f_26050_, f_26050_ instanceof ServerPlayer ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit - reason
-       super.m_8056_();
+    public void start() {
+-      this.mob.setTarget(this.target);
++      this.mob.setTarget(this.target, target instanceof ServerPlayer ? org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER : org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit - reason
+       super.start();
     }
  

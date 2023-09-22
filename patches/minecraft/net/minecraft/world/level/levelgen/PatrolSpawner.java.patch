@@ -7,14 +7,14 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class PatrolSpawner implements CustomSpawner {
-    private int f_64562_;
+    private int nextTick;
 @@ -105,7 +_,8 @@
  
-             patrollingmonster.m_6034_((double)p_224534_.m_123341_(), (double)p_224534_.m_123342_(), (double)p_224534_.m_123343_());
-             patrollingmonster.m_6518_(p_224533_, p_224533_.m_6436_(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
--            p_224533_.m_47205_(patrollingmonster);
+             patrollingmonster.setPos((double)p_224534_.getX(), (double)p_224534_.getY(), (double)p_224534_.getZ());
+             patrollingmonster.finalizeSpawn(p_224533_, p_224533_.getCurrentDifficultyAt(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
+-            p_224533_.addFreshEntityWithPassengers(patrollingmonster);
 +            patrollingmonster.spawnReason(CreatureSpawnEvent.SpawnReason.PATROL); // Mohist
-+            p_224533_.m_47205_(patrollingmonster); // CraftBukkit
++            p_224533_.addFreshEntityWithPassengers(patrollingmonster); // CraftBukkit
              return true;
           } else {
              return false;

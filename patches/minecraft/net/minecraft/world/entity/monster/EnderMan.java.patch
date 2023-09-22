@@ -3,11 +3,11 @@
 @@ -111,7 +_,6 @@
     }
  
-    public void m_6710_(@Nullable LivingEntity p_32537_) {
--      super.m_6710_(p_32537_);
-       AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
+    public void setTarget(@Nullable LivingEntity p_32537_) {
+-      super.setTarget(p_32537_);
+       AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
        if (p_32537_ == null) {
-          this.f_32477_ = 0;
+          this.targetChangeTime = 0;
 @@ -126,6 +_,30 @@
           }
        }
@@ -19,122 +19,122 @@
 +      if (!super.setTarget(pLivingEntity, reason, fireEvent)) {
 +         return false;
 +      }
-+      pLivingEntity = m_5448_();
++      pLivingEntity = getTarget();
 +      // CraftBukkit end
-+      AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
++      AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
 +      if (pLivingEntity == null) {
-+         this.f_32477_ = 0;
-+         this.f_19804_.m_135381_(f_32473_, false);
-+         this.f_19804_.m_135381_(f_32474_, false);
-+         attributeinstance.m_22130_(f_32481_);
++         this.targetChangeTime = 0;
++         this.entityData.set(DATA_CREEPY, false);
++         this.entityData.set(DATA_STARED_AT, false);
++         attributeinstance.removeModifier(SPEED_MODIFIER_ATTACKING);
 +      } else {
-+         this.f_32477_ = this.f_19797_;
-+         this.f_19804_.m_135381_(f_32473_, true);
-+         if (!attributeinstance.m_22109_(f_32481_)) {
-+            attributeinstance.m_22118_(f_32481_);
++         this.targetChangeTime = this.tickCount;
++         this.entityData.set(DATA_CREEPY, true);
++         if (!attributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
++            attributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
 +         }
 +      }
 +
 +      return true;
     }
  
-    protected void m_8097_() {
+    protected void defineSynchedData() {
 @@ -200,7 +_,7 @@
  
-    boolean m_32534_(Player p_32535_) {
-       ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);
--      if (itemstack.m_150930_(Blocks.f_50143_.m_5456_())) {
+    boolean isLookingAtMe(Player p_32535_) {
+       ItemStack itemstack = p_32535_.getInventory().armor.get(3);
+-      if (itemstack.is(Blocks.CARVED_PUMPKIN.asItem())) {
 +      if (net.minecraftforge.common.ForgeHooks.shouldSuppressEnderManAnger(this, p_32535_, itemstack)) {
           return false;
        } else {
-          Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
+          Vec3 vec3 = p_32535_.getViewVector(1.0F).normalize();
 @@ -251,7 +_,7 @@
-       super.m_8024_();
+       super.customServerAiStep();
     }
  
--   protected boolean m_32529_() {
-+   public boolean m_32529_() {
-       if (!this.m_9236_().m_5776_() && this.m_6084_()) {
-          double d0 = this.m_20185_() + (this.f_19796_.m_188500_() - 0.5D) * 64.0D;
-          double d1 = this.m_20186_() + (double)(this.f_19796_.m_188503_(64) - 32);
+-   protected boolean teleport() {
++   public boolean teleport() {
+       if (!this.level().isClientSide() && this.isAlive()) {
+          double d0 = this.getX() + (this.random.nextDouble() - 0.5D) * 64.0D;
+          double d1 = this.getY() + (double)(this.random.nextInt(64) - 32);
 @@ -262,7 +_,7 @@
        }
     }
  
--   boolean m_32500_(Entity p_32501_) {
-+   public boolean m_32500_(Entity p_32501_) {
-       Vec3 vec3 = new Vec3(this.m_20185_() - p_32501_.m_20185_(), this.m_20227_(0.5D) - p_32501_.m_20188_(), this.m_20189_() - p_32501_.m_20189_());
-       vec3 = vec3.m_82541_();
+-   boolean teleportTowards(Entity p_32501_) {
++   public boolean teleportTowards(Entity p_32501_) {
+       Vec3 vec3 = new Vec3(this.getX() - p_32501_.getX(), this.getY(0.5D) - p_32501_.getEyeY(), this.getZ() - p_32501_.getZ());
+       vec3 = vec3.normalize();
        double d0 = 16.0D;
 @@ -283,8 +_,10 @@
-       boolean flag = blockstate.m_280555_();
-       boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
+       boolean flag = blockstate.blocksMotion();
+       boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);
        if (flag && !flag1) {
 +         net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_32544_, p_32545_, p_32546_);
 +         if (event.isCanceled()) return false;
-          Vec3 vec3 = this.m_20182_();
--         boolean flag2 = this.m_20984_(p_32544_, p_32545_, p_32546_, true);
-+         boolean flag2 = this.m_20984_(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
+          Vec3 vec3 = this.position();
+-         boolean flag2 = this.randomTeleport(p_32544_, p_32545_, p_32546_, true);
++         boolean flag2 = this.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
           if (flag2) {
-             this.m_9236_().m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
-             if (!this.m_20067_()) {
+             this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
+             if (!this.isSilent()) {
 @@ -424,7 +_,7 @@
-       public boolean m_8036_() {
-          if (this.f_32554_.m_32530_() == null) {
+       public boolean canUse() {
+          if (this.enderman.getCarriedBlock() == null) {
              return false;
--         } else if (!this.f_32554_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32554_.m_9236_(), this.f_32554_)) {
+-         } else if (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.enderman.level(), this.enderman)) {
              return false;
           } else {
-             return this.f_32554_.m_217043_().m_188503_(m_186073_(2000)) == 0;
+             return this.enderman.getRandom().nextInt(reducedTickDelay(2000)) == 0;
 @@ -444,17 +_,19 @@
-          BlockState blockstate2 = this.f_32554_.m_32530_();
+          BlockState blockstate2 = this.enderman.getCarriedBlock();
           if (blockstate2 != null) {
-             blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.m_9236_(), blockpos);
--            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
--               level.m_7731_(blockpos, blockstate2, 3);
--               level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
--               this.f_32554_.m_32521_((BlockState)null);
-+            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(f_32554_, net.minecraftforge.common.util.BlockSnapshot.create(level.m_46472_(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32554_, blockpos, blockstate2)) {
-+                  level.m_7731_(blockpos, blockstate2, 3);
-+                  level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
-+                  this.f_32554_.m_32521_((BlockState) null);
+             blockstate2 = Block.updateFromNeighbourShapes(blockstate2, this.enderman.level(), blockpos);
+-            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
+-               level.setBlock(blockpos, blockstate2, 3);
+-               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
+-               this.enderman.setCarriedBlock((BlockState)null);
++            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(enderman, net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, blockpos1), net.minecraft.core.Direction.UP)) {
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) {
++                  level.setBlock(blockpos, blockstate2, 3);
++                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
++                  this.enderman.setCarriedBlock((BlockState) null);
 +               }
              }
  
           }
        }
  
-       private boolean m_32558_(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
--         return p_32562_.m_60795_() && !p_32563_.m_60795_() && !p_32563_.m_60713_(Blocks.f_50752_) && p_32563_.m_60838_(p_32559_, p_32564_) && p_32561_.m_60710_(p_32559_, p_32560_) && p_32559_.m_45933_(this.f_32554_, AABB.m_82333_(Vec3.m_82528_(p_32560_))).isEmpty();
-+         return p_32562_.m_60795_() && !p_32563_.m_60795_() && !p_32563_.m_60713_(Blocks.f_50752_) && !p_32563_.m_204336_(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_32563_.m_60838_(p_32559_, p_32564_) && p_32561_.m_60710_(p_32559_, p_32560_) && p_32559_.m_45933_(this.f_32554_, AABB.m_82333_(Vec3.m_82528_(p_32560_))).isEmpty();
+       private boolean canPlaceBlock(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
+-         return p_32562_.isAir() && !p_32563_.isAir() && !p_32563_.is(Blocks.BEDROCK) && p_32563_.isCollisionShapeFullBlock(p_32559_, p_32564_) && p_32561_.canSurvive(p_32559_, p_32560_) && p_32559_.getEntities(this.enderman, AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(p_32560_))).isEmpty();
++         return p_32562_.isAir() && !p_32563_.isAir() && !p_32563_.is(Blocks.BEDROCK) && !p_32563_.is(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_32563_.isCollisionShapeFullBlock(p_32559_, p_32564_) && p_32561_.canSurvive(p_32559_, p_32560_) && p_32559_.getEntities(this.enderman, AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(p_32560_))).isEmpty();
        }
     }
  
 @@ -556,7 +_,7 @@
-       public boolean m_8036_() {
-          if (this.f_32583_.m_32530_() != null) {
+       public boolean canUse() {
+          if (this.enderman.getCarriedBlock() != null) {
              return false;
--         } else if (!this.f_32583_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32583_.m_9236_(), this.f_32583_)) {
+-         } else if (!this.enderman.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.enderman.level(), this.enderman)) {
              return false;
           } else {
-             return this.f_32583_.m_217043_().m_188503_(m_186073_(20)) == 0;
+             return this.enderman.getRandom().nextInt(reducedTickDelay(20)) == 0;
 @@ -575,12 +_,15 @@
           Vec3 vec31 = new Vec3((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
-          BlockHitResult blockhitresult = level.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.f_32583_));
-          boolean flag = blockhitresult.m_82425_().equals(blockpos);
--         if (blockstate.m_204336_(BlockTags.f_13046_) && flag) {
--            level.m_7471_(blockpos, false);
--            level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
--            this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());
-+		 if (blockstate.m_204336_(BlockTags.f_13046_) && flag) {
+          BlockHitResult blockhitresult = level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.enderman));
+          boolean flag = blockhitresult.getBlockPos().equals(blockpos);
+-         if (blockstate.is(BlockTags.ENDERMAN_HOLDABLE) && flag) {
+-            level.removeBlock(blockpos, false);
+-            level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
+-            this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
++		 if (blockstate.is(BlockTags.ENDERMAN_HOLDABLE) && flag) {
 +            // CraftBukkit start - Pickup event
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.f_32583_, blockpos, Blocks.f_50016_.m_49966_())) {
-+               level.m_7471_(blockpos, false);
-+               level.m_220407_(GameEvent.f_157794_, blockpos, GameEvent.Context.m_223719_(this.f_32583_, blockstate));
-+               this.f_32583_.m_32521_(blockstate.m_60734_().m_49966_());
++            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) {
++               level.removeBlock(blockpos, false);
++               level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
++               this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
 +            }
           }
 -

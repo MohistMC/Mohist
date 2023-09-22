@@ -17,9 +17,9 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class PrepareRamNearestTarget<E extends PathfinderMob> extends Behavior<E> {
-    public static final int f_147713_ = 160;
+    public static final int TIME_OUT_DURATION = 160;
 @@ -56,6 +_,13 @@
-             return this.f_147718_.m_26885_(p_147737_, p_147789_);
+             return this.ramTargeting.test(p_147737_, p_147789_);
           });
        }).ifPresent((p_147778_) -> {
 +         // CraftBukkit start
@@ -29,6 +29,6 @@
 +         }
 +         p_147778_ = ((CraftLivingEntity) event.getTarget()).getHandle();
 +         // CraftBukkit end
-          this.m_147765_(p_147737_, p_147778_);
+          this.chooseRamPosition(p_147737_, p_147778_);
        });
     }

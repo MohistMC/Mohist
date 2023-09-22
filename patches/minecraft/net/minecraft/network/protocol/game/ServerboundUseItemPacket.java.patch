@@ -2,17 +2,17 @@
 +++ b/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
 @@ -7,6 +_,7 @@
  public class ServerboundUseItemPacket implements Packet<ServerGamePacketListener> {
-    private final InteractionHand f_134707_;
-    private final int f_238009_;
+    private final InteractionHand hand;
+    private final int sequence;
 +   public long timestamp; // Spigot
  
     public ServerboundUseItemPacket(InteractionHand p_238011_, int p_238012_) {
-       this.f_134707_ = p_238011_;
+       this.hand = p_238011_;
 @@ -14,6 +_,7 @@
     }
  
     public ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
 +      this.timestamp = System.currentTimeMillis(); // Spigot
-       this.f_134707_ = p_179798_.m_130066_(InteractionHand.class);
-       this.f_238009_ = p_179798_.m_130242_();
+       this.hand = p_179798_.readEnum(InteractionHand.class);
+       this.sequence = p_179798_.readVarInt();
     }

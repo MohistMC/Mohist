@@ -7,11 +7,11 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant;
  
  public class ClientSideMerchant implements Merchant {
-    private final Player f_35340_;
+    private final Player source;
 @@ -42,6 +_,11 @@
  
-    public boolean m_183595_() {
-       return this.f_35340_.m_9236_().f_46443_;
+    public boolean isClientSide() {
+       return this.source.level().isClientSide;
 +   }
 +
 +   @Override
@@ -19,4 +19,4 @@
 +      return null;
     }
  
-    public int m_7809_() {
+    public int getVillagerXp() {

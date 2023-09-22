@@ -7,17 +7,17 @@
 +   public EntitySelector parse(StringReader pReader, boolean overridePermissions) throws CommandSyntaxException {
 +      EntitySelectorParser entityselectorparser = new EntitySelectorParser(pReader);
 +      EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
-+      if (entityselector.m_121138_() > 1 && this.f_91443_) {
-+         if (this.f_91444_) {
++      if (entityselector.getMaxResults() > 1 && this.single) {
++         if (this.playersOnly) {
 +            pReader.setCursor(0);
-+            throw f_91437_.createWithContext(pReader);
++            throw ERROR_NOT_SINGLE_PLAYER.createWithContext(pReader);
 +         } else {
 +            pReader.setCursor(0);
-+            throw f_91436_.createWithContext(pReader);
++            throw ERROR_NOT_SINGLE_ENTITY.createWithContext(pReader);
 +         }
-+      } else if (entityselector.m_121159_() && this.f_91444_ && !entityselector.m_121162_()) {
++      } else if (entityselector.includesEntities() && this.playersOnly && !entityselector.isSelfSelector()) {
 +         pReader.setCursor(0);
-+         throw f_91438_.createWithContext(pReader);
++         throw ERROR_ONLY_PLAYERS_ALLOWED.createWithContext(pReader);
 +      } else {
 +         return entityselector;
 +      }
@@ -28,8 +28,8 @@
        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
           StringReader stringreader = new StringReader(p_91483_.getInput());
           stringreader.setCursor(p_91483_.getStart());
--         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.m_6761_(2));
+-         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
 +         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
  
           try {
-             entityselectorparser.m_121377_();
+             entityselectorparser.parse();

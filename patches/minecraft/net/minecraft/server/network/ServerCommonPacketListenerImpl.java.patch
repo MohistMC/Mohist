@@ -11,23 +11,23 @@
  
  public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
 @@ -29,18 +_,30 @@
-    public static final int f_290500_ = 15000;
-    private static final Component f_290625_ = Component.m_237115_("disconnect.timeout");
-    protected final MinecraftServer f_291389_;
--   protected final Connection f_291338_;
-+   public final Connection f_291338_;
-    private long f_290835_;
-    private boolean f_291554_;
-    private long f_291155_;
-    private int f_291042_;
-    private volatile boolean f_290367_ = false;
+    public static final int LATENCY_CHECK_INTERVAL = 15000;
+    private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
+    protected final MinecraftServer server;
+-   protected final Connection connection;
++   public final Connection connection;
+    private long keepAliveTime;
+    private boolean keepAlivePending;
+    private long keepAliveChallenge;
+    private int latency;
+    private volatile boolean suspendFlushingOnServerThread = false;
  
 -   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
 +   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, ServerPlayer player) {
-       this.f_291389_ = p_299469_;
-       this.f_291338_ = p_300872_;
-       this.f_290835_ = Util.m_137550_();
-       this.f_291042_ = p_300277_.f_291325_();
+       this.server = p_299469_;
+       this.connection = p_300872_;
+       this.keepAliveTime = Util.getMillis();
+       this.latency = p_300277_.latency();
 +      // CraftBukkit start - add fields and methods
 +      this.player = player;
 +      this.cserver = p_299469_.server;
@@ -42,22 +42,22 @@
 +      // CraftBukkit end
     }
  
-    public void m_7026_(Component p_300550_) {
+    public void onDisconnect(Component p_300550_) {
 @@ -66,6 +_,7 @@
     }
  
-    public void m_293234_(ServerboundCustomPayloadPacket p_300164_) {
-+      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.f_291338_);
+    public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
++      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
     }
  
-    public void m_293248_(ServerboundResourcePackPacket p_300656_) {
+    public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
 @@ -147,5 +_,9 @@
  
-    protected CommonListenerCookie m_295477_(ClientInformation p_297318_) {
-       return new CommonListenerCookie(this.m_293343_(), this.f_291042_, p_297318_);
+    protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
+       return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_);
 +   }
 +
 +   public Connection getConnection() {
-+      return this.f_291338_;
++      return this.connection;
     }
  }

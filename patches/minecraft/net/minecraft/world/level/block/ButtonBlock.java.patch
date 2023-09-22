@@ -9,13 +9,13 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class ButtonBlock extends FaceAttachedHorizontalDirectionalBlock {
-    public static final BooleanProperty f_51045_ = BlockStateProperties.f_61448_;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 @@ -107,6 +_,19 @@
-       if (p_51088_.m_61143_(f_51045_)) {
+       if (p_51088_.getValue(POWERED)) {
           return InteractionResult.CONSUME;
        } else {
 +         // CraftBukkit start
-+         boolean powered = p_51088_.m_61143_(f_51045_);
++         boolean powered = p_51088_.getValue(POWERED);
 +         org.bukkit.block.Block block = CraftBlock.at(p_51089_, p_51090_);
 +         int old = (powered) ? 15 : 0;
 +         int current = (!powered) ? 15 : 0;
@@ -27,13 +27,13 @@
 +            return InteractionResult.SUCCESS;
 +         }
 +         // CraftBukkit end
-          this.m_51116_(p_51088_, p_51089_, p_51090_);
-          this.m_51067_(p_51091_, p_51089_, p_51090_, true);
-          p_51089_.m_142346_(p_51091_, GameEvent.f_223702_, p_51090_);
+          this.press(p_51088_, p_51089_, p_51090_);
+          this.playSound(p_51091_, p_51089_, p_51090_, true);
+          p_51089_.gameEvent(p_51091_, GameEvent.BLOCK_ACTIVATE, p_51090_);
 @@ -166,7 +_,33 @@
-       AbstractArrow abstractarrow = this.f_243959_ ? p_51122_.m_45976_(AbstractArrow.class, p_51121_.m_60808_(p_51122_, p_51123_).m_83215_().m_82338_(p_51123_)).stream().findFirst().orElse((AbstractArrow)null) : null;
+       AbstractArrow abstractarrow = this.arrowsCanPress ? p_51122_.getEntitiesOfClass(AbstractArrow.class, p_51121_.getShape(p_51122_, p_51123_).bounds().move(p_51123_)).stream().findFirst().orElse((AbstractArrow)null) : null;
        boolean flag = abstractarrow != null;
-       boolean flag1 = p_51121_.m_61143_(f_51045_);
+       boolean flag1 = p_51121_.getValue(POWERED);
 +
 +      // CraftBukkit start - Call interact event when arrows turn on wooden buttons
 +      if (flag1 != flag && flag) {
@@ -61,6 +61,6 @@
 +            return;
 +         }
 +         // CraftBukkit end
-          p_51122_.m_7731_(p_51123_, p_51121_.m_61124_(f_51045_, Boolean.valueOf(flag)), 3);
-          this.m_51124_(p_51121_, p_51122_, p_51123_);
-          this.m_51067_((Player)null, p_51122_, p_51123_, flag);
+          p_51122_.setBlock(p_51123_, p_51121_.setValue(POWERED, Boolean.valueOf(flag)), 3);
+          this.updateNeighbours(p_51121_, p_51122_, p_51123_);
+          this.playSound((Player)null, p_51122_, p_51123_, flag);

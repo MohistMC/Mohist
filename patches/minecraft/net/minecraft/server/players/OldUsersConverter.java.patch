@@ -13,22 +13,22 @@
        }).toArray((p_11070_) -> {
           return new String[p_11070_];
        });
--      if (p_11087_.m_129797_()) {
-+      if (p_11087_.m_129797_() || org.spigotmc.SpigotConfig.bungee) { // Spigot: bungee = online mode, for now.
-          p_11087_.m_129926_().findProfilesByNames(astring, p_11089_);
+-      if (p_11087_.usesAuthentication()) {
++      if (p_11087_.usesAuthentication() || org.spigotmc.SpigotConfig.bungee) { // Spigot: bungee = online mode, for now.
+          p_11087_.getProfileRepository().findProfilesByNames(astring, p_11089_);
        } else {
           for(String s : astring) {
 @@ -125,7 +_,7 @@
              try {
-                ipbanlist.m_11399_();
+                ipbanlist.load();
              } catch (IOException ioexception1) {
--               f_11066_.warn("Could not load existing file {}", ipbanlist.m_11385_().getName(), ioexception1);
-+               f_11066_.warn("Could not load existing file {}", ipbanlist.m_11385_().getName()); // CraftBukkit - don't print stacktrace
+-               LOGGER.warn("Could not load existing file {}", ipbanlist.getFile().getName(), ioexception1);
++               LOGGER.warn("Could not load existing file {}", ipbanlist.getFile().getName()); // CraftBukkit - don't print stacktrace
              }
           }
  
 @@ -310,6 +_,30 @@
-                private void m_11167_(File p_11168_, String p_11169_, String p_11170_) {
+                private void movePlayerFile(File p_11168_, String p_11169_, String p_11170_) {
                    File file5 = new File(file1, p_11169_ + ".dat");
                    File file6 = new File(p_11168_, p_11170_ + ".dat");
 +
@@ -36,25 +36,25 @@
 +                  CompoundTag root = null;
 +
 +                  try {
-+                     root = NbtIo.m_128939_(new java.io.FileInputStream(file5));
++                     root = NbtIo.readCompressed(new java.io.FileInputStream(file5));
 +                  } catch (Exception exception) {
 +                     exception.printStackTrace();
 +                  }
 +
 +                  if (root != null) {
-+                     if (!root.m_128441_("bukkit")) {
-+                        root.m_128365_("bukkit", new CompoundTag());
++                     if (!root.contains("bukkit")) {
++                        root.put("bukkit", new CompoundTag());
 +                     }
-+                     CompoundTag data = root.m_128469_("bukkit");
-+                     data.m_128359_("lastKnownName", p_11169_);
++                     CompoundTag data = root.getCompound("bukkit");
++                     data.putString("lastKnownName", p_11169_);
 +                     try {
-+                        NbtIo.m_128947_(root, new java.io.FileOutputStream(file2));
++                        NbtIo.writeCompressed(root, new java.io.FileOutputStream(file2));
 +                     } catch (Exception exception) {
 +                        exception.printStackTrace();
 +                     }
 +                  }
 +                  // CraftBukkit end
 +
-                   OldUsersConverter.m_11093_(p_11168_);
+                   OldUsersConverter.ensureDirectoryExists(p_11168_);
                    if (!file5.renameTo(file6)) {
                       throw new OldUsersConverter.ConversionError("Could not convert file for " + p_11169_);

@@ -8,33 +8,33 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class RemoveBlockGoal extends MoveToBlockGoal {
-    private final Block f_25836_;
+    private final Block blockToRemove;
 @@ -34,7 +_,7 @@
     }
  
-    public boolean m_8036_() {
--      if (!this.f_25837_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25837_.m_9236_(), this.f_25837_)) {
+    public boolean canUse() {
+-      if (!this.removerMob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.removerMob.level(), this.removerMob)) {
           return false;
-       } else if (this.f_25600_ > 0) {
-          --this.f_25600_;
+       } else if (this.nextStartTick > 0) {
+          --this.nextStartTick;
 @@ -89,6 +_,11 @@
           }
  
-          if (this.f_25838_ > 60) {
+          if (this.ticksSinceReachedGoal > 60) {
 +            // CraftBukkit start - Step on eggs
-+            if (!CraftEventFactory.callEntityInteractEvent(this.f_25837_, CraftBlock.at(level, blockpos1))) {
++            if (!CraftEventFactory.callEntityInteractEvent(this.removerMob, CraftBlock.at(level, blockpos1))) {
 +               return;
 +            }
 +            // CraftBukkit end
-             level.m_7471_(blockpos1, false);
-             if (!level.f_46443_) {
+             level.removeBlock(blockpos1, false);
+             if (!level.isClientSide) {
                 for(int i = 0; i < 20; ++i) {
 @@ -129,6 +_,7 @@
        if (chunkaccess == null) {
           return false;
        } else {
-+         if (!chunkaccess.m_8055_(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.f_25837_)) return false;
-          return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
++         if (!chunkaccess.getBlockState(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.removerMob)) return false;
+          return chunkaccess.getBlockState(p_25851_).is(this.blockToRemove) && chunkaccess.getBlockState(p_25851_.above()).isAir() && chunkaccess.getBlockState(p_25851_.above(2)).isAir();
        }
     }

@@ -1,46 +1,43 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
 @@ -26,7 +_,7 @@
-    private static final int f_150129_ = -1;
-    private static final EntityDataAccessor<Integer> f_36854_ = SynchedEntityData.m_135353_(Arrow.class, EntityDataSerializers.f_135028_);
-    private static final byte f_150130_ = 0;
--   private Potion f_36855_ = Potions.f_43598_;
-+   public Potion f_36855_ = Potions.f_43598_;
-    public final Set<MobEffectInstance> f_36852_ = Sets.newHashSet();
-    private boolean f_36853_;
+    private static final int NO_EFFECT_COLOR = -1;
+    private static final EntityDataAccessor<Integer> ID_EFFECT_COLOR = SynchedEntityData.defineId(Arrow.class, EntityDataSerializers.INT);
+    private static final byte EVENT_POTION_PUFF = 0;
+-   private Potion potion = Potions.EMPTY;
++   public Potion potion = Potions.EMPTY;
+    public final Set<MobEffectInstance> effects = Sets.newHashSet();
+    private boolean fixedColor;
  
 @@ -71,7 +_,7 @@
-       return compoundtag != null && compoundtag.m_128425_("CustomPotionColor", 99) ? compoundtag.m_128451_("CustomPotionColor") : -1;
+       return compoundtag != null && compoundtag.contains("CustomPotionColor", 99) ? compoundtag.getInt("CustomPotionColor") : -1;
     }
  
--   private void m_36890_() {
-+   public void m_36890_() {
-       this.f_36853_ = false;
-       if (this.f_36855_ == Potions.f_43598_ && this.f_36852_.isEmpty()) {
-          this.f_19804_.m_135381_(f_36854_, -1);
+-   private void updateColor() {
++   public void updateColor() {
+       this.fixedColor = false;
+       if (this.potion == Potions.EMPTY && this.effects.isEmpty()) {
+          this.entityData.set(ID_EFFECT_COLOR, -1);
 @@ -128,7 +_,7 @@
-       return this.f_19804_.m_135370_(f_36854_);
+       return this.entityData.get(ID_EFFECT_COLOR);
     }
  
--   private void m_36882_(int p_36883_) {
-+   public void m_36882_(int p_36883_) {
-       this.f_36853_ = true;
-       this.f_19804_.m_135381_(f_36854_, p_36883_);
+-   private void setFixedColor(int p_36883_) {
++   public void setFixedColor(int p_36883_) {
+       this.fixedColor = true;
+       this.entityData.set(ID_EFFECT_COLOR, p_36883_);
     }
-@@ -178,14 +_,14 @@
-       Entity entity = this.m_150173_();
- 
-       for(MobEffectInstance mobeffectinstance : this.f_36855_.m_43488_()) {
--         p_36873_.m_147207_(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_267696_((p_268168_) -> {
-+         p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_267696_((p_268168_) -> {
+@@ -180,12 +_,12 @@
+       for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
+          p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {
              return p_268168_ / 8;
--         }), 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity);
-+         }), 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+-         }), 1), mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()), entity);
++         }), 1), mobeffectinstance.getAmplifier(), mobeffectinstance.isAmbient(), mobeffectinstance.isVisible()), entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
        }
  
-       if (!this.f_36852_.isEmpty()) {
-          for(MobEffectInstance mobeffectinstance1 : this.f_36852_) {
--            p_36873_.m_147207_(mobeffectinstance1, entity);
+       if (!this.effects.isEmpty()) {
+          for(MobEffectInstance mobeffectinstance1 : this.effects) {
+-            p_36873_.addEffect(mobeffectinstance1, entity);
 +            p_36873_.addEffect(mobeffectinstance1, entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
           }
        }

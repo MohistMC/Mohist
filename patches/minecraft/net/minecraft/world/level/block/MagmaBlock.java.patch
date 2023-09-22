@@ -20,14 +20,14 @@
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
  
  public class MagmaBlock extends Block {
-    private static final int f_153775_ = 20;
+    private static final int BUBBLE_COLUMN_CHECK_DELAY = 20;
 @@ -21,7 +_,9 @@
  
-    public void m_141947_(Level p_153777_, BlockPos p_153778_, BlockState p_153779_, Entity p_153780_) {
-       if (!p_153780_.m_20161_() && p_153780_ instanceof LivingEntity && !EnchantmentHelper.m_44938_((LivingEntity)p_153780_)) {
+    public void stepOn(Level p_153777_, BlockPos p_153778_, BlockState p_153779_, Entity p_153780_) {
+       if (!p_153780_.isSteppingCarefully() && p_153780_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_153780_)) {
 +         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = CraftBlock.at(p_153777_, p_153778_); // CraftBukkit
-          p_153780_.m_6469_(p_153777_.m_269111_().m_269047_(), 1.0F);
+          p_153780_.hurt(p_153777_.damageSources().hotFloor(), 1.0F);
 +         org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.blockDamage = null; // CraftBukkit
        }
  
-       super.m_141947_(p_153777_, p_153778_, p_153779_, p_153780_);
+       super.stepOn(p_153777_, p_153778_, p_153779_, p_153780_);

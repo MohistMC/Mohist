@@ -13,9 +13,9 @@
 @@ -48,7 +_,7 @@
           }
  
-          Vec3 vec3 = this.m_7037_();
+          Vec3 vec3 = this.getPosition();
 -         if (vec3 == null) {
-+         if (vec3 == null|| !((ServerLevel) this.f_25725_.f_19853_).m_143340_(BlockPos.m_274561_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_))) { // MultiPaper - don't wander into non-ticking chunks
++         if (vec3 == null|| !((ServerLevel) this.mob.level).isPositionEntityTicking(BlockPos.containing(vec3.x, vec3.y, vec3.z))) { // MultiPaper - don't wander into non-ticking chunks
              return false;
           } else {
-             this.f_25726_ = vec3.f_82479_;
+             this.wantedX = vec3.x;

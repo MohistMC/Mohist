@@ -2,30 +2,30 @@
 +++ b/net/minecraft/world/entity/monster/Guardian.java
 @@ -63,6 +_,7 @@
     @Nullable
-    public RandomStrollGoal f_32806_;
+    public RandomStrollGoal randomStrollGoal;
  
 +   public Guardian.GuardianAttackGoal guardianAttackGoal; // CraftBukkit - add field
     public Guardian(EntityType<? extends Guardian> p_32810_, Level p_32811_) {
        super(p_32810_, p_32811_);
-       this.f_21364_ = 10;
+       this.xpReward = 10;
 @@ -120,7 +_,7 @@
        return 80;
     }
  
--   void m_32817_(int p_32818_) {
-+   public void m_32817_(int p_32818_) {
-       this.f_19804_.m_135381_(f_32807_, p_32818_);
+-   void setActiveAttackTarget(int p_32818_) {
++   public void setActiveAttackTarget(int p_32818_) {
+       this.entityData.set(DATA_ID_ATTACK_TARGET, p_32818_);
     }
  
 @@ -340,9 +_,9 @@
-       return new Vector3f(0.0F, p_297893_.f_20378_ + 0.125F * p_297810_, 0.0F);
+       return new Vector3f(0.0F, p_297893_.height + 0.125F * p_297810_, 0.0F);
     }
  
 -   static class GuardianAttackGoal extends Goal {
 +   public static class GuardianAttackGoal extends Goal {
-       private final Guardian f_32867_;
--      private int f_32868_;
-+      public int f_32868_;
-       private final boolean f_32869_;
+       private final Guardian guardian;
+-      private int attackTime;
++      public int attackTime;
+       private final boolean elder;
  
        public GuardianAttackGoal(Guardian p_32871_) {

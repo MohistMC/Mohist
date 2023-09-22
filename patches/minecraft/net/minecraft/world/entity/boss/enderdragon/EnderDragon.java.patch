@@ -30,59 +30,59 @@
  
  public class EnderDragon extends Mob implements Enemy {
 @@ -88,6 +_,7 @@
-    private final Node[] f_31077_ = new Node[24];
-    private final int[] f_31078_ = new int[24];
-    private final BinaryHeap f_31079_ = new BinaryHeap();
+    private final Node[] nodes = new Node[24];
+    private final int[] nodeAdjacency = new int[24];
+    private final BinaryHeap openSet = new BinaryHeap();
 +   private final Explosion explosionSource; // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
  
     public EnderDragon(EntityType<? extends EnderDragon> p_31096_, Level p_31097_) {
-       super(EntityType.f_20565_, p_31097_);
+       super(EntityType.ENDER_DRAGON, p_31097_);
 @@ -104,6 +_,15 @@
-       this.f_19794_ = true;
-       this.f_19811_ = true;
-       this.f_31074_ = new EnderDragonPhaseManager(this);
-+      this.m_20234_(f_19843_.getAndAdd(this.f_31089_.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
+       this.noPhysics = true;
+       this.noCulling = true;
+       this.phaseManager = new EnderDragonPhaseManager(this);
++      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
 +      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY); // CraftBukkit
 +   }
 +
 +   @Override
-+   public void m_20234_(int p_20235_) {
-+      super.m_20234_(p_20235_);
-+      for (int i = 0; i < this.f_31089_.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-+         this.f_31089_[i].m_20234_(p_20235_ + i + 1);
++   public void setId(int p_20235_) {
++      super.setId(p_20235_);
++      for (int i = 0; i < this.subEntities.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
++         this.subEntities[i].setId(p_20235_ + i + 1);
     }
  
-    public void m_287231_(EndDragonFight p_287736_) {
+    public void setDragonFight(EndDragonFight p_287736_) {
 @@ -159,7 +_,11 @@
        return adouble;
     }
  
 +   @org.jetbrains.annotations.Nullable private Player unlimitedLastHurtByPlayer = null;
-    public void m_8107_() {
+    public void aiStep() {
 +      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
-+      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
-+      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_213877_()) this.unlimitedLastHurtByPlayer = null;
-       this.m_146874_();
-       if (this.m_9236_().f_46443_) {
-          this.m_21153_(this.m_21223_());
++      if (this.lastHurtByPlayer != null) this.unlimitedLastHurtByPlayer = lastHurtByPlayer;
++      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.isRemoved()) this.unlimitedLastHurtByPlayer = null;
+       this.processFlappingMovement();
+       if (this.level().isClientSide) {
+          this.setHealth(this.getHealth());
 @@ -362,7 +_,14 @@
-          if (this.f_31086_.m_213877_()) {
-             this.f_31086_ = null;
-          } else if (this.f_19797_ % 10 == 0 && this.m_21223_() < this.m_21233_()) {
--            this.m_21153_(this.m_21223_() + 1.0F);
+          if (this.nearestCrystal.isRemoved()) {
+             this.nearestCrystal = null;
+          } else if (this.tickCount % 10 == 0 && this.getHealth() < this.getMaxHealth()) {
+-            this.setHealth(this.getHealth() + 1.0F);
 +            // CraftBukkit start
 +            EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), 1.0F, EntityRegainHealthEvent.RegainReason.ENDER_CRYSTAL);
-+            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++            this.level.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
-+               this.m_21153_((float) (this.m_21223_() + event.getAmount()));
++               this.setHealth((float) (this.getHealth() + event.getAmount()));
 +            }
 +            // CraftBukkit end
           }
        }
  
 @@ -426,15 +_,22 @@
-       int j1 = Mth.m_14107_(p_31140_.f_82293_);
+       int j1 = Mth.floor(p_31140_.maxZ);
        boolean flag = false;
        boolean flag1 = false;
 +      // CraftBukkit start - Create a list to hold all the destroyed blocks
@@ -93,16 +93,16 @@
           for(int l1 = j; l1 <= i1; ++l1) {
              for(int i2 = k; i2 <= j1; ++i2) {
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
--               BlockState blockstate = this.m_9236_().m_8055_(blockpos);
-+               BlockState blockstate = this.f_19853_.m_8055_(blockpos);
-                if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
--                  if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
--                     flag1 = this.m_9236_().m_7471_(blockpos, false) || flag1;
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
+-               BlockState blockstate = this.level().getBlockState(blockpos);
++               BlockState blockstate = this.level.getBlockState(blockpos);
+                if (!blockstate.isAir() && !blockstate.is(BlockTags.DRAGON_TRANSPARENT)) {
+-                  if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
+-                     flag1 = this.level().removeBlock(blockpos, false) || flag1;
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.level, blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level.removeBlock(blockposition, false) || flag1;
 +                     flag1 = true;
-+                     destroyedBlocks.add(CraftBlock.at(f_19853_, blockpos));
++                     destroyedBlocks.add(CraftBlock.at(level, blockpos));
 +                     // CraftBukkit end
                    } else {
                       flag = true;
@@ -127,7 +127,7 @@
 +      } else if (event.getYield() == 0F) {
 +         // Yield zero ==> no drops
 +         for (org.bukkit.block.Block block : event.blockList()) {
-+            this.f_19853_.m_7471_(new BlockPos(block.getX(), block.getY(), block.getZ()), false);
++            this.level.removeBlock(new BlockPos(block.getX(), block.getY(), block.getZ()), false);
 +         }
 +      } else {
 +         for (org.bukkit.block.Block block : event.blockList()) {
@@ -139,73 +139,73 @@
 +            CraftBlock craftBlock = ((CraftBlock) block);
 +            BlockPos blockposition = craftBlock.getPosition();
 +
-+            Block nmsBlock = craftBlock.getNMS().m_60734_();
-+            if (nmsBlock.m_6903_(explosionSource)) {
-+               BlockEntity tileentity = craftBlock.getNMS().m_155947_() ? this.m_9236_().m_7702_(blockposition) : null;
-+               LootParams.Builder loottableinfo_builder = (new LootParams.Builder((ServerLevel) this.f_19853_)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(blockposition)).m_287286_(LootContextParams.f_81463_, ItemStack.f_41583_).m_287286_(LootContextParams.f_81464_, 1.0F / event.getYield()).m_287289_(LootContextParams.f_81462_, tileentity);
++            Block nmsBlock = craftBlock.getNMS().getBlock();
++            if (nmsBlock.dropFromExplosion(explosionSource)) {
++               BlockEntity tileentity = craftBlock.getNMS().hasBlockEntity() ? this.level().getBlockEntity(blockposition) : null;
++               LootParams.Builder loottableinfo_builder = (new LootParams.Builder((ServerLevel) this.level)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockposition)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / event.getYield()).withOptionalParameter(LootContextParams.BLOCK_ENTITY, tileentity);
 +
-+               craftBlock.getNMS().m_287290_(loottableinfo_builder).forEach((itemstack) -> {
-+                  Block.m_49840_(this.m_9236_(), blockposition, itemstack);
++               craftBlock.getNMS().getDrops(loottableinfo_builder).forEach((itemstack) -> {
++                  Block.popResource(this.level(), blockposition, itemstack);
 +               });
-+               craftBlock.getNMS().m_222967_((ServerLevel) f_19853_, blockposition, ItemStack.f_41583_, false);
++               craftBlock.getNMS().spawnAfterBreak((ServerLevel) level, blockposition, ItemStack.EMPTY, false);
 +            }
-+            nmsBlock.m_7592_(this.m_9236_(), blockposition, explosionSource);
++            nmsBlock.wasExploded(this.level(), blockposition, explosionSource);
 +
-+            this.f_19853_.m_7471_(blockposition, false);
++            this.level.removeBlock(blockposition, false);
 +         }
 +      }
 +      // CraftBukkit end
 +
        if (flag1) {
-          BlockPos blockpos1 = new BlockPos(i + this.f_19796_.m_188503_(l - i + 1), j + this.f_19796_.m_188503_(i1 - j + 1), k + this.f_19796_.m_188503_(j1 - k + 1));
-          this.m_9236_().m_46796_(2008, blockpos1, 0);
+          BlockPos blockpos1 = new BlockPos(i + this.random.nextInt(l - i + 1), j + this.random.nextInt(i1 - j + 1), k + this.random.nextInt(j1 - k + 1));
+          this.level().levelEvent(2008, blockpos1, 0);
 @@ -522,20 +_,39 @@
           i = 12000;
        }
  
--      if (this.m_9236_() instanceof ServerLevel) {
--         if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.08F));
-+      if (this.f_19853_ instanceof ServerLevel) {
-+         if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && true) {  // CraftBukkit - SPIGOT-2420: Already checked for the game rule when calculating the xp
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.08F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
+-      if (this.level() instanceof ServerLevel) {
+-         if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && flag) {
+-            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.08F));
++      if (this.level instanceof ServerLevel) {
++         if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && true) {  // CraftBukkit - SPIGOT-2420: Already checked for the game rule when calculating the xp
++            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.08F));
++            ExperienceOrb.award((ServerLevel)this.level, this.position(), award);
           }
  
-          if (this.f_31084_ == 1 && !this.m_20067_()) {
--            this.m_9236_().m_6798_(1028, this.m_20183_(), 0);
+          if (this.dragonDeathTime == 1 && !this.isSilent()) {
+-            this.level().globalLevelEvent(1028, this.blockPosition(), 0);
 +            // CraftBukkit start - Use relative location for far away sounds
 +            // this.level.globalLevelEvent(1028, this.blockPosition(), 0);
-+            int viewDistance = this.f_19853_.getCraftServer().getViewDistance() * 16;
-+            for (net.minecraft.server.level.ServerPlayer player : this.f_19853_.m_7654_().m_6846_().f_11196_) {
-+               double deltaX = this.m_20185_() - player.m_20185_();
-+               double deltaZ = this.m_20189_() - player.m_20189_();
++            int viewDistance = this.level.getCraftServer().getViewDistance() * 16;
++            for (net.minecraft.server.level.ServerPlayer player : this.level.getServer().getPlayerList().players) {
++               double deltaX = this.getX() - player.getX();
++               double deltaZ = this.getZ() - player.getZ();
 +               double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
-+               if ( f_19853_.spigotConfig.dragonDeathSoundRadius > 0 && distanceSquared > f_19853_.spigotConfig.dragonDeathSoundRadius * f_19853_.spigotConfig.dragonDeathSoundRadius ) continue; // Spigot
++               if ( level.spigotConfig.dragonDeathSoundRadius > 0 && distanceSquared > level.spigotConfig.dragonDeathSoundRadius * level.spigotConfig.dragonDeathSoundRadius ) continue; // Spigot
 +               if (distanceSquared > viewDistance * viewDistance) {
 +                  double deltaLength = Math.sqrt(distanceSquared);
-+                  double relativeX = player.m_20185_() + (deltaX / deltaLength) * viewDistance;
-+                  double relativeZ = player.m_20189_() + (deltaZ / deltaLength) * viewDistance;
-+                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
++                  double relativeX = player.getX() + (deltaX / deltaLength) * viewDistance;
++                  double relativeZ = player.getZ() + (deltaZ / deltaLength) * viewDistance;
++                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.getY(), (int) relativeZ), 0, true));
 +               } else {
-+                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
++                  player.connection.send(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ()), 0, true));
 +               }
 +            }
 +            // CraftBukkit end
           }
        }
  
-       this.m_6478_(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
--      if (this.f_31084_ == 200 && this.m_9236_() instanceof ServerLevel) {
+       this.move(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
+-      if (this.dragonDeathTime == 200 && this.level() instanceof ServerLevel) {
 -         if (flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
-+      if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
+-            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.2F));
++      if (this.dragonDeathTime == 200 && this.level instanceof ServerLevel) {
 +         if (true) { // CraftBukkit - SPIGOT-2420: Already checked for the game rule when calculating the xp
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.2F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
++            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.2F));
++            ExperienceOrb.award((ServerLevel)this.level, this.position(), award);
           }
  
-          if (this.f_31073_ != null) {
+          if (this.dragonFight != null) {
 @@ -858,8 +_,19 @@
        return false;
     }
@@ -217,12 +217,12 @@
 +
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
-+      return this.f_31089_;
++      return this.subEntities;
 +   }
 +
-    public void m_141965_(ClientboundAddEntityPacket p_218825_) {
-       super.m_141965_(p_218825_);
+    public void recreateFromPacket(ClientboundAddEntityPacket p_218825_) {
+       super.recreateFromPacket(p_218825_);
 +      if (true) return; // Forge: Fix MC-158205: Moved into setId()
-       EnderDragonPart[] aenderdragonpart = this.m_31156_();
+       EnderDragonPart[] aenderdragonpart = this.getSubEntities();
  
        for(int i = 0; i < aenderdragonpart.length; ++i) {

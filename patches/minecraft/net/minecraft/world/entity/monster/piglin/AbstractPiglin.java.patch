@@ -1,34 +1,34 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 @@ -63,7 +_,7 @@
-       this.m_20088_().m_135381_(f_34648_, p_34671_);
+       this.getEntityData().set(DATA_IMMUNE_TO_ZOMBIFICATION, p_34671_);
     }
  
--   protected boolean m_34665_() {
-+   public boolean m_34665_() {
-       return this.m_20088_().m_135370_(f_34648_);
+-   protected boolean isImmuneToZombification() {
++   public boolean isImmuneToZombification() {
+       return this.getEntityData().get(DATA_IMMUNE_TO_ZOMBIFICATION);
     }
  
 @@ -93,9 +_,10 @@
-          ++this.f_34649_;
+          ++this.timeInOverworld;
        } else {
-          this.f_34649_ = 0;
-+         this.f_34649_ = 0;
+          this.timeInOverworld = 0;
++         this.timeInOverworld = 0;
        }
  
--      if (this.f_34649_ > 300) {
-+      if (this.f_34649_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> this.f_34649_ = timer)) {
-          this.m_7580_();
-          this.m_8063_((ServerLevel)this.m_9236_());
+-      if (this.timeInOverworld > 300) {
++      if (this.timeInOverworld > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> this.timeInOverworld = timer)) {
+          this.playConvertedSound();
+          this.finishConversion((ServerLevel)this.level());
        }
 @@ -107,9 +_,10 @@
     }
  
-    protected void m_8063_(ServerLevel p_34663_) {
--      ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);
-+      ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.f_20531_, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PIGLIN_ZOMBIFIED, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED); // CraftBukkit - add spawn and transform reasons
+    protected void finishConversion(ServerLevel p_34663_) {
+-      ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
++      ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.PIGLIN_ZOMBIFIED, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.PIGLIN_ZOMBIFIED); // CraftBukkit - add spawn and transform reasons
        if (zombifiedpiglin != null) {
-          zombifiedpiglin.m_7292_(new MobEffectInstance(MobEffects.f_19604_, 200, 0));
+          zombifiedpiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
 +         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
        }
  

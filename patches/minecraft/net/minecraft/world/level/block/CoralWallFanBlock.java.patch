@@ -2,13 +2,13 @@
 +++ b/net/minecraft/world/level/block/CoralWallFanBlock.java
 @@ -24,6 +_,11 @@
  
-    public void m_213897_(BlockState p_221035_, ServerLevel p_221036_, BlockPos p_221037_, RandomSource p_221038_) {
-       if (!m_49186_(p_221035_, p_221036_, p_221037_)) {
+    public void tick(BlockState p_221035_, ServerLevel p_221036_, BlockPos p_221037_, RandomSource p_221038_) {
+       if (!scanForWater(p_221035_, p_221036_, p_221037_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_221036_, p_221037_, this.f_52200_.m_49966_().m_61124_(f_49158_, false).m_61124_(f_49192_, p_221035_.m_61143_(f_49192_))).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_221036_, p_221037_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, false).setValue(FACING, p_221035_.getValue(FACING))).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_221036_.m_7731_(p_221037_, this.f_52200_.m_49966_().m_61124_(f_49158_, Boolean.valueOf(false)).m_61124_(f_49192_, p_221035_.m_61143_(f_49192_)), 2);
+          p_221036_.setBlock(p_221037_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, Boolean.valueOf(false)).setValue(FACING, p_221035_.getValue(FACING)), 2);
        }
  

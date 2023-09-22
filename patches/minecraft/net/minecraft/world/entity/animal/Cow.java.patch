@@ -11,23 +11,23 @@
  
  public class Cow extends Animal {
 @@ -76,10 +_,18 @@
-    public InteractionResult m_6071_(Player p_28298_, InteractionHand p_28299_) {
-       ItemStack itemstack = p_28298_.m_21120_(p_28299_);
-       if (itemstack.m_150930_(Items.f_42446_) && !this.m_6162_()) {
+    public InteractionResult mobInteract(Player p_28298_, InteractionHand p_28299_) {
+       ItemStack itemstack = p_28298_.getItemInHand(p_28299_);
+       if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
 +         // CraftBukkit start - Got milk?
-+         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_28298_.m_9236_(), p_28298_, this.m_20183_(), this.m_20183_(), null, itemstack, Items.f_42455_, p_28299_);
++         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent((ServerLevel) p_28298_.level(), p_28298_, this.blockPosition(), this.blockPosition(), null, itemstack, Items.MILK_BUCKET, p_28299_);
 +
 +         if (event.isCancelled()) {
 +            return InteractionResult.PASS;
 +         }
 +         // CraftBukkit end
 +
-          p_28298_.m_5496_(SoundEvents.f_11833_, 1.0F, 1.0F);
--         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_28298_, Items.f_42455_.m_7968_());
-+         ItemStack itemstack1 = ItemUtils.m_41813_(itemstack, p_28298_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
-          p_28298_.m_21008_(p_28299_, itemstack1);
--         return InteractionResult.m_19078_(this.m_9236_().f_46443_);
-+         return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+          p_28298_.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+-         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, Items.MILK_BUCKET.getDefaultInstance());
++         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
+          p_28298_.setItemInHand(p_28299_, itemstack1);
+-         return InteractionResult.sidedSuccess(this.level().isClientSide);
++         return InteractionResult.sidedSuccess(this.level.isClientSide);
        } else {
-          return super.m_6071_(p_28298_, p_28299_);
+          return super.mobInteract(p_28298_, p_28299_);
        }

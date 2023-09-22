@@ -12,17 +12,17 @@
  public class StonecutterRecipe extends SingleItemRecipe {
     public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {
 @@ -17,4 +_,16 @@
-    public ItemStack m_8042_() {
-       return new ItemStack(Blocks.f_50679_);
+    public ItemStack getToastSymbol() {
+       return new ItemStack(Blocks.STONECUTTER);
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_44410_);
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.f_44409_));
-+      recipe.setGroup(this.f_44412_);
++      CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient));
++      recipe.setGroup(this.group);
 +
 +      return recipe;
 +   }

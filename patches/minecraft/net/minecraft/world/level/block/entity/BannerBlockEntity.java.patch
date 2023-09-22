@@ -3,12 +3,12 @@
 @@ -96,6 +_,11 @@
        }
  
-       this.f_58475_ = p_155042_.m_128437_("Patterns", 10);
+       this.itemPatterns = p_155042_.getList("Patterns", 10);
 +      // CraftBukkit start
-+      while (this.f_58475_.size() > 20) {
-+         this.f_58475_.remove(20);
++      while (this.itemPatterns.size() > 20) {
++         this.itemPatterns.remove(20);
 +      }
 +      // CraftBukkit end
-       this.f_58477_ = null;
+       this.patterns = null;
     }
  

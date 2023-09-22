@@ -9,12 +9,12 @@
 +import org.bukkit.event.entity.VillagerAcquireTradeEvent;
  
  public class WanderingTrader extends AbstractVillager {
-    private static final int f_150044_ = 5;
+    private static final int NUMBER_OF_TRADE_OFFERS = 5;
 @@ -54,6 +_,7 @@
  
     public WanderingTrader(EntityType<? extends WanderingTrader> p_35843_, Level p_35844_) {
        super(p_35843_, p_35844_);
-+      this.m_35891_(48000); // CraftBukkit - set default from MobSpawnerTrader
++      this.setDespawnDelay(48000); // CraftBukkit - set default from MobSpawnerTrader
     }
  
-    protected void m_8099_() {
+    protected void registerGoals() {

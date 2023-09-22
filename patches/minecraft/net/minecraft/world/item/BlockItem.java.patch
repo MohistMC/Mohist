@@ -19,27 +19,27 @@
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {
-    public static final String f_150696_ = "BlockEntityTag";
+    public static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
 @@ -59,6 +_,12 @@
           return InteractionResult.FAIL;
        } else {
-          BlockPlaceContext blockplacecontext = this.m_7732_(p_40577_);
+          BlockPlaceContext blockplacecontext = this.updatePlacementContext(p_40577_);
 +         // CraftBukkit start - special case for handling block placement with water lilies and snow buckets
 +         org.bukkit.block.BlockState blockstateCB = null;
 +         if (this instanceof PlaceOnWaterBlockItem || this instanceof SolidBucketItem) {
-+            blockstateCB = CraftBlockStates.getBlockState(p_40577_.m_43725_(), p_40577_.m_8083_());
++            blockstateCB = CraftBlockStates.getBlockState(p_40577_.getLevel(), p_40577_.getClickedPos());
 +         }
 +         // CraftBukkit end
           if (blockplacecontext == null) {
              return InteractionResult.FAIL;
           } else {
 @@ -77,15 +_,28 @@
-                   blockstate1 = this.m_40602_(blockpos, level, itemstack, blockstate1);
-                   this.m_7274_(blockpos, level, player, itemstack, blockstate1);
-                   blockstate1.m_60734_().m_6402_(level, blockpos, blockstate1, player, itemstack);
+                   blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
+                   this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
+                   blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
 +                  // CraftBukkit start
 +                  if (blockstateCB != null) {
-+                     org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent((ServerLevel) level, player, p_40577_.m_43724_(), blockstateCB, blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_());
++                     org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent((ServerLevel) level, player, p_40577_.getHand(), blockstateCB, blockpos.getX(), blockpos.getY(), blockpos.getZ());
 +                     if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
 +                        blockstateCB.update(true, false);
 +
@@ -51,18 +51,18 @@
 +                  }
 +                  // CraftBukkit end
                    if (player instanceof ServerPlayer) {
-                      CriteriaTriggers.f_10591_.m_285767_((ServerPlayer)player, blockpos, itemstack);
+                      CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, blockpos, itemstack);
                    }
                 }
  
--               SoundType soundtype = blockstate1.m_60827_();
--               level.m_5594_(player, blockpos, this.m_40587_(blockstate1), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
-                level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(player, blockstate1));
--               if (player == null || !player.m_150110_().f_35937_) {
-+               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.m_43723_());
-+               level.m_5594_(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.m_43723_()), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
-+               if ((player == null || !player.m_150110_().f_35937_) && itemstack != ItemStack.f_41583_) { // CraftBukkit
-                   itemstack.m_41774_(1);
+-               SoundType soundtype = blockstate1.getSoundType();
+-               level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
+-               if (player == null || !player.getAbilities().instabuild) {
++               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.getPlayer());
++               level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               if ((player == null || !player.getAbilities().instabuild) && itemstack != ItemStack.EMPTY) { // CraftBukkit
+                   itemstack.shrink(1);
                 }
  
 @@ -95,10 +_,16 @@
@@ -70,73 +70,73 @@
     }
  
 +   @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
-    protected SoundEvent m_40587_(BlockState p_40588_) {
-       return p_40588_.m_60827_().m_56777_();
+    protected SoundEvent getPlaceSound(BlockState p_40588_) {
+       return p_40588_.getSoundType().getPlaceSound();
     }
  
 +   //Forge: Sensitive version of BlockItem#getPlaceSound
 +   protected SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
-+      return state.getSoundType(world, pos, entity).m_56777_();
++      return state.getSoundType(world, pos, entity).getPlaceSound();
 +   }
 +
     @Nullable
-    public BlockPlaceContext m_7732_(BlockPlaceContext p_40609_) {
+    public BlockPlaceContext updatePlacementContext(BlockPlaceContext p_40609_) {
        return p_40609_;
 @@ -146,7 +_,15 @@
-    protected boolean m_40610_(BlockPlaceContext p_40611_, BlockState p_40612_) {
-       Player player = p_40611_.m_43723_();
-       CollisionContext collisioncontext = player == null ? CollisionContext.m_82749_() : CollisionContext.m_82750_(player);
--      return (!this.m_6652_() || p_40612_.m_60710_(p_40611_.m_43725_(), p_40611_.m_8083_())) && p_40611_.m_43725_().m_45752_(p_40612_, p_40611_.m_8083_(), collisioncontext);
+    protected boolean canPlace(BlockPlaceContext p_40611_, BlockState p_40612_) {
+       Player player = p_40611_.getPlayer();
+       CollisionContext collisioncontext = player == null ? CollisionContext.empty() : CollisionContext.of(player);
+-      return (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos())) && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), collisioncontext);
 +      // CraftBukkit start - store default return
-+      boolean defaultReturn = (!this.m_6652_() || p_40612_.m_60710_(p_40611_.m_43725_(), p_40611_.m_8083_())) && p_40611_.m_43725_().m_45752_(p_40612_, p_40611_.m_8083_(), collisioncontext);
-+      org.bukkit.entity.Player playerCB = (p_40611_.m_43723_() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_40611_.m_43723_().getBukkitEntity() : null;
++      boolean defaultReturn = (!this.mustSurvive() || p_40612_.canSurvive(p_40611_.getLevel(), p_40611_.getClickedPos())) && p_40611_.getLevel().isUnobstructed(p_40612_, p_40611_.getClickedPos(), collisioncontext);
++      org.bukkit.entity.Player playerCB = (p_40611_.getPlayer() instanceof ServerPlayer) ? (org.bukkit.entity.Player) p_40611_.getPlayer().getBukkitEntity() : null;
 +
-+      BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_40611_.m_43725_(), p_40611_.m_8083_()), playerCB, CraftBlockData.fromData(p_40612_), defaultReturn);
-+      p_40611_.m_43725_().getCraftServer().getPluginManager().callEvent(event);
++      BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_40611_.getLevel(), p_40611_.getClickedPos()), playerCB, CraftBlockData.fromData(p_40612_), defaultReturn);
++      p_40611_.getLevel().getCraftServer().getPluginManager().callEvent(event);
 +
 +      return event.isBuildable();
 +      // CraftBukkit end
     }
  
-    protected boolean m_6652_() {
+    protected boolean mustSurvive() {
 @@ -195,6 +_,10 @@
     }
  
-    public Block m_40614_() {
+    public Block getBlock() {
 +      return this.getBlockRaw() == null ? null : net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(this.getBlockRaw()).get();
 +   }
 +
 +   private Block getBlockRaw() {
-       return this.f_40563_;
+       return this.block;
     }
  
 @@ -202,6 +_,10 @@
-       p_40607_.put(this.m_40614_(), p_40608_);
+       p_40607_.put(this.getBlock(), p_40608_);
     }
  
 +   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-+      blockToItemMap.remove(this.m_40614_());
++      blockToItemMap.remove(this.getBlock());
 +   }
 +
-    public boolean m_142095_() {
-       return !(this.f_40563_ instanceof ShulkerBoxBlock);
+    public boolean canFitInsideContainerItems() {
+       return !(this.block instanceof ShulkerBoxBlock);
     }
 @@ -236,4 +_,22 @@
-    public FeatureFlagSet m_245183_() {
-       return this.m_40614_().m_245183_();
+    public FeatureFlagSet requiredFeatures() {
+       return this.getBlock().requiredFeatures();
     }
 +
 +   public static BlockState getBlockState(BlockState iblockdata, CompoundTag compoundtag1) {
 +      BlockState iblockdata1 = iblockdata;
 +      {
 +         // CraftBukkit end
-+         StateDefinition<Block, BlockState> statedefinition = iblockdata.m_60734_().m_49965_();
++         StateDefinition<Block, BlockState> statedefinition = iblockdata.getBlock().getStateDefinition();
 +
-+         for(String s : compoundtag1.m_128431_()) {
-+            Property<?> property = statedefinition.m_61081_(s);
++         for(String s : compoundtag1.getAllKeys()) {
++            Property<?> property = statedefinition.getProperty(s);
 +            if (property != null) {
-+               String s1 = compoundtag1.m_128423_(s).m_7916_();
-+               iblockdata1 = m_40593_(iblockdata1, property, s1);
++               String s1 = compoundtag1.get(s).getAsString();
++               iblockdata1 = updateState(iblockdata1, property, s1);
 +            }
 +         }
 +      }

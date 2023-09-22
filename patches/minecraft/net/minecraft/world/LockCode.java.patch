@@ -12,21 +12,21 @@
 @@ -15,7 +_,19 @@
     }
  
-    public boolean m_19107_(ItemStack p_19108_) {
--      return this.f_19103_.isEmpty() || !p_19108_.m_41619_() && p_19108_.m_41788_() && this.f_19103_.equals(p_19108_.m_41786_().getString());
+    public boolean unlocksWith(ItemStack p_19108_) {
+-      return this.key.isEmpty() || !p_19108_.isEmpty() && p_19108_.hasCustomHoverName() && this.key.equals(p_19108_.getHoverName().getString());
 +      // CraftBukkit start - SPIGOT-6307: Check for color codes if the lock contains color codes
-+      if (this.f_19103_.isEmpty()) return true;
-+      if (!p_19108_.m_41619_() && p_19108_.m_41788_()) {
-+         if (this.f_19103_.indexOf(ChatColor.COLOR_CHAR) == -1) {
++      if (this.key.isEmpty()) return true;
++      if (!p_19108_.isEmpty() && p_19108_.hasCustomHoverName()) {
++         if (this.key.indexOf(ChatColor.COLOR_CHAR) == -1) {
 +            // The lock key contains no color codes, so let's ignore colors in the item display name (vanilla Minecraft behavior):
-+            return this.f_19103_.equals(p_19108_.m_41786_().getString());
++            return this.key.equals(p_19108_.getHoverName().getString());
 +         } else {
 +            // The lock key contains color codes, so let's take them into account:
-+            return this.f_19103_.equals(CraftChatMessage.fromComponent(p_19108_.m_41786_()));
++            return this.key.equals(CraftChatMessage.fromComponent(p_19108_.getHoverName()));
 +         }
 +      }
 +      return false;
 +      // CraftBukkit end
     }
  
-    public void m_19109_(CompoundTag p_19110_) {
+    public void addToTag(CompoundTag p_19110_) {

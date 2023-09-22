@@ -9,27 +9,27 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class LoomMenu extends AbstractContainerMenu {
-    private static final int f_219989_ = -1;
+    private static final int PATTERN_NOT_SET = -1;
 @@ -46,12 +_,24 @@
-          LoomMenu.this.m_6199_(this);
-          LoomMenu.this.f_39847_.run();
+          LoomMenu.this.slotsChanged(this);
+          LoomMenu.this.slotUpdateListener.run();
        }
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return LoomMenu.this.f_39845_.getLocation();
++         return LoomMenu.this.access.getLocation();
 +      }
 +      // CraftBukkit end
     };
-    private final Container f_39854_ = new SimpleContainer(1) {
-       public void m_6596_() {
-          super.m_6596_();
-          LoomMenu.this.f_39847_.run();
+    private final Container outputContainer = new SimpleContainer(1) {
+       public void setChanged() {
+          super.setChanged();
+          LoomMenu.this.slotUpdateListener.run();
        }
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return LoomMenu.this.f_39845_.getLocation();
++         return LoomMenu.this.access.getLocation();
 +      }
 +      // CraftBukkit end
     };
@@ -38,18 +38,18 @@
 @@ -111,9 +_,11 @@
        }
  
-       this.m_38895_(this.f_39846_);
-+      player = (org.bukkit.entity.Player) p_39860_.f_35978_.getBukkitEntity(); // CraftBukkit
+       this.addDataSlot(this.selectedBannerPatternIndex);
++      player = (org.bukkit.entity.Player) p_39860_.player.getBukkitEntity(); // CraftBukkit
     }
  
-    public boolean m_6875_(Player p_39865_) {
+    public boolean stillValid(Player p_39865_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return m_38889_(this.f_39845_, p_39865_, Blocks.f_50617_);
+       return stillValid(this.access, p_39865_, Blocks.LOOM);
     }
  
 @@ -313,4 +_,20 @@
-    public Slot m_39897_() {
-       return this.f_39851_;
+    public Slot getResultSlot() {
+       return this.resultSlot;
     }
 +
 +   // CraftBukkit start
@@ -62,7 +62,7 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryLoom inventory = new CraftInventoryLoom(this.f_39853_, this.f_39854_);
++      CraftInventoryLoom inventory = new CraftInventoryLoom(this.inputContainer, this.outputContainer);
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }

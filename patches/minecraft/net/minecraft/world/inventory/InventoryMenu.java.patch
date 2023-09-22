@@ -13,14 +13,14 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
-    public static final int f_150579_ = 0;
+    public static final int CONTAINER_ID = 0;
 @@ -35,13 +_,30 @@
-    private static final EquipmentSlot[] f_39700_ = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private final CraftingContainer f_39701_ = new TransientCraftingContainer(this, 2, 2);
-    private final ResultContainer f_39702_ = new ResultContainer();
+    private static final EquipmentSlot[] SLOT_IDS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 2, 2);
+    private final ResultContainer resultSlots = new ResultContainer();
 +   // CraftBukkit start
-    public final boolean f_39698_;
-    private final Player f_39703_;
+    public final boolean active;
+    private final Player owner;
 +   private CraftInventoryView bukkitEntity = null;
 +   private Inventory player;
 +   @Override
@@ -29,28 +29,28 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.f_39701_, this.f_39702_);
-+      bukkitEntity = new CraftInventoryView(this.player.f_35978_.getBukkitEntity(), inventory, this);
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftSlots, this.resultSlots);
++      bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
  
     public InventoryMenu(Inventory p_39706_, boolean p_39707_, final Player p_39708_) {
        super((MenuType<?>)null, 0);
-       this.f_39698_ = p_39707_;
-       this.f_39703_ = p_39708_;
-+      ((TransientCraftingContainer)this.f_39701_).resultInventory = this.f_39702_; // CraftBukkit - let InventoryCrafting know about its result slot
-+      ((TransientCraftingContainer)this.f_39701_).setOwner(p_39706_.f_35978_);
+       this.active = p_39707_;
+       this.owner = p_39708_;
++      ((TransientCraftingContainer)this.craftSlots).resultInventory = this.resultSlots; // CraftBukkit - let InventoryCrafting know about its result slot
++      ((TransientCraftingContainer)this.craftSlots).setOwner(p_39706_.player);
 +      this.player = p_39706_; // CraftBukkit - save player
-       this.m_38897_(new ResultSlot(p_39706_.f_35978_, this.f_39701_, this.f_39702_, 0, 154, 28));
+       this.addSlot(new ResultSlot(p_39706_.player, this.craftSlots, this.resultSlots, 0, 154, 28));
  
        for(int i = 0; i < 2; ++i) {
 @@ -63,7 +_,7 @@
              }
  
-             public boolean m_5857_(ItemStack p_39746_) {
--               return equipmentslot == Mob.m_147233_(p_39746_);
-+               return p_39746_.canEquip(equipmentslot, f_39703_);
+             public boolean mayPlace(ItemStack p_39746_) {
+-               return equipmentslot == Mob.getEquipmentSlotForItem(p_39746_);
++               return p_39746_.canEquip(equipmentslot, owner);
              }
  
-             public boolean m_8010_(Player p_39744_) {
+             public boolean mayPickup(Player p_39744_) {

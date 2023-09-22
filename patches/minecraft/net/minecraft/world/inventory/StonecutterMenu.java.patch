@@ -9,19 +9,19 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
  
  public class StonecutterMenu extends AbstractContainerMenu {
-    public static final int f_150665_ = 0;
+    public static final int INPUT_SLOT = 0;
 @@ -39,8 +_,29 @@
-          StonecutterMenu.this.m_6199_(this);
-          StonecutterMenu.this.f_40291_.run();
+          StonecutterMenu.this.slotsChanged(this);
+          StonecutterMenu.this.slotUpdateListener.run();
        }
 +      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return StonecutterMenu.this.f_40285_.getLocation();
++         return StonecutterMenu.this.access.getLocation();
 +      }
 +      // CraftBukkit end
     };
-    final ResultContainer f_40292_ = new ResultContainer();
+    final ResultContainer resultContainer = new ResultContainer();
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private org.bukkit.entity.Player player;
@@ -32,27 +32,27 @@
 +         return bukkitEntity;
 +      }
 +
-+      CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.f_40284_, this.f_40292_);
++      CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.container, this.resultContainer);
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
  
     public StonecutterMenu(int p_40294_, Inventory p_40295_) {
-       this(p_40294_, p_40295_, ContainerLevelAccess.f_39287_);
+       this(p_40294_, p_40295_, ContainerLevelAccess.NULL);
 @@ -91,6 +_,7 @@
        }
  
-       this.m_38895_(this.f_40286_);
-+      player = (org.bukkit.entity.Player) p_40298_.f_35978_.getBukkitEntity(); // CraftBukkit
+       this.addDataSlot(this.selectedRecipeIndex);
++      player = (org.bukkit.entity.Player) p_40298_.player.getBukkitEntity(); // CraftBukkit
     }
  
-    public int m_40338_() {
+    public int getSelectedRecipeIndex() {
 @@ -110,6 +_,7 @@
     }
  
-    public boolean m_6875_(Player p_40307_) {
+    public boolean stillValid(Player p_40307_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-       return m_38889_(this.f_40285_, p_40307_, Blocks.f_50679_);
+       return stillValid(this.access, p_40307_, Blocks.STONECUTTER);
     }
  

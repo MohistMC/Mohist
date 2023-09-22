@@ -30,30 +30,30 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
  
  public class SmithingTrimRecipe implements SmithingRecipe {
-    final Ingredient f_265958_;
-    final Ingredient f_266040_;
-    final Ingredient f_266053_;
+    final Ingredient template;
+    final Ingredient base;
+    final Ingredient addition;
  
 -   SmithingTrimRecipe(Ingredient p_267298_, Ingredient p_266862_, Ingredient p_267050_) {
 +   public SmithingTrimRecipe(Ingredient p_267298_, Ingredient p_266862_, Ingredient p_267050_) {
-       this.f_265958_ = p_267298_;
-       this.f_266040_ = p_266862_;
-       this.f_266053_ = p_267050_;
+       this.template = p_267298_;
+       this.base = p_266862_;
+       this.addition = p_267050_;
 @@ -87,8 +_,15 @@
     }
  
-    public boolean m_142505_() {
--      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(Ingredient::m_43947_);
+    public boolean isIncomplete() {
+-      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
 -   }
-+      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
++      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
 +   }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.f_265958_), CraftRecipe.toBukkit(this.f_266040_), CraftRecipe.toBukkit(this.f_266053_));
++      return new CraftSmithingTrimRecipe(id, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
-       private static final Codec<SmithingTrimRecipe> f_291091_ = RecordCodecBuilder.create((p_297394_) -> {
+       private static final Codec<SmithingTrimRecipe> CODEC = RecordCodecBuilder.create((p_297394_) -> {

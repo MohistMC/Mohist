@@ -19,13 +19,13 @@
  
 -public abstract class BlockEntity {
 +public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
-    private static final Logger f_58854_ = LogUtils.getLogger();
-    private final BlockEntityType<?> f_58855_;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private final BlockEntityType<?> type;
     @Nullable
 @@ -23,11 +_,19 @@
-    protected final BlockPos f_58858_;
-    protected boolean f_58859_;
-    private BlockState f_58856_;
+    protected final BlockPos worldPosition;
+    protected boolean remove;
+    private BlockState blockState;
 +   private CompoundTag customPersistentData;
 +
 +   // CraftBukkit start - data containers
@@ -35,41 +35,41 @@
  
     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
 +      super(BlockEntity.class);
-       this.f_58855_ = p_155228_;
-       this.f_58858_ = p_155229_.m_7949_();
-       this.f_58856_ = p_155230_;
+       this.type = p_155228_;
+       this.worldPosition = p_155229_.immutable();
+       this.blockState = p_155230_;
 +      this.gatherCapabilities();
     }
  
-    public static BlockPos m_187472_(CompoundTag p_187473_) {
+    public static BlockPos getPosFromTag(CompoundTag p_187473_) {
 @@ -48,9 +_,20 @@
     }
  
-    public void m_142466_(CompoundTag p_155245_) {
-+      if (p_155245_.m_128441_("ForgeData")) this.customPersistentData = p_155245_.m_128469_("ForgeData");
-+      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
+    public void load(CompoundTag p_155245_) {
++      if (p_155245_.contains("ForgeData")) this.customPersistentData = p_155245_.getCompound("ForgeData");
++      if (getCapabilities() != null && p_155245_.contains("ForgeCaps")) deserializeCaps(p_155245_.getCompound("ForgeCaps"));
 +
 +      this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +
-+      net.minecraft.nbt.Tag persistentDataTag = p_155245_.m_128423_("PublicBukkitValues");
++      net.minecraft.nbt.Tag persistentDataTag = p_155245_.get("PublicBukkitValues");
 +      if (persistentDataTag instanceof CompoundTag) {
 +         this.persistentDataContainer.putAll((CompoundTag) persistentDataTag);
 +      }
     }
  
-    protected void m_183515_(CompoundTag p_187471_) {
-+      if (this.customPersistentData != null) p_187471_.m_128365_("ForgeData", this.customPersistentData.m_6426_());
-+      if (getCapabilities() != null) p_187471_.m_128365_("ForgeCaps", serializeCaps());
+    protected void saveAdditional(CompoundTag p_187471_) {
++      if (this.customPersistentData != null) p_187471_.put("ForgeData", this.customPersistentData.copy());
++      if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps());
     }
  
-    public final CompoundTag m_187480_() {
+    public final CompoundTag saveWithFullMetadata() {
 @@ -68,6 +_,11 @@
-    public final CompoundTag m_187482_() {
+    public final CompoundTag saveWithoutMetadata() {
        CompoundTag compoundtag = new CompoundTag();
-       this.m_183515_(compoundtag);
+       this.saveAdditional(compoundtag);
 +      // CraftBukkit start - store container
 +      if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
-+         compoundtag.m_128365_("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
++         compoundtag.put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
 +      }
 +      // CraftBukkit end
        return compoundtag;
@@ -77,8 +77,8 @@
  
 @@ -163,6 +_,13 @@
  
-    public void m_7651_() {
-       this.f_58859_ = true;
+    public void setRemoved() {
+       this.remove = true;
 +      this.invalidateCaps();
 +      requestModelDataUpdate();
 +   }
@@ -88,9 +88,9 @@
 +      this.invalidateCaps();
     }
  
-    public void m_6339_() {
+    public void clearRemoved() {
 @@ -191,9 +_,22 @@
-       return this.f_58855_;
+       return this.type;
     }
  
 +   @Override
@@ -102,8 +102,8 @@
 +
     /** @deprecated */
     @Deprecated
-    public void m_155250_(BlockState p_155251_) {
-       this.f_58856_ = p_155251_;
+    public void setBlockState(BlockState p_155251_) {
+       this.blockState = p_155251_;
     }
 +
 +   // CraftBukkit start - add method

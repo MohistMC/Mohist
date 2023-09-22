@@ -13,18 +13,18 @@
  public class SmeltingRecipe extends AbstractCookingRecipe {
     public SmeltingRecipe(String p_250200_, CookingBookCategory p_251114_, Ingredient p_250340_, ItemStack p_250306_, float p_249577_, int p_250030_) {
 @@ -15,4 +_,17 @@
-    public RecipeSerializer<?> m_7707_() {
-       return RecipeSerializer.f_44091_;
+    public RecipeSerializer<?> getSerializer() {
+       return RecipeSerializer.SMELTING_RECIPE;
     }
 +
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_43730_);
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(id, result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
-+      recipe.setGroup(this.f_43728_);
-+      recipe.setCategory(CraftRecipe.getCategory(this.m_245534_()));
++      CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);
++      recipe.setGroup(this.group);
++      recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
 +      return recipe;
 +   }

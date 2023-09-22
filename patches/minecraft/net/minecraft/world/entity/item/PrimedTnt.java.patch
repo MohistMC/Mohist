@@ -8,10 +8,10 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class PrimedTnt extends Entity implements TraceableEntity {
-    private static final EntityDataAccessor<Integer> f_32071_ = SynchedEntityData.m_135353_(PrimedTnt.class, EntityDataSerializers.f_135028_);
-    private static final int f_149679_ = 80;
+    private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(PrimedTnt.class, EntityDataSerializers.INT);
+    private static final int DEFAULT_FUSE_TIME = 80;
     @Nullable
-    public LivingEntity f_32072_;
+    public LivingEntity owner;
 +   public float yield = 4; // CraftBukkit - add field
 +   public boolean isIncendiary = false; // CraftBukkit - add field
  
@@ -20,39 +20,39 @@
 @@ -51,6 +_,7 @@
     }
  
-    public void m_8119_() {
-+      if (f_19853_.spigotConfig.maxTntTicksPerTick > 0 && ++f_19853_.spigotConfig.currentPrimedTnt > f_19853_.spigotConfig.maxTntTicksPerTick) { return; } // Spigot
-       if (!this.m_20068_()) {
-          this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.04D, 0.0D));
+    public void tick() {
++      if (level.spigotConfig.maxTntTicksPerTick > 0 && ++level.spigotConfig.currentPrimedTnt > level.spigotConfig.maxTntTicksPerTick) { return; } // Spigot
+       if (!this.isNoGravity()) {
+          this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
        }
 @@ -64,10 +_,13 @@
-       int i = this.m_32100_() - 1;
-       this.m_32085_(i);
+       int i = this.getFuse() - 1;
+       this.setFuse(i);
        if (i <= 0) {
--         this.m_146870_();
+-         this.discard();
 +         // CraftBukkit start - Need to reverse the order of the explosion and the entity death so we have a location for the event
 +         // this.discard();
-          if (!this.m_9236_().f_46443_) {
-             this.m_32103_();
+          if (!this.level().isClientSide) {
+             this.explode();
           }
-+         this.m_146870_();
++         this.discard();
 +         // CraftBukkit end
        } else {
-          this.m_20073_();
-          if (this.m_9236_().f_46443_) {
+          this.updateInWaterStateAndDoFluidPushing();
+          if (this.level().isClientSide) {
 @@ -78,8 +_,13 @@
     }
  
-    protected void m_32103_() {
+    protected void explode() {
 -      float f = 4.0F;
--      this.m_9236_().m_254849_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), 4.0F, Level.ExplosionInteraction.TNT);
+-      this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 4.0F, Level.ExplosionInteraction.TNT);
 +      // CraftBukkit start
 +      ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
 +
 +      if (!event.isCancelled()) {
-+         this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20227_(0.0625D), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
++         this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.TNT);
 +      }
 +      // CraftBukkit end
     }
  
-    protected void m_7380_(CompoundTag p_32097_) {
+    protected void addAdditionalSaveData(CompoundTag p_32097_) {

@@ -20,26 +20,26 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTransformRecipe;
  
  public class SmithingTransformRecipe implements SmithingRecipe {
-    final Ingredient f_265949_;
+    final Ingredient template;
 @@ -58,8 +_,19 @@
     }
  
-    public boolean m_142505_() {
--      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(Ingredient::m_43947_);
+    public boolean isIncomplete() {
+-      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
 -   }
-+      return Stream.of(this.f_265949_, this.f_265888_, this.f_265907_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
++      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
 +   }
 +
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_266098_);
++      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
-+      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.f_265949_), CraftRecipe.toBukkit(this.f_265888_), CraftRecipe.toBukkit(this.f_265907_));
++      CraftSmithingTransformRecipe recipe = new CraftSmithingTransformRecipe(id, result, CraftRecipe.toBukkit(this.template), CraftRecipe.toBukkit(this.base), CraftRecipe.toBukkit(this.addition));
 +
 +      return recipe;
 +   }
 +   // CraftBukkit end
  
     public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
-       private static final Codec<SmithingTransformRecipe> f_291016_ = RecordCodecBuilder.create((p_301330_) -> {
+       private static final Codec<SmithingTransformRecipe> CODEC = RecordCodecBuilder.create((p_301330_) -> {

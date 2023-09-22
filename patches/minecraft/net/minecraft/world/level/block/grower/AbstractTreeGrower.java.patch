@@ -19,12 +19,12 @@
  public abstract class AbstractTreeGrower {
 +
     @Nullable
-    protected abstract ResourceKey<ConfiguredFeature<?, ?>> m_213888_(RandomSource p_222910_, boolean p_222911_);
+    protected abstract ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource p_222910_, boolean p_222911_);
  
 @@ -23,9 +_,13 @@
           return false;
        } else {
-          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.m_9598_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
+          Holder<ConfiguredFeature<?, ?>> holder = p_222905_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222905_, p_222909_, p_222907_, holder);
 +         holder = event.getFeature();
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
@@ -32,9 +32,9 @@
              return false;
           } else {
 +            setTreeType(holder); // CraftBukkit
-             ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();
-             BlockState blockstate = p_222905_.m_6425_(p_222907_).m_76188_();
-             p_222905_.m_7731_(p_222907_, blockstate, 4);
+             ConfiguredFeature<?, ?> configuredfeature = holder.value();
+             BlockState blockstate = p_222905_.getFluidState(p_222907_).createLegacyBlock();
+             p_222905_.setBlock(p_222907_, blockstate, 4);
 @@ -52,4 +_,55 @@
  
        return false;
@@ -42,48 +42,48 @@
 +
 +   // CraftBukkit start
 +   protected void setTreeType(Holder<ConfiguredFeature<?, ?>> holder) {
-+      ResourceKey<ConfiguredFeature<?, ?>> worldgentreeabstract = holder.m_203543_().get();
-+      if (worldgentreeabstract == TreeFeatures.f_195123_ || worldgentreeabstract == TreeFeatures.f_195142_) {
++      ResourceKey<ConfiguredFeature<?, ?>> worldgentreeabstract = holder.unwrapKey().get();
++      if (worldgentreeabstract == TreeFeatures.OAK || worldgentreeabstract == TreeFeatures.OAK_BEES_005) {
 +         SaplingBlock.treeType = TreeType.TREE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195122_) {
++      } else if (worldgentreeabstract == TreeFeatures.HUGE_RED_MUSHROOM) {
 +         SaplingBlock.treeType = TreeType.RED_MUSHROOM;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195121_) {
++      } else if (worldgentreeabstract == TreeFeatures.HUGE_BROWN_MUSHROOM) {
 +         SaplingBlock.treeType = TreeType.BROWN_MUSHROOM;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195129_) {
++      } else if (worldgentreeabstract == TreeFeatures.JUNGLE_TREE) {
 +         SaplingBlock.treeType = TreeType.COCOA_TREE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195131_) {
++      } else if (worldgentreeabstract == TreeFeatures.JUNGLE_TREE_NO_VINE) {
 +         SaplingBlock.treeType = TreeType.SMALL_JUNGLE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195128_) {
++      } else if (worldgentreeabstract == TreeFeatures.PINE) {
 +         SaplingBlock.treeType = TreeType.TALL_REDWOOD;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195127_) {
++      } else if (worldgentreeabstract == TreeFeatures.SPRUCE) {
 +         SaplingBlock.treeType = TreeType.REDWOOD;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195126_) {
++      } else if (worldgentreeabstract == TreeFeatures.ACACIA) {
 +         SaplingBlock.treeType = TreeType.ACACIA;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195125_ || worldgentreeabstract == TreeFeatures.f_195108_) {
++      } else if (worldgentreeabstract == TreeFeatures.BIRCH || worldgentreeabstract == TreeFeatures.BIRCH_BEES_005) {
 +         SaplingBlock.treeType = TreeType.BIRCH;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195135_) {
++      } else if (worldgentreeabstract == TreeFeatures.SUPER_BIRCH_BEES_0002) {
 +         SaplingBlock.treeType = TreeType.TALL_BIRCH;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195137_) {
++      } else if (worldgentreeabstract == TreeFeatures.SWAMP_OAK) {
 +         SaplingBlock.treeType = TreeType.SWAMP;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195130_ || worldgentreeabstract == TreeFeatures.f_195111_) {
++      } else if (worldgentreeabstract == TreeFeatures.FANCY_OAK || worldgentreeabstract == TreeFeatures.FANCY_OAK_BEES_005) {
 +         SaplingBlock.treeType = TreeType.BIG_TREE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195138_) {
++      } else if (worldgentreeabstract == TreeFeatures.JUNGLE_BUSH) {
 +         SaplingBlock.treeType = TreeType.JUNGLE_BUSH;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195124_) {
++      } else if (worldgentreeabstract == TreeFeatures.DARK_OAK) {
 +         SaplingBlock.treeType = TreeType.DARK_OAK;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195133_) {
++      } else if (worldgentreeabstract == TreeFeatures.MEGA_SPRUCE) {
 +         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195134_) {
++      } else if (worldgentreeabstract == TreeFeatures.MEGA_PINE) {
 +         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195132_) {
++      } else if (worldgentreeabstract == TreeFeatures.MEGA_JUNGLE_TREE) {
 +         SaplingBlock.treeType = TreeType.JUNGLE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_195139_) {
++      } else if (worldgentreeabstract == TreeFeatures.AZALEA_TREE) {
 +         SaplingBlock.treeType = TreeType.AZALEA;
-+      } else if (worldgentreeabstract == TreeFeatures.f_236762_) {
++      } else if (worldgentreeabstract == TreeFeatures.MANGROVE) {
 +         SaplingBlock.treeType = TreeType.MANGROVE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_236763_) {
++      } else if (worldgentreeabstract == TreeFeatures.TALL_MANGROVE) {
 +         SaplingBlock.treeType = TreeType.TALL_MANGROVE;
-+      } else if (worldgentreeabstract == TreeFeatures.f_271469_ || worldgentreeabstract == TreeFeatures.f_271485_) {
++      } else if (worldgentreeabstract == TreeFeatures.CHERRY || worldgentreeabstract == TreeFeatures.CHERRY_BEES_005) {
 +         SaplingBlock.treeType = TreeType.CHERRY;
 +      } else {
 +         SaplingBlock.treeType = TreeType.CUSTOM; // Mohist - handle mod tree generator

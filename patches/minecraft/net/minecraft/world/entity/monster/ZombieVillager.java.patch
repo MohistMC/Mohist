@@ -19,66 +19,66 @@
  
 @@ -65,6 +_,7 @@
     @Nullable
-    private CompoundTag f_34362_;
-    private int f_34363_;
+    private CompoundTag tradeOffers;
+    private int villagerXp;
 +   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
        super(p_34368_, p_34369_);
 @@ -128,13 +_,18 @@
-    public void m_8119_() {
-       if (!this.m_9236_().f_46443_ && this.m_6084_() && this.m_34408_()) {
-          int i = this.m_34410_();
+    public void tick() {
+       if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
+          int i = this.getConversionProgress();
 +         // CraftBukkit start - Use wall time instead of ticks for villager conversion
 +         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
 +         i *= elapsedTicks;
 +         // CraftBukkit end
-          this.f_34365_ -= i;
--         if (this.f_34365_ <= 0) {
-+         if (this.f_34365_ <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20492_, (timer) -> this.f_34365_ = timer)) {
-             this.m_34398_((ServerLevel)this.m_9236_());
+          this.villagerConversionTime -= i;
+-         if (this.villagerConversionTime <= 0) {
++         if (this.villagerConversionTime <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.VILLAGER, (timer) -> this.villagerConversionTime = timer)) {
+             this.finishConversion((ServerLevel)this.level());
           }
        }
  
-       super.m_8119_();
+       super.tick();
 +      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
     }
  
-    public InteractionResult m_6071_(Player p_34394_, InteractionHand p_34395_) {
+    public InteractionResult mobInteract(Player p_34394_, InteractionHand p_34395_) {
 @@ -170,19 +_,21 @@
-       return this.m_20088_().m_135370_(f_34359_);
+       return this.getEntityData().get(DATA_CONVERTING_ID);
     }
  
--   private void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
-+   public void m_34383_(@Nullable UUID p_34384_, int p_34385_) {
-       this.f_34360_ = p_34384_;
-       this.f_34365_ = p_34385_;
-       this.m_20088_().m_135381_(f_34359_, true);
--      this.m_21195_(MobEffects.f_19613_);
--      this.m_7292_(new MobEffectInstance(MobEffects.f_19600_, p_34385_, Math.min(this.m_9236_().m_46791_().m_19028_() - 1, 0)));
--      this.m_9236_().m_7605_(this, (byte)16);
+-   private void startConverting(@Nullable UUID p_34384_, int p_34385_) {
++   public void startConverting(@Nullable UUID p_34384_, int p_34385_) {
+       this.conversionStarter = p_34384_;
+       this.villagerConversionTime = p_34385_;
+       this.getEntityData().set(DATA_CONVERTING_ID, true);
+-      this.removeEffect(MobEffects.WEAKNESS);
+-      this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level().getDifficulty().getId() - 1, 0)));
+-      this.level().broadcastEntityEvent(this, (byte)16);
 +      // CraftBukkit start
-+      this.removeEffect(MobEffects.f_19613_, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
-+      this.addEffect(new MobEffectInstance(MobEffects.f_19600_, p_34385_, Math.min(this.f_19853_.m_46791_().m_19028_() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
++      this.removeEffect(MobEffects.WEAKNESS, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
++      this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, p_34385_, Math.min(this.level.getDifficulty().getId() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +      // CraftBukkit end
-+      this.f_19853_.m_7605_(this, (byte)16);
++      this.level.broadcastEntityEvent(this, (byte)16);
     }
  
-    public void m_7822_(byte p_34372_) {
+    public void handleEntityEvent(byte p_34372_) {
        if (p_34372_ == 16) {
-          if (!this.m_20067_()) {
--            this.m_9236_().m_7785_(this.m_20185_(), this.m_20188_(), this.m_20189_(), SoundEvents.f_12644_, this.m_5720_(), 1.0F + this.f_19796_.m_188501_(), this.f_19796_.m_188501_() * 0.7F + 0.3F, false);
-+            this.f_19853_.m_7785_(this.m_20185_(), this.m_20188_(), this.m_20189_(), SoundEvents.f_12644_, this.m_5720_(), 1.0F + this.f_19796_.m_188501_(), this.f_19796_.m_188501_() * 0.7F + 0.3F, false);
+          if (!this.isSilent()) {
+-            this.level().playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, this.getSoundSource(), 1.0F + this.random.nextFloat(), this.random.nextFloat() * 0.7F + 0.3F, false);
++            this.level.playLocalSound(this.getX(), this.getEyeY(), this.getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, this.getSoundSource(), 1.0F + this.random.nextFloat(), this.random.nextFloat() * 0.7F + 0.3F, false);
           }
  
        } else {
 @@ -191,7 +_,14 @@
     }
  
-    private void m_34398_(ServerLevel p_34399_) {
+    private void finishConversion(ServerLevel p_34399_) {
 +      // CraftBukkit start
 +      this.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.CURED, CreatureSpawnEvent.SpawnReason.CURED); // Mohist
-       Villager villager = this.m_21406_(EntityType.f_20492_, false);
+       Villager villager = this.convertTo(EntityType.VILLAGER, false);
 +      if (villager == null) {
 +         ((org.bukkit.entity.ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
 +         return;
@@ -86,13 +86,13 @@
 +      // CraftBukkit end
  
        for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-          ItemStack itemstack = this.m_6844_(equipmentslot);
+          ItemStack itemstack = this.getItemBySlot(equipmentslot);
 @@ -201,7 +_,9 @@
              } else {
-                double d0 = (double)this.m_21519_(equipmentslot);
+                double d0 = (double)this.getEquipmentDropChance(equipmentslot);
                 if (d0 > 1.0D) {
 +                  this.forceDrops = true; // CraftBukkit
-                   this.m_19983_(itemstack);
+                   this.spawnAtLocation(itemstack);
 +                  this.forceDrops = false; // CraftBukkit
                 }
              }
@@ -101,13 +101,13 @@
           }
        }
  
--      villager.m_7292_(new MobEffectInstance(MobEffects.f_19604_, 200, 0));
-+      villager.addEffect(new MobEffectInstance(MobEffects.f_19604_, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit);
-       if (!this.m_20067_()) {
-          p_34399_.m_5898_((Player)null, 1027, this.m_20183_(), 0);
+-      villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
++      villager.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit);
+       if (!this.isSilent()) {
+          p_34399_.levelEvent((Player)null, 1027, this.blockPosition(), 0);
        }
 -
 +      net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, villager);
     }
  
-    private int m_34410_() {
+    private int getConversionProgress() {

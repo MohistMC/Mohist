@@ -19,50 +19,50 @@
  import org.joml.Vector3fc;
  
 @@ -354,6 +_,13 @@
-             if (blockpos1.m_123342_() > this.m_9236_().m_141937_() && this.m_9236_().m_46859_(blockpos1) && this.m_9236_().m_6857_().m_61937_(blockpos1) && this.m_9236_().m_45756_(this, (new AABB(blockpos1)).m_82406_(1.0E-6D))) {
-                Direction direction = this.m_149810_(blockpos1);
+             if (blockpos1.getY() > this.level().getMinBuildHeight() && this.level().isEmptyBlock(blockpos1) && this.level().getWorldBorder().isWithinBounds(blockpos1) && this.level().noCollision(this, (new AABB(blockpos1)).deflate(1.0E-6D))) {
+                Direction direction = this.findAttachableSurface(blockpos1);
                 if (direction != null) {
-+                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_());
++                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
 +                  EntityTeleportEvent teleportEvent = CraftEventFactory.callEntityTeleportEvent(this, event.getTargetX(), event.getTargetY(), event.getTargetZ()); // Mohist hook forge event
 +                  if (event.isCanceled() || teleportEvent.isCancelled()) direction = null;
 +                  blockpos1 = CraftLocation.toBlockPosition(teleportEvent.getTo()); // Mohist hook forge event
 +               }
 +
 +               if (direction != null) {
-                   this.m_19877_();
-                   this.m_149788_(direction);
-                   this.m_5496_(SoundEvents.f_12418_, 1.0F, 1.0F);
+                   this.unRide();
+                   this.setAttachFace(direction);
+                   this.playSound(SoundEvents.SHULKER_TELEPORT, 1.0F, 1.0F);
 @@ -417,9 +_,9 @@
              if (shulker != null) {
-                shulker.m_28464_(this.m_28554_());
-                shulker.m_20219_(vec3);
+                shulker.setVariant(this.getVariant());
+                shulker.moveTo(vec3);
 +               shulker.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);  // CraftBukkit - the mysteries of life
-                this.m_9236_().m_7967_(shulker);
+                this.level().addFreshEntity(shulker);
              }
 -
           }
        }
     }
 @@ -432,7 +_,7 @@
-       return this.f_19804_.m_135370_(f_33392_);
+       return this.entityData.get(DATA_ATTACH_FACE_ID);
     }
  
--   private void m_149788_(Direction p_149789_) {
-+   public void m_149788_(Direction p_149789_) {
-       this.f_19804_.m_135381_(f_33392_, p_149789_);
+-   private void setAttachFace(Direction p_149789_) {
++   public void setAttachFace(Direction p_149789_) {
+       this.entityData.set(DATA_ATTACH_FACE_ID, p_149789_);
     }
  
 @@ -444,11 +_,11 @@
-       super.m_7350_(p_33434_);
+       super.onSyncedDataUpdated(p_33434_);
     }
  
--   private int m_33463_() {
-+   public int m_33463_() {
-       return this.f_19804_.m_135370_(f_33401_);
+-   private int getRawPeekAmount() {
++   public int getRawPeekAmount() {
+       return this.entityData.get(DATA_PEEK_ID);
     }
  
--   void m_33418_(int p_33419_) {
-+   public void m_33418_(int p_33419_) {
-       if (!this.m_9236_().f_46443_) {
-          this.m_21051_(Attributes.f_22284_).m_22120_(f_33395_.m_22209_());
+-   void setRawPeekAmount(int p_33419_) {
++   public void setRawPeekAmount(int p_33419_) {
+       if (!this.level().isClientSide) {
+          this.getAttribute(Attributes.ARMOR).removeModifier(COVERED_ARMOR_MODIFIER.getId());
           if (p_33419_ == 0) {

@@ -25,15 +25,15 @@
 +import org.bukkit.event.player.PlayerTeleportEvent;
  
  public class EndPortalBlock extends BaseEntityBlock {
-    protected static final VoxelShape f_53014_ = Block.m_49796_(0.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+    protected static final VoxelShape SHAPE = Block.box(0.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D);
 @@ -39,10 +_,26 @@
-          ResourceKey<Level> resourcekey = p_53026_.m_46472_() == Level.f_46430_ ? Level.f_46428_ : Level.f_46430_;
-          ServerLevel serverlevel = ((ServerLevel)p_53026_).m_7654_().m_129880_(resourcekey);
+          ResourceKey<Level> resourcekey = p_53026_.dimension() == Level.END ? Level.OVERWORLD : Level.END;
+          ServerLevel serverlevel = ((ServerLevel)p_53026_).getServer().getLevel(resourcekey);
           if (serverlevel == null) {
 +         }
 +
 +         // CraftBukkit start - Entity in portal
-+         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53027_.m_123341_(), p_53027_.m_123342_(), p_53027_.m_123343_()));
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_53028_.getBukkitEntity(), new org.bukkit.Location(p_53026_.getWorld(), p_53027_.getX(), p_53027_.getY(), p_53027_.getZ()));
 +         p_53026_.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (p_53028_ instanceof ServerPlayer player) {
@@ -41,16 +41,16 @@
 +            if (p_53026_.getCraftServer().getAllowEnd()) {
 +               player.changeDimension(serverlevel, PlayerTeleportEvent.TeleportCause.END_PORTAL);
 +            }else {
-+               player.m_5661_(Component.m_237113_("End dimension is not allow at this server"), true);
++               player.displayClientMessage(Component.literal("End dimension is not allow at this server"), true);
 +            }
              return;
           }
 -
--         p_53028_.m_5489_(serverlevel);
+-         p_53028_.changeDimension(serverlevel);
 +         // CraftBukkit end
 +         if (p_53026_.getCraftServer().getAllowEnd()) {
 +            // Mohist end
-+            p_53028_.m_5489_(serverlevel);
++            p_53028_.changeDimension(serverlevel);
 +         }
        }
  

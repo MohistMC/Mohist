@@ -7,44 +7,44 @@
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class LargeFireball extends Fireball {
-    public int f_37197_ = 1;
+    public int explosionPower = 1;
  
     public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
        super(p_37199_, p_37200_);
-+      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_19749_()); // Mohist
++      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner()); // Mohist
     }
  
     public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
-       super(EntityType.f_20463_, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
-       this.f_37197_ = p_181156_;
-+      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_19749_()); // Mohist
+       super(EntityType.FIREBALL, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
+       this.explosionPower = p_181156_;
++      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner()); // Mohist
     }
  
-    protected void m_6532_(HitResult p_37218_) {
-       super.m_6532_(p_37218_);
--      if (!this.m_9236_().f_46443_) {
--         boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_);
--         this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)this.f_37197_, flag, Level.ExplosionInteraction.MOB);
-+      if (!this.f_19853_.f_46443_) {
+    protected void onHit(HitResult p_37218_) {
+       super.onHit(p_37218_);
+-      if (!this.level().isClientSide) {
+-         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+-         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
++      if (!this.level.isClientSide) {
 +         // CraftBukkit start - fire ExplosionPrimeEvent
 +         ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++         this.level.getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
 +            // give 'this' instead of (Entity) null so we know what causes the damage
-+            this.f_19853_.m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.level.explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
 +         }
 +         // CraftBukkit end
-          this.m_146870_();
+          this.discard();
        }
  
 @@ -52,7 +_,8 @@
-    public void m_7378_(CompoundTag p_37220_) {
-       super.m_7378_(p_37220_);
-       if (p_37220_.m_128425_("ExplosionPower", 99)) {
--         this.f_37197_ = p_37220_.m_128445_("ExplosionPower");
+    public void readAdditionalSaveData(CompoundTag p_37220_) {
+       super.readAdditionalSaveData(p_37220_);
+       if (p_37220_.contains("ExplosionPower", 99)) {
+-         this.explosionPower = p_37220_.getByte("ExplosionPower");
 +         // CraftBukkit - set bukkitYield when setting explosionpower
-+         bukkitYield = this.f_37197_ = p_37220_.m_128445_("ExplosionPower");
++         bukkitYield = this.explosionPower = p_37220_.getByte("ExplosionPower");
        }
  
     }

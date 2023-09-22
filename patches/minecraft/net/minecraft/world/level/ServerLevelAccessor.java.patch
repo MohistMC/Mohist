@@ -7,19 +7,19 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public interface ServerLevelAccessor extends LevelAccessor {
-    ServerLevel m_6018_();
+    ServerLevel getLevel();
 @@ -9,4 +_,14 @@
-    default void m_47205_(Entity p_47206_) {
-       p_47206_.m_20199_().forEach(this::m_7967_);
+    default void addFreshEntityWithPassengers(Entity p_47206_) {
+       p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
     }
 +
 +   default void addFreshEntityWithPassengers(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {
-+      pEntity.m_20199_().forEach((e) -> this.addFreshEntity(e, reason));
++      pEntity.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, reason));
 +   }
 +
 +   @Override
 +   default ServerLevel getMinecraftWorld() {
-+      return m_6018_();
++      return getLevel();
 +   }
 +   // CraftBukkit end
  }

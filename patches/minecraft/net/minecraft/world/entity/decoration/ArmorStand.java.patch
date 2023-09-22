@@ -32,54 +32,54 @@
 +import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
  
  public class ArmorStand extends LivingEntity {
-    public static final int f_149592_ = 5;
+    public static final int WOBBLE_TIME = 5;
 @@ -71,7 +_,7 @@
-    public static final EntityDataAccessor<Rotations> f_31550_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
-    public static final EntityDataAccessor<Rotations> f_31527_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
-    private static final Predicate<Entity> f_31537_ = (p_31582_) -> {
--      return p_31582_ instanceof AbstractMinecart && ((AbstractMinecart)p_31582_).m_6064_() == AbstractMinecart.Type.RIDEABLE;
+    public static final EntityDataAccessor<Rotations> DATA_LEFT_LEG_POSE = SynchedEntityData.defineId(ArmorStand.class, EntityDataSerializers.ROTATIONS);
+    public static final EntityDataAccessor<Rotations> DATA_RIGHT_LEG_POSE = SynchedEntityData.defineId(ArmorStand.class, EntityDataSerializers.ROTATIONS);
+    private static final Predicate<Entity> RIDABLE_MINECARTS = (p_31582_) -> {
+-      return p_31582_ instanceof AbstractMinecart && ((AbstractMinecart)p_31582_).getMinecartType() == AbstractMinecart.Type.RIDEABLE;
 +      return p_31582_ instanceof AbstractMinecart && ((AbstractMinecart)p_31582_).canBeRidden();
     };
-    private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
-    private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
 @@ -95,6 +_,13 @@
-       this.m_6034_(p_31557_, p_31558_, p_31559_);
+       this.setPos(p_31557_, p_31558_, p_31559_);
     }
  
 +   // CraftBukkit start - SPIGOT-3607, SPIGOT-3637
 +   @Override
 +   public float getBukkitYaw() {
-+      return this.m_146908_();
++      return this.getYRot();
 +   }
 +   // CraftBukkit end
 +
-    public void m_6210_() {
-       double d0 = this.m_20185_();
-       double d1 = this.m_20186_();
+    public void refreshDimensions() {
+       double d0 = this.getX();
+       double d1 = this.getY();
 @@ -153,6 +_,19 @@
  
     }
  
 +   public void setItemSlot(EquipmentSlot pSlot, ItemStack pStack, boolean silent) {
 +      // CraftBukkit end
-+      this.m_181122_(pStack);
-+      switch(pSlot.m_20743_()) {
++      this.verifyEquippedItem(pStack);
++      switch(pSlot.getType()) {
 +         case HAND:
-+            this.f_31538_.set(pSlot.m_20749_(), pStack);
++            this.handItems.set(pSlot.getIndex(), pStack);
 +            break;
 +         case ARMOR:
-+            this.f_31539_.set(pSlot.m_20749_(), pStack);
++            this.armorItems.set(pSlot.getIndex(), pStack);
 +      }
 +
 +   }
 +
-    public boolean m_7066_(ItemStack p_31638_) {
-       EquipmentSlot equipmentslot = Mob.m_147233_(p_31638_);
-       return this.m_6844_(equipmentslot).m_41619_() && !this.m_31626_(equipmentslot);
+    public boolean canTakeItem(ItemStack p_31638_) {
+       EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(p_31638_);
+       return this.getItemBySlot(equipmentslot).isEmpty() && !this.isDisabled(equipmentslot);
 @@ -347,6 +_,22 @@
  
-    private boolean m_31588_(Player p_31589_, EquipmentSlot p_31590_, ItemStack p_31591_, InteractionHand p_31592_) {
-       ItemStack itemstack = this.m_6844_(p_31590_);
+    private boolean swapItem(Player p_31589_, EquipmentSlot p_31590_, ItemStack p_31591_, InteractionHand p_31592_) {
+       ItemStack itemstack = this.getItemBySlot(p_31590_);
 +      // CraftBukkit start
 +      org.bukkit.inventory.ItemStack armorStandItem = CraftItemStack.asCraftMirror(p_31591_);
 +      org.bukkit.inventory.ItemStack playerHeldItem = CraftItemStack.asCraftMirror(itemstack);
@@ -90,93 +90,93 @@
 +      org.bukkit.inventory.EquipmentSlot slot = CraftEquipmentSlot.getSlot(p_31590_);
 +      org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(p_31592_);
 +      PlayerArmorStandManipulateEvent armorStandManipulateEvent = new PlayerArmorStandManipulateEvent(player,self,playerHeldItem,armorStandItem,slot,hand);
-+      this.f_19853_.getCraftServer().getPluginManager().callEvent(armorStandManipulateEvent);
++      this.level.getCraftServer().getPluginManager().callEvent(armorStandManipulateEvent);
 +
 +      if (armorStandManipulateEvent.isCancelled()) {
 +         return true;
 +      }
 +      // CraftBukkit end
-       if (!itemstack.m_41619_() && (this.f_31541_ & 1 << p_31590_.m_20750_() + 8) != 0) {
+       if (!itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 8) != 0) {
           return false;
-       } else if (itemstack.m_41619_() && (this.f_31541_ & 1 << p_31590_.m_20750_() + 16) != 0) {
+       } else if (itemstack.isEmpty() && (this.disabledSlots & 1 << p_31590_.getFilterFlag() + 16) != 0) {
 @@ -371,9 +_,19 @@
-    public boolean m_6469_(DamageSource p_31579_, float p_31580_) {
-       if (!this.m_9236_().f_46443_ && !this.m_213877_()) {
-          if (p_31579_.m_269533_(DamageTypeTags.f_268738_)) {
+    public boolean hurt(DamageSource p_31579_, float p_31580_) {
+       if (!this.level().isClientSide && !this.isRemoved()) {
+          if (p_31579_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 +            // CraftBukkit start
 +            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_)) {
 +               return false;
 +            }
 +            // CraftBukkit end
-             this.m_6074_();
+             this.kill();
              return false;
--         } else if (!this.m_6673_(p_31579_) && !this.f_31540_ && !this.m_31677_()) {
-+         } else if (!this.m_6673_(p_31579_) && (true || !this.f_31540_) && !this.m_31677_()) { // CraftBukkit
+-         } else if (!this.isInvulnerableTo(p_31579_) && !this.invisible && !this.isMarker()) {
++         } else if (!this.isInvulnerableTo(p_31579_) && (true || !this.invisible) && !this.isMarker()) { // CraftBukkit
 +            // CraftBukkit start
-+            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.f_31540_)) {
++            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_31579_, p_31580_, true, this.invisible)) {
 +               return false;
 +            }
 +            // CraftBukkit end
-             if (p_31579_.m_269533_(DamageTypeTags.f_268415_)) {
-                this.m_31653_(p_31579_);
-                this.m_6074_();
+             if (p_31579_.is(DamageTypeTags.IS_EXPLOSION)) {
+                this.brokenByAnything(p_31579_);
+                this.kill();
 @@ -418,14 +_,14 @@
                       return false;
                    } else {
-                      long i = this.m_9236_().m_46467_();
--                     if (i - this.f_31528_ > 5L && !flag1) {
-+                     if (i - this.f_31528_ > 5L && !flag) {
-                         this.m_9236_().m_7605_(this, (byte)32);
-                         this.m_146852_(GameEvent.f_223706_, p_31579_.m_7639_());
-                         this.f_31528_ = i;
+                      long i = this.level().getGameTime();
+-                     if (i - this.lastHit > 5L && !flag1) {
++                     if (i - this.lastHit > 5L && !flag) {
+                         this.level().broadcastEntityEvent(this, (byte)32);
+                         this.gameEvent(GameEvent.ENTITY_DAMAGE, p_31579_.getEntity());
+                         this.lastHit = i;
                       } else {
-                         this.m_31646_(p_31579_);
-                         this.m_31565_();
--                        this.m_6074_();
-+                        this.m_146870_(); // CraftBukkit - SPIGOT-4890: remain as this.discard() since above damagesource method will call death event
+                         this.brokenByPlayer(p_31579_);
+                         this.showBreakingParticles();
+-                        this.kill();
++                        this.discard(); // CraftBukkit - SPIGOT-4890: remain as this.discard() since above damagesource method will call death event
                       }
  
                       return true;
 @@ -591,7 +_,24 @@
-       return this.m_31666_();
+       return this.isSmall();
     }
  
 +   // CraftBukkit start
 +   @Override
-+   public boolean m_6149_() {
++   public boolean shouldDropExperience() {
 +      return true; // MC-157395, SPIGOT-5193 even baby (small) armor stands should drop
 +   }
 +   // CraftBukkit end
 +
-    public void m_6074_() {
+    public void kill() {
 +      Collection<ItemEntity> captureDrops = this.captureDrops(null);
 +      List<org.bukkit.inventory.ItemStack> drops;
 +      if (captureDrops == null) {
 +         drops = new ArrayList<>();
 +      } else if (captureDrops instanceof List) {
-+         drops = Lists.transform((List<ItemEntity>) captureDrops, e -> CraftItemStack.asCraftMirror(e.m_32055_()));
++         drops = Lists.transform((List<ItemEntity>) captureDrops, e -> CraftItemStack.asCraftMirror(e.getItem()));
 +      } else {
-+         drops = captureDrops.stream().map(ItemEntity::m_32055_).map(CraftItemStack::asCraftMirror).collect(Collectors.toList());
++         drops = captureDrops.stream().map(ItemEntity::getItem).map(CraftItemStack::asCraftMirror).collect(Collectors.toList());
 +      }
 +      CraftEventFactory.callEntityDeathEvent(this, drops); // CraftBukkit - call event
-       this.m_142687_(Entity.RemovalReason.KILLED);
-       this.m_146850_(GameEvent.f_223707_);
+       this.remove(Entity.RemovalReason.KILLED);
+       this.gameEvent(GameEvent.ENTITY_DIE);
     }
 @@ -608,7 +_,7 @@
-       return this.m_31677_();
+       return this.isMarker();
     }
  
--   private void m_31603_(boolean p_31604_) {
-+   public void m_31603_(boolean p_31604_) {
-       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 1, p_31604_));
+-   private void setSmall(boolean p_31604_) {
++   public void setSmall(boolean p_31604_) {
+       this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 1, p_31604_));
     }
  
 @@ -632,7 +_,7 @@
-       return (this.f_19804_.m_135370_(f_31524_) & 8) != 0;
+       return (this.entityData.get(DATA_CLIENT_FLAGS) & 8) != 0;
     }
  
--   private void m_31681_(boolean p_31682_) {
-+   public void m_31681_(boolean p_31682_) {
-       this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 16, p_31682_));
+-   private void setMarker(boolean p_31682_) {
++   public void setMarker(boolean p_31682_) {
+       this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 16, p_31682_));
     }
  

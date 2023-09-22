@@ -7,11 +7,11 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant;
  
  public interface Merchant {
-    void m_7189_(@Nullable Player p_45307_);
+    void setTradingPlayer(@Nullable Player p_45307_);
 @@ -49,4 +_,6 @@
     }
  
-    boolean m_183595_();
+    boolean isClientSide();
 +
 +   CraftMerchant getCraftMerchant();
  }

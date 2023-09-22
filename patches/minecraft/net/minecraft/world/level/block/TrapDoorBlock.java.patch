@@ -8,38 +8,38 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TrapDoorBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
-    public static final BooleanProperty f_57514_ = BlockStateProperties.f_61446_;
+    public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 @@ -102,6 +_,18 @@
-       if (!p_57548_.f_46443_) {
-          boolean flag = p_57548_.m_276867_(p_57549_);
-          if (flag != p_57547_.m_61143_(f_57516_)) {
+       if (!p_57548_.isClientSide) {
+          boolean flag = p_57548_.hasNeighborSignal(p_57549_);
+          if (flag != p_57547_.getValue(POWERED)) {
 +            // CraftBukkit start
 +            org.bukkit.block.Block bblock = CraftBlock.at(p_57548_, p_57549_);
 +
 +            int power = bblock.getBlockPower();
-+            int oldPower = (Boolean) p_57547_.m_61143_(f_57514_) ? 15 : 0;
++            int oldPower = (Boolean) p_57547_.getValue(OPEN) ? 15 : 0;
 +
-+            if (oldPower == 0 ^ power == 0 || p_57550_.m_49966_().m_60803_()) {
++            if (oldPower == 0 ^ power == 0 || p_57550_.defaultBlockState().isSignalSource()) {
 +               BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
 +               p_57548_.getCraftServer().getPluginManager().callEvent(eventRedstone);
 +               flag = eventRedstone.getNewCurrent() > 0;
 +            }
 +            // CraftBukkit end
-             if (p_57547_.m_61143_(f_57514_) != flag) {
-                p_57547_ = p_57547_.m_61124_(f_57514_, Boolean.valueOf(flag));
-                this.m_57527_((Player)null, p_57548_, p_57549_, flag);
+             if (p_57547_.getValue(OPEN) != flag) {
+                p_57547_ = p_57547_.setValue(OPEN, Boolean.valueOf(flag));
+                this.playSound((Player)null, p_57548_, p_57549_, flag);
 @@ -148,4 +_,17 @@
  
-       return super.m_7417_(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
+       return super.updateShape(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
     }
 +
 +   //Forge Start
 +   @Override
 +   public boolean isLadder(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, net.minecraft.world.entity.LivingEntity entity) {
-+      if (state.m_61143_(f_57514_)) {
-+         BlockPos downPos = pos.m_7495_();
-+         BlockState down = world.m_8055_(downPos);
-+         return down.m_60734_().makesOpenTrapdoorAboveClimbable(down, world, downPos, state);
++      if (state.getValue(OPEN)) {
++         BlockPos downPos = pos.below();
++         BlockState down = world.getBlockState(downPos);
++         return down.getBlock().makesOpenTrapdoorAboveClimbable(down, world, downPos, state);
 +      }
 +      return false;
 +   }

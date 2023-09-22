@@ -12,14 +12,14 @@
        return false;
     }
  
--   private void m_30840_(int p_30841_) {
+-   private void setStrength(int p_30841_) {
 +   // CraftBukkit start
 +   public void setStrengthPublic(int i) {
-+      this.m_30840_(i);
++      this.setStrength(i);
 +   }
 +   // CraftBukkit end
 +
-+   public void m_30840_(int p_30841_) {
-       this.f_19804_.m_135381_(f_30745_, Math.max(1, Math.min(5, p_30841_)));
++   public void setStrength(int p_30841_) {
+       this.entityData.set(DATA_STRENGTH_ID, Math.max(1, Math.min(5, p_30841_)));
     }
  

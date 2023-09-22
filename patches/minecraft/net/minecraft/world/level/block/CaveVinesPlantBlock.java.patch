@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/CaveVinesPlantBlock.java
 +++ b/net/minecraft/world/level/block/CaveVinesPlantBlock.java
 @@ -43,7 +_,7 @@
-       p_153031_.m_61104_(f_152949_);
+       p_153031_.add(BERRIES);
     }
  
--   public boolean m_7370_(LevelReader p_255942_, BlockPos p_153012_, BlockState p_153013_) {
+-   public boolean isValidBonemealTarget(LevelReader p_255942_, BlockPos p_153012_, BlockState p_153013_) {
 +   public boolean isValidBonemealTarget(LevelReader p_255942_, BlockPos p_153012_, BlockState p_153013_, boolean p_153014_) {
-       return !p_153013_.m_61143_(f_152949_);
+       return !p_153013_.getValue(BERRIES);
     }
  

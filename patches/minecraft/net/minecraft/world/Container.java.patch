@@ -21,10 +21,10 @@
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
 +
  public interface Container extends Clearable {
-    int f_146642_ = 64;
-    int f_271421_ = 8;
+    int LARGE_MAX_STACK_SIZE = 64;
+    int DEFAULT_DISTANCE_LIMIT = 8;
 @@ -92,4 +_,47 @@
-          return p_272670_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) <= (double)(p_273411_ * p_273411_);
+          return p_272670_.distanceToSqr((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) <= (double)(p_273411_ * p_273411_);
        }
     }
 +
@@ -54,8 +54,8 @@
 +
 +   default org.bukkit.Location getLocation(){
 +      if (this instanceof BlockEntity entity) {
-+         BlockPos blockPos = entity.m_58899_();
-+         return new Location(entity.m_58904_().getWorld(), blockPos.m_123341_(), blockPos.m_123342_(), blockPos.m_123343_());
++         BlockPos blockPos = entity.getBlockPos();
++         return new Location(entity.getLevel().getWorld(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
 +      } else {
 +         return null;
 +      }

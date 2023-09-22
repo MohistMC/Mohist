@@ -3,13 +3,13 @@
 @@ -16,11 +_,25 @@
  
     public Eula(Path p_135943_) {
-       this.f_135939_ = p_135943_;
--      this.f_135940_ = SharedConstants.f_136183_ || this.m_135945_();
+       this.file = p_135943_;
+-      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || this.readFile();
 -   }
 -
--   private boolean m_135945_() {
--      try (InputStream inputstream = Files.newInputStream(this.f_135939_)) {
-+      this.f_135940_ = SharedConstants.f_136183_ || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(p_135943_); // Forge: Automatically agree to EULA for gametest servers to aid CI
+-   private boolean readFile() {
+-      try (InputStream inputstream = Files.newInputStream(this.file)) {
++      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(p_135943_); // Forge: Automatically agree to EULA for gametest servers to aid CI
 +   }
 +
 +   // Yatopia start - global eula file

@@ -2,31 +2,31 @@
 +++ b/net/minecraft/stats/ServerStatsCounter.java
 @@ -41,6 +_,13 @@
     public ServerStatsCounter(MinecraftServer p_12816_, File p_12817_) {
-       this.f_12810_ = p_12816_;
-       this.f_12811_ = p_12817_;
+       this.server = p_12816_;
+       this.file = p_12817_;
 +      // Spigot start
 +      for ( Map.Entry<ResourceLocation, Integer> entry : org.spigotmc.SpigotConfig.forcedStats.entrySet() )
 +      {
-+         Stat<ResourceLocation> wrapper = Stats.f_12988_.m_12902_( entry.getKey() );
-+         this.f_13013_.put( wrapper, entry.getValue().intValue() );
++         Stat<ResourceLocation> wrapper = Stats.CUSTOM.get( entry.getKey() );
++         this.stats.put( wrapper, entry.getValue().intValue() );
 +      }
 +      // Spigot end
        if (p_12817_.isFile()) {
           try {
-             this.m_12832_(p_12816_.m_129933_(), FileUtils.readFileToString(p_12817_));
+             this.parseLocal(p_12816_.getFixerUpper(), FileUtils.readFileToString(p_12817_));
 @@ -54,6 +_,7 @@
     }
  
-    public void m_12818_() {
+    public void save() {
 +      if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
        try {
-          FileUtils.writeStringToFile(this.f_12811_, this.m_12845_());
+          FileUtils.writeStringToFile(this.file, this.toJson());
        } catch (IOException ioexception) {
 @@ -63,6 +_,7 @@
     }
  
-    public void m_6085_(Player p_12827_, Stat<?> p_12828_, int p_12829_) {
+    public void setValue(Player p_12827_, Stat<?> p_12828_, int p_12829_) {
 +      if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
-       super.m_6085_(p_12827_, p_12828_, p_12829_);
-       this.f_12812_.add(p_12828_);
+       super.setValue(p_12827_, p_12828_, p_12829_);
+       this.dirty.add(p_12828_);
     }

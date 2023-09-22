@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/players/BanListEntry.java
 +++ b/net/minecraft/server/players/BanListEntry.java
 @@ -78,4 +_,22 @@
-       p_10959_.addProperty("expires", this.f_10946_ == null ? "forever" : f_10943_.format(this.f_10946_));
-       p_10959_.addProperty("reason", this.f_10947_);
+       p_10959_.addProperty("expires", this.expires == null ? "forever" : DATE_FORMAT.format(this.expires));
+       p_10959_.addProperty("reason", this.reason);
     }
 +
 +   // CraftBukkit start
@@ -10,7 +10,7 @@
 +      Date expires = null;
 +
 +      try {
-+         expires = jsonobject.has("expires") ? f_10943_.parse(jsonobject.get("expires").getAsString()) : null;
++         expires = jsonobject.has("expires") ? DATE_FORMAT.parse(jsonobject.get("expires").getAsString()) : null;
 +      } catch (ParseException ex) {
 +         // Guess we don't have a date
 +      }

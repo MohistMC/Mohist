@@ -3,13 +3,13 @@
 @@ -21,6 +_,12 @@
     }
  
-    protected void m_5578_(ServerLevel p_26754_, Villager p_26755_) {
+    protected void doTick(ServerLevel p_26754_, Villager p_26755_) {
 +      // Mirai start - lithium: ai.sensor.secondary_poi
-+      if (p_26755_.m_7141_().m_35571_().f_35603_().isEmpty()) {
-+         p_26755_.m_6274_().m_21936_(MemoryModuleType.f_26363_);
++      if (p_26755_.getVillagerData().getProfession().secondaryPoi().isEmpty()) {
++         p_26755_.getBrain().eraseMemory(MemoryModuleType.SECONDARY_JOB_SITE);
 +         return;
 +      }
 +      // Mirai end
-       ResourceKey<Level> resourcekey = p_26754_.m_46472_();
-       BlockPos blockpos = p_26755_.m_20183_();
+       ResourceKey<Level> resourcekey = p_26754_.dimension();
+       BlockPos blockpos = p_26755_.blockPosition();
        List<GlobalPos> list = Lists.newArrayList();

@@ -18,10 +18,10 @@
 +import org.bukkit.entity.HumanEntity;
  
  public class JukeboxBlockEntity extends BlockEntity implements Clearable, ContainerSingleItem {
-    private static final int f_271500_ = 20;
+    private static final int SONG_END_PADDING = 20;
 @@ -32,6 +_,42 @@
-    public long f_238572_;
-    public boolean f_238637_;
+    public long recordStartedTick;
+    public boolean isPlaying;
  
 +   // CraftBukkit start - add fields and methods
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
@@ -29,7 +29,7 @@
 +   public boolean opened;
 +   @Override
 +   public List<ItemStack> getContents() {
-+      return this.f_271436_;
++      return this.items;
 +   }
 +
 +   @Override
@@ -54,33 +54,33 @@
 +
 +   @Override
 +   public Location getLocation() {
-+      if (f_58857_ == null) return null;
-+      return new org.bukkit.Location(f_58857_.getWorld(), f_58858_.m_123341_(), f_58858_.m_123342_(), f_58858_.m_123343_());
++      if (level == null) return null;
++      return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
 +   }
 +   // CraftBukkit end
 +
     public JukeboxBlockEntity(BlockPos p_155613_, BlockState p_155614_) {
-       super(BlockEntityType.f_58921_, p_155613_, p_155614_);
+       super(BlockEntityType.JUKEBOX, p_155613_, p_155614_);
     }
 @@ -141,7 +_,7 @@
     }
  
-    public int m_6893_() {
+    public int getMaxStackSize() {
 -      return 1;
 +      return maxStack; // CraftBukkit
     }
  
-    public boolean m_6542_(Player p_273466_) {
+    public boolean stillValid(Player p_273466_) {
 @@ -187,7 +_,11 @@
     @VisibleForTesting
-    public void m_272139_(ItemStack p_272693_) {
-       this.f_271436_.set(0, p_272693_);
--      this.f_58857_.m_46672_(this.m_58899_(), this.m_58900_().m_60734_());
+    public void setRecordWithoutPlaying(ItemStack p_272693_) {
+       this.items.set(0, p_272693_);
+-      this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
 +      // CraftBukkit start - add null check for level
-+      if (f_58857_ != null) {
-+         this.f_58857_.m_46672_(this.m_58899_(), this.m_58900_().m_60734_());
++      if (level != null) {
++         this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
 +      }
 +      // CraftBukkit end
-       this.m_6596_();
+       this.setChanged();
     }
  }

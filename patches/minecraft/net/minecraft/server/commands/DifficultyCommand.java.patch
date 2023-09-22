@@ -2,15 +2,15 @@
 +++ b/net/minecraft/server/commands/DifficultyCommand.java
 @@ -37,10 +_,11 @@
  
-    public static int m_136944_(CommandSourceStack p_136945_, Difficulty p_136946_) throws CommandSyntaxException {
-       MinecraftServer minecraftserver = p_136945_.m_81377_();
--      if (minecraftserver.m_129910_().m_5472_() == p_136946_) {
-+      net.minecraft.server.level.ServerLevel worldServer = p_136945_.m_81372_(); // CraftBukkit
-+      if (worldServer.m_46791_() == p_136946_) { // CraftBukkit
-          throw f_136933_.create(p_136946_.m_19036_());
+    public static int setDifficulty(CommandSourceStack p_136945_, Difficulty p_136946_) throws CommandSyntaxException {
+       MinecraftServer minecraftserver = p_136945_.getServer();
+-      if (minecraftserver.getWorldData().getDifficulty() == p_136946_) {
++      net.minecraft.server.level.ServerLevel worldServer = p_136945_.getLevel(); // CraftBukkit
++      if (worldServer.getDifficulty() == p_136946_) { // CraftBukkit
+          throw ERROR_ALREADY_DIFFICULT.create(p_136946_.getKey());
        } else {
--         minecraftserver.m_129827_(p_136946_, true);
-+         worldServer.K.m_6166_(p_136946_); // CraftBukkit
-          p_136945_.m_288197_(() -> {
-             return Component.m_237110_("commands.difficulty.success", p_136946_.m_19033_());
+-         minecraftserver.setDifficulty(p_136946_, true);
++         worldServer.K.setDifficulty(p_136946_); // CraftBukkit
+          p_136945_.sendSuccess(() -> {
+             return Component.translatable("commands.difficulty.success", p_136946_.getDisplayName());
           }, true);

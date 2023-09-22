@@ -12,9 +12,9 @@
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public abstract class BasePressurePlateBlock extends Block {
-    protected static final VoxelShape f_49285_ = Block.m_49796_(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
+    protected static final VoxelShape PRESSED_AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
 @@ -75,6 +_,18 @@
-       int i = this.m_6693_(p_152145_, p_152146_);
+       int i = this.getSignalStrength(p_152145_, p_152146_);
        boolean flag = p_152148_ > 0;
        boolean flag1 = i > 0;
 +      // CraftBukkit start - Interact Pressure Plate
@@ -30,5 +30,5 @@
 +      // CraftBukkit end
 +
        if (p_152148_ != i) {
-          BlockState blockstate = this.m_7422_(p_152147_, i);
-          p_152145_.m_7731_(p_152146_, blockstate, 2);
+          BlockState blockstate = this.setSignalForState(p_152147_, i);
+          p_152145_.setBlock(p_152146_, blockstate, 2);

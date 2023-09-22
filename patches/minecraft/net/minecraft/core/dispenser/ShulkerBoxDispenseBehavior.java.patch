@@ -10,17 +10,17 @@
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseItemBehavior {
 @@ -20,6 +_,30 @@
-          Direction direction = p_123587_.f_301783_().m_61143_(DispenserBlock.f_52659_);
-          BlockPos blockpos = p_123587_.f_301784_().m_121945_(direction);
-          Direction direction1 = p_123587_.f_301782_().m_46859_(blockpos.m_7495_()) ? direction : Direction.UP;
+          Direction direction = p_123587_.state().getValue(DispenserBlock.FACING);
+          BlockPos blockpos = p_123587_.pos().relative(direction);
+          Direction direction1 = p_123587_.level().isEmptyBlock(blockpos.below()) ? direction : Direction.UP;
 +
 +         // CraftBukkit start
-+         org.bukkit.block.Block bukkitBlock = p_123587_.f_301782_().getWorld().getBlockAt(p_123587_.f_301784_().m_123341_(), p_123587_.f_301784_().m_123342_(), p_123587_.f_301784_().m_123343_());
++         org.bukkit.block.Block bukkitBlock = p_123587_.level().getWorld().getBlockAt(p_123587_.pos().getX(), p_123587_.pos().getY(), p_123587_.pos().getZ());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123588_);
 +
-+         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()));
++         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
 +         if (!DispenserBlock.eventFired) {
-+            p_123587_.f_301782_().getCraftServer().getPluginManager().callEvent(event);
++            p_123587_.level().getCraftServer().getPluginManager().callEvent(event);
 +         }
 +
 +         if (event.isCancelled()) {
@@ -30,13 +30,13 @@
 +         if (!event.getItem().equals(craftItem)) {
 +            // Chain to handler for new item
 +            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            DispenseItemBehavior idispensebehavior = DispenserBlock.f_52661_.get(eventStack.m_41720_());
-+            if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
-+               idispensebehavior.m_6115_(p_123587_, eventStack);
++            DispenseItemBehavior idispensebehavior = DispenserBlock.DISPENSER_REGISTRY.get(eventStack.getItem());
++            if (idispensebehavior != DispenseItemBehavior.NOOP && idispensebehavior != this) {
++               idispensebehavior.dispense(p_123587_, eventStack);
 +               return p_123588_;
 +            }
 +         }
 +         // CraftBukkit end
  
           try {
-             this.m_123573_(((BlockItem)item).m_40576_(new DirectionalPlaceContext(p_123587_.f_301782_(), blockpos, direction, p_123588_, direction1)).m_19077_());
+             this.setSuccess(((BlockItem)item).place(new DirectionalPlaceContext(p_123587_.level(), blockpos, direction, p_123588_, direction1)).consumesAction());

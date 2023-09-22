@@ -16,10 +16,10 @@
 +
 +   public static Component getDisplayName(GameProfile p_130728_) {
 +      if (p_130728_.getName() != null) {
-+         return Component.m_237113_(p_130728_.getName());
++         return Component.literal(p_130728_.getName());
 +      } else {
-+         return p_130728_.getId() != null ? Component.m_237113_(p_130728_.getId().toString()) : Component.m_237113_("(unknown)");
++         return p_130728_.getId() != null ? Component.literal(p_130728_.getId().toString()) : Component.literal("(unknown)");
 +      }
     }
  
-    public static Component m_130743_(Collection<String> p_130744_) {
+    public static Component formatList(Collection<String> p_130744_) {

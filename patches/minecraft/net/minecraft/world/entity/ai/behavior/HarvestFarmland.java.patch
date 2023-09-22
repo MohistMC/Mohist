@@ -14,44 +14,44 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class HarvestFarmland extends Behavior<Villager> {
-    private static final int f_147559_ = 200;
+    private static final int HARVEST_DURATION = 200;
 @@ -40,7 +_,7 @@
     }
  
-    protected boolean m_6114_(ServerLevel p_23174_, Villager p_23175_) {
--      if (!p_23174_.m_46469_().m_46207_(GameRules.f_46132_)) {
+    protected boolean checkExtraStartConditions(ServerLevel p_23174_, Villager p_23175_) {
+-      if (!p_23174_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_23174_, p_23175_)) {
           return false;
-       } else if (p_23175_.m_7141_().m_35571_() != VillagerProfession.f_35590_) {
+       } else if (p_23175_.getVillagerData().getProfession() != VillagerProfession.FARMER) {
           return false;
 @@ -98,7 +_,11 @@
-             Block block = blockstate.m_60734_();
-             Block block1 = p_23196_.m_8055_(this.f_23159_.m_7495_()).m_60734_();
-             if (block instanceof CropBlock && ((CropBlock)block).m_52307_(blockstate)) {
--               p_23196_.m_46953_(this.f_23159_, true, p_23197_);
+             Block block = blockstate.getBlock();
+             Block block1 = p_23196_.getBlockState(this.aboveFarmlandPos.below()).getBlock();
+             if (block instanceof CropBlock && ((CropBlock)block).isMaxAge(blockstate)) {
+-               p_23196_.destroyBlock(this.aboveFarmlandPos, true, p_23197_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, Blocks.f_50016_.m_49966_())) {
-+                  p_23196_.m_46953_(this.f_23159_, true, p_23197_);
++               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.aboveFarmlandPos, Blocks.AIR.defaultBlockState())) {
++                  p_23196_.destroyBlock(this.aboveFarmlandPos, true, p_23197_);
 +               }
 +               // CraftBukkit end
              }
  
-             if (blockstate.m_60795_() && block1 instanceof FarmBlock && p_23197_.m_35516_()) {
+             if (blockstate.isAir() && block1 instanceof FarmBlock && p_23197_.hasFarmSeeds()) {
 @@ -112,9 +_,16 @@
                       if ($$11 instanceof BlockItem) {
                          BlockItem blockitem = (BlockItem)$$11;
-                         BlockState blockstate1 = blockitem.m_40614_().m_49966_();
--                        p_23196_.m_46597_(this.f_23159_, blockstate1);
--                        p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate1));
+                         BlockState blockstate1 = blockitem.getBlock().defaultBlockState();
+-                        p_23196_.setBlockAndUpdate(this.aboveFarmlandPos, blockstate1);
+-                        p_23196_.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(p_23197_, blockstate1));
 -                        flag = true;
-+                        if (CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.f_23159_, blockstate1)) { // CraftBukkit
-+                           p_23196_.m_46597_(this.f_23159_, blockstate1);
-+                           p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate1));
++                        if (CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.aboveFarmlandPos, blockstate1)) { // CraftBukkit
++                           p_23196_.setBlockAndUpdate(this.aboveFarmlandPos, blockstate1);
++                           p_23196_.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(p_23197_, blockstate1));
 +                           flag = true;
 +                        } // CraftBukkit
-+                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP) {
-+                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
++                     } else if (itemstack.getItem() instanceof net.minecraftforge.common.IPlantable) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlantType(p_23196_, aboveFarmlandPos) == net.minecraftforge.common.PlantType.CROP) {
++                           p_23196_.setBlock(aboveFarmlandPos, ((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlant(p_23196_, aboveFarmlandPos), 3);
 +                           flag = true;
 +                        }
                       }

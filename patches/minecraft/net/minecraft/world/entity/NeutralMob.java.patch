@@ -7,22 +7,22 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public interface NeutralMob {
-    String f_147283_ = "AngerTime";
+    String TAG_ANGER_TIME = "AngerTime";
 @@ -108,7 +_,7 @@
-    default void m_21662_() {
-       this.m_6703_((LivingEntity)null);
-       this.m_6925_((UUID)null);
--      this.m_6710_((LivingEntity)null);
+    default void stopBeingAngry() {
+       this.setLastHurtByMob((LivingEntity)null);
+       this.setPersistentAngerTarget((UUID)null);
+-      this.setTarget((LivingEntity)null);
 +      this.setTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
-       this.m_7870_(0);
+       this.setRemainingPersistentAngerTime(0);
     }
  
 @@ -120,6 +_,8 @@
-    void m_6598_(@Nullable Player p_21680_);
+    void setLastHurtByPlayer(@Nullable Player p_21680_);
  
-    void m_6710_(@Nullable LivingEntity p_21681_);
+    void setTarget(@Nullable LivingEntity p_21681_);
 +
 +   boolean setTarget(@Nullable LivingEntity pLivingEntity, EntityTargetEvent.TargetReason reason, boolean fireEvent); // CraftBukkit
  
-    boolean m_6779_(LivingEntity p_181126_);
+    boolean canAttack(LivingEntity p_181126_);
  

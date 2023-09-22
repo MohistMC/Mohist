@@ -9,8 +9,8 @@
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.util.RandomSource;
 @@ -112,4 +_,6 @@
-    default void m_220407_(GameEvent p_220408_, BlockPos p_220409_, GameEvent.Context p_220410_) {
-       this.m_214171_(p_220408_, Vec3.m_82512_(p_220409_), p_220410_);
+    default void gameEvent(GameEvent p_220408_, BlockPos p_220409_, GameEvent.Context p_220410_) {
+       this.gameEvent(p_220408_, Vec3.atCenterOf(p_220409_), p_220410_);
     }
 +
 +   ServerLevel getMinecraftWorld();  // CraftBukkit

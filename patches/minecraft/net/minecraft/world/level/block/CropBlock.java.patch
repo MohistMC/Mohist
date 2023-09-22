@@ -7,40 +7,40 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
  
  public class CropBlock extends BushBlock implements BonemealableBlock {
-    public static final int f_153107_ = 7;
+    public static final int MAX_AGE = 7;
 @@ -39,7 +_,7 @@
-       return p_52302_.m_60713_(Blocks.f_50093_);
+       return p_52302_.is(Blocks.FARMLAND);
     }
  
--   protected IntegerProperty m_7959_() {
-+   public IntegerProperty m_7959_() {
-       return f_52244_;
+-   protected IntegerProperty getAgeProperty() {
++   public IntegerProperty getAgeProperty() {
+       return AGE;
     }
  
 @@ -64,12 +_,25 @@
     }
  
-    public void m_213898_(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
+    public void randomTick(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
 +      if (!p_221051_.isAreaLoaded(p_221052_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_221051_.m_45524_(p_221052_, 0) >= 9) {
-          int i = this.m_52305_(p_221050_);
-          if (i < this.m_7419_()) {
-             float f = m_52272_(this, p_221051_, p_221052_);
--            if (p_221053_.m_188503_((int)(25.0F / f) + 1) == 0) {
--               p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
+       if (p_221051_.getRawBrightness(p_221052_, 0) >= 9) {
+          int i = this.getAge(p_221050_);
+          if (i < this.getMaxAge()) {
+             float f = getGrowthSpeed(this, p_221051_, p_221052_);
+-            if (p_221053_.nextInt((int)(25.0F / f) + 1) == 0) {
+-               p_221051_.setBlock(p_221052_, this.getStateForAge(i + 1), 2);
 +            // Spigot start
 +            int modifier;
-+            if (this == Blocks.f_50444_) {
++            if (this == Blocks.BEETROOTS) {
 +               modifier = p_221051_.spigotConfig.beetrootModifier;
-+            } else if (this == Blocks.f_50249_) {
++            } else if (this == Blocks.CARROTS) {
 +               modifier = p_221051_.spigotConfig.carrotModifier;
-+            } else if (this == Blocks.f_50250_) {
++            } else if (this == Blocks.POTATOES) {
 +               modifier = p_221051_.spigotConfig.potatoModifier;
 +            } else {
 +               modifier = p_221051_.spigotConfig.wheatModifier;
 +            }
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188501_() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1)))))) { // Spigot - SPIGOT-7159: Better modifier resolution
-+               CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.m_52289_(i + 1), 2); // CraftBukkit
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextFloat() < (modifier / (100.0f * (Math.floor((25.0F / f) + 1)))))) { // Spigot - SPIGOT-7159: Better modifier resolution
++               CraftEventFactory.handleBlockGrowEvent(p_221051_, p_221052_, this.getStateForAge(i + 1), 2); // CraftBukkit
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }
           }
@@ -49,29 +49,29 @@
           i = j;
        }
  
--      p_52264_.m_7731_(p_52265_, this.m_52289_(i), 2);
-+      CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.m_52289_(i), 2); // CraftBukkit
+-      p_52264_.setBlock(p_52265_, this.getStateForAge(i), 2);
++      CraftEventFactory.handleBlockGrowEvent(p_52264_, p_52265_, this.getStateForAge(i), 2); // CraftBukkit
     }
  
-    protected int m_7125_(Level p_52262_) {
+    protected int getBonemealAgeIncrease(Level p_52262_) {
 @@ -98,9 +_,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
-             BlockState blockstate = p_52274_.m_8055_(blockpos.m_7918_(i, 0, j));
--            if (blockstate.m_60713_(Blocks.f_50093_)) {
-+            if (blockstate.canSustainPlant(p_52274_, blockpos.m_7918_(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
+             BlockState blockstate = p_52274_.getBlockState(blockpos.offset(i, 0, j));
+-            if (blockstate.is(Blocks.FARMLAND)) {
++            if (blockstate.canSustainPlant(p_52274_, blockpos.offset(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
                 f1 = 1.0F;
--               if (blockstate.m_61143_(FarmBlock.f_53243_) > 0) {
-+               if (blockstate.isFertile(p_52274_, p_52275_.m_7918_(i, 0, j))) {
+-               if (blockstate.getValue(FarmBlock.MOISTURE) > 0) {
++               if (blockstate.isFertile(p_52274_, p_52275_.offset(i, 0, j))) {
                    f1 = 3.0F;
                 }
              }
 @@ -140,7 +_,7 @@
     }
  
-    public void m_7892_(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
--      if (p_52280_ instanceof Ravager && p_52278_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_) && CraftEventFactory.callEntityChangeBlockEvent(p_52280_, p_52279_, Blocks.f_50016_.m_49966_(), !p_52278_.m_46469_().m_46207_(GameRules.f_46132_))) {
-          p_52278_.m_46953_(p_52279_, true, p_52280_);
+    public void entityInside(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
+-      if (p_52280_ instanceof Ravager && p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_) && CraftEventFactory.callEntityChangeBlockEvent(p_52280_, p_52279_, Blocks.AIR.defaultBlockState(), !p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))) {
+          p_52278_.destroyBlock(p_52279_, true, p_52280_);
        }
  

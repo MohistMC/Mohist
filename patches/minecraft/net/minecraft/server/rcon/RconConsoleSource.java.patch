@@ -10,13 +10,13 @@
 +import java.net.SocketAddress;
  
  public class RconConsoleSource implements CommandSource {
-    private static final String f_144022_ = "Rcon";
+    private static final String RCON = "Rcon";
 @@ -15,8 +_,14 @@
-    private final StringBuffer f_11501_ = new StringBuffer();
-    private final MinecraftServer f_11502_;
+    private final StringBuffer buffer = new StringBuffer();
+    private final MinecraftServer server;
  
 -   public RconConsoleSource(MinecraftServer p_11505_) {
--      this.f_11502_ = p_11505_;
+-      this.server = p_11505_;
 +   // CraftBukkit start
 +   public final SocketAddress socketAddress;
 +   private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
@@ -24,28 +24,28 @@
 +   public RconConsoleSource(MinecraftServer pServer, SocketAddress socketAddress) {
 +      this.socketAddress = socketAddress;
 +      // CraftBukkit end
-+      this.f_11502_ = pServer;
++      this.server = pServer;
     }
  
-    public void m_11512_() {
+    public void prepareForCommand() {
 @@ -33,7 +_,7 @@
     }
  
-    public void m_213846_(Component p_215653_) {
--      this.f_11501_.append(p_215653_.getString());
-+      this.f_11501_.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
+    public void sendSystemMessage(Component p_215653_) {
+-      this.buffer.append(p_215653_.getString());
++      this.buffer.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
     }
  
-    public boolean m_6999_() {
+    public boolean acceptsSuccess() {
 @@ -47,4 +_,16 @@
-    public boolean m_6102_() {
-       return this.f_11502_.m_6983_();
+    public boolean shouldInformAdmins() {
+       return this.server.shouldRconBroadcast();
     }
 +
 +
 +   // CraftBukkit start - Send a String
 +   public void sendMessage(String message) {
-+      this.f_11501_.append(message);
++      this.buffer.append(message);
 +   }
 +
 +   @Override

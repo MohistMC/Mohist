@@ -13,17 +13,17 @@
 +import java.util.List;
  
  public class SpongeBlock extends Block {
-    public static final int f_154689_ = 6;
+    public static final int MAX_DEPTH = 6;
 @@ -41,43 +_,83 @@
     }
  
-    private boolean m_56807_(Level p_56808_, BlockPos p_56809_) {
--      return BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
-+      BlockState spongeState = p_56808_.m_8055_(p_56809_);
+    private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {
+-      return BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
++      BlockState spongeState = p_56808_.getBlockState(p_56809_);
 +      BlockStateListPopulator blockList = new BlockStateListPopulator(p_56808_); // CraftBukkit - Use BlockStateListPopulator
-+      BlockPos.m_276833_(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
-          for(Direction direction : f_276425_) {
-             p_277492_.accept(p_277519_.m_121945_(direction));
++      BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
+          for(Direction direction : ALL_DIRECTIONS) {
+             p_277492_.accept(p_277519_.relative(direction));
           }
  
 -      }, (p_296944_) -> {
@@ -32,40 +32,40 @@
 +         if (p_279054_.equals(p_56809_)) {
              return true;
           } else {
--            BlockState blockstate = p_56808_.m_8055_(p_296944_);
--            FluidState fluidstate = p_56808_.m_6425_(p_296944_);
--            if (!fluidstate.m_205070_(FluidTags.f_13131_)) {
+-            BlockState blockstate = p_56808_.getBlockState(p_296944_);
+-            FluidState fluidstate = p_56808_.getFluidState(p_296944_);
+-            if (!fluidstate.is(FluidTags.WATER)) {
 +            // CraftBukkit start
-+            BlockState blockstate = blockList.m_8055_(p_279054_);
-+            FluidState fluidstate = blockList.m_6425_(p_279054_);
++            BlockState blockstate = blockList.getBlockState(p_279054_);
++            FluidState fluidstate = blockList.getFluidState(p_279054_);
 +            // CraftBukkit end
 +            if (!spongeState.canBeHydrated(p_56808_, p_56809_, fluidstate, p_279054_)) {
                 return false;
              } else {
-                Block block = blockstate.m_60734_();
+                Block block = blockstate.getBlock();
                 if (block instanceof BucketPickup) {
                    BucketPickup bucketpickup = (BucketPickup)block;
--                  if (!bucketpickup.m_142598_((Player)null, p_56808_, p_296944_, blockstate).m_41619_()) {
-+                  if (!bucketpickup.m_142598_(null, blockList, p_279054_, blockstate).m_41619_()) { // CraftBukkit
+-                  if (!bucketpickup.pickupBlock((Player)null, p_56808_, p_296944_, blockstate).isEmpty()) {
++                  if (!bucketpickup.pickupBlock(null, blockList, p_279054_, blockstate).isEmpty()) { // CraftBukkit
                       return true;
                    }
                 }
  
-                if (blockstate.m_60734_() instanceof LiquidBlock) {
--                  p_56808_.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
-+                  p_56808_.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
+                if (blockstate.getBlock() instanceof LiquidBlock) {
+-                  p_56808_.setBlock(p_296944_, Blocks.AIR.defaultBlockState(), 3);
++                  p_56808_.setBlock(p_279054_, Blocks.AIR.defaultBlockState(), 3);
                 } else {
-                   if (!blockstate.m_60713_(Blocks.f_50575_) && !blockstate.m_60713_(Blocks.f_50576_) && !blockstate.m_60713_(Blocks.f_50037_) && !blockstate.m_60713_(Blocks.f_50038_)) {
+                   if (!blockstate.is(Blocks.KELP) && !blockstate.is(Blocks.KELP_PLANT) && !blockstate.is(Blocks.SEAGRASS) && !blockstate.is(Blocks.TALL_SEAGRASS)) {
                       return false;
                    }
  
--                  BlockEntity blockentity = blockstate.m_155947_() ? p_56808_.m_7702_(p_296944_) : null;
--                  m_49892_(blockstate, p_56808_, p_296944_, blockentity);
--                  p_56808_.m_7731_(p_296944_, Blocks.f_50016_.m_49966_(), 3);
+-                  BlockEntity blockentity = blockstate.hasBlockEntity() ? p_56808_.getBlockEntity(p_296944_) : null;
+-                  dropResources(blockstate, p_56808_, p_296944_, blockentity);
+-                  p_56808_.setBlock(p_296944_, Blocks.AIR.defaultBlockState(), 3);
 +                  // CraftBukkit start
 +                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? pLevel.getBlockEntity(p_279054_) : null;
 +                  // dropResources(blockstate, pLevel, p_279054_, blockentity);
-+                  blockList.m_7731_(p_279054_, Blocks.f_50016_.m_49966_(), 3);
++                  blockList.setBlock(p_279054_, Blocks.AIR.defaultBlockState(), 3);
                 }
  
                 return true;
@@ -87,21 +87,21 @@
 +
 +         for (CraftBlockState block : blocks) {
 +            BlockPos blockposition1 = block.getPosition();
-+            BlockState iblockdata = p_56808_.m_8055_(blockposition1);
-+            FluidState fluid = p_56808_.m_6425_(blockposition1);
++            BlockState iblockdata = p_56808_.getBlockState(blockposition1);
++            FluidState fluid = p_56808_.getFluidState(blockposition1);
 +
-+            if (fluid.m_205070_(FluidTags.f_13131_)) {
-+               if (iblockdata.m_60734_() instanceof BucketPickup && !((BucketPickup) iblockdata.m_60734_()).m_142598_(null, blockList, blockposition1, iblockdata).m_41619_()) {
++            if (fluid.is(FluidTags.WATER)) {
++               if (iblockdata.getBlock() instanceof BucketPickup && !((BucketPickup) iblockdata.getBlock()).pickupBlock(null, blockList, blockposition1, iblockdata).isEmpty()) {
 +                  // NOP
-+               } else if (iblockdata.m_60734_() instanceof LiquidBlock) {
++               } else if (iblockdata.getBlock() instanceof LiquidBlock) {
 +                  // NOP
-+               } else if (iblockdata.m_60713_(Blocks.f_50575_) || iblockdata.m_60713_(Blocks.f_50576_) || iblockdata.m_60713_(Blocks.f_50037_) || iblockdata.m_60713_(Blocks.f_50038_)) {
-+                  BlockEntity tileentity = iblockdata.m_155947_() ? p_56808_.m_7702_(blockposition1) : null;
++               } else if (iblockdata.is(Blocks.KELP) || iblockdata.is(Blocks.KELP_PLANT) || iblockdata.is(Blocks.SEAGRASS) || iblockdata.is(Blocks.TALL_SEAGRASS)) {
++                  BlockEntity tileentity = iblockdata.hasBlockEntity() ? p_56808_.getBlockEntity(blockposition1) : null;
 +
-+                  m_49892_(iblockdata, p_56808_, blockposition1, tileentity);
++                  dropResources(iblockdata, p_56808_, blockposition1, tileentity);
 +               }
 +            }
-+            p_56808_.m_7731_(blockposition1, block.getHandle(), block.getFlag());
++            p_56808_.setBlock(blockposition1, block.getHandle(), block.getFlag());
 +         }
 +
 +         return true;

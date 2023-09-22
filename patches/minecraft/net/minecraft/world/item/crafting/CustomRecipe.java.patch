@@ -9,10 +9,10 @@
 +import org.bukkit.NamespacedKey;
  
  public abstract class CustomRecipe implements CraftingRecipe {
-    private final CraftingBookCategory f_244184_;
+    private final CraftingBookCategory category;
 @@ -21,4 +_,11 @@
-    public CraftingBookCategory m_245232_() {
-       return this.f_244184_;
+    public CraftingBookCategory category() {
+       return this.category;
     }
 +
 +   // CraftBukkit start

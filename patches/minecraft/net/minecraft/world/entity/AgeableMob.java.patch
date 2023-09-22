@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/entity/AgeableMob.java
 +++ b/net/minecraft/world/entity/AgeableMob.java
 @@ -19,11 +_,32 @@
-    protected int f_146733_;
-    protected int f_146734_;
-    protected int f_146735_;
+    protected int age;
+    protected int forcedAge;
+    protected int forcedAgeTimer;
 +   public boolean ageLocked; // CraftBukkit
  
     protected AgeableMob(EntityType<? extends AgeableMob> p_146738_, Level p_146739_) {
@@ -14,46 +14,46 @@
 +   @Override
 +   public void inactiveTick() {
 +      super.inactiveTick();
-+      if (this.f_19853_.f_46443_ || this.ageLocked) { // CraftBukkit
-+         this.m_6210_();
++      if (this.level.isClientSide || this.ageLocked) { // CraftBukkit
++         this.refreshDimensions();
 +      } else {
-+         int i = this.m_146764_();
++         int i = this.getAge();
 +
 +         if (i < 0) {
 +            ++i;
-+            this.m_146762_(i);
++            this.setAge(i);
 +         } else if (i > 0) {
 +            --i;
-+            this.m_146762_(i);
++            this.setAge(i);
 +         }
 +      }
 +   }
 +   // Spigot end
 +
-    public SpawnGroupData m_6518_(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_, @Nullable CompoundTag p_146750_) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_, @Nullable CompoundTag p_146750_) {
        if (p_146749_ == null) {
           p_146749_ = new AgeableMob.AgeableMobGroupData(true);
 @@ -98,12 +_,14 @@
-       super.m_7380_(p_146761_);
-       p_146761_.m_128405_("Age", this.m_146764_());
-       p_146761_.m_128405_("ForcedAge", this.f_146734_);
-+      p_146761_.m_128379_("AgeLocked", this.ageLocked); // CraftBukkit
+       super.addAdditionalSaveData(p_146761_);
+       p_146761_.putInt("Age", this.getAge());
+       p_146761_.putInt("ForcedAge", this.forcedAge);
++      p_146761_.putBoolean("AgeLocked", this.ageLocked); // CraftBukkit
     }
  
-    public void m_7378_(CompoundTag p_146752_) {
-       super.m_7378_(p_146752_);
-       this.m_146762_(p_146752_.m_128451_("Age"));
-       this.f_146734_ = p_146752_.m_128451_("ForcedAge");
-+      this.ageLocked = p_146752_.m_128471_("AgeLocked"); // CraftBukkit
+    public void readAdditionalSaveData(CompoundTag p_146752_) {
+       super.readAdditionalSaveData(p_146752_);
+       this.setAge(p_146752_.getInt("Age"));
+       this.forcedAge = p_146752_.getInt("ForcedAge");
++      this.ageLocked = p_146752_.getBoolean("AgeLocked"); // CraftBukkit
     }
  
-    public void m_7350_(EntityDataAccessor<?> p_146754_) {
+    public void onSyncedDataUpdated(EntityDataAccessor<?> p_146754_) {
 @@ -116,7 +_,7 @@
  
-    public void m_8107_() {
-       super.m_8107_();
--      if (this.m_9236_().f_46443_) {
-+      if (this.m_9236_().f_46443_ || ageLocked) { // CraftBukkit
-          if (this.f_146735_ > 0) {
-             if (this.f_146735_ % 4 == 0) {
-                this.m_9236_().m_7106_(ParticleTypes.f_123748_, this.m_20208_(1.0D), this.m_20187_() + 0.5D, this.m_20262_(1.0D), 0.0D, 0.0D, 0.0D);
+    public void aiStep() {
+       super.aiStep();
+-      if (this.level().isClientSide) {
++      if (this.level().isClientSide || ageLocked) { // CraftBukkit
+          if (this.forcedAgeTimer > 0) {
+             if (this.forcedAgeTimer % 4 == 0) {
+                this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/item/BrushItem.java
 +++ b/net/minecraft/world/item/BrushItem.java
 @@ -109,7 +_,7 @@
-       }, f_279643_);
+       }, MAX_BRUSH_DISTANCE);
     }
  
--   private void m_278154_(Level p_278327_, BlockHitResult p_278272_, BlockState p_278235_, Vec3 p_278337_, HumanoidArm p_285071_) {
-+   public void m_278154_(Level p_278327_, BlockHitResult p_278272_, BlockState p_278235_, Vec3 p_278337_, HumanoidArm p_285071_) {
+-   private void spawnDustParticles(Level p_278327_, BlockHitResult p_278272_, BlockState p_278235_, Vec3 p_278337_, HumanoidArm p_285071_) {
++   public void spawnDustParticles(Level p_278327_, BlockHitResult p_278272_, BlockState p_278235_, Vec3 p_278337_, HumanoidArm p_285071_) {
        double d0 = 3.0D;
        int i = p_285071_ == HumanoidArm.RIGHT ? 1 : -1;
-       int j = p_278327_.m_213780_().m_216339_(7, 12);
+       int j = p_278327_.getRandom().nextInt(7, 12);

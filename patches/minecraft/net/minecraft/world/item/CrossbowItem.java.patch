@@ -9,24 +9,24 @@
  import org.joml.Vector3f;
  
 @@ -214,11 +_,27 @@
-             Vector3f vector3f = vec31.m_252839_().rotate(quaternionf);
-             projectile.m_6686_((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
+             Vector3f vector3f = vec31.toVector3f().rotate(quaternionf);
+             projectile.shoot((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
           }
 +         // CraftBukkit start
-+         org.bukkit.event.entity.EntityShootBowEvent event = CraftEventFactory.callEntityShootBowEvent(p_40896_, p_40898_, p_40899_, projectile, p_40896_.m_7655_(), p_40900_, true);
++         org.bukkit.event.entity.EntityShootBowEvent event = CraftEventFactory.callEntityShootBowEvent(p_40896_, p_40898_, p_40899_, projectile, p_40896_.getUsedItemHand(), p_40900_, true);
 +         if (event.isCancelled()) {
 +            event.getProjectile().remove();
 +            return;
 +         }
 +         // CraftBukkit end
  
-          p_40898_.m_41622_(flag ? 3 : 1, p_40896_, (p_40858_) -> {
-             p_40858_.m_21190_(p_40897_);
+          p_40898_.hurtAndBreak(flag ? 3 : 1, p_40896_, (p_40858_) -> {
+             p_40858_.broadcastBreakEvent(p_40897_);
           });
--         p_40895_.m_7967_(projectile);
+-         p_40895_.addFreshEntity(projectile);
 +         // CraftBukkit start
 +         if (event.getProjectile() == projectile.getBukkitEntity()) {
-+            if (!p_40895_.m_7967_(projectile)) {
++            if (!p_40895_.addFreshEntity(projectile)) {
 +               if (p_40896_ instanceof ServerPlayer) {
 +                  ((ServerPlayer) p_40896_).getBukkitEntity().updateInventory();
 +               }
@@ -34,22 +34,22 @@
 +            }
 +         }
 +         // CraftBukkit end
-          p_40895_.m_6263_((Player)null, p_40896_.m_20185_(), p_40896_.m_20186_(), p_40896_.m_20189_(), SoundEvents.f_11847_, SoundSource.PLAYERS, 1.0F, p_40900_);
+          p_40895_.playSound((Player)null, p_40896_.getX(), p_40896_.getY(), p_40896_.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, p_40900_);
        }
     }
 @@ -241,6 +_,7 @@
     }
  
-    public static void m_40887_(Level p_40888_, LivingEntity p_40889_, InteractionHand p_40890_, ItemStack p_40891_, float p_40892_, float p_40893_) {
-+      if (p_40889_ instanceof Player player && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40891_, p_40889_.m_9236_(), player, 1, true) < 0) return;
-       List<ItemStack> list = m_40941_(p_40891_);
-       float[] afloat = m_220023_(p_40889_.m_217043_());
+    public static void performShooting(Level p_40888_, LivingEntity p_40889_, InteractionHand p_40890_, ItemStack p_40891_, float p_40892_, float p_40893_) {
++      if (p_40889_ instanceof Player player && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40891_, p_40889_.level(), player, 1, true) < 0) return;
+       List<ItemStack> list = getChargedProjectiles(p_40891_);
+       float[] afloat = getShotPitches(p_40889_.getRandom());
  
 @@ -304,6 +_,7 @@
-             p_40910_.m_6263_((Player)null, p_40911_.m_20185_(), p_40911_.m_20186_(), p_40911_.m_20189_(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
+             p_40910_.playSound((Player)null, p_40911_.getX(), p_40911_.getY(), p_40911_.getZ(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
           }
        }
-+      super.m_5929_(p_40910_, p_40911_, p_40912_, p_40913_); //TODO: Remove in 1.20, this is only here to trigger Forge's old onUseingTick method
++      super.onUseTick(p_40910_, p_40911_, p_40912_, p_40913_); //TODO: Remove in 1.20, this is only here to trigger Forge's old onUseingTick method
  
     }
  

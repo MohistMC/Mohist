@@ -4,8 +4,8 @@
  import net.minecraft.world.level.levelgen.structure.StructureStart;
  
  public class StructureManager {
--   private final LevelAccessor f_220460_;
-+   public final LevelAccessor f_220460_;
-    private final WorldOptions f_244109_;
-    private final StructureCheck f_220462_;
+-   private final LevelAccessor level;
++   public final LevelAccessor level;
+    private final WorldOptions worldOptions;
+    private final StructureCheck structureCheck;
  

@@ -3,12 +3,12 @@
 @@ -47,6 +_,11 @@
     }
  
-    protected void m_54168_(BlockState p_54169_, Level p_54170_, BlockPos p_54171_) {
+    protected void melt(BlockState p_54169_, Level p_54170_, BlockPos p_54171_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.m_6042_().f_63857_() ? Blocks.f_50016_.m_49966_() : Blocks.f_49990_.m_49966_()).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.dimensionType().ultraWarm() ? Blocks.AIR.defaultBlockState() : Blocks.WATER.defaultBlockState()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end
-       if (p_54170_.m_6042_().f_63857_()) {
-          p_54170_.m_7471_(p_54171_, false);
+       if (p_54170_.dimensionType().ultraWarm()) {
+          p_54170_.removeBlock(p_54171_, false);
        } else {

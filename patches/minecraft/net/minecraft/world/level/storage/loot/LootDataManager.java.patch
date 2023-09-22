@@ -1,22 +1,22 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
 @@ -27,6 +_,7 @@
-    public static final LootDataId<LootTable> f_278474_ = new LootDataId<>(LootDataType.f_278413_, BuiltInLootTables.f_78712_);
-    private Map<LootDataId<?>, ?> f_278415_ = Map.of();
-    private Multimap<LootDataType<?>, ResourceLocation> f_278404_ = ImmutableMultimap.of();
+    public static final LootDataId<LootTable> EMPTY_LOOT_TABLE_KEY = new LootDataId<>(LootDataType.TABLE, BuiltInLootTables.EMPTY);
+    private Map<LootDataId<?>, ?> elements = Map.of();
+    private Multimap<LootDataType<?>, ResourceLocation> typeKeys = ImmutableMultimap.of();
 +   public Map<?, ResourceLocation> lootTableToKey = ImmutableMap.of(); // CraftBukkit
  
-    public final CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_279240_, ResourceManager p_279377_, ProfilerFiller p_279135_, ProfilerFiller p_279088_, Executor p_279148_, Executor p_279169_) {
+    public final CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_279240_, ResourceManager p_279377_, ProfilerFiller p_279135_, ProfilerFiller p_279088_, Executor p_279148_, Executor p_279169_) {
        Map<LootDataType<?>, Map<ResourceLocation, ?>> map = new HashMap<>();
 @@ -84,6 +_,11 @@
        });
-       this.f_278415_ = map;
-       this.f_278404_ = builder1.build();
+       this.elements = map;
+       this.typeKeys = builder1.build();
 +      // CraftBukkit start - build a reversed registry map
 +      ImmutableMap.Builder<Object, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
-+      this.f_278415_.forEach((key, lootTable) -> lootTableToKeyBuilder.put(lootTable, key.f_278500_()));
++      this.elements.forEach((key, lootTable) -> lootTableToKeyBuilder.put(lootTable, key.location()));
 +      this.lootTableToKey = lootTableToKeyBuilder.build();
 +      // CraftBukkit end
     }
  
-    private static <T> void m_278621_(ValidationContext p_279270_, LootDataId<T> p_279249_, Object p_279342_) {
+    private static <T> void castAndValidate(ValidationContext p_279270_, LootDataId<T> p_279249_, Object p_279342_) {
