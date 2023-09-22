@@ -1,14 +1,12 @@
 --- a/net/minecraft/world/item/context/BlockPlaceContext.java
 +++ b/net/minecraft/world/item/context/BlockPlaceContext.java
-@@ -1,6 +_,8 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.item.context;
  
- import javax.annotation.Nullable;
-+
 +import com.mohistmc.plugins.ban.bans.BanItem;
+ import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
- import net.minecraft.world.InteractionHand;
 @@ -37,6 +_,7 @@
     }
  

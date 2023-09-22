@@ -1,7 +1,9 @@
 package org.bukkit.potion;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.effect.MobEffect;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Color;
 import org.bukkit.Keyed;
@@ -9,10 +11,6 @@ import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a type of potion and its effect on an entity.

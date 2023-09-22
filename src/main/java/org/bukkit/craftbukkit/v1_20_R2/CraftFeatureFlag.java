@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -7,9 +9,6 @@ import org.bukkit.FeatureFlag;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class CraftFeatureFlag implements FeatureFlag {
 

@@ -1,9 +1,8 @@
 package org.bukkit.command;
 
+import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 
 public class FormattedCommandAlias extends Command {
     private final String[] formatStrings;

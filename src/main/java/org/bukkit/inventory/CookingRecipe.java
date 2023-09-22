@@ -1,13 +1,12 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import java.util.Collections;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.recipe.CookingBookCategory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 /**
  * Represents a cooking recipe.

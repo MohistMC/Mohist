@@ -1,9 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.map;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.Util;
-import org.bukkit.map.MapPalette;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +15,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import net.minecraft.Util;
+import org.bukkit.map.MapPalette;
 
 public class CraftMapColorCache implements MapPalette.MapColorCache {
 

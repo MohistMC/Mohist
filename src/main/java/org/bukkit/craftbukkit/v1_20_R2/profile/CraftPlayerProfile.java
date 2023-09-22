@@ -5,19 +5,6 @@ import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import net.minecraft.Util;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
-import org.bukkit.profile.PlayerProfile;
-import org.bukkit.profile.PlayerTextures;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,6 +15,18 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.Util;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.configuration.ConfigSerializationUtil;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
 @SerializableAs("PlayerProfile")
 public final class CraftPlayerProfile implements PlayerProfile {
@@ -55,8 +54,8 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     public CraftPlayerProfile(UUID uniqueId, String name) {
         Preconditions.checkArgument((uniqueId != null) || !StringUtils.isBlank(name), "uniqueId is null or name is blank");
-        this.uniqueId = uniqueId;
-        this.name = name;
+        this.uniqueId = (uniqueId == null) ? Util.NIL_UUID : uniqueId;
+        this.name = (name == null) ? "" : name;;
     }
 
     // The Map of properties of the given GameProfile is not immutable. This captures a snapshot of the properties of
@@ -74,12 +73,12 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     @Override
     public UUID getUniqueId() {
-        return uniqueId;
+        return (uniqueId.equals(Util.NIL_UUID)) ? null : uniqueId;
     }
 
     @Override
     public String getName() {
-        return name;
+        return (name.isEmpty()) ? null : name;
     }
 
     @Nullable
@@ -119,7 +118,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
     @Override
     public boolean isComplete() {
-        return (uniqueId != null) && (name != null) && !textures.isEmpty();
+        return (getUniqueId() != null) && (getName() != null) && !textures.isEmpty();
     }
 
     @Override
@@ -132,12 +131,12 @@ public final class CraftPlayerProfile implements PlayerProfile {
         GameProfile profile = this.buildGameProfile();
 
         // If missing, look up the uuid by name:
-        if (profile.getId() == null) {
+        if (profile.getId().equals(Util.NIL_UUID)) {
             profile = server.getProfileCache().get(profile.getName()).orElse(profile);
         }
 
         // Look up properties such as the textures:
-        if (profile.getId() != null) {
+        if (!profile.getId().equals(Util.NIL_UUID)) {
             GameProfile newProfile;
             try {
                 newProfile = SkullBlockEntity.fillProfileTextures(profile).get().orElse(null); // TODO: replace with CompletableFuture
@@ -245,11 +244,11 @@ public final class CraftPlayerProfile implements PlayerProfile {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (uniqueId != null) {
-            map.put("uniqueId", uniqueId.toString());
+        if (getUniqueId() != null) {
+            map.put("uniqueId", getUniqueId().toString());
         }
-        if (name != null) {
-            map.put("name", name);
+        if (getName() != null) {
+            map.put("name", getName());
         }
         rebuildDirtyProperties();
         if (!properties.isEmpty()) {

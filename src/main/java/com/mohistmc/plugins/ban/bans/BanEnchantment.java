@@ -5,13 +5,12 @@ import com.mohistmc.api.EnchantmentAPI;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.util.ListUtils;
+import java.util.List;
 import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * @author Mgazul by MohistMC

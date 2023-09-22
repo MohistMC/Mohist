@@ -1,13 +1,11 @@
 package org.bukkit.craftbukkit;
 
-import joptsimple.OptionParser;
-import joptsimple.util.PathConverter;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-
 import static java.util.Arrays.asList;
+import joptsimple.OptionParser;
+import joptsimple.util.PathConverter;
 
 public class Main extends OptionParser {
     public Main() {

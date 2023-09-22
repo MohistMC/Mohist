@@ -1,11 +1,10 @@
 package org.bukkit.generator;
 
+import java.util.Random;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.world.WorldInitEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Random;
 
 /**
  * A block populator is responsible for generating a small area of blocks.

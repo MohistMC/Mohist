@@ -1,12 +1,11 @@
 package com.mohistmc.util;
 
-import org.bukkit.World;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.bukkit.World;
 
 /**
  * @author Mgazul by MohistMC

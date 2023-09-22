@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.google.common.base.Preconditions;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;

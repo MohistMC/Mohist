@@ -1,10 +1,9 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * Represents the various type of game modes that {@link HumanEntity}s may

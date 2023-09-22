@@ -2,6 +2,8 @@ package com.mohistmc.plugins.world.utils;
 
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.YamlUtils;
+import java.io.File;
+import java.util.Objects;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.bukkit.Bukkit;
@@ -14,9 +16,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.io.File;
-import java.util.Objects;
 
 public class ConfigByWorlds {
     public static File f = new File("mohist-config", "worlds.yml");

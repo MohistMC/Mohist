@@ -1,5 +1,8 @@
 package org.bukkit.generator;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
@@ -11,10 +14,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * A chunk generator is responsible for the initial shaping of an entire

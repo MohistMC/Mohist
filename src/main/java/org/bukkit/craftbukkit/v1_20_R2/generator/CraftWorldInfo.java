@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.generator;
 
 import com.mohistmc.util.Level2LevelStem;
+import java.util.UUID;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -8,8 +9,6 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID;
 import org.bukkit.generator.WorldInfo;
-
-import java.util.UUID;
 
 public class CraftWorldInfo implements WorldInfo {
 

@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/item/BucketItem.java
 +++ b/net/minecraft/world/item/BucketItem.java
-@@ -5,6 +_,8 @@
+@@ -1,10 +_,13 @@
+ package net.minecraft.world.item;
+ 
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.core.particles.ParticleTypes;
@@ -9,7 +14,7 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
-@@ -27,18 +_,39 @@
+@@ -27,18 +_,37 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -18,8 +23,6 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
-+
-+import java.util.concurrent.atomic.AtomicReference;
  
  public class BucketItem extends Item implements DispensibleContainerItem {
     private final Fluid content;

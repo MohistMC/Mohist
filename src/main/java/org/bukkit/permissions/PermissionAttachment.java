@@ -1,11 +1,10 @@
 package org.bukkit.permissions;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Holds information about a permission attachment on a {@link Permissible}

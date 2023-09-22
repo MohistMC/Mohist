@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/SnowballItem.java
 +++ b/net/minecraft/world/item/SnowballItem.java
-@@ -8,6 +_,7 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.Snowball;
- import net.minecraft.world.level.Level;
-+import org.bukkit.SoundCategory;
- 
- public class SnowballItem extends Item {
-    public SnowballItem(Item.Properties p_43140_) {
 @@ -16,18 +_,24 @@
  
     public InteractionResultHolder<ItemStack> use(Level p_43142_, Player p_43143_, InteractionHand p_43144_) {

@@ -1,11 +1,10 @@
 package org.bukkit.plugin.messaging;
 
+import java.util.Set;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * A class responsible for managing the registrations of plugin channels and

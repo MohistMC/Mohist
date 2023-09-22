@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/RegionFileStorage.java
-@@ -5,6 +_,8 @@
+@@ -5,6 +_,7 @@
  import java.io.DataOutputStream;
  import java.io.IOException;
  import java.nio.file.Path;
 +import java.util.concurrent.atomic.AtomicBoolean;
-+import java.util.concurrent.atomic.AtomicReference;
  import javax.annotation.Nullable;
  import net.minecraft.FileUtil;
  import net.minecraft.nbt.CompoundTag;

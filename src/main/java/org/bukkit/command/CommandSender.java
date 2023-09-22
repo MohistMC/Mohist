@@ -1,11 +1,10 @@
 package org.bukkit.command;
 
+import java.util.UUID;
 import org.bukkit.Server;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public interface CommandSender extends Permissible {
 

@@ -1,11 +1,10 @@
 package com.mohistmc.api.event;
 
+import java.net.URI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.net.URI;
 
 public class MohistNetworkEvent extends Event implements Cancellable {
 

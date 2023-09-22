@@ -1,12 +1,11 @@
 package org.bukkit.entity;
 
+import java.util.Locale;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 /**
  * Represents a villager NPC

@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -15,6 +_,7 @@
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.tags.ItemTags;
- import net.minecraft.util.ByIdMap;
-+import net.minecraft.util.Mth;
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.StringRepresentable;
- import net.minecraft.world.Container;
 @@ -82,7 +_,13 @@
        return false;
     }

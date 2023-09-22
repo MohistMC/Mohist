@@ -1,5 +1,7 @@
 package org.bukkit.plugin;
 
+import java.io.File;
+import java.util.Set;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -8,9 +10,6 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.Set;
 
 /**
  * Handles all plugin management from the Server

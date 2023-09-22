@@ -8,15 +8,6 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
-@@ -82,7 +_,7 @@
-    });
-    private final PacketFlow receiving;
-    private final Queue<Consumer<Connection>> pendingActions = Queues.newConcurrentLinkedQueue();
--   public Channel channel;
-+   private Channel channel;
-    public SocketAddress address;
-    @Nullable
-    private volatile PacketListener disconnectListener;
 @@ -102,15 +_,28 @@
     private volatile Component delayedDisconnect;
     @Nullable

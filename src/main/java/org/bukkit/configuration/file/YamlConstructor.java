@@ -1,17 +1,16 @@
 package org.bukkit.configuration.file;
 
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
 import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
 import com.mohistmc.org.yaml.snakeyaml.error.YAMLException;
 import com.mohistmc.org.yaml.snakeyaml.nodes.MappingNode;
 import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
 import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class YamlConstructor extends SafeConstructor {
 

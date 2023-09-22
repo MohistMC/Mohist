@@ -3,6 +3,23 @@ package org.bukkit.plugin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
+import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
+import com.mohistmc.org.yaml.snakeyaml.Yaml;
+import com.mohistmc.org.yaml.snakeyaml.constructor.AbstractConstruct;
+import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
+import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,24 +31,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
-import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
-import com.mohistmc.org.yaml.snakeyaml.Yaml;
-import com.mohistmc.org.yaml.snakeyaml.constructor.AbstractConstruct;
-import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
-import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
-import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
-import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
-
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * This type is the runtime-container for the information in the plugin.yml.

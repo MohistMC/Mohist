@@ -1,13 +1,12 @@
 package com.mohistmc.api.color;
 
-import net.md_5.bungee.api.ChatColor;
-
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * @author Mgazul by MohistMC

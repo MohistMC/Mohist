@@ -1,15 +1,14 @@
 package org.bukkit.craftbukkit.v1_20_R2.map;
 
 import com.google.common.base.Preconditions;
+import java.awt.Color;
+import java.awt.Image;
+import java.util.Arrays;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
 import org.bukkit.map.MapFont.CharacterSprite;
 import org.bukkit.map.MapPalette;
-
-import java.awt.Color;
-import java.awt.Image;
-import java.util.Arrays;
 
 public class CraftMapCanvas implements MapCanvas {
 

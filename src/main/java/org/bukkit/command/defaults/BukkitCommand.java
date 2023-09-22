@@ -1,9 +1,8 @@
 package org.bukkit.command.defaults;
 
+import java.util.List;
 import org.bukkit.command.Command;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public abstract class BukkitCommand extends Command {
     protected BukkitCommand(@NotNull String name) {

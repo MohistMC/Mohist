@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/entity/npc/WanderingTrader.java
 +++ b/net/minecraft/world/entity/npc/WanderingTrader.java
-@@ -45,6 +_,9 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.phys.Vec3;
- import org.apache.commons.lang3.tuple.Pair;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantRecipe;
-+import org.bukkit.event.entity.VillagerAcquireTradeEvent;
- 
- public class WanderingTrader extends AbstractVillager {
-    private static final int NUMBER_OF_TRADE_OFFERS = 5;
 @@ -54,6 +_,7 @@
  
     public WanderingTrader(EntityType<? extends WanderingTrader> p_35843_, Level p_35844_) {

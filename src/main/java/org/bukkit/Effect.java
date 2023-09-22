@@ -1,12 +1,11 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
 import org.bukkit.block.BlockFace;
 import org.bukkit.potion.Potion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * A list of effects that the server is able to send to players.

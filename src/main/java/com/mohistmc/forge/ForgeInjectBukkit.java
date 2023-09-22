@@ -7,6 +7,13 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.inventory.MohistPotionEffect;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -55,14 +62,6 @@ import org.bukkit.entity.SpawnCategory;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class ForgeInjectBukkit {
 
@@ -295,7 +294,6 @@ public class ForgeInjectBukkit {
             String name = normalizeName(resourceLocation.getPath());
             if (isMods(resourceLocation)) {
                 Fluid fluid = MohistDynamEnum.addEnum(Fluid.class, name);
-                CraftMagicNumbers.FLUIDTYPE_FLUID.put(fluidType, fluid);
                 MohistMC.LOGGER.debug("Registered forge Fluid as Fluid(Bukkit) {}", fluid.name());
             }
         }

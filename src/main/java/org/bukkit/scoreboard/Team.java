@@ -1,12 +1,11 @@
 package org.bukkit.scoreboard;
 
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * A team on a scoreboard that has a common display theme and other

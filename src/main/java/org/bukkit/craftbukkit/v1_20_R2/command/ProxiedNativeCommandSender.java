@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.command;
 
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.commands.CommandSourceStack;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -8,9 +10,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Set;
-import java.util.UUID;
 
 public class ProxiedNativeCommandSender implements ProxiedCommandSender {
 

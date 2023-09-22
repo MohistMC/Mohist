@@ -1,10 +1,9 @@
 package org.bukkit.configuration;
 
 import com.google.common.base.Preconditions;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  * This is a {@link Configuration} implementation that does not save or load

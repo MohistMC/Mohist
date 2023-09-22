@@ -1,23 +1,13 @@
 --- a/net/minecraft/world/level/block/LeavesBlock.java
 +++ b/net/minecraft/world/level/block/LeavesBlock.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.level.block;
- 
--import java.util.OptionalInt;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.particles.ParticleTypes;
-@@ -22,8 +_,12 @@
+@@ -22,8 +_,10 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
--
--public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.event.block.LeavesDecayEvent;
-+
-+import java.util.OptionalInt;
-+
+ 
+-public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
 +public class LeavesBlock extends Block implements SimpleWaterloggedBlock, net.minecraftforge.common.IForgeShearable {
     public static final int DECAY_DISTANCE = 7;
     public static final IntegerProperty DISTANCE = BlockStateProperties.DISTANCE;

@@ -4,18 +4,16 @@ import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.plugins.MohistProxySelector;
 import com.mohistmc.util.VersionInfo;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-
 import java.net.ProxySelector;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 
 @Mod("mohist")
 @OnlyIn(Dist.DEDICATED_SERVER)

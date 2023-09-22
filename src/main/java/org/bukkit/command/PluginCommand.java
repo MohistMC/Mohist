@@ -1,11 +1,10 @@
 package org.bukkit.command;
 
 import com.google.common.base.Preconditions;
+import java.util.List;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents a {@link Command} belonging to a plugin

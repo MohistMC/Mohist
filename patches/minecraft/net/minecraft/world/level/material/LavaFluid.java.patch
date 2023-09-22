@@ -1,15 +1,18 @@
 --- a/net/minecraft/world/level/material/LavaFluid.java
 +++ b/net/minecraft/world/level/material/LavaFluid.java
-@@ -2,6 +_,8 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.material;
  
++import com.mohistmc.plugins.ban.bans.BanEvents;
  import java.util.Optional;
  import javax.annotation.Nullable;
-+
-+import com.mohistmc.plugins.ban.bans.BanEvents;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.particles.ParticleOptions;
-@@ -23,6 +_,7 @@
+@@ -18,11 +_,11 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
+-import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.LiquidBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.StateDefinition;

@@ -3,8 +3,6 @@ package com.mohistmc.bukkit.remapping;
 import com.google.common.io.ByteStreams;
 import cpw.mods.modlauncher.ClassTransformer;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import org.objectweb.asm.ClassReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.Hashtable;
+import org.objectweb.asm.ClassReader;
 
 /**
  * RemapSourceHandler

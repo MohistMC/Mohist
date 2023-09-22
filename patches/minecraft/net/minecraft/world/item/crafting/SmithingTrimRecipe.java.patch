@@ -1,33 +1,12 @@
 --- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
-@@ -1,13 +_,17 @@
- package net.minecraft.world.item.crafting;
- 
--import com.mojang.serialization.Codec;
--import com.mojang.serialization.codecs.RecordCodecBuilder;
-+import com.google.gson.JsonObject;
- import java.util.Optional;
- import java.util.stream.Stream;
-+
-+import com.mojang.serialization.Codec;
-+import com.mojang.serialization.codecs.RecordCodecBuilder;
- import net.minecraft.core.Holder;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.network.FriendlyByteBuf;
-+import net.minecraft.resources.ResourceLocation;
-+import net.minecraft.util.GsonHelper;
- import net.minecraft.world.Container;
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
-@@ -17,13 +_,17 @@
+@@ -17,13 +_,16 @@
  import net.minecraft.world.item.armortrim.TrimPattern;
  import net.minecraft.world.item.armortrim.TrimPatterns;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTrimRecipe;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
  
  public class SmithingTrimRecipe implements SmithingRecipe {
     final Ingredient template;

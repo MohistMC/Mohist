@@ -1,12 +1,11 @@
 package org.bukkit.profile;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.Server;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A player profile.

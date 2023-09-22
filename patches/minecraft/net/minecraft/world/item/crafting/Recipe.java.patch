@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
-@@ -7,6 +_,7 @@
+@@ -3,7 +_,6 @@
+ import net.minecraft.core.NonNullList;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.world.Container;
+-import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.jetbrains.annotations.NotNull;
- 
- public interface Recipe<C extends Container> {
-    boolean matches(C p_44002_, Level p_44003_);
 @@ -21,9 +_,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(p_44004_.getContainerSize(), ItemStack.EMPTY);
  

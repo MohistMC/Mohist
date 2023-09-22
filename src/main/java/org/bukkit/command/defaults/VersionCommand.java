@@ -3,6 +3,9 @@ package org.bukkit.command.defaults;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mohistmc.MohistMC;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,10 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class VersionCommand extends BukkitCommand {
     public VersionCommand(@NotNull String name) {

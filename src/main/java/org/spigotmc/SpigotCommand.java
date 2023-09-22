@@ -1,12 +1,11 @@
 package org.spigotmc;
 
+import java.io.File;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import java.io.File;
 
 public class SpigotCommand extends Command {
 

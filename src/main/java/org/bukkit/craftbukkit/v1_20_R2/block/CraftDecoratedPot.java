@@ -1,6 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R2.block;
 
 import com.google.common.base.Preconditions;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
@@ -9,11 +13,6 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.DecoratedPot;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
-
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CraftDecoratedPot extends CraftBlockEntityState<DecoratedPotBlockEntity> implements DecoratedPot {
 

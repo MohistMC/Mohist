@@ -1,14 +1,12 @@
 --- a/net/minecraft/world/item/Equipable.java
 +++ b/net/minecraft/world/item/Equipable.java
-@@ -1,6 +_,8 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.item;
  
- import javax.annotation.Nullable;
-+
 +import com.mohistmc.plugins.ban.bans.BanItem;
+ import javax.annotation.Nullable;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
- import net.minecraft.stats.Stats;
 @@ -22,6 +_,7 @@
  
     default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {

@@ -1,10 +1,9 @@
 package org.bukkit.conversations;
 
 import com.google.common.base.Joiner;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * FixedSetPrompt is the base class for any prompt that requires a fixed set

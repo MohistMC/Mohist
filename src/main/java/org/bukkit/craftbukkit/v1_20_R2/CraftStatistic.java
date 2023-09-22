@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 
@@ -169,7 +170,7 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         Preconditions.checkArgument(entity != null, "EntityType cannot be null");
         if (entity.getName() != null) {
-            net.minecraft.world.entity.EntityType<?> nmsEntity = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
+            net.minecraft.world.entity.EntityType<?> nmsEntity = CraftEntityType.bukkitToMinecraft(entity);
 
             if (stat == org.bukkit.Statistic.KILL_ENTITY) {
                 return net.minecraft.stats.Stats.ENTITY_KILLED.get(nmsEntity);
@@ -183,8 +184,7 @@ public enum CraftStatistic {
 
     public static EntityType getEntityTypeFromStatistic(net.minecraft.stats.Stat<net.minecraft.world.entity.EntityType<?>> statistic) {
         Preconditions.checkArgument(statistic != null, "NMS Statistic cannot be null");
-        ResourceLocation name = net.minecraft.world.entity.EntityType.getKey(statistic.getValue());
-        return EntityType.fromName(name.getPath());
+        return CraftEntityType.minecraftToBukkit(statistic.getValue());
     }
 
     public static Material getMaterialFromStatistic(net.minecraft.stats.Stat<?> statistic) {

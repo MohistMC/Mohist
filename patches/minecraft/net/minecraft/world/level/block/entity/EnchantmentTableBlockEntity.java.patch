@@ -1,14 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/EnchantmentTableBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/EnchantmentTableBlockEntity.java
-@@ -1,6 +_,8 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.level.block.entity;
  
- import javax.annotation.Nullable;
-+
 +import com.mohistmc.MohistConfig;
+ import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
 @@ -46,6 +_,7 @@
     }
  

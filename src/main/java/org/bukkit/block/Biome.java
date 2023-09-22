@@ -1,10 +1,9 @@
 package org.bukkit.block;
 
+import java.util.Locale;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 /**
  * Holds all accepted Biomes in the default server

@@ -7,11 +7,10 @@
  import com.mojang.logging.LogUtils;
  import javax.annotation.Nullable;
  import net.minecraft.CrashReportCategory;
-@@ -13,9 +_,13 @@
+@@ -13,9 +_,12 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
 +import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;

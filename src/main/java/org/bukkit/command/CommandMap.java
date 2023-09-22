@@ -1,10 +1,9 @@
 package org.bukkit.command;
 
+import java.util.List;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public interface CommandMap {
 

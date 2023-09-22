@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/BellBlock.java
 +++ b/net/minecraft/world/level/block/BellBlock.java
-@@ -29,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.DirectionProperty;
- import net.minecraft.world.level.block.state.properties.EnumProperty;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.shapes.CollisionContext;
 @@ -247,4 +_,16 @@
     public boolean isPathfindable(BlockState p_49717_, BlockGetter p_49718_, BlockPos p_49719_, PathComputationType p_49720_) {
        return false;

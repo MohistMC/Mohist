@@ -1,12 +1,11 @@
 package org.bukkit;
 
 import com.google.common.base.Preconditions;
+import java.util.Locale;
+import java.util.UUID;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Represents a String based key which consists of two components - a namespace

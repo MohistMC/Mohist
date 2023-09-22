@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.scoreboard;
 
 import com.google.common.collect.ImmutableBiMap;
-import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.RenderType;

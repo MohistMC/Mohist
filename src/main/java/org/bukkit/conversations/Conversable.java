@@ -1,9 +1,8 @@
 package org.bukkit.conversations;
 
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * The Conversable interface is used to indicate objects that can have

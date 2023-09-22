@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
-@@ -6,6 +_,7 @@
- import java.util.function.BiPredicate;
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
-+import net.md_5.bungee.api.chat.TranslatableComponent;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.network.chat.Component;
+@@ -23,7 +_,6 @@
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.animal.Cat;
+ import net.minecraft.world.entity.monster.piglin.PiglinAi;
+-import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.inventory.AbstractContainerMenu;
+ import net.minecraft.world.inventory.ChestMenu;
 @@ -80,27 +_,8 @@
     };
     private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {

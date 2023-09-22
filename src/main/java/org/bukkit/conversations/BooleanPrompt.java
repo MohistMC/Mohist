@@ -1,11 +1,10 @@
 package org.bukkit.conversations;
 
 import com.google.common.collect.ImmutableSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Locale;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * BooleanPrompt is the base class for any prompt that requires a boolean

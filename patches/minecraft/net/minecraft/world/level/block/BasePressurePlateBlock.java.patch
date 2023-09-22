@@ -1,10 +1,6 @@
 --- a/net/minecraft/world/level/block/BasePressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/BasePressurePlateBlock.java
-@@ -17,9 +_,12 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.block.state.properties.BlockSetType;
- import net.minecraft.world.level.gameevent.GameEvent;
-+import net.minecraft.world.level.material.PushReaction;
+@@ -20,6 +_,8 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;

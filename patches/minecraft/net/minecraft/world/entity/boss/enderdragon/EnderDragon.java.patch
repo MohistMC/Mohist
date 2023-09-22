@@ -13,22 +13,20 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -47,9 +_,15 @@
+@@ -47,8 +_,13 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
-+import net.minecraft.world.level.storage.loot.LootContext;
 +import net.minecraft.world.level.storage.loot.LootParams;
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
+ import org.joml.Vector3f;
  import org.slf4j.Logger;
  
- public class EnderDragon extends Mob implements Enemy {
 @@ -88,6 +_,7 @@
     private final Node[] nodes = new Node[24];
     private final int[] nodeAdjacency = new int[24];

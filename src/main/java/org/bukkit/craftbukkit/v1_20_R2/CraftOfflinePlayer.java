@@ -1,6 +1,14 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.mojang.authlib.GameProfile;
+import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -25,15 +33,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.profile.PlayerProfile;
-
-import java.io.File;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @SerializableAs("Player")
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
@@ -61,7 +60,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         }
 
         // This might not match lastKnownName but if not it should be more correct
-        if (profile.getName() != null) {
+        if (!profile.getName().isEmpty()) {
             return profile.getName();
         }
 

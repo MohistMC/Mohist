@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,23 @@
+@@ -2,16 +_,20 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
@@ -12,13 +12,10 @@
  import com.mojang.brigadier.StringReader;
 +import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-+import com.mysql.cj.util.StringUtils;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import java.net.SocketAddress;
-+import java.nio.charset.StandardCharsets;
-+import java.time.Duration;
  import java.time.Instant;
 +import java.util.Arrays;
  import java.util.Collections;
@@ -33,27 +30,6 @@
  import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-@@ -29,8 +_,12 @@
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
- import net.minecraft.ChatFormatting;
-+import net.minecraft.CrashReport;
-+import net.minecraft.CrashReportCategory;
-+import net.minecraft.ReportedException;
- import net.minecraft.SharedConstants;
- import net.minecraft.Util;
-+import net.minecraft.advancements.Advancement;
- import net.minecraft.advancements.AdvancementHolder;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.commands.CommandSigningContext;
-@@ -43,6 +_,7 @@
- import net.minecraft.nbt.ListTag;
- import net.minecraft.nbt.StringTag;
- import net.minecraft.network.Connection;
-+import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.TickablePacketListener;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
 @@ -50,6 +_,7 @@
  import net.minecraft.network.chat.LastSeenMessagesValidator;
  import net.minecraft.network.chat.MessageSignature;
@@ -62,25 +38,18 @@
  import net.minecraft.network.chat.PlayerChatMessage;
  import net.minecraft.network.chat.RemoteChatSession;
  import net.minecraft.network.chat.SignableCommand;
-@@ -57,7 +_,13 @@
- import net.minecraft.network.chat.SignedMessageChain;
+@@ -58,6 +_,7 @@
  import net.minecraft.network.protocol.Packet;
  import net.minecraft.network.protocol.PacketUtils;
-+import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
  import net.minecraft.network.protocol.common.ServerboundClientInformationPacket;
-+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-+import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
-+import net.minecraft.network.protocol.common.ServerboundPongPacket;
-+import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
 +import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
  import net.minecraft.network.protocol.game.ClientboundBlockChangedAckPacket;
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundCommandSuggestionsPacket;
-@@ -68,6 +_,9 @@
+@@ -68,6 +_,8 @@
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
  import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
  import net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket;
@@ -1102,6 +1071,20 @@
        this.send(new ClientboundPlayerChatPacket(p_250321_.link().sender(), p_250321_.link().index(), p_250321_.signature(), p_250321_.signedBody().pack(this.messageSignatureCache), p_250321_.unsignedContent(), p_250321_.filterMask(), p_250910_.toNetwork(this.player.level().registryAccess())));
        this.addPendingMessage(p_250321_);
     }
+@@ -1376,6 +_,13 @@
+       return this.connection.getRemoteAddress();
+    }
+ 
++   // Spigot Start
++   public SocketAddress getRawAddress()
++   {
++      return this.connection.channel.remoteAddress();
++   }
++   // Spigot End
++
+    public void switchToConfig() {
+       this.waitingForSwitchToConfig = true;
+       this.removePlayerFromWorld();
 @@ -1388,8 +_,17 @@
  
     public void handleInteract(ServerboundInteractPacket p_9866_) {
@@ -1638,14 +1621,10 @@
        }
     }
  
-@@ -1676,4 +_,117 @@
+@@ -1676,4 +_,113 @@
     interface EntityInteraction {
        InteractionResult run(ServerPlayer p_143695_, Entity p_143696_, InteractionHand p_143697_);
     }
-+
-+   public final boolean isDisconnected() {
-+      return !this.player.joining && !this.connection.isConnected();
-+   }
 +
 +   private void handleCommand(String s) {
 +      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
@@ -1702,7 +1681,7 @@
 +                  }
 +                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
 +                  if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
-+                     if (originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
++                     if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
 +                        ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
 +                        return null;
 +                     }
@@ -1738,7 +1717,7 @@
 +            }
 +            s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
 +            if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
-+               if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
++               if (!org.spigotmc.SpigotConfig.bungee && originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
 +                  ServerGamePacketListenerImpl.this.server.getPlayerList().broadcastChatMessage(original, ServerGamePacketListenerImpl.this.player, ChatType.bind(ChatType.CHAT, (Entity) ServerGamePacketListenerImpl.this.player));
 +                  return;
 +               }

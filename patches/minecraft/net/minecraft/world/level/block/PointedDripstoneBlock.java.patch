@@ -8,22 +8,6 @@
  import java.util.function.BiPredicate;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
-@@ -14,6 +_,7 @@
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
-+import net.minecraft.world.entity.EntitySelector;
- import net.minecraft.world.entity.item.FallingBlockEntity;
- import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.entity.projectile.ThrownTrident;
-@@ -34,6 +_,7 @@
- import net.minecraft.world.level.material.Fluid;
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.material.Fluids;
-+import net.minecraft.world.level.material.PushReaction;
- import net.minecraft.world.level.pathfinder.PathComputationType;
- import net.minecraft.world.phys.BlockHitResult;
- import net.minecraft.world.phys.Vec3;
 @@ -41,6 +_,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;

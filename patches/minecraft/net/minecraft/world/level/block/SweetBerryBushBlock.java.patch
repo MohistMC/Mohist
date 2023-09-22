@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -26,6 +_,12 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.block;
+ 
++import java.util.Collections;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvents;
+@@ -26,6 +_,10 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -8,8 +15,6 @@
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
-+
-+import java.util.Collections;
  
  public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {
     private static final float HURT_SPEED_THRESHOLD = 0.003F;

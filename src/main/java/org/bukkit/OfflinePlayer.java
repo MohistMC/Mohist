@@ -1,5 +1,10 @@
 package org.bukkit;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
+import org.bukkit.ban.ProfileBanList;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.EntityType;
@@ -8,11 +13,6 @@ import org.bukkit.permissions.ServerOperator;
 import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Represents a reference to a player identity and the data belonging to a

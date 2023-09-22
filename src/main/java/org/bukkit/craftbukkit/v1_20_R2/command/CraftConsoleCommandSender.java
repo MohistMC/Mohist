@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.command;
 
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.command.ConsoleCommandSender;
@@ -7,8 +8,6 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import org.bukkit.craftbukkit.v1_20_R2.conversations.ConversationTracker;
-
-import java.util.UUID;
 
 /**
  * Represents CLI input from a console

@@ -1,9 +1,8 @@
 package org.bukkit.profile;
 
+import java.net.URL;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.net.URL;
 
 /**
  * Provides access to the textures stored inside a {@link PlayerProfile}.

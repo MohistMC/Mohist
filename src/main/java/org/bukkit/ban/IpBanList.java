@@ -1,8 +1,7 @@
 package org.bukkit.ban;
 
-import org.bukkit.BanList;
-
 import java.net.InetAddress;
+import org.bukkit.BanList;
 
 /**
  * A {@link BanList} targeting IP bans.

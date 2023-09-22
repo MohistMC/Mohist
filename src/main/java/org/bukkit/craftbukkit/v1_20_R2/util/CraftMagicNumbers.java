@@ -2,8 +2,6 @@ package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
@@ -11,6 +9,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.DeserializationContext;
@@ -32,10 +39,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
 import org.bukkit.Bukkit;
 import org.bukkit.FeatureFlag;
-import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.attribute.Attribute;
@@ -43,8 +48,8 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_20_R2.CraftFeatureFlag;
+import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttribute;
 import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeInstance;
-import org.bukkit.craftbukkit.v1_20_R2.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.legacy.CraftLegacy;
@@ -55,16 +60,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -99,7 +94,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     // ========================================================================
     public static final Map<Block, Material> BLOCK_MATERIAL = new HashMap<>();
     public static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
-    public static final BiMap<net.minecraft.world.level.material.Fluid, Fluid> FLUIDTYPE_FLUID = HashBiMap.create();
     public static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
     public static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
 
@@ -110,15 +104,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         for (Item item : BuiltInRegistries.ITEM) {
             ITEM_MATERIAL.put(item, Material.getMaterial(BuiltInRegistries.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        for (net.minecraft.world.level.material.Fluid fluidType : BuiltInRegistries.FLUID) {
-            if (BuiltInRegistries.FLUID.getKey(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                Fluid fluid = Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.FLUID.getKey(fluidType)));
-                if (fluid != null) {
-                    FLUIDTYPE_FLUID.put(fluidType, fluid);
-                }
-            }
         }
 
         for (Material material : Material.values()) {
@@ -144,10 +129,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return ITEM_MATERIAL.getOrDefault(item, Material.AIR);
     }
 
-    public static Fluid getFluid(net.minecraft.world.level.material.Fluid fluid) {
-        return FLUIDTYPE_FLUID.get(fluid);
-    }
-
     public static Item getItem(Material material) {
         if (material != null && material.isLegacy()) {
             material = CraftLegacy.fromLegacy(material);
@@ -162,10 +143,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         return MATERIAL_BLOCK.get(material);
-    }
-
-    public static net.minecraft.world.level.material.Fluid getFluid(Fluid fluid) {
-        return FLUIDTYPE_FLUID.inverse().get(fluid);
     }
 
     public static ResourceLocation key(Material mat) {
@@ -350,7 +327,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> nmsDefaultAttributes = getItem(material).getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(slot));
         for (Map.Entry<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> mapEntry : nmsDefaultAttributes.entries()) {
-            Attribute attribute = CraftAttributeMap.fromMinecraft(BuiltInRegistries.ATTRIBUTE.getKey(mapEntry.getKey()).toString());
+            Attribute attribute = CraftAttribute.minecraftToBukkit(mapEntry.getKey());
             defaultAttributes.put(attribute, CraftAttributeInstance.convert(mapEntry.getValue(), slot));
         }
 

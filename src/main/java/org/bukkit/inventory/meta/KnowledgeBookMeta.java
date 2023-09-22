@@ -1,9 +1,8 @@
 package org.bukkit.inventory.meta;
 
+import java.util.List;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public interface KnowledgeBookMeta extends ItemMeta {
 

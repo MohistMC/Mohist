@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -10,21 +10,34 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 
 public class CraftSound {
 
-    public static SoundEvent getSoundEffect(String s) {
-        SoundEvent effect = BuiltInRegistries.SOUND_EVENT.get(new ResourceLocation(s));
-        Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
+    public static Sound minecraftToBukkit(SoundEvent minecraft) {
+        Preconditions.checkArgument(minecraft != null);
 
-        return effect;
+        net.minecraft.core.Registry<SoundEvent> registry = CraftRegistry.getMinecraftRegistry(Registries.SOUND_EVENT);
+        Sound bukkit = Registry.SOUNDS.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
+
+        Preconditions.checkArgument(bukkit != null);
+
+        return bukkit;
     }
 
-    public static SoundEvent getSoundEffect(Sound s) {
-        SoundEvent effect = BuiltInRegistries.SOUND_EVENT.get(CraftNamespacedKey.toMinecraft(s.getKey()));
-        Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
+    public static SoundEvent bukkitToMinecraft(Sound bukkit) {
+        Preconditions.checkArgument(bukkit != null);
 
-        return effect;
+        return CraftRegistry.getMinecraftRegistry(Registries.SOUND_EVENT)
+                .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
     }
 
-    public static Sound getBukkit(SoundEvent soundEffect) {
-        return Registry.SOUNDS.get(CraftNamespacedKey.fromMinecraft(BuiltInRegistries.SOUND_EVENT.getKey(soundEffect)));
+    public static Holder<SoundEvent> bukkitToMinecraftHolder(Sound bukkit) {
+        Preconditions.checkArgument(bukkit != null);
+
+        net.minecraft.core.Registry<SoundEvent> registry = CraftRegistry.getMinecraftRegistry(Registries.SOUND_EVENT);
+
+        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.Reference<SoundEvent> holder) {
+            return holder;
+        }
+
+        throw new IllegalArgumentException("No Reference holder found for " + bukkit
+                + ", this can happen if a plugin creates its own sound effect with out properly registering it.");
     }
 }

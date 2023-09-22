@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
+import java.util.UUID;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Fox;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class CraftFox extends CraftAnimals implements Fox {
 

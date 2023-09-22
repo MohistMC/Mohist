@@ -1,16 +1,14 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
-@@ -2,6 +_,10 @@
+@@ -1,5 +_,8 @@
+ package net.minecraft.world.entity.boss.enderdragon.phases;
  
- import java.lang.reflect.Constructor;
- import java.util.Arrays;
-+
 +import com.mohistmc.MohistMC;
 +import com.mohistmc.api.ServerAPI;
 +import com.mohistmc.dynamicenum.MohistDynamEnum;
+ import java.lang.reflect.Constructor;
+ import java.util.Arrays;
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
- 
- public class EnderDragonPhase<T extends DragonPhaseInstance> {
 @@ -60,6 +_,21 @@
        EnderDragonPhase<T> enderdragonphase = new EnderDragonPhase<>(phases.length, p_31403_, p_31404_);
        phases = Arrays.copyOf(phases, phases.length + 1);

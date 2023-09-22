@@ -1,6 +1,19 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableList;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
@@ -44,20 +57,6 @@ import org.bukkit.util.CachedServerIcon;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 /**
  * Represents a server implementation.

@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import org.bukkit.util.BoundingBox;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bukkit.util.BoundingBox;
 
 public final class CraftVoxelShape implements org.bukkit.util.VoxelShape {
 

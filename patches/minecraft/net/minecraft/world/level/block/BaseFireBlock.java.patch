@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -14,6 +_,7 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.state.BlockBehaviour;
- import net.minecraft.world.level.block.state.BlockState;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.portal.PortalShape;
- import net.minecraft.world.phys.shapes.CollisionContext;
- import net.minecraft.world.phys.shapes.VoxelShape;
 @@ -112,7 +_,14 @@
        if (!p_49263_.fireImmune()) {
           p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);

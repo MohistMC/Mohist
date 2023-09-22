@@ -3,11 +3,6 @@ package org.bukkit.plugin.java;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
 import com.mohistmc.util.IOUtil;
-import mjson.Json;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +14,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import mjson.Json;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class LibraryLoader {
 

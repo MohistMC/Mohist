@@ -1,12 +1,11 @@
 package org.bukkit;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Indicates that the annotated element (class, method, field, etc.) is part of a

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -1,13 +_,17 @@
+@@ -1,12 +_,16 @@
  package net.minecraft.world.level.block.entity;
  
 +import java.util.ArrayList;
@@ -13,11 +13,10 @@
 +import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.chat.Component;
- import net.minecraft.world.Container;
 +import net.minecraft.server.MinecraftServer;
+ import net.minecraft.world.Container;
  import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.Containers;
- import net.minecraft.world.WorldlyContainer;
 @@ -23,6 +_,17 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BrewingStandBlock;

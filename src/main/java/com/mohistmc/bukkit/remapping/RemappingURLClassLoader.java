@@ -2,7 +2,6 @@ package com.mohistmc.bukkit.remapping;
 
 import com.google.common.io.ByteStreams;
 import io.izzel.tools.product.Product2;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;

@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
+import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -38,9 +40,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
-
-import java.util.List;
-import java.util.function.Predicate;
 
 public class DummyGeneratorAccess implements WorldGenLevel {
 

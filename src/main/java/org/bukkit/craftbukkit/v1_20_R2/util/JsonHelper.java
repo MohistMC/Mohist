@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_20_R2.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

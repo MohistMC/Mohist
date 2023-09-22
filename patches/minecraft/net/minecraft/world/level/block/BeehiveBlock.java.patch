@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/BeehiveBlock.java
 +++ b/net/minecraft/world/level/block/BeehiveBlock.java
-@@ -2,6 +_,7 @@
- 
- import java.util.List;
- import javax.annotation.Nullable;
-+
- import net.minecraft.Util;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.core.BlockPos;
 @@ -72,6 +_,10 @@
        return p_49620_.getValue(HONEY_LEVEL);
     }

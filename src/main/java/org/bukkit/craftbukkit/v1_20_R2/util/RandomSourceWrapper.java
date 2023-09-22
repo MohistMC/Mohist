@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.v1_20_R2.util;
 
+import java.util.Random;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
-
-import java.util.Random;
 
 public final class RandomSourceWrapper implements RandomSource {
 

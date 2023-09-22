@@ -8,16 +8,14 @@
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
  import net.minecraft.Util;
-@@ -24,6 +_,12 @@
+@@ -24,6 +_,10 @@
  import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-+import org.apache.commons.lang3.ArrayUtils;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.world.LootGenerateEvent;
-+import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
  
  public class LootTable {

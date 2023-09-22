@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -12,15 +_,18 @@
+@@ -12,9 +_,11 @@
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Codec;
  import com.mojang.serialization.JsonOps;
@@ -12,13 +12,6 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
- import java.util.stream.Collectors;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
-+
- import net.minecraft.Util;
- import net.minecraft.core.NonNullList;
- import net.minecraft.core.registries.BuiltInRegistries;
 @@ -32,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;

@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.mohistmc.bukkit.inventory.MohistSpecialIngredient;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
@@ -8,9 +10,6 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.recipe.CookingBookCategory;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public interface CraftRecipe extends Recipe {
 

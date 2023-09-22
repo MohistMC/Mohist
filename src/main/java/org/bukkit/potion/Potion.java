@@ -1,13 +1,12 @@
 package org.bukkit.potion;
 
 import com.google.common.base.Preconditions;
+import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 /**
  * Potion Adapter for pre-1.9 data values

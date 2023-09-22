@@ -1,22 +1,13 @@
 --- a/net/minecraft/world/level/block/SculkVeinBlock.java
 +++ b/net/minecraft/world/level/block/SculkVeinBlock.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.world.level.block;
  
  import java.util.Collection;
 +import java.util.concurrent.atomic.AtomicReference;
-+
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.sounds.SoundEvents;
-@@ -21,6 +_,7 @@
- import net.minecraft.world.level.block.state.properties.BooleanProperty;
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.material.Fluids;
-+import net.minecraft.world.level.material.PushReaction;
- 
- public class SculkVeinBlock extends MultifaceBlock implements SculkBehaviour, SimpleWaterloggedBlock {
-    private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 @@ -83,7 +_,10 @@
        }
     }

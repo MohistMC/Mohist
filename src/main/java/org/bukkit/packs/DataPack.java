@@ -1,11 +1,10 @@
 package org.bukkit.packs;
 
+import java.util.Set;
 import org.bukkit.FeatureFlag;
 import org.bukkit.Keyed;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * Represents a data pack.

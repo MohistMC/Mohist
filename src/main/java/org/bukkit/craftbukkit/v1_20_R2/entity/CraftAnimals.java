@@ -1,14 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
 import com.google.common.base.Preconditions;
+import java.util.UUID;
 import net.minecraft.world.entity.animal.Animal;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Animals;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 public class CraftAnimals extends CraftAgeable implements Animals {
 

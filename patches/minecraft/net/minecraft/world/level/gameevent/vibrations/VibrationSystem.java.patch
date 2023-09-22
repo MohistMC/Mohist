@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
 +++ b/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
-@@ -22,11 +_,15 @@
- import net.minecraft.world.level.ChunkPos;
- import net.minecraft.world.level.ClipBlockStateContext;
- import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.chunk.ChunkAccess;
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.level.gameevent.GameEventListener;
+@@ -27,6 +_,9 @@
  import net.minecraft.world.level.gameevent.PositionSource;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;

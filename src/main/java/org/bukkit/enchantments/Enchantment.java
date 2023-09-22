@@ -1,14 +1,13 @@
 package org.bukkit.enchantments;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The various type of enchantments that may be added to armour or weapons

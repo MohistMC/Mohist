@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -16,16 +_,20 @@
+@@ -16,6 +_,7 @@
  import java.util.Queue;
  import java.util.Set;
  import java.util.UUID;
@@ -8,11 +8,7 @@
  import java.util.function.Consumer;
  import java.util.stream.Collectors;
  import java.util.stream.Stream;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.SectionPos;
-+import net.minecraft.server.level.ChunkHolder;
- import net.minecraft.server.level.FullChunkStatus;
- import net.minecraft.util.CsvOutput;
+@@ -26,6 +_,8 @@
  import net.minecraft.util.VisibleForDebug;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;

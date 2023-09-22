@@ -1,6 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R2.boss;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -13,11 +17,6 @@ import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEnderCrystal;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EnderDragon;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 public class CraftDragonBattle implements DragonBattle {
 

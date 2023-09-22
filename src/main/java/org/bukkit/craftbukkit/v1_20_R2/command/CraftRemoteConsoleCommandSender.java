@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R2.command;
 
+import java.net.SocketAddress;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.rcon.RconConsoleSource;
 import org.bukkit.command.RemoteConsoleCommandSender;
-
-import java.net.SocketAddress;
 
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {
 

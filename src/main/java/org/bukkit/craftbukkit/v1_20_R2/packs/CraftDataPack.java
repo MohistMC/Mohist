@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R2.packs;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import org.bukkit.Bukkit;
@@ -9,9 +11,6 @@ import org.bukkit.craftbukkit.v1_20_R2.CraftFeatureFlag;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.packs.DataPack;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CraftDataPack implements DataPack {
 

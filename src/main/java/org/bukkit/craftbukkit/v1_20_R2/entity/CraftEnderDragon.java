@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.mohistmc.api.ServerAPI;
+import java.util.Set;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
@@ -10,8 +11,6 @@ import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.boss.CraftDragonBattle;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
-
-import java.util.Set;
 
 public class CraftEnderDragon extends CraftMob implements EnderDragon {
 

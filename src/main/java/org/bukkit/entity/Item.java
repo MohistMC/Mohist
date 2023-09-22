@@ -1,10 +1,9 @@
 package org.bukkit.entity;
 
+import java.util.UUID;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 /**
  * Represents a dropped item.

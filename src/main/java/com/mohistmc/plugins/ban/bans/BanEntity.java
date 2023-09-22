@@ -7,13 +7,12 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.util.ListUtils;
+import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-
-import java.util.List;
 
 /**
  * @author Mgazul by MohistMC

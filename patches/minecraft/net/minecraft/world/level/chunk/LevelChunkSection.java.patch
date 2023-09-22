@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/chunk/LevelChunkSection.java
 +++ b/net/minecraft/world/level/chunk/LevelChunkSection.java
-@@ -2,6 +_,7 @@
- 
- import java.util.function.Predicate;
- import net.minecraft.core.Holder;
-+import net.minecraft.core.QuartPos;
- import net.minecraft.core.Registry;
- import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.world.level.biome.Biome;
 @@ -30,6 +_,12 @@
        this.recalcBlockCounts();
     }

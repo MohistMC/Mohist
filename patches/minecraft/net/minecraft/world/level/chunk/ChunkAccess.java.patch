@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -16,6 +_,7 @@
- import java.util.function.Function;
- import java.util.function.Predicate;
- import java.util.function.Supplier;
-+import java.util.stream.Stream;
- import javax.annotation.Nullable;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
 @@ -51,6 +_,8 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.ticks.SerializableTickContainer;

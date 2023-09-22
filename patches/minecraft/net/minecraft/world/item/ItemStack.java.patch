@@ -34,12 +34,8 @@
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
-@@ -71,17 +_,25 @@
- import net.minecraft.world.item.enchantment.Enchantments;
- import net.minecraft.world.level.ItemLike;
- import net.minecraft.world.level.Level;
--import net.minecraft.world.level.block.Block;
-+import net.minecraft.world.level.block.*;
+@@ -74,14 +_,22 @@
+ import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;

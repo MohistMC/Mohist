@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.v1_20_R2.inventory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.serialization.DataResult;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
@@ -16,9 +18,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.inventory.meta.CompassMeta;
-
-import java.util.Map;
-import java.util.Optional;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaCompass extends CraftMetaItem implements CompassMeta {

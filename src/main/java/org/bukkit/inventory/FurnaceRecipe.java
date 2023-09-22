@@ -1,11 +1,10 @@
 package org.bukkit.inventory;
 
+import java.util.Collections;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 /**
  * Represents a furnace recipe.

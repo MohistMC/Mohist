@@ -1,11 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -6,28 +_,36 @@
- import com.mojang.authlib.GameProfile;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
-+import io.netty.buffer.Unpooled;
- import java.io.File;
+@@ -10,18 +_,20 @@
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -23,22 +18,11 @@
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
-+
  import net.minecraft.ChatFormatting;
 -import net.minecraft.FileUtil;
  import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.LayeredRegistryAccess;
-+import net.minecraft.core.RegistryAccess;
-+import net.minecraft.core.RegistrySynchronization;
-+import net.minecraft.core.UUIDUtil;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.nbt.NbtOps;
- import net.minecraft.network.Connection;
-+import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.chat.MutableComponent;
 @@ -65,11 +_,13 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
@@ -53,20 +37,7 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -80,9 +_,12 @@
- import net.minecraft.world.effect.MobEffectInstance;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.Mob;
- import net.minecraft.world.entity.player.Player;
-+import net.minecraft.world.flag.FeatureFlags;
- import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.biome.BiomeManager;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.border.BorderChangeListener;
-@@ -96,6 +_,20 @@
+@@ -96,6 +_,19 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -74,7 +45,6 @@
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R2.command.ColouredConsoleSender;
-+import org.bukkit.craftbukkit.v1_20_R2.command.ConsoleCommandCompleter;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
@@ -385,7 +355,7 @@
 +
 +      ServerPlayer entity = new ServerPlayer(this.server, this.server.getLevel(Level.OVERWORLD), pGameProfile, ClientInformation.createDefault());
 +      org.bukkit.entity.Player player = entity.getBukkitEntity();
-+      PlayerLoginEvent event = new PlayerLoginEvent(player, loginlistener.connection.hostname, ((java.net.InetSocketAddress) socketaddress).getAddress());
++      PlayerLoginEvent event = new PlayerLoginEvent(player, loginlistener.connection.hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
 +
 +      if (getBans().isBanned(pGameProfile) && !getBans().get(pGameProfile).hasExpired()) {
 +         UserBanListEntry userbanlistentry = this.bans.get(pGameProfile);

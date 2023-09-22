@@ -1,12 +1,11 @@
 package org.bukkit.metadata;
 
 import com.google.common.base.Preconditions;
+import java.lang.ref.WeakReference;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
 
 /**
  * Optional base class for facilitating MetadataValue implementations.

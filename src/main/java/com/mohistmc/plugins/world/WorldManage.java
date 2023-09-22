@@ -2,7 +2,6 @@ package com.mohistmc.plugins.world;
 
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
-
 import java.io.File;
 
 

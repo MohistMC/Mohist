@@ -1,9 +1,8 @@
 package org.bukkit.generator;
 
+import java.util.UUID;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Holds various information of a World

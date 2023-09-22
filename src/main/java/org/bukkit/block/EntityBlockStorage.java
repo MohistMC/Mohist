@@ -1,9 +1,8 @@
 package org.bukkit.block;
 
+import java.util.List;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represents a captured state of a block which stores entities.

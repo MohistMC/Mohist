@@ -1,9 +1,8 @@
 package org.bukkit.block.data;
 
+import java.util.Set;
 import org.bukkit.Axis;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * 'axis' represents the axis along whilst this block is oriented.

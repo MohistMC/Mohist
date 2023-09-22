@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.mohistmc.api.EntityAPI;
 import com.mohistmc.bukkit.entity.CraftFakePlayer;
 import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
 import com.mohistmc.bukkit.entity.MohistModsAnimals;
@@ -17,6 +16,9 @@ import com.mohistmc.bukkit.entity.MohistModsSkeleton;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableProjectile;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -68,7 +70,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
-import org.bukkit.Registry;
 import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -82,7 +83,6 @@ import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftVector;
 import org.bukkit.entity.EntityType;
@@ -102,10 +102,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
@@ -119,8 +115,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     public CraftEntity(final CraftServer server, final Entity entity) {
         this.server = server;
         this.entity = entity;
-        EntityType type = Registry.ENTITY_TYPE.get(CraftNamespacedKey.fromMinecraft(net.minecraft.world.entity.EntityType.getKey(entity.getType())));
-        this.entityType = (type != null) ? type : EntityAPI.entityType(EntityAPI.entityName(entity), EntityType.UNKNOWN); // Mohist
+
+        this.entityType = CraftEntityType.minecraftToBukkit(entity.getType());
     }
 
     public static CraftEntity getEntity(CraftServer server, Entity entity) {
@@ -698,17 +694,17 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public Sound getSwimSound() {
-        return CraftSound.getBukkit(getHandle().getSwimSound0());
+        return CraftSound.minecraftToBukkit(getHandle().getSwimSound0());
     }
 
     @Override
     public Sound getSwimSplashSound() {
-        return CraftSound.getBukkit(getHandle().getSwimSplashSound0());
+        return CraftSound.minecraftToBukkit(getHandle().getSwimSplashSound0());
     }
 
     @Override
     public Sound getSwimHighSpeedSplashSound() {
-        return CraftSound.getBukkit(getHandle().getSwimHighSpeedSplashSound0());
+        return CraftSound.minecraftToBukkit(getHandle().getSwimHighSpeedSplashSound0());
     }
 
     public void setHandle(final Entity entity) {

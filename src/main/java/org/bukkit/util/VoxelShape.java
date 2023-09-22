@@ -1,8 +1,7 @@
 package org.bukkit.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A shape made out of voxels.

@@ -1,12 +1,6 @@
 package org.bukkit.configuration.file;
 
 import com.google.common.base.Preconditions;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.jetbrains.annotations.NotNull;
 import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
 import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
 import com.mohistmc.org.yaml.snakeyaml.Yaml;
@@ -21,7 +15,6 @@ import com.mohistmc.org.yaml.snakeyaml.nodes.ScalarNode;
 import com.mohistmc.org.yaml.snakeyaml.nodes.SequenceNode;
 import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
 import com.mohistmc.org.yaml.snakeyaml.reader.UnicodeReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +27,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.

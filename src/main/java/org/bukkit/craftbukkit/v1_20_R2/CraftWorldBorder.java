@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
+import java.util.concurrent.TimeUnit;
 import net.minecraft.core.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
-
-import java.util.concurrent.TimeUnit;
 
 public class CraftWorldBorder implements WorldBorder {
 

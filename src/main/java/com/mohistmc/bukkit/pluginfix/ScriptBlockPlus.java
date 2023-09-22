@@ -2,7 +2,6 @@ package com.mohistmc.bukkit.pluginfix;
 
 import io.netty.util.Version;
 import io.netty.util.internal.PlatformDependent;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;

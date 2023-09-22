@@ -1,15 +1,14 @@
 package org.bukkit.configuration.file;
 
+import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
+import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
-import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
-import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
-import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class YamlRepresenter extends Representer {
 

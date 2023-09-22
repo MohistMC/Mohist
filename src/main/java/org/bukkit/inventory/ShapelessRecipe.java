@@ -1,15 +1,14 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.material.MaterialData;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a shapeless recipe, where the arrangement of the ingredients on

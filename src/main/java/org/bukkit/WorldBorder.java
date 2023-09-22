@@ -1,9 +1,8 @@
 package org.bukkit;
 
+import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.TimeUnit;
 
 public interface WorldBorder {
 

@@ -1,11 +1,10 @@
 package org.bukkit;
 
-import org.bukkit.entity.Raider;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.entity.Raider;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a raid event.

@@ -1,13 +1,12 @@
 package org.bukkit.configuration.file;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.MemoryConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link

@@ -1,6 +1,10 @@
 package org.bukkit.craftbukkit.v1_20_R2;
 
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -19,11 +23,6 @@ import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
 
 public class CraftLootTable implements org.bukkit.loot.LootTable {
 

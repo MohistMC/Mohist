@@ -1,5 +1,6 @@
 package org.bukkit.block;
 
+import java.util.Collection;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -19,8 +20,6 @@ import org.bukkit.util.VoxelShape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * Represents a block. This is a live object, and only one Block may exist for

@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkStorage.java
-@@ -6,16 +_,22 @@
+@@ -6,16 +_,19 @@
  import java.nio.file.Path;
  import java.util.Optional;
  import java.util.concurrent.CompletableFuture;
 +import java.util.concurrent.ExecutionException;
-+import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Supplier;
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;
@@ -13,11 +12,9 @@
  import net.minecraft.nbt.NbtUtils;
  import net.minecraft.resources.ResourceKey;
 +import net.minecraft.server.level.ServerChunkCache;
-+import net.minecraft.server.level.ServerLevel;
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
-+import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.chunk.ChunkGenerator;
 +import net.minecraft.world.level.chunk.ChunkStatus;
  import net.minecraft.world.level.levelgen.structure.LegacyStructureDataHandler;

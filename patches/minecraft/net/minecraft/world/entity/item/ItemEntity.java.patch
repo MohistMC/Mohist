@@ -1,20 +1,5 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -3,12 +_,14 @@
- import java.util.Objects;
- import java.util.UUID;
- import javax.annotation.Nullable;
-+
- import net.minecraft.core.BlockPos;
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.stats.Stats;
 @@ -28,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -124,12 +109,7 @@
        } else {
           return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
        }
-@@ -234,10 +_,15 @@
- 
-    private static void merge(ItemEntity p_32023_, ItemStack p_32024_, ItemStack p_32025_) {
-       ItemStack itemstack = merge(p_32024_, p_32025_, 64);
--      p_32023_.setItem(itemstack);
-+      if (!itemstack.isEmpty()) p_32023_.setItem(itemstack); // CraftBukkit - don't set empty stacks
+@@ -238,6 +_,11 @@
     }
  
     private static void merge(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {

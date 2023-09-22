@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 +++ b/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-@@ -7,6 +_,7 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.FrostedIceBlock;
-+import net.minecraft.world.level.block.LiquidBlock;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.phys.shapes.CollisionContext;
- 
 @@ -43,9 +_,12 @@
                 BlockState blockstate1 = p_45020_.getBlockState(blockpos$mutableblockpos);
                 if (blockstate1.isAir()) {

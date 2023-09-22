@@ -1,10 +1,9 @@
 package org.bukkit.inventory.meta;
 
+import java.util.List;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represents a suspicious stew that can have custom effects.

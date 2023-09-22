@@ -1,9 +1,8 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents the two types of coal

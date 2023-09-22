@@ -1,15 +1,14 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistMC;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Mgazul by MohistMC

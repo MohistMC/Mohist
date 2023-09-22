@@ -2,6 +2,11 @@ package org.bukkit.craftbukkit.v1_20_R2.persistence;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Primitives;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
@@ -16,12 +21,6 @@ import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import org.bukkit.persistence.PersistentDataContainer;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * This class represents a registry that contains the used adapters for.

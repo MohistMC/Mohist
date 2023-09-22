@@ -1,12 +1,11 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
+import java.util.Collections;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 /**
  * Represents a Stonecutting recipe.

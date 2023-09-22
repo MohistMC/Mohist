@@ -1,10 +1,9 @@
 package org.bukkit.configuration.file;
 
 import com.google.common.base.Preconditions;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link

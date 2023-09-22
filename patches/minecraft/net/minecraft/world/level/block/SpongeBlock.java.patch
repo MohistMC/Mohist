@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -11,6 +_,13 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.block;
+ 
++import java.util.List;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.sounds.SoundEvents;
+@@ -11,6 +_,11 @@
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.material.FluidState;
@@ -9,8 +16,6 @@
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
 +import org.bukkit.event.block.SpongeAbsorbEvent;
-+
-+import java.util.List;
  
  public class SpongeBlock extends Block {
     public static final int MAX_DEPTH = 6;

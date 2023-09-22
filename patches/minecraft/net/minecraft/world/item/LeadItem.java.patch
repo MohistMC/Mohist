@@ -1,15 +1,19 @@
 --- a/net/minecraft/world/item/LeadItem.java
 +++ b/net/minecraft/world/item/LeadItem.java
-@@ -11,6 +_,12 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.item;
+ 
++import java.util.concurrent.atomic.AtomicReference;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.InteractionResult;
+@@ -11,6 +_,9 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
 +import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 +import org.bukkit.event.hanging.HangingPlaceEvent;
-+import org.bukkit.inventory.EquipmentSlot;
-+
-+import java.util.concurrent.atomic.AtomicReference;
  
  public class LeadItem extends Item {
     public LeadItem(Item.Properties p_42828_) {

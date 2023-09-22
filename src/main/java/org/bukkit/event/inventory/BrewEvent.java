@@ -1,5 +1,6 @@
 package org.bukkit.event.inventory;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -7,8 +8,6 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Called when the brewing of the contents inside the Brewing Stand is

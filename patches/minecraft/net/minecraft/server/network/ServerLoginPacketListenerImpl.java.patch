@@ -70,7 +70,7 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -188,6 +_,42 @@
+@@ -188,11 +_,47 @@
                 ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
@@ -113,7 +113,19 @@
                    ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
                    ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-@@ -205,6 +_,11 @@
+                   ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1));
+                } else {
+                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
+@@ -200,11 +_,16 @@
+             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
+                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
+-                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
++                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1));
+                } else {
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
                 }
@@ -125,7 +137,7 @@
              }
  
           }
-@@ -220,16 +_,22 @@
+@@ -220,21 +_,41 @@
     }
  
     public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
@@ -141,11 +153,33 @@
        this.connection.setListener(serverconfigurationpacketlistenerimpl);
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
-+   }
-+
-+   @Nullable
-+   public GameProfile getAuthenticatedProfile() {
-+       return this.authenticatedProfile;
     }
  
-    protected static GameProfile createOfflineProfile(String p_297551_) {
+-   protected static GameProfile createOfflineProfile(String p_297551_) {
+-      UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
+-      return new GameProfile(uuid, p_297551_);
++   protected GameProfile createOfflineProfile(String p_297551_) {
++      UUID uuid;
++      if ( connection.spoofedUUID != null )
++      {
++         uuid = connection.spoofedUUID;
++      } else
++      {
++         uuid = UUIDUtil.createOfflinePlayerUUID( p_297551_ );
++      }
++
++      GameProfile gameProfile = new GameProfile( uuid, p_297551_ );
++
++      if (connection.spoofedProfile != null)
++      {
++         for ( com.mojang.authlib.properties.Property property : connection.spoofedProfile )
++         {
++            if ( !ServerHandshakePacketListenerImpl.PROP_PATTERN.matcher( property.name()).matches() ) continue;
++            gameProfile.getProperties().put( property.name(), property );
++         }
++      }
++      return gameProfile;
++      // Spigot end
+    }
+ 
+    static enum State {

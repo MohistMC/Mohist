@@ -1,10 +1,9 @@
 package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
+import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 public class EntityAPI {
 
@@ -21,8 +20,7 @@ public class EntityAPI {
         return Objects.requireNonNullElse(type, EntityType.UNKNOWN);
     }
 
-    public static EntityType entityType(String entityName, EntityType defType) {
-        EntityType type = EntityType.fromName(entityName);
+    public static EntityType entityType(EntityType type, EntityType defType) {
         if (type != null) {
             return type;
         } else {

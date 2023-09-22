@@ -1,12 +1,11 @@
 package org.bukkit.metadata;
 
 import com.google.common.base.Preconditions;
+import java.lang.ref.SoftReference;
+import java.util.concurrent.Callable;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.SoftReference;
-import java.util.concurrent.Callable;
 
 /**
  * The LazyMetadataValue class implements a type of metadata that is not

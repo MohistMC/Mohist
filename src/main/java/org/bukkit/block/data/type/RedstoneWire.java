@@ -1,10 +1,9 @@
 package org.bukkit.block.data.type;
 
+import java.util.Set;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.AnaloguePowerable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * 'north', 'east', 'south', 'west' represent the types of connections this

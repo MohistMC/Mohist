@@ -1,9 +1,8 @@
 package org.bukkit.structure;
 
+import java.util.List;
 import org.bukkit.block.BlockState;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represent a variation of a structure.

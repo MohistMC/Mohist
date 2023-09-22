@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.v1_20_R2.configuration;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 /**
  * Utilities related to the serialization and deserialization of {@link ConfigurationSerializable}s.

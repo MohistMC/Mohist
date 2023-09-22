@@ -1,10 +1,9 @@
 package org.bukkit.inventory.meta;
 
+import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * EnchantmentMeta is specific to items that can <i>store</i> enchantments, as

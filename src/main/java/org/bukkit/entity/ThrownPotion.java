@@ -1,10 +1,9 @@
 package org.bukkit.entity;
 
+import java.util.Collection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 /**
  * Represents a thrown potion bottle
