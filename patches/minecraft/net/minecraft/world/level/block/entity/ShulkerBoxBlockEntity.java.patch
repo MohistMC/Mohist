@@ -52,7 +52,20 @@
     public ShulkerBoxBlockEntity(@Nullable DyeColor p_155666_, BlockPos p_155667_, BlockState p_155668_) {
        super(BlockEntityType.f_58939_, p_155667_, p_155668_);
        this.f_59650_ = p_155666_;
-@@ -152,6 +_,7 @@
+@@ -134,10 +_,12 @@
+          this.f_59646_ = p_59679_;
+          if (p_59679_ == 0) {
+             this.f_59647_ = ShulkerBoxBlockEntity.AnimationStatus.CLOSING;
++            m_155687_(this.m_58904_(), this.f_58858_, this.m_58900_());
+          }
+ 
+          if (p_59679_ == 1) {
+             this.f_59647_ = ShulkerBoxBlockEntity.AnimationStatus.OPENING;
++            m_155687_(this.m_58904_(), this.f_58858_, this.m_58900_());
+          }
+ 
+          return true;
+@@ -158,6 +_,7 @@
           }
  
           ++this.f_59646_;
@@ -60,7 +73,7 @@
           this.f_58857_.m_7696_(this.f_58858_, this.m_58900_().m_60734_(), 1, this.f_59646_);
           if (this.f_59646_ == 1) {
              this.f_58857_.m_142346_(p_59692_, GameEvent.f_157803_, this.f_58858_);
-@@ -164,6 +_,7 @@
+@@ -170,6 +_,7 @@
     public void m_5785_(Player p_59688_) {
        if (!this.f_58859_ && !p_59688_.m_5833_()) {
           --this.f_59646_;
@@ -68,7 +81,7 @@
           this.f_58857_.m_7696_(this.f_58858_, this.m_58900_().m_60734_(), 1, this.f_59646_);
           if (this.f_59646_ <= 0) {
              this.f_58857_.m_142346_(p_59688_, GameEvent.f_157802_, this.f_58858_);
-@@ -211,7 +_,7 @@
+@@ -217,7 +_,7 @@
     }
  
     public boolean m_7155_(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
@@ -77,7 +90,7 @@
     }
  
     public boolean m_7157_(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
-@@ -233,6 +_,11 @@
+@@ -239,6 +_,11 @@
  
     public boolean m_59702_() {
        return this.f_59647_ == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;

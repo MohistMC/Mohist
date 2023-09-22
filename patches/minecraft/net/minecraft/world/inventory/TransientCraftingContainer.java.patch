@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/TransientCraftingContainer.java
 +++ b/net/minecraft/world/inventory/TransientCraftingContainer.java
-@@ -2,16 +_,91 @@
+@@ -2,16 +_,92 @@
  
  import java.util.List;
  import net.minecraft.core.NonNullList;
@@ -10,6 +10,7 @@
  import net.minecraft.world.entity.player.StackedContents;
  import net.minecraft.world.item.ItemStack;
 +import net.minecraft.world.item.crafting.Recipe;
++import net.minecraft.world.item.crafting.RecipeHolder;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
@@ -23,7 +24,7 @@
 +
 +   // CraftBukkit start - add fields
 +   public List<HumanEntity> transaction = new java.util.ArrayList<>();
-+   private Recipe currentRecipe;
++   private RecipeHolder<?> currentRecipe;
 +   public Container resultInventory;
 +   public Player owner;
 +   private int maxStack = MAX_STACK;
@@ -74,12 +75,12 @@
 +   }
 +
 +   @Override
-+   public Recipe getCurrentRecipe() {
++   public RecipeHolder<?> getCurrentRecipe() {
 +      return this.currentRecipe;
 +   }
 +
 +   @Override
-+   public void setCurrentRecipe(Recipe currentRecipe) {
++   public void setCurrentRecipe(RecipeHolder<?> currentRecipe) {
 +      this.currentRecipe = currentRecipe;
 +   }
 +

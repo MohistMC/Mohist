@@ -115,7 +115,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public Recipe getRecipe() {
-        net.minecraft.world.item.crafting.Recipe recipe = getInventory().getCurrentRecipe();
+        net.minecraft.world.item.crafting.RecipeHolder recipe = getInventory().getCurrentRecipe();
         return recipe == null ? null : recipe.toBukkitRecipe();
     }
 }

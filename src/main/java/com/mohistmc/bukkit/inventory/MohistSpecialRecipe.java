@@ -1,6 +1,7 @@
 package com.mohistmc.bukkit.inventory;
 
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftComplexRecipe;
@@ -15,21 +16,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MohistSpecialRecipe extends CraftComplexRecipe {
 
-    private final Recipe<?> recipe;
+    private final RecipeHolder<?> recipe;
 
-    public MohistSpecialRecipe(Recipe<?> recipe) {
-        super(null);
+    public MohistSpecialRecipe(NamespacedKey id, RecipeHolder<?> recipe) {
+        super(id, null);
         this.recipe = recipe;
     }
 
     @Override
     public @NotNull ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(this.recipe.getResultItem(ServerLifecycleHooks.getCurrentServer().registryAccess()));
+        return CraftItemStack.asCraftMirror(this.recipe.value().getResultItem(ServerLifecycleHooks.getCurrentServer().registryAccess()));
     }
 
     @Override
     public @NotNull NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(this.recipe.getId());
+        return CraftNamespacedKey.fromMinecraft(this.recipe.id());
     }
 
     @Override

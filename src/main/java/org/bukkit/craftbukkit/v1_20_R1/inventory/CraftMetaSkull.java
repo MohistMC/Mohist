@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem.SerializableMeta;
+import org.bukkit.craftbukkit.v1_20_R1.profile.CraftGameProfile;
 import org.bukkit.craftbukkit.v1_20_R1.profile.CraftPlayerProfile;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
@@ -75,7 +76,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         if (tag.contains(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
             this.setProfile(NbtUtils.readGameProfile(tag.getCompound(SKULL_OWNER.NBT)));
         } else if (tag.contains(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_STRING) && !tag.getString(SKULL_OWNER.NBT).isEmpty()) {
-            this.setProfile(new GameProfile(null, tag.getString(SKULL_OWNER.NBT)));
+            this.setProfile(new CraftGameProfile(null, tag.getString(SKULL_OWNER.NBT)));
         }
 
         if (tag.contains(BLOCK_ENTITY_TAG.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
@@ -143,9 +144,11 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             // SPIGOT-6558: Set initial textures
             tag.put(SKULL_OWNER.NBT, serializedProfile);
             // Fill in textures
-            SkullBlockEntity.updateGameprofile(profile, (filledProfile) -> {
-                setProfile(filledProfile);
-                tag.put(SKULL_OWNER.NBT, serializedProfile);
+            SkullBlockEntity.fillProfileTextures(profile).thenAccept((optional) -> {
+                optional.ifPresent((filledProfile) -> {
+                    setProfile(filledProfile);
+                    tag.put(SKULL_OWNER.NBT, serializedProfile);
+                });
             });
         }
 

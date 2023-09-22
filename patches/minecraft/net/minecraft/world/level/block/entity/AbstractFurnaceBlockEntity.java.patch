@@ -25,7 +25,7 @@
 +import org.bukkit.event.inventory.FurnaceStartSmeltEvent;
 +import org.bukkit.inventory.CookingRecipe;
  
- public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
+ public abstract class AbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible {
     protected static final int f_154980_ = 0;
 @@ -59,6 +_,7 @@
     public static final int f_154987_ = 4;
@@ -35,7 +35,7 @@
     protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
     public int f_58316_;
     int f_58317_;
-@@ -103,12 +_,16 @@
+@@ -103,12 +_,17 @@
     };
     private final Object2IntOpenHashMap<ResourceLocation> f_58320_ = new Object2IntOpenHashMap<>();
     private final RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> f_222691_;
@@ -48,7 +48,8 @@
 +      worldPosition$mohist = p_154992_;
     }
  
-+   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated
++   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/
++   @Deprecated
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
@@ -82,9 +83,9 @@
           }
  
           int i = p_155017_.m_6893_();
--         if (!p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
+-         if (!p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) {
 -            p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
-+         if (!p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
++         if (!p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) {
 +            // CraftBukkit start
 +            CraftItemStack fuel = CraftItemStack.asCraftMirror(itemstack);
 +
@@ -116,12 +117,12 @@
              }
           }
  
--         if (p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
-+         if (p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
+-         if (p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) {
++         if (p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) {
 +            // CraftBukkit start
-+            if (recipe != null && p_155017_.f_58318_ == 0) {
++            if (recipeholder != null && p_155017_.f_58318_ == 0) {
 +               CraftItemStack source = CraftItemStack.asCraftMirror(p_155017_.f_58310_.get(0));
-+               CookingRecipe<?> recipeCB = (CookingRecipe<?>) recipe.toBukkitRecipe();
++               CookingRecipe<?> recipeCB = (CookingRecipe<?>) recipeholder.toBukkitRecipe();
 +
 +               FurnaceStartSmeltEvent event = new FurnaceStartSmeltEvent(CraftBlock.at(p_155014_, p_155015_), source, recipeCB);
 +               p_155014_.getCraftServer().getPluginManager().callEvent(event);
@@ -132,22 +133,22 @@
              if (p_155017_.f_58318_ == p_155017_.f_58319_) {
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_222692_(p_155014_, p_155017_);
--               if (m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
+-               if (m_266209_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) {
 +               burn$world.set(p_155017_.f_58857_);
 +               burn$blockposition.set(p_155017_.f_58858_);
-+               if (p_155017_.m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) { // CraftBukkit
-                   p_155017_.m_6029_(recipe);
++               if (p_155017_.m_266209_(p_155014_.m_9598_(), recipeholder, p_155017_.f_58310_, i)) { // CraftBukkit
+                   p_155017_.m_40156_(recipeholder);
                 }
  
 @@ -295,9 +_,9 @@
  
     }
  
--   private static boolean m_155005_(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-+   private boolean m_155005_(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-       if (!p_155007_.get(0).m_41619_() && p_155006_ != null) {
--         ItemStack itemstack = p_155006_.m_8043_(p_266924_);
-+         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(this, p_266924_);
+-   private static boolean m_155005_(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++   private boolean m_155005_(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+       if (!p_155007_.get(0).m_41619_() && p_299207_ != null) {
+-         ItemStack itemstack = p_299207_.f_291008_().m_8043_(p_266924_);
++         ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299207_).f_291008_().m_5874_(this, p_266924_);
           if (itemstack.m_41619_()) {
              return false;
           } else {
@@ -168,18 +169,18 @@
        }
     }
  
--   private static boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
--      if (p_266780_ != null && m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
+-   private static boolean m_266209_(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
+-      if (p_299450_ != null && m_155005_(p_266740_, p_299450_, p_267073_, p_267157_)) {
 +   // Mohist start - Fix compatibility with ImprovableSkills mod
 +   public static AtomicReference<Level> burn$world  = new AtomicReference<>(null);
 +   public static AtomicReference<BlockPos> burn$blockposition  = new AtomicReference<>(null);
 +   // Mohist end
 +
-+   private boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) { // CraftBukkit
-+      if (p_266780_ != null && this.m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
++   private boolean m_266209_(RegistryAccess p_266740_, @Nullable RecipeHolder<?> p_299450_, NonNullList<ItemStack> p_267073_, int p_267157_) {
++      if (p_299450_ != null && this.m_155005_(p_266740_, p_299450_, p_267073_, p_267157_)) {
           ItemStack itemstack = p_267073_.get(0);
--         ItemStack itemstack1 = p_266780_.m_8043_(p_266740_);
-+         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_266780_).m_5874_(this, p_266740_);
+-         ItemStack itemstack1 = p_299450_.f_291008_().m_8043_(p_266740_);
++         ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299450_).f_291008_().m_5874_(this, p_266740_);
           ItemStack itemstack2 = p_267073_.get(2);
 -         if (itemstack2.m_41619_()) {
 -            p_267073_.set(2, itemstack1.m_41777_());
@@ -212,7 +213,7 @@
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_267073_.get(1).m_41619_() && p_267073_.get(1).m_150930_(Items.f_42446_)) {
-@@ -344,16 +_,16 @@
+@@ -344,18 +_,19 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -222,8 +223,10 @@
     }
  
     private static int m_222692_(Level p_222693_, AbstractFurnaceBlockEntity p_222694_) {
--      return p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map(AbstractCookingRecipe::m_43753_).orElse(200);
-+      return (p_222693_ != null) ? p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map(AbstractCookingRecipe::m_43753_).orElse(200) : 200; // CraftBukkit - SPIGOT-4302
++      if (p_222693_ == null) return 200; // CraftBukkit - SPIGOT-4302
+       return p_222694_.f_222691_.m_213657_(p_222694_, p_222693_).map((p_296950_) -> {
+          return p_296950_.f_291008_().m_43753_();
+       }).orElse(200);
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -232,7 +235,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -429,7 +_,7 @@
+@@ -431,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -241,12 +244,8 @@
        }
     }
  
-@@ -450,21 +_,20 @@
-       return null;
-    }
- 
--   public void m_58395_(Player p_58396_, List<ItemStack> p_282202_) {
-+   public void awardUsedRecipes(Player pPlayer) {
+@@ -455,7 +_,12 @@
+    public void m_58395_(Player p_58396_, List<ItemStack> p_282202_) {
     }
  
 +   // Mohist start - Fix Minecraft Comes Alive mod mixin (MixinAbstractFurnaceBlockEntity)
@@ -255,22 +254,18 @@
 +   public static AtomicInteger amount = new AtomicInteger(0);
     public void m_155003_(ServerPlayer p_155004_) {
 +      createExperience$entityhuman.set(p_155004_);
-       List<Recipe<?>> list = this.m_154995_(p_155004_.m_284548_(), p_155004_.m_20182_());
+       List<RecipeHolder<?>> list = this.m_154995_(p_155004_.m_284548_(), p_155004_.m_20182_());
        p_155004_.m_7281_(list);
--
--      for(Recipe<?> recipe : list) {
--         if (recipe != null) {
--            p_155004_.m_280300_(recipe, this.f_58310_);
--         }
--      }
--
+ 
+@@ -467,6 +_,7 @@
+ 
        this.f_58320_.clear();
     }
 +   // Mohist end
  
-    public List<Recipe<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
-       List<Recipe<?>> list = Lists.newArrayList();
-@@ -486,6 +_,17 @@
+    public List<RecipeHolder<?>> m_154995_(ServerLevel p_154996_, Vec3 p_154997_) {
+       List<RecipeHolder<?>> list = Lists.newArrayList();
+@@ -488,6 +_,17 @@
           ++i;
        }
  
@@ -288,7 +283,7 @@
        ExperienceOrb.m_147082_(p_154999_, p_155000_, i);
     }
  
-@@ -495,4 +_,67 @@
+@@ -497,4 +_,67 @@
        }
  
     }

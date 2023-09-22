@@ -8,7 +8,7 @@
  
  public abstract class DiodeBlock extends HorizontalDirectionalBlock {
     protected static final VoxelShape f_52495_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
-@@ -41,8 +_,18 @@
+@@ -46,8 +_,18 @@
           boolean flag = p_221065_.m_61143_(f_52496_);
           boolean flag1 = this.m_7320_(p_221066_, p_221067_, p_221065_);
           if (flag && !flag1) {
@@ -27,7 +27,7 @@
              p_221066_.m_7731_(p_221067_, p_221065_.m_61124_(f_52496_, Boolean.valueOf(true)), 2);
              if (!flag1) {
                 p_221066_.m_186464_(p_221067_, this, this.m_6112_(p_221065_), TickPriority.VERY_HIGH);
-@@ -154,6 +_,8 @@
+@@ -159,6 +_,8 @@
     protected void m_52580_(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
        Direction direction = p_52583_.m_61143_(f_54117_);
        BlockPos blockpos = p_52582_.m_121945_(direction.m_122424_());

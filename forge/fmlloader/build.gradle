@@ -4,10 +4,9 @@ import com.mohistmc.tasks.JenkinsNumber
 plugins {
     id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+    id 'java-library'
+    id 'jacoco'
 }
-apply plugin: 'java-library'
-apply plugin: 'jacoco'
-apply plugin: 'org.javamodularity.moduleplugin'
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 configurations.forEach{

@@ -1,17 +1,10 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -25,7 +_,6 @@
- import net.minecraft.world.entity.LightningBolt;
- import net.minecraft.world.entity.MobSpawnType;
- import net.minecraft.world.entity.Shearable;
--import net.minecraft.world.entity.VariantHolder;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
-@@ -40,8 +_,12 @@
+@@ -40,8 +_,13 @@
+ import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
- import org.apache.commons.lang3.tuple.Pair;
++import org.apache.commons.lang3.tuple.Pair;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityDropItemEvent;
@@ -21,23 +14,17 @@
 +public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
     private static final EntityDataAccessor<String> f_28908_ = SynchedEntityData.m_135353_(MushroomCow.class, EntityDataSerializers.f_135030_);
     private static final int f_148934_ = 1024;
-    @Nullable
-@@ -102,11 +_,11 @@
-          }
+    private static final String f_291553_ = "stew_effects";
+@@ -102,7 +_,7 @@
  
           this.m_5496_(soundevent, 1.0F, 1.0F);
--         return InteractionResult.m_19078_(this.m_9236_().f_46443_);
+          return InteractionResult.m_19078_(this.m_9236_().f_46443_);
 -      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
-+         return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-+      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared // Mohist TODO
++      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
--         if (!this.m_9236_().f_46443_) {
-+         if (!this.f_19853_.f_46443_) {
-             itemstack.m_41622_(1, p_28941_, (p_28927_) -> {
-                p_28927_.m_21190_(p_28942_);
-             });
-@@ -144,13 +_,23 @@
+          if (!this.m_9236_().f_46443_) {
+@@ -141,13 +_,23 @@
        }
     }
  
@@ -63,7 +50,7 @@
              cow.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
              cow.m_21153_(this.m_21223_());
              cow.f_20883_ = this.f_20883_;
-@@ -164,13 +_,32 @@
+@@ -161,13 +_,32 @@
              }
  
              cow.m_20331_(this.m_20147_());
@@ -97,30 +84,14 @@
  
     }
  
-@@ -183,6 +_,7 @@
-       p_28944_.m_128359_("Type", this.m_28554_().m_7912_());
-       if (this.f_28909_ != null) {
-          p_28944_.m_128405_("EffectId", MobEffect.m_19459_(this.f_28909_));
-+         net.minecraftforge.common.ForgeHooks.saveMobEffect(p_28944_, "forge:effect_id", this.f_28909_);
-          p_28944_.m_128405_("EffectDuration", this.f_28910_);
-       }
- 
-@@ -193,6 +_,7 @@
-       this.m_28464_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
-       if (p_28936_.m_128425_("EffectId", 99)) {
-          this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128451_("EffectId"));
-+         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
-       }
- 
-       if (p_28936_.m_128425_("EffectDuration", 99)) {
-@@ -235,6 +_,11 @@
+@@ -231,6 +_,11 @@
        }
  
        return mushroomcow$mushroomtype2;
 +   }
 +
 +   @Override
-+   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
++   public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
 +      return m_6220_();
     }
  

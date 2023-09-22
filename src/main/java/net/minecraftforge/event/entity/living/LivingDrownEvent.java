@@ -51,7 +51,7 @@ public class LivingDrownEvent extends LivingEvent {
     @ApiStatus.Internal
     @Deprecated(forRemoval = true, since = "1.20.1")
     public LivingDrownEvent(LivingEntity entity, boolean isDrowning) {
-        this(entity, isDrowning, 2.0F, 8);
+    	this(entity, isDrowning, 2.0F, 8);
     }
 
     /**

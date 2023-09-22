@@ -265,7 +265,7 @@ public interface IForgeItem
      */
     default int getEntityLifespan(ItemStack itemStack, Level level)
     {
-        return level.spigotConfig.itemDespawnRate; // Mohist;
+        return 6000;
     }
 
     /**

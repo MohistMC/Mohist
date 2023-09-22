@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/core/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -9,6 +_,8 @@
+@@ -8,6 +_,8 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.context.DirectionalPlaceContext;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -9,18 +9,18 @@
  import org.slf4j.Logger;
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseItemBehavior {
-@@ -21,6 +_,30 @@
-          Direction direction = p_123587_.m_6414_().m_61143_(DispenserBlock.f_52659_);
-          BlockPos blockpos = p_123587_.m_7961_().m_121945_(direction);
-          Direction direction1 = p_123587_.m_7727_().m_46859_(blockpos.m_7495_()) ? direction : Direction.UP;
+@@ -20,6 +_,30 @@
+          Direction direction = p_123587_.f_301783_().m_61143_(DispenserBlock.f_52659_);
+          BlockPos blockpos = p_123587_.f_301784_().m_121945_(direction);
+          Direction direction1 = p_123587_.f_301782_().m_46859_(blockpos.m_7495_()) ? direction : Direction.UP;
 +
 +         // CraftBukkit start
-+         org.bukkit.block.Block bukkitBlock = p_123587_.m_7727_().getWorld().getBlockAt(p_123587_.m_7961_().m_123341_(), p_123587_.m_7961_().m_123342_(), p_123587_.m_7961_().m_123343_());
++         org.bukkit.block.Block bukkitBlock = p_123587_.f_301782_().getWorld().getBlockAt(p_123587_.f_301784_().m_123341_(), p_123587_.f_301784_().m_123342_(), p_123587_.f_301784_().m_123343_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123588_);
 +
 +         BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.m_123341_(), blockpos.m_123342_(), blockpos.m_123343_()));
 +         if (!DispenserBlock.eventFired) {
-+            p_123587_.m_7727_().getCraftServer().getPluginManager().callEvent(event);
++            p_123587_.f_301782_().getCraftServer().getPluginManager().callEvent(event);
 +         }
 +
 +         if (event.isCancelled()) {
@@ -39,4 +39,4 @@
 +         // CraftBukkit end
  
           try {
-             this.m_123573_(((BlockItem)item).m_40576_(new DirectionalPlaceContext(p_123587_.m_7727_(), blockpos, direction, p_123588_, direction1)).m_19077_());
+             this.m_123573_(((BlockItem)item).m_40576_(new DirectionalPlaceContext(p_123587_.f_301782_(), blockpos, direction, p_123588_, direction1)).m_19077_());

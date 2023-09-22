@@ -32,7 +32,7 @@
              if (optional.isPresent()) {
                 optional.get().m_77743_();
                 return;
-@@ -131,14 +_,14 @@
+@@ -131,7 +_,7 @@
           }
  
           if (!p_49279_.m_60710_(p_49280_, p_49281_)) {
@@ -41,14 +41,6 @@
           }
  
        }
-    }
- 
-    private static boolean m_49248_(Level p_49249_) {
--      return p_49249_.m_46472_() == Level.f_46428_ || p_49249_.m_46472_() == Level.f_46429_;
-+      return p_49249_.getTypeKey() == LevelStem.f_63971_ || p_49249_.getTypeKey() == LevelStem.f_63972_;
-    }
- 
-    protected void m_142387_(Level p_152139_, Player p_152140_, BlockPos p_152141_, BlockState p_152142_) {
 @@ -169,7 +_,7 @@
           boolean flag = false;
  

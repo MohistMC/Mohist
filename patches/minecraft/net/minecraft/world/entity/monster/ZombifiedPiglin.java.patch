@@ -1,23 +1,15 @@
 --- a/net/minecraft/world/entity/monster/ZombifiedPiglin.java
 +++ b/net/minecraft/world/entity/monster/ZombifiedPiglin.java
-@@ -13,6 +_,7 @@
- import net.minecraft.world.Difficulty;
- import net.minecraft.world.DifficultyInstance;
- import net.minecraft.world.damagesource.DamageSource;
-+import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityDimensions;
- import net.minecraft.world.entity.EntitySelector;
- import net.minecraft.world.entity.EntityType;
-@@ -144,7 +_,7 @@
-       }).filter((p_289463_) -> {
-          return !p_289463_.m_7307_(this.m_5448_());
-       }).forEach((p_289464_) -> {
--         p_289464_.m_6710_(this.m_5448_());
-+         p_289464_.setTarget(this.m_5448_(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
+@@ -142,7 +_,7 @@
+       }).filter((p_296830_) -> {
+          return !p_296830_.m_7307_(this.m_5448_());
+       }).forEach((p_296829_) -> {
+-         p_296829_.m_6710_(this.m_5448_());
++         p_296829_.setTarget(this.m_5448_(), org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
        });
     }
  
-@@ -165,8 +_,30 @@
+@@ -163,8 +_,30 @@
        super.m_6710_(p_34478_);
     }
  

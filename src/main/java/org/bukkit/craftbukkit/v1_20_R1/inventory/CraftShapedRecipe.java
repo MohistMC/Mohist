@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R1.inventory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -19,8 +20,8 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
         super(key, result);
     }
 
-    public CraftShapedRecipe(ItemStack result, net.minecraft.world.item.crafting.ShapedRecipe recipe) {
-        this(CraftNamespacedKey.fromMinecraft(recipe.getId()), result);
+    public CraftShapedRecipe(NamespacedKey key, ItemStack result, net.minecraft.world.item.crafting.ShapedRecipe recipe) {
+        this(key, result);
         this.recipe = recipe;
     }
 
@@ -57,6 +58,6 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             }
         }
 
-        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.world.item.crafting.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftRecipe.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult()))));
     }
 }

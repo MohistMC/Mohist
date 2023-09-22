@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
 +++ b/net/minecraft/world/level/gameevent/vibrations/VibrationSystem.java
-@@ -28,6 +_,9 @@
+@@ -22,11 +_,15 @@
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.ClipBlockStateContext;
+ import net.minecraft.world.level.Level;
++import net.minecraft.world.level.chunk.ChunkAccess;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.gameevent.GameEventListener;
  import net.minecraft.world.level.gameevent.PositionSource;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -10,7 +16,7 @@
  
  public interface VibrationSystem {
     GameEvent[] f_279664_ = new GameEvent[]{GameEvent.f_276553_, GameEvent.f_276530_, GameEvent.f_276691_, GameEvent.f_276533_, GameEvent.f_276695_, GameEvent.f_276518_, GameEvent.f_276655_, GameEvent.f_276494_, GameEvent.f_276419_, GameEvent.f_276431_, GameEvent.f_276621_, GameEvent.f_276548_, GameEvent.f_276569_, GameEvent.f_276454_, GameEvent.f_276436_};
-@@ -185,7 +_,12 @@
+@@ -184,7 +_,12 @@
                 return false;
              } else {
                 Vec3 vec3 = optional.get();

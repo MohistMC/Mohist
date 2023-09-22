@@ -9,7 +9,7 @@
  import org.joml.Vector3f;
  
 @@ -214,11 +_,27 @@
-             Vector3f vector3f = vec3.m_252839_().rotate(quaternionf);
+             Vector3f vector3f = vec31.m_252839_().rotate(quaternionf);
              projectile.m_6686_((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
           }
 +         // CraftBukkit start

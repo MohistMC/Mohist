@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -7,9 +_,25 @@
+@@ -6,9 +_,25 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -26,21 +26,21 @@
 +  public final ItemStack m_6115_(BlockSource p_123391_, ItemStack p_123392_) {
        ItemStack itemstack = this.m_7498_(p_123391_, p_123392_);
        this.m_6823_(p_123391_);
-       this.m_123387_(p_123391_, p_123391_.m_6414_().m_61143_(DispenserBlock.f_52659_));
-@@ -20,7 +_,11 @@
-       Direction direction = p_123385_.m_6414_().m_61143_(DispenserBlock.f_52659_);
-       Position position = DispenserBlock.m_52720_(p_123385_);
+       this.m_123387_(p_123391_, p_123391_.f_301783_().m_61143_(DispenserBlock.f_52659_));
+@@ -19,7 +_,11 @@
+       Direction direction = p_301824_.f_301783_().m_61143_(DispenserBlock.f_52659_);
+       Position position = DispenserBlock.m_52720_(p_301824_);
        ItemStack itemstack = p_123386_.m_41620_(1);
--      m_123378_(p_123385_.m_7727_(), itemstack, 6, direction, position);
+-      m_123378_(p_301824_.f_301782_(), itemstack, 6, direction, position);
 +      // CraftBukkit start
-+      if (!spawnItem(p_123385_.m_7727_(), itemstack, 6, direction, p_123385_, dropper)){
++      if (!spawnItem(p_301824_.f_301782_(), itemstack, 6, direction, p_301824_, dropper)){
 +         itemstack.m_41769_(1);
 +      }
 +      // CraftBukkit end
        return p_123386_;
     }
  
-@@ -39,6 +_,59 @@
+@@ -38,6 +_,59 @@
        itementity.m_20334_(p_123379_.f_46441_.m_216328_((double)p_123382_.m_122429_() * d3, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_(0.2D, 0.0172275D * (double)p_123381_), p_123379_.f_46441_.m_216328_((double)p_123382_.m_122431_() * d3, 0.0172275D * (double)p_123381_));
        p_123379_.m_7967_(itementity);
     }
@@ -65,7 +65,7 @@
 +      itementity.m_20334_(pLevel.f_46441_.m_216328_((double)pFacing.m_122429_() * d3, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_(0.2D, 0.0172275D * (double)pSpeed), pLevel.f_46441_.m_216328_((double)pFacing.m_122431_() * d3, 0.0172275D * (double)pSpeed));
 +
 +      // CraftBukkit start
-+      org.bukkit.block.Block block = CraftBlock.at(pLevel, isourceblock.m_7961_());
++      org.bukkit.block.Block block = CraftBlock.at(pLevel, isourceblock.f_301784_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(pStack);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), CraftVector.toBukkit(itementity.m_20184_()));
@@ -99,4 +99,4 @@
 +   // Mohist end
  
     protected void m_6823_(BlockSource p_123384_) {
-       p_123384_.m_7727_().m_46796_(1000, p_123384_.m_7961_(), 0);
+       p_123384_.f_301782_().m_46796_(1000, p_123384_.f_301784_(), 0);

@@ -27,7 +27,7 @@
  
     public CommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
        this(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_, false, (p_81361_, p_81362_, p_81363_) -> {
-@@ -172,9 +_,23 @@
+@@ -168,9 +_,23 @@
     }
  
     public boolean m_6761_(int p_81370_) {
@@ -51,7 +51,7 @@
     public Vec3 m_81371_() {
        return this.f_81289_;
     }
-@@ -299,13 +_,13 @@
+@@ -295,13 +_,13 @@
        Component component = Component.m_237110_("chat.type.admin", this.m_81357_(), p_81367_).m_130944_(ChatFormatting.GRAY, ChatFormatting.ITALIC);
        if (this.f_81294_.m_129900_().m_46207_(GameRules.f_46144_)) {
           for(ServerPlayer serverplayer : this.f_81294_.m_6846_().m_11314_()) {
@@ -67,7 +67,7 @@
           this.f_81294_.m_213846_(component);
        }
  
-@@ -363,4 +_,10 @@
+@@ -359,4 +_,10 @@
     public FeatureFlagSet m_245239_() {
        return this.f_81290_.m_246046_();
     }

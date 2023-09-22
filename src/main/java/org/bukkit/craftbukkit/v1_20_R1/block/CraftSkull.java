@@ -16,6 +16,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.profile.CraftGameProfile;
 import org.bukkit.craftbukkit.v1_20_R1.profile.CraftPlayerProfile;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.profile.PlayerProfile;
@@ -102,7 +103,7 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
         if (player instanceof CraftPlayer) {
             this.profile = ((CraftPlayer) player).getProfile();
         } else {
-            this.profile = new GameProfile(player.getUniqueId(), player.getName());
+            this.profile = new CraftGameProfile(player.getUniqueId(), player.getName());
         }
     }
 

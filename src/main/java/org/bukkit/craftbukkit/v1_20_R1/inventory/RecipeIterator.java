@@ -6,14 +6,15 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 
 import java.util.Iterator;
 import java.util.Map;
 
 public class RecipeIterator implements Iterator<Recipe> {
-    private final Iterator<Map.Entry<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, net.minecraft.world.item.crafting.Recipe<?>>>> recipes;
-    private Iterator<net.minecraft.world.item.crafting.Recipe<?>> current;
+    private final Iterator<Map.Entry<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, net.minecraft.world.item.crafting.RecipeHolder<?>>>> recipes;
+    private Iterator<net.minecraft.world.item.crafting.RecipeHolder<?>> current;
 
     public RecipeIterator() {
         this.recipes = MinecraftServer.getServer().getRecipeManager().recipesCB.entrySet().iterator();
@@ -40,12 +41,12 @@ public class RecipeIterator implements Iterator<Recipe> {
             return next();
         }
 
-        net.minecraft.world.item.crafting.Recipe<?> recipe = current.next();
+        net.minecraft.world.item.crafting.RecipeHolder<?> recipe = current.next();
         try {
             return recipe.toBukkitRecipe();
         } catch (Throwable e) {
             //throw new RuntimeException("Error converting recipe " + recipe.getId(), e);
-            return new MohistSpecialRecipe(recipe);
+            return new MohistSpecialRecipe(CraftNamespacedKey.fromMinecraft(recipe.id()), recipe);
         }
     }
 

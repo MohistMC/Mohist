@@ -14,9 +14,9 @@
     private boolean f_140017_;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
     private CompletableFuture<Void> f_142981_ = CompletableFuture.completedFuture((Void)null);
+    private CompletableFuture<?> f_290310_ = CompletableFuture.completedFuture((Object)null);
  
-    public ChunkHolder(ChunkPos p_142986_, int p_142987_, LevelHeightAccessor p_142988_, LevelLightEngine p_142989_, ChunkHolder.LevelChangeListener p_142990_, ChunkHolder.PlayerProvider p_142991_) {
-@@ -78,6 +_,20 @@
+@@ -79,6 +_,20 @@
        this.f_140011_ = new ShortSet[p_142988_.m_151559_()];
     }
  
@@ -37,7 +37,7 @@
     public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140047_(ChunkStatus p_140048_) {
        CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.f_140001_.get(p_140048_.m_62445_());
        return completablefuture == null ? f_139996_ : completablefuture;
-@@ -150,6 +_,7 @@
+@@ -160,6 +_,7 @@
        LevelChunk levelchunk = this.m_140085_();
        if (levelchunk != null) {
           int i = this.f_142983_.m_151564_(p_140057_.m_123342_());
@@ -45,7 +45,7 @@
           if (this.f_140011_[i] == null) {
              this.f_140010_ = true;
              this.f_140011_[i] = new ShortOpenHashSet();
-@@ -352,6 +_,29 @@
+@@ -373,6 +_,29 @@
        boolean flag1 = ChunkLevel.m_287217_(this.f_140007_);
        FullChunkStatus fullchunkstatus = ChunkLevel.m_287264_(this.f_140006_);
        FullChunkStatus fullchunkstatus1 = ChunkLevel.m_287264_(this.f_140007_);
@@ -75,7 +75,7 @@
        if (flag) {
           Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = Either.right(new ChunkHolder.ChunkLoadingFailure() {
              public String toString() {
-@@ -417,6 +_,25 @@
+@@ -438,6 +_,25 @@
  
        this.f_140015_.m_6250_(this.f_140009_, this::m_140094_, this.f_140007_, this::m_140086_);
        this.f_140006_ = this.f_140007_;

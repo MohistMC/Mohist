@@ -7,6 +7,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.Util;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @SerializableAs("PlayerProfile")
@@ -89,7 +91,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
         // Assert: (property == null) || property.getName().equals(propertyName)
         removeProperty(propertyName);
         if (property != null) {
-            properties.put(property.getName(), property);
+            properties.put(property.name(), property);
         }
     }
 
@@ -136,7 +138,12 @@ public final class CraftPlayerProfile implements PlayerProfile {
 
         // Look up properties such as the textures:
         if (profile.getId() != null) {
-            GameProfile newProfile = server.getSessionService().fillProfileProperties(profile, true);
+            GameProfile newProfile;
+            try {
+                newProfile = SkullBlockEntity.fillProfileTextures(profile).get().orElse(null); // TODO: replace with CompletableFuture
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException("Exception filling profile textures", ex);
+            }
             if (newProfile != null) {
                 profile = newProfile;
             }
@@ -266,7 +273,7 @@ public final class CraftPlayerProfile implements PlayerProfile {
             for (Object propertyData : (List<?>) map.get("properties")) {
                 Preconditions.checkArgument(propertyData instanceof Map, "Propertu data (%s) is not a valid Map", propertyData);
                 Property property = CraftProfileProperty.deserialize((Map<?, ?>) propertyData);
-                profile.properties.put(property.getName(), property);
+                profile.properties.put(property.name(), property);
             }
         }
 

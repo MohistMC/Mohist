@@ -161,7 +161,7 @@
 +      // CraftBukkit start
 +      ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.m_5472_(), this.m_5474_());
 +      for (ServerPlayer player : (java.util.List<ServerPlayer>) (java.util.List) world.m_6907_()) {
-+         player.f_8906_.m_9829_(packet);
++         player.f_8906_.m_141995_(packet);
 +      }
 +      // CraftBukkit end
     }

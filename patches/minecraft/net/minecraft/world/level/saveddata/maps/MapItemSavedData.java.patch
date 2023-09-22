@@ -14,7 +14,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.nbt.CompoundTag;
-@@ -27,6 +_,13 @@
+@@ -28,6 +_,13 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.saveddata.SavedData;
@@ -28,7 +28,7 @@
  import org.slf4j.Logger;
  
  public class MapItemSavedData extends SavedData {
-@@ -50,6 +_,14 @@
+@@ -51,6 +_,14 @@
     private final Map<String, MapFrame> f_77898_ = Maps.newHashMap();
     private int f_181308_;
  
@@ -39,11 +39,11 @@
 +   public String id;
 +   private RenderData vanillaRender = new RenderData();
 +   // CraftBukkit end
-+
-    private MapItemSavedData(int p_164768_, int p_164769_, byte p_164770_, boolean p_164771_, boolean p_164772_, boolean p_164773_, ResourceKey<Level> p_164774_) {
-       this.f_77890_ = p_164770_;
-       this.f_256718_ = p_164768_;
-@@ -59,6 +_,12 @@
++   
+    public static SavedData.Factory<MapItemSavedData> m_295558_() {
+       return new SavedData.Factory<>(() -> {
+          throw new IllegalStateException("Should never create an empty map saved data");
+@@ -66,6 +_,12 @@
        this.f_77889_ = p_164772_;
        this.f_77892_ = p_164773_;
        this.m_77762_();
@@ -56,7 +56,7 @@
     }
  
     public static MapItemSavedData m_164780_(double p_164781_, double p_164782_, byte p_164783_, boolean p_164784_, boolean p_164785_, ResourceKey<Level> p_164786_) {
-@@ -75,8 +_,26 @@
+@@ -82,8 +_,26 @@
     }
  
     public static MapItemSavedData m_164807_(CompoundTag p_164808_) {
@@ -85,7 +85,7 @@
        });
        int i = p_164808_.m_128451_("xCenter");
        int j = p_164808_.m_128451_("zCenter");
-@@ -89,6 +_,7 @@
+@@ -96,6 +_,7 @@
        if (abyte.length == 16384) {
           mapitemsaveddata.f_77891_ = abyte;
        }
@@ -93,7 +93,7 @@
  
        ListTag listtag = p_164808_.m_128437_("banners", 10);
  
-@@ -113,6 +_,25 @@
+@@ -120,6 +_,25 @@
        ResourceLocation.f_135803_.encodeStart(NbtOps.f_128958_, this.f_77887_.m_135782_()).resultOrPartial(f_77895_::error).ifPresent((p_77954_) -> {
           p_77956_.m_128365_("dimension", p_77954_);
        });
@@ -119,7 +119,16 @@
        p_77956_.m_128405_("xCenter", this.f_256718_);
        p_77956_.m_128405_("zCenter", this.f_256789_);
        p_77956_.m_128344_("scale", this.f_77890_);
-@@ -464,24 +_,54 @@
+@@ -410,7 +_,7 @@
+ 
+    public boolean m_164810_() {
+       for(MapDecoration mapdecoration : this.f_77894_.values()) {
+-         if (mapdecoration.f_77791_().m_294654_()) {
++         if (mapdecoration.f_77791_() == MapDecoration.Type.MANSION || mapdecoration.f_77791_() == MapDecoration.Type.MONUMENT) {
+             return true;
+          }
+       }
+@@ -471,24 +_,54 @@
           return new MapItemSavedData.MapPatch(i, j, k, l, abyte);
        }
  

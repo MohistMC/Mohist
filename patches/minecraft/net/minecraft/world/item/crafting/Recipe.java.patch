@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
-@@ -22,9 +_,9 @@
+@@ -7,6 +_,7 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
++import org.jetbrains.annotations.NotNull;
+ 
+ public interface Recipe<C extends Container> {
+    boolean m_5818_(C p_44002_, Level p_44003_);
+@@ -21,9 +_,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.m_122780_(p_44004_.m_6643_(), ItemStack.f_41583_);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
@@ -13,7 +21,7 @@
           }
        }
  
-@@ -60,7 +_,11 @@
+@@ -57,7 +_,11 @@
     default boolean m_142505_() {
        NonNullList<Ingredient> nonnulllist = this.m_7527_();
        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {
@@ -22,7 +30,7 @@
        });
 +   }
 +
-+   default org.bukkit.inventory.Recipe toBukkitRecipe() {
++   default org.bukkit.inventory.Recipe toBukkitRecipe(org.bukkit.NamespacedKey id) {
 +      return () -> new org.bukkit.inventory.ItemStack(org.bukkit.Material.AIR);
     }
  }

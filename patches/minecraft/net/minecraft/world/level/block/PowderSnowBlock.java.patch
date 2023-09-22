@@ -1,6 +1,22 @@
 --- a/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/net/minecraft/world/level/block/PowderSnowBlock.java
-@@ -64,7 +_,12 @@
+@@ -1,7 +_,6 @@
+ package net.minecraft.world.level.block;
+ 
+ import java.util.Optional;
+-import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.ParticleTypes;
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.phys.shapes.EntityCollisionContext;
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.jetbrains.annotations.Nullable;
+ 
+ public class PowderSnowBlock extends Block implements BucketPickup {
+    private static final float f_154246_ = 0.083333336F;
+@@ -65,7 +_,12 @@
  
        p_154266_.m_146924_(true);
        if (!p_154264_.f_46443_) {
@@ -14,7 +30,7 @@
              p_154264_.m_46961_(p_154265_, false);
           }
  
-@@ -107,7 +_,7 @@
+@@ -108,7 +_,7 @@
        if (p_154256_.m_6095_().m_204039_(EntityTypeTags.f_144291_)) {
           return true;
        } else {

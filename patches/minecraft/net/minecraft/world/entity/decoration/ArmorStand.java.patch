@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -1,8 +_,13 @@
+@@ -1,7 +_,13 @@
  package net.minecraft.world.entity.decoration;
  
 +import java.util.ArrayList;
 +import java.util.Collection;
- import java.util.List;
++import java.util.List;
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -14,7 +14,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.Rotations;
-@@ -29,6 +_,7 @@
+@@ -28,6 +_,7 @@
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.Pose;
@@ -22,7 +22,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.projectile.AbstractArrow;
  import net.minecraft.world.entity.vehicle.AbstractMinecart;
-@@ -42,6 +_,10 @@
+@@ -41,6 +_,10 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
@@ -33,7 +33,7 @@
  
  public class ArmorStand extends LivingEntity {
     public static final int f_149592_ = 5;
-@@ -72,7 +_,7 @@
+@@ -71,7 +_,7 @@
     public static final EntityDataAccessor<Rotations> f_31550_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     public static final EntityDataAccessor<Rotations> f_31527_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     private static final Predicate<Entity> f_31537_ = (p_31582_) -> {
@@ -42,7 +42,7 @@
     };
     private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
-@@ -96,6 +_,13 @@
+@@ -95,6 +_,13 @@
        this.m_6034_(p_31557_, p_31558_, p_31559_);
     }
  
@@ -56,7 +56,7 @@
     public void m_6210_() {
        double d0 = this.m_20185_();
        double d1 = this.m_20186_();
-@@ -154,6 +_,19 @@
+@@ -153,6 +_,19 @@
  
     }
  
@@ -76,7 +76,7 @@
     public boolean m_7066_(ItemStack p_31638_) {
        EquipmentSlot equipmentslot = Mob.m_147233_(p_31638_);
        return this.m_6844_(equipmentslot).m_41619_() && !this.m_31626_(equipmentslot);
-@@ -351,6 +_,22 @@
+@@ -347,6 +_,22 @@
  
     private boolean m_31588_(Player p_31589_, EquipmentSlot p_31590_, ItemStack p_31591_, InteractionHand p_31592_) {
        ItemStack itemstack = this.m_6844_(p_31590_);
@@ -99,7 +99,7 @@
        if (!itemstack.m_41619_() && (this.f_31541_ & 1 << p_31590_.m_20750_() + 8) != 0) {
           return false;
        } else if (itemstack.m_41619_() && (this.f_31541_ & 1 << p_31590_.m_20750_() + 16) != 0) {
-@@ -375,9 +_,19 @@
+@@ -371,9 +_,19 @@
     public boolean m_6469_(DamageSource p_31579_, float p_31580_) {
        if (!this.m_9236_().f_46443_ && !this.m_213877_()) {
           if (p_31579_.m_269533_(DamageTypeTags.f_268738_)) {
@@ -120,7 +120,15 @@
              if (p_31579_.m_269533_(DamageTypeTags.f_268415_)) {
                 this.m_31653_(p_31579_);
                 this.m_6074_();
-@@ -422,7 +_,7 @@
+@@ -418,14 +_,14 @@
+                      return false;
+                   } else {
+                      long i = this.m_9236_().m_46467_();
+-                     if (i - this.f_31528_ > 5L && !flag1) {
++                     if (i - this.f_31528_ > 5L && !flag) {
+                         this.m_9236_().m_7605_(this, (byte)32);
+                         this.m_146852_(GameEvent.f_223706_, p_31579_.m_7639_());
+                         this.f_31528_ = i;
                       } else {
                          this.m_31646_(p_31579_);
                          this.m_31565_();
@@ -129,7 +137,7 @@
                       }
  
                       return true;
-@@ -592,7 +_,24 @@
+@@ -591,7 +_,24 @@
        return this.m_31666_();
     }
  
@@ -154,7 +162,7 @@
        this.m_142687_(Entity.RemovalReason.KILLED);
        this.m_146850_(GameEvent.f_223707_);
     }
-@@ -609,7 +_,7 @@
+@@ -608,7 +_,7 @@
        return this.m_31677_();
     }
  
@@ -163,7 +171,7 @@
        this.f_19804_.m_135381_(f_31524_, this.m_31569_(this.f_19804_.m_135370_(f_31524_), 1, p_31604_));
     }
  
-@@ -633,7 +_,7 @@
+@@ -632,7 +_,7 @@
        return (this.f_19804_.m_135370_(f_31524_) & 8) != 0;
     }
  

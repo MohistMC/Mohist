@@ -16,4 +16,4 @@
 +      if (BanItem.check(p_270300_, itemstack)) return InteractionResultHolder.m_19100_(itemstack);
        EquipmentSlot equipmentslot = Mob.m_147233_(itemstack);
        ItemStack itemstack1 = p_270300_.m_6844_(equipmentslot);
-       if (!EnchantmentHelper.m_44920_(itemstack1) && !ItemStack.m_41728_(itemstack, itemstack1)) {
+       if ((!EnchantmentHelper.m_44920_(itemstack1) || p_270300_.m_7500_()) && !ItemStack.m_41728_(itemstack, itemstack1)) {

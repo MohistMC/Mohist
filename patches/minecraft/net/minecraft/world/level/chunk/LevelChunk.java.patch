@@ -62,11 +62,8 @@
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
-@@ -118,9 +_,11 @@
-          }
-       }
- 
--      this.f_283754_ = p_196851_.f_283754_;
+@@ -121,6 +_,9 @@
+       this.f_283754_ = p_196851_.f_283754_;
        this.m_8094_(p_196851_.m_6332_());
        this.f_187603_ = true;
 +      this.needsDecoration = true; // CraftBukkit
@@ -90,7 +87,7 @@
              if (!this.f_62776_.f_46443_) {
                 blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
 -            } else if (!blockstate.m_60713_(block) && flag2) {
-+            } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
++         } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
                 this.m_8114_(p_62865_);
              }
  
@@ -149,19 +146,6 @@
        }
  
     }
-@@ -362,6 +_,12 @@
-             blockentity.m_7651_();
-          }
- 
-+      }else {
-+         System.out.println("Attempted to place a tile entity (" + p_156374_ + ") at " + p_156374_.m_58899_().m_123341_() + "," + p_156374_.m_58899_().m_123342_() + "," + p_156374_.m_58899_().m_123343_()
-+                 + " (" + m_8055_(blockpos) + ") where there was no entity tile!");
-+         System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
-+         new Exception().printStackTrace();
-+         // CraftBukkit end
-       }
-    }
- 
 @@ -369,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
@@ -335,7 +319,7 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -644,15 +_,13 @@
+@@ -644,7 +_,7 @@
                       this.f_156430_ = false;
                    } else if (!this.f_156430_) {
                       this.f_156430_ = true;
@@ -344,16 +328,19 @@
                    }
  
                    profilerfiller.m_7238_();
-                } catch (Throwable throwable) {
--                  CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
--                  CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
--                  this.f_156428_.m_58886_(crashreportcategory);
--                  throw new ReportedException(crashreport);
-+                  f_156428_.m_7651_();
-+                  LevelChunk.this.m_8114_(f_156428_.m_58899_());
+@@ -652,6 +_,12 @@
+                   CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
+                   CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
+                   this.f_156428_.m_58886_(crashreportcategory);
++
++                  if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringBlockEntities.get()) {
++                     f_62771_.error("{}", crashreport.m_127526_());
++                     f_156428_.m_7651_();
++                     LevelChunk.this.m_8114_(f_156428_.m_58899_());
++                  } else
+                   throw new ReportedException(crashreport);
                 }
              }
-          }
 @@ -680,6 +_,34 @@
        IMMEDIATE,
        QUEUED,

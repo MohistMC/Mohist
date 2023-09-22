@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
-@@ -53,7 +_,7 @@
+@@ -63,7 +_,7 @@
        this.m_20088_().m_135381_(f_34648_, p_34671_);
     }
  
@@ -9,7 +9,7 @@
        return this.m_20088_().m_135370_(f_34648_);
     }
  
-@@ -87,9 +_,10 @@
+@@ -93,9 +_,10 @@
           ++this.f_34649_;
        } else {
           this.f_34649_ = 0;
@@ -21,7 +21,7 @@
           this.m_7580_();
           this.m_8063_((ServerLevel)this.m_9236_());
        }
-@@ -101,9 +_,10 @@
+@@ -107,9 +_,10 @@
     }
  
     protected void m_8063_(ServerLevel p_34663_) {

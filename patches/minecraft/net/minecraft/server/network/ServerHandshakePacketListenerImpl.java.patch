@@ -1,18 +1,18 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,9 +_,12 @@
+@@ -1,8 +_,12 @@
  package net.minecraft.server.network;
  
 +import java.net.InetAddress;
 +import java.util.HashMap;
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
- import net.minecraft.network.ConnectionProtocol;
++import net.minecraft.network.ConnectionProtocol;
  import net.minecraft.network.chat.Component;
 +import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.protocol.handshake.ClientIntent;
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
- import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 @@ -14,6 +_,15 @@
     private static final Component f_9964_ = Component.m_237115_("disconnect.ignoring_status_request");
     private final MinecraftServer f_9965_;
@@ -29,15 +29,15 @@
  
     public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
        this.f_9965_ = p_9969_;
-@@ -21,28 +_,88 @@
+@@ -21,28 +_,89 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
-+      this.f_9966_.hostname = p_9975_.f_134721_ + ":" + p_9975_.f_134722_; // CraftBukkit  - set hostname
-       switch (p_9975_.m_134735_()) {
++      this.f_9966_.hostname = p_9975_.f_134721_() + ":" + p_9975_.f_134722_(); // CraftBukkit  - set hostname
+       switch (p_9975_.f_134723_()) {
           case LOGIN:
-             this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);
+             this.f_9966_.m_294993_(ClientIntent.LOGIN);
 +            // CraftBukkit start - Connection throttle
 +            try {
 +               long currentTime = System.currentTimeMillis();
@@ -72,9 +72,9 @@
 +               org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
 +            }
 +            // CraftBukkit end
-             if (p_9975_.m_134738_() != SharedConstants.m_183709_().m_132495_()) {
+             if (p_9975_.f_134720_() != SharedConstants.m_183709_().m_132495_()) {
                 Component component;
-                if (p_9975_.m_134738_() < 754) {
+                if (p_9975_.f_134720_() < 754) {
 -                  component = Component.m_237110_("multiplayer.disconnect.outdated_client", SharedConstants.m_183709_().m_132493_());
 +                  component = Component.m_237113_( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedClientMessage.replaceAll("'", "''"), SharedConstants.m_183709_().m_132493_())); // Spigot
                 } else {
@@ -87,11 +87,12 @@
              } else {
                 this.f_9966_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9965_, this.f_9966_));
 +               // Spigot Start
-+               String[] split = p_9975_.original_ip.split("\00");
++               String[] split = p_9975_.f_134721_().split("\00");
 +               if (org.spigotmc.SpigotConfig.bungee) {
 +                  if ( ( split.length == 3 || split.length == 4 ) && ( HOST_PATTERN.matcher( split[1] ).matches() ) ) {
++                     f_9966_.hostname = split[0];
 +                     f_9966_.f_129469_ = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) f_9966_.m_129523_()).getPort());
-+                     f_9966_.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString( split[2] );
++                     f_9966_.spoofedUUID = com.mojang.util.UndashedUuid.fromStringLenient( split[2] );
 +                  } else
 +                  {
 +                     Component chatmessage = Component.m_237113_("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
@@ -115,7 +116,7 @@
           case STATUS:
              ServerStatus serverstatus = this.f_9965_.m_129928_();
              if (this.f_9965_.m_6373_() && serverstatus != null) {
-                this.f_9966_.m_129498_(ConnectionProtocol.STATUS);
+                this.f_9966_.m_294993_(ClientIntent.STATUS);
 -               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_));
 +               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_, this.f_9965_.getStatusJson()));
              } else {

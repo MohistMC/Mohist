@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -365,8 +_,8 @@
+@@ -366,8 +_,8 @@
              if (this.m_21830_(p_28153_)) {
                 if (!(item instanceof DyeItem)) {
                    if (item.m_41472_() && this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
@@ -10,7 +10,7 @@
                       return InteractionResult.CONSUME;
                    }
  
-@@ -391,7 +_,7 @@
+@@ -392,7 +_,7 @@
              }
           } else if (this.m_6898_(itemstack)) {
              this.m_142075_(p_28153_, p_28154_, itemstack);
@@ -19,7 +19,7 @@
                 this.m_21828_(p_28153_);
                 this.m_21839_(true);
                 this.m_9236_().m_7605_(this, (byte)7);
-@@ -546,7 +_,15 @@
+@@ -551,7 +_,15 @@
           LootParams lootparams = (new LootParams.Builder((ServerLevel)this.f_28198_.m_9236_())).m_287286_(LootContextParams.f_81460_, this.f_28198_.m_20182_()).m_287286_(LootContextParams.f_81455_, this.f_28198_).m_287235_(LootContextParamSets.f_81416_);
  
           for(ItemStack itemstack : loottable.m_287195_(lootparams)) {

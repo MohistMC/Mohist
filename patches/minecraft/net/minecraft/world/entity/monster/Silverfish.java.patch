@@ -1,21 +1,25 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
-@@ -25,13 +_,13 @@
- import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
- import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
+@@ -32,6 +_,7 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.InfestedBlock;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ import org.joml.Vector3f;
  
  public class Silverfish extends Monster {
-    @Nullable
-@@ -140,7 +_,7 @@
+@@ -53,6 +_,10 @@
+       this.f_21346_.m_25352_(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+ 
++   public double getMyRidingOffset() {
++      return 0.1D;
++   }
++
+    protected float m_6431_(Pose p_33540_, EntityDimensions p_33541_) {
+       return 0.13F;
+    }
+@@ -141,7 +_,7 @@
              return false;
           } else {
              RandomSource randomsource = this.f_25725_.m_217043_();
@@ -24,7 +28,7 @@
                 this.f_33555_ = Direction.m_235672_(randomsource);
                 BlockPos blockpos = BlockPos.m_274561_(this.f_25725_.m_20185_(), this.f_25725_.m_20186_() + 0.5D, this.f_25725_.m_20189_()).m_121945_(this.f_33555_);
                 BlockState blockstate = this.f_25725_.m_9236_().m_8055_(blockpos);
-@@ -167,6 +_,11 @@
+@@ -168,6 +_,11 @@
              BlockPos blockpos = BlockPos.m_274561_(this.f_25725_.m_20185_(), this.f_25725_.m_20186_() + 0.5D, this.f_25725_.m_20189_()).m_121945_(this.f_33555_);
              BlockState blockstate = levelaccessor.m_8055_(blockpos);
              if (InfestedBlock.m_54195_(blockstate)) {
@@ -36,7 +40,7 @@
                 levelaccessor.m_7731_(blockpos, InfestedBlock.m_153430_(blockstate), 3);
                 this.f_25725_.m_21373_();
                 this.f_25725_.m_146870_();
-@@ -209,7 +_,12 @@
+@@ -210,7 +_,12 @@
                       BlockState blockstate = level.m_8055_(blockpos1);
                       Block block = blockstate.m_60734_();
                       if (block instanceof InfestedBlock) {

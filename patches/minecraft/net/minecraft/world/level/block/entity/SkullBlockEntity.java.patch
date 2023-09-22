@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/SkullBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SkullBlockEntity.java
+@@ -187,7 +_,7 @@
+       }, f_291574_);
+    }
+ 
+-   private static CompletableFuture<Optional<GameProfile>> m_292605_(GameProfile p_299217_) {
++   public static CompletableFuture<Optional<GameProfile>> m_292605_(GameProfile p_299217_) {
+       return m_292986_(p_299217_) ? CompletableFuture.completedFuture(Optional.of(p_299217_)) : CompletableFuture.supplyAsync(() -> {
+          MinecraftSessionService minecraftsessionservice = f_59756_;
+          if (minecraftsessionservice != null) {

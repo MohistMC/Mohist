@@ -215,7 +215,7 @@
        if (this.m_151570_(p_46605_)) {
           return false;
        } else if (!this.f_46443_ && this.m_46659_()) {
-@@ -198,11 +_,60 @@
+@@ -198,11 +_,55 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
@@ -252,11 +252,6 @@
              return false;
           } else {
              BlockState blockstate1 = this.m_8055_(p_46605_);
-+            if ((p_46607_ & 128) == 0 && blockstate1 != blockstate && (blockstate1.m_60739_(this, p_46605_) != oldOpacity || blockstate1.getLightEmission(this, p_46605_) != oldLight || blockstate1.m_60787_() || blockstate.m_60787_())) {
-+               this.m_46473_().m_6180_("queueCheckLight");
-+               this.m_7726_().m_7827_().m_7174_(p_46605_);
-+               this.m_46473_().m_7238_();
-+            }
 +
 +            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
 +               this.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, p_46608_);
@@ -337,7 +332,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -420,16 +_,17 @@
+@@ -420,16 +_,24 @@
  
        this.f_151504_ = false;
        profilerfiller.m_7238_();
@@ -349,11 +344,14 @@
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
           p_46654_.accept(p_46655_);
        } catch (Throwable throwable) {
--         CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
--         CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
--         p_46655_.m_7976_(crashreportcategory);
--         throw new ReportedException(crashreport);
-+         p_46655_.m_146870_();
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
+          CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
+          p_46655_.m_7976_(crashreportcategory);
++         if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
++            com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.m_127526_());
++            p_46655_.m_146870_();
++         } else
+          throw new ReportedException(crashreport);
 +      } finally {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
        }
@@ -376,29 +374,24 @@
        explosion.m_46061_();
        explosion.m_46075_(p_256377_);
        return explosion;
-@@ -495,16 +_,32 @@
+@@ -495,6 +_,16 @@
  
     @Nullable
     public BlockEntity m_7702_(BlockPos p_46716_) {
--      if (this.m_151570_(p_46716_)) {
 +      // CraftBukkit start
 +      return getBlockEntity(p_46716_, true);
 +   }
 +
 +   @Nullable
-+   public BlockEntity getBlockEntity(BlockPos pPos, boolean validate) {
-+      if (capturedTileEntities.containsKey(pPos)) {
-+         return capturedTileEntities.get(pPos);
++   public BlockEntity getBlockEntity(BlockPos p_46716_, boolean validate) {
++      if (capturedTileEntities.containsKey(p_46716_)) {
++         return capturedTileEntities.get(p_46716_);
 +      }
 +      // CraftBukkit end
-+      if (this.m_151570_(pPos)) {
+       if (this.m_151570_(p_46716_)) {
           return null;
        } else {
--         return !this.f_46443_ && Thread.currentThread() != this.f_46423_ ? null : this.m_46745_(p_46716_).m_5685_(p_46716_, LevelChunk.EntityCreationType.IMMEDIATE);
-+         return !this.f_46443_ && Thread.currentThread() != this.f_46423_ ? null : this.m_46745_(pPos).m_5685_(pPos, LevelChunk.EntityCreationType.IMMEDIATE);
-       }
-    }
- 
+@@ -505,6 +_,12 @@
     public void m_151523_(BlockEntity p_151524_) {
        BlockPos blockpos = p_151524_.m_58899_();
        if (!this.m_151570_(blockpos)) {

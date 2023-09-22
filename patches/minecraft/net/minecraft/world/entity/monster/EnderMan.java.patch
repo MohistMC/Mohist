@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -110,7 +_,6 @@
+@@ -111,7 +_,6 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_32537_) {
@@ -8,7 +8,7 @@
        AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
        if (p_32537_ == null) {
           this.f_32477_ = 0;
-@@ -125,6 +_,30 @@
+@@ -126,6 +_,30 @@
           }
        }
  
@@ -39,7 +39,7 @@
     }
  
     protected void m_8097_() {
-@@ -199,7 +_,7 @@
+@@ -200,7 +_,7 @@
  
     boolean m_32534_(Player p_32535_) {
        ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);
@@ -48,7 +48,7 @@
           return false;
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
-@@ -246,7 +_,7 @@
+@@ -251,7 +_,7 @@
        super.m_8024_();
     }
  
@@ -57,7 +57,7 @@
        if (!this.m_9236_().m_5776_() && this.m_6084_()) {
           double d0 = this.m_20185_() + (this.f_19796_.m_188500_() - 0.5D) * 64.0D;
           double d1 = this.m_20186_() + (double)(this.f_19796_.m_188503_(64) - 32);
-@@ -257,7 +_,7 @@
+@@ -262,7 +_,7 @@
        }
     }
  
@@ -66,7 +66,7 @@
        Vec3 vec3 = new Vec3(this.m_20185_() - p_32501_.m_20185_(), this.m_20227_(0.5D) - p_32501_.m_20188_(), this.m_20189_() - p_32501_.m_20189_());
        vec3 = vec3.m_82541_();
        double d0 = 16.0D;
-@@ -278,8 +_,10 @@
+@@ -283,8 +_,10 @@
        boolean flag = blockstate.m_280555_();
        boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
        if (flag && !flag1) {
@@ -78,7 +78,7 @@
           if (flag2) {
              this.m_9236_().m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
              if (!this.m_20067_()) {
-@@ -419,7 +_,7 @@
+@@ -424,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32554_.m_32530_() == null) {
              return false;
@@ -87,7 +87,7 @@
              return false;
           } else {
              return this.f_32554_.m_217043_().m_188503_(m_186073_(2000)) == 0;
-@@ -439,17 +_,19 @@
+@@ -444,17 +_,19 @@
           BlockState blockstate2 = this.f_32554_.m_32530_();
           if (blockstate2 != null) {
              blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.m_9236_(), blockpos);
@@ -112,7 +112,7 @@
        }
     }
  
-@@ -551,7 +_,7 @@
+@@ -556,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32583_.m_32530_() != null) {
              return false;
@@ -121,7 +121,7 @@
              return false;
           } else {
              return this.f_32583_.m_217043_().m_188503_(m_186073_(20)) == 0;
-@@ -570,12 +_,15 @@
+@@ -575,12 +_,15 @@
           Vec3 vec31 = new Vec3((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D);
           BlockHitResult blockhitresult = level.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this.f_32583_));
           boolean flag = blockhitresult.m_82425_().equals(blockpos);

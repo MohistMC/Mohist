@@ -1,6 +1,13 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -15,6 +_,8 @@
+@@ -8,12 +_,15 @@
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.monster.Endermite;
++import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -9,7 +16,7 @@
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -46,12 +_,18 @@
+@@ -45,10 +_,13 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.f_8906_.m_6198_() && serverplayer.m_9236_() == this.m_9236_() && !serverplayer.m_5803_()) {
@@ -22,13 +29,8 @@
 +                     endermite.spawnReason(CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
                       this.m_9236_().m_7967_(endermite);
                    }
-+                  if (entity.m_20159_()) {
-+                     entity.m_8127_();
-+                  }
                 }
- 
-                if (entity.m_20159_()) {
-@@ -60,8 +_,12 @@
+@@ -59,8 +_,12 @@
                    entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
                 }
  
@@ -42,15 +44,14 @@
              }
           } else if (entity != null) {
              entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
-@@ -84,12 +_,12 @@
+@@ -83,12 +_,12 @@
     }
  
     @Nullable
 -   public Entity m_5489_(ServerLevel p_37506_) {
 +   public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
        Entity entity = this.m_19749_();
--      if (entity != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) {
-+      if (entity != null && p_37506_ != null && entity.f_19853_.m_46472_() != p_37506_.m_46472_()) {
+       if (entity != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) {
           this.m_5602_((Entity)null);
        }
  

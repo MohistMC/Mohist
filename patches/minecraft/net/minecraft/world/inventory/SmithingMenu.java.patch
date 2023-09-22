@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/inventory/SmithingMenu.java
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
-@@ -11,6 +_,10 @@
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.inventory;
+ 
+ import java.util.List;
++import java.util.Optional;
+ import java.util.OptionalInt;
+ import javax.annotation.Nullable;
+ import net.minecraft.world.entity.player.Inventory;
+@@ -12,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
@@ -11,9 +19,9 @@
  
  public class SmithingMenu extends ItemCombinerMenu {
     public static final int f_266015_ = 0;
-@@ -27,6 +_,10 @@
-    private SmithingRecipe f_40242_;
-    private final List<SmithingRecipe> f_40243_;
+@@ -28,6 +_,10 @@
+    private RecipeHolder<SmithingRecipe> f_40242_;
+    private final List<RecipeHolder<SmithingRecipe>> f_40243_;
  
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity;
@@ -22,18 +30,18 @@
     public SmithingMenu(int p_40245_, Inventory p_40246_) {
        this(p_40245_, p_40246_, ContainerLevelAccess.f_39287_);
     }
-@@ -88,14 +_,16 @@
+@@ -89,14 +_,16 @@
     public void m_6640_() {
-       List<SmithingRecipe> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
+       List<RecipeHolder<SmithingRecipe>> list = this.f_40241_.m_7465_().m_44056_(RecipeType.f_44113_, this.f_39769_, this.f_40241_);
        if (list.isEmpty()) {
 -         this.f_39768_.m_6836_(0, ItemStack.f_41583_);
 +         CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), ItemStack.f_41583_); // CraftBukkit
        } else {
-          SmithingRecipe smithingrecipe = list.get(0);
-          ItemStack itemstack = smithingrecipe.m_5874_(this.f_39769_, this.f_40241_.m_9598_());
+          RecipeHolder<SmithingRecipe> recipeholder = list.get(0);
+          ItemStack itemstack = recipeholder.f_291008_().m_5874_(this.f_39769_, this.f_40241_.m_9598_());
           if (itemstack.m_246617_(this.f_40241_.m_246046_())) {
-             this.f_40242_ = smithingrecipe;
-             this.f_39768_.m_6029_(smithingrecipe);
+             this.f_40242_ = recipeholder;
+             this.f_39768_.m_40156_(recipeholder);
 -            this.f_39768_.m_6836_(0, itemstack);
 +            // CraftBukkit start
 +            CraftEventFactory.callPrepareSmithingEvent(getBukkitView(), itemstack);
@@ -41,10 +49,11 @@
           }
        }
  
-@@ -126,4 +_,17 @@
-          return m_266320_(p_266647_, p_266846_);
-       }).anyMatch(Optional::isPresent);
+@@ -131,4 +_,18 @@
+          return !this.m_38853_(p_296883_).m_6657_();
+       }).findFirst();
     }
++
 +
 +   // CraftBukkit start
 +   @Override

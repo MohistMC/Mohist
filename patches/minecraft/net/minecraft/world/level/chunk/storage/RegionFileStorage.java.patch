@@ -9,7 +9,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.FileUtil;
  import net.minecraft.nbt.CompoundTag;
-@@ -25,6 +_,8 @@
+@@ -26,6 +_,8 @@
        this.f_63701_ = p_196955_;
     }
  
@@ -18,7 +18,7 @@
     private RegionFile m_63711_(ChunkPos p_63712_) throws IOException {
        long i = ChunkPos.m_45589_(p_63712_.m_45610_(), p_63712_.m_45612_());
        RegionFile regionfile = this.f_63699_.getAndMoveToFirst(i);
-@@ -37,24 +_,38 @@
+@@ -38,24 +_,38 @@
  
           FileUtil.m_257659_(this.f_63700_);
           Path path = this.f_63700_.resolve("r." + p_63712_.m_45610_() + "." + p_63712_.m_45612_() + ".mca");
@@ -60,8 +60,8 @@
 +      // CraftBukkit end
        try (DataInputStream datainputstream = regionfile.m_63645_(p_196957_)) {
           if (datainputstream != null) {
-             NbtIo.m_197509_(datainputstream, p_196958_);
-@@ -64,7 +_,7 @@
+             NbtIo.m_197509_(datainputstream, p_196958_, NbtAccounter.m_301669_());
+@@ -65,7 +_,7 @@
     }
  
     protected void m_63708_(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {

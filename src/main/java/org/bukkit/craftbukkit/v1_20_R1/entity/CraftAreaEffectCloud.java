@@ -10,6 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_20_R1.CraftParticle;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_20_R1.potion.CraftPotionUtil;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
@@ -133,10 +134,10 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean addCustomEffect(PotionEffect effect, boolean override) {
-        int effectId = effect.getType().getId();
+        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect.getType());
         MobEffectInstance existing = null;
         for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (MobEffect.getId(mobEffect.getEffect()) == effectId) {
+            if (mobEffect.getEffect() == minecraft) {
                 existing = mobEffect;
             }
         }
@@ -183,10 +184,10 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean removeCustomEffect(PotionEffectType effect) {
-        int effectId = effect.getId();
+        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect);
         MobEffectInstance existing = null;
         for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (MobEffect.getId(mobEffect.getEffect()) == effectId) {
+            if (mobEffect.getEffect() == minecraft) {
                 existing = mobEffect;
             }
         }

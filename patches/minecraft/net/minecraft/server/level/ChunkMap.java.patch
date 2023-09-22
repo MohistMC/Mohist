@@ -8,7 +8,15 @@
  import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Either;
-@@ -40,6 +_,7 @@
+@@ -27,6 +_,7 @@
+ import java.io.Writer;
+ import java.nio.file.Path;
+ import java.util.ArrayList;
++import java.util.BitSet;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Locale;
+@@ -39,12 +_,14 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
  import java.util.concurrent.Executor;
@@ -16,25 +24,56 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
-@@ -75,7 +_,6 @@
+ import java.util.function.IntFunction;
+ import java.util.function.IntSupplier;
+ import java.util.function.Supplier;
++import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+@@ -56,7 +_,11 @@
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
++import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetChunkCacheCenterPacket;
++import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
++import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
++import net.minecraft.network.protocol.game.DebugPackets;
+ import net.minecraft.server.level.progress.ChunkProgressListener;
+ import net.minecraft.server.network.ServerPlayerConnection;
+ import net.minecraft.util.CsvOutput;
+@@ -67,8 +_,8 @@
+ import net.minecraft.util.thread.ProcessorMailbox;
+ import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.Mob;
++import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
 -import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.chunk.ChunkAccess;
-@@ -101,6 +_,7 @@
+@@ -93,6 +_,8 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableBoolean;
- import org.apache.commons.lang3.mutable.MutableObject;
++import org.apache.commons.lang3.mutable.MutableObject;
 +import org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator;
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -144,6 +_,27 @@
+@@ -103,7 +_,7 @@
+    private static final int f_143037_ = 200;
+    private static final int f_198789_ = 20;
+    private static final int f_202982_ = 10000;
+-   public static final int f_143038_ = 2;
++   private static final int f_143038_ = 2;
+    public static final int f_143032_ = 32;
+    public static final int f_143033_ = ChunkLevel.m_287154_(FullChunkStatus.ENTITY_TICKING);
+    public final Long2ObjectLinkedOpenHashMap<ChunkHolder> f_140129_ = new Long2ObjectLinkedOpenHashMap<>();
+@@ -136,6 +_,27 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
-    int f_140126_;
+    private int f_290679_;
  
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
@@ -60,7 +99,7 @@
     public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
        super(p_214837_.m_197394_(p_214836_.m_46472_()).resolve("region"), p_214838_, p_214848_);
        this.f_214833_ = p_214839_;
-@@ -151,6 +_,11 @@
+@@ -143,6 +_,11 @@
        this.f_182284_ = path.getFileName().toString();
        this.f_140133_ = p_214836_;
        this.f_140136_ = p_214843_;
@@ -72,7 +111,7 @@
        RegistryAccess registryaccess = p_214836_.m_9598_();
        long i = p_214836_.m_7328_();
        if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
-@@ -398,6 +_,7 @@
+@@ -392,6 +_,7 @@
              this.f_140140_ = true;
           }
  
@@ -80,15 +119,15 @@
           return p_140179_;
        }
     }
-@@ -503,6 +_,7 @@
+@@ -497,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
                    ((LevelChunk)p_203002_).m_62913_(false);
-+                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(p_203002_));
++                  net.minecraftforge.event.ForgeEventFactory.onChunkUnload(p_203002_);
                 }
  
                 this.m_140258_(p_203002_);
-@@ -685,7 +_,21 @@
+@@ -679,7 +_,21 @@
  
     private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
@@ -111,31 +150,30 @@
        }
  
     }
-@@ -710,11 +_,22 @@
-             levelchunk.m_62879_(() -> {
-                return ChunkLevel.m_287264_(p_140384_.m_140093_());
-             });
--            levelchunk.m_62952_();
-+            try {
-+               p_140384_.currentlyLoading = levelchunk; // Neo: bypass the future chain when getChunk is called, this prevents deadlocks.
-+               levelchunk.m_62952_();
-+            }  finally {
-+               p_140384_.currentlyLoading = null; // Neo: Stop bypassing the future chain.
-+            }
+@@ -707,8 +_,14 @@
+             levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
                 levelchunk.m_62913_(true);
 +               try {
-+               p_140384_.currentlyLoading = levelchunk; // Neo: bypass the future chain when getChunk is called, this prevents deadlocks.
++               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
                 levelchunk.m_156369_();
                 levelchunk.m_187958_(this.f_140133_);
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
++               net.minecraftforge.event.ForgeEventFactory.onChunkLoad(levelchunk, !(protochunk instanceof ImposterProtoChunk));
 +               } finally {
-+                   p_140384_.currentlyLoading = null; // Neo - Stop bypassing the future chain.
++                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
 +               }
              }
  
              return levelchunk;
-@@ -797,7 +_,7 @@
+@@ -756,6 +_,7 @@
+       for(ServerPlayer serverplayer : this.f_140149_.m_183926_()) {
+          if (serverplayer.m_292900_().m_293959_(chunkpos)) {
+             m_296018_(serverplayer, p_299599_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(serverplayer, p_299599_, this.f_140133_);
+          }
+       }
+ 
+@@ -801,7 +_,7 @@
        }
     }
  
@@ -144,32 +182,23 @@
        this.f_140138_.m_63796_(p_140259_.m_7697_());
        if (!p_140259_.m_6344_()) {
           return false;
-@@ -819,6 +_,7 @@
+@@ -823,6 +_,7 @@
  
              this.f_140133_.m_46473_().m_6174_("chunkSave");
              CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
++            net.minecraftforge.event.ForgeEventFactory.onChunkDataSave(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag);
              this.m_63502_(chunkpos, compoundtag);
              this.m_140229_(chunkpos, chunkstatus.m_62494_());
              return true;
-@@ -889,6 +_,7 @@
- 
-          if (!p_183759_ && p_183758_) {
-             p_183755_.m_9088_(p_183756_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
-          }
- 
+@@ -877,6 +_,7 @@
+       LevelChunk levelchunk = this.m_295187_(p_298062_.m_45588_());
+       if (levelchunk != null) {
+          m_296018_(p_297974_, levelchunk);
++         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_297974_, levelchunk, this.f_140133_);
        }
-@@ -946,7 +_,7 @@
  
-    private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
-       return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
--         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map((nbttagcompound) -> m_214947_(nbttagcompound));
-       }, Util.m_183991_());
     }
- 
-@@ -954,12 +_,27 @@
+@@ -955,11 +_,26 @@
        return this.m_188288_(this.f_140133_.m_46472_(), this.f_140137_, p_214948_, this.f_140136_.m_187743_());
     }
  
@@ -188,11 +217,10 @@
 +      double blockRange = (reducedRange0.getAndSet(false)) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
 +      // Spigot end
 +      // Mohist end
-       long i = p_183880_.m_45588_();
-       if (!this.f_140145_.m_140847_(i)) {
+       if (!this.f_140145_.m_140847_(p_183880_.m_45588_())) {
           return false;
        } else {
-          for(ServerPlayer serverplayer : this.f_140149_.m_183926_(i)) {
+          for(ServerPlayer serverplayer : this.f_140149_.m_183926_()) {
 +            this.mobSpawnRange.set(blockRange);
              if (this.m_183751_(serverplayer, p_183880_)) {
                 return true;
@@ -221,7 +249,23 @@
  
     private boolean m_140329_(ServerPlayer p_140330_) {
        return p_140330_.m_5833_() && !this.f_140133_.m_46469_().m_46207_(GameRules.f_46146_);
-@@ -1132,9 +_,10 @@
+@@ -1002,6 +_,7 @@
+    void m_140192_(ServerPlayer p_140193_, boolean p_140194_) {
+       boolean flag = this.m_140329_(p_140193_);
+       boolean flag1 = this.f_140149_.m_8260_(p_140193_);
++      int i = SectionPos.m_123171_(p_140193_.m_146903_());
+       if (p_140194_) {
+          this.f_140149_.m_8252_(p_140193_, flag);
+          this.m_140373_(p_140193_);
+@@ -1099,6 +_,7 @@
+             this.m_294841_(p_301380_, p_296566_);
+          }, (p_296568_) -> {
+             m_295122_(p_301380_, p_296568_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.f_140133_);
+          });
+          p_301380_.m_294756_(p_301057_);
+       }
+@@ -1118,9 +_,10 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -233,15 +277,7 @@
           if (i != 0) {
              int j = entitytype.m_20682_();
              if (this.f_140150_.containsKey(p_140200_.m_19879_())) {
-@@ -1282,6 +_,7 @@
-          }
-       }
- 
-+      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.f_140133_);
-    }
- 
-    protected PoiManager m_140424_() {
-@@ -1324,7 +_,7 @@
+@@ -1287,7 +_,7 @@
        public final Set<ServerPlayerConnection> f_140475_ = Sets.newIdentityHashSet();
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
@@ -250,10 +286,10 @@
           this.f_140472_ = p_140478_;
           this.f_140473_ = p_140479_;
           this.f_140474_ = SectionPos.m_235861_(p_140478_);
-@@ -1378,6 +_,12 @@
+@@ -1342,6 +_,12 @@
              double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
              double d2 = d0 * d0;
-             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
+             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_) && ChunkMap.this.m_295978_(p_140498_, this.f_140472_.m_146902_().f_45578_, this.f_140472_.m_146902_().f_45579_);
 +
 +            // CraftBukkit start - respect vanish API
 +            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {

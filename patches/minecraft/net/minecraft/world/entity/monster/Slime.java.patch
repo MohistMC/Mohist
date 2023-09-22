@@ -11,17 +11,17 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.particles.ParticleOptions;
-@@ -41,6 +_,9 @@
- import net.minecraft.world.level.WorldGenLevel;
+@@ -43,6 +_,9 @@
  import net.minecraft.world.level.levelgen.WorldgenRandom;
  import net.minecraft.world.phys.Vec3;
+ import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.SlimeSplitEvent;
  
  public class Slime extends Mob implements Enemy {
     private static final EntityDataAccessor<Integer> f_33582_ = SynchedEntityData.m_135353_(Slime.class, EntityDataSerializers.f_135028_);
-@@ -124,6 +_,8 @@
+@@ -130,6 +_,8 @@
        if (this.m_20096_() && !this.f_33583_) {
           int i = this.m_33632_();
  
@@ -30,7 +30,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
              float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
-@@ -175,6 +_,9 @@
+@@ -181,6 +_,9 @@
        return (EntityType<? extends Slime>)super.m_6095_();
     }
  
@@ -40,7 +40,7 @@
     public void m_142687_(Entity.RemovalReason p_149847_) {
        int i = this.m_33632_();
        if (!this.m_9236_().f_46443_ && i > 1 && this.m_21224_()) {
-@@ -184,6 +_,18 @@
+@@ -190,6 +_,18 @@
           int j = i / 2;
           int k = 2 + this.f_19796_.m_188503_(3);
  
@@ -59,7 +59,7 @@
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -198,7 +_,14 @@
+@@ -204,7 +_,14 @@
                 slime.m_20331_(this.m_20147_());
                 slime.m_7839_(j, true);
                 slime.m_7678_(this.m_20185_() + (double)f1, this.m_20186_() + 0.5D, this.m_20189_() + (double)f2, this.f_19796_.m_188501_() * 360.0F, 0.0F);
@@ -75,7 +75,7 @@
              }
           }
        }
-@@ -319,6 +_,12 @@
+@@ -329,6 +_,12 @@
     public EntityDimensions m_6972_(Pose p_33597_) {
        return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
     }

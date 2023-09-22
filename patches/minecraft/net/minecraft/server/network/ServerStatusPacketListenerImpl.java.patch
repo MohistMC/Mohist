@@ -76,7 +76,7 @@
 +         ServerStatus ping = new ServerStatus(
 +                 CraftChatMessage.fromString(event.getMotd(), true)[0],
 +                 Optional.of(playerSample),
-+                 Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.m_7630_(), SharedConstants.m_183709_().m_132495_())),
++                 Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.m_129786_(), SharedConstants.m_183709_().m_132495_())),
 +                 (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
 +                 server.m_214005_(),
 +                 Optional.of(new net.minecraftforge.network.ServerStatusPing())

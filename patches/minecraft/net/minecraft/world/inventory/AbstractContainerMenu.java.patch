@@ -187,10 +187,10 @@
              slot7.m_6654_();
 +            // CraftBukkit start - Make sure the client has the right slot contents
 +            if (p_150434_ instanceof ServerPlayer serverPlayer && slot7.m_6641_() != 64) {
-+               serverPlayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), slot7.f_40219_, slot7.m_7993_()));
++               serverPlayer.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), slot7.f_40219_, slot7.m_7993_()));
 +               // Updating a crafting inventory makes the client reset the result slot, have to send it again
 +               if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
-+                  serverPlayer.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
++                  serverPlayer.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
 +               }
 +            }
 +            // CraftBukkit end
@@ -242,7 +242,7 @@
              break;
           default:
              i = p_279172_.m_41613_();
-@@ -809,4 +_,13 @@
+@@ -807,4 +_,13 @@
        this.f_182405_ = this.f_182405_ + 1 & 32767;
        return this.f_182405_;
     }

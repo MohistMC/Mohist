@@ -20,7 +20,7 @@
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
  import java.util.stream.Collectors;
-@@ -118,6 +_,8 @@
+@@ -120,6 +_,8 @@
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
@@ -29,7 +29,7 @@
  import org.slf4j.Logger;
  
  public class Commands {
-@@ -193,7 +_,7 @@
+@@ -196,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -37,8 +37,8 @@
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           TestCommand.m_127946_(this.f_82090_);
           SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
-       }
-@@ -218,7 +_,14 @@
+          if (p_230943_.f_82145_) {
+@@ -224,7 +_,14 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -54,7 +54,7 @@
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
        });
-@@ -230,12 +_,62 @@
+@@ -236,12 +_,62 @@
        return new ParseResults<>(commandcontextbuilder1, p_242928_.getReader(), p_242928_.getExceptions());
     }
  
@@ -120,7 +120,7 @@
        CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
        commandsourcestack.m_81377_().m_129905_().m_6521_(() -> {
           return "/" + p_242841_;
-@@ -243,7 +_,16 @@
+@@ -249,7 +_,16 @@
  
        try {
           try {
@@ -138,7 +138,7 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -252,7 +_,7 @@
+@@ -258,7 +_,7 @@
              if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
                 int j = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 MutableComponent mutablecomponent1 = Component.m_237119_().m_130940_(ChatFormatting.GRAY).m_130938_((p_82134_) -> {
@@ -147,7 +147,7 @@
                 });
                 if (j > 10) {
                    mutablecomponent1.m_7220_(CommonComponents.f_238772_);
-@@ -295,17 +_,65 @@
+@@ -301,17 +_,65 @@
        }
     }
  
@@ -192,7 +192,7 @@
 +      }
 +      // CraftBukkit end
 +
-       p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
+       p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
     }
  
 +   public static <S> boolean canUse(CommandNode<S> node, S source) {

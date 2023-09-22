@@ -76,7 +76,7 @@
     public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 -      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
 +      if (BanItem.check(f_9245_)) {
-+         this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++         this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +         return;
 +      }
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_, p_215121_);
@@ -86,21 +86,21 @@
 +      if (!this.f_9245_.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
           this.m_215125_(p_215120_, false, p_215124_, "too far");
        } else if (p_215120_.m_123342_() >= p_215123_) {
-          this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+          this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
 @@ -132,16 +_,46 @@
        } else {
           if (p_215121_ == ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) {
              if (!this.f_9244_.m_7966_(this.f_9245_, p_215120_)) {
 +               // CraftBukkit start - fire PlayerInteractEvent
 +               CraftEventFactory.callPlayerInteractEvent(this.f_9245_, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
-                this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
                 this.m_215125_(p_215120_, false, p_215124_, "may not interact");
 -               return;
 -            }
 +               // Update any tile entity data for this block
 +               BlockEntity tileentity = f_9244_.m_7702_(p_215120_);
 +               if (tileentity != null) {
-+                  this.f_9245_.f_8906_.m_9829_(tileentity.m_58483_());
++                  this.f_9245_.f_8906_.m_141995_(tileentity.m_58483_());
 +               }
 +               // CraftBukkit end
 +               return;
@@ -110,11 +110,11 @@
 +            PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(this.f_9245_, Action.LEFT_CLICK_BLOCK, p_215120_, p_215122_, this.f_9245_.m_150109_().m_36056_(), InteractionHand.MAIN_HAND);
 +            if (eventCB.isCancelled()) {
 +               // Let the client know the block still exists
-+               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               // Update any tile entity data for this block
 +               BlockEntity tileentity = this.f_9244_.m_7702_(p_215120_);
 +               if (tileentity != null) {
-+                  this.f_9245_.f_8906_.m_9829_(tileentity.m_58483_());
++                  this.f_9245_.f_8906_.m_141995_(tileentity.m_58483_());
 +               }
 +               return;
 +            }
@@ -128,13 +128,13 @@
 +            // Spigot start - handle debug stick left click for non-creative
 +            if (this.f_9245_.m_21205_().m_150930_(net.minecraft.world.item.Items.f_42751_)
 +                    && ((net.minecraft.world.item.DebugStickItem) net.minecraft.world.item.Items.f_42751_).m_150802_(this.f_9245_, this.f_9244_.m_8055_(p_215120_), this.f_9244_, p_215120_, false, this.f_9245_.m_21205_())) {
-+               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               return;
 +            }
 +            // Spigot end
 +
              if (this.f_9245_.m_36187_(this.f_9244_, p_215120_, this.f_9247_)) {
-                this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+                this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
                 this.m_215125_(p_215120_, false, p_215124_, "block action restricted");
 @@ -151,11 +_,43 @@
              this.f_9250_ = this.f_9252_;
@@ -148,10 +148,10 @@
 +               if (data.m_60734_() instanceof DoorBlock) {
 +                  // For some reason *BOTH* the bottom/top part have to be marked updated.
 +                  boolean bottom = data.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
-+                  this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
-+                  this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, bottom ? p_215120_.m_7494_() : p_215120_.m_7495_()));
++                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, bottom ? p_215120_.m_7494_() : p_215120_.m_7495_()));
 +               } else if (data.m_60734_() instanceof TrapDoorBlock) {
-+                  this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               }
 +            } else if (!blockstate.m_60795_()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
@@ -162,7 +162,7 @@
 +            if (eventCB.useItemInHand() == Event.Result.DENY) {
 +               // If we 'insta destroyed' then the client needs to be informed.
 +               if (f > 1.0f) {
-+                  this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               }
 +               return;
 +            }
@@ -170,7 +170,7 @@
 +
 +            if (blockEvent.isCancelled()) {
 +               // Let the client know the block still exists
-+               this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
++               this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_215120_));
 +               return;
 +            }
 +            if (blockEvent.getInstaBreak()) {
@@ -315,15 +315,15 @@
 +         // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
 +         if (blockstate.m_60734_() instanceof DoorBlock) {
 +            boolean bottom = blockstate.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
-+            p_9266_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.m_7494_() : blockpos.m_7495_()));
++            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, bottom ? blockpos.m_7494_() : blockpos.m_7495_()));
 +         } else if (blockstate.m_60734_() instanceof CakeBlock) {
 +            p_9266_.getBukkitEntity().sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
 +         } else if (interactItemStack.m_41720_() instanceof DoubleHighBlockItem) {
 +            // send a correcting update to the client, as it already placed the upper half of the bisected item
-+            p_9266_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_121945_(p_9270_.m_82434_()).m_7494_()));
++            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_121945_(p_9270_.m_82434_()).m_7494_()));
 +
 +            // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
-+            p_9266_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_7494_()));
++            p_9266_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(p_9267_, blockpos.m_7494_()));
 +         }
 +         p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
 +         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;

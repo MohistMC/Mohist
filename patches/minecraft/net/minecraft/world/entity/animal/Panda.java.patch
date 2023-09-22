@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/animal/Panda.java
 +++ b/net/minecraft/world/entity/animal/Panda.java
-@@ -61,6 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -63,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
+ import org.joml.Vector3f;
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class Panda extends Animal {
     private static final EntityDataAccessor<Integer> f_29073_ = SynchedEntityData.m_135353_(Panda.class, EntityDataSerializers.f_135028_);
-@@ -506,7 +_,8 @@
+@@ -508,7 +_,8 @@
     }
  
     protected void m_7581_(ItemEntity p_29121_) {
@@ -18,7 +18,7 @@
           this.m_21053_(p_29121_);
           ItemStack itemstack = p_29121_.m_32055_();
           this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
-@@ -828,7 +_,7 @@
+@@ -834,7 +_,7 @@
  
        protected void m_5766_(Mob p_29295_, LivingEntity p_29296_) {
           if (p_29295_ instanceof Panda && p_29295_.m_5912_()) {

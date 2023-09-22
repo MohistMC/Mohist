@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CaveVinesBlock.java
++++ b/net/minecraft/world/level/block/CaveVinesBlock.java
+@@ -58,7 +_,7 @@
+       p_152993_.m_61104_(f_152949_);
+    }
+ 
+-   public boolean m_7370_(LevelReader p_256026_, BlockPos p_152971_, BlockState p_152972_) {
++   public boolean isValidBonemealTarget(LevelReader p_256026_, BlockPos p_152971_, BlockState p_152972_, boolean p_152973_) {
+       return !p_152972_.m_61143_(f_152949_);
+    }
+ 

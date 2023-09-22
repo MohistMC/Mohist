@@ -8,10 +8,10 @@
  import java.util.Objects;
  import java.util.function.Predicate;
  import net.minecraft.core.BlockPos;
-@@ -14,13 +_,19 @@
- import net.minecraft.world.level.block.ChiseledBookShelfBlock;
+@@ -15,13 +_,19 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
+ import net.minecraft.world.level.gameevent.GameEvent;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
@@ -29,7 +29,7 @@
  
     public ChiseledBookShelfBlockEntity(BlockPos p_249541_, BlockState p_251752_) {
        super(BlockEntityType.f_244310_, p_249541_, p_251752_);
-@@ -44,6 +_,7 @@
+@@ -46,6 +_,7 @@
     }
  
     public void m_142466_(CompoundTag p_249911_) {
@@ -37,7 +37,7 @@
        this.f_260576_.clear();
        ContainerHelper.m_18980_(p_249911_, this.f_260576_);
        this.f_262317_ = p_249911_.m_128451_("last_interacted_slot");
-@@ -78,7 +_,7 @@
+@@ -80,7 +_,7 @@
        ItemStack itemstack = Objects.requireNonNullElse(this.f_260576_.get(p_255828_), ItemStack.f_41583_);
        this.f_260576_.set(p_255828_, ItemStack.f_41583_);
        if (!itemstack.m_41619_()) {
@@ -46,16 +46,18 @@
        }
  
        return itemstack;
-@@ -91,7 +_,7 @@
+@@ -93,9 +_,7 @@
     public void m_6836_(int p_256610_, ItemStack p_255789_) {
        if (p_255789_.m_204117_(ItemTags.f_244646_)) {
           this.f_260576_.set(p_256610_, p_255789_);
 -         this.m_261204_(p_256610_);
+-      } else if (p_255789_.m_41619_()) {
+-         this.m_7407_(p_256610_, 1);
 +         if (f_58857_ != null) this.m_261204_(p_256610_); // CraftBukkit - SPIGOT-7381: check for null world
        }
  
     }
-@@ -107,7 +_,7 @@
+@@ -111,7 +_,7 @@
     }
  
     public int m_6893_() {
@@ -64,7 +66,7 @@
     }
  
     public boolean m_6542_(Player p_256481_) {
-@@ -118,7 +_,63 @@
+@@ -122,7 +_,63 @@
        return p_255922_.m_204117_(ItemTags.f_244646_) && this.m_8020_(p_256567_).m_41619_();
     }
  

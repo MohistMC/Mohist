@@ -46,11 +46,12 @@
  import net.minecraft.world.entity.boss.wither.WitherBoss;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
-@@ -117,14 +_,31 @@
+@@ -117,14 +_,32 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_20_R1.attribute.CraftAttributeMap;
 +import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
@@ -70,11 +71,11 @@
 -public abstract class LivingEntity extends Entity implements Attackable {
 +public abstract class LivingEntity extends Entity implements Attackable, net.minecraftforge.common.extensions.IForgeLivingEntity {
     private static final Logger f_201943_ = LogUtils.getLogger();
-    private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+    private static final String f_290660_ = "active_effects";
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
 +   private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
-    private static final AttributeModifier f_20960_ = new AttributeModifier(f_20929_, "Sprinting speed boost", (double)0.3F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier f_20960_ = new AttributeModifier(UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D"), "Sprinting speed boost", (double)0.3F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 +   private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
@@ -129,8 +130,8 @@
     }
  
     public static AttributeSupplier.Builder m_21183_() {
--      return AttributeSupplier.m_22244_().m_22266_(Attributes.f_22276_).m_22266_(Attributes.f_22278_).m_22266_(Attributes.f_22279_).m_22266_(Attributes.f_22284_).m_22266_(Attributes.f_22285_);
-+      return AttributeSupplier.m_22244_().m_22266_(Attributes.f_22276_).m_22266_(Attributes.f_22278_).m_22266_(Attributes.f_22279_).m_22266_(Attributes.f_22284_).m_22266_(Attributes.f_22285_).m_22266_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22266_(net.minecraftforge.common.ForgeMod.NAMETAG_DISTANCE.get()).m_22266_(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get()).m_22266_(net.minecraftforge.common.ForgeMod.STEP_HEIGHT_ADDITION.get());
+-      return AttributeSupplier.m_22244_().m_22266_(Attributes.f_22276_).m_22266_(Attributes.f_22278_).m_22266_(Attributes.f_22279_).m_22266_(Attributes.f_22284_).m_22266_(Attributes.f_22285_).m_22266_(Attributes.f_290864_);
++      return AttributeSupplier.m_22244_().m_22266_(Attributes.f_22276_).m_22266_(Attributes.f_22278_).m_22266_(Attributes.f_22279_).m_22266_(Attributes.f_22284_).m_22266_(Attributes.f_22285_).m_22266_(Attributes.f_290864_).m_22266_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22266_(net.minecraftforge.common.ForgeMod.NAMETAG_DISTANCE.get()).m_22266_(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get()).m_22266_(net.minecraftforge.common.ForgeMod.STEP_HEIGHT_ADDITION.get());
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
@@ -170,7 +171,7 @@
     public boolean m_6040_() {
        return this.m_6336_() == MobType.f_21641_;
     }
-@@ -352,8 +_,11 @@
+@@ -352,6 +_,9 @@
              }
           }
  
@@ -178,11 +179,8 @@
 +         net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, airSupply - m_7302_(airSupply), m_7305_(airSupply) - airSupply);
 +         if (false) // Forge: Handled in ForgeHooks#onLivingBreathe(LivingEntity, int, int)
           if (this.m_204029_(FluidTags.f_13131_) && !this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
--            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
-+            boolean flag1 = this.canDrownInFluidType(this.getEyeInFluidType()) && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
+             boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
              if (flag1) {
-                this.m_20301_(this.m_7302_(this.m_20146_()));
-                if (this.m_20146_() == -20) {
 @@ -387,7 +_,7 @@
           }
        }
@@ -192,7 +190,7 @@
           this.m_252836_();
        }
  
-@@ -635,12 +_,14 @@
+@@ -635,23 +_,34 @@
        return true;
     }
  
@@ -202,13 +200,19 @@
        boolean flag = p_238395_.m_41619_() && p_238394_.m_41619_();
        if (!flag && !ItemStack.m_150942_(p_238394_, p_238395_) && !this.f_19803_) {
           Equipable equipable = Equipable.m_269088_(p_238395_);
-          if (equipable != null && !this.m_5833_() && equipable.m_40402_() == p_238393_) {
--            if (!this.m_9236_().m_5776_() && !this.m_20067_()) {
+-         if (!this.m_9236_().m_5776_() && !this.m_5833_()) {
+-            if (!this.m_20067_() && equipable != null && equipable.m_40402_() == p_238393_) {
++         if (equipable != null && !this.m_5833_() && equipable.m_40402_() == p_238393_) {
 +            if (!this.m_9236_().m_5776_() && !this.m_20067_() && !silent0.getAndSet(false)) {
                 this.m_9236_().m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), equipable.m_150681_(), this.m_5720_(), 1.0F, 1.0F);
              }
  
-@@ -652,6 +_,15 @@
+             if (this.m_213772_(p_238393_)) {
+-               this.m_146850_(equipable != null ? GameEvent.f_157811_ : GameEvent.f_291275_);
++               this.m_146850_(GameEvent.f_157811_);
+             }
+          }
+ 
        }
     }
  
@@ -376,7 +380,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -908,25 +_,64 @@
+@@ -908,27 +_,64 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -398,6 +402,7 @@
           return false;
        } else {
           MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
+-         boolean flag = false;
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
 +         // CraftBukkit start
 +         boolean override = false;
@@ -416,16 +421,21 @@
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
-             return true;
+-            flag = true;
 -         } else if (mobeffectinstance.m_19558_(p_147208_)) {
++            return true;
 +         } else if (override) {
 +            mobeffectinstance.m_19558_(p_147208_);
              this.m_141973_(mobeffectinstance, true, p_147209_);
+-            flag = true;
 +            // CraftBukkit end
-             return true;
-          } else {
-             return false;
++            return true;
++         } else {
++            return false;
           }
+-
+-         p_147208_.m_292680_(this);
+-         return flag;
        }
     }
 +
@@ -436,13 +446,13 @@
 +   // Mohist end
  
     public boolean m_7301_(MobEffectInstance p_21197_) {
-+      net.minecraftforge.event.entity.living.MobEffectEvent.Applicable event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);
++      var event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +      if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -953,12 +_,35 @@
+@@ -955,12 +_,35 @@
        return this.m_6336_() == MobType.f_21641_;
     }
  
@@ -478,7 +488,7 @@
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -968,6 +_,12 @@
+@@ -970,6 +_,12 @@
        }
     }
  
@@ -491,7 +501,15 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.m_9236_().f_46443_) {
-@@ -1015,19 +_,54 @@
+@@ -994,7 +_,6 @@
+          MobEffect mobeffect = p_147192_.m_19544_();
+          mobeffect.m_6386_(this.m_21204_());
+          mobeffect.m_6385_(this.m_21204_(), p_147192_.m_19564_());
+-         this.m_292733_();
+       }
+ 
+       if (!this.m_9236_().f_46443_) {
+@@ -1041,19 +_,54 @@
  
     }
  
@@ -547,7 +565,7 @@
        this.f_19804_.m_135381_(f_20961_, Mth.m_14036_(p_21154_, 0.0F, this.m_21233_()));
     }
  
-@@ -1036,27 +_,30 @@
+@@ -1062,27 +_,30 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -577,7 +595,7 @@
 -            f1 = p_21017_;
 -            p_21017_ = 0.0F;
 +         if (false && p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
-+            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_21016_, p_21017_);
++            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = ForgeEventFactory.onShieldBlock(this, p_21016_, p_21017_);
 +            if(!ev.isCanceled()) {
 +            if(ev.shieldTakesDamage()) this.m_7909_(p_21017_);
 +            f1 = ev.getBlockedDamage();
@@ -585,7 +603,7 @@
              if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {
-@@ -1065,32 +_,45 @@
+@@ -1091,32 +_,45 @@
                 }
              }
  
@@ -636,7 +654,7 @@
              this.m_142642_(p_21016_, p_21017_);
              p_21017_ *= 0.75F;
           }
-@@ -1108,11 +_,10 @@
+@@ -1134,11 +_,10 @@
                 Player player1 = (Player)entity1;
                 this.f_20889_ = 100;
                 this.f_20888_ = player1;
@@ -651,7 +669,16 @@
                    if (livingentity2 instanceof Player) {
                       Player player = (Player)livingentity2;
                       this.f_20888_ = player;
-@@ -1171,7 +_,7 @@
+@@ -1160,7 +_,7 @@
+                this.m_5834_();
+             }
+ 
+-            if (entity1 != null && !p_21016_.m_269533_(DamageTypeTags.f_291118_)) {
++            if (entity1 != null && !p_21016_.m_269533_(DamageTypeTags.f_268415_)) {
+                double d0 = entity1.m_20185_() - this.m_20185_();
+ 
+                double d1;
+@@ -1197,7 +_,7 @@
           if (this instanceof ServerPlayer) {
              CriteriaTriggers.f_10574_.m_35174_((ServerPlayer)this, p_21016_, f, p_21017_, flag);
              if (f1 > 0.0F && f1 < 3.4028235E37F) {
@@ -660,7 +687,7 @@
              }
           }
  
-@@ -1197,31 +_,46 @@
+@@ -1223,32 +_,46 @@
        } else {
           ItemStack itemstack = null;
  
@@ -698,6 +725,7 @@
 +               // CraftBukkit end
 +               serverplayer.m_6278_(Stats.f_12982_.m_12902_(Items.f_42747_), 1);
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
+-               this.m_146850_(GameEvent.f_223697_);
              }
  
              this.m_21153_(1.0F);
@@ -718,7 +746,7 @@
        }
     }
  
-@@ -1278,6 +_,7 @@
+@@ -1305,6 +_,7 @@
     }
  
     public void m_6667_(DamageSource p_21014_) {
@@ -726,7 +754,7 @@
        if (!this.m_213877_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
-@@ -1315,17 +_,26 @@
+@@ -1342,17 +_,26 @@
        if (!this.m_9236_().f_46443_) {
           boolean flag = false;
           if (p_21269_ instanceof WitherBoss) {
@@ -757,7 +785,7 @@
                 this.m_9236_().m_7967_(itementity);
              }
           }
-@@ -1335,12 +_,9 @@
+@@ -1362,12 +_,9 @@
  
     protected void m_6668_(DamageSource p_21192_) {
        Entity entity = p_21192_.m_7639_();
@@ -773,7 +801,7 @@
  
        boolean flag = this.f_20889_ > 0;
        if (this.m_6125_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_)) {
-@@ -1350,6 +_,10 @@
+@@ -1377,6 +_,10 @@
  
        this.m_5907_();
        this.m_21226_();
@@ -784,7 +812,7 @@
     }
  
     protected void m_5907_() {
-@@ -1357,7 +_,8 @@
+@@ -1384,7 +_,8 @@
  
     protected void m_21226_() {
        if (this.m_9236_() instanceof ServerLevel && !this.m_217046_() && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_))) {
@@ -794,7 +822,7 @@
        }
  
     }
-@@ -1386,6 +_,11 @@
+@@ -1413,6 +_,11 @@
     }
  
     public void m_147240_(double p_147241_, double p_147242_, double p_147243_) {
@@ -806,7 +834,7 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-@@ -1445,6 +_,36 @@
+@@ -1474,6 +_,28 @@
        return p_21202_.m_41616_();
     }
  
@@ -832,18 +860,10 @@
 +   }
 +   // CraftBukkit end
 +
-+   public void m_6853_(boolean p_21182_) {
-+      super.m_6853_(p_21182_);
-+      if (p_21182_) {
-+         this.f_20957_ = Optional.empty();
-+      }
-+
-+   }
-+
     public Optional<BlockPos> m_21227_() {
        return this.f_20957_;
     }
-@@ -1455,15 +_,9 @@
+@@ -1484,15 +_,9 @@
        } else {
           BlockPos blockpos = this.m_20183_();
           BlockState blockstate = this.m_146900_();
@@ -862,7 +882,7 @@
        }
     }
  
-@@ -1483,12 +_,22 @@
+@@ -1512,12 +_,22 @@
     }
  
     public boolean m_142535_(float p_147187_, float p_147188_, DamageSource p_147189_) {
@@ -886,7 +906,7 @@
           return true;
        } else {
           return flag;
-@@ -1510,9 +_,10 @@
+@@ -1539,9 +_,10 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);
           int k = Mth.m_14107_(this.m_20189_());
@@ -899,7 +919,7 @@
              this.m_5496_(soundtype.m_56779_(), soundtype.m_56773_() * 0.5F, soundtype.m_56774_() * 0.75F);
           }
  
-@@ -1539,7 +_,7 @@
+@@ -1568,7 +_,7 @@
  
     protected float m_21161_(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.m_269533_(DamageTypeTags.f_268490_)) {
@@ -908,7 +928,7 @@
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  
-@@ -1556,14 +_,17 @@
+@@ -1585,14 +_,17 @@
              float f = p_21194_ * (float)j;
              float f1 = p_21194_;
              p_21194_ = Math.max(f / 25.0F, 0.0F);
@@ -930,7 +950,7 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1583,26 +_,183 @@
+@@ -1612,26 +_,183 @@
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
        if (!this.m_6673_(p_21240_)) {
@@ -974,7 +994,7 @@
 +         Function<Double, Double> blocking;
 +         boolean shieldTakesDamage = false;
 +         if (this.m_21275_(p_21240_)) {
-+            var shieldEvent = ForgeHooks.onShieldBlock(this, p_21240_, p_21241_);
++            var shieldEvent = ForgeEventFactory.onShieldBlock(this, p_21240_, p_21241_);
 +            if (!shieldEvent.isCanceled()) {
 +               var blocked = shieldEvent.getBlockedDamage();
 +               shieldTakesDamage = shieldEvent.shieldTakesDamage();
@@ -1132,7 +1152,7 @@
     }
  
     public CombatTracker m_21231_() {
-@@ -1627,9 +_,25 @@
+@@ -1660,9 +_,25 @@
     }
  
     public final void m_21317_(int p_21318_) {
@@ -1158,7 +1178,7 @@
     public final int m_21235_() {
        return this.f_19804_.m_135370_(f_20941_);
     }
-@@ -1651,6 +_,8 @@
+@@ -1684,6 +_,8 @@
     }
  
     public void m_21011_(InteractionHand p_21012_, boolean p_21013_) {
@@ -1167,20 +1187,20 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
-@@ -1761,8 +_,10 @@
+@@ -1794,8 +_,10 @@
  
     private void m_21312_() {
        ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
 -      this.m_8061_(EquipmentSlot.OFFHAND, this.m_6844_(EquipmentSlot.MAINHAND));
 -      this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
-+      var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
++      var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this);
 +      if (event.isCanceled()) return;
 +      this.m_8061_(EquipmentSlot.OFFHAND, event.getItemSwappedToOffHand());
 +      this.m_8061_(EquipmentSlot.MAINHAND, event.getItemSwappedToMainHand());
     }
  
     protected void m_6088_() {
-@@ -1770,6 +_,7 @@
+@@ -1803,6 +_,7 @@
     }
  
     protected void m_21203_() {
@@ -1188,7 +1208,7 @@
        int i = this.m_21304_();
        if (this.f_20911_) {
           ++this.f_20913_;
-@@ -1862,6 +_,12 @@
+@@ -1895,6 +_,12 @@
  
     public abstract ItemStack m_6844_(EquipmentSlot p_21127_);
  
@@ -1201,7 +1221,7 @@
     public abstract void m_8061_(EquipmentSlot p_21036_, ItemStack p_21037_);
  
     protected void m_181122_(ItemStack p_181123_) {
-@@ -1955,14 +_,17 @@
+@@ -1985,14 +_,17 @@
        }
  
        this.f_19812_ = true;
@@ -1221,7 +1241,7 @@
     }
  
     protected float m_6108_() {
-@@ -1976,13 +_,18 @@
+@@ -2006,13 +_,19 @@
     public void m_7023_(Vec3 p_21280_) {
        if (this.m_6109_()) {
           double d0 = 0.08D;
@@ -1229,9 +1249,10 @@
           boolean flag = this.m_20184_().f_82480_ <= 0.0D;
           if (flag && this.m_21023_(MobEffects.f_19591_)) {
 -            d0 = 0.01D;
-+            if (!gravity.m_22109_(SLOW_FALLING)) gravity.m_22118_(SLOW_FALLING);
++            if (!gravity.m_22109_(SLOW_FALLING))
++               gravity.m_22118_(SLOW_FALLING);
 +         } else if (gravity.m_22109_(SLOW_FALLING)) {
-+            gravity.m_22130_(SLOW_FALLING);
++            gravity.m_22120_(SLOW_FALLING.m_22209_());
           }
 +         d0 = gravity.m_22135_();
  
@@ -1242,7 +1263,7 @@
              double d9 = this.m_20186_();
              float f4 = this.m_20142_() ? 0.9F : this.m_6108_();
              float f5 = 0.02F;
-@@ -2004,6 +_,7 @@
+@@ -2034,6 +_,7 @@
                 f4 = 0.96F;
              }
  
@@ -1250,7 +1271,7 @@
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
-@@ -2017,6 +_,7 @@
+@@ -2047,6 +_,7 @@
              if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d9, vec32.f_82481_)) {
                 this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
              }
@@ -1258,7 +1279,7 @@
           } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
              double d8 = this.m_20186_();
              this.m_19920_(0.02F, p_21280_);
-@@ -2074,12 +_,12 @@
+@@ -2104,12 +_,12 @@
                 }
              }
  
@@ -1269,11 +1290,11 @@
           } else {
              BlockPos blockpos = this.m_20099_();
 -            float f2 = this.m_9236_().m_8055_(blockpos).m_60734_().m_49958_();
-+            float f2 = this.f_19853_.m_8055_(this.m_20099_()).getFriction(f_19853_, this.m_20099_(), this);
++            float f2 = this.m_9236_().m_8055_(this.m_20099_()).getFriction(m_9236_(), this.m_20099_(), this);
              float f3 = this.m_20096_() ? f2 * 0.91F : 0.91F;
              Vec3 vec35 = this.m_21074_(p_21280_, f2);
              double d2 = vec35.f_82480_;
-@@ -2175,7 +_,7 @@
+@@ -2205,7 +_,7 @@
           double d0 = Mth.m_14008_(p_21298_.f_82479_, (double)-0.15F, (double)0.15F);
           double d1 = Mth.m_14008_(p_21298_.f_82481_, (double)-0.15F, (double)0.15F);
           double d2 = Math.max(p_21298_.f_82480_, (double)-0.15F);
@@ -1282,7 +1303,7 @@
              d2 = 0.0D;
           }
  
-@@ -2207,6 +_,7 @@
+@@ -2237,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -1290,8 +1311,8 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
-@@ -2328,7 +_,7 @@
- 
+@@ -2359,7 +_,7 @@
+       this.m_292733_();
     }
  
 -   private void m_21315_() {
@@ -1299,7 +1320,7 @@
        Map<EquipmentSlot, ItemStack> map = this.m_21319_();
        if (map != null) {
           this.m_21091_(map);
-@@ -2358,6 +_,7 @@
+@@ -2389,6 +_,7 @@
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);
           if (this.m_246525_(itemstack, itemstack1)) {
@@ -1307,22 +1328,23 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2503,6 +_,9 @@
+@@ -2527,6 +_,10 @@
        this.m_9236_().m_46473_().m_6180_("jump");
        if (this.f_20899_ && this.m_6129_()) {
-          double d7;
-+         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
-+         if (!fluidType.isAir()) d7 = this.getFluidTypeHeight(fluidType);
+          double d3;
++         var fluidType = this.getMaxHeightFluidType();
++         if (!fluidType.isAir())
++            d3 = this.getFluidTypeHeight(fluidType);
 +         else
           if (this.m_20077_()) {
-             d7 = this.m_204036_(FluidTags.f_13132_);
+             d3 = this.m_204036_(FluidTags.f_13132_);
           } else {
-@@ -2513,15 +_,17 @@
-          double d8 = this.m_20204_();
-          if (!flag || this.m_20096_() && !(d7 > d8)) {
-             if (!this.m_20077_() || this.m_20096_() && !(d7 > d8)) {
-+               if (fluidType.isAir() || this.m_20096_() && !(d7 > d8)) {
-                if ((this.m_20096_() || flag && d7 <= d8) && this.f_20954_ == 0) {
+@@ -2537,15 +_,17 @@
+          double d4 = this.m_20204_();
+          if (!flag || this.m_20096_() && !(d3 > d4)) {
+             if (!this.m_20077_() || this.m_20096_() && !(d3 > d4)) {
++               if (fluidType.isAir() || this.m_20096_() && !(d3 > d4)) {
+                if ((this.m_20096_() || flag && d3 <= d4) && this.f_20954_ == 0) {
                    this.m_6135_();
                    this.f_20954_ = 10;
                 }
@@ -1337,7 +1359,7 @@
           }
        } else {
           this.f_20954_ = 0;
-@@ -2587,9 +_,12 @@
+@@ -2611,9 +_,12 @@
     }
  
     private void m_21323_() {
@@ -1350,7 +1372,7 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
-@@ -2611,6 +_,7 @@
+@@ -2635,6 +_,7 @@
        }
  
        if (!this.m_9236_().f_46443_) {
@@ -1358,78 +1380,7 @@
           this.m_20115_(7, flag);
        }
  
-@@ -2620,12 +_,12 @@
-    }
- 
-    protected void m_6138_() {
--      if (this.m_9236_().m_5776_()) {
--         this.m_9236_().m_142425_(EntityTypeTest.m_156916_(Player.class), this.m_20191_(), EntitySelector.m_20421_(this)).forEach(this::m_7324_);
-+      if (this.f_19853_.m_5776_()) {
-+         this.f_19853_.m_142425_(EntityTypeTest.m_156916_(Player.class), this.m_20191_(), EntitySelector.m_20421_(this)).forEach(this::m_7324_);
-       } else {
--         List<Entity> list = this.m_9236_().m_6249_(this, this.m_20191_(), EntitySelector.m_20421_(this));
-+         List<Entity> list = this.f_19853_.m_6249_(this, this.m_20191_(), EntitySelector.m_20421_(this));
-          if (!list.isEmpty()) {
--            int i = this.m_9236_().m_46469_().m_46215_(GameRules.f_46149_);
-+            int i = this.f_19853_.m_46469_().m_46215_(GameRules.f_46149_);
-             if (i > 0 && list.size() > i - 1 && this.f_19796_.m_188503_(4) == 0) {
-                int j = 0;
- 
-@@ -2651,7 +_,7 @@
- 
-    protected void m_21071_(AABB p_21072_, AABB p_21073_) {
-       AABB aabb = p_21072_.m_82367_(p_21073_);
--      List<Entity> list = this.m_9236_().m_45933_(this, aabb);
-+      List<Entity> list = this.f_19853_.m_45933_(this, aabb);
-       if (!list.isEmpty()) {
-          for(int i = 0; i < list.size(); ++i) {
-             Entity entity = list.get(i);
-@@ -2666,7 +_,7 @@
-          this.f_20938_ = 0;
-       }
- 
--      if (!this.m_9236_().f_46443_ && this.f_20938_ <= 0) {
-+      if (!this.f_19853_.f_46443_ && this.f_20938_ <= 0) {
-          this.m_21155_(4, false);
-       }
- 
-@@ -2686,7 +_,7 @@
-    public void m_8127_() {
-       Entity entity = this.m_20202_();
-       super.m_8127_();
--      if (entity != null && entity != this.m_20202_() && !this.m_9236_().f_46443_) {
-+      if (entity != null && entity != this.m_20202_() && !this.f_19853_.f_46443_) {
-          this.m_21028_(entity);
-       }
- 
-@@ -2726,14 +_,14 @@
-    }
- 
-    public void m_7938_(Entity p_21030_, int p_21031_) {
--      if (!p_21030_.m_213877_() && !this.m_9236_().f_46443_ && (p_21030_ instanceof ItemEntity || p_21030_ instanceof AbstractArrow || p_21030_ instanceof ExperienceOrb)) {
--         ((ServerLevel)this.m_9236_()).m_7726_().m_8445_(p_21030_, new ClientboundTakeItemEntityPacket(p_21030_.m_19879_(), this.m_19879_(), p_21031_));
-+      if (!p_21030_.m_213877_() && !this.f_19853_.f_46443_ && (p_21030_ instanceof ItemEntity || p_21030_ instanceof AbstractArrow || p_21030_ instanceof ExperienceOrb)) {
-+         ((ServerLevel)this.f_19853_).m_7726_().m_8445_(p_21030_, new ClientboundTakeItemEntityPacket(p_21030_.m_19879_(), this.m_19879_(), p_21031_));
-       }
- 
-    }
- 
-    public boolean m_142582_(Entity p_147185_) {
--      if (p_147185_.m_9236_() != this.m_9236_()) {
-+      if (p_147185_.f_19853_ != this.f_19853_) {
-          return false;
-       } else {
-          Vec3 vec3 = new Vec3(this.m_20185_(), this.m_20188_(), this.m_20189_());
-@@ -2741,7 +_,7 @@
-          if (vec31.m_82554_(vec3) > 128.0D) {
-             return false;
-          } else {
--            return this.m_9236_().m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).m_6662_() == HitResult.Type.MISS;
-+            return this.f_19853_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).m_6662_() == HitResult.Type.MISS;
-          }
-       }
-    }
-@@ -2760,12 +_,19 @@
+@@ -2802,12 +_,19 @@
     }
  
     public boolean m_6087_() {
@@ -1452,7 +1403,7 @@
  
     public float m_6080_() {
        return this.f_20885_;
-@@ -2821,23 +_,28 @@
+@@ -2863,8 +_,11 @@
  
     private void m_21329_() {
        if (this.m_6117_()) {
@@ -1466,27 +1417,24 @@
              this.m_142106_(this.f_20935_);
           } else {
              this.m_5810_();
-          }
-       }
--
+@@ -2874,12 +_,15 @@
     }
  
     protected void m_142106_(ItemStack p_147201_) {
--      p_147201_.m_41731_(this.m_9236_(), this, this.m_21212_());
 +      if (!p_147201_.m_41619_())
-+         this.f_20936_ = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, p_147201_, this.m_21212_());
++          this.f_20936_ = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, p_147201_, this.m_21212_());
 +      if (this.m_21212_() > 0)
-+         p_147201_.m_41731_(this.f_19853_, this, this.m_21212_());
+       p_147201_.m_41731_(this.m_9236_(), this, this.m_21212_());
        if (this.m_21332_()) {
           this.m_21137_(p_147201_, 5);
        }
  
 -      if (--this.f_20936_ == 0 && !this.m_9236_().f_46443_ && !p_147201_.m_41781_()) {
-+      if (--this.f_20936_ <= 0 && !this.f_19853_.f_46443_ && !p_147201_.m_41781_()) {
++      if (--this.f_20936_ <= 0 && !this.m_9236_().f_46443_ && !p_147201_.m_41781_()) {
           this.m_8095_();
        }
  
-@@ -2845,7 +_,7 @@
+@@ -2887,7 +_,7 @@
  
     private boolean m_21332_() {
        int i = this.m_21212_();
@@ -1495,7 +1443,7 @@
        boolean flag = foodproperties != null && foodproperties.m_38748_();
        flag |= i <= this.f_20935_.m_41779_() - 7;
        return flag && i % 4 == 0;
-@@ -2875,8 +_,11 @@
+@@ -2917,8 +_,11 @@
     public void m_6672_(InteractionHand p_21159_) {
        ItemStack itemstack = this.m_21120_(p_21159_);
        if (!itemstack.m_41619_() && !this.m_6117_()) {
@@ -1508,7 +1456,7 @@
           if (!this.m_9236_().f_46443_) {
              this.m_21155_(1, true);
              this.m_21155_(2, p_21159_ == InteractionHand.OFF_HAND);
-@@ -2937,6 +_,9 @@
+@@ -2979,6 +_,9 @@
           vec31 = vec31.m_82496_(-this.m_146909_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82524_(-this.m_146908_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82520_(this.m_20185_(), this.m_20188_(), this.m_20189_());
@@ -1518,7 +1466,7 @@
           this.m_9236_().m_7106_(new ItemParticleOption(ParticleTypes.f_123752_, p_21061_), vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, vec3.f_82479_, vec3.f_82480_ + 0.05D, vec3.f_82481_);
        }
  
-@@ -2950,7 +_,29 @@
+@@ -2992,7 +_,29 @@
           } else {
              if (!this.f_20935_.m_41619_() && this.m_6117_()) {
                 this.m_21137_(this.f_20935_, 16);
@@ -1549,7 +1497,7 @@
                 if (itemstack != this.f_20935_) {
                    this.m_21008_(interactionhand, itemstack);
                 }
-@@ -2976,7 +_,11 @@
+@@ -3018,7 +_,11 @@
  
     public void m_21253_() {
        if (!this.f_20935_.m_41619_()) {
@@ -1561,7 +1509,7 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
-@@ -2986,6 +_,7 @@
+@@ -3028,6 +_,7 @@
     }
  
     public void m_5810_() {
@@ -1569,7 +1517,7 @@
        if (!this.m_9236_().f_46443_) {
           boolean flag = this.m_6117_();
           this.m_21155_(1, false);
-@@ -3001,7 +_,7 @@
+@@ -3043,7 +_,7 @@
     public boolean m_21254_() {
        if (this.m_6117_() && !this.f_20935_.m_41619_()) {
           Item item = this.f_20935_.m_41720_();
@@ -1578,7 +1526,7 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -3028,12 +_,17 @@
+@@ -3070,12 +_,17 @@
     }
  
     public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
@@ -1598,7 +1546,7 @@
        Level level = this.m_9236_();
        if (level.m_46805_(blockpos)) {
           boolean flag1 = false;
-@@ -3050,18 +_,39 @@
+@@ -3092,18 +_,39 @@
           }
  
           if (flag1) {
@@ -1642,7 +1590,7 @@
              level.m_7605_(this, (byte)46);
           }
  
-@@ -3069,7 +_,7 @@
+@@ -3111,7 +_,7 @@
              ((PathfinderMob)this).m_21573_().m_26573_();
           }
  
@@ -1651,7 +1599,7 @@
        }
     }
  
-@@ -3127,8 +_,8 @@
+@@ -3174,8 +_,8 @@
        }
  
        BlockState blockstate = this.m_9236_().m_8055_(p_21141_);
@@ -1662,12 +1610,12 @@
        }
  
        this.m_20124_(Pose.SLEEPING);
-@@ -3144,16 +_,16 @@
+@@ -3191,16 +_,16 @@
  
     private boolean m_21334_() {
-       return this.m_21257_().map((p_289310_) -> {
--         return this.m_9236_().m_8055_(p_289310_).m_60734_() instanceof BedBlock;
-+         return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_289310_);
+       return this.m_21257_().map((p_296657_) -> {
+-         return this.m_9236_().m_8055_(p_296657_).m_60734_() instanceof BedBlock;
++         return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_296657_);
        }).orElse(false);
     }
  
@@ -1682,7 +1630,7 @@
              Vec3 vec31 = BedBlock.m_260958_(this.m_6095_(), this.m_9236_(), p_261435_, direction, this.m_146908_()).orElseGet(() -> {
                 BlockPos blockpos = p_261435_.m_7494_();
                 return new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.1D, (double)blockpos.m_123343_() + 0.5D);
-@@ -3175,7 +_,9 @@
+@@ -3222,7 +_,9 @@
     @Nullable
     public Direction m_21259_() {
        BlockPos blockpos = this.m_21257_().orElse((BlockPos)null);
@@ -1693,7 +1641,7 @@
     }
  
     public boolean m_5830_() {
-@@ -3191,7 +_,7 @@
+@@ -3238,7 +_,7 @@
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
@@ -1702,7 +1650,7 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3211,9 +_,9 @@
+@@ -3258,9 +_,9 @@
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
        Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
@@ -1714,7 +1662,7 @@
              }
           }
        }
-@@ -3247,6 +_,64 @@
+@@ -3294,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
  
@@ -1779,7 +1727,7 @@
     public AABB m_6921_() {
        if (this.m_6844_(EquipmentSlot.HEAD).m_150930_(Items.f_42683_)) {
           float f = 0.5F;
-@@ -3257,6 +_,8 @@
+@@ -3304,6 +_,8 @@
     }
  
     public static EquipmentSlot m_147233_(ItemStack p_147234_) {
@@ -1788,7 +1736,7 @@
        Equipable equipable = Equipable.m_269088_(p_147234_);
        return equipable != null ? equipable.m_40402_() : EquipmentSlot.MAINHAND;
     }
-@@ -3334,4 +_,9 @@
+@@ -3393,4 +_,9 @@
  
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
     }

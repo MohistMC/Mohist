@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/level/block/ChiseledBookShelfBlock.java
 +++ b/net/minecraft/world/level/block/ChiseledBookShelfBlock.java
+@@ -2,7 +_,6 @@
+ 
+ import java.util.List;
+ import java.util.Optional;
+-import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.sounds.SoundEvent;
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.phys.BlockHitResult;
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
++import org.jetbrains.annotations.Nullable;
+ 
+ public class ChiseledBookShelfBlock extends BaseEntityBlock {
+    private static final int f_260522_ = 6;
 @@ -112,7 +_,7 @@
        }
     }
@@ -9,3 +25,13 @@
        int i = p_261991_.f_82471_ >= 0.5F ? 0 : 1;
        int j = m_261181_(p_261991_.f_82470_);
        return j + i * 3;
+@@ -155,8 +_,7 @@
+       }
+    }
+ 
+-   @Nullable
+-   public BlockEntity m_142194_(BlockPos p_250440_, BlockState p_248729_) {
++   public @Nullable BlockEntity m_142194_(BlockPos p_250440_, BlockState p_248729_) {
+       return new ChiseledBookShelfBlockEntity(p_250440_, p_248729_);
+    }
+ 

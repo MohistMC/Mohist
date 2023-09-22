@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Vex.java
 +++ b/net/minecraft/world/entity/monster/Vex.java
-@@ -52,8 +_,8 @@
+@@ -49,12 +_,13 @@
+    public static final int f_149864_ = Mth.m_14167_(3.9269907F);
+    protected static final EntityDataAccessor<Byte> f_33977_ = SynchedEntityData.m_135353_(Vex.class, EntityDataSerializers.f_135027_);
+    private static final int f_149865_ = 1;
++   private static final double RIDING_OFFSET = 0.4D;
+    @Nullable
     Mob f_33980_;
     @Nullable
     private BlockPos f_33981_;
@@ -11,7 +16,7 @@
  
     public Vex(EntityType<? extends Vex> p_33984_, Level p_33985_) {
        super(p_33984_, p_33985_);
-@@ -280,7 +_,7 @@
+@@ -285,7 +_,7 @@
        }
  
        public void m_8056_() {

@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/item/crafting/SmokingRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmokingRecipe.java
-@@ -1,8 +_,14 @@
- package net.minecraft.world.item.crafting;
+@@ -2,6 +_,12 @@
  
-+import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
- import net.minecraft.resources.ResourceLocation;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
++import org.bukkit.NamespacedKey;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftRecipe;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftSmokingRecipe;
@@ -14,21 +12,18 @@
 +import org.bukkit.inventory.Recipe;
  
  public class SmokingRecipe extends AbstractCookingRecipe {
-    public SmokingRecipe(ResourceLocation p_249711_, String p_249312_, CookingBookCategory p_251017_, Ingredient p_252345_, ItemStack p_250002_, float p_250535_, int p_251222_) {
-@@ -16,4 +_,20 @@
+    public SmokingRecipe(String p_249312_, CookingBookCategory p_251017_, Ingredient p_252345_, ItemStack p_250002_, float p_250535_, int p_251222_) {
+@@ -15,4 +_,17 @@
     public RecipeSerializer<?> m_7707_() {
        return RecipeSerializer.f_44093_;
     }
 +
 +   // CraftBukkit start
 +   @Override
-+   public Recipe toBukkitRecipe() {
-+      if (this.f_43730_.m_41619_()) {
-+         return new MohistSpecialRecipe(this);
-+      }
++   public Recipe toBukkitRecipe(NamespacedKey id) {
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.f_43730_);
 +
-+      CraftSmokingRecipe recipe = new CraftSmokingRecipe(CraftNamespacedKey.fromMinecraft(this.f_43727_), result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
++      CraftSmokingRecipe recipe = new CraftSmokingRecipe(id, result, CraftRecipe.toBukkit(this.f_43729_), this.f_43731_, this.f_43732_);
 +      recipe.setGroup(this.f_43728_);
 +      recipe.setCategory(CraftRecipe.getCategory(this.m_245534_()));
 +

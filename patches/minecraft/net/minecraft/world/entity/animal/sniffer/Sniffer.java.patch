@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 +++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-@@ -29,6 +_,7 @@
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.AgeableMob;
- import net.minecraft.world.entity.AnimationState;
-+import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityDimensions;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.Mob;
-@@ -79,14 +_,23 @@
+@@ -81,14 +_,23 @@
  
     public Sniffer(EntityType<? extends Animal> p_273717_, Level p_273562_) {
        super(p_273717_, p_273562_);
@@ -34,7 +26,7 @@
     protected float m_6431_(Pose p_272721_, EntityDimensions p_273353_) {
        return this.m_6972_(p_272721_).f_20378_ * 0.6F;
     }
-@@ -136,7 +_,7 @@
+@@ -134,7 +_,7 @@
        return this.m_20182_().m_82549_(this.m_20156_().m_82490_(2.25D));
     }
  
@@ -43,7 +35,7 @@
        return this.f_19804_.m_135370_(f_271416_);
     }
  
-@@ -229,7 +_,7 @@
+@@ -227,7 +_,7 @@
        return this;
     }
  
@@ -51,17 +43,17 @@
 +   public Optional<BlockPos> m_271905_() {
        return IntStream.range(0, 5).mapToObj((p_273771_) -> {
           return LandRandomPos.m_148488_(this, 10 + 2 * p_273771_, 3);
-       }).filter(Objects::nonNull).map(BlockPos::m_274446_).filter((p_289451_) -> {
-@@ -237,7 +_,7 @@
+       }).filter(Objects::nonNull).map(BlockPos::m_274446_).filter((p_296816_) -> {
+@@ -235,7 +_,7 @@
        }).map(BlockPos::m_7495_).filter(this::m_271898_).findFirst();
     }
  
 -   boolean m_272270_() {
 +   public boolean m_272270_() {
-       return !this.m_272223_() && !this.m_278663_() && !this.m_6162_() && !this.m_20069_() && this.m_20096_() && !this.m_20159_() && this.m_271898_(this.m_284345_().m_7495_());
+       return !this.m_293628_() && !this.m_278663_() && !this.m_6162_() && !this.m_20069_() && this.m_20096_() && !this.m_20159_() && this.m_271898_(this.m_284345_().m_7495_());
     }
  
-@@ -277,7 +_,7 @@
+@@ -275,7 +_,7 @@
              }
  
              if (this.f_19797_ % 10 == 0) {
@@ -70,7 +62,7 @@
              }
           }
        }
-@@ -289,14 +_,14 @@
+@@ -287,14 +_,14 @@
        return this;
     }
  

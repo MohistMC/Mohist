@@ -536,12 +536,12 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return ImmutableSet.of();
     }
 
-    private Collection<net.minecraft.world.item.crafting.Recipe<?>> bukkitKeysToMinecraftRecipes(Collection<NamespacedKey> recipeKeys) {
-        Collection<net.minecraft.world.item.crafting.Recipe<?>> recipes = new ArrayList<>();
+    private Collection<net.minecraft.world.item.crafting.RecipeHolder<?>> bukkitKeysToMinecraftRecipes(Collection<NamespacedKey> recipeKeys) {
+        Collection<net.minecraft.world.item.crafting.RecipeHolder<?>> recipes = new ArrayList<>();
         RecipeManager manager = getHandle().level.getServer().getRecipeManager();
 
         for (NamespacedKey recipeKey : recipeKeys) {
-            Optional<? extends net.minecraft.world.item.crafting.Recipe<?>> recipe = manager.byKey(CraftNamespacedKey.toMinecraft(recipeKey));
+            Optional<? extends net.minecraft.world.item.crafting.RecipeHolder<?>> recipe = manager.byKey(CraftNamespacedKey.toMinecraft(recipeKey));
             if (!recipe.isPresent()) {
                 continue;
             }

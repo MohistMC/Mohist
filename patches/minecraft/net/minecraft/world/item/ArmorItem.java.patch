@@ -16,8 +16,8 @@
           ItemStack itemstack = p_40400_.m_41620_(1);
 -         livingentity.m_8061_(equipmentslot, itemstack);
 +         // CraftBukkit start
-+         Level world = p_40399_.m_7727_();
-+         org.bukkit.block.Block block = CraftBlock.at(world, p_40399_.m_7961_());
++         Level world = p_40399_.f_301782_();
++         org.bukkit.block.Block block = CraftBlock.at(world, p_40399_.f_301784_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +
 +         BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity) livingentity.getBukkitEntity());

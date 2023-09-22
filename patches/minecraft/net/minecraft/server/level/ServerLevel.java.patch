@@ -43,14 +43,6 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.particles.ParticleOptions;
  import net.minecraft.core.registries.BuiltInRegistries;
-@@ -94,7 +_,6 @@
- import net.minecraft.world.entity.animal.Animal;
- import net.minecraft.world.entity.animal.WaterAnimal;
- import net.minecraft.world.entity.animal.horse.SkeletonHorse;
--import net.minecraft.world.entity.boss.EnderDragonPart;
- import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
- import net.minecraft.world.entity.npc.Npc;
- import net.minecraft.world.entity.player.Player;
 @@ -114,6 +_,7 @@
  import net.minecraft.world.level.StructureManager;
  import net.minecraft.world.level.WorldGenLevel;
@@ -181,9 +173,9 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,9 @@
-             return new RandomSequences(i);
-          }, "random_sequences");
+@@ -232,6 +_,9 @@
+       this.f_286969_ = Objects.requireNonNullElseGet(p_288977_, () -> {
+          return this.m_8895_().m_164861_(RandomSequences.m_295760_(i), "random_sequences");
        });
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
@@ -191,7 +183,7 @@
     }
  
     /** @deprecated */
-@@ -274,12 +_,20 @@
+@@ -266,12 +_,20 @@
        this.m_184096_();
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
@@ -215,7 +207,7 @@
           if (this.m_46469_().m_46207_(GameRules.f_46150_) && this.m_46471_()) {
              this.m_184097_();
           }
-@@ -305,7 +_,7 @@
+@@ -297,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -224,7 +216,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -318,6 +_,7 @@
+@@ -310,6 +_,7 @@
              profilerfiller.m_7238_();
           }
  
@@ -232,7 +224,7 @@
           this.f_143243_.m_156910_((p_184065_) -> {
              if (!p_184065_.m_213877_()) {
                 if (this.m_143342_(p_184065_)) {
-@@ -337,7 +_,9 @@
+@@ -329,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -243,7 +235,7 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -401,7 +_,7 @@
+@@ -393,7 +_,7 @@
        int j = chunkpos.m_45605_();
        ProfilerFiller profilerfiller = this.m_46473_();
        profilerfiller.m_6180_("thunder");
@@ -252,7 +244,7 @@
           BlockPos blockpos = this.m_143288_(this.m_46496_(i, 0, j, 15));
           if (this.m_46758_(blockpos)) {
              DifficultyInstance difficultyinstance = this.m_6436_(blockpos);
-@@ -412,7 +_,8 @@
+@@ -404,7 +_,8 @@
                    skeletonhorse.m_30923_(true);
                    skeletonhorse.m_146762_(0);
                    skeletonhorse.m_6034_((double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_());
@@ -262,7 +254,7 @@
                 }
              }
  
-@@ -420,7 +_,7 @@
+@@ -412,16 +_,42 @@
              if (lightningbolt != null) {
                 lightningbolt.m_20219_(Vec3.m_82539_(blockpos));
                 lightningbolt.m_20874_(flag1);
@@ -271,30 +263,53 @@
              }
           }
        }
-@@ -430,8 +_,9 @@
-          BlockPos blockpos1 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
-          BlockPos blockpos2 = blockpos1.m_7495_();
-          Biome biome = this.m_204166_(blockpos1).m_203334_();
+ 
+       profilerfiller.m_6182_("iceandsnow");
+-
+-      for(int i1 = 0; i1 < p_8716_; ++i1) {
+-         if (this.f_46441_.m_188503_(48) == 0) {
+-            this.m_293428_(flag, this.m_46496_(i, 0, j, 15));
++      if (this.f_46441_.m_188503_(16) == 0) {
++         BlockPos blockpos1 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
++         BlockPos blockpos2 = blockpos1.m_7495_();
++         Biome biome = this.m_204166_(blockpos1).m_203334_();
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-          if (biome.m_47477_(this, blockpos2)) {
--            this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
++         if (biome.m_47477_(this, blockpos2)) {
 +            CraftEventFactory.handleBlockFormEvent(this, blockpos2, Blocks.f_50126_.m_49966_(), null); // CraftBukkit
-          }
- 
-          if (flag) {
-@@ -443,10 +_,10 @@
-                   if (k < Math.min(i1, 8)) {
-                      BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(k + 1));
-                      Block.m_49897_(blockstate, blockstate1, this, blockpos1);
--                     this.m_46597_(blockpos1, blockstate1);
++         }
++
++         if (flag) {
++            int i1 = this.m_46469_().m_46215_(GameRules.f_254637_);
++            if (i1 > 0 && biome.m_47519_(this, blockpos1)) {
++               BlockState blockstate = this.m_8055_(blockpos1);
++               if (blockstate.m_60713_(Blocks.f_50125_)) {
++                  int k = blockstate.m_61143_(SnowLayerBlock.f_56581_);
++                  if (k < Math.min(i1, 8)) {
++                     BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(k + 1));
++                     Block.m_49897_(blockstate, blockstate1, this, blockpos1);
 +                     CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null); // CraftBukkit
-                   }
-                } else {
--                  this.m_46597_(blockpos1, Blocks.f_50125_.m_49966_());
++                  }
++               } else {
 +                  CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.f_50125_.m_49966_(), null); // CraftBukkit
-                }
-             }
++               }
++            }
++
++            Biome.Precipitation biome$precipitation = biome.m_264600_(blockpos2);
++            if (biome$precipitation != Biome.Precipitation.NONE) {
++               BlockState blockstate3 = this.m_8055_(blockpos2);
++               blockstate3.m_60734_().m_141997_(blockstate3, this, blockpos2, biome$precipitation);
++            }
+          }
+       }
  
+@@ -461,6 +_,7 @@
+       BlockPos blockpos = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, p_300602_);
+       BlockPos blockpos1 = blockpos.m_7495_();
+       Biome biome = this.m_204166_(blockpos).m_203334_();
++      if (this.isAreaLoaded(blockpos1, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+       if (biome.m_47477_(this, blockpos1)) {
+          this.m_46597_(blockpos1, Blocks.f_50126_.m_49966_());
+       }
 @@ -633,24 +_,39 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
@@ -381,7 +396,7 @@
           if (p_8644_ != null) {
              p_8644_.m_6309_(Component.m_237115_("menu.savingLevel"));
           }
-@@ -736,12 +_,13 @@
+@@ -736,6 +_,7 @@
              this.f_143244_.m_157554_();
           }
  
@@ -389,13 +404,6 @@
        }
     }
  
-    private void m_8806_() {
-       if (this.f_8559_ != null) {
--         this.f_8548_.m_129910_().m_5915_(this.f_8559_.m_289745_());
-+         this.K.m_5915_(this.f_8559_.m_289745_());
-       }
- 
-       this.m_7726_().m_8483_().m_78151_();
 @@ -807,10 +_,28 @@
        return this.m_8872_(p_8848_);
     }
@@ -432,7 +440,7 @@
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_8854_, this))) return;
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
-          f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
+          f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_());
 @@ -835,18 +_,37 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
@@ -521,7 +529,7 @@
 +            // CraftBukkit end
 +
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
-                serverplayer.f_8906_.m_9829_(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
+                serverplayer.f_8906_.m_141995_(new ClientboundBlockDestructionPacket(p_8612_, p_8613_, p_8614_));
              }
 @@ -880,10 +_,22 @@
     }
@@ -604,40 +612,7 @@
     public <T extends ParticleOptions> boolean m_8624_(ServerPlayer p_8625_, T p_8626_, boolean p_8627_, double p_8628_, double p_8629_, double p_8630_, int p_8631_, double p_8632_, double p_8633_, double p_8634_, double p_8635_) {
        Packet<?> packet = new ClientboundLevelParticlesPacket(p_8626_, p_8627_, p_8628_, p_8629_, p_8630_, (float)p_8632_, (float)p_8633_, (float)p_8634_, (float)p_8635_, p_8631_);
        return this.m_8636_(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
-@@ -1083,7 +_,7 @@
- 
-    @Nullable
-    public BlockPos m_215011_(TagKey<Structure> p_215012_, BlockPos p_215013_, int p_215014_, boolean p_215015_) {
--      if (!this.f_8548_.m_129910_().m_246337_().m_247749_()) {
-+      if (!this.K.m_246337_().m_247749_()) {
-          return null;
-       } else {
-          Optional<HolderSet.Named<Structure>> optional = this.m_9598_().m_175515_(Registries.f_256944_).m_203431_(p_215012_);
-@@ -1109,16 +_,30 @@
-       return this.f_8564_;
-    }
- 
-+   public RegistryAccess m_9598_() {
-+      return this.f_8548_.m_206579_();
-+   }
-+
-    public DimensionDataStorage m_8895_() {
-       return this.m_7726_().m_8483_();
-    }
- 
-    @Nullable
-    public MapItemSavedData m_7489_(String p_8785_) {
--      return this.m_7654_().m_129783_().m_8895_().m_164858_(MapItemSavedData::m_164807_, p_8785_);
-+      // CraftBukkit start
-+      return this.m_7654_().m_129783_().m_8895_().m_164858_((nbttagcompound) -> {
-+         // We only get here when the data file exists, but is not a valid map
-+         MapItemSavedData newMap = MapItemSavedData.m_164807_(nbttagcompound);
-+         newMap.id = p_8785_;
-+         MapInitializeEvent event = new MapInitializeEvent(newMap.mapView);
-+         Bukkit.getServer().getPluginManager().callEvent(event);
-+         return newMap;
-+         }, p_8785_);
-+      // CraftBukkit end
+@@ -1119,6 +_,7 @@
     }
  
     public void m_142325_(String p_143305_, MapItemSavedData p_143306_) {
@@ -645,15 +620,6 @@
        this.m_7654_().m_129783_().m_8895_().m_164855_(p_143305_, p_143306_);
     }
  
-@@ -1162,7 +_,7 @@
-    }
- 
-    public List<ServerPlayer> m_6907_() {
--      return this.f_8546_;
-+      return this.f_8546_ == null ? Collections.emptyList() : this.f_8546_; // Mohist TODO
-    }
- 
-    public void m_6559_(BlockPos p_8751_, BlockState p_8752_, BlockState p_8753_) {
 @@ -1309,6 +_,11 @@
  
     public void m_6289_(BlockPos p_8743_, Block p_8744_) {
@@ -680,7 +646,7 @@
     }
  
     @Nullable
-@@ -1367,17 +_,43 @@
+@@ -1367,17 +_,42 @@
        }
     }
  
@@ -721,8 +687,7 @@
 +
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.LevelCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.LevelCapabilityData(getCapabilities()), net.minecraftforge.common.util.LevelCapabilityData.ID);
-+      capabilityData.setCapabilities(getCapabilities());
++      capabilityData = net.minecraftforge.common.util.LevelCapabilityData.compute(this.m_8895_(), getCapabilities());
     }
  
     public LevelEntityGetter<Entity> m_142646_() {

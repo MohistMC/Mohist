@@ -22,7 +22,7 @@ public class PlayerAPI {
      * @param player org.bukkit.entity.player
      */
     public static String getPing(Player player) {
-        return String.valueOf(getNMSPlayer(player).latency);
+        return String.valueOf(getNMSPlayer(player).connection.latency());
     }
 
     public static ServerPlayer getNMSPlayer(Player player) {

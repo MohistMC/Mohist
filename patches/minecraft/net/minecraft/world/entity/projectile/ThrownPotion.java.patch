@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownPotion.java
 +++ b/net/minecraft/world/entity/projectile/ThrownPotion.java
-@@ -1,11 +_,14 @@
+@@ -1,14 +_,18 @@
  package net.minecraft.world.entity.projectile;
  
 +import java.util.HashMap;
@@ -15,6 +15,10 @@
  import net.minecraft.tags.BlockTags;
  import net.minecraft.world.effect.MobEffect;
  import net.minecraft.world.effect.MobEffectInstance;
++import net.minecraft.world.effect.MobEffects;
+ import net.minecraft.world.entity.AreaEffectCloud;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
 @@ -23,12 +_,15 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
@@ -53,7 +57,7 @@
              if (livingentity.m_5801_()) {
                 double d0 = this.m_20280_(livingentity);
                 if (d0 < 16.0D) {
-@@ -140,20 +_,43 @@
+@@ -140,20 +_,42 @@
                    } else {
                       d1 = 1.0D - Math.sqrt(d0) / 4.0D;
                    }
@@ -92,9 +96,8 @@
 +
 +               // CraftBukkit start - Abide by PVP settings - for players only!
 +               if (!this.f_19853_.pvpMode && this.m_19749_() instanceof ServerPlayer && livingentity instanceof ServerPlayer && livingentity != this.m_19749_()) {
-+                  int i = MobEffect.m_19459_(mobeffect);
-+                  // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
-+                  if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19) {
++                  if (mobeffect == MobEffects.f_19597_ || mobeffect == MobEffects.f_19599_ || mobeffect == MobEffects.f_19602_ || mobeffect == MobEffects.f_19610_
++                          || mobeffect == MobEffects.f_19612_ || mobeffect == MobEffects.f_19613_ || mobeffect == MobEffects.f_19614_) {
 +                     continue;
 +                  }
 +               }
@@ -134,7 +137,7 @@
     private void m_150192_(BlockPos p_150193_) {
        BlockState blockstate = this.m_9236_().m_8055_(p_150193_);
        if (blockstate.m_204336_(BlockTags.f_13076_)) {
--         this.m_9236_().m_7471_(p_150193_, false);
+-         this.m_9236_().m_46953_(p_150193_, false, this);
 +         // CraftBukkit start
 +         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.f_50016_.m_49966_())) {
 +            this.m_9236_().m_7471_(p_150193_, false);

@@ -9,7 +9,7 @@
  
  public class FarmBlock extends Block {
     public static final IntegerProperty f_53243_ = BlockStateProperties.f_61423_;
-@@ -73,42 +_,50 @@
+@@ -73,18 +_,19 @@
        int i = p_221139_.m_61143_(f_53243_);
        if (!m_53258_(p_221140_, p_221141_) && !p_221140_.m_46758_(p_221141_.m_7494_())) {
           if (i > 0) {
@@ -27,13 +27,11 @@
  
     public void m_142072_(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
 -      if (!p_153227_.f_46443_ && p_153227_.f_46441_.m_188501_() < p_153231_ - 0.5F && p_153230_ instanceof LivingEntity && (p_153230_ instanceof Player || p_153227_.m_46469_().m_46207_(GameRules.f_46132_)) && p_153230_.m_20205_() * p_153230_.m_20205_() * p_153230_.m_20206_() > 0.512F) {
--         m_269406_(p_153230_, p_153228_, p_153227_, p_153229_);
--      }
--
-       super.m_142072_(p_153227_, p_153228_, p_153229_, p_153230_, p_153231_);
 +      if (!p_153227_.f_46443_ && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_153227_, p_153229_, Blocks.f_50493_.m_49966_(), p_153231_, p_153230_)) { // Forge: Move logic to Entity#canTrample
-+         m_269406_(p_153230_, p_153228_, p_153227_, p_153229_);
-+      }
+          m_269406_(p_153230_, p_153228_, p_153227_, p_153229_);
+       }
+ 
+@@ -92,23 +_,31 @@
     }
  
     public static void m_269406_(@Nullable Entity p_270981_, BlockState p_270402_, Level p_270568_, BlockPos p_270551_) {

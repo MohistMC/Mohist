@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ChorusFruitItem.java
 +++ b/net/minecraft/world/item/ChorusFruitItem.java
-@@ -33,12 +_,22 @@
+@@ -33,13 +_,22 @@
              }
  
              Vec3 vec3 = p_40714_.m_20182_();
@@ -20,6 +20,7 @@
 -               p_40713_.m_6263_((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 +               p_40713_.m_6263_((Player) null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                 p_40714_.m_5496_(soundevent, 1.0F, 1.0F);
+-               p_40714_.m_183634_();
                 break;
 +
              }

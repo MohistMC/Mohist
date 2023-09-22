@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/animal/Turtle.java
 +++ b/net/minecraft/world/entity/animal/Turtle.java
-@@ -58,6 +_,7 @@
+@@ -60,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
+ import org.joml.Vector3f;
  
  public class Turtle extends Animal {
-    private static final EntityDataAccessor<BlockPos> f_30123_ = SynchedEntityData.m_135353_(Turtle.class, EntityDataSerializers.f_135038_);
-@@ -283,7 +_,9 @@
+@@ -287,7 +_,9 @@
     protected void m_30232_() {
        super.m_30232_();
        if (!this.m_6162_() && this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_)) {
@@ -18,7 +18,7 @@
        }
  
     }
-@@ -307,7 +_,9 @@
+@@ -311,7 +_,9 @@
     }
  
     public void m_8038_(ServerLevel p_30140_, LightningBolt p_30141_) {
@@ -27,8 +27,8 @@
 +      org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
-    static class TurtleBreedGoal extends BreedGoal {
-@@ -468,11 +_,15 @@
+    protected Vector3f m_292594_(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {
+@@ -476,11 +_,15 @@
                 this.f_30274_.m_30236_(true);
              } else if (this.f_30274_.f_30129_ > this.m_183277_(200)) {
                 Level level = this.f_30274_.m_9236_();

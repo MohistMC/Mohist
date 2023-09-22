@@ -1,15 +1,19 @@
 package org.bukkit.craftbukkit.v1_20_R1.potion;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Color;
+import org.bukkit.craftbukkit.v1_20_R1.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffectType;
 
 public class CraftPotionEffectType extends PotionEffectType {
     private final MobEffect handle;
 
     public CraftPotionEffectType(MobEffect handle) {
-        super(MobEffect.getId(handle), org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(BuiltInRegistries.MOB_EFFECT.getKey(handle)));
+        super(BuiltInRegistries.MOB_EFFECT.getId(handle) + 1, CraftNamespacedKey.fromMinecraft(BuiltInRegistries.MOB_EFFECT.getKey(handle)));
         this.handle = handle;
     }
 
@@ -104,5 +108,23 @@ public class CraftPotionEffectType extends PotionEffectType {
     @Override
     public Color getColor() {
         return Color.fromRGB(handle.getColor());
+    }
+
+    public static PotionEffectType minecraftToBukkit(MobEffect minecraft) {
+        Preconditions.checkArgument(minecraft != null);
+
+        net.minecraft.core.Registry<MobEffect> registry = CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT);
+        PotionEffectType bukkit = PotionEffectType.getByKey(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
+
+        Preconditions.checkArgument(bukkit != null);
+
+        return bukkit;
+    }
+
+    public static MobEffect bukkitToMinecraft(PotionEffectType bukkit) {
+        Preconditions.checkArgument(bukkit != null);
+
+        return CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT)
+                .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
     }
 }

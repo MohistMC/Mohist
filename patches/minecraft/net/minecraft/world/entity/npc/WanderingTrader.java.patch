@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/entity/npc/WanderingTrader.java
 +++ b/net/minecraft/world/entity/npc/WanderingTrader.java
-@@ -43,6 +_,9 @@
- import net.minecraft.world.item.trading.MerchantOffers;
+@@ -45,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.tuple.Pair;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantRecipe;
 +import org.bukkit.event.entity.VillagerAcquireTradeEvent;
  
  public class WanderingTrader extends AbstractVillager {
     private static final int f_150044_ = 5;
-@@ -52,6 +_,7 @@
+@@ -54,6 +_,7 @@
  
     public WanderingTrader(EntityType<? extends WanderingTrader> p_35843_, Level p_35844_) {
        super(p_35843_, p_35844_);
@@ -18,21 +18,3 @@
     }
  
     protected void m_8099_() {
-@@ -120,7 +_,16 @@
-          VillagerTrades.ItemListing villagertrades$itemlisting = avillagertrades$itemlisting1[i];
-          MerchantOffer merchantoffer = villagertrades$itemlisting.m_213663_(this, this.f_19796_);
-          if (merchantoffer != null) {
--            merchantoffers.add(merchantoffer);
-+            // CraftBukkit start
-+            VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((org.bukkit.entity.AbstractVillager) getBukkitEntity(), merchantoffer.asBukkit());
-+            // Suppress during worldgen
-+            if (this.valid) {
-+               Bukkit.getPluginManager().callEvent(event);
-+            }
-+            if (!event.isCancelled()) {
-+               merchantoffers.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
-+            }
-+            // CraftBukkit end
-          }
- 
-       }

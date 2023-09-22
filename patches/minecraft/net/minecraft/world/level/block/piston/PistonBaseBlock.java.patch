@@ -73,56 +73,7 @@
        return true;
     }
  
-@@ -282,6 +_,48 @@
-          BlockState[] ablockstate = new BlockState[list.size() + list2.size()];
-          Direction direction = p_60185_ ? p_60184_ : p_60184_.m_122424_();
-          int j = 0;
-+         // CraftBukkit start
-+         final org.bukkit.block.Block bblock = CraftBlock.at(p_60182_, p_60183_);
-+
-+         final List<BlockPos> moved = pistonstructureresolver.m_60436_();
-+         final List<BlockPos> broken = pistonstructureresolver.m_60437_();
-+
-+         List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
-+
-+            @Override
-+            public int size() {
-+               return moved.size() + broken.size();
-+            }
-+
-+            @Override
-+            public org.bukkit.block.Block get(int index) {
-+               if (index >= size() || index < 0) {
-+                  throw new ArrayIndexOutOfBoundsException(index);
-+               }
-+               BlockPos pos = (BlockPos) (index < moved.size() ? moved.get(index) : broken.get(index - moved.size()));
-+               return bblock.getWorld().getBlockAt(pos.m_123341_(), pos.m_123342_(), pos.m_123343_());
-+            }
-+         };
-+         org.bukkit.event.block.BlockPistonEvent event;
-+         if (p_60185_) {
-+            event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(direction));
-+         } else {
-+            event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(direction));
-+         }
-+         p_60182_.getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (event.isCancelled()) {
-+            for (BlockPos b : broken) {
-+               p_60182_.m_7260_(b, Blocks.f_50016_.m_49966_(), p_60182_.m_8055_(b), 3);
-+            }
-+            for (BlockPos b : moved) {
-+               p_60182_.m_7260_(b, Blocks.f_50016_.m_49966_(), p_60182_.m_8055_(b), 3);
-+               b = b.m_121945_(direction);
-+               p_60182_.m_7260_(b, Blocks.f_50016_.m_49966_(), p_60182_.m_8055_(b), 3);
-+            }
-+            return false;
-+         }
-+         // CraftBukkit end
- 
-          for(int k = list2.size() - 1; k >= 0; --k) {
-             BlockPos blockpos2 = list2.get(k);
-@@ -354,6 +_,10 @@
+@@ -353,6 +_,10 @@
  
     public BlockState m_6843_(BlockState p_60215_, Rotation p_60216_) {
        return p_60215_.m_61124_(f_52588_, p_60216_.m_55954_(p_60215_.m_61143_(f_52588_)));

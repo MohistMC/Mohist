@@ -31,7 +31,7 @@
 +         itemstack1 = CraftItemStack.asNMSCopy(playerBucketFishEvent.getEntityBucket());
 +         if (playerBucketFishEvent.isCancelled()) {
 +            ((ServerPlayer) p_148829_).f_36096_.m_150429_(); // We need to update inventory to resync client's bucket
-+            ((ServerPlayer) p_148829_).f_8906_.m_9829_(new ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
++            ((ServerPlayer) p_148829_).f_8906_.m_141995_(new ClientboundAddEntityPacket(p_148831_)); // We need to play out these packets as the client assumes the fish is gone
 +            p_148831_.m_20088_().refresh((ServerPlayer) p_148829_); // Need to send data such as the display name to client
 +            return Optional.of(InteractionResult.FAIL);
 +         }

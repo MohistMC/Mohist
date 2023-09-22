@@ -32,7 +32,18 @@
        }
     }
  
-@@ -162,7 +_,15 @@
+@@ -90,6 +_,10 @@
+ 
+    }
+ 
++   public double getMyRidingOffset() {
++      return 0.14D;
++   }
++
+    public void m_7378_(CompoundTag p_27576_) {
+       super.m_7378_(p_27576_);
+       this.f_27554_ = p_27576_.m_128451_("InLove");
+@@ -158,7 +_,15 @@
     public void m_27595_(@Nullable Player p_27596_) {
        this.f_27554_ = 600;
        if (p_27596_ != null) {
@@ -48,7 +59,7 @@
        }
  
        this.m_9236_().m_7605_(this, (byte)18);
-@@ -206,28 +_,61 @@
+@@ -202,28 +_,61 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);

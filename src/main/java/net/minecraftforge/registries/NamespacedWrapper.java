@@ -8,7 +8,6 @@ package net.minecraftforge.registries;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Lifecycle;
@@ -72,7 +71,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     @Override
     public Holder.Reference<T> registerMapping(int id, ResourceKey<T> key, T value, Lifecycle lifecycle)
     {
-        if (UltraCosmetics.canLock && locked)
+        if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
 
         Validate.notNull(value);
@@ -268,7 +267,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
 
     void validateWrite()
     {
-        if (UltraCosmetics.canLock && this.frozen)
+        if (this.frozen)
             throw new IllegalStateException("Registry is already frozen");
     }
 

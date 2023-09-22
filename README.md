@@ -1,12 +1,11 @@
 <div align="center">
-  <h1>Mohist 1.20.1</h1>
+  <h1>Mohist 1.20.2</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.1)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.1--47.1.47-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.1.html)
-[![](https://img.shields.io/badge/NeoForge-1.20.1--47.1.76-brightgreen.svg?colorB=26303d)](https://neoforged.net/)
+[![](https://img.shields.io/badge/Forge-1.20.2--48.0.1-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.8+7-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.3-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.3/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -21,14 +20,13 @@
 Progress
 ------
 
-- [x] Rectify Forge([**12d24df4f**](https://github.com/MinecraftForge/MinecraftForge/commit/12d24df4f))
-- [x] Rectify NeoForge([**0974ecc14**](https://github.com/neoforged/NeoForge/commit/0974ecc14))
+- [x] Rectify Forge([**d80f10614**](https://github.com/MinecraftForge/MinecraftForge/commit/d80f10614))
 - [x] Start patch
     * [x] Bukkit([**1961ead6**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/1961ead6))
-    * [x] CraftBukkit([**ddc9a2dad**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/ddc9a2dad))
-    * [x] Spigot ([**d2eba2c8**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/d2eba2c8))
-        * [x] Bukkit-Patches
-        * [x] CraftBukkit-Patches
+    * [ ] CraftBukkit([**f0702775c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f0702775c))
+    * [ ] Spigot ([**17ca32d0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/17ca32d0))
+        * [ ] Bukkit-Patches
+        * [ ] CraftBukkit-Patches
 
 Getting Help
 ------

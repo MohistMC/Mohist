@@ -21,7 +21,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EquipmentSlot;
  import net.minecraft.world.entity.LivingEntity;
-@@ -38,6 +_,8 @@
+@@ -38,14 +_,13 @@
  import net.minecraft.world.item.MapItem;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.phys.Vec3;
@@ -30,7 +30,15 @@
  import org.slf4j.Logger;
  
  public class ServerEntity {
-@@ -60,25 +_,29 @@
+    private static final Logger f_8508_ = LogUtils.getLogger();
+    private static final int f_143241_ = 1;
+-   private static final double f_290999_ = (double)7.6293945E-6F;
+-   public static final int f_291116_ = 60;
+-   private static final int f_291733_ = 400;
+    private final ServerLevel f_8509_;
+    private final Entity f_8510_;
+    private final int f_8511_;
+@@ -63,8 +_,12 @@
     private boolean f_8525_;
     @Nullable
     private List<SynchedEntityData.DataValue<?>> f_263120_;
@@ -38,42 +46,41 @@
 +   private final Set<ServerPlayerConnection> trackedPlayers;
  
 -   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_) {
--      this.f_8509_ = p_8528_;
--      this.f_8513_ = p_8532_;
--      this.f_8510_ = p_8529_;
--      this.f_8511_ = p_8530_;
--      this.f_8512_ = p_8531_;
--      this.f_214995_.m_238033_(p_8529_.m_213870_());
--      this.f_8517_ = Mth.m_14143_(p_8529_.m_146908_() * 256.0F / 360.0F);
--      this.f_8518_ = Mth.m_14143_(p_8529_.m_146909_() * 256.0F / 360.0F);
--      this.f_8519_ = Mth.m_14143_(p_8529_.m_6080_() * 256.0F / 360.0F);
--      this.f_8525_ = p_8529_.m_20096_();
--      this.f_263120_ = p_8529_.m_20088_().m_252804_();
-+   public ServerEntity(ServerLevel pLevel, Entity pEntity, int pUpdateInterval, boolean pTrackDelta, Consumer<Packet<?>> pBroadcast, Set<ServerPlayerConnection> trackedPlayers) {
++   public ServerEntity(ServerLevel p_8528_, Entity p_8529_, int p_8530_, boolean p_8531_, Consumer<Packet<?>> p_8532_, Set<ServerPlayerConnection> trackedPlayers) {
 +      this.trackedPlayers = trackedPlayers;
 +      // CraftBukkit end
-+      this.f_8509_ = pLevel;
-+      this.f_8513_ = pBroadcast;
-+      this.f_8510_ = pEntity;
-+      this.f_8511_ = pUpdateInterval;
-+      this.f_8512_ = pTrackDelta;
-+      this.f_214995_.m_238033_(pEntity.m_213870_());
-+      this.f_8517_ = Mth.m_14143_(pEntity.m_146908_() * 256.0F / 360.0F);
-+      this.f_8518_ = Mth.m_14143_(pEntity.m_146909_() * 256.0F / 360.0F);
-+      this.f_8519_ = Mth.m_14143_(pEntity.m_6080_() * 256.0F / 360.0F);
-+      this.f_8525_ = pEntity.m_20096_();
-+      this.f_263120_ = pEntity.m_20088_().m_252804_();
-    }
+       this.f_8509_ = p_8528_;
+       this.f_8513_ = p_8532_;
+       this.f_8510_ = p_8529_;
+@@ -95,10 +_,9 @@
+       if ($$11 instanceof ItemFrame itemframe) {
+          if (this.f_8521_ % 10 == 0) {
+             ItemStack itemstack = itemframe.m_31822_();
+-            if (itemstack.m_41720_() instanceof MapItem) {
+-               Integer integer = MapItem.m_151131_(itemstack);
+-               MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
+-               if (mapitemsaveddata != null) {
++         Integer integer = MapItem.m_151131_(itemstack);
++         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
++         if (mapitemsaveddata != null) {
+                   for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
+                      mapitemsaveddata.m_77918_(serverplayer, itemstack);
+                      Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
+@@ -107,11 +_,12 @@
+                      }
+                   }
+                }
+-            }
  
-    public void m_8533_() {
-       List<Entity> list = this.f_8510_.m_20197_();
-       if (!list.equals(this.f_8523_)) {
--         this.f_8513_.accept(new ClientboundSetPassengersPacket(this.f_8510_));
-+         this.m_8538_(new ClientboundSetPassengersPacket(this.f_8510_)); // CraftBukkit
-          m_277180_(list, this.f_8523_).forEach((p_289307_) -> {
-             if (p_289307_ instanceof ServerPlayer serverplayer1) {
-                serverplayer1.f_8906_.m_9774_(serverplayer1.m_20185_(), serverplayer1.m_20186_(), serverplayer1.m_20189_(), serverplayer1.m_146908_(), serverplayer1.m_146909_());
-@@ -200,7 +_,27 @@
+             this.m_8543_();
+          }
+       }
++
++
+ 
+       if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
+          if (this.f_8510_.m_20159_()) {
+@@ -203,7 +_,27 @@
  
        ++this.f_8521_;
        if (this.f_8510_.f_19864_) {
@@ -102,17 +109,17 @@
           this.f_8510_.f_19864_ = false;
        }
  
-@@ -215,6 +_,7 @@
+@@ -218,6 +_,7 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
-       p_8535_.f_8906_.m_9829_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
+       p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
 +      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
     }
  
     public void m_8541_(ServerPlayer p_8542_) {
-@@ -222,11 +_,15 @@
+@@ -225,11 +_,15 @@
        this.m_289200_(p_8542_, list::add);
-       p_8542_.f_8906_.m_9829_(new ClientboundBundlePacket(list));
+       p_8542_.f_8906_.m_141995_(new ClientboundBundlePacket(list));
        this.f_8510_.m_6457_(p_8542_);
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
     }
@@ -127,7 +134,7 @@
        }
  
        Packet<ClientGamePacketListener> packet = this.f_8510_.m_5654_();
-@@ -239,6 +_,11 @@
+@@ -242,6 +_,11 @@
        boolean flag = this.f_8512_;
        if (this.f_8510_ instanceof LivingEntity) {
           Collection<AttributeInstance> collection = ((LivingEntity)this.f_8510_).m_21204_().m_22170_();
@@ -139,7 +146,7 @@
           if (!collection.isEmpty()) {
              p_289563_.accept(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), collection));
           }
-@@ -266,6 +_,21 @@
+@@ -269,6 +_,21 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.f_8510_.m_19879_(), list));
           }
@@ -161,7 +168,7 @@
        }
  
        if (!this.f_8510_.m_20197_().isEmpty()) {
-@@ -296,6 +_,11 @@
+@@ -299,6 +_,11 @@
        if (this.f_8510_ instanceof LivingEntity) {
           Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();
           if (!set.isEmpty()) {

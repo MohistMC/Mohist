@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -75,6 +_,8 @@
- import net.minecraft.world.phys.AABB;
+@@ -76,6 +_,8 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
+ import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  
  public abstract class AbstractHorse extends Animal implements ContainerListener, HasCustomInventoryScreen, OwnableEntity, PlayerRideableJumping, Saddleable {
     public static final int f_149486_ = 400;
-@@ -136,6 +_,7 @@
+@@ -137,6 +_,7 @@
     protected int f_30524_;
     @Nullable
     private UUID f_268614_;
@@ -17,7 +17,7 @@
  
     protected AbstractHorse(EntityType<? extends AbstractHorse> p_30531_, Level p_30532_) {
        super(p_30531_, p_30532_);
-@@ -310,9 +_,9 @@
+@@ -311,9 +_,9 @@
        return 2;
     }
  
@@ -29,7 +29,7 @@
        if (simplecontainer != null) {
           simplecontainer.m_19181_(this);
           int i = Math.min(simplecontainer.m_6643_(), this.f_30520_.m_6643_());
-@@ -327,6 +_,7 @@
+@@ -328,6 +_,7 @@
  
        this.f_30520_.m_19164_(this);
        this.m_7493_();
@@ -37,7 +37,7 @@
     }
  
     protected void m_7493_() {
-@@ -374,9 +_,9 @@
+@@ -375,9 +_,9 @@
     protected void m_7355_(BlockPos p_30584_, BlockState p_30585_) {
        if (!p_30585_.m_278721_()) {
           BlockState blockstate = this.m_9236_().m_8055_(p_30584_.m_7494_());
@@ -49,7 +49,7 @@
           }
  
           if (this.m_20160_() && this.f_30523_) {
-@@ -412,7 +_,7 @@
+@@ -413,7 +_,7 @@
     }
  
     public int m_7555_() {
@@ -58,7 +58,7 @@
     }
  
     protected float m_6121_() {
-@@ -482,7 +_,7 @@
+@@ -483,7 +_,7 @@
        }
  
        if (this.m_21223_() < this.m_21233_() && f > 0.0F) {
@@ -67,7 +67,7 @@
           flag = true;
        }
  
-@@ -554,7 +_,7 @@
+@@ -555,7 +_,7 @@
        super.m_8107_();
        if (!this.m_9236_().f_46443_ && this.m_6084_()) {
           if (this.f_19796_.m_188503_(900) == 0 && this.f_20919_ == 0) {
@@ -76,7 +76,7 @@
           }
  
           if (this.m_7559_()) {
-@@ -786,6 +_,7 @@
+@@ -787,6 +_,7 @@
        this.m_20334_(vec3.f_82479_, d1, vec3.f_82481_);
        this.m_30655_(true);
        this.f_19812_ = true;
@@ -84,7 +84,7 @@
        if (p_275435_.f_82481_ > 0.0D) {
           float f = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
           float f1 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
-@@ -807,6 +_,7 @@
+@@ -808,6 +_,7 @@
        if (this.m_21805_() != null) {
           p_30589_.m_128362_("Owner", this.m_21805_());
        }
@@ -92,7 +92,7 @@
  
        if (!this.f_30520_.m_8020_(0).m_41619_()) {
           p_30589_.m_128365_("SaddleItem", this.f_30520_.m_8020_(0).m_41739_(new CompoundTag()));
-@@ -831,6 +_,11 @@
+@@ -832,6 +_,11 @@
        if (uuid != null) {
           this.m_30586_(uuid);
        }
@@ -104,7 +104,7 @@
  
        if (p_30565_.m_128425_("SaddleItem", 10)) {
           ItemStack itemstack = ItemStack.m_41712_(p_30565_.m_128469_("SaddleItem"));
-@@ -924,6 +_,17 @@
+@@ -925,6 +_,17 @@
     }
  
     public void m_7199_(int p_30574_) {
@@ -122,7 +122,7 @@
        this.f_30510_ = true;
        this.m_247525_();
        this.m_7486_();
-@@ -1120,6 +_,25 @@
+@@ -1109,6 +_,25 @@
  
        this.m_214179_(p_30555_.m_213780_());
        return super.m_6518_(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);

@@ -31,7 +31,7 @@
     protected void m_8097_() {
        this.f_19804_.m_135372_(f_37019_, ItemStack.f_41583_);
        this.f_19804_.m_135372_(f_37020_, OptionalInt.empty());
-@@ -130,13 +_,13 @@
+@@ -130,7 +_,7 @@
  
        HitResult hitresult = ProjectileUtil.m_278158_(this, this::m_5603_);
        if (!this.f_19794_) {
@@ -40,13 +40,6 @@
           this.f_19812_ = true;
        }
  
-       this.m_37283_();
-       if (this.f_37022_ == 0 && !this.m_20067_()) {
--         this.m_9236_().m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_11932_, SoundSource.AMBIENT, 3.0F, 1.0F);
-+         this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_11932_, SoundSource.AMBIENT, 3.0F, 1.0F);
-       }
- 
-       ++this.f_37022_;
 @@ -144,10 +_,21 @@
           this.m_9236_().m_7106_(ParticleTypes.f_123815_, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.f_19796_.m_188583_() * 0.05D, -this.m_20184_().f_82480_ * 0.5D, this.f_19796_.m_188583_() * 0.05D);
        }
@@ -73,7 +66,7 @@
     }
  
     private void m_37080_() {
-@@ -160,15 +_,23 @@
+@@ -160,7 +_,11 @@
     protected void m_5790_(EntityHitResult p_37071_) {
        super.m_5790_(p_37071_);
        if (!this.m_9236_().f_46443_) {
@@ -86,10 +79,9 @@
        }
     }
  
-    protected void m_8060_(BlockHitResult p_37069_) {
+@@ -168,7 +_,11 @@
        BlockPos blockpos = new BlockPos(p_37069_.m_82425_());
--      this.m_9236_().m_8055_(blockpos).m_60682_(this.m_9236_(), blockpos, this);
-+      this.m_9236_().m_8055_(blockpos).m_60682_(this.f_19853_, blockpos, this);
+       this.m_9236_().m_8055_(blockpos).m_60682_(this.m_9236_(), blockpos, this);
        if (!this.m_9236_().m_5776_() && this.m_37086_()) {
 -         this.m_37080_();
 +         // CraftBukkit start

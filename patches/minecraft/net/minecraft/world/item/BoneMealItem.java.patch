@@ -1,38 +1,24 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -30,10 +_,16 @@
+@@ -32,10 +_,16 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_40637_) {
--      Level level = p_40637_.m_43725_();
--      BlockPos blockpos = p_40637_.m_8083_();
--      BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
--      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
 +      // CraftBukkit start - extract bonemeal application logic to separate, static method
 +      return applyBonemeal(p_40637_);
 +   }
 +
 +   // Mohist TODO fix mixin?
-+   public static InteractionResult applyBonemeal(UseOnContext pContext) {
-+      Level level = pContext.m_43725_();
-+      BlockPos blockpos = pContext.m_8083_();
-+      BlockPos blockpos1 = blockpos.m_121945_(pContext.m_43719_());
-+      if (m_40627_(pContext.m_43722_(), level, blockpos)) {
++   public static InteractionResult applyBonemeal(UseOnContext p_40637_) {
+       Level level = p_40637_.m_43725_();
+       BlockPos blockpos = p_40637_.m_8083_();
+       BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
+-      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
++      if (applyBonemeal(p_40637_.m_43722_(), level, blockpos, p_40637_.m_43723_())) {
           if (!level.f_46443_) {
+             p_40637_.m_43723_().m_146850_(GameEvent.f_223697_);
              level.m_46796_(1505, blockpos, 0);
-          }
-@@ -41,8 +_,8 @@
-          return InteractionResult.m_19078_(level.f_46443_);
-       } else {
-          BlockState blockstate = level.m_8055_(blockpos);
--         boolean flag = blockstate.m_60783_(level, blockpos, p_40637_.m_43719_());
--         if (flag && m_40631_(p_40637_.m_43722_(), level, blockpos1, p_40637_.m_43719_())) {
-+         boolean flag = blockstate.m_60783_(level, blockpos, pContext.m_43719_());
-+         if (flag && m_40631_(pContext.m_43722_(), level, blockpos1, pContext.m_43719_())) {
-             if (!level.f_46443_) {
-                level.m_46796_(1505, blockpos1, 0);
-             }
-@@ -53,9 +_,19 @@
+@@ -57,9 +_,19 @@
           }
        }
     }
@@ -49,6 +35,6 @@
        BlockState blockstate = p_40629_.m_8055_(p_40630_);
 +      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_40629_, p_40630_, blockstate, p_40628_);
 +      if (hook != 0) return hook > 0;
-       if (blockstate.m_60734_() instanceof BonemealableBlock) {
-          BonemealableBlock bonemealableblock = (BonemealableBlock)blockstate.m_60734_();
-          if (bonemealableblock.m_7370_(p_40629_, p_40630_, blockstate, p_40629_.f_46443_)) {
+       Block block = blockstate.m_60734_();
+       if (block instanceof BonemealableBlock bonemealableblock) {
+          if (bonemealableblock.m_7370_(p_40629_, p_40630_, blockstate)) {

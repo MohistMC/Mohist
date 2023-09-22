@@ -5,9 +5,9 @@
  
 +import java.util.concurrent.atomic.AtomicReference;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.BlockSource;
  import net.minecraft.server.level.ServerLevel;
-@@ -13,18 +_,47 @@
+ import net.minecraft.server.level.ServerPlayer;
+@@ -12,18 +_,47 @@
  import net.minecraft.world.entity.Shearable;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -23,10 +23,10 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class ShearsDispenseItemBehavior extends OptionalDispenseItemBehavior {
-    protected ItemStack m_7498_(BlockSource p_123580_, ItemStack p_123581_) {
-       ServerLevel serverlevel = p_123580_.m_7727_();
+    protected ItemStack m_7498_(BlockSource p_301806_, ItemStack p_123581_) {
+       ServerLevel serverlevel = p_301806_.f_301782_();
 +      // CraftBukkit start
-+      org.bukkit.block.Block bukkitBlock = serverlevel.getWorld().getBlockAt(p_123580_.m_7961_().m_123341_(), p_123580_.m_7961_().m_123342_(), p_123580_.m_7961_().m_123343_());
++      org.bukkit.block.Block bukkitBlock = serverlevel.getWorld().getBlockAt(p_301806_.f_301784_().m_123341_(), p_301806_.f_301784_().m_123342_(), p_301806_.f_301784_().m_123343_());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_123581_);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
@@ -43,19 +43,19 @@
 +         ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
 +         DispenseItemBehavior idispensebehavior = DispenserBlock.f_52661_.get(eventStack.m_41720_());
 +         if (idispensebehavior != DispenseItemBehavior.f_123393_ && idispensebehavior != this) {
-+            idispensebehavior.m_6115_(p_123580_, eventStack);
++            idispensebehavior.m_6115_(p_301806_, eventStack);
 +            return p_123581_;
 +         }
 +      }
 +      // CraftBukkit end
 +
        if (!serverlevel.m_5776_()) {
-          BlockPos blockpos = p_123580_.m_7961_().m_121945_(p_123580_.m_6414_().m_61143_(DispenserBlock.f_52659_));
+          BlockPos blockpos = p_301806_.f_301784_().m_121945_(p_301806_.f_301783_().m_61143_(DispenserBlock.f_52659_));
 +         bukkitBlockAndcraftItem(bukkitBlock, craftItem); // Mohist
           this.m_123573_(m_123576_(serverlevel, blockpos) || m_123582_(serverlevel, blockpos));
           if (this.m_123570_() && p_123581_.m_220157_(1, serverlevel.m_213780_(), (ServerPlayer)null)) {
              p_123581_.m_41764_(0);
-@@ -56,6 +_,11 @@
+@@ -55,6 +_,11 @@
        for(LivingEntity livingentity : p_123583_.m_6443_(LivingEntity.class, new AABB(p_123584_), EntitySelector.f_20408_)) {
           if (livingentity instanceof Shearable shearable) {
              if (shearable.m_6220_()) {
@@ -67,7 +67,7 @@
                 shearable.m_5851_(SoundSource.BLOCKS);
                 p_123583_.m_142346_((Entity)null, GameEvent.f_157781_, p_123584_);
                 return true;
-@@ -65,4 +_,18 @@
+@@ -64,4 +_,18 @@
  
        return false;
     }

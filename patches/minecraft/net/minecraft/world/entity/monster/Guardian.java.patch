@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Guardian.java
 +++ b/net/minecraft/world/entity/monster/Guardian.java
-@@ -62,6 +_,7 @@
+@@ -63,6 +_,7 @@
     @Nullable
     public RandomStrollGoal f_32806_;
  
@@ -8,7 +8,7 @@
     public Guardian(EntityType<? extends Guardian> p_32810_, Level p_32811_) {
        super(p_32810_, p_32811_);
        this.f_21364_ = 10;
-@@ -119,7 +_,7 @@
+@@ -120,7 +_,7 @@
        return 80;
     }
  
@@ -17,8 +17,8 @@
        this.f_19804_.m_135381_(f_32807_, p_32818_);
     }
  
-@@ -335,9 +_,9 @@
- 
+@@ -340,9 +_,9 @@
+       return new Vector3f(0.0F, p_297893_.f_20378_ + 0.125F * p_297810_, 0.0F);
     }
  
 -   static class GuardianAttackGoal extends Goal {

@@ -91,10 +91,10 @@ public class InventoryOwner {
             return new CraftCustomInventory(((InvWrapper) handler).getInv());
         }
         if (handler instanceof SidedInvWrapper) {
-            return new CraftCustomInventory(((SidedInvWrapper) handler).getInv());
+            return new CraftCustomInventory(((SidedInvWrapper) handler).inv);
         }
         if (handler instanceof PlayerInvWrapper) {
-            IItemHandlerModifiable[] piw = ((PlayerInvWrapper) handler).itemHandler();
+            IItemHandlerModifiable[] piw = ((PlayerInvWrapper) handler).itemHandler;
             for (IItemHandlerModifiable itemHandler : piw) {
                 if (itemHandler instanceof PlayerMainInvWrapper) {
                     return new CraftCustomInventory(((PlayerMainInvWrapper) itemHandler).getInventoryPlayer());

@@ -1,22 +1,14 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -53,7 +_,6 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.item.Items;
- import net.minecraft.world.item.crafting.Ingredient;
--import net.minecraft.world.level.GameRules;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.LevelAccessor;
- import net.minecraft.world.level.LevelReader;
-@@ -65,6 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -66,6 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.Path;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
  
  public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
     public static final double f_149016_ = 0.6D;
-@@ -90,7 +_,7 @@
+@@ -91,7 +_,7 @@
        this.m_29725_(0.0D);
     }
  
@@ -25,7 +17,7 @@
        this.f_21345_.m_25352_(1, new FloatGoal(this));
        this.f_21345_.m_25352_(1, new ClimbOnTopOfPowderSnowGoal(this, this.m_9236_()));
        this.f_21345_.m_25352_(1, new Rabbit.RabbitPanicGoal(this, 2.2D));
-@@ -524,7 +_,7 @@
+@@ -515,7 +_,7 @@
  
        public boolean m_8036_() {
           if (this.f_25600_ <= 0) {
@@ -34,7 +26,7 @@
                 return false;
              }
  
-@@ -550,9 +_,19 @@
+@@ -541,9 +_,19 @@
              if (this.f_29780_ && block instanceof CarrotBlock) {
                 int i = blockstate.m_61143_(CarrotBlock.f_52244_);
                 if (i == 0) {
@@ -52,5 +44,5 @@
 +                  }
 +                  // CraftBukkit end
                    level.m_7731_(blockpos, blockstate.m_61124_(CarrotBlock.f_52244_, Integer.valueOf(i - 1)), 2);
+                   level.m_220407_(GameEvent.f_157792_, blockpos, GameEvent.Context.m_223717_(this.f_29778_));
                    level.m_46796_(2001, blockpos, Block.m_49956_(blockstate));
-                }

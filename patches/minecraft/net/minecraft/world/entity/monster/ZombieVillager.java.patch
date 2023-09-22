@@ -8,16 +8,16 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvent;
-@@ -44,6 +_,8 @@
+@@ -46,6 +_,8 @@
  import net.minecraft.world.level.block.BedBlock;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
+ import org.joml.Vector3f;
  import org.slf4j.Logger;
  
- public class ZombieVillager extends Zombie implements VillagerDataHolder {
-@@ -62,6 +_,7 @@
+@@ -65,6 +_,7 @@
     @Nullable
     private CompoundTag f_34362_;
     private int f_34363_;
@@ -25,7 +25,7 @@
  
     public ZombieVillager(EntityType<? extends ZombieVillager> p_34368_, Level p_34369_) {
        super(p_34368_, p_34369_);
-@@ -125,13 +_,18 @@
+@@ -128,13 +_,18 @@
     public void m_8119_() {
        if (!this.m_9236_().f_46443_ && this.m_6084_() && this.m_34408_()) {
           int i = this.m_34410_();
@@ -45,7 +45,7 @@
     }
  
     public InteractionResult m_6071_(Player p_34394_, InteractionHand p_34395_) {
-@@ -167,19 +_,21 @@
+@@ -170,19 +_,21 @@
        return this.m_20088_().m_135370_(f_34359_);
     }
  
@@ -72,7 +72,7 @@
           }
  
        } else {
-@@ -188,7 +_,14 @@
+@@ -191,7 +_,14 @@
     }
  
     private void m_34398_(ServerLevel p_34399_) {
@@ -87,7 +87,7 @@
  
        for(EquipmentSlot equipmentslot : EquipmentSlot.values()) {
           ItemStack itemstack = this.m_6844_(equipmentslot);
-@@ -198,7 +_,9 @@
+@@ -201,7 +_,9 @@
              } else {
                 double d0 = (double)this.m_21519_(equipmentslot);
                 if (d0 > 1.0D) {
@@ -97,7 +97,7 @@
                 }
              }
           }
-@@ -224,11 +_,11 @@
+@@ -227,11 +_,11 @@
           }
        }
  

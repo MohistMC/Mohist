@@ -1,11 +1,12 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,22 @@
+@@ -2,16 +_,23 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
 +import com.mohistmc.bukkit.inventory.MohistModsInventory;
 +import com.mohistmc.plugins.ban.bans.BanItem;
+ import com.mojang.authlib.GameProfile;
  import com.mojang.brigadier.CommandDispatcher;
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
@@ -17,7 +18,7 @@
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
  import java.net.SocketAddress;
 +import java.nio.charset.StandardCharsets;
- import java.time.Duration;
++import java.time.Duration;
  import java.time.Instant;
 +import java.util.Arrays;
  import java.util.Collections;
@@ -32,7 +33,28 @@
  import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
-@@ -54,6 +_,7 @@
+@@ -29,8 +_,12 @@
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import net.minecraft.ChatFormatting;
++import net.minecraft.CrashReport;
++import net.minecraft.CrashReportCategory;
++import net.minecraft.ReportedException;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
++import net.minecraft.advancements.Advancement;
+ import net.minecraft.advancements.AdvancementHolder;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.commands.CommandSigningContext;
+@@ -43,6 +_,7 @@
+ import net.minecraft.nbt.ListTag;
+ import net.minecraft.nbt.StringTag;
+ import net.minecraft.network.Connection;
++import net.minecraft.network.PacketSendListener;
+ import net.minecraft.network.TickablePacketListener;
+ import net.minecraft.network.chat.ChatType;
+ import net.minecraft.network.chat.Component;
+@@ -50,6 +_,7 @@
  import net.minecraft.network.chat.LastSeenMessagesValidator;
  import net.minecraft.network.chat.MessageSignature;
  import net.minecraft.network.chat.MessageSignatureCache;
@@ -40,25 +62,31 @@
  import net.minecraft.network.chat.PlayerChatMessage;
  import net.minecraft.network.chat.RemoteChatSession;
  import net.minecraft.network.chat.SignableCommand;
-@@ -61,6 +_,7 @@
+@@ -57,7 +_,13 @@
  import net.minecraft.network.chat.SignedMessageChain;
  import net.minecraft.network.protocol.Packet;
  import net.minecraft.network.protocol.PacketUtils;
++import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
+ import net.minecraft.network.protocol.common.ServerboundClientInformationPacket;
++import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
++import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
++import net.minecraft.network.protocol.common.ServerboundPongPacket;
++import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
 +import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
  import net.minecraft.network.protocol.game.ClientboundBlockChangedAckPacket;
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundCommandSuggestionsPacket;
-@@ -73,6 +_,9 @@
+@@ -68,6 +_,9 @@
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
  import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+ import net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket;
  import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
  import net.minecraft.network.protocol.game.ClientboundTagQueryPacket;
- import net.minecraft.network.protocol.game.ServerGamePacketListener;
-@@ -140,9 +_,12 @@
+@@ -135,9 +_,12 @@
  import net.minecraft.world.entity.ExperienceOrb;
  import net.minecraft.world.entity.HasCustomInventoryScreen;
  import net.minecraft.world.entity.LivingEntity;
@@ -71,7 +99,7 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.ChatVisiblity;
  import net.minecraft.world.entity.player.Inventory;
-@@ -155,12 +_,14 @@
+@@ -150,12 +_,14 @@
  import net.minecraft.world.inventory.BeaconMenu;
  import net.minecraft.world.inventory.MerchantMenu;
  import net.minecraft.world.inventory.RecipeBookMenu;
@@ -86,7 +114,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -176,15 +_,68 @@
+@@ -171,14 +_,67 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -143,9 +171,8 @@
 +import org.bukkit.inventory.SmithingInventory;
  import org.slf4j.Logger;
  
- public class ServerGamePacketListenerImpl implements ServerPlayerConnection, TickablePacketListener, ServerGamePacketListener {
+ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
     static final Logger f_9744_ = LogUtils.getLogger();
-    private static final int f_143608_ = 15000;
 +   /**
 +    * Forge: Deprecated in favor of range/reach attributes.
 +    * @see net.minecraftforge.common.ForgeMod#BLOCK_REACH
@@ -155,20 +182,16 @@
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
     private static final int f_244471_ = 4096;
-@@ -197,7 +_,9 @@
-    private long f_9747_;
-    private boolean f_9748_;
-    private long f_9749_;
--   private int f_9750_;
-+   // CraftBukkit start - multithreaded fields
-+   private final AtomicInteger f_9750_ = new AtomicInteger();
-+   // CraftBukkit end
-    private int f_9751_;
-    private double f_9753_;
-    private double f_9754_;
-@@ -239,8 +_,31 @@
+@@ -223,14 +_,37 @@
+    private boolean f_290343_;
+ 
+    public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
+-      super(p_9770_, p_9771_, p_300908_);
++      super(p_9770_, p_9771_, p_300908_, p_9772_);
+       this.f_290664_ = new PlayerChunkSender(p_9771_.m_129531_());
+       p_9771_.m_129505_(this);
+       this.f_9743_ = p_9772_;
        p_9772_.f_8906_ = this;
-       this.f_9747_ = Util.m_137550_();
        p_9772_.m_8967_().m_7674_();
 -      this.f_240889_ = p_9770_.m_214005_() ? SignedMessageChain.Decoder.f_252472_ : SignedMessageChain.Decoder.m_246683_(p_9772_.m_20148_());
 -      this.f_241681_ = new FutureChain(p_9770_);
@@ -200,42 +223,13 @@
     }
  
     public void m_9933_() {
-@@ -294,7 +_,7 @@
- 
-       this.f_9745_.m_129905_().m_6180_("keepAlive");
-       long i = Util.m_137550_();
--      if (i - this.f_9747_ >= 15000L) {
-+      if (i - this.f_9747_ >= 25000L) { // CraftBukkit
-          if (this.f_9748_) {
-             this.m_9942_(Component.m_237115_("disconnect.timeout"));
-          } else {
-@@ -306,15 +_,14 @@
-       }
- 
-       this.f_9745_.m_129905_().m_7238_();
--      if (this.f_9750_ > 0) {
--         --this.f_9750_;
--      }
-+      for (int spam; (spam = this.f_9750_.get()) > 0 && !f_9750_.compareAndSet(spam, spam - 1); ) ;
- 
-       if (this.f_9751_ > 0) {
-          --this.f_9751_;
-       }
- 
--      if (this.f_9743_.m_8956_() > 0L && this.f_9745_.m_129924_() > 0 && Util.m_137550_() - this.f_9743_.m_8956_() > (long)this.f_9745_.m_129924_() * 1000L * 60L) {
-+      if (this.f_9743_.m_8956_() > 0L && this.f_9745_.m_129924_() > 0 && Util.m_137550_() - this.f_9743_.m_8956_() > (long)(this.f_9745_.m_129924_() * 1000 * 60)) {
-+         this.f_9743_.m_9243_(); // CraftBukkit - SPIGOT-854
-          this.m_9942_(Component.m_237115_("multiplayer.disconnect.idling"));
-       }
- 
-@@ -337,12 +_,60 @@
-       return this.f_9745_.m_7779_(this.f_9743_.m_36316_());
+@@ -322,6 +_,63 @@
+       return this.f_9743_.m_36316_();
     }
  
++
 +   // CraftBukkit start
-    public void m_9942_(Component p_9943_) {
--      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(p_9943_), PacketSendListener.m_243092_(() -> {
--         this.f_9742_.m_129507_(p_9943_);
++   public void m_294716_(Component p_9943_) {
 +      disconnect(CraftChatMessage.fromComponent(p_9943_));
 +   }
 +   // CraftBukkit end
@@ -254,7 +248,7 @@
 +            }
 +         };
 +
-+         this.f_9745_.processQueue.add(waitable);
++         this.f_291389_.processQueue.add(waitable);
 +
 +         try {
 +            waitable.get();
@@ -281,22 +275,23 @@
 +      // Send the possibly modified leave message
 +      final Component ichatbasecomponent = CraftChatMessage.fromString(event.getReason(), true)[0];
 +      // CraftBukkit end
-+      this.f_9742_.m_243124_(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.m_243092_(() -> {
-+         this.f_9742_.m_129507_(ichatbasecomponent);
-       }));
++      this.f_291338_.m_243124_(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.m_243092_(() -> {
++         this.f_291338_.m_129507_(ichatbasecomponent);
++      }));
 +
 +      this.m_7026_(ichatbasecomponent); // CraftBukkit - fire quit instantly
-       this.f_9742_.m_129540_();
--      this.f_9745_.m_18709_(this.f_9742_::m_129541_);
-+      this.f_9745_.m_6681_(this.f_9742_::m_129541_); // CraftBukkit - Don't wait
-    }
- 
++      this.f_291338_.m_129540_();
++      this.f_291389_.m_6681_(this.f_291338_::m_129541_); // CraftBukkit - Don't wait
++   }
++
     private <T, R> CompletableFuture<R> m_243080_(T p_243240_, BiFunction<TextFilter, T, CompletableFuture<R>> p_243271_) {
-@@ -402,7 +_,32 @@
+       return p_243271_.apply(this.f_9743_.m_8967_(), p_243240_).thenApply((p_264862_) -> {
+          if (!this.m_6198_()) {
+@@ -379,9 +_,34 @@
              double d8 = d5 - this.f_9762_;
              double d9 = entity.m_20184_().m_82556_();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
--            if (d10 - d9 > 100.0D && !this.m_9956_()) {
+-            if (d10 - d9 > 100.0D && !this.m_293330_()) {
 +            // CraftBukkit start - handle custom speeds and skipped ticks
 +            this.allowedPlayerTicks += (System.currentTimeMillis() / 50) - this.lastTick;
 +            this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
@@ -321,12 +316,15 @@
 +               speed = f_9743_.m_150110_().f_35940_ * 10f;
 +            }
 +            speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
-+            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.m_9956_()) {
++            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.m_293330_()) {
 +               // CraftBukkit end
                 f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
-                this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
+-               this.m_141995_(new ClientboundMoveVehiclePacket(entity));
++               this.f_291338_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -430,18 +_,88 @@
+             }
+ 
+@@ -407,18 +_,88 @@
              d8 = d5 - entity.m_20189_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -342,8 +340,9 @@
              boolean flag3 = serverlevel.m_45756_(entity, entity.m_20191_().m_82406_(0.0625D));
              if (flag && (flag2 || !flag3)) {
                 entity.m_19890_(d0, d1, d2, f, f1);
+-               this.m_141995_(new ClientboundMoveVehiclePacket(entity));
 +               this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-                this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
++               this.f_291338_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
 +
@@ -416,7 +415,7 @@
  
              this.f_9743_.m_284548_().m_7726_().m_8385_(this.f_9743_);
              this.f_9743_.m_36378_(this.f_9743_.m_20185_() - d0, this.f_9743_.m_20186_() - d1, this.f_9743_.m_20189_() - d2);
-@@ -475,6 +_,7 @@
+@@ -452,6 +_,7 @@
           }
  
           this.f_9766_ = null;
@@ -424,28 +423,19 @@
        }
  
     }
-@@ -503,6 +_,12 @@
+@@ -486,8 +_,9 @@
+       }
  
-    public void m_7741_(ServerboundCommandSuggestionPacket p_9847_) {
-       PacketUtils.m_131359_(p_9847_, this, this.f_9743_.m_284548_());
-+      // CraftBukkit start
-+      if (f_9750_.addAndGet(1) > 500 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
-+         this.m_9942_(Component.m_237115_("disconnect.spam"));
-+         return;
-+      }
-+      // CraftBukkit end
-       StringReader stringreader = new StringReader(p_9847_.m_133904_());
-       if (stringreader.canRead() && stringreader.peek() == '/') {
-          stringreader.skip();
-@@ -510,6 +_,7 @@
- 
-       ParseResults<CommandSourceStack> parseresults = this.f_9745_.m_129892_().m_82094_().parse(stringreader, this.f_9743_.m_20203_());
-       this.f_9745_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
+       ParseResults<CommandSourceStack> parseresults = this.f_291389_.m_129892_().m_82094_().parse(stringreader, this.f_9743_.m_20203_());
+-      this.f_291389_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_296597_) -> {
+-         this.m_141995_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_296597_));
++      this.f_291389_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
 +         if (p_238197_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
-          this.f_9742_.m_129512_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_238197_));
++         this.f_291338_.m_129512_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_238197_));
        });
     }
-@@ -726,6 +_,14 @@
+ 
+@@ -703,6 +_,14 @@
        int i = p_9905_.m_134469_();
        AbstractContainerMenu abstractcontainermenu = this.f_9743_.f_36096_;
        if (abstractcontainermenu instanceof MerchantMenu merchantmenu) {
@@ -460,7 +450,7 @@
           if (!merchantmenu.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, merchantmenu);
              return;
-@@ -738,6 +_,13 @@
+@@ -715,6 +_,13 @@
     }
  
     public void m_6829_(ServerboundEditBookPacket p_9862_) {
@@ -474,7 +464,7 @@
        int i = p_9862_.m_134013_();
        if (Inventory.m_36045_(i) || i == 40) {
           List<String> list = Lists.newArrayList();
-@@ -756,6 +_,8 @@
+@@ -733,6 +_,8 @@
     private void m_9812_(List<FilteredText> p_9813_, int p_9814_) {
        ItemStack itemstack = this.f_9743_.m_150109_().m_8020_(p_9814_);
        if (itemstack.m_150930_(Items.f_42614_)) {
@@ -483,7 +473,7 @@
           this.m_143634_(p_9813_, UnaryOperator.identity(), itemstack);
        }
     }
-@@ -776,12 +_,23 @@
+@@ -753,12 +_,23 @@
              itemstack1.m_41700_("filtered_title", StringTag.m_129297_(p_215209_.m_243113_()));
              itemstack1.m_41700_("title", StringTag.m_129297_(p_215209_.f_215168_()));
           }
@@ -509,7 +499,7 @@
     }
  
     private void m_143634_(List<FilteredText> p_143635_, UnaryOperator<String> p_143636_, ItemStack p_143637_) {
-@@ -809,7 +_,9 @@
+@@ -786,7 +_,9 @@
        }
  
        p_143637_.m_41700_("pages", listtag);
@@ -519,8 +509,8 @@
  
     public void m_7548_(ServerboundEntityTagQuery p_9864_) {
        PacketUtils.m_131359_(p_9864_, this, this.f_9743_.m_284548_());
-@@ -838,7 +_,7 @@
-          this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_player_movement"));
+@@ -815,7 +_,7 @@
+          this.m_294716_(Component.m_237115_("multiplayer.disconnect.invalid_player_movement"));
        } else {
           ServerLevel serverlevel = this.f_9743_.m_284548_();
 -         if (!this.f_9743_.f_8944_) {
@@ -528,7 +518,7 @@
              if (this.f_9746_ == 0) {
                 this.m_9953_();
              }
-@@ -849,6 +_,7 @@
+@@ -826,6 +_,7 @@
                    this.m_9774_(this.f_9766_.f_82479_, this.f_9766_.f_82480_, this.f_9766_.f_82481_, this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
                 }
  
@@ -536,7 +526,7 @@
              } else {
                 this.f_9735_ = this.f_9746_;
                 double d0 = m_143609_(p_9874_.m_134129_(this.f_9743_.m_20185_()));
-@@ -859,7 +_,15 @@
+@@ -836,7 +_,15 @@
                 if (this.f_9743_.m_20159_()) {
                    this.f_9743_.m_19890_(this.f_9743_.m_20185_(), this.f_9743_.m_20186_(), this.f_9743_.m_20189_(), f, f1);
                    this.f_9743_.m_284548_().m_7726_().m_8385_(this.f_9743_);
@@ -552,7 +542,7 @@
                    double d3 = this.f_9743_.m_20185_();
                    double d4 = this.f_9743_.m_20186_();
                    double d5 = this.f_9743_.m_20189_();
-@@ -876,14 +_,31 @@
+@@ -853,14 +_,31 @@
                    } else {
                       ++this.f_9740_;
                       int i = this.f_9740_ - this.f_9741_;
@@ -580,13 +570,13 @@
 +
                       if (!this.f_9743_.m_8958_() && (!this.f_9743_.m_9236_().m_46469_().m_46207_(GameRules.f_46148_) || !this.f_9743_.m_21255_())) {
                          float f2 = this.f_9743_.m_21255_() ? 300.0F : 100.0F;
--                        if (d10 - d9 > (double)(f2 * (float)i) && !this.m_9956_()) {
-+                        if (d10 - d9 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.m_9956_()) {
+-                        if (d10 - d9 > (double)(f2 * (float)i) && !this.m_293330_()) {
++                        if (d10 - d9 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.m_293330_()) {
 +                           // CraftBukkit end
                             f_9744_.warn("{} moved too quickly! {},{},{}", this.f_9743_.m_7755_().getString(), d6, d7, d8);
                             this.m_9774_(this.f_9743_.m_20185_(), this.f_9743_.m_20186_(), this.f_9743_.m_20189_(), this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
                             return;
-@@ -901,6 +_,7 @@
+@@ -878,6 +_,7 @@
  
                       boolean flag1 = this.f_9743_.f_201939_;
                       this.f_9743_.m_6478_(MoverType.PLAYER, new Vec3(d6, d7, d8));
@@ -594,7 +584,7 @@
                       d6 = d0 - this.f_9743_.m_20185_();
                       d7 = d1 - this.f_9743_.m_20186_();
                       if (d7 > -0.5D || d7 < 0.5D) {
-@@ -910,13 +_,75 @@
+@@ -887,13 +_,75 @@
                       d8 = d2 - this.f_9743_.m_20189_();
                       d10 = d6 * d6 + d7 * d7 + d8 * d8;
                       boolean flag2 = false;
@@ -669,10 +659,10 @@
 +                        }
 +                        this.f_9743_.m_19890_(d0, d1, d2, f, f1); // Copied from above
 +                        // CraftBukkit end
-                         this.f_9736_ = d7 >= -0.03125D && !flag1 && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR && !this.f_9745_.m_129915_() && !this.f_9743_.m_150110_().f_35936_ && !this.f_9743_.m_21023_(MobEffects.f_19620_) && !this.f_9743_.m_21255_() && !this.f_9743_.m_21209_() && this.m_9793_(this.f_9743_);
+                         this.f_9736_ = d7 >= -0.03125D && !flag1 && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR && !this.f_291389_.m_129915_() && !this.f_9743_.m_150110_().f_35936_ && !this.f_9743_.m_21023_(MobEffects.f_19620_) && !this.f_9743_.m_21255_() && !this.f_9743_.m_21209_() && this.m_9793_(this.f_9743_);
                          this.f_9743_.m_284548_().m_7726_().m_8385_(this.f_9743_);
                          this.f_9743_.m_289599_(this.f_9743_.m_20185_() - d3, this.f_9743_.m_20186_() - d4, this.f_9743_.m_20189_() - d5, p_9874_.m_134139_());
-@@ -930,7 +_,7 @@
+@@ -907,7 +_,7 @@
                          this.f_9757_ = this.f_9743_.m_20186_();
                          this.f_9758_ = this.f_9743_.m_20189_();
                       } else {
@@ -681,7 +671,7 @@
                          this.f_9743_.m_289599_(this.f_9743_.m_20185_() - d3, this.f_9743_.m_20186_() - d4, this.f_9743_.m_20189_() - d5, p_9874_.m_134139_());
                       }
                    }
-@@ -954,28 +_,86 @@
+@@ -931,28 +_,86 @@
        return false;
     }
  
@@ -766,9 +756,9 @@
  
        this.f_9735_ = this.f_9746_;
 -      this.f_9743_.m_19890_(p_9781_, p_9782_, p_9783_, p_9784_, p_9785_);
--      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(p_9781_ - d0, p_9782_ - d1, p_9783_ - d2, p_9784_ - f, p_9785_ - f1, p_9786_, this.f_9767_));
+-      this.f_9743_.f_8906_.m_141995_(new ClientboundPlayerPositionPacket(p_9781_ - d0, p_9782_ - d1, p_9783_ - d2, p_9784_ - f, p_9785_ - f1, p_9786_, this.f_9767_));
 +      this.f_9743_.m_19890_(pX, pY, pZ, pYaw, pPitch);
-+      this.f_9743_.f_8906_.m_9829_(new ClientboundPlayerPositionPacket(pX - d0, pY - d1, pZ - d2, pYaw - f, pPitch - f1, pRelativeSet, this.f_9767_));
++      this.f_9743_.f_8906_.m_141995_(new ClientboundPlayerPositionPacket(pX - d0, pY - d1, pZ - d2, pYaw - f, pPitch - f1, pRelativeSet, this.f_9767_));
     }
  
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
@@ -777,13 +767,13 @@
        BlockPos blockpos = p_9889_.m_134281_();
        this.f_9743_.m_9243_();
        ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_9889_.m_134285_();
-@@ -983,8 +_,28 @@
+@@ -960,8 +_,28 @@
           case SWAP_ITEM_WITH_OFFHAND:
              if (!this.f_9743_.m_5833_()) {
                 ItemStack itemstack = this.f_9743_.m_21120_(InteractionHand.OFF_HAND);
 -               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, this.f_9743_.m_21120_(InteractionHand.MAIN_HAND));
 -               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, itemstack);
-+               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.f_9743_);
++               var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.f_9743_);
 +               if (event.isCanceled()) return;
 +
 +               // CraftBukkit start - inspiration taken from DispenserRegistry (See SpigotCraft#394)
@@ -808,7 +798,7 @@
                 this.f_9743_.m_5810_();
              }
  
-@@ -997,6 +_,21 @@
+@@ -974,6 +_,21 @@
              return;
           case DROP_ALL_ITEMS:
              if (!this.f_9743_.m_5833_()) {
@@ -830,7 +820,7 @@
                 this.f_9743_.m_182294_(true);
              }
  
-@@ -1024,8 +_,29 @@
+@@ -1001,8 +_,29 @@
        }
     }
  
@@ -860,7 +850,7 @@
        this.f_9743_.f_8906_.m_215201_(p_9930_.m_238008_());
        ServerLevel serverlevel = this.f_9743_.m_284548_();
        InteractionHand interactionhand = p_9930_.m_134703_();
-@@ -1035,7 +_,7 @@
+@@ -1012,7 +_,7 @@
           Vec3 vec3 = blockhitresult.m_82450_();
           BlockPos blockpos = blockhitresult.m_82425_();
           Vec3 vec31 = Vec3.m_82512_(blockpos);
@@ -869,7 +859,7 @@
              Vec3 vec32 = vec3.m_82546_(vec31);
              double d0 = 1.0000001D;
              if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
-@@ -1043,7 +_,8 @@
+@@ -1020,7 +_,8 @@
                 this.f_9743_.m_9243_();
                 int i = this.f_9743_.m_9236_().m_151558_();
                 if (blockpos.m_123342_() < i) {
@@ -879,7 +869,7 @@
                       InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                       if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                          Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
-@@ -1068,12 +_,58 @@
+@@ -1045,12 +_,58 @@
  
     public void m_5760_(ServerboundUseItemPacket p_9932_) {
        PacketUtils.m_131359_(p_9932_, this, this.f_9743_.m_284548_());
@@ -940,8 +930,8 @@
           InteractionResult interactionresult = this.f_9743_.f_8941_.m_6261_(this.f_9743_, serverlevel, itemstack, interactionhand);
           if (interactionresult.m_19080_()) {
              this.f_9743_.m_21011_(interactionhand, true);
-@@ -1088,7 +_,7 @@
-          for(ServerLevel serverlevel : this.f_9745_.m_129785_()) {
+@@ -1065,7 +_,7 @@
+          for(ServerLevel serverlevel : this.f_291389_.m_129785_()) {
              Entity entity = p_9928_.m_134681_(serverlevel);
              if (entity != null) {
 -               this.f_9743_.m_8999_(serverlevel, entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
@@ -949,56 +939,25 @@
                 return;
              }
           }
-@@ -1102,7 +_,7 @@
-          f_9744_.info("Disconnecting {} due to resource pack rejection", (Object)this.f_9743_.m_7755_());
-          this.m_9942_(Component.m_237115_("multiplayer.requiredTexturePrompt.disconnect"));
-       }
--
-+      this.cserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getCraftPlayer(), PlayerResourcePackStatusEvent.Status.values()[p_9901_.f_134406_.ordinal()])); // CraftBukkit
-    }
- 
-    public void m_5938_(ServerboundPaddleBoatPacket p_9878_) {
-@@ -1118,12 +_,22 @@
-    }
- 
-    public void m_7026_(Component p_9825_) {
-+      // CraftBukkit start - Rarely it would send a disconnect line twice
-+      if (this.processedDisconnect) {
-+         return;
-+      } else {
-+         this.processedDisconnect = true;
-+      }
-+      // CraftBukkit end
-       this.f_241681_.close();
-       f_9744_.info("{} lost connection: {}", this.f_9743_.m_7755_().getString(), p_9825_.getString());
--      this.f_9745_.m_129929_();
--      this.f_9745_.m_6846_().m_240416_(Component.m_237110_("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW), false);
+@@ -1094,7 +_,17 @@
+       this.f_291389_.m_6846_().m_240416_(Component.m_237110_("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW), false);
        this.f_9743_.m_9231_();
-       this.f_9745_.m_6846_().m_11286_(this.f_9743_);
-+      String quitMessage = this.f_9745_.m_6846_().quitMessage;
+       this.f_291389_.m_6846_().m_11286_(this.f_9743_);
++      String quitMessage = this.f_291389_.m_6846_().quitMessage;
 +      if ((quitMessage != null) && (quitMessage.length() > 0)) {
-+         this.f_9745_.m_6846_().broadcastMessage(CraftChatMessage.fromString(quitMessage));
++         this.f_291389_.m_6846_().broadcastMessage(CraftChatMessage.fromString(quitMessage));
 +      }
 +      // CraftBukkit end
        this.f_9743_.m_8967_().m_7670_();
-       if (this.m_9956_()) {
-          f_9744_.info("Stopping singleplayer server as player logged out");
-@@ -1145,6 +_,14 @@
++      if (this.m_293330_()) {
++         f_9744_.info("Stopping singleplayer server as player logged out");
++         this.f_291389_.m_7570_(false);
++      }
++
     }
  
-    public void m_243119_(Packet<?> p_243227_, @Nullable PacketSendListener p_243273_) {
-+      // CraftBukkit start
-+      if (p_243227_ == null || this.processedDisconnect) { // Spigot
-+         return;
-+      } else if (p_243227_ instanceof ClientboundSetDefaultSpawnPositionPacket) {
-+         ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) p_243227_;
-+         this.f_9743_.compassTarget = CraftLocation.toBukkit(packet6.f_133111_, this.getCraftPlayer().getWorld());
-+      }
-+      // CraftBukkit end
-       try {
-          this.f_9742_.m_243124_(p_243227_, p_243273_);
-       } catch (Throwable throwable) {
-@@ -1159,7 +_,16 @@
+    public void m_215201_(int p_215202_) {
+@@ -1107,7 +_,16 @@
  
     public void m_7798_(ServerboundSetCarriedItemPacket p_9909_) {
        PacketUtils.m_131359_(p_9909_, this, this.f_9743_.m_284548_());
@@ -1007,7 +966,7 @@
 +         PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getCraftPlayer(), this.f_9743_.m_150109_().f_35977_, p_9909_.m_134498_());
 +         this.cserver.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
-+            this.m_9829_(new ClientboundSetCarriedItemPacket(this.f_9743_.m_150109_().f_35977_));
++            this.m_141995_(new ClientboundSetCarriedItemPacket(this.f_9743_.m_150109_().f_35977_));
 +            this.f_9743_.m_9243_();
 +            return;
 +         }
@@ -1015,7 +974,7 @@
           if (this.f_9743_.m_150109_().f_35977_ != p_9909_.m_134498_() && this.f_9743_.m_7655_() == InteractionHand.MAIN_HAND) {
              this.f_9743_.m_5810_();
           }
-@@ -1167,17 +_,24 @@
+@@ -1115,36 +_,42 @@
           this.f_9743_.m_150109_().f_35977_ = p_9909_.m_134498_();
           this.f_9743_.m_9243_();
        } else {
@@ -1028,52 +987,64 @@
     public void m_7388_(ServerboundChatPacket p_9841_) {
 +      // CraftBukkit start - async chat
 +      // SPIGOT-3638
-+      if (this.f_9745_.m_129918_()) {
++      if (this.f_291389_.m_129918_()) {
 +         return;
 +      }
 +      // CraftBukkit end
        if (m_215214_(p_9841_.f_133827_())) {
-          this.m_9942_(Component.m_237115_("multiplayer.disconnect.illegal_characters"));
+          this.m_294716_(Component.m_237115_("multiplayer.disconnect.illegal_characters"));
        } else {
           Optional<LastSeenMessages> optional = this.m_247189_(p_9841_.f_133827_(), p_9841_.f_237950_(), p_9841_.f_241662_());
           if (optional.isPresent()) {
--            this.f_9745_.m_18707_(() -> {
+-            this.f_291389_.m_18707_(() -> {
+-               PlayerChatMessage playerchatmessage;
+-               try {
+-                  playerchatmessage = this.m_247340_(p_9841_, optional.get());
+-               } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
+-                  this.m_246889_(signedmessagechain$decodeexception);
+-                  return;
+-               }
 +            // this.server.submit(() -> { // CraftBukkit - async chat
-                PlayerChatMessage playerchatmessage;
-                try {
-                   playerchatmessage = this.m_247340_(p_9841_, optional.get());
-@@ -1187,14 +_,17 @@
-                }
++            PlayerChatMessage playerchatmessage;
++            try {
++               playerchatmessage = this.m_247340_(p_9841_, optional.get());
++            } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
++               this.m_246889_(signedmessagechain$decodeexception);
++               return;
++            }
++            CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
  
-                CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
--               CompletableFuture<Component> completablefuture1 = this.f_9745_.m_236742_().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
-+               CompletableFuture<Component> completablefuture1 = net.minecraftforge.common.ForgeHooks.getServerChatSubmittedDecorator().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
-                this.f_241681_.m_241849_((p_248212_) -> {
-                   return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_248218_) -> {
--                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(completablefuture1.join()).m_243072_(completablefuture.join().f_243010_());
-+                     Component decoratedContent = completablefuture1.join();
-+                     if (decoratedContent == null)
-+                        return; // Forge: ServerChatEvent was canceled if this is null.
-+                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(decoratedContent).m_243072_(completablefuture.join().f_243010_());
-                      this.m_243086_(playerchatmessage1);
--                  }, p_248212_);
-+                  }, this.f_9745_.chatExecutor); // CraftBukkit - async chat
-                });
--            });
-+            // }); // CraftBukkit - async chat
+-               CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
+-               Component component = this.f_291389_.m_236742_().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
+-               this.f_241681_.m_241849_((p_296593_) -> {
+-                  return completablefuture.thenAcceptAsync((p_296589_) -> {
+-                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(component).m_243072_(p_296589_.f_243010_());
+-                     this.m_243086_(playerchatmessage1);
+-                  }, p_296593_);
+-               });
++            Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.f_9743_, playerchatmessage.m_245692_());
++            this.f_241681_.m_241849_((p_296593_) -> {
++               return completablefuture.thenAcceptAsync((p_296589_) -> {
++                  if (component == null) return;
++                  PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(component).m_243072_(p_296589_.f_243010_());
++                  this.m_243086_(playerchatmessage1);
++               }, p_296593_);
+             });
           }
- 
+-
        }
-@@ -1208,7 +_,7 @@
+    }
+ 
+@@ -1156,7 +_,7 @@
           if (optional.isPresent()) {
-             this.f_9745_.m_18707_(() -> {
+             this.f_291389_.m_18707_(() -> {
                 this.m_246958_(p_215225_, optional.get());
 -               this.m_215251_();
-+               this.detectRateSpam("/" + p_215225_.f_237922_()); // Spigot
++               this.m_215251_(); // Spigot
              });
           }
  
-@@ -1216,21 +_,34 @@
+@@ -1164,21 +_,34 @@
     }
  
     private void m_246958_(ServerboundChatCommandPacket p_251139_, LastSeenMessages p_250484_) {
@@ -1082,7 +1053,7 @@
 +      String command = "/" + p_251139_.f_237922_();
 +      f_9744_.info(this.f_9743_.m_6302_() + " issued server command: " + command);
 +
-+      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getCraftPlayer(), command, new LazyPlayerSet(f_9745_));
++      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getCraftPlayer(), command, new LazyPlayerSet(f_291389_));
 +      this.cserver.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
@@ -1103,72 +1074,26 @@
        }
  
        CommandSigningContext commandsigningcontext = new CommandSigningContext.SignedArguments(map);
--      parseresults = Commands.m_242611_(parseresults, (p_242749_) -> {
+-      parseresults = Commands.m_242611_(parseresults, (p_296586_) -> {
+-         return p_296586_.m_230893_(commandsigningcontext, this.f_241681_);
 +      parseresults = Commands.<CommandSourceStack>m_242611_(parseresults, (p_242749_) -> {
-          return p_242749_.m_230893_(commandsigningcontext);
++         return p_242749_.m_230893_(commandsigningcontext, this.f_241681_);
        });
--      this.f_9745_.m_129892_().m_242674_(parseresults, p_251139_.f_237922_());
-+      this.f_9745_.m_129892_().m_242674_(parseresults, command); // CraftBukkit
+-      this.f_291389_.m_129892_().m_242674_(parseresults, p_251139_.f_237922_());
++      this.f_291389_.m_129892_().m_242674_(parseresults, command); // CraftBukkit
     }
  
     private void m_246889_(SignedMessageChain.DecodeException p_252068_) {
-@@ -1266,7 +_,7 @@
+@@ -1214,7 +_,7 @@
           return Optional.empty();
        } else {
           Optional<LastSeenMessages> optional = this.m_245578_(p_249613_);
 -         if (this.f_9743_.m_9241_() == ChatVisiblity.HIDDEN) {
 +         if (this.f_9743_.m_213877_() || this.f_9743_.m_9241_() == ChatVisiblity.HIDDEN) { // CraftBukkit - dead men tell no tales
-             this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.disabled.options").m_130940_(ChatFormatting.RED), false));
+             this.m_141995_(new ClientboundSystemChatPacket(Component.m_237115_("chat.disabled.options").m_130940_(ChatFormatting.RED), false));
              return Optional.empty();
           } else {
-@@ -1316,13 +_,41 @@
-    }
- 
-    private void m_243086_(PlayerChatMessage p_243277_) {
--      this.f_9745_.m_6846_().m_243049_(p_243277_, this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, this.f_9743_));
--      this.m_215251_();
-+      // CraftBukkit start
-+      String s = p_243277_.m_245728_();
-+      if (s.isEmpty()) {
-+         f_9744_.warn(this.f_9743_.m_6302_() + " tried to send an empty message");
-+      } else if (getCraftPlayer().isConversing()) {
-+         final String conversationInput = s;
-+         this.f_9745_.processQueue.add(new Runnable() {
-+            @Override
-+            public void run() {
-+               getCraftPlayer().acceptConversationInput(conversationInput);
-+            }
-+           });
-+      } else if (this.f_9743_.m_9241_() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
-+         this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.cannotSend").m_130940_(ChatFormatting.RED), false));
-+      } else {
-+         this.chat(s, p_243277_, true);
-+      }
-+      // CraftBukkit end
-+      this.detectRateSpam(s); // Spigot
-    }
- 
--   private void m_215251_() {
--      this.f_9750_ += 20;
--      if (this.f_9750_ > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
-+   private void detectRateSpam(String s) {
-+      boolean counted = true;
-+      for ( String exclude : org.spigotmc.SpigotConfig.spamExclusions )
-+      {
-+         if ( exclude != null && s.startsWith( exclude ) )
-+         {
-+            counted = false;
-+            break;
-+         }
-+      }
-+      // Spigot end
-+      // this.chatSpamTickCount += 20;
-+      if (this.f_9750_.addAndGet(20) > 200 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
-+         // CraftBukkit end
-          this.m_9942_(Component.m_237115_("disconnect.spam"));
-       }
- 
-@@ -1340,12 +_,61 @@
+@@ -1288,12 +_,61 @@
  
     public void m_7953_(ServerboundSwingPacket p_9926_) {
        PacketUtils.m_131359_(p_9926_, this, this.f_9743_.m_284548_());
@@ -1230,7 +1155,7 @@
        this.f_9743_.m_9243_();
        switch (p_9891_.m_134320_()) {
           case PRESS_SHIFT_KEY:
-@@ -1416,6 +_,12 @@
+@@ -1364,6 +_,12 @@
     }
  
     public void m_245431_(PlayerChatMessage p_250321_, ChatType.Bound p_250910_) {
@@ -1240,10 +1165,10 @@
 +         return;
 +      }
 +      // CraftBukkit end
-       this.m_9829_(new ClientboundPlayerChatPacket(p_250321_.f_243882_().f_244443_(), p_250321_.f_243882_().f_244066_(), p_250321_.f_244279_(), p_250321_.f_240885_().m_253217_(this.f_243718_), p_250321_.f_237215_(), p_250321_.f_242992_(), p_250910_.m_240987_(this.f_9743_.m_9236_().m_9598_())));
+       this.m_141995_(new ClientboundPlayerChatPacket(p_250321_.f_243882_().f_244443_(), p_250321_.f_243882_().f_244066_(), p_250321_.f_244279_(), p_250321_.f_240885_().m_253217_(this.f_243718_), p_250321_.f_237215_(), p_250321_.f_242992_(), p_250910_.m_240987_(this.f_9743_.m_9236_().m_9598_())));
        this.m_241992_(p_250321_);
     }
-@@ -1430,8 +_,17 @@
+@@ -1388,8 +_,17 @@
  
     public void m_6946_(ServerboundInteractPacket p_9866_) {
        PacketUtils.m_131359_(p_9866_, this, this.f_9743_.m_284548_());
@@ -1261,7 +1186,7 @@
        this.f_9743_.m_9243_();
        this.f_9743_.m_20260_(p_9866_.m_134061_());
        if (entity != null) {
-@@ -1440,13 +_,50 @@
+@@ -1398,13 +_,50 @@
           }
  
           AABB aabb = entity.m_20191_();
@@ -1282,13 +1207,13 @@
 +
 +                     // Entity in bucket - SPIGOT-4048 and SPIGOT-6859a
 +                     if ((entity instanceof Bucketable && entity instanceof LivingEntity && origItem != null && origItem.m_5456_() == Items.f_42447_) && (event.isCancelled() || f_9743_.m_150109_().m_36056_() == null || f_9743_.m_150109_().m_36056_().m_41720_() != origItem)) {
-+                        m_9829_(new ClientboundAddEntityPacket(entity));
++                        m_141995_(new ClientboundAddEntityPacket(entity));
 +                        f_9743_.f_36096_.m_150429_();
 +                     }
 +
 +                     if (triggerLeashUpdate && (event.isCancelled() || f_9743_.m_150109_().m_36056_() == null || f_9743_.m_150109_().m_36056_().m_41720_() != origItem)) {
 +                        // Refresh the current leash state
-+                        m_9829_(new ClientboundSetEntityLinkPacket(entity, ((Mob) entity).m_21524_()));
++                        m_141995_(new ClientboundSetEntityLinkPacket(entity, ((Mob) entity).m_21524_()));
 +                     }
 +
 +                     if (event.isCancelled() || f_9743_.m_150109_().m_36056_() == null || f_9743_.m_150109_().m_36056_().m_41720_() != origItem) {
@@ -1296,7 +1221,7 @@
 +                        entity.m_20088_().refresh(f_9743_);
 +                        // SPIGOT-7136 - Allays
 +                        if (entity instanceof Allay) {
-+                           m_9829_(new ClientboundSetEquipmentPacket(entity.m_19879_(), Arrays.stream(net.minecraft.world.entity.EquipmentSlot.values()).map((slot) -> Pair.of(slot, ((LivingEntity) entity).m_6844_(slot).m_41777_())).collect(Collectors.toList())));
++                           m_141995_(new ClientboundSetEquipmentPacket(entity.m_19879_(), Arrays.stream(net.minecraft.world.entity.EquipmentSlot.values()).map((slot) -> Pair.of(slot, ((LivingEntity) entity).m_6844_(slot).m_41777_())).collect(Collectors.toList())));
 +                           f_9743_.f_36096_.m_150429_();
 +                        }
 +                     }
@@ -1314,7 +1239,7 @@
                       if (interactionresult.m_19077_()) {
                          CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack1, entity);
                          if (interactionresult.m_19080_()) {
-@@ -1458,20 +_,28 @@
+@@ -1416,20 +_,28 @@
                 }
  
                 public void m_142299_(InteractionHand p_143677_) {
@@ -1346,24 +1271,24 @@
 +                        // CraftBukkit end
                       }
                    } else {
-                      ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1492,6 +_,7 @@
+                      ServerGamePacketListenerImpl.this.m_294716_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
+@@ -1450,6 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.f_9743_.f_8944_) {
                 this.f_9743_.f_8944_ = false;
-+               this.f_9745_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.END_PORTAL; // Mohist
-                this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, true);
++               this.f_291389_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.END_PORTAL; // Mohist
+                this.f_9743_ = this.f_291389_.m_6846_().m_11236_(this.f_9743_, true);
                 CriteriaTriggers.f_10588_.m_19757_(this.f_9743_, Level.f_46430_, Level.f_46428_);
              } else {
-@@ -1499,6 +_,7 @@
+@@ -1457,6 +_,7 @@
                    return;
                 }
  
-+               this.f_9745_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.DEATH; // Mohist
-                this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, false);
-                if (this.f_9745_.m_7035_()) {
++               this.f_291389_.m_6846_().mohist$reason = PlayerRespawnEvent.RespawnReason.DEATH; // Mohist
+                this.f_9743_ = this.f_291389_.m_6846_().m_11236_(this.f_9743_, false);
+                if (this.f_291389_.m_7035_()) {
                    this.f_9743_.m_143403_(GameType.SPECTATOR);
-@@ -1514,14 +_,17 @@
+@@ -1472,14 +_,17 @@
  
     public void m_7951_(ServerboundContainerClosePacket p_9858_) {
        PacketUtils.m_131359_(p_9858_, this, this.f_9743_.m_284548_());
@@ -1383,7 +1308,7 @@
              this.f_9743_.f_36096_.m_150429_();
           } else if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
-@@ -1532,7 +_,281 @@
+@@ -1490,7 +_,281 @@
              } else {
                 boolean flag = p_9856_.m_182741_() != this.f_9743_.f_36096_.m_182424_();
                 this.f_9743_.f_36096_.m_150443_();
@@ -1636,19 +1561,19 @@
 +                           case PLACE_SOME:
 +                           case PLACE_ONE:
 +                           case SWAP_WITH_CURSOR:
-+                              this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(-1, -1, this.f_9743_.f_36095_.m_182425_(), this.f_9743_.f_36096_.m_142621_()));
-+                              this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36096_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9856_.m_133962_(), this.f_9743_.f_36096_.m_38853_(p_9856_.m_133962_()).m_7993_()));
++                              this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(-1, -1, this.f_9743_.f_36095_.m_182425_(), this.f_9743_.f_36096_.m_142621_()));
++                              this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36096_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9856_.m_133962_(), this.f_9743_.f_36096_.m_38853_(p_9856_.m_133962_()).m_7993_()));
 +                              break;
 +                           // Modified clicked only
 +                           case DROP_ALL_SLOT:
 +                           case DROP_ONE_SLOT:
-+                              this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36096_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9856_.m_133962_(), this.f_9743_.f_36096_.m_38853_(p_9856_.m_133962_()).m_7993_()));
++                              this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36096_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9856_.m_133962_(), this.f_9743_.f_36096_.m_38853_(p_9856_.m_133962_()).m_7993_()));
 +                              break;
 +                           // Modified cursor only
 +                           case DROP_ALL_CURSOR:
 +                           case DROP_ONE_CURSOR:
 +                           case CLONE_STACK:
-+                              this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(-1, -1, this.f_9743_.f_36095_.m_182425_(), this.f_9743_.f_36096_.m_142621_()));
++                              this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(-1, -1, this.f_9743_.f_36095_.m_182425_(), this.f_9743_.f_36096_.m_142621_()));
 +                              break;
 +                           // Nothing
 +                           case NOTHING:
@@ -1666,12 +1591,12 @@
  
                 for(Int2ObjectMap.Entry<ItemStack> entry : Int2ObjectMaps.fastIterable(p_9856_.m_179582_())) {
                    this.f_9743_.f_36096_.m_182414_(entry.getIntKey(), entry.getValue());
-@@ -1558,8 +_,16 @@
+@@ -1516,8 +_,16 @@
           if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
              f_9744_.debug("Player {} interacted with invalid menu {}", this.f_9743_, this.f_9743_.f_36096_);
           } else {
--            this.f_9745_.m_129894_().m_44043_(p_9882_.m_134252_()).ifPresent((p_287379_) -> {
--               ((RecipeBookMenu)this.f_9743_.f_36096_).m_6951_(p_9882_.m_134253_(), p_287379_, this.f_9743_);
+-            this.f_291389_.m_129894_().m_44043_(p_9882_.m_134252_()).ifPresent((p_296595_) -> {
+-               ((RecipeBookMenu)this.f_9743_.f_36096_).m_6951_(p_9882_.m_134253_(), p_296595_, this.f_9743_);
 +            // CraftBukkit start - implement PlayerRecipeBookClickEvent
 +            org.bukkit.inventory.Recipe recipe = this.cserver.getRecipe(CraftNamespacedKey.fromMinecraft(p_9882_.m_134252_()));
 +            if (recipe == null) {
@@ -1680,12 +1605,12 @@
 +            org.bukkit.event.player.PlayerRecipeBookClickEvent event = CraftEventFactory.callRecipeBookClickEvent(this.f_9743_, recipe, p_9882_.m_134253_());
 +
 +            // Cast to keyed should be safe as the recipe will never be a MerchantRecipe.
-+            this.f_9745_.m_129894_().m_44043_(CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((irecipe) -> {
++            this.f_291389_.m_129894_().m_44043_(CraftNamespacedKey.toMinecraft(((org.bukkit.Keyed) event.getRecipe()).getKey())).ifPresent((irecipe) -> {
 +               ((RecipeBookMenu) this.f_9743_.f_36096_).m_6951_(event.isShiftClick(), irecipe, this.f_9743_);
              });
           }
        }
-@@ -1567,6 +_,7 @@
+@@ -1525,6 +_,7 @@
  
     public void m_6557_(ServerboundContainerButtonClickPacket p_9854_) {
        PacketUtils.m_131359_(p_9854_, this, this.f_9743_.m_284548_());
@@ -1693,7 +1618,7 @@
        this.f_9743_.m_9243_();
        if (this.f_9743_.f_36096_.f_38840_ == p_9854_.m_133935_() && !this.f_9743_.m_5833_()) {
           if (!this.f_9743_.f_36096_.m_6875_(this.f_9743_)) {
-@@ -1603,6 +_,43 @@
+@@ -1561,6 +_,43 @@
  
           boolean flag1 = p_9915_.m_134561_() >= 1 && p_9915_.m_134561_() <= 45;
           boolean flag2 = itemstack.m_41619_() || itemstack.m_41773_() >= 0 && itemstack.m_41613_() <= 64 && !itemstack.m_41619_();
@@ -1727,8 +1652,8 @@
 +               case DENY:
 +                  // Reset the slot
 +                  if (p_9915_.m_134561_() >= 0) {
-+                     this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36095_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9915_.m_134561_(), this.f_9743_.f_36095_.m_38853_(p_9915_.m_134561_()).m_7993_()));
-+                     this.f_9743_.f_8906_.m_9829_(new ClientboundContainerSetSlotPacket(-1, this.f_9743_.f_36095_.m_182425_(), -1, ItemStack.f_41583_));
++                     this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_9743_.f_36095_.f_38840_, this.f_9743_.f_36095_.m_182425_(), p_9915_.m_134561_(), this.f_9743_.f_36095_.m_38853_(p_9915_.m_134561_()).m_7993_()));
++                     this.f_9743_.f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(-1, this.f_9743_.f_36095_.m_182425_(), -1, ItemStack.f_41583_));
 +                  }
 +                  return;
 +            }
@@ -1737,7 +1662,7 @@
           if (flag1 && flag2) {
              this.f_9743_.f_36095_.m_38853_(p_9915_.m_134561_()).m_269060_(itemstack);
              this.f_9743_.f_36095_.m_38946_();
-@@ -1622,6 +_,7 @@
+@@ -1580,6 +_,7 @@
     }
  
     private void m_9922_(ServerboundSignUpdatePacket p_9923_, List<FilteredText> p_9924_) {
@@ -1745,15 +1670,7 @@
        this.f_9743_.m_9243_();
        ServerLevel serverlevel = this.f_9743_.m_284548_();
        BlockPos blockpos = p_9923_.m_134660_();
-@@ -1638,6 +_,7 @@
-    }
- 
-    public void m_5683_(ServerboundKeepAlivePacket p_9870_) {
-+      PacketUtils.m_131359_(p_9870_, this, this.f_9743_.m_284548_()); // CraftBukkit
-       if (this.f_9748_ && p_9870_.m_134102_() == this.f_9749_) {
-          int i = (int)(Util.m_137550_() - this.f_9747_);
-          this.f_9743_.f_8943_ = (this.f_9743_.f_8943_ * 3 + i) / 4;
-@@ -1651,6 +_,17 @@
+@@ -1598,6 +_,17 @@
     public void m_6828_(ServerboundPlayerAbilitiesPacket p_9887_) {
        PacketUtils.m_131359_(p_9887_, this, this.f_9743_.m_284548_());
        this.f_9743_.m_150110_().f_35935_ = p_9887_.m_134264_() && this.f_9743_.m_150110_().f_35936_;
@@ -1770,64 +1687,8 @@
 +      // CraftBukkit end
     }
  
-    public void m_5617_(ServerboundClientInformationPacket p_9845_) {
-@@ -1658,7 +_,55 @@
-       this.f_9743_.m_9156_(p_9845_);
-    }
- 
-+   // CraftBukkit start
-+   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
-+   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
-    public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {
-+      PacketUtils.m_131359_(p_9860_, this, this.f_9743_.m_284548_());
-+      var readerIndex = p_9860_.f_133981_.readerIndex();
-+      var buf = new byte[p_9860_.f_133981_.readableBytes()];
-+      p_9860_.f_133981_.readBytes(buf);
-+      p_9860_.f_133981_.readerIndex(readerIndex);
-+      ServerLifecycleHooks.getCurrentServer().m_201446_(() -> {
-+         if (ServerLifecycleHooks.getCurrentServer().hasStopped() || processedDisconnect) {
-+            return;
-+         }
-+         if (this.f_9742_.m_129536_()) {
-+            if (p_9860_.f_133980_.equals(CUSTOM_REGISTER)) {
-+               try {
-+                  String channels = new String(buf, StandardCharsets.UTF_8);
-+                  for (String channel : channels.split("\0")) {
-+                     if (!StringUtils.isNullOrEmpty(channel)) {
-+                        getCraftPlayer().addChannel(channel);
-+                     }
-+                  }
-+               } catch (Exception ex) {
-+                  f_9744_.error("Couldn't register custom payload", ex);
-+                  this.disconnect("Invalid payload REGISTER!");
-+               }
-+            } else if (p_9860_.f_133980_.equals(CUSTOM_UNREGISTER)) {
-+               try {
-+                  String channels = new String(buf, StandardCharsets.UTF_8);
-+                  for (String channel : channels.split("\0")) {
-+                     if (!StringUtils.isNullOrEmpty(channel)) {
-+                        getCraftPlayer().removeChannel(channel);
-+                     }
-+                  }
-+               } catch (Exception ex) {
-+                  f_9744_.error("Couldn't unregister custom payload", ex);
-+                  this.disconnect("Invalid payload UNREGISTER!");
-+               }
-+            } else {
-+               try {
-+                  this.cserver.getMessenger().dispatchIncomingMessage(this.f_9743_.getBukkitEntity(), p_9860_.f_133980_.toString(), buf);
-+               } catch (Exception ex) {
-+                  f_9744_.error("Couldn't dispatch custom payload", ex);
-+                  this.disconnect("Invalid custom payload!");
-+               }
-+            }
-+         }
-+      });
-+      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.f_9742_);
-    }
- 
-    public void m_7477_(ServerboundChangeDifficultyPacket p_9839_) {
-@@ -1676,6 +_,7 @@
+    public void m_9844_(ServerboundClientInformationPacket p_298714_) {
+@@ -1620,6 +_,7 @@
     }
  
     public void m_252797_(ServerboundChatSessionUpdatePacket p_253950_) {
@@ -1835,20 +1696,22 @@
        PacketUtils.m_131359_(p_253950_, this, this.f_9743_.m_284548_());
        RemoteChatSession.Data remotechatsession$data = p_253950_.f_252446_();
        ProfilePublicKey.Data profilepublickey$data = this.f_252494_ != null ? this.f_252494_.f_243855_().f_219781_() : null;
-@@ -1715,8 +_,124 @@
-       return this.f_9743_;
+@@ -1649,7 +_,7 @@
+       if (!this.f_290343_) {
+          throw new IllegalStateException("Client acknowledged config, but none was requested");
+       } else {
+-         this.f_291338_.m_129505_(new ServerConfigurationPacketListenerImpl(this.f_291389_, this.f_291338_, this.m_295477_(this.f_9743_.m_294559_())));
++         this.f_291338_.m_129505_(new ServerConfigurationPacketListenerImpl(this.f_291389_, this.f_291338_, this.m_295477_(this.f_9743_.m_294559_()), this.f_9743_));
+       }
     }
  
-+   public void dismount(double x, double y, double z, float yRot, float xRot) {
-+   }
-+
-    @FunctionalInterface
+@@ -1676,4 +_,117 @@
     interface EntityInteraction {
        InteractionResult m_143694_(ServerPlayer p_143695_, Entity p_143696_, InteractionHand p_143697_);
     }
 +
 +   public final boolean isDisconnected() {
-+      return !this.f_9743_.joining && !this.f_9742_.m_129536_();
++      return !this.f_9743_.joining && !this.f_291338_.m_129536_();
 +   }
 +
 +   private void handleCommand(String s) {
@@ -1857,7 +1720,7 @@
 +
 +      CraftPlayer player = this.getCraftPlayer();
 +
-+      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet(f_9745_));
++      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet(f_291389_));
 +      this.cserver.getPluginManager().callEvent(event);
 +
 +      if (event.isCancelled()) {
@@ -1889,7 +1752,7 @@
 +         // Do nothing, this is coming from a plugin
 +      } else {
 +         org.bukkit.entity.Player player = this.getCraftPlayer();
-+         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(f_9745_));
++         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(f_291389_));
 +         String originalFormat = event.getFormat(), originalMessage = event.getMessage();
 +         Bukkit.getPluginManager().callEvent(event);
 +
@@ -1907,11 +1770,11 @@
 +                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
 +                  if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
 +                     if (originalFormat.equals(queueEvent.getFormat()) && originalMessage.equals(queueEvent.getMessage()) && queueEvent.getPlayer().getName().equalsIgnoreCase(queueEvent.getPlayer().getDisplayName())) {
-+                        ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
++                        ServerGamePacketListenerImpl.this.f_291389_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
 +                        return null;
 +                     }
 +
-+                     for (ServerPlayer recipient : ServerGamePacketListenerImpl.this.f_9745_.m_6846_().f_11196_) {
++                     for (ServerPlayer recipient : ServerGamePacketListenerImpl.this.f_291389_.m_6846_().f_11196_) {
 +                        recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), message);
 +                     }
 +                  } else {
@@ -1919,13 +1782,13 @@
 +                        player.sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), message);
 +                     }
 +                  }
-+                  ServerGamePacketListenerImpl.this.f_9745_.console.sendMessage(message);
++                  ServerGamePacketListenerImpl.this.f_291389_.console.sendMessage(message);
 +
 +                  return null;
 +               }
 +            };
 +            if (async) {
-+               f_9745_.processQueue.add(waitable);
++               f_291389_.processQueue.add(waitable);
 +            } else {
 +               waitable.run();
 +            }
@@ -1943,10 +1806,10 @@
 +            s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
 +            if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
 +               if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
-+                  ServerGamePacketListenerImpl.this.f_9745_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
++                  ServerGamePacketListenerImpl.this.f_291389_.m_6846_().m_243049_(original, ServerGamePacketListenerImpl.this.f_9743_, ChatType.m_240980_(ChatType.f_130598_, (Entity) ServerGamePacketListenerImpl.this.f_9743_));
 +                  return;
 +               }
-+               for (ServerPlayer recipient : f_9745_.m_6846_().f_11196_) {
++               for (ServerPlayer recipient : f_291389_.m_6846_().f_11196_) {
 +                  recipient.getBukkitEntity().sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
 +               }
 +            } else {
@@ -1954,7 +1817,7 @@
 +                  recipient.sendMessage(ServerGamePacketListenerImpl.this.f_9743_.m_20148_(), s);
 +               }
 +            }
-+            f_9745_.console.sendMessage(s);
++            f_291389_.console.sendMessage(s);
 +         }
 +      }
 +   }

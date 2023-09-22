@@ -23,6 +23,7 @@ import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -248,8 +249,8 @@ public class DumpCommand extends Command {
 
     private void dumpAdvancements(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for (Advancement channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
-            sb.append(channel.getId()).append("\n");
+        for (AdvancementHolder channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
+            sb.append(channel.id()).append("\n");
         }
         dump(sender, "advancements", sb, mode);
     }

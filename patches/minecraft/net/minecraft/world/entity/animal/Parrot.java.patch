@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -245,7 +_,7 @@
+@@ -246,7 +_,7 @@
           }
  
           if (!this.m_9236_().f_46443_) {
@@ -9,7 +9,7 @@
                 this.m_21828_(p_29414_);
                 this.m_9236_().m_7605_(this, (byte)7);
              } else {
-@@ -259,7 +_,7 @@
+@@ -260,7 +_,7 @@
              itemstack.m_41774_(1);
           }
  
@@ -18,7 +18,7 @@
           if (p_29414_.m_7500_() || !this.m_20147_()) {
              this.m_6469_(this.m_269291_().m_269075_(p_29414_), Float.MAX_VALUE);
           }
-@@ -352,7 +_,7 @@
+@@ -353,7 +_,7 @@
     }
  
     public boolean m_6094_() {
@@ -27,7 +27,7 @@
     }
  
     protected void m_7324_(Entity p_29367_) {
-@@ -365,11 +_,14 @@
+@@ -366,11 +_,14 @@
        if (this.m_6673_(p_29378_)) {
           return false;
        } else {

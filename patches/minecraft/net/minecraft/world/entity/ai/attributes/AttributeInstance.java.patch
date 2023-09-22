@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/attributes/AttributeInstance.java
++++ b/net/minecraft/world/entity/ai/attributes/AttributeInstance.java
+@@ -90,7 +_,7 @@
+       this.f_22095_.accept(this);
+    }
+ 
+-   private void m_22130_(AttributeModifier p_22131_) {
++   public void m_22130_(AttributeModifier p_22131_) {
+       this.m_22104_(p_22131_.m_22217_()).remove(p_22131_);
+       this.f_22090_.remove(p_22131_.m_22209_());
+       this.f_22091_.remove(p_22131_);

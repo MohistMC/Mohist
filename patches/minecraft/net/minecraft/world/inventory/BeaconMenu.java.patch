@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -6,10 +_,14 @@
+@@ -2,15 +_,20 @@
+ 
+ import java.util.Optional;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.tags.ItemTags;
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
  import net.minecraft.world.effect.MobEffect;
@@ -15,7 +21,7 @@
  
  public class BeaconMenu extends AbstractContainerMenu {
     private static final int f_150481_ = 0;
-@@ -31,6 +_,10 @@
+@@ -33,6 +_,10 @@
     private final BeaconMenu.PaymentSlot f_39032_;
     private final ContainerLevelAccess f_39033_;
     private final ContainerData f_39034_;
@@ -26,7 +32,7 @@
  
     public BeaconMenu(int p_39036_, Container p_39037_) {
        this(p_39036_, p_39037_, new SimpleContainerData(3), ContainerLevelAccess.f_39287_);
-@@ -38,6 +_,7 @@
+@@ -40,6 +_,7 @@
  
     public BeaconMenu(int p_39039_, Container p_39040_, ContainerData p_39041_, ContainerLevelAccess p_39042_) {
        super(MenuType.f_39965_, p_39039_);
@@ -34,7 +40,7 @@
        m_38886_(p_39041_, 3);
        this.f_39034_ = p_39041_;
        this.f_39033_ = p_39042_;
-@@ -71,6 +_,7 @@
+@@ -73,6 +_,7 @@
     }
  
     public boolean m_6875_(Player p_39047_) {
@@ -42,7 +48,7 @@
        return m_38889_(this.f_39033_, p_39047_, Blocks.f_50273_);
     }
  
-@@ -91,10 +_,8 @@
+@@ -93,10 +_,8 @@
              }
  
              slot.m_40234_(itemstack1, itemstack);
@@ -55,7 +61,7 @@
           } else if (p_39052_ >= 1 && p_39052_ < 28) {
              if (!this.m_38903_(itemstack1, 28, 37, false)) {
                 return ItemStack.f_41583_;
-@@ -164,4 +_,17 @@
+@@ -175,4 +_,17 @@
           return 1;
        }
     }

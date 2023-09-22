@@ -16,15 +16,27 @@
  
  public abstract class SignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final BooleanProperty f_56268_ = BlockStateProperties.f_61362_;
-@@ -101,6 +_,7 @@
+@@ -89,7 +_,7 @@
+             boolean flag = signblockentity.m_278155_(p_56281_, p_56279_, p_56280_, flag2);
+             if (signblockentity.m_277118_()) {
+                p_56279_.m_247517_((Player)null, signblockentity.m_58899_(), SoundEvents.f_276627_, SoundSource.BLOCKS);
+-               return this.m_293177_(flag1);
++               return InteractionResult.PASS;
+             } else if (flag1 && !this.m_277189_(p_56281_, signblockentity) && signapplicator.m_277072_(signtext, p_56281_) && signapplicator.m_276787_(p_56279_, signblockentity, flag2, p_56281_)) {
+                if (!p_56281_.m_7500_()) {
+                   itemstack.m_41774_(1);
+@@ -101,8 +_,9 @@
              } else if (flag) {
                 return InteractionResult.SUCCESS;
              } else if (!this.m_277189_(p_56281_, signblockentity) && p_56281_.m_36326_() && this.m_278656_(p_56281_, signblockentity, flag2)) {
 +               openTextEditcause.set(PlayerSignOpenEvent.Cause.INTERACT); // CraftBukkit
                 this.m_276926_(p_56281_, signblockentity, flag2);
-                return InteractionResult.SUCCESS;
+-               return this.m_293177_(flag1);
++               return InteractionResult.SUCCESS;
              } else {
-@@ -146,9 +_,18 @@
+                return InteractionResult.PASS;
+             }
+@@ -150,9 +_,18 @@
        return woodtype;
     }
  

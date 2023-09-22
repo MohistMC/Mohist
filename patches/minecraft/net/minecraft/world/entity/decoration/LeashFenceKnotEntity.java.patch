@@ -23,7 +23,7 @@
              if (mob.m_21524_() == p_31842_) {
 +               // CraftBukkit start
 +               if (CraftEventFactory.callPlayerLeashEntityEvent(mob, this, p_31842_, p_31843_).isCancelled()) {
-+                  ((ServerPlayer) p_31842_).f_8906_.m_9829_(new ClientboundSetEntityLinkPacket(mob, mob.m_21524_()));
++                  ((ServerPlayer) p_31842_).f_8906_.m_141995_(new ClientboundSetEntityLinkPacket(mob, mob.m_21524_()));
 +                  continue;
 +               }
 +               // CraftBukkit end

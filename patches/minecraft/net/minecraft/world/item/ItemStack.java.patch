@@ -12,7 +12,7 @@
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import java.text.DecimalFormat;
  import java.text.DecimalFormatSymbols;
-@@ -31,6 +_,7 @@
+@@ -32,6 +_,7 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.nbt.ListTag;
@@ -20,7 +20,7 @@
  import net.minecraft.nbt.Tag;
  import net.minecraft.network.chat.CommonComponents;
  import net.minecraft.network.chat.Component;
-@@ -39,11 +_,13 @@
+@@ -40,11 +_,13 @@
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.chat.Style;
  import net.minecraft.resources.ResourceLocation;
@@ -34,7 +34,7 @@
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
-@@ -70,17 +_,25 @@
+@@ -71,17 +_,25 @@
  import net.minecraft.world.item.enchantment.Enchantments;
  import net.minecraft.world.level.ItemLike;
  import net.minecraft.world.level.Level;
@@ -62,7 +62,7 @@
     private static final Logger f_41585_ = LogUtils.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Void)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -104,7 +_,6 @@
+@@ -105,7 +_,6 @@
     private int f_41588_;
     /** @deprecated */
     @Deprecated
@@ -70,7 +70,7 @@
     private Item f_41589_;
     @Nullable
     private CompoundTag f_41590_;
-@@ -136,32 +_,88 @@
+@@ -137,32 +_,88 @@
        this(p_220155_.m_203334_(), p_220156_);
     }
  
@@ -169,7 +169,7 @@
  
     public static ItemStack m_41712_(CompoundTag p_41713_) {
        try {
-@@ -173,7 +_,7 @@
+@@ -174,7 +_,7 @@
     }
  
     public boolean m_41619_() {
@@ -178,7 +178,7 @@
     }
  
     public boolean m_246617_(FeatureFlagSet p_250869_) {
-@@ -198,7 +_,7 @@
+@@ -199,7 +_,7 @@
     }
  
     public Item m_41720_() {
@@ -187,7 +187,7 @@
     }
  
     public Holder<Item> m_220173_() {
-@@ -226,14 +_,24 @@
+@@ -231,14 +_,24 @@
     }
  
     public InteractionResult m_41661_(UseOnContext p_41662_) {
@@ -213,7 +213,7 @@
           if (player != null && interactionresult.m_146666_()) {
              player.m_36246_(Stats.f_12982_.m_12902_(item));
           }
-@@ -262,11 +_,15 @@
+@@ -267,11 +_,15 @@
           p_41740_.m_128365_("tag", this.f_41590_.m_6426_());
        }
  
@@ -230,7 +230,7 @@
     }
  
     public boolean m_41753_() {
-@@ -274,7 +_,7 @@
+@@ -279,7 +_,7 @@
     }
  
     public boolean m_41763_() {
@@ -239,7 +239,7 @@
           CompoundTag compoundtag = this.m_41783_();
           return compoundtag == null || !compoundtag.m_128471_("Unbreakable");
        } else {
-@@ -283,19 +_,19 @@
+@@ -288,19 +_,19 @@
     }
  
     public boolean m_41768_() {
@@ -263,7 +263,7 @@
     }
  
     public boolean m_220157_(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -313,6 +_,21 @@
+@@ -318,6 +_,21 @@
              }
  
              p_220158_ -= j;
@@ -285,7 +285,7 @@
              if (p_220158_ <= 0) {
                 return false;
              }
-@@ -331,9 +_,15 @@
+@@ -336,9 +_,15 @@
     public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.m_9236_().f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {
           if (this.m_41763_()) {
@@ -301,7 +301,7 @@
                 this.m_41774_(1);
                 if (p_41624_ instanceof Player) {
                    ((Player)p_41624_).m_36246_(Stats.f_12983_.m_12902_(item));
-@@ -383,7 +_,7 @@
+@@ -388,7 +_,7 @@
     }
  
     public boolean m_41735_(BlockState p_41736_) {
@@ -310,7 +310,7 @@
     }
  
     public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -394,7 +_,7 @@
+@@ -399,7 +_,7 @@
        if (this.m_41619_()) {
           return f_41583_;
        } else {
@@ -319,7 +319,7 @@
           itemstack.m_41754_(this.m_41612_());
           if (this.f_41590_ != null) {
              itemstack.f_41590_ = this.f_41590_.m_6426_();
-@@ -430,7 +_,7 @@
+@@ -435,7 +_,7 @@
        if (!p_150943_.m_150930_(p_150944_.m_41720_())) {
           return false;
        } else {
@@ -328,7 +328,7 @@
        }
     }
  
-@@ -483,6 +_,17 @@
+@@ -488,6 +_,17 @@
        return this.f_41590_;
     }
  
@@ -346,7 +346,7 @@
     public CompoundTag m_41784_() {
        if (this.f_41590_ == null) {
           this.m_41751_(new CompoundTag());
-@@ -522,7 +_,7 @@
+@@ -527,7 +_,7 @@
  
     public void m_41751_(@Nullable CompoundTag p_41752_) {
        this.f_41590_ = p_41752_;
@@ -355,7 +355,7 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -583,7 +_,7 @@
+@@ -588,7 +_,7 @@
  
     public List<Component> m_41651_(@Nullable Player p_41652_, TooltipFlag p_41653_) {
        List<Component> list = Lists.newArrayList();
@@ -364,7 +364,7 @@
        if (this.m_41788_()) {
           mutablecomponent.m_130940_(ChatFormatting.ITALIC);
        }
-@@ -730,6 +_,7 @@
+@@ -735,6 +_,7 @@
           list.add(f_243862_);
        }
  
@@ -372,7 +372,7 @@
        return list;
     }
  
-@@ -738,7 +_,7 @@
+@@ -743,7 +_,7 @@
     }
  
     private int m_41618_() {
@@ -381,20 +381,7 @@
     }
  
     public void m_41654_(ItemStack.TooltipPart p_41655_) {
-@@ -831,6 +_,12 @@
-    }
- 
-    public void m_41742_(int p_41743_) {
-+      // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
-+      if (p_41743_ == 0) {
-+         this.m_41749_("RepairCost");
-+         return;
-+      }
-+      // CraftBukkit end
-       this.m_41784_().m_128405_("RepairCost", p_41743_);
-    }
- 
-@@ -853,9 +_,10 @@
+@@ -863,9 +_,10 @@
              }
           }
        } else {
@@ -406,7 +393,7 @@
        return multimap;
     }
  
-@@ -883,7 +_,7 @@
+@@ -893,7 +_,7 @@
  
        MutableComponent mutablecomponent1 = ComponentUtils.m_130748_(mutablecomponent);
        if (!this.m_41619_()) {
@@ -415,7 +402,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -935,6 +_,8 @@
+@@ -945,6 +_,8 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -424,7 +411,7 @@
     public void m_150924_(ItemEntity p_150925_) {
        this.m_41720_().m_142023_(p_150925_);
     }
-@@ -943,6 +_,23 @@
+@@ -953,6 +_,23 @@
        return this.m_41720_().m_41472_();
     }
  
@@ -448,7 +435,7 @@
     public SoundEvent m_41615_() {
        return this.m_41720_().m_6023_();
     }
-@@ -950,6 +_,14 @@
+@@ -960,6 +_,14 @@
     public SoundEvent m_41616_() {
        return this.m_41720_().m_6061_();
     }

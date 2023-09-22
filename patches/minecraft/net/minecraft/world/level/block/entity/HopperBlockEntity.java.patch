@@ -189,7 +189,7 @@
        ItemStack itemstack = p_59333_.m_32055_().m_41777_();
        ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
        if (itemstack1.m_41619_()) {
-@@ -280,6 +_,11 @@
+@@ -281,6 +_,11 @@
           boolean flag = false;
           boolean flag1 = p_59322_.m_7983_();
           if (itemstack.m_41619_()) {
@@ -201,7 +201,7 @@
              p_59322_.m_6836_(p_59324_, p_59323_);
              p_59323_ = ItemStack.f_41583_;
              flag = true;
-@@ -303,7 +_,7 @@
+@@ -304,7 +_,7 @@
                       }
                    }
  
@@ -210,7 +210,7 @@
                 }
              }
  
-@@ -314,15 +_,39 @@
+@@ -315,15 +_,39 @@
        return p_59323_;
     }
  
@@ -254,7 +254,7 @@
     }
  
     public static List<ItemEntity> m_155589_(Level p_155590_, Hopper p_155591_) {
-@@ -340,6 +_,7 @@
+@@ -341,6 +_,7 @@
     private static Container m_59347_(Level p_59348_, double p_59349_, double p_59350_, double p_59351_) {
        Container container = null;
        BlockPos blockpos = BlockPos.m_274561_(p_59349_, p_59350_, p_59351_);
@@ -262,7 +262,7 @@
        BlockState blockstate = p_59348_.m_8055_(blockpos);
        Block block = blockstate.m_60734_();
        if (block instanceof WorldlyContainerHolder) {
-@@ -411,5 +_,14 @@
+@@ -414,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {
        return new HopperMenu(p_59312_, p_59313_, this);

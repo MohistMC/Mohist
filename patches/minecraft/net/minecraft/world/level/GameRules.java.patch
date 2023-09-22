@@ -17,7 +17,7 @@
     public static final GameRules.Key<GameRules.BooleanValue> f_46132_ = m_46189_("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.m_46250_(true));
     public static final GameRules.Key<GameRules.BooleanValue> f_46133_ = m_46189_("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.m_46250_(false));
     public static final GameRules.Key<GameRules.BooleanValue> f_46134_ = m_46189_("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.m_46250_(true));
-@@ -171,13 +_,13 @@
+@@ -177,13 +_,13 @@
     public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
        private boolean f_46219_;
  
@@ -33,7 +33,7 @@
           return m_46252_(p_46251_, (p_46236_, p_46237_) -> {
           });
        }
-@@ -204,7 +_,7 @@
+@@ -210,7 +_,7 @@
           return Boolean.toString(this.f_46219_);
        }
  
@@ -42,7 +42,7 @@
           this.f_46219_ = Boolean.parseBoolean(p_46234_);
        }
  
-@@ -260,13 +_,13 @@
+@@ -266,13 +_,13 @@
     public static class IntegerValue extends GameRules.Value<GameRules.IntegerValue> {
        private int f_46284_;
  
@@ -58,7 +58,7 @@
           return m_46294_(p_46313_, (p_46309_, p_46310_) -> {
           });
        }
-@@ -293,7 +_,7 @@
+@@ -299,7 +_,7 @@
           return Integer.toString(this.f_46284_);
        }
  
@@ -67,7 +67,7 @@
           this.f_46284_ = m_46317_(p_46307_);
        }
  
-@@ -414,14 +_,14 @@
+@@ -420,14 +_,14 @@
           this.m_46368_(p_46371_.getSource().m_81377_());
        }
  

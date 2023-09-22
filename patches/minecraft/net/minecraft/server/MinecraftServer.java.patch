@@ -25,7 +25,7 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -156,6 +_,12 @@
+@@ -155,6 +_,12 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
@@ -37,8 +37,8 @@
 +import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
  
- public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements CommandSource, AutoCloseable {
-@@ -190,8 +_,8 @@
+ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
+@@ -189,8 +_,8 @@
     @Nullable
     private MinecraftServer.TimeProfiler f_177876_;
     private boolean f_177877_;
@@ -49,7 +49,7 @@
     @Nullable
     private ServerStatus f_129757_;
     @Nullable
-@@ -200,8 +_,8 @@
+@@ -199,8 +_,8 @@
     public final DataFixer f_129759_;
     private String f_129760_;
     private int f_129761_ = -1;
@@ -60,8 +60,8 @@
     private PlayerList f_129763_;
     private volatile boolean f_129764_ = true;
     private boolean f_129765_;
-@@ -237,24 +_,42 @@
-    private final FrameTimer f_129735_ = new FrameTimer();
+@@ -235,24 +_,42 @@
+    private final ServerFunctionManager f_129734_;
     private boolean f_129736_;
     private float f_129737_;
 -   private final Executor f_129738_;
@@ -107,7 +107,7 @@
        }
  
        S s = p_129873_.apply(thread);
-@@ -267,7 +_,7 @@
+@@ -265,7 +_,7 @@
        super("Server");
        this.f_244176_ = p_236726_.f_244542_();
        this.f_129749_ = p_236726_.f_206895_();
@@ -116,7 +116,7 @@
           throw new IllegalStateException("Missing Overworld dimension data");
        } else {
           this.f_129747_ = p_236727_;
-@@ -278,7 +_,7 @@
+@@ -276,7 +_,7 @@
              p_236729_.f_214336_().m_143974_(this);
           }
  
@@ -125,7 +125,7 @@
           this.f_129756_ = p_236730_;
           this.f_129744_ = p_236724_;
           this.f_129745_ = p_236724_.m_78301_();
-@@ -288,8 +_,11 @@
+@@ -286,8 +_,11 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_, holdergetter);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
@@ -136,8 +136,8 @@
 +
  
     private void m_129841_(DimensionDataStorage p_129842_) {
-       p_129842_.m_164861_(this.m_129896_()::m_180013_, this.m_129896_()::m_180015_, "scoreboard");
-@@ -307,7 +_,6 @@
+       p_129842_.m_164861_(this.m_129896_().m_294331_(), "scoreboard");
+@@ -305,7 +_,6 @@
        ChunkProgressListener chunkprogresslistener = this.f_129756_.m_9620_(11);
        this.m_129815_(chunkprogresslistener);
        this.m_7044_();
@@ -145,7 +145,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -335,11 +_,14 @@
+@@ -333,11 +_,14 @@
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
        ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
@@ -160,7 +160,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
-@@ -373,13 +_,43 @@
+@@ -371,13 +_,43 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -205,7 +205,7 @@
     }
  
     private static void m_177896_(ServerLevel p_177897_, ServerLevelData p_177898_, boolean p_177899_, boolean p_177900_) {
-@@ -387,7 +_,23 @@
+@@ -385,7 +_,23 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.m_7726_();
@@ -229,7 +229,7 @@
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
              BlockPos blockpos = chunkpos.m_45615_();
-@@ -442,40 +_,87 @@
+@@ -440,40 +_,87 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -299,11 +299,11 @@
 +      this.executeModerately();
  
        for(ServerLevel serverlevel1 : this.f_129762_.values()) {
--         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
+-         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData.m_293948_(), "chunks");
 -         if (forcedchunkssaveddata != null) {
 -            LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
 +         if (serverlevel1.getWorld().getKeepSpawnInMemory()) {
-+            ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
++            ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData.m_293948_(), "chunks");
 +            if (forcedchunkssaveddata != null) {
 +               LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
  
@@ -335,7 +335,7 @@
     }
  
     public GameType m_130008_() {
-@@ -509,6 +_,13 @@
+@@ -507,6 +_,13 @@
        serverleveldata.m_7831_(serverlevel2.m_6857_().m_61970_());
        this.f_129749_.m_5917_(this.m_129901_().m_136307_());
        this.f_129744_.m_78290_(this.m_206579_(), this.f_129749_, this.m_6846_().m_6960_());
@@ -349,7 +349,7 @@
        if (p_129887_) {
           for(ServerLevel serverlevel1 : this.m_129785_()) {
              f_129750_.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)serverlevel1.m_7726_().f_8325_.m_182285_());
-@@ -537,12 +_,34 @@
+@@ -535,18 +_,44 @@
        this.m_7041_();
     }
  
@@ -376,15 +376,18 @@
        }
  
        f_129750_.info("Stopping server");
+-      this.m_129919_().m_9718_();
 +      // CraftBukkit start
 +      if (this.server != null) {
 +         this.server.disablePlugins();
 +      }
 +      // CraftBukkit end
-       if (this.m_129919_() != null) {
-          this.m_129919_().m_9718_();
-       }
-@@ -552,6 +_,7 @@
++      if (this.m_129919_() != null) {
++         this.m_129919_().m_9718_();
++      }
++
+       this.f_195494_ = true;
+       if (this.f_129763_ != null) {
           f_129750_.info("Saving players");
           this.f_129763_.m_11302_();
           this.f_129763_.m_11313_();
@@ -392,7 +395,7 @@
        }
  
        f_129750_.info("Saving worlds");
-@@ -582,6 +_,7 @@
+@@ -577,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
              try {
@@ -400,7 +403,7 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -597,6 +_,12 @@
+@@ -592,6 +_,12 @@
        } catch (IOException ioexception) {
           f_129750_.error("Failed to unlock level {}", this.f_129744_.m_78277_(), ioexception);
        }
@@ -413,7 +416,7 @@
  
     }
  
-@@ -624,30 +_,118 @@
+@@ -619,30 +_,118 @@
  
     }
  
@@ -534,7 +537,7 @@
              this.f_129726_ += 50L;
              this.m_177945_();
              this.f_129754_.m_6180_("tick");
-@@ -661,8 +_,16 @@
+@@ -656,8 +_,16 @@
              this.f_129717_ = true;
              JvmProfiler.f_185340_.m_183597_(this.f_129737_);
           }
@@ -551,7 +554,7 @@
           CrashReport crashreport = m_206568_(throwable1);
           this.m_177935_(crashreport.m_178626_());
           File file1 = new File(new File(this.m_6237_(), "crash-reports"), "crash-" + Util.m_241986_() + "-server.txt");
-@@ -672,6 +_,7 @@
+@@ -667,6 +_,7 @@
              f_129750_.error("We were unable to save this crash report to disk.");
           }
  
@@ -559,7 +562,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -683,7 +_,9 @@
+@@ -678,7 +_,9 @@
              if (this.f_236721_.f_214336_() != null) {
                 this.f_236721_.f_214336_().m_196559_();
              }
@@ -570,7 +573,7 @@
              this.m_6988_();
           }
  
-@@ -714,8 +_,14 @@
+@@ -709,8 +_,14 @@
     }
  
     private boolean m_129960_() {
@@ -587,7 +590,7 @@
  
     protected void m_130012_() {
        this.m_18699_();
-@@ -724,7 +_,7 @@
+@@ -719,7 +_,7 @@
        });
     }
  
@@ -596,7 +599,7 @@
        return new TickTask(this.f_129766_, p_129852_);
     }
  
-@@ -779,6 +_,7 @@
+@@ -774,6 +_,7 @@
              f_129750_.error("Couldn't load server icon", (Throwable)exception);
              return Optional.empty();
           }
@@ -604,7 +607,7 @@
        });
     }
  
-@@ -798,14 +_,16 @@
+@@ -793,14 +_,16 @@
  
     public void m_5705_(BooleanSupplier p_129871_) {
        long i = Util.m_137569_();
@@ -622,14 +625,17 @@
           f_129750_.debug("Autosave started");
           this.f_129754_.m_6180_("save");
           this.m_195514_(true, false, false);
-@@ -819,11 +_,23 @@
+@@ -812,16 +_,24 @@
+       long j = this.f_129748_[this.f_129766_ % 100] = Util.m_137569_() - i;
+       this.f_129737_ = this.f_129737_ * 0.8F + (float)j / 1000000.0F * 0.19999999F;
        long k = Util.m_137569_();
-       this.f_129735_.m_13755_(k - i);
+-      this.m_293783_(k - i);
        this.f_129754_.m_7238_();
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
-+   }
-+
+    }
+ 
+-   protected void m_293783_(long p_298126_) {
 +   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
 +   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
 +   private void resetStatusCache(ServerStatus status) {
@@ -647,10 +653,13 @@
     }
  
     private ServerStatus.Players m_271961_() {
-@@ -847,39 +_,60 @@
+@@ -845,42 +_,60 @@
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
+-      this.m_6846_().m_11314_().forEach((p_296434_) -> {
+-         p_296434_.f_8906_.m_295499_();
+-      });
 +      this.server.getScheduler().mainThreadHeartbeat(this.f_129766_); // CraftBukkit
        this.f_129754_.m_6180_("commandFunctions");
        this.m_129890_().m_136128_();
@@ -667,7 +676,7 @@
 +      if (this.f_129766_ % 20 == 0) {
 +         for (int i = 0; i < this.m_6846_().f_11196_.size(); ++i) {
 +            ServerPlayer entityplayer = (ServerPlayer) this.m_6846_().f_11196_.get(i);
-+            entityplayer.f_8906_.m_9829_(new ClientboundSetTimePacket(entityplayer.f_19853_.m_46467_(), entityplayer.getPlayerTime(), entityplayer.f_19853_.m_46469_().m_46207_(GameRules.f_46140_))); // Add support for per player time
++            entityplayer.f_8906_.m_141995_(new ClientboundSetTimePacket(entityplayer.f_19853_.m_46467_(), entityplayer.getPlayerTime(), entityplayer.f_19853_.m_46469_().m_46207_(GameRules.f_46140_))); // Add support for per player time
 +         }
 +      }
 +
@@ -716,7 +725,7 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
-@@ -935,6 +_,16 @@
+@@ -943,6 +_,16 @@
        return this.f_129762_.get(p_129881_);
     }
  
@@ -733,7 +742,7 @@
     public Set<ResourceKey<Level>> m_129784_() {
        return this.f_129762_.keySet();
     }
-@@ -961,7 +_,7 @@
+@@ -969,7 +_,7 @@
  
     @DontObfuscate
     public String getServerModName() {
@@ -742,7 +751,7 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -1137,7 +_,7 @@
+@@ -1145,7 +_,7 @@
     public abstract boolean m_6993_();
  
     public String m_129916_() {
@@ -751,16 +760,16 @@
     }
  
     public void m_129989_(String p_129990_) {
-@@ -1164,7 +_,7 @@
+@@ -1171,7 +_,7 @@
+    }
  
-    @Nullable
     public ServerConnectionListener m_129919_() {
 -      return this.f_129755_;
 +      return this.f_129755_ == null ? this.f_129755_ = new ServerConnectionListener(this) : this.f_129755_; // Spigot
     }
  
     public boolean m_129920_() {
-@@ -1303,6 +_,7 @@
+@@ -1310,6 +_,7 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.f_129740_.close();
           this.f_129740_ = p_248090_;
@@ -768,7 +777,7 @@
           this.f_129730_.m_10509_(p_129862_);
           WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(m_129817_(this.f_129730_), this.f_129749_.m_247623_());
           this.f_129749_.m_245843_(worlddataconfiguration);
-@@ -1311,6 +_,7 @@
+@@ -1318,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());
           this.f_236720_.m_230370_(this.f_129740_.f_206584_);
@@ -776,7 +785,7 @@
        }, this);
        if (this.m_18695_()) {
           this.m_18701_(completablefuture::isDone);
-@@ -1320,10 +_,13 @@
+@@ -1327,10 +_,13 @@
     }
  
     public static WorldDataConfiguration m_246048_(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
@@ -792,7 +801,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1481,6 +_,31 @@
+@@ -1484,6 +_,31 @@
  
     public abstract boolean m_7779_(GameProfile p_129840_);
  
@@ -824,7 +833,7 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
-@@ -1646,6 +_,10 @@
+@@ -1649,6 +_,10 @@
        return this.f_129749_;
     }
  
@@ -835,7 +844,7 @@
     public RegistryAccess.Frozen m_206579_() {
        return this.f_244176_.m_247579_();
     }
-@@ -1707,8 +_,31 @@
+@@ -1710,10 +_,14 @@
  
     }
  
@@ -844,31 +853,14 @@
 +           new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
 +
     public ChatDecorator m_236742_() {
--      return ChatDecorator.f_236947_;
-+      return (entityplayer, ichatbasecomponent) -> {
-+
-+         // SPIGOT-7127: Console /say and similar
-+         if (entityplayer == null) {
-+            return CompletableFuture.completedFuture(ichatbasecomponent);
-+         }
-+
-+         return CompletableFuture.supplyAsync(() -> {
-+            AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, entityplayer.getBukkitEntity(), CraftChatMessage.fromComponent(ichatbasecomponent), new LazyPlayerSet(this));
-+            String originalFormat = event.getFormat(), originalMessage = event.getMessage();
-+            this.server.getPluginManager().callEvent(event);
-+
-+            if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
-+               return ichatbasecomponent;
-+            }
-+
-+            return CraftChatMessage.fromStringOrNull(String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage()));
-+            }, chatExecutor);
-+      };
-+      // CraftBukkit end
+       return ChatDecorator.f_236947_;
     }
- 
-    public static record ReloadableResources(CloseableResourceManager f_206584_, ReloadableServerResources f_206585_) implements AutoCloseable {
-@@ -1761,4 +_,18 @@
+-
++   
+    public boolean m_292975_() {
+       return true;
+    }
+@@ -1768,4 +_,18 @@
           };
        }
     }

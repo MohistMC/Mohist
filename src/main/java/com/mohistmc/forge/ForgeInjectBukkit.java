@@ -9,6 +9,7 @@ import com.mohistmc.bukkit.inventory.MohistPotionEffect;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -177,7 +178,7 @@ public class ForgeInjectBukkit {
             if (CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
                 String name = normalizeName(resourceLocation.toString());
                 MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
-                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : PotionEffectType.getById(MobEffect.getId(effectInstance.getEffect())), false, false));
+                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : BuiltInRegistries.MOB_EFFECT.getId(effectInstance.getEffect()) + 1, false, false));
                 if (potionType != null) {
                     MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
                 }

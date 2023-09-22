@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -36,8 +_,12 @@
+@@ -37,8 +_,12 @@
  import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
  import net.minecraft.world.entity.monster.Enemy;
  import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.dimension.end.EndDragonFight;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -46,8 +_,14 @@
+@@ -47,9 +_,15 @@
  import net.minecraft.world.level.pathfinder.BinaryHeap;
  import net.minecraft.world.level.pathfinder.Node;
  import net.minecraft.world.level.pathfinder.Path;
@@ -22,13 +22,14 @@
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
+ import org.joml.Vector3f;
 +import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
  import org.slf4j.Logger;
  
  public class EnderDragon extends Mob implements Enemy {
-@@ -86,6 +_,7 @@
+@@ -88,6 +_,7 @@
     private final Node[] f_31077_ = new Node[24];
     private final int[] f_31078_ = new int[24];
     private final BinaryHeap f_31079_ = new BinaryHeap();
@@ -36,7 +37,7 @@
  
     public EnderDragon(EntityType<? extends EnderDragon> p_31096_, Level p_31097_) {
        super(EntityType.f_20565_, p_31097_);
-@@ -102,6 +_,15 @@
+@@ -104,6 +_,15 @@
        this.f_19794_ = true;
        this.f_19811_ = true;
        this.f_31074_ = new EnderDragonPhaseManager(this);
@@ -45,14 +46,14 @@
 +   }
 +
 +   @Override
-+   public void m_20234_(int id) {
-+      super.m_20234_(id);
++   public void m_20234_(int p_20235_) {
++      super.m_20234_(p_20235_);
 +      for (int i = 0; i < this.f_31089_.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-+         this.f_31089_[i].m_20234_(id + i + 1);
++         this.f_31089_[i].m_20234_(p_20235_ + i + 1);
     }
  
     public void m_287231_(EndDragonFight p_287736_) {
-@@ -157,7 +_,11 @@
+@@ -159,7 +_,11 @@
        return adouble;
     }
  
@@ -64,16 +65,7 @@
        this.m_146874_();
        if (this.m_9236_().f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -237,7 +_,7 @@
-                }
- 
-                Vec3 vec3 = dragonphaseinstance.m_5535_();
--               if (vec3 != null) {
-+               if (vec3 != null && dragonphaseinstance.m_7309_() != EnderDragonPhase.f_31387_) { // CraftBukkit - Don't move when hovering
-                   double d7 = vec3.f_82479_ - this.m_20185_();
-                   double d8 = vec3.f_82480_ - this.m_20186_();
-                   double d9 = vec3.f_82481_ - this.m_20189_();
-@@ -367,7 +_,14 @@
+@@ -362,7 +_,14 @@
           if (this.f_31086_.m_213877_()) {
              this.f_31086_ = null;
           } else if (this.f_19797_ % 10 == 0 && this.m_21223_() < this.m_21233_()) {
@@ -89,7 +81,7 @@
           }
        }
  
-@@ -431,15 +_,22 @@
+@@ -426,15 +_,22 @@
        int j1 = Mth.m_14107_(p_31140_.f_82293_);
        boolean flag = false;
        boolean flag1 = false;
@@ -115,7 +107,7 @@
                    } else {
                       flag = true;
                    }
-@@ -448,6 +_,51 @@
+@@ -443,6 +_,51 @@
           }
        }
  
@@ -167,18 +159,7 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.f_19796_.m_188503_(l - i + 1), j + this.f_19796_.m_188503_(i1 - j + 1), k + this.f_19796_.m_188503_(j1 - k + 1));
           this.m_9236_().m_46796_(2008, blockpos1, 0);
-@@ -518,29 +_,48 @@
-          float f = (this.f_19796_.m_188501_() - 0.5F) * 8.0F;
-          float f1 = (this.f_19796_.m_188501_() - 0.5F) * 4.0F;
-          float f2 = (this.f_19796_.m_188501_() - 0.5F) * 8.0F;
--         this.m_9236_().m_7106_(ParticleTypes.f_123812_, this.m_20185_() + (double)f, this.m_20186_() + 2.0D + (double)f1, this.m_20189_() + (double)f2, 0.0D, 0.0D, 0.0D);
-+         this.f_19853_.m_7106_(ParticleTypes.f_123812_, this.m_20185_() + (double)f, this.m_20186_() + 2.0D + (double)f1, this.m_20189_() + (double)f2, 0.0D, 0.0D, 0.0D);
-       }
- 
--      boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46135_);
-+      boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_);
-       int i = 500;
-       if (this.f_31073_ != null && !this.f_31073_.m_64099_()) {
+@@ -522,20 +_,39 @@
           i = 12000;
        }
  
@@ -205,9 +186,9 @@
 +                  double deltaLength = Math.sqrt(distanceSquared);
 +                  double relativeX = player.m_20185_() + (deltaX / deltaLength) * viewDistance;
 +                  double relativeZ = player.m_20189_() + (deltaZ / deltaLength) * viewDistance;
-+                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
++                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) relativeX, (int) this.m_20186_(), (int) relativeZ), 0, true));
 +               } else {
-+                  player.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
++                  player.f_8906_.m_141995_(new net.minecraft.network.protocol.game.ClientboundLevelEventPacket(1028, new BlockPos((int) this.m_20185_(), (int) this.m_20186_(), (int) this.m_20189_()), 0, true));
 +               }
 +            }
 +            // CraftBukkit end
@@ -225,15 +206,7 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -740,7 +_,6 @@
-       if (p_31134_.m_128441_("DragonDeathTime")) {
-          this.f_31084_ = p_31134_.m_128451_("DragonDeathTime");
-       }
--
-    }
- 
-    public void m_6043_() {
-@@ -863,8 +_,19 @@
+@@ -858,8 +_,19 @@
        return false;
     }
  

@@ -179,7 +179,7 @@
              this.f_157611_ = entitysection;
              this.f_157610_ = i;
              this.m_157620_(visibility, entitysection.m_156848_());
-+            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);
++            if (this.realEntity != null) net.minecraftforge.event.ForgeEventFactory.onEntityEnterSection(this.realEntity, oldSectionKey, i);
           }
  
        }

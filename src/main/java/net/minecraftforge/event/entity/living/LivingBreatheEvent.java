@@ -32,7 +32,7 @@ public class LivingBreatheEvent extends LivingEvent {
     @ApiStatus.Internal
     @Deprecated(forRemoval = true, since = "1.20.1")
     public LivingBreatheEvent(LivingEntity entity, boolean canBreathe, int consumeAirAmount, int refillAirAmount) {
-        this(entity, canBreathe, consumeAirAmount, refillAirAmount, canBreathe);
+    	this(entity, canBreathe, consumeAirAmount, refillAirAmount, canBreathe);
     }
 
     @ApiStatus.Internal

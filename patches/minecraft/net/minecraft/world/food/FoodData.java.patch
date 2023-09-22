@@ -93,7 +93,7 @@
 +               this.f_38696_ = event.getFoodLevel();
 +            }
 +
-+            ((ServerPlayer) entityhuman).f_8906_.m_9829_(new ClientboundSetHealthPacket(((ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), this.f_38696_, this.f_38697_));
++            ((ServerPlayer) entityhuman).f_8906_.m_141995_(new ClientboundSetHealthPacket(((ServerPlayer) entityhuman).getBukkitEntity().getScaledHealth(), this.f_38696_, this.f_38697_));
 +            // CraftBukkit end
           }
        }

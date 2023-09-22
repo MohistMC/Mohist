@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/CampfireBlockEntity.java
-@@ -24,6 +_,11 @@
+@@ -25,6 +_,11 @@
  import net.minecraft.world.level.block.CampfireBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -12,8 +12,8 @@
  
  public class CampfireBlockEntity extends BlockEntity implements Clearable {
     private static final int f_155298_ = 2;
-@@ -51,6 +_,20 @@
-                   return p_270054_.m_5874_(container, p_155307_.m_9598_());
+@@ -52,6 +_,20 @@
+                   return p_296955_.f_291008_().m_5874_(container, p_155307_.m_9598_());
                 }).orElse(itemstack);
                 if (itemstack1.m_246617_(p_155307_.m_246046_())) {
 +                  // CraftBukkit start - fire BlockCookEvent
@@ -33,7 +33,7 @@
                    Containers.m_18992_(p_155307_, (double)p_155308_.m_123341_(), (double)p_155308_.m_123342_(), (double)p_155308_.m_123343_(), itemstack1);
                    p_155310_.f_59042_.set(i, ItemStack.f_41583_);
                    p_155307_.m_7260_(p_155308_, p_155309_, p_155309_, 3);
-@@ -153,7 +_,11 @@
+@@ -154,7 +_,11 @@
        for(int i = 0; i < this.f_59042_.size(); ++i) {
           ItemStack itemstack = this.f_59042_.get(i);
           if (itemstack.m_41619_()) {

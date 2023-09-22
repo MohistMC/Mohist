@@ -77,8 +77,8 @@
 +      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.f_46012_, this, list, f2);
        Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
  
-       for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -193,7 +_,39 @@
+       for(Entity entity : list) {
+@@ -192,7 +_,39 @@
                    d9 /= d13;
                    double d14 = (double)m_46064_(vec3, entity);
                    double d10 = (1.0D - d12) * d14;
@@ -119,7 +119,7 @@
                    double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -239,31 +_,80 @@
+@@ -238,31 +_,80 @@
           boolean flag1 = this.m_252906_() instanceof Player;
           Util.m_214673_(this.f_46020_, this.f_46012_.f_46441_);
  
@@ -216,7 +216,7 @@
                 this.f_46012_.m_46473_().m_7238_();
              }
           }
-@@ -276,7 +_,11 @@
+@@ -275,7 +_,11 @@
        if (this.f_46009_) {
           for(BlockPos blockpos2 : this.f_46020_) {
              if (this.f_46011_.m_188503_(3) == 0 && this.f_46012_.m_8055_(blockpos2).m_60795_() && this.f_46012_.m_8055_(blockpos2.m_7495_()).m_60804_(this.f_46012_, blockpos2.m_7495_())) {
@@ -229,7 +229,7 @@
              }
           }
        }
-@@ -288,6 +_,7 @@
+@@ -287,6 +_,7 @@
     }
  
     private static void m_46067_(ObjectArrayList<Pair<ItemStack, BlockPos>> p_46068_, ItemStack p_46069_, BlockPos p_46070_) {
@@ -237,7 +237,7 @@
        int i = p_46068_.size();
  
        for(int j = 0; j < i; ++j) {
-@@ -354,6 +_,15 @@
+@@ -353,6 +_,15 @@
  
     public List<BlockPos> m_46081_() {
        return this.f_46020_;

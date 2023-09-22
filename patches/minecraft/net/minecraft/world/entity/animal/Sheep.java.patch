@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -46,6 +_,7 @@
+@@ -47,6 +_,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.inventory.MenuType;
@@ -8,10 +8,10 @@
  import net.minecraft.world.inventory.TransientCraftingContainer;
  import net.minecraft.world.item.DyeColor;
  import net.minecraft.world.item.DyeItem;
-@@ -60,8 +_,10 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -62,8 +_,10 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+ import org.joml.Vector3f;
 +import org.bukkit.event.entity.SheepRegrowWoolEvent;
 +import org.bukkit.inventory.InventoryView;
  
@@ -20,7 +20,7 @@
     private static final int f_149039_ = 40;
     private static final EntityDataAccessor<Byte> f_29799_ = SynchedEntityData.m_135353_(Sheep.class, EntityDataSerializers.f_135027_);
     private static final Map<DyeColor, ItemLike> f_29800_ = Util.m_137469_(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
-@@ -233,7 +_,7 @@
+@@ -235,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_29853_, InteractionHand p_29854_) {
        ItemStack itemstack = p_29853_.m_21120_(p_29854_);
@@ -29,7 +29,7 @@
           if (!this.m_9236_().f_46443_ && this.m_6220_()) {
              this.m_5851_(SoundSource.PLAYERS);
              this.m_146852_(GameEvent.f_157781_, p_29853_);
-@@ -255,7 +_,9 @@
+@@ -257,7 +_,9 @@
        int i = 1 + this.f_19796_.m_188503_(3);
  
        for(int j = 0; j < i; ++j) {
@@ -39,7 +39,7 @@
           if (itementity != null) {
              itementity.m_20256_(itementity.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F), (double)(this.f_19796_.m_188501_() * 0.05F), (double)((this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F)));
           }
-@@ -344,6 +_,12 @@
+@@ -346,6 +_,12 @@
     }
  
     public void m_8035_() {
@@ -52,7 +52,7 @@
        super.m_8035_();
        this.m_29878_(false);
        if (this.m_6162_()) {
-@@ -378,13 +_,44 @@
+@@ -380,9 +_,17 @@
           public boolean m_6875_(Player p_29888_) {
              return false;
           }
@@ -70,8 +70,10 @@
        return craftingcontainer;
     }
  
-    protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {
-       return 0.95F * p_29851_.f_20378_;
+@@ -392,5 +_,27 @@
+ 
+    protected Vector3f m_292594_(Entity p_297780_, EntityDimensions p_298437_, float p_300315_) {
+       return new Vector3f(0.0F, p_298437_.f_20378_ - 0.0625F * p_300315_, 0.0F);
 +   }
 +
 +   @Override
@@ -79,9 +81,8 @@
 +      return m_6220_();
 +   }
 +
-+   @org.jetbrains.annotations.NotNull
 +   @Override
-+   public java.util.List<ItemStack> onSheared(@Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
++   public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, BlockPos pos, int fortune) {
 +      world.m_6269_(null, this, SoundEvents.f_12344_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
 +      this.m_146852_(GameEvent.f_157781_, player);
 +      if (!world.f_46443_) {

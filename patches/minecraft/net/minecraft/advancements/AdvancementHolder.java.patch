@@ -1,0 +1,21 @@
+--- a/net/minecraft/advancements/AdvancementHolder.java
++++ b/net/minecraft/advancements/AdvancementHolder.java
+@@ -2,6 +_,7 @@
+ 
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.resources.ResourceLocation;
++import org.bukkit.craftbukkit.v1_20_R1.advancement.CraftAdvancement;
+ 
+ public record AdvancementHolder(ResourceLocation f_291758_, Advancement f_290952_) {
+    public void m_292675_(FriendlyByteBuf p_299066_) {
+@@ -35,4 +_,10 @@
+    public String toString() {
+       return this.f_291758_.toString();
+    }
++
++   // CraftBukkit start
++   public final org.bukkit.advancement.Advancement toBukkit() {
++      return new CraftAdvancement(this);
++   }
++   // CraftBukkit end
+ }

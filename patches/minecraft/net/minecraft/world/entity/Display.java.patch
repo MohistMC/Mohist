@@ -13,7 +13,41 @@
  import java.util.function.IntFunction;
  import javax.annotation.Nullable;
  import net.minecraft.Util;
-@@ -302,7 +_,7 @@
+@@ -17,6 +_,9 @@
+ import net.minecraft.nbt.NbtUtils;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.ComponentUtils;
++import net.minecraft.network.protocol.Packet;
++import net.minecraft.network.protocol.game.ClientGamePacketListener;
++import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
+@@ -320,19 +_,19 @@
+       return this.f_276646_;
+    }
+ 
+-   private void m_294351_(int p_297488_) {
++   public void m_294351_(int p_297488_) {
+       this.f_19804_.m_135381_(f_290650_, p_297488_);
+    }
+ 
+-   private int m_295061_() {
++   public int m_295061_() {
+       return this.f_19804_.m_135370_(f_290650_);
+    }
+ 
+-   private void m_294622_(int p_300640_) {
++   public void m_294622_(int p_300640_) {
+       this.f_19804_.m_276349_(f_291687_, p_300640_, true);
+    }
+ 
+-   private int m_294688_() {
++   public int m_294688_() {
+       return this.f_19804_.m_135370_(f_291687_);
+    }
+ 
+@@ -348,7 +_,7 @@
        this.f_19804_.m_135381_(f_268593_, p_270345_.m_269016_());
     }
  
@@ -22,7 +56,7 @@
        return Display.BillboardConstraints.f_268544_.apply(this.f_19804_.m_135370_(f_268593_));
     }
  
-@@ -316,7 +_,7 @@
+@@ -362,7 +_,7 @@
        return i != -1 ? Brightness.m_269373_(i) : null;
     }
  
@@ -31,7 +65,7 @@
        return this.f_19804_.m_135370_(f_268599_);
     }
  
-@@ -484,11 +_,11 @@
+@@ -516,11 +_,11 @@
  
        }
  
@@ -45,7 +79,7 @@
           this.f_19804_.m_135381_(f_268543_, p_270267_);
        }
  
-@@ -590,7 +_,7 @@
+@@ -622,7 +_,7 @@
  
        }
  
@@ -54,7 +88,7 @@
           return this.f_19804_.m_135370_(f_268455_);
        }
  
-@@ -602,7 +_,7 @@
+@@ -634,7 +_,7 @@
           this.f_19804_.m_135381_(f_268601_, p_270370_.m_269462_());
        }
  
@@ -63,7 +97,7 @@
           return ItemDisplayContext.f_268648_.apply(this.f_19804_.m_135370_(f_268601_));
        }
  
-@@ -674,8 +_,8 @@
+@@ -733,8 +_,8 @@
        private static final byte f_268541_ = -1;
        public static final int f_268744_ = 1073741824;
        private static final EntityDataAccessor<Component> f_268542_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135031_);
@@ -74,7 +108,7 @@
        private static final EntityDataAccessor<Byte> f_268481_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
        private static final EntityDataAccessor<Byte> f_268636_ = SynchedEntityData.m_135353_(Display.TextDisplay.class, EntityDataSerializers.f_135027_);
        private static final IntSet f_276462_ = IntSet.of(f_268542_.m_135015_(), f_268476_.m_135015_(), f_268494_.m_135015_(), f_268481_.m_135015_(), f_268636_.m_135015_());
-@@ -705,7 +_,7 @@
+@@ -764,7 +_,7 @@
  
        }
  
@@ -83,7 +117,7 @@
           return this.f_19804_.m_135370_(f_268542_);
        }
  
-@@ -713,7 +_,7 @@
+@@ -772,7 +_,7 @@
           this.f_19804_.m_135381_(f_268542_, p_270902_);
        }
  
@@ -92,7 +126,7 @@
           return this.f_19804_.m_135370_(f_268476_);
        }
  
-@@ -737,7 +_,7 @@
+@@ -796,7 +_,7 @@
           this.f_19804_.m_135381_(f_268494_, p_270241_);
        }
  

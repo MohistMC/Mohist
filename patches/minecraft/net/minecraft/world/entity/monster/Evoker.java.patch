@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -248,6 +_,7 @@
+@@ -251,6 +_,7 @@
                 vex.m_33994_(Evoker.this);
                 vex.m_34033_(blockpos);
                 vex.m_33987_(20 * (30 + Evoker.this.f_19796_.m_188503_(90)));
 +               vex.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
                 serverlevel.m_47205_(vex);
+                serverlevel.m_220407_(GameEvent.f_157810_, blockpos, GameEvent.Context.m_223717_(Evoker.this));
              }
-          }
-@@ -275,7 +_,7 @@
+@@ -279,7 +_,7 @@
              return false;
           } else if (Evoker.this.f_19797_ < this.f_33775_) {
              return false;

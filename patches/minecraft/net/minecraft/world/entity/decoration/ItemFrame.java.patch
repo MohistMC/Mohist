@@ -25,7 +25,7 @@
        Validate.notNull(p_31793_);
        this.f_31699_ = p_31793_;
        if (p_31793_.m_122434_().m_122479_()) {
-@@ -116,14 +_,45 @@
+@@ -116,6 +_,37 @@
        }
     }
  
@@ -63,17 +63,6 @@
     public boolean m_7088_() {
        if (this.f_31755_) {
           return true;
--      } else if (!this.m_9236_().m_45786_(this)) {
-+      } else if (!this.f_19853_.m_45786_(this)) {
-          return false;
-       } else {
--         BlockState blockstate = this.m_9236_().m_8055_(this.f_31698_.m_121945_(this.f_31699_.m_122424_()));
--         return blockstate.m_280296_() || this.f_31699_.m_122434_().m_122479_() && DiodeBlock.m_52586_(blockstate) ? this.m_9236_().m_6249_(this, this.m_20191_(), f_31697_).isEmpty() : false;
-+         BlockState blockstate = this.f_19853_.m_8055_(this.f_31698_.m_121945_(this.f_31699_.m_122424_()));
-+         return blockstate.m_280296_() || this.f_31699_.m_122434_().m_122479_() && DiodeBlock.m_52586_(blockstate) ? this.f_19853_.m_6249_(this, this.m_20191_(), f_31697_).isEmpty() : false;
-       }
-    }
- 
 @@ -157,6 +_,11 @@
           return false;
        } else if (!p_31776_.m_269533_(DamageTypeTags.f_268415_) && !this.m_31822_().m_41619_()) {

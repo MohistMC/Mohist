@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/Container.java
 +++ b/net/minecraft/world/Container.java
-@@ -1,7 +_,10 @@
+@@ -1,14 +_,22 @@
  package net.minecraft.world;
  
 +import java.util.Collections;
@@ -11,7 +11,8 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.Item;
-@@ -9,6 +_,10 @@
+ import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.BlockEntity;
  
@@ -60,11 +61,11 @@
 +      }
 +   }
 +
-+   default Recipe getCurrentRecipe() {
++   default RecipeHolder<?> getCurrentRecipe() {
 +      return null;
 +   }
 +
-+   default void setCurrentRecipe(Recipe recipe) {
++   default void setCurrentRecipe(RecipeHolder<?> recipe) {
 +   }
 +
 +   int MAX_STACK = 64;

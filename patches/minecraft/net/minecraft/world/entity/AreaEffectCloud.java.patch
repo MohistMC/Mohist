@@ -27,16 +27,16 @@
  import org.slf4j.Logger;
  
  public class AreaEffectCloud extends Entity implements TraceableEntity {
-@@ -40,7 +_,7 @@
-    private static final float f_252519_ = 3.0F;
+@@ -41,7 +_,7 @@
     public static final float f_252512_ = 6.0F;
     public static final float f_252504_ = 0.5F;
+    private static final String f_291475_ = "effects";
 -   private Potion f_19701_ = Potions.f_43598_;
 +   public Potion f_19701_ = Potions.f_43598_;
     public final List<MobEffectInstance> f_19685_ = Lists.newArrayList();
     private final Map<Entity, Integer> f_19686_ = Maps.newHashMap();
     private int f_19687_ = 600;
-@@ -99,7 +_,7 @@
+@@ -100,7 +_,7 @@
  
     }
  
@@ -45,7 +45,7 @@
        if (this.f_19701_ == Potions.f_43598_ && this.f_19685_.isEmpty()) {
           this.m_20088_().m_135381_(f_19698_, 0);
        } else {
-@@ -149,6 +_,18 @@
+@@ -150,6 +_,18 @@
        this.f_19687_ = p_19735_;
     }
  
@@ -64,12 +64,9 @@
     public void m_8119_() {
        super.m_8119_();
        boolean flag = this.m_19747_();
-@@ -236,20 +_,33 @@
-             if (list.isEmpty()) {
-                this.f_19686_.clear();
+@@ -239,18 +_,31 @@
              } else {
--               List<LivingEntity> list1 = this.m_9236_().m_45976_(LivingEntity.class, this.m_20191_());
-+               List<LivingEntity> list1 = this.f_19853_.m_45976_(LivingEntity.class, this.m_20191_());
+                List<LivingEntity> list1 = this.m_9236_().m_45976_(LivingEntity.class, this.m_20191_());
                 if (!list1.isEmpty()) {
 +                  List<org.bukkit.entity.LivingEntity> entities = new java.util.ArrayList<>(); // CraftBukkit
                    for(LivingEntity livingentity : list1) {

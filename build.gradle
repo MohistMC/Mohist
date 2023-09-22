@@ -2,6 +2,7 @@ import com.mohistmc.tasks.JenkinsNumber
 import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.forge.tasks.checks.*
 import net.minecraftforge.gradle.common.tasks.*
+import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
@@ -18,18 +19,17 @@ plugins {
     id 'de.undercouch.download' version '5.4.0'
     id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
     id 'net.neoforged.gradle.mcp' version '[6.0.12,6.2)' apply false
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+' apply false
 }
 
 init() //Init all our extension methods!
 
 ext {
     JAR_SIGNER = null
-    MAPPING_CHANNEL = 'parchment'
-    MAPPING_VERSION = '2023.09.03-1.20.1'
-    MC_VERSION = '1.20.1'
+    MAPPING_CHANNEL = 'official'
+    MC_VERSION = '1.20.2'
+    MAPPING_VERSION = MC_VERSION
     MC_NEXT_VERSION = '1.21'
-    MCP_VERSION = '20230612.114412'
+    MCP_VERSION = '20230921.100330'
     SNAPSHOT = false
 
     SPI_VERSION = '7.0.1'
@@ -67,8 +67,8 @@ ext {
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
-    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
-    MIN_TAG_FOR_CHANGELOG = '41.0'
+    FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.5:all'
+    MIN_TAG_FOR_CHANGELOG = '47.999'
     
     // remove :fatjar
     BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
@@ -125,7 +125,6 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'net.neoforged.gradle.patcher'
-    apply plugin: 'org.parchmentmc.librarian.forgegradle'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -136,6 +135,7 @@ project(':clean') {
         parent = project(':mcp')
         mcVersion = MC_VERSION
         patchedSrc = file('src/main/java')
+        srgPatches = false
 
         mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
 
@@ -213,8 +213,8 @@ def sharedDeps = {
     installer 'org.fusesource.jansi:jansi:1.18'
     installer 'jline:jline:2.14.6'
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
-    installer 'org.xerial:sqlite-jdbc:3.42.0.0'
-    installer 'com.mysql:mysql-connector-j:8.0.33'
+    installer 'org.xerial:sqlite-jdbc:3.43.0.0'
+    installer 'com.mysql:mysql-connector-j:8.1.0'
 
     installer 'net.md-5:SpecialSource:1.11.2'
 
@@ -235,33 +235,33 @@ def sharedDeps = {
     installer 'com.google.guava:failureaccess:1.0.1'
     installer "com.google.guava:guava:${GUAVA_VERSION}"
     installer 'com.google.code.gson:gson:2.10'
-    installer 'com.mojang:authlib:4.0.43'
+    installer 'com.mojang:authlib:5.0.47'
     installer 'com.mojang:logging:1.1.1'
     installer 'commons-lang:commons-lang:2.6-mohist'
-    installer 'org.slf4j:slf4j-api:2.0.6'
+    installer 'org.slf4j:slf4j-api:2.0.7'
 
     installer 'org.apache.logging.log4j:log4j-core:2.20.0'
     installer 'org.apache.logging.log4j:log4j-iostreams:2.20.0'
     installer 'org.apache.logging.log4j:log4j-api:2.20.0'
     installer 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
-    installer 'org.apache.commons:commons-lang3:3.12.0'
+    installer 'org.apache.commons:commons-lang3:3.13.0'
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer 'net.java.dev.jna:jna-platform:5.13.0'
     installer 'net.java.dev.jna:jna:5.13.0'
     installer 'it.unimi.dsi:fastutil:8.5.12'
-    installer 'commons-io:commons-io:2.11.0'
+    installer 'commons-io:commons-io:2.13.0'
     installer 'com.mojang:javabridge:2.0.25'
     installer 'com.mojang:datafixerupper:6.0.8'
-    installer 'com.github.oshi:oshi-core:6.4.0'
+    installer 'com.github.oshi:oshi-core:6.4.5'
 
-    installer 'io.netty:netty-buffer:4.1.82.Final'
-    installer 'io.netty:netty-codec:4.1.82.Final'
-    installer 'io.netty:netty-common:4.1.82.Final'
-    installer 'io.netty:netty-handler:4.1.82.Final'
-    installer 'io.netty:netty-resolver:4.1.82.Final'
-    installer 'io.netty:netty-transport:4.1.82.Final'
-    installer 'io.netty:netty-transport-classes-epoll:4.1.82.Final'
-    installer 'io.netty:netty-transport-native-unix-common:4.1.82.Final'
+    installer 'io.netty:netty-buffer:4.1.97.Final'
+    installer 'io.netty:netty-codec:4.1.97.Final'
+    installer 'io.netty:netty-common:4.1.97.Final'
+    installer 'io.netty:netty-handler:4.1.97.Final'
+    installer 'io.netty:netty-resolver:4.1.97.Final'
+    installer 'io.netty:netty-transport:4.1.97.Final'
+    installer 'io.netty:netty-transport-classes-epoll:4.1.97.Final'
+    installer 'io.netty:netty-transport-native-unix-common:4.1.97.Final'
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -357,7 +357,6 @@ project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.neoforged.gradle.patcher'
-    apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
     applyPatches { level 'WARNING' }
 
@@ -428,7 +427,6 @@ project(':mohist') {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
-        srgPatches = true
         accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
@@ -448,7 +446,7 @@ project(':mohist') {
                     '--output', rootProject.file('src/generated/resources/'),
                     '--validate',
                     '--existing', sourceSets.main.resources.srcDirs[0]
-                    ]
+            ]
             forge_data {
                 taskName 'forge_data'
                 args '--launchTarget', 'forgedatadev'

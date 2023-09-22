@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/inventory/FurnaceResultSlot.java
 +++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
-@@ -38,15 +_,20 @@
-    }
- 
-    protected void m_5845_(ItemStack p_39558_) {
--      p_39558_.m_41678_(this.f_39539_.m_9236_(), this.f_39539_, this.f_39540_);
-+      p_39558_.m_41678_(this.f_39539_.f_19853_, this.f_39539_, this.f_39540_);
-       Player player = this.f_39539_;
+@@ -43,10 +_,15 @@
        if (player instanceof ServerPlayer serverplayer) {
           Container container = this.f_40218_;
           if (container instanceof AbstractFurnaceBlockEntity abstractfurnaceblockentity) {

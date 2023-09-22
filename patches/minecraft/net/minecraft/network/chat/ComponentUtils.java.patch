@@ -1,0 +1,25 @@
+--- a/net/minecraft/network/chat/ComponentUtils.java
++++ b/net/minecraft/network/chat/ComponentUtils.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.network.chat;
+ 
+ import com.google.common.collect.Lists;
++import com.mojang.authlib.GameProfile;
+ import com.mojang.brigadier.Message;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.datafixers.DataFixUtils;
+@@ -62,6 +_,14 @@
+       }
+ 
+       return p_130738_;
++   }
++
++   public static Component getDisplayName(GameProfile p_130728_) {
++      if (p_130728_.getName() != null) {
++         return Component.m_237113_(p_130728_.getName());
++      } else {
++         return p_130728_.getId() != null ? Component.m_237113_(p_130728_.getId().toString()) : Component.m_237113_("(unknown)");
++      }
+    }
+ 
+    public static Component m_130743_(Collection<String> p_130744_) {

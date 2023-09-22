@@ -1,42 +1,15 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -76,7 +_,7 @@
-    protected static final ResourceLocation f_92983_ = new ResourceLocation("textures/misc/pumpkinblur.png");
-    protected static final ResourceLocation f_168665_ = new ResourceLocation("textures/misc/spyglass_scope.png");
-    protected static final ResourceLocation f_168666_ = new ResourceLocation("textures/misc/powder_snow_outline.png");
--   private static final ResourceLocation f_279580_ = new ResourceLocation("textures/gui/icons.png");
-+   protected static final ResourceLocation f_279580_ = new ResourceLocation("textures/gui/icons.png");
-    protected static final Component f_92984_ = Component.m_237115_("demo.demoExpired");
-    protected static final Component f_193830_ = Component.m_237115_("menu.savingLevel");
-    protected static final int f_168667_ = 16777215;
-@@ -335,7 +_,7 @@
- 
-    }
- 
--   private void m_93039_(GuiGraphics p_282548_, Font p_93041_, int p_93042_, int p_93043_, int p_93044_) {
-+   protected void m_93039_(GuiGraphics p_282548_, Font p_93041_, int p_93042_, int p_93043_, int p_93044_) {
-       int i = this.f_92986_.f_91066_.m_92170_(0.0F);
-       if (i != 0) {
-          int j = -p_93043_ / 2;
-@@ -344,7 +_,7 @@
- 
-    }
- 
--   private void m_280130_(GuiGraphics p_282828_) {
-+   public void m_280130_(GuiGraphics p_282828_) {
-       Options options = this.f_92986_.f_91066_;
-       if (options.m_92176_().m_90612_()) {
-          if (this.f_92986_.f_91072_.m_105295_() != GameType.SPECTATOR || this.m_93024_(this.f_92986_.f_91077_)) {
-@@ -405,7 +_,7 @@
-       }
-    }
- 
--   protected void m_280523_(GuiGraphics p_282812_) {
-+   public void m_280523_(GuiGraphics p_282812_) {
-       Collection<MobEffectInstance> collection = this.f_92986_.f_91074_.m_21220_();
-       if (!collection.isEmpty()) {
-          Screen $$4 = this.f_92986_.f_91080_;
-@@ -424,6 +_,8 @@
+@@ -130,7 +_,7 @@
+    public float f_92980_ = 1.0F;
+    protected int f_92993_;
+    protected ItemStack f_92994_ = ItemStack.f_41583_;
+-   protected final DebugScreenOverlay f_291320_;
++   protected DebugScreenOverlay f_291320_;
+    protected final SubtitleOverlay f_92996_;
+    protected final SpectatorGui f_92997_;
+    protected final PlayerTabOverlay f_92998_;
+@@ -453,6 +_,8 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              MobEffect mobeffect = mobeffectinstance.m_19544_();
@@ -45,7 +18,7 @@
              if (mobeffectinstance.m_19575_()) {
                 int i = this.f_92977_;
                 int j = 1;
-@@ -452,6 +_,7 @@
+@@ -481,6 +_,7 @@
                    }
                 }
  
@@ -53,16 +26,7 @@
                 TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
                 int i1 = j;
                 float f1 = f;
-@@ -468,7 +_,7 @@
-       }
-    }
- 
--   private void m_280518_(float p_283031_, GuiGraphics p_282108_) {
-+   public void m_280518_(float p_283031_, GuiGraphics p_282108_) {
-       Player player = this.m_93092_();
-       if (player != null) {
-          ItemStack itemstack = player.m_21206_();
-@@ -572,16 +_,21 @@
+@@ -601,16 +_,21 @@
     }
  
     public void m_280295_(GuiGraphics p_283501_) {
@@ -87,7 +51,7 @@
           if (!this.f_92986_.f_91072_.m_105205_()) {
              k += 14;
           }
-@@ -593,7 +_,13 @@
+@@ -622,7 +_,13 @@
  
           if (l > 0) {
              p_283501_.m_280509_(j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
@@ -102,61 +66,7 @@
           }
        }
  
-@@ -614,7 +_,7 @@
-       this.f_92986_.m_91307_().m_7238_();
-    }
- 
--   private void m_280030_(GuiGraphics p_282008_, Objective p_283455_) {
-+   public void m_280030_(GuiGraphics p_282008_, Objective p_283455_) {
-       Scoreboard scoreboard = p_283455_.m_83313_();
-       Collection<Score> collection = scoreboard.m_83498_(p_283455_);
-       List<Score> list = collection.stream().filter((p_93027_) -> {
-@@ -819,7 +_,7 @@
-       }
-    }
- 
--   private void m_168688_(GuiGraphics p_282497_, Player p_168690_, int p_168691_, int p_168692_, int p_168693_, int p_168694_, float p_168695_, int p_168696_, int p_168697_, int p_168698_, boolean p_168699_) {
-+   protected void m_168688_(GuiGraphics p_282497_, Player p_168690_, int p_168691_, int p_168692_, int p_168693_, int p_168694_, float p_168695_, int p_168696_, int p_168697_, int p_168698_, boolean p_168699_) {
-       Gui.HeartType gui$hearttype = Gui.HeartType.m_168732_(p_168690_);
-       int i = 9 * (p_168690_.m_9236_().m_6106_().m_5466_() ? 5 : 0);
-       int j = Mth.m_14165_((double)p_168695_ / 2.0D);
-@@ -904,7 +_,7 @@
-       }
-    }
- 
--   private void m_280155_(GuiGraphics p_282304_, ResourceLocation p_281622_, float p_281504_) {
-+   protected void m_280155_(GuiGraphics p_282304_, ResourceLocation p_281622_, float p_281504_) {
-       RenderSystem.disableDepthTest();
-       RenderSystem.depthMask(false);
-       p_282304_.m_280246_(1.0F, 1.0F, 1.0F, p_281504_);
-@@ -914,7 +_,7 @@
-       p_282304_.m_280246_(1.0F, 1.0F, 1.0F, 1.0F);
-    }
- 
--   private void m_280278_(GuiGraphics p_282069_, float p_283442_) {
-+   public void m_280278_(GuiGraphics p_282069_, float p_283442_) {
-       float f = (float)Math.min(this.f_92977_, this.f_92978_);
-       float f1 = Math.min((float)this.f_92977_ / f, (float)this.f_92978_ / f) * p_283442_;
-       int i = Mth.m_14143_(f * f1);
-@@ -939,7 +_,7 @@
-       }
-    }
- 
--   private void m_280154_(GuiGraphics p_283063_, Entity p_283439_) {
-+   public void m_280154_(GuiGraphics p_283063_, Entity p_283439_) {
-       WorldBorder worldborder = this.f_92986_.f_91073_.m_6857_();
-       float f = (float)worldborder.m_61925_(p_283439_);
-       double d0 = Math.min(worldborder.m_61966_() * (double)worldborder.m_61967_() * 1000.0D, Math.abs(worldborder.m_61961_() - worldborder.m_61959_()));
-@@ -969,7 +_,7 @@
-       RenderSystem.defaultBlendFunc();
-    }
- 
--   private void m_280379_(GuiGraphics p_283375_, float p_283296_) {
-+   protected void m_280379_(GuiGraphics p_283375_, float p_283296_) {
-       if (p_283296_ < 1.0F) {
-          p_283296_ *= p_283296_;
-          p_283296_ *= p_283296_;
-@@ -1037,7 +_,7 @@
+@@ -1069,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {
              this.f_92993_ = 0;

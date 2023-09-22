@@ -41,8 +41,7 @@ public class CraftDataPack implements DataPack {
 
     @Override
     public int getPackFormat() {
-        Pack.Info info = Pack.readPackInfo(this.getRawId(), this.getHandle().resources);
-        return (info == null) ? 0 : info.dataFormat();
+        return 0;
     }
 
     @Override
