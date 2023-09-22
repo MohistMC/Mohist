@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/effect/HungerMobEffect.java
++++ b/net/minecraft/world/effect/HungerMobEffect.java
+@@ -11,6 +_,7 @@
+    public void applyEffectTick(LivingEntity p_301304_, int p_301079_) {
+       super.applyEffectTick(p_301304_, p_301079_);
+       if (p_301304_ instanceof Player player) {
++         player.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.HUNGER_EFFECT); // CraftBukkit - EntityExhaustionEvent
+          player.causeFoodExhaustion(0.005F * (float)(p_301079_ + 1));
+       }
+ 

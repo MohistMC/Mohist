@@ -471,7 +471,7 @@ public class ForgeMod {
     }
 
     public void preInit(FMLCommonSetupEvent evt) {
-        VersionChecker.startVersionCheck();
+        // VersionChecker.startVersionCheck(); // Mohist
         //VanillaPacketSplitter.register();
     }
 

@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.IntFunction;
 
+import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -753,7 +754,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @Override
     public boolean isLocked()
     {
-        return this.isFrozen;
+        return UltraCosmetics.canLock && this.isFrozen;
     }
 
     /**

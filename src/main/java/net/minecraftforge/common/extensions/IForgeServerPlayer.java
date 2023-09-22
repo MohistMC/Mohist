@@ -7,6 +7,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.function.Consumer;
 
+import com.mohistmc.bukkit.inventory.MohistModsInventory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,6 +17,9 @@ import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkInitialization;
 import net.minecraftforge.network.packets.OpenContainer;
+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
 
 public interface IForgeServerPlayer {
     private ServerPlayer self() {
@@ -66,6 +70,15 @@ public interface IForgeServerPlayer {
         if (output.readableBytes() > 32600 || output.readableBytes() < 1)
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         var c = containerSupplier.createMenu(openContainerId, player.getInventory(), player);
+        // Mohist start - Custom Container compatible with mods
+        c.setTitle(containerSupplier.getDisplayName());
+        if (c.getBukkitView() == null) {
+            org.bukkit.inventory.Inventory inventory = new CraftInventory(new MohistModsInventory(c, player));
+            inventory.getType().setMods(true);
+            c.bukkitView = new CraftInventoryView(player.getBukkitEntity(), inventory, c);
+        }
+        c = CraftEventFactory.callInventoryOpenEvent(player, c);
+        // Mohist end
         if (c == null)
             return;
         var msg = new OpenContainer(c.getType(), openContainerId, containerSupplier.getDisplayName(), output);

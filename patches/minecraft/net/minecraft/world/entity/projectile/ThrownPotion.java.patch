@@ -140,7 +140,7 @@
 -         this.level().destroyBlock(p_150193_, false, this);
 +         // CraftBukkit start
 +         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, Blocks.AIR.defaultBlockState())) {
-+            this.level().removeBlock(p_150193_, false);
++            this.level().destroyBlock(p_150193_, false, this);
 +         }
 +         // CraftBukkit end
        } else if (AbstractCandleBlock.isLit(blockstate)) {
@@ -158,7 +158,7 @@
 +         if (CraftEventFactory.callEntityChangeBlockEvent(this, p_150193_, blockstate.setValue(CampfireBlock.LIT, false))) {
 +            this.level().levelEvent((Player) null, 1009, p_150193_, 0);
 +            CampfireBlock.dowse(this.getOwner(), this.level(), p_150193_, blockstate);
-+            this.level().setBlockAndUpdate(p_150193_, blockstate.setValue(CampfireBlock.LIT, Boolean.valueOf(false)));
++            this.level().setBlockAndUpdate(p_150193_, blockstate.setValue(CampfireBlock.LIT, false));
 +         }
 +         // CraftBukkit end
        }

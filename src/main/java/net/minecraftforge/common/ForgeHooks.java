@@ -520,12 +520,13 @@ public class ForgeHooks {
             itemstack.setTag(nbt);
 
             Direction side = context.getClickedFace();
+            InteractionHand hand = context.getHand(); // Mohist
 
             boolean eventResult = false;
             if (blockSnapshots.size() > 1)
-                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
+                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side, hand); // Mohist add hand
             else if (blockSnapshots.size() == 1)
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side, hand); // Mohist add hand
 
             if (eventResult) {
                 ret = InteractionResult.FAIL; // cancel placement

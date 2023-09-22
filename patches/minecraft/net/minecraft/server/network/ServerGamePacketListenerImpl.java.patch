@@ -114,7 +114,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -171,14 +_,67 @@
+@@ -171,14 +_,62 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -123,10 +123,8 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import net.minecraftforge.server.ServerLifecycleHooks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
@@ -134,7 +132,6 @@
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 +import org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet;
@@ -156,9 +153,7 @@
 +import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 +import org.bukkit.event.player.PlayerInteractEntityEvent;
 +import org.bukkit.event.player.PlayerItemHeldEvent;
-+import org.bukkit.event.player.PlayerKickEvent;
 +import org.bukkit.event.player.PlayerMoveEvent;
-+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 +import org.bukkit.event.player.PlayerRespawnEvent;
 +import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
@@ -182,7 +177,7 @@
     public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
     private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
     private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
-@@ -223,14 +_,37 @@
+@@ -223,14 +_,36 @@
     private boolean waitingForSwitchToConfig;
  
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
@@ -197,11 +192,9 @@
 -      this.chatMessageChain = new FutureChain(p_9770_);
 +	  this.signedMessageDecoder = p_9770_.enforceSecureProfile() ? SignedMessageChain.Decoder.REJECT_ALL : SignedMessageChain.Decoder.unsigned(p_9772_.getUUID());
 +	  this.chatMessageChain = new FutureChain(p_9770_.chatExecutor); // CraftBukkit - async chat
-+      // CraftBukkit start - add fields and methods
-+      this.cserver = p_9770_.server;
 +   }
 +
-+   private final CraftServer cserver;
++   // CraftBukkit start - add fields
 +   public boolean processedDisconnect;
 +   private int lastTick = MinecraftServer.currentTick;
 +   private int allowedPlayerTicks = 1;
@@ -216,6 +209,7 @@
 +   private float lastPitch = Float.MAX_VALUE;
 +   private float lastYaw = Float.MAX_VALUE;
 +   private boolean justTeleported = false;
++   // CraftBukkit end
 +   private boolean hasMoved; // Spigot
 +
 +   public CraftPlayer getCraftPlayer() {
@@ -223,71 +217,15 @@
     }
  
     public void tick() {
-@@ -322,6 +_,63 @@
-       return this.player.getGameProfile();
-    }
+@@ -292,6 +_,7 @@
+       }
  
-+
-+   // CraftBukkit start
-+   public void disconnect(Component p_9943_) {
-+      disconnect(CraftChatMessage.fromComponent(p_9943_));
-+   }
-+   // CraftBukkit end
-+
-+   public void disconnect(String pTextComponent) {
-+      // CraftBukkit start - fire PlayerKickEvent
-+      if (this.processedDisconnect) {
-+         return;
-+      }
-+      if (!this.cserver.isPrimaryThread()) {
-+         Waitable waitable = new Waitable() {
-+            @Override
-+            protected Object evaluate() {
-+               ServerGamePacketListenerImpl.this.disconnect(pTextComponent);
-+               return null;
-+            }
-+         };
-+
-+         this.server.processQueue.add(waitable);
-+
-+         try {
-+            waitable.get();
-+         } catch (InterruptedException e) {
-+            Thread.currentThread().interrupt();
-+         } catch (ExecutionException e) {
-+            throw new RuntimeException(e);
-+         }
-+         return;
-+      }
-+      String leaveMessage = ChatFormatting.YELLOW + this.player.getScoreboardName() + " left the game.";
-+
-+      PlayerKickEvent event = new PlayerKickEvent(this.player.getBukkitEntity(), pTextComponent, leaveMessage);
-+
-+      if (this.cserver.getServer().isRunning()) {
-+         this.cserver.getPluginManager().callEvent(event);
-+      }
-+
-+      if (event.isCancelled()) {
-+         // Do not kick the player
-+         return;
-+      }
-+      this.player.kickLeaveMessage = event.getLeaveMessage(); // CraftBukkit - SPIGOT-3034: Forward leave message to PlayerQuitEvent
-+      // Send the possibly modified leave message
-+      final Component ichatbasecomponent = CraftChatMessage.fromString(event.getReason(), true)[0];
-+      // CraftBukkit end
-+      this.connection.send(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.thenRun(() -> {
-+         this.connection.disconnect(ichatbasecomponent);
-+      }));
-+
-+      this.onDisconnect(ichatbasecomponent); // CraftBukkit - fire quit instantly
-+      this.connection.setReadOnly();
-+      this.server.wrapRunnable(this.connection::handleDisconnection); // CraftBukkit - Don't wait
-+   }
-+
-    private <T, R> CompletableFuture<R> filterTextPacket(T p_243240_, BiFunction<TextFilter, T, CompletableFuture<R>> p_243271_) {
-       return p_243271_.apply(this.player.getTextFilter(), p_243240_).thenApply((p_264862_) -> {
-          if (!this.isAcceptingMessages()) {
-@@ -379,9 +_,34 @@
+       if (this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long)this.server.getPlayerIdleTimeout() * 1000L * 60L) {
++         this.player.resetLastActionTime(); // CraftBukkit - SPIGOT-854
+          this.disconnect(Component.translatable("multiplayer.disconnect.idling"));
+       }
+ 
+@@ -379,7 +_,32 @@
              double d8 = d5 - this.vehicleFirstGoodZ;
              double d9 = entity.getDeltaMovement().lengthSqr();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -319,11 +257,8 @@
 +            if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isSingleplayerOwner()) {
 +               // CraftBukkit end
                 LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
--               this.send(new ClientboundMoveVehiclePacket(entity));
-+               this.connection.send(new ClientboundMoveVehiclePacket(entity));
+                this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
-             }
- 
 @@ -407,18 +_,88 @@
              d8 = d5 - entity.getZ();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -340,9 +275,8 @@
              boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
              if (flag && (flag2 || !flag3)) {
                 entity.absMoveTo(d0, d1, d2, f, f1);
--               this.send(new ClientboundMoveVehiclePacket(entity));
 +               this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-+               this.connection.send(new ClientboundMoveVehiclePacket(entity));
+                this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
 +
@@ -431,7 +365,7 @@
 -         this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_296597_));
 +      this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
 +         if (p_238197_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
-+         this.connection.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_238197_));
++         this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_238197_));
        });
     }
  

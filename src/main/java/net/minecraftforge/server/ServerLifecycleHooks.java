@@ -68,6 +68,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import org.jetbrains.annotations.ApiStatus;
+import org.spigotmc.SpigotConfig;
 
 @SuppressWarnings("deprecation")
 @ApiStatus.Internal
@@ -222,7 +223,8 @@ public class ServerLifecycleHooks {
         if (ctx.getType() == ConnectionType.MODDED && ctx.getNetVersion() != NetworkContext.NET_VERSION)
             return rejectConnection(connection, ctx.getType(), "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version " + ctx.getNetVersion() + " this server is net version " + NetworkContext.NET_VERSION);
 
-        if (ctx.getType() == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections())
+        // Mohist
+        if (!SpigotConfig.bungee && ctx.getType() == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections())
             return rejectConnection(connection, ctx.getType(), "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
 
         NetworkRegistry.onConnectionStart(connection);

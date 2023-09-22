@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/effect/PoisonMobEffect.java
++++ b/net/minecraft/world/effect/PoisonMobEffect.java
+@@ -10,7 +_,7 @@
+    public void applyEffectTick(LivingEntity p_299064_, int p_299074_) {
+       super.applyEffectTick(p_299064_, p_299074_);
+       if (p_299064_.getHealth() > 1.0F) {
+-         p_299064_.hurt(p_299064_.damageSources().magic(), 1.0F);
++         p_299064_.hurt(p_299064_.damageSources().poison, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
+       }
+ 
+    }

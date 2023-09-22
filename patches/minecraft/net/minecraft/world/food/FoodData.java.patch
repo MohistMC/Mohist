@@ -104,7 +104,7 @@
 -         if (this.tickTimer >= 10) {
 +         if (this.tickTimer >= this.saturatedRegenRate) { // CraftBukkit
              float f = Math.min(this.saturationLevel, 6.0F);
-+            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.regainReason0(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.heal(f / 6.0F);
 -            this.addExhaustion(f);
 +            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN);
@@ -115,7 +115,7 @@
           ++this.tickTimer;
 -         if (this.tickTimer >= 80) {
 +         if (this.tickTimer >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
-+            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
++            p_38711_.regainReason0(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.heal(1.0F);
 -            this.addExhaustion(6.0F);
 +            p_38711_.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.REGEN); // CraftBukkit - EntityExhaustionEvent

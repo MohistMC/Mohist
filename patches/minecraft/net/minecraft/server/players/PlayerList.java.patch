@@ -442,10 +442,15 @@
     public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
        UUID uuid = p_299278_.getId();
        Set<ServerPlayer> set = Sets.newIdentityHashSet();
-@@ -402,77 +_,169 @@
+@@ -402,77 +_,174 @@
        return !set.isEmpty();
     }
  
++   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added ServerPlayer
++      return player == null;
++   }
++   // CraftBukkit end
++
 +
 +   // Mohist TODO start
 +   public Location mohist$location = null;

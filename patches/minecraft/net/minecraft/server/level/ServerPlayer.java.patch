@@ -94,7 +94,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -243,6 +_,22 @@
+@@ -243,6 +_,21 @@
     public int containerCounter;
     public boolean wonGame;
  
@@ -108,7 +108,6 @@
 +   public double maxHealthCache;
 +   public boolean joining = true;
 +   public boolean sentListPacket = false;
-+   public Integer clientViewDistance;
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
@@ -569,18 +568,15 @@
  
     }
  
-@@ -791,9 +_,9 @@
+@@ -791,7 +_,7 @@
        if (optional.isPresent()) {
           return optional;
        } else {
 -         Direction.Axis direction$axis = this.level().getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
 +         Direction.Axis direction$axis = this.level.getBlockState(this.portalEntrancePos).getOptionalValue(NetherPortalBlock.AXIS).orElse(Direction.Axis.X);
           Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
--         if (optional1.isEmpty()) {
-+         if (!optional1.isPresent()) {
+          if (optional1.isEmpty()) {
              LOGGER.error("Unable to create a portal, likely target out of worldborder");
-          }
- 
 @@ -801,7 +_,21 @@
        }
     }
@@ -950,6 +946,23 @@
        if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
           return false;
        } else {
+@@ -1275,6 +_,16 @@
+    }
+ 
+    public void updateOptions(ClientInformation p_297843_) {
++      // CraftBukkit start
++      if (getMainArm() != p_297843_.mainHand()) {
++         PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(getBukkitEntity(), getMainArm() == HumanoidArm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
++         this.server.server.getPluginManager().callEvent(event);
++      }
++      if (!this.language.equals(p_297843_.language())) {
++         PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent(getBukkitEntity(), p_297843_.language());
++         this.server.server.getPluginManager().callEvent(event);
++      }
++      // CraftBukkit end
+       this.language = p_297843_.language();
+       this.requestedViewDistance = p_297843_.viewDistance();
+       this.chatVisibility = p_297843_.chatVisibility();
 @@ -1348,6 +_,7 @@
     public void setCamera(@Nullable Entity p_9214_) {
        Entity entity = this.getCamera();

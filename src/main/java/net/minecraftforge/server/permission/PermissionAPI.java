@@ -5,6 +5,8 @@
 
 package net.minecraftforge.server.permission;
 
+import com.mohistmc.MohistConfig;
+import com.mohistmc.forge.BukkitPermissionsHandler;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -132,6 +134,11 @@ public final class PermissionAPI
         catch (ResourceLocationException e)
         {
             LOGGER.error("Error parsing config value 'permissionHandler'", e);
+        }
+        if (MohistConfig.bukkitpermissionshandler) {
+            var handler = new BukkitPermissionsHandler(activeHandler);
+            LOGGER.info("Forwarding forge permission[{}] to bukkit[{}]", activeHandler.getIdentifier(), handler.getIdentifier());
+            activeHandler = handler;
         }
     }
 }

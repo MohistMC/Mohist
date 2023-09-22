@@ -844,13 +844,14 @@
     public RegistryAccess.Frozen registryAccess() {
        return this.registries.compositeAccess();
     }
-@@ -1710,10 +_,14 @@
+@@ -1710,10 +_,15 @@
  
     }
  
 +   // CraftBukkit start
 +   public final java.util.concurrent.ExecutorService chatExecutor = java.util.concurrent.Executors.newCachedThreadPool(
 +           new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
++   // CraftBukkit end
 +
     public ChatDecorator getChatDecorator() {
        return ChatDecorator.PLAIN;

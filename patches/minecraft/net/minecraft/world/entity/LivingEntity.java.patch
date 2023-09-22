@@ -203,7 +203,7 @@
 -         if (!this.level().isClientSide() && !this.isSpectator()) {
 -            if (!this.isSilent() && equipable != null && equipable.getEquipmentSlot() == p_238393_) {
 +         if (equipable != null && !this.isSpectator() && equipable.getEquipmentSlot() == p_238393_) {
-+            if (!this.level().isClientSide() && !this.isSilent() && !silent0.getAndSet(false)) {
++            if (!this.isSilent() && !this.isSilent() && !silent0.getAndSet(false)) {
                 this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), equipable.getEquipSound(), this.getSoundSource(), 1.0F, 1.0F);
              }
  
@@ -509,11 +509,14 @@
        }
  
        if (!this.level().isClientSide) {
-@@ -1041,19 +_,54 @@
+@@ -1041,19 +_,57 @@
  
     }
  
 +   public AtomicReference<RegainReason> regainReason0 = new AtomicReference<>(RegainReason.CUSTOM);
++   public void regainReason0(RegainReason reason) {
++      regainReason0.set(reason);
++   }
     public void heal(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;
@@ -534,7 +537,7 @@
 +   }
  
 +   public void heal(float pHealAmount, EntityRegainHealthEvent.RegainReason regainReason) {
-+      this.regainReason0.set(regainReason);
++      this.regainReason0(regainReason);
 +      this.heal(pHealAmount);
     }
  

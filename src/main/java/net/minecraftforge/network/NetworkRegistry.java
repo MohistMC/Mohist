@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.netty.util.Attribute;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.spigotmc.SpigotConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class NetworkRegistry {
                 results.add(net.getChannelName().toString());
         }
 
-        if (!results.isEmpty()) {
+        if (!SpigotConfig.bungee && !results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections", String.join(", ", results));
             return results;
         }

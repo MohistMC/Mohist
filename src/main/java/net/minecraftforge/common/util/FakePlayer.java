@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.util;
 
+import com.mohistmc.bukkit.entity.CraftFakePlayer;
 import com.mojang.authlib.GameProfile;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -78,6 +79,10 @@ import org.jetbrains.annotations.Nullable;
 public class FakePlayer extends ServerPlayer {
     protected FakePlayer(ServerLevel level, GameProfile name, ClientInformation info) {
         super(level.getServer(), level, name, info);
+    }
+
+    public CraftFakePlayer getBukkitEntity() {
+        return (CraftFakePlayer) super.getBukkitEntity();
     }
 
     @Override public void displayClientMessage(Component chatComponent, boolean actionBar) { }
