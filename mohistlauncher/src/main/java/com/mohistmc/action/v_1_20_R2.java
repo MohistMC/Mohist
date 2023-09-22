@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_20 {
+public class v_1_20_R2 {
 
     public static final List<String> loadedLibsPaths = new ArrayList<>();
 
@@ -184,8 +184,8 @@ public class v_1_20 {
                         new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
                         stringToUrl(Arrays.asList(
                                 libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
-                                libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                libPath + "com/google/guava/guava/31.1-jre/guava-31.1-jre.jar",
+                                libPath + "commons-io/commons-io/2.13.0/commons-io-2.13.0.jar",
+                                libPath + "com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar",
                                 libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                                 libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
                                 libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",

@@ -18,7 +18,7 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_20;
+import com.mohistmc.action.v_1_20_R2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
@@ -71,14 +71,14 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
+        //if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
         }
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
-            v_1_20.run();
+            v_1_20_R2.run();
         }
 
         AutoDeleteMods.jar();
