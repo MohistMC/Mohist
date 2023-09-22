@@ -105,7 +105,6 @@ public class MohistCommand extends Command {
                 String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
                 sender.sendMessage("Mohist: " + MohistMC.versionInfo.mohist());
                 sender.sendMessage("Forge: " + MohistMC.versionInfo.forge());
-                sender.sendMessage("NeoForge: " + MohistMC.versionInfo.neoforge());
                 sender.sendMessage("Bukkit: " + MohistMC.versionInfo.bukkit());
                 sender.sendMessage("CraftBukkit: " + MohistMC.versionInfo.craftbukkit());
                 sender.sendMessage("Spigot: " + MohistMC.versionInfo.spigot());

@@ -49,7 +49,7 @@ public class MohistPlugin {
             } catch (IOException e) {
                 data = "libraries";
             }
-            File file = new File(data, "com/mohistmc/mohistplugins/mohistplugins-1.20.1.jar");
+            File file = new File(data, "com/mohistmc/mohistplugins/mohistplugins-1.20.2.jar");
             if (file.exists()) {
                 plugin = Control.loadPlugin(file);
                 if (plugin != null) {

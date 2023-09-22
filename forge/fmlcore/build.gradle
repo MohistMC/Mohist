@@ -27,7 +27,7 @@ ext {
             'FMLModType': 'LIBRARY',
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': '1.20.1',
+            'Git-Branch': '1.20.2',
             'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}"
         ] as LinkedHashMap,
         'net/minecraftforge/fml/loading/': [

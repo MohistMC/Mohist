@@ -23,7 +23,7 @@ public class MohistMC {
     public static final String NAME = "Mohist";
     public static Logger LOGGER = LogManager.getLogger();
     public static i18n i18n;
-    public static String version = "1.20.1";
+    public static String version = "1.20.2";
     public static String modid = "mohist";
     public static ClassLoader classLoader;
     public static VersionInfo versionInfo;
@@ -47,7 +47,6 @@ public class MohistMC {
         arguments.put("craftbukkit", cbs[1]);
         arguments.put("spigot", cbs[2]);
         arguments.put("forge", cbs[3]);
-        arguments.put("neoforge", ForgeVersion.getVersion());
         versionInfo = new VersionInfo(arguments);
     }
 }

@@ -30,7 +30,7 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion()  + ", Forge version " + MohistMC.versionInfo.forge() + ", NeoForge version " + MohistMC.versionInfo.neoforge() +  ")");
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion()  + ", Forge version " + MohistMC.versionInfo.forge() + ")");
         } else {
             StringBuilder name = new StringBuilder();
 
