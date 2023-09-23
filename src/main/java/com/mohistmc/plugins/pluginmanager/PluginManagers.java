@@ -18,7 +18,7 @@
 
 package com.mohistmc.plugins.pluginmanager;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.util.I18n;
 import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,7 @@ public class PluginManagers {
 
     public static boolean loadPluginCommand(CommandSender sender, String label, String[] split) {
         if (split.length < 2) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.load", label));
+            sender.sendMessage(I18n.as("pluginscommand.load", label));
             return false;
         }
         String pluginName = split[1];
@@ -44,7 +44,7 @@ public class PluginManagers {
             jarName = pluginName + (pluginName.endsWith(".jar") ? ".unloaded" : ".jar.unloaded");
             toLoad = new File("plugins" + File.separator + jarName);
             if (!toLoad.exists()) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.nofile", pluginName));
+                sender.sendMessage(I18n.as("pluginscommand.nofile", pluginName));
                 return false;
             } else {
                 String fileName = jarName.substring(0, jarName.length() - (".unloaded".length()));
@@ -56,22 +56,22 @@ public class PluginManagers {
 
         PluginDescriptionFile desc = Control.getDescription(toLoad);
         if (desc == null) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.noyml", pluginName));
+            sender.sendMessage(I18n.as("pluginscommand.noyml", pluginName));
             return false;
         }
 
         for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
             if (desc.getName().equals(p.getName())) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.alreadyloaded", desc.getName()));
+                sender.sendMessage(I18n.as("pluginscommand.alreadyloaded", desc.getName()));
                 return true;
             }
         }
         Plugin p = Control.loadPlugin(toLoad);
         if (p != null) {
             Bukkit.getServer().getPluginManager().enablePlugin(p);
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.loaded", p.getDescription().getName(), p.getDescription().getVersion()));
+            sender.sendMessage(I18n.as("pluginscommand.loaded", p.getDescription().getName(), p.getDescription().getVersion()));
         } else {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.notload", pluginName));
+            sender.sendMessage(I18n.as("pluginscommand.notload", pluginName));
             return false;
         }
 
@@ -80,7 +80,7 @@ public class PluginManagers {
 
     public static boolean unloadPluginCommand(CommandSender sender, String label, String[] split) {
         if (split.length < 2) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.unload", label));
+            sender.sendMessage(I18n.as("pluginscommand.unload", label));
             return true;
         }
 
@@ -88,13 +88,13 @@ public class PluginManagers {
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
 
         if (p == null) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.noplugin", pluginName));
+            sender.sendMessage(I18n.as("pluginscommand.noplugin", pluginName));
             return false;
         } else {
             if (Control.unloadPlugin(p)) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.unloaded", p.getDescription().getName(), p.getDescription().getVersion()));
+                sender.sendMessage(I18n.as("pluginscommand.unloaded", p.getDescription().getName(), p.getDescription().getVersion()));
             } else {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.notunload", pluginName));
+                sender.sendMessage(I18n.as("pluginscommand.notunload", pluginName));
                 return false;
             }
         }
@@ -104,35 +104,35 @@ public class PluginManagers {
     public static boolean reloadPluginCommand(CommandSender sender, String label, String[] split) {
 
         if (split.length < 2) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.reload", label));
+            sender.sendMessage(I18n.as("pluginscommand.reload", label));
             return false;
         }
         String pluginName = split[1];
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
 
         if (p == null) {
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.noplugin", pluginName));
+            sender.sendMessage(I18n.as("pluginscommand.noplugin", pluginName));
             return false;
         } else {
             File file = ((JavaPlugin) p).getFile();
 
             if (file == null) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.nojar", p.getName()));
+                sender.sendMessage(I18n.as("pluginscommand.nojar", p.getName()));
                 return false;
             }
 
             File name = new File("plugins" + File.separator + file.getName());
             JavaPlugin loaded = null;
             if (!Control.unloadPlugin(p)) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.unloaderror", pluginName));
+                sender.sendMessage(I18n.as("pluginscommand.unloaderror", pluginName));
                 return false;
             } else if ((loaded = (JavaPlugin) Control.loadPlugin(name)) == null) {
-                sender.sendMessage(MohistMC.i18n.get("pluginscommand.nojar", pluginName));
+                sender.sendMessage(I18n.as("pluginscommand.nojar", pluginName));
                 return false;
             }
 
             Bukkit.getPluginManager().enablePlugin(loaded);
-            sender.sendMessage(MohistMC.i18n.get("pluginscommand.reloaded", pluginName, loaded.getDescription().getVersion()));
+            sender.sendMessage(I18n.as("pluginscommand.reloaded", pluginName, loaded.getDescription().getVersion()));
         }
         return true;
     }

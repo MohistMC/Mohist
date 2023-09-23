@@ -10,7 +10,6 @@ import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
-import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
 import com.mohistmc.org.yaml.snakeyaml.Yaml;
@@ -426,7 +425,6 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        ForgeEventHandler.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
         File pluginFolder = (File) console.options.valueOf("plugins");
 

@@ -13,7 +13,8 @@ import com.mohistmc.commands.PermissionCommand;
 import com.mohistmc.commands.PingCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.commands.ShowsCommand;
-import com.mohistmc.plugins.MohistPlugin;
+import com.mohistmc.plugins.warps.WarpsCommands;
+import com.mohistmc.plugins.world.commands.WorldsCommands;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -83,7 +84,10 @@ public class MohistConfig {
         commands.put("shows", new ShowsCommand("shows"));
         commands.put("ping", new PingCommand("ping"));
 
-        MohistPlugin.registerCommands(commands);
+        if (getBoolean("worldmanage", true)) {
+            commands.put("worlds", new WorldsCommands("worlds"));
+        }
+        commands.put("warps", new WarpsCommands("warps"));
 
         version = getInt("config-version", 1);
         set("config-version", 1);
@@ -125,7 +129,7 @@ public class MohistConfig {
         }
     }
 
-    private static void set(String path, Object val) {
+    public static void set(String path, Object val) {
         config.set(path, val);
     }
 

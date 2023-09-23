@@ -19,6 +19,7 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.util.I18n;
 import com.mohistmc.util.ZipUtil;
 import java.io.File;
 import java.nio.file.Paths;
@@ -32,7 +33,7 @@ public class BackupWorldCommand extends Command {
 
     public BackupWorldCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("worldbackupcmd.description");
+        this.description = I18n.as("worldbackupcmd.description");
         this.usageMessage = "/backupworld";
         this.setPermission("mohist.command.backupworld");
     }
@@ -41,26 +42,26 @@ public class BackupWorldCommand extends Command {
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (sender.isOp()) {
             if (args.length != 1) {
-                sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.promptWorldName"));
+                sender.sendMessage(I18n.as("worldbackupcmd.notice.promptWorldName"));
                 return true;
             }
 
             World world = Bukkit.getWorld(args[0]);
             if (!new File(args[0]).exists() || world == null) {
-                sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.worldDontExists")  + Bukkit.getWorlds());
+                sender.sendMessage(I18n.as("worldbackupcmd.notice.worldDontExists")  + Bukkit.getWorlds());
                 return true;
             }
             world.save();
             new Thread(() -> {
                 try {
-                    sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.creatingWorldBackup"));
+                    sender.sendMessage(I18n.as("worldbackupcmd.notice.creatingWorldBackup"));
                     LocalDateTime now = LocalDateTime.now();
                     File zip = new File("./MohistBackups/" + args[0] + "-" + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".zip");
                     zip.getParentFile().mkdirs();
                     zip.createNewFile();
 
                     ZipUtil.zipFolder(Paths.get("./" + args[0]), zip.toPath());
-                    sender.sendMessage(MohistMC.i18n.get("worldbackupcmd.notice.worldComplete"));
+                    sender.sendMessage(I18n.as("worldbackupcmd.notice.worldComplete"));
                 } catch (Exception e) {
                     MohistMC.LOGGER.error("Failed to save world or this world doesn't exists.", e);
                 }

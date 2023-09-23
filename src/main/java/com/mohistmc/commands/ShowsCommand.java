@@ -1,10 +1,10 @@
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -70,7 +70,7 @@ public class ShowsCommand extends Command {
 
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
+            sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
             return false;
         }
 

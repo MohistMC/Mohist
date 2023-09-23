@@ -1,9 +1,9 @@
 package com.mohistmc.plugins.world.listener;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
+import com.mohistmc.util.I18n;
 import java.util.Random;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ public class InventoryClickListener {
     public static void createWorld(InventoryClickEvent event, Player p) {
         p.closeInventory();
         String worldName = WorldsCommands.type;
-        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateStart" , worldName));
+        p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateStart" , worldName));
         String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
         World.Environment environment = World.Environment.valueOf(itemName);
 
@@ -36,7 +36,7 @@ public class InventoryClickListener {
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            String msg = String.format(MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart1") + worldName) + MohistMC.i18n.get("worldlistener.ICL.worldCreateFailurePart2");
+            String msg = String.format(I18n.as("worldlistener.ICL.worldCreateFailurePart", worldName));
             p.sendMessage(ChatColor.RED + msg);
             return;
         }
@@ -47,7 +47,7 @@ public class InventoryClickListener {
         }
 
         world.setSpawnLocation(spawnLocation);
-        p.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("worldlistener.ICL.worldCreateSuccess" , worldName));
+        p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateSuccess" , worldName));
         try {
             ConfigByWorlds.addWorld(world.getName());
             ConfigByWorlds.addSpawn(spawnLocation);

@@ -6,19 +6,15 @@ import com.mohistmc.plugins.ban.bans.BanEntity;
 import com.mohistmc.plugins.ban.bans.BanItem;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
-import com.mohistmc.plugins.warps.WarpsCommands;
 import com.mohistmc.plugins.warps.WarpsUtils;
 import com.mohistmc.plugins.world.WorldManage;
-import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -37,7 +33,9 @@ public class MohistPlugin {
     public static Logger LOGGER = LogManager.getLogger("MohistPlugin");
 
     public static void init(Server server) {
-        if (MohistConfig.worldmanage) WorldManage.onEnable();
+        if (MohistConfig.yml.getBoolean("worldmanage", true)){
+            WorldManage.onEnable();
+        }
         ItemsConfig.init();
         WarpsUtils.init();
         File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
@@ -59,11 +57,6 @@ public class MohistPlugin {
             }
         }
         EntityClear.start();
-    }
-
-    public static void registerCommands(Map<String, Command> map) {
-        if (MohistConfig.worldmanage) map.put(WorldManage.command, new WorldsCommands(WorldManage.command));
-        map.put("warps", new WarpsCommands("warps"));
     }
 
     public static void registerListener(Event event) {

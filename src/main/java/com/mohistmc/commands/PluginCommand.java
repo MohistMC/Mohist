@@ -18,8 +18,8 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.plugins.pluginmanager.PluginManagers;
+import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ public class PluginCommand extends Command {
 
     public PluginCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("plugincmd.description");
+        this.description = I18n.as("plugincmd.description");
         this.usageMessage = "/plugin [load|unload|reload] [name]";
         this.setPermission("mohist.command.plugin");
     }

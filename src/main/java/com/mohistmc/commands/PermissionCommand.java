@@ -1,6 +1,6 @@
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +23,7 @@ public class PermissionCommand extends Command {
 
     public PermissionCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("permissioncmd.description");
+        this.description = I18n.as("permissioncmd.description");
         this.usageMessage = "/permission <check>";
         this.setPermission("mohist.command.permission");
     }
@@ -49,7 +49,7 @@ public class PermissionCommand extends Command {
                 if (player != null) {
                     sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
                 } else {
-                    sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep1") + args[1] + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep2") );
+                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep", args[1]));
                 }
             }
             default -> {

@@ -22,6 +22,7 @@ import com.mohistmc.MohistMC;
 import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.util.HasteUtils;
+import com.mohistmc.util.I18n;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +54,7 @@ public class DumpCommand extends Command {
 
     public DumpCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("dumpcmd.description");
+        this.description = I18n.as("dumpcmd.description");
         this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements]";
         this.setPermission("mohist.command.dump");
     }
