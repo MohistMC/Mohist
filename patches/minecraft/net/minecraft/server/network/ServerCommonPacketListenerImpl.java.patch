@@ -1,17 +1,16 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -3,6 +_,10 @@
+@@ -2,7 +_,9 @@
+ 
  import com.mojang.authlib.GameProfile;
  import com.mojang.logging.LogUtils;
++import java.util.concurrent.ExecutionException;
  import javax.annotation.Nullable;
-+
-+import com.mysql.cj.util.StringUtils;
-+import io.netty.buffer.ByteBuf;
 +import net.minecraft.ChatFormatting;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -19,28 +_,53 @@
+@@ -19,9 +_,18 @@
  import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
  import net.minecraft.network.protocol.common.ServerboundPongPacket;
  import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
@@ -21,7 +20,6 @@
  import net.minecraft.server.level.ClientInformation;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.VisibleForDebug;
-+import net.minecraftforge.server.ServerLifecycleHooks;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
@@ -30,11 +28,8 @@
 +import org.bukkit.event.player.PlayerResourcePackStatusEvent;
  import org.slf4j.Logger;
  
-+import java.nio.charset.StandardCharsets;
-+import java.util.concurrent.ExecutionException;
-+
  public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
-    private static final Logger LOGGER = LogUtils.getLogger();
+@@ -29,18 +_,30 @@
     public static final int LATENCY_CHECK_INTERVAL = 15000;
     private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
     protected final MinecraftServer server;
@@ -67,15 +62,7 @@
     }
  
     public void onDisconnect(Component p_300550_) {
-@@ -52,6 +_,7 @@
-    }
- 
-    public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
-+      PacketUtils.ensureRunningOnSameThread(p_299975_, this, this.player.serverLevel()); // CraftBukkit
-       if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
-          int i = (int)(Util.getMillis() - this.keepAliveTime);
-          this.latency = (this.latency * 3 + i) / 4;
-@@ -65,8 +_,65 @@
+@@ -65,8 +_,17 @@
     public void handlePong(ServerboundPongPacket p_299461_) {
     }
  
@@ -84,54 +71,6 @@
 +   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
     public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
 -   }
-+      if (!(p_300164_.payload() instanceof ServerboundCustomPayloadPacket.UnknownPayload)) {
-+         return;
-+      }
-+      PacketUtils.ensureRunningOnSameThread(p_300164_, this, this.player.serverLevel());
-+      ResourceLocation identifier = p_300164_.payload().id();
-+      ByteBuf payload = ((ServerboundCustomPayloadPacket.UnknownPayload)p_300164_.payload()).data();
-+
-+      ServerLifecycleHooks.getCurrentServer().executeIfPossible(() -> {
-+         if (ServerLifecycleHooks.getCurrentServer().hasStopped() || processedDisconnect) {
-+            return;
-+         }
-+         if (this.connection.isConnected()) {
-+            if (identifier.equals(CUSTOM_REGISTER)) {
-+               try {
-+                  String channels = payload.toString(StandardCharsets.UTF_8);
-+                  for (String channel : channels.split("\0")) {
-+                     if (!StringUtils.isNullOrEmpty(channel)) {
-+                        getCraftPlayer().addChannel(channel);
-+                     }
-+                  }
-+               } catch (Exception ex) {
-+                  LOGGER.error("Couldn't register custom payload", ex);
-+                  this.disconnect("Invalid payload REGISTER!");
-+               }
-+            } else if (identifier.equals(CUSTOM_UNREGISTER)) {
-+               try {
-+                  String channels = payload.toString(StandardCharsets.UTF_8);
-+                  for (String channel : channels.split("\0")) {
-+                     if (!StringUtils.isNullOrEmpty(channel)) {
-+                        getCraftPlayer().removeChannel(channel);
-+                     }
-+                  }
-+               } catch (Exception ex) {
-+                  LOGGER.error("Couldn't unregister custom payload", ex);
-+                  this.disconnect("Invalid payload UNREGISTER!");
-+               }
-+            } else {
-+               try {
-+                  byte[] data = new byte[payload.readableBytes()];
-+                  payload.readBytes(data);
-+                  this.cserver.getMessenger().dispatchIncomingMessage(this.player.getBukkitEntity(), identifier.toString(), data);
-+               } catch (Exception ex) {
-+                  LOGGER.error("Couldn't dispatch custom payload", ex);
-+                  this.disconnect("Invalid custom payload!");
-+               }
-+            }
-+         }
-+      });
 +      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
 +   }
 +

@@ -2,19 +2,18 @@ package org.bukkit.craftbukkit.v1_20_R2.util;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.SnbtPrinterTagVisitor;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftNBTTagConfigSerializer {
 
@@ -23,35 +22,29 @@ public class CraftNBTTagConfigSerializer {
     private static final Pattern DOUBLE = Pattern.compile("[-+]?(?:[0-9]+[.]?|[0-9]*[.][0-9]+)(?:e[-+]?[0-9]+)?d", Pattern.CASE_INSENSITIVE);
     private static final TagParser MOJANGSON_PARSER = new TagParser(new StringReader(""));
 
-    public static Object serialize(Tag base) {
-        if (base instanceof CompoundTag) {
-            Map<String, Object> innerMap = new HashMap<>();
-            for (String key : ((CompoundTag) base).getAllKeys()) {
-                innerMap.put(key, serialize(((CompoundTag) base).get(key)));
-            }
-
-            return innerMap;
-        } else if (base instanceof ListTag) {
-            List<Object> baseList = new ArrayList<>();
-            for (int i = 0; i < ((CollectionTag) base).size(); i++) {
-                baseList.add(serialize((Tag) ((CollectionTag) base).get(i)));
-            }
-
-            return baseList;
-        } else if (base instanceof StringTag) {
-            return base.getAsString();
-        } else if (base instanceof IntTag) { // No need to check for doubles, those are covered by the double itself
-            return base.toString() + "i";
-        }
-
-        return base.toString();
+    public static String serialize(@NotNull final Tag base) {
+        final SnbtPrinterTagVisitor snbtVisitor = new SnbtPrinterTagVisitor();
+        return snbtVisitor.visit(base);
     }
 
-    public static Tag deserialize(Object object) {
+    public static Tag deserialize(final Object object) {
+        // The new logic expects the top level object to be a single string, holding the entire nbt tag as SNBT.
+        if (object instanceof final String snbtString) {
+            try {
+                return TagParser.parseTag(snbtString);
+            } catch (final CommandSyntaxException e) {
+                throw new RuntimeException("Failed to deserialise nbt", e);
+            }
+        } else { // Legacy logic is passed to the internal legacy deserialization that attempts to read the old format that *unsuccessfully* attempted to read/write nbt to a full yml tree.
+            return internalLegacyDeserialization(object);
+        }
+    }
+
+    private static Tag internalLegacyDeserialization(@NotNull final Object object) {
         if (object instanceof Map) {
             CompoundTag compound = new CompoundTag();
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) object).entrySet()) {
-                compound.put(entry.getKey(), deserialize(entry.getValue()));
+                compound.put(entry.getKey(), internalLegacyDeserialization(entry.getValue()));
             }
 
             return compound;
@@ -63,7 +56,7 @@ public class CraftNBTTagConfigSerializer {
 
             ListTag tagList = new ListTag();
             for (Object tag : list) {
-                tagList.add(deserialize(tag));
+                tagList.add(internalLegacyDeserialization(tag));
             }
 
             return tagList;
@@ -93,6 +86,6 @@ public class CraftNBTTagConfigSerializer {
             }
         }
 
-        throw new RuntimeException("Could not deserialize Tag");
+        throw new RuntimeException("Could not deserialize NBTBase");
     }
 }

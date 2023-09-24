@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.2--48.0.1-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.20.2--48.0.4-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.8+7-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.1.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.1.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -20,13 +20,13 @@
 Progress
 ------
 
-- [x] Rectify Forge([**d80f10614**](https://github.com/MinecraftForge/MinecraftForge/commit/d80f10614))
+- [x] Rectify Forge([**18886e512**](https://github.com/MinecraftForge/MinecraftForge/commit/18886e512))
 - [x] Start patch
-    * [x] Bukkit([**1961ead6**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/1961ead6))
-    * [x] CraftBukkit([**f0702775c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f0702775c))
-    * [ ] Spigot ([**17ca32d0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/17ca32d0))
-        * [ ] Bukkit-Patches
-        * [ ] CraftBukkit-Patches
+    * [x] Bukkit([**fb23cbb3**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/fb23cbb3))
+    * [x] CraftBukkit([**f0661c351**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/f0661c351))
+    * [x] Spigot ([**17ca32d0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/17ca32d0))
+        * [x] Bukkit-Patches
+        * [x] CraftBukkit-Patches
 
 Getting Help
 ------
