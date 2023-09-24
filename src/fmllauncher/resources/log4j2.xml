@@ -30,7 +30,7 @@
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="99" fileIndex="min"/>
+            <DefaultRolloverStrategy max="99"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg{nolookups}}{strip}%n%xEx" charset="UTF-8"/>
@@ -38,7 +38,7 @@
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="5" fileIndex="min"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
