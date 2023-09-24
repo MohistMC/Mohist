@@ -30,7 +30,7 @@
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="99" fileIndex="min"/>
+            <DefaultRolloverStrategy max="99"/>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.zip">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %replace{%msg{nolookups}}{(?i)\u00A7[0-9A-FK-OR]}{}%n" charset="UTF-8"/>
@@ -38,7 +38,7 @@
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="5" fileIndex="min"/>
+            <DefaultRolloverStrategy max="5"/>
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
