@@ -71,7 +71,7 @@
 +         }
 +         // Spigot End
 +
-+         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles);
++         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), event.getNumPlayers(), (server.hidesOnlinePlayers()) ? Collections.emptyList() : profiles);
 +
 +         ServerStatus ping = new ServerStatus(
 +                 CraftChatMessage.fromString(event.getMotd(), true)[0],

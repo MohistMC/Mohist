@@ -150,7 +150,7 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.entity.getId(), list));
           }
-+         ((LivingEntity) this.entity).detectEquipmentUpdates(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
++         ((LivingEntity) this.entity).detectEquipmentUpdatesPublic(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
 +      }
 +
 +      // CraftBukkit start - MC-109346: Fix for nonsensical head yaw

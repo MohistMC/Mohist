@@ -5,25 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.IntFunction;
-
-import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.registries.tags.ITagManager;
-import org.apache.commons.lang3.Validate;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -32,16 +13,37 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
+import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import io.netty.buffer.Unpooled;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
+import net.minecraft.tags.TagKey;
+import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.util.TablePrinter;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.registries.tags.ITagManager;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -49,14 +51,13 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
 
 @ApiStatus.Internal
 public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
-    private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
-    private static Logger LOGGER = LogManager.getLogger();
+    private static final Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
+    private static final Logger LOGGER = LogManager.getLogger();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
@@ -572,15 +573,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateContent(ResourceLocation registryName)
     {
-        try
-        {
-            ObfuscationReflectionHelper.findMethod(BitSet.class, "trimToSize").invoke(this.availabilityMap);
-        }
-        catch (Exception e)
-        {
-            //We don't care... Just a micro-optimization
-        }
-
         for (V obj : this)
         {
             int id = getID(obj);

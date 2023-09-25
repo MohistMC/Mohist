@@ -1314,11 +1314,24 @@
        super.tick();
        this.updatingUsingItem();
        this.updateSwimAmount();
-@@ -2359,7 +_,7 @@
+@@ -2265,7 +_,7 @@
+             }
+          }
+ 
+-         this.detectEquipmentUpdates();
++         this.detectEquipmentUpdatesPublic(); // CraftBukkit
+          if (this.tickCount % 20 == 0) {
+             this.getCombatTracker().recheckStatus();
+          }
+@@ -2359,7 +_,11 @@
        this.refreshDirtyAttributes();
     }
  
 -   private void detectEquipmentUpdates() {
++   public void detectEquipmentUpdatesPublic() { // CraftBukkit
++      detectEquipmentUpdates();
++   }
++
 +   public void detectEquipmentUpdates() {
        Map<EquipmentSlot, ItemStack> map = this.collectEquipmentChanges();
        if (map != null) {
