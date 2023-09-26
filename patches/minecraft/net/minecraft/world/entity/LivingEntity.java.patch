@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1,21 +_,28 @@
+@@ -1,21 +_,29 @@
  package net.minecraft.world.entity;
  
 +import com.google.common.base.Function;
@@ -25,6 +25,7 @@
 +import java.util.Set;
  import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
@@ -88,7 +89,7 @@
     private LivingEntity f_20951_;
     private int f_20952_;
     private float f_20953_;
-@@ -226,6 +_,25 @@
+@@ -226,6 +_,27 @@
     private float f_20932_;
     protected Brain<?> f_20939_;
     private boolean f_217034_;
@@ -111,6 +112,8 @@
 +      ++this.f_20891_; // Above all the floats
 +   }
 +   // Spigot end
++   // Mohist start
++   public AtomicInteger invulnerableDurationAtom = new AtomicInteger(20);
  
     protected LivingEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
        super(p_20966_, p_20967_);
@@ -547,7 +550,7 @@
        this.f_19804_.m_135381_(f_20961_, Mth.m_14036_(p_21154_, 0.0F, this.m_21233_()));
     }
  
-@@ -1036,27 +_,30 @@
+@@ -1036,35 +_,26 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -569,34 +572,25 @@
  
           this.f_20891_ = 0;
           float f = p_21017_;
--         boolean flag = false;
-+         boolean flag = f > 0.0F && this.m_21275_(p_21016_); // Copied from below
++
+          boolean flag = false;
           float f1 = 0.0F;
--         if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
+          if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
 -            this.m_7909_(p_21017_);
 -            f1 = p_21017_;
 -            p_21017_ = 0.0F;
-+         if (false && p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
-+            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_21016_, p_21017_);
-+            if(!ev.isCanceled()) {
-+            if(ev.shieldTakesDamage()) this.m_7909_(p_21017_);
-+            f1 = ev.getBlockedDamage();
-+            p_21017_ -= ev.getBlockedDamage();
-             if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
-                Entity entity = p_21016_.m_7640_();
-                if (entity instanceof LivingEntity) {
-@@ -1065,32 +_,45 @@
-                }
-             }
- 
--            flag = true;
-+            flag = p_21017_ <= 0;
+-            if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
+-               Entity entity = p_21016_.m_7640_();
+-               if (entity instanceof LivingEntity) {
+-                  LivingEntity livingentity = (LivingEntity)entity;
+-                  this.m_6728_(livingentity);
+-               }
+-            }
+-
+             flag = true;
           }
  
-          if (p_21016_.m_269533_(DamageTypeTags.f_268419_) && this.m_6095_().m_204039_(EntityTypeTags.f_144295_)) {
-             p_21017_ *= 5.0F;
-          }
-+         }
+@@ -1074,23 +_,39 @@
  
           this.f_267362_.m_267771_(1.5F);
           boolean flag1 = true;
@@ -625,7 +619,11 @@
 +            // CraftBukkit end
 +
 +            this.f_20898_ = p_21017_;
-+            this.f_19802_ = this.f_20926_; // CraftBukkit - restore use of maxNoDamageTicks
++            if (this.f_20926_ == invulnerableDurationAtom.get()) {
++               this.f_19802_ = 20; // CraftBukkit - restore use of maxNoDamageTicks
++            } else {
++               this.f_19802_ = this.f_20926_;
++            }
 +            // CraftBukkit end
              this.f_20917_ = 10;
              this.f_20916_ = this.f_20917_;
