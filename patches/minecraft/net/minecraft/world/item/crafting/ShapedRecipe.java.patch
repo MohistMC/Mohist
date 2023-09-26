@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
+@@ -2,6 +_,7 @@
+ 
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.Sets;
++import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
 @@ -15,9 +_,27 @@
  import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
@@ -31,12 +39,15 @@
     final int width;
     final int height;
     final NonNullList<Ingredient> recipeItems;
-@@ -40,6 +_,67 @@
+@@ -40,6 +_,70 @@
        this(p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
     }
  
 +   // CraftBukkit start
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++      if (this.getWidth() < 1 || this.getWidth() > 3 || this.getHeight() < 1 || this.getHeight() > 3 || this.result.isEmpty()) {
++         return new MohistSpecialRecipe(id, this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +      CraftShapedRecipe recipe = new CraftShapedRecipe(id, result, this);
 +      recipe.setGroup(this.group);

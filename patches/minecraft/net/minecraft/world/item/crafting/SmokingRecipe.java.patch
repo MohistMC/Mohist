@@ -1,7 +1,9 @@
 --- a/net/minecraft/world/item/crafting/SmokingRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmokingRecipe.java
-@@ -2,6 +_,11 @@
+@@ -1,7 +_,13 @@
+ package net.minecraft.world.item.crafting;
  
++import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
 +import org.bukkit.NamespacedKey;
@@ -12,7 +14,7 @@
  
  public class SmokingRecipe extends AbstractCookingRecipe {
     public SmokingRecipe(String p_249312_, CookingBookCategory p_251017_, Ingredient p_252345_, ItemStack p_250002_, float p_250535_, int p_251222_) {
-@@ -15,4 +_,17 @@
+@@ -15,4 +_,20 @@
     public RecipeSerializer<?> getSerializer() {
        return RecipeSerializer.SMOKING_RECIPE;
     }
@@ -20,6 +22,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe(NamespacedKey id) {
++      if (this.result.isEmpty()) {
++         return new MohistSpecialRecipe(id, this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
 +      CraftSmokingRecipe recipe = new CraftSmokingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);

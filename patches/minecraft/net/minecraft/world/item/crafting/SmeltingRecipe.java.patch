@@ -1,7 +1,9 @@
 --- a/net/minecraft/world/item/crafting/SmeltingRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmeltingRecipe.java
-@@ -2,6 +_,11 @@
+@@ -1,7 +_,13 @@
+ package net.minecraft.world.item.crafting;
  
++import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
 +import org.bukkit.NamespacedKey;
@@ -12,7 +14,7 @@
  
  public class SmeltingRecipe extends AbstractCookingRecipe {
     public SmeltingRecipe(String p_250200_, CookingBookCategory p_251114_, Ingredient p_250340_, ItemStack p_250306_, float p_249577_, int p_250030_) {
-@@ -15,4 +_,17 @@
+@@ -15,4 +_,20 @@
     public RecipeSerializer<?> getSerializer() {
        return RecipeSerializer.SMELTING_RECIPE;
     }
@@ -20,6 +22,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public Recipe toBukkitRecipe(NamespacedKey id) {
++      if (this.result.isEmpty()) {
++         return new MohistSpecialRecipe(id, this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
 +      CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(id, result, CraftRecipe.toBukkit(this.ingredient), this.experience, this.cookingTime);

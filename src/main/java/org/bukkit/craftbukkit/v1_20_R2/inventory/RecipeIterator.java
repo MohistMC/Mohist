@@ -1,14 +1,12 @@
 package org.bukkit.craftbukkit.v1_20_R2.inventory;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeType;
-import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 
 public class RecipeIterator implements Iterator<Recipe> {
@@ -44,8 +42,7 @@ public class RecipeIterator implements Iterator<Recipe> {
         try {
             return recipe.toBukkitRecipe();
         } catch (Throwable e) {
-            //throw new RuntimeException("Error converting recipe " + recipe.getId(), e);
-            return new MohistSpecialRecipe(CraftNamespacedKey.fromMinecraft(recipe.id()), recipe);
+            throw new RuntimeException("Error converting recipe " + recipe.id(), e);
         }
     }
 

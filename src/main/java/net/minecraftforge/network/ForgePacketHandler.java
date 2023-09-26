@@ -5,6 +5,21 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.api.PlayerAPI;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,37 +31,21 @@ import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
 import net.minecraftforge.network.packets.Acknowledge;
 import net.minecraftforge.network.packets.ChannelVersions;
-import net.minecraftforge.network.packets.LoginWrapper;
-import net.minecraftforge.network.packets.ModVersions;
-import net.minecraftforge.network.packets.RegistryList;
-import net.minecraftforge.network.packets.RegistryData;
 import net.minecraftforge.network.packets.ConfigData;
+import net.minecraftforge.network.packets.LoginWrapper;
 import net.minecraftforge.network.packets.MismatchData;
+import net.minecraftforge.network.packets.ModVersions;
+import net.minecraftforge.network.packets.RegistryData;
+import net.minecraftforge.network.packets.RegistryList;
 import net.minecraftforge.network.tasks.ChannelVersionsTask;
 import net.minecraftforge.network.tasks.ModVersionsTask;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * TODO: Gathered Payloads
@@ -94,7 +93,8 @@ public class ForgePacketHandler {
         var nctx = NetworkContext.get(ctx.getConnection());
         nctx.modList.clear();
         nctx.modList.putAll(list.mods());
-
+        PlayerAPI.mods.put(ctx.getConnection().address, nctx.getModList().size());
+        PlayerAPI.modlist.put(ctx.getConnection().address, Collections.singletonList(list.mods().keySet().stream().sorted().collect(Collectors.joining(", "))));
         if (ctx.isClientSide()) {
             NetworkInitialization.PLAY.send(ModVersions.create(), ctx.getConnection());
             /*

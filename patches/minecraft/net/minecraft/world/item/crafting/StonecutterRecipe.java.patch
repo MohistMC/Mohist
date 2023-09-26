@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/item/crafting/StonecutterRecipe.java
 +++ b/net/minecraft/world/item/crafting/StonecutterRecipe.java
-@@ -4,6 +_,10 @@
+@@ -1,9 +_,14 @@
+ package net.minecraft.world.item.crafting;
+ 
++import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
+ import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
@@ -11,7 +15,7 @@
  
  public class StonecutterRecipe extends SingleItemRecipe {
     public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {
-@@ -17,4 +_,16 @@
+@@ -17,4 +_,19 @@
     public ItemStack getToastSymbol() {
        return new ItemStack(Blocks.STONECUTTER);
     }
@@ -19,6 +23,9 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
++      if (this.result.isEmpty()) {
++         return new MohistSpecialRecipe(id, this);
++      }
 +      CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
 +
 +      CraftStonecuttingRecipe recipe = new CraftStonecuttingRecipe(id, result, CraftRecipe.toBukkit(this.ingredient));

@@ -1,25 +1,29 @@
 --- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -2,7 +_,9 @@
+@@ -2,7 +_,10 @@
  
  import com.mojang.authlib.GameProfile;
  import com.mojang.logging.LogUtils;
++import java.nio.charset.StandardCharsets;
 +import java.util.concurrent.ExecutionException;
  import javax.annotation.Nullable;
 +import net.minecraft.ChatFormatting;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -19,9 +_,18 @@
+@@ -19,9 +_,21 @@
  import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
  import net.minecraft.network.protocol.common.ServerboundPongPacket;
  import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
++import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 +import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
 +import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.level.ClientInformation;
 +import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.util.StringUtil;
  import net.minecraft.util.VisibleForDebug;
++import net.minecraftforge.server.ServerLifecycleHooks;
 +import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
@@ -62,7 +66,7 @@
     }
  
     public void onDisconnect(Component p_300550_) {
-@@ -65,8 +_,17 @@
+@@ -65,8 +_,62 @@
     public void handlePong(ServerboundPongPacket p_299461_) {
     }
  
@@ -71,6 +75,51 @@
 +   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
     public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
 -   }
++      if (p_300164_.payload() instanceof DiscardedPayload payload && payload.data() != null) {
++         var readerIndex = payload.data().readerIndex();
++         var buf = new byte[payload.data().readableBytes()];
++         payload.data().readBytes(buf);
++         payload.data().readerIndex(readerIndex);
++         ServerLifecycleHooks.getCurrentServer().executeIfPossible(() -> {
++            if (ServerLifecycleHooks.getCurrentServer().hasStopped() || processedDisconnect) {
++               return;
++            }
++            if (this.connection.isConnected()) {
++               if (payload.id().equals(CUSTOM_REGISTER)) {
++                  try {
++                     String channels = new String(buf, StandardCharsets.UTF_8);
++                     for (String channel : channels.split("\0")) {
++                        if (!StringUtil.isNullOrEmpty(channel)) {
++                           this.getCraftPlayer().addChannel(channel);
++                        }
++                     }
++                  } catch (Exception ex) {
++                     LOGGER.error("Couldn't register custom payload", ex);
++                     this.disconnect("Invalid payload REGISTER!");
++                  }
++               } else if (payload.id().equals(CUSTOM_UNREGISTER)) {
++                  try {
++                     final String channels = new String(buf, StandardCharsets.UTF_8);
++                     for (String channel : channels.split("\0")) {
++                        if (!StringUtil.isNullOrEmpty(channel)) {
++                           this.getCraftPlayer().removeChannel(channel);
++                        }
++                     }
++                  } catch (Exception ex) {
++                     LOGGER.error("Couldn't unregister custom payload", ex);
++                     this.disconnect("Invalid payload UNREGISTER!");
++                  }
++               } else {
++                  try {
++                     this.cserver.getMessenger().dispatchIncomingMessage(this.player.getBukkitEntity(), payload.id().toString(), buf);
++                  } catch (Exception ex) {
++                     LOGGER.error("Couldn't dispatch custom payload", ex);
++                     this.disconnect("Invalid custom payload!");
++                  }
++               }
++            }
++         });
++      }
 +      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
 +   }
 +

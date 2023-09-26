@@ -52,6 +52,6 @@ public class PlayerAPI {
     }
 
     public static SocketAddress getRemoteAddress(Player player) {
-        return getNMSPlayer(player).connection.connection.getRemoteAddress();
+        return getNMSPlayer(player).connection.getRemoteAddress();
     }
 }
