@@ -9,7 +9,20 @@
  
  public class FishingRodItem extends Item implements Vanishable {
     public FishingRodItem(Item.Properties p_41285_) {
-@@ -29,11 +_,21 @@
+@@ -20,20 +_,34 @@
+       ItemStack itemstack = p_41291_.getItemInHand(p_41292_);
+       if (p_41291_.fishing != null) {
+          if (!p_41290_.isClientSide) {
++            ItemStack original = itemstack.copy();
+             int i = p_41291_.fishing.retrieve(itemstack);
+             itemstack.hurtAndBreak(i, p_41291_, (p_41288_) -> {
+                p_41288_.broadcastBreakEvent(p_41292_);
+             });
++            if(itemstack.isEmpty()) {
++               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_41291_, original, p_41292_);
++            }
+          }
+ 
           p_41290_.playSound((Player)null, p_41291_.getX(), p_41291_.getY(), p_41291_.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.NEUTRAL, 1.0F, 0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F));
           p_41291_.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
        } else {
