@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * naturally generated containers, what items should be dropped when killing a
  * mob, or what items can be fished.
  *
- * See the <a href="https://minecraft.gamepedia.com/Loot_table">
+ * See the <a href="https://minecraft.wiki/w/Loot_table">
  * Minecraft Wiki</a> for more information.
  */
 public interface LootTable extends Keyed {
