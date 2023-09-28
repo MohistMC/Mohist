@@ -70,7 +70,7 @@
 +   // CraftBukkit start
 +   public static InteractionResult bindPlayerMobs(Player pPlayer, Level pLevel, BlockPos pPos, net.minecraft.world.InteractionHand enumhand) {
 +      enumHand.set(enumhand);
-+      return bindPlayerMobs(pPlayer, pLevel, pPos, net.minecraft.world.InteractionHand.MAIN_HAND);
++      return m_42829_(pPlayer, pLevel, pPos);
 +   }
 +   // CraftBukkit end
  }
