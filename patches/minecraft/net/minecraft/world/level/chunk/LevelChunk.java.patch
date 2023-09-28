@@ -149,19 +149,6 @@
        }
  
     }
-@@ -362,6 +_,12 @@
-             blockentity.m_7651_();
-          }
- 
-+      }else {
-+         System.out.println("Attempted to place a tile entity (" + p_156374_ + ") at " + p_156374_.m_58899_().m_123341_() + "," + p_156374_.m_58899_().m_123342_() + "," + p_156374_.m_58899_().m_123343_()
-+                 + " (" + m_8055_(blockpos) + ") where there was no entity tile!");
-+         System.out.println("Chunk coordinates: " + (this.f_187604_.f_45578_ * 16) + "," + (this.f_187604_.f_45579_ * 16));
-+         new Exception().printStackTrace();
-+         // CraftBukkit end
-       }
-    }
- 
 @@ -369,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
