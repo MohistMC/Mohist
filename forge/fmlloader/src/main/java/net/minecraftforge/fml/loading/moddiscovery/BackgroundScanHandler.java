@@ -6,18 +6,18 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.slf4j.Logger;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
 
 public class BackgroundScanHandler
 {
@@ -32,9 +32,6 @@ public class BackgroundScanHandler
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ExecutorService modContentScanner;
-    private final List<ModFile> pendingFiles;
-    private final List<ModFile> scannedFiles;
-    private final List<ModFile> allFiles;
     private final List<ModFile> modFiles;
     private ScanStatus status;
     private LoadingModList loadingModList;
@@ -47,9 +44,6 @@ public class BackgroundScanHandler
             thread.setName("Background Scan Handler");
             return thread;
         });
-        scannedFiles = new ArrayList<>();
-        pendingFiles = new ArrayList<>();
-        allFiles = new ArrayList<>();
         status = ScanStatus.NOT_STARTED;
     }
 
@@ -64,8 +58,6 @@ public class BackgroundScanHandler
         }
         status = ScanStatus.RUNNING;
         ImmediateWindowHandler.updateProgress("Scanning mod candidates");
-        allFiles.add(file);
-        pendingFiles.add(file);
         final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
                 .whenComplete(file::setScanResult)
                 .whenComplete((r,t)-> this.addCompletedFile(file,r,t));
@@ -77,8 +69,6 @@ public class BackgroundScanHandler
             status = ScanStatus.ERRORED;
             LOGGER.error(LogMarkers.SCAN,"An error occurred scanning file {}", file, throwable);
         }
-        pendingFiles.remove(file);
-        scannedFiles.add(file);
     }
 
     public void setLoadingModList(LoadingModList loadingModList)
