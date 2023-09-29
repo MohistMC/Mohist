@@ -19,6 +19,10 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implem
         super(world, tileEntity);
     }
 
+    protected CraftBeacon(CraftBeacon state) {
+        super(state);
+    }
+
     @Override
     public Collection<LivingEntity> getEntitiesInRange() {
         ensureNoWorldGeneration();
@@ -91,5 +95,10 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implem
     @Override
     public void setLock(String key) {
         this.getSnapshot().lockKey = (key == null) ? LockCode.NO_LOCK : new LockCode(key);
+    }
+
+    @Override
+    public CraftBeacon copy() {
+        return new CraftBeacon(this);
     }
 }

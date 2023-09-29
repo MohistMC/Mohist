@@ -30,6 +30,10 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
         super(world, te);
     }
 
+    protected CraftSkull(CraftSkull state) {
+        super(state);
+    }
+
     @Override
     public void load(SkullBlockEntity skull) {
         super.load(skull);
@@ -197,5 +201,10 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
         if (getSkullType() == SkullType.PLAYER) {
             skull.setOwner(profile);
         }
+    }
+
+    @Override
+    public CraftSkull copy() {
+        return new CraftSkull(this);
     }
 }

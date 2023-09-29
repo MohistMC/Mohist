@@ -20,6 +20,10 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
         super(world, te);
     }
 
+    protected CraftChest(CraftChest state) {
+        super(state);
+    }
+
     @Override
     public Inventory getSnapshotInventory() {
         return new CraftInventory(this.getSnapshot());
@@ -73,5 +77,10 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
             ChestBlockEntity.playSound(getTileEntity().getLevel(), getPosition(), block, SoundEvents.CHEST_CLOSE);
         }
         getTileEntity().openersCounter.opened = false;
+    }
+
+    @Override
+    public CraftChest copy() {
+        return new CraftChest(this);
     }
 }

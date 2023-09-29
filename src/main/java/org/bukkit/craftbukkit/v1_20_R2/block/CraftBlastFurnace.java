@@ -9,4 +9,13 @@ public class CraftBlastFurnace extends CraftFurnace<BlastFurnaceBlockEntity> imp
     public CraftBlastFurnace(World world, BlastFurnaceBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftBlastFurnace(CraftBlastFurnace state) {
+        super(state);
+    }
+
+    @Override
+    public CraftBlastFurnace copy() {
+        return new CraftBlastFurnace(this);
+    }
 }

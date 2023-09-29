@@ -27,6 +27,17 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
         this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
+    protected CraftSign(CraftSign<T> state) {
+        super(state);
+        this.front = new CraftSignSide(this.getSnapshot().getFrontText());
+        this.back = new CraftSignSide(this.getSnapshot().getBackText());
+    }
+
+    @Override
+    public CraftSign<T> copy() {
+        return new CraftSign<T>(this);
+    }
+
     public static void openSign(Sign sign, Player player, Side side) {
         Preconditions.checkArgument(sign != null, "sign == null");
         Preconditions.checkArgument(side != null, "side == null");

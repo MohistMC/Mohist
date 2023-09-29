@@ -19,6 +19,10 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> impl
         super(world, te);
     }
 
+    protected CraftBeehive(CraftBeehive state) {
+        super(state);
+    }
+
     @Override
     public Location getFlower() {
         BlockPos flower = getSnapshot().savedFlowerPos;
@@ -79,5 +83,10 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> impl
         Preconditions.checkArgument(entity != null, "Entity must not be null");
 
         getSnapshot().addOccupant(((CraftBee) entity).getHandle(), false);
+    }
+
+    @Override
+    public CraftBeehive copy() {
+        return new CraftBeehive(this);
     }
 }

@@ -20,6 +20,12 @@ public final class CapturedBlockState extends CraftBlockState {
         this.treeBlock = treeBlock;
     }
 
+    protected CapturedBlockState(CapturedBlockState state) {
+        super(state);
+
+        this.treeBlock = state.treeBlock;
+    }
+
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
@@ -47,6 +53,11 @@ public final class CapturedBlockState extends CraftBlockState {
         }
 
         return result;
+    }
+
+    @Override
+    public CapturedBlockState copy() {
+        return new CapturedBlockState(this);
     }
 
     public static CapturedBlockState getBlockState(Level world, BlockPos pos, int flag) {

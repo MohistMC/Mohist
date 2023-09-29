@@ -22,6 +22,10 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
         super(world, tileEntity);
     }
 
+    protected CraftBanner(CraftBanner state) {
+        super(state);
+    }
+
     @Override
     public void load(BannerBlockEntity banner) {
         super.load(banner);
@@ -98,5 +102,10 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
             newPatterns.add(compound);
         }
         banner.itemPatterns = newPatterns;
+    }
+
+    @Override
+    public CraftBanner copy() {
+        return new CraftBanner(this);
     }
 }

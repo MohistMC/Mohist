@@ -19,6 +19,10 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
         super(world, te);
     }
 
+    protected CraftDispenser(CraftDispenser state) {
+        super(state);
+    }
+
     @Override
     public Inventory getSnapshotInventory() {
         return new CraftInventory(this.getSnapshot());
@@ -57,5 +61,10 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
         } else {
             return false;
         }
+    }
+
+    @Override
+    public CraftDispenser copy() {
+        return new CraftDispenser(this);
     }
 }

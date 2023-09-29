@@ -8,4 +8,13 @@ public class CraftFurnaceFurnace extends CraftFurnace<FurnaceBlockEntity> {
     public CraftFurnaceFurnace(World world, FurnaceBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftFurnaceFurnace(CraftFurnaceFurnace state) {
+        super(state);
+    }
+
+    @Override
+    public CraftFurnaceFurnace copy() {
+        return new CraftFurnaceFurnace(this);
+    }
 }

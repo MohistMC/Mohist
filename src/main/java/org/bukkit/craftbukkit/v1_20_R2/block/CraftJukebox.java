@@ -19,6 +19,10 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
     public CraftJukebox(World world, JukeboxBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftJukebox(CraftJukebox state) {
+        super(state);
+    }
     @Override
     public JukeboxInventory getSnapshotInventory() {
         return new CraftInventoryJukebox(this.getSnapshot());
@@ -145,5 +149,10 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         boolean result = !jukebox.getFirstItem().isEmpty();
         jukebox.popOutRecord();
         return result;
+    }
+
+    @Override
+    public CraftJukebox copy() {
+        return new CraftJukebox(this);
     }
 }

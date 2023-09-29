@@ -8,6 +8,20 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.util.RandomSource;
+@@ -33,11 +_,11 @@
+ 
+    LevelTickAccess<Block> getBlockTicks();
+ 
+-   private <T> ScheduledTick<T> createTick(BlockPos p_186483_, T p_186484_, int p_186485_, TickPriority p_186486_) {
++   default <T> ScheduledTick<T> createTick(BlockPos p_186483_, T p_186484_, int p_186485_, TickPriority p_186486_) {
+       return new ScheduledTick<>(p_186484_, p_186483_, this.getLevelData().getGameTime() + (long)p_186485_, p_186486_, this.nextSubTickCount());
+    }
+ 
+-   private <T> ScheduledTick<T> createTick(BlockPos p_186479_, T p_186480_, int p_186481_) {
++   default <T> ScheduledTick<T> createTick(BlockPos p_186479_, T p_186480_, int p_186481_) {
+       return new ScheduledTick<>(p_186480_, p_186479_, this.getLevelData().getGameTime() + (long)p_186481_, this.nextSubTickCount());
+    }
+ 
 @@ -112,4 +_,6 @@
     default void gameEvent(GameEvent p_220408_, BlockPos p_220409_, GameEvent.Context p_220410_) {
        this.gameEvent(p_220408_, Vec3.atCenterOf(p_220409_), p_220410_);

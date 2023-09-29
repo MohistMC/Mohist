@@ -1,5 +1,36 @@
 --- a/net/minecraft/world/level/levelgen/structure/StructureStart.java
 +++ b/net/minecraft/world/level/levelgen/structure/StructureStart.java
+@@ -29,6 +_,7 @@
+    private int references;
+    @Nullable
+    private volatile BoundingBox cachedBoundingBox;
++   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION; // CraftBukkit
+ 
+    public StructureStart(Structure p_226846_, ChunkPos p_226847_, int p_226848_, PiecesContainer p_226849_) {
+       this.structure = p_226846_;
+@@ -85,11 +_,19 @@
+          BlockPos blockpos = boundingbox.getCenter();
+          BlockPos blockpos1 = new BlockPos(blockpos.getX(), boundingbox.minY(), blockpos.getZ());
+ 
+-         for(StructurePiece structurepiece : list) {
+-            if (structurepiece.getBoundingBox().intersects(p_226855_)) {
+-               structurepiece.postProcess(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
++         // CraftBukkit start
++         List<StructurePiece> pieces = list.stream().filter(piece -> piece.getBoundingBox().intersects(boundingbox)).toList();
++         if (!pieces.isEmpty()) {
++            org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess transformerAccess = new org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess();
++            transformerAccess.setHandle(p_226851_);
++            transformerAccess.setStructureTransformer(new org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureTransformer(generationEventCause, p_226851_, p_226852_, structure, boundingbox, p_226856_));
++            for (StructurePiece structurepiece : list) {
++                  structurepiece.postProcess(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, blockpos1);
++
+             }
++            transformerAccess.getStructureTransformer().discard();
+          }
++         // CraftBukkit end
+ 
+          this.structure.afterPlace(p_226851_, p_226852_, p_226853_, p_226854_, p_226855_, p_226856_, this.pieceContainer);
+       }
 @@ -98,6 +_,9 @@
     public CompoundTag createTag(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {
        CompoundTag compoundtag = new CompoundTag();

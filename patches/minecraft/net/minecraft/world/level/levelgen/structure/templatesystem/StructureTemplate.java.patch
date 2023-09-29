@@ -29,7 +29,7 @@
     public void fillFromWorld(Level p_163803_, BlockPos p_163804_, Vec3i p_163805_, boolean p_163806_, @Nullable Block p_163807_) {
        if (p_163805_.getX() >= 1 && p_163805_.getY() >= 1 && p_163805_.getZ() >= 1) {
           BlockPos blockpos = p_163804_.offset(p_163805_).offset(-1, -1, -1);
-@@ -201,6 +_,10 @@
+@@ -201,10 +_,27 @@
        return transform(p_74565_, p_74564_.getMirror(), p_74564_.getRotation(), p_74564_.getRotationPivot());
     }
  
@@ -40,6 +40,23 @@
     public boolean placeInWorld(ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_) {
        if (this.palettes.isEmpty()) {
           return false;
+       } else {
++         // CraftBukkit start
++         // We only want the TransformerGeneratorAccess at certain locations because in here are many "block update" calls that shouldn't be transformed
++         ServerLevelAccessor wrappedAccess = p_230329_;
++         org.bukkit.craftbukkit.v1_20_R2.util.CraftStructureTransformer structureTransformer = null;
++         if (wrappedAccess instanceof org.bukkit.craftbukkit.v1_20_R2.util.TransformerGeneratorAccess transformerAccess) {
++            p_230329_ = transformerAccess.getHandle();
++            structureTransformer = transformerAccess.getStructureTransformer();
++            // The structureTransformer is not needed if we can not transform blocks therefore we can save a little bit of performance doing this
++            if (structureTransformer != null && !structureTransformer.canTransformBlocks()) {
++               structureTransformer = null;
++            }
++         }
++         // CraftBukkit end
+          List<StructureTemplate.StructureBlockInfo> list = p_230332_.getRandomPalette(this.palettes, p_230330_).blocks();
+          if ((!list.isEmpty() || !p_230332_.isIgnoreEntities() && !this.entityInfoList.isEmpty()) && this.size.getX() >= 1 && this.size.getY() >= 1 && this.size.getZ() >= 1) {
+             BoundingBox boundingbox = p_230332_.getBoundingBox();
 @@ -218,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
@@ -49,12 +66,42 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.pos;
                 if (boundingbox == null || boundingbox.isInside(blockpos)) {
                    FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
+@@ -228,6 +_,20 @@
+                      Clearable.tryClear(blockentity);
+                      p_230329_.setBlock(blockpos, Blocks.BARRIER.defaultBlockState(), 20);
+                   }
++                  // CraftBukkit start
++                  if (structureTransformer != null) {
++                     org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState craftBlockState = (org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState) org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates.getBlockState(blockpos, blockstate, null);
++                     if (structuretemplate$structureblockinfo.nbt != null && craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState<?> entityState) {
++                        entityState.loadData(structuretemplate$structureblockinfo.nbt);
++                        if (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftLootable<?> craftLootable) {
++                           craftLootable.setSeed(p_230333_.nextLong());
++                        }
++                     }
++                     craftBlockState = structureTransformer.transformCraftState(craftBlockState);
++                     blockstate = craftBlockState.getHandle();
++                     structuretemplate$structureblockinfo = new StructureTemplate.StructureBlockInfo(blockpos, blockstate, (craftBlockState instanceof org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockEntityState<?> craftBlockEntityState ? craftBlockEntityState.getSnapshotNBT() : null));
++                  }
++                  // CraftBukkit end
+ 
+                   if (p_230329_.setBlock(blockpos, blockstate, p_230334_)) {
+                      i = Math.min(i, blockpos.getX());
+@@ -240,7 +_,7 @@
+                      if (structuretemplate$structureblockinfo.nbt != null) {
+                         BlockEntity blockentity1 = p_230329_.getBlockEntity(blockpos);
+                         if (blockentity1 != null) {
+-                           if (blockentity1 instanceof RandomizableContainerBlockEntity) {
++                           if (wrappedAccess == p_230329_ && blockentity1 instanceof RandomizableContainerBlockEntity) { // CraftBukkit - only process if don't have a transformer access (originalAccess == worldaccess)
+                               structuretemplate$structureblockinfo.nbt.putLong("LootTableSeed", p_230333_.nextLong());
+                            }
+ 
 @@ -330,7 +_,7 @@
              }
  
              if (!p_230332_.isIgnoreEntities()) {
 -               this.placeEntities(p_230329_, p_230330_, p_230332_.getMirror(), p_230332_.getRotation(), p_230332_.getRotationPivot(), boundingbox, p_230332_.shouldFinalizeEntities());
-+               this.addEntitiesToWorld(p_230329_, p_230330_, p_230332_);
++               this.addEntitiesToWorld(wrappedAccess, p_230330_, p_230332_);
              }
  
              return true;

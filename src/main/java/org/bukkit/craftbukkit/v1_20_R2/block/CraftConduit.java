@@ -9,4 +9,13 @@ public class CraftConduit extends CraftBlockEntityState<ConduitBlockEntity> impl
     public CraftConduit(World world, ConduitBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftConduit(CraftConduit state) {
+        super(state);
+    }
+
+    @Override
+    public CraftConduit copy() {
+        return new CraftConduit(this);
+    }
 }

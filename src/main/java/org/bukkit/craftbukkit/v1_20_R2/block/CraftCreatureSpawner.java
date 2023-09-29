@@ -17,6 +17,10 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         super(world, te);
     }
 
+    protected CraftCreatureSpawner(CraftCreatureSpawner state) {
+        super(state);
+    }
+
     @Override
     public EntityType getSpawnedType() {
         SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
@@ -134,5 +138,10 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     @Override
     public void setSpawnRange(int spawnRange) {
         this.getSnapshot().getSpawner().spawnRange = spawnRange;
+    }
+
+    @Override
+    public CraftCreatureSpawner copy() {
+        return new CraftCreatureSpawner(this);
     }
 }

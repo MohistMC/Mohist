@@ -18,6 +18,10 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
         super(world, te);
     }
 
+    protected CraftBell(CraftBell state) {
+        super(state);
+    }
+
     @Override
     public boolean ring(Entity entity, BlockFace direction) {
         Preconditions.checkArgument(direction == null || direction.isCartesian(), "direction must be cartesian, given %s", direction);
@@ -66,5 +70,10 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
     @Override
     public int getResonatingTicks() {
         return isResonating() ? getSnapshot().ticks : 0;
+    }
+
+    @Override
+    public CraftBell copy() {
+        return new CraftBell(this);
     }
 }

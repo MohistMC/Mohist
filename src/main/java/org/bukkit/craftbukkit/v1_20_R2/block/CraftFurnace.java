@@ -20,6 +20,10 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
         super(world, te);
     }
 
+    protected CraftFurnace(CraftFurnace<T> state) {
+        super(state);
+    }
+
     @Override
     public FurnaceInventory getSnapshotInventory() {
         return new CraftInventoryFurnace(this.getSnapshot());
@@ -78,4 +82,7 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
 
         return recipesUsed.build();
     }
+
+    @Override
+    public abstract CraftFurnace<T> copy();
 }

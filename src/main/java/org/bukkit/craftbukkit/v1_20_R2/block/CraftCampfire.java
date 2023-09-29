@@ -13,6 +13,10 @@ public class CraftCampfire extends CraftBlockEntityState<CampfireBlockEntity> im
         super(world, te);
     }
 
+    protected CraftCampfire(CraftCampfire state) {
+        super(state);
+    }
+
     @Override
     public int getSize() {
         return getSnapshot().getItems().size();
@@ -47,5 +51,10 @@ public class CraftCampfire extends CraftBlockEntityState<CampfireBlockEntity> im
     @Override
     public void setCookTimeTotal(int index, int cookTimeTotal) {
         getSnapshot().cookingTime[index] = cookTimeTotal;
+    }
+
+    @Override
+    public CraftCampfire copy() {
+        return new CraftCampfire(this);
     }
 }

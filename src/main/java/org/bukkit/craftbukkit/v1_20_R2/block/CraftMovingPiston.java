@@ -8,4 +8,13 @@ public class CraftMovingPiston extends CraftBlockEntityState<PistonMovingBlockEn
     public CraftMovingPiston(World world, PistonMovingBlockEntity tileEntity) {
         super(world, tileEntity);
     }
+
+    protected CraftMovingPiston(CraftMovingPiston state) {
+        super(state);
+    }
+
+    @Override
+    public CraftMovingPiston copy() {
+        return new CraftMovingPiston(this);
+    }
 }

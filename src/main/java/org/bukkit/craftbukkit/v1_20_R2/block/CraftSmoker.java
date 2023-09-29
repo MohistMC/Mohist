@@ -9,4 +9,13 @@ public class CraftSmoker extends CraftFurnace<SmokerBlockEntity> implements Smok
     public CraftSmoker(World world, SmokerBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftSmoker(CraftSmoker state) {
+        super(state);
+    }
+
+    @Override
+    public CraftSmoker copy() {
+        return new CraftSmoker(this);
+    }
 }

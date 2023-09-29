@@ -9,4 +9,13 @@ public class CraftComparator extends CraftBlockEntityState<ComparatorBlockEntity
     public CraftComparator(World world, final ComparatorBlockEntity te) {
         super(world, te);
     }
+
+    protected CraftComparator(CraftComparator state) {
+        super(state);
+    }
+
+    @Override
+    public CraftComparator copy() {
+        return new CraftComparator(this);
+    }
 }
