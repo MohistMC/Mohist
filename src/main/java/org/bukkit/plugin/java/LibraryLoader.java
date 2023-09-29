@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -120,36 +121,39 @@ class LibraryLoader {
         Json json3Json = json2Json.at("dependencies").at("dependency");
         if (json3Json.isArray()) {
             for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
-                if (o.toString().contains("groupId") && o.toString().contains("artifactId")) {
-                    String groupId = o.asString("groupId");
-                    String artifactId = o.asString("artifactId");
-                    if (o.toString().contains("version")) {
-                        String versionAsString = o.asString("version");
-                        if (versionAsString.contains("${project.version}")) {
-                            Dependency dependency = new Dependency(groupId, artifactId, version, true);
-                            list.add(dependency);
-                        } else if (!versionAsString.contains("${")) {
-                            Dependency dependency = new Dependency(groupId, artifactId, versionAsString, true);
-                            list.add(dependency);
-                        }
-                    } else {
-                        if (o.has("scope") && o.asString("scope").equals("compile")) {
-                            URL mavenUrl = new URL("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml"));
-                            Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");;
-
-                            String compile_version = compile_json2Json.at("versioning").asString("release");
-
-                            Dependency dependency = new Dependency(groupId, artifactId, compile_version, true);
-                            list.add(dependency);
-                        }
-                    }
-                }
+                dependency(o, list, version);
             }
         } else {
-            Dependency dependency = new Dependency(json3Json.asString("groupId"), json3Json.asString("artifactId"), json3Json.asString("version"), true);
-            list.add(dependency);
+            dependency(json3Json, list, null);
         }
         return list;
+    }
+
+    public static void dependency(Json json, List<Dependency> list, String version) throws MalformedURLException {
+        if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
+            String groupId = json.asString("groupId");
+            String artifactId = json.asString("artifactId");
+            if (json.toString().contains("version")) {
+                String versionAsString = json.asString("version");
+                if (versionAsString.contains("${project.version}")) {
+                    Dependency dependency = new Dependency(groupId, artifactId, version, true);
+                    list.add(dependency);
+                } else if (!versionAsString.contains("${")) {
+                    Dependency dependency = new Dependency(groupId, artifactId, versionAsString, true);
+                    list.add(dependency);
+                }
+            } else {
+                if (json.has("scope") && json.asString("scope").equals("compile")) {
+                    URL mavenUrl = URI.create("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
+                    Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");;
+
+                    String compile_version = compile_json2Json.at("versioning").asString("release");
+
+                    Dependency dependency = new Dependency(groupId, artifactId, compile_version, true);
+                    list.add(dependency);
+                }
+            }
+        }
     }
 
     public record Dependency(String group, String name, String version, boolean extra) {
