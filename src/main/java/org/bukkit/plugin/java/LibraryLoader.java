@@ -130,32 +130,32 @@ class LibraryLoader {
     }
 
     public static void dependency(Json json, List<Dependency> list, String version) throws MalformedURLException {
-        if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
-            String groupId = json.asString("groupId");
-            String artifactId = json.asString("artifactId");
-            if (json.toString().contains("version")) {
-                String versionAsString = json.asString("version");
-                if (versionAsString.contains("${project.version}")) {
-                    Dependency dependency = new Dependency(groupId, artifactId, version, true);
-                    list.add(dependency);
-                } else if (!versionAsString.contains("${")) {
-                    Dependency dependency = new Dependency(groupId, artifactId, versionAsString, true);
-                    list.add(dependency);
-                }
-            } else {
-                if (json.has("scope") && json.asString("scope").equals("compile")) {
-                    URL mavenUrl = URI.create("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
-                    Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");;
-
-                    String compile_version = compile_json2Json.at("versioning").asString("release");
-
-                    Dependency dependency = new Dependency(groupId, artifactId, compile_version, true);
-                    list.add(dependency);
+        try {
+            if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
+                String groupId = json.asString("groupId");
+                String artifactId = json.asString("artifactId");
+                if (json.toString().contains("version")) {
+                    String versionAsString = json.asString("version");
+                    if (versionAsString.contains("${project.version}")) {
+                        Dependency dependency = new Dependency(groupId, artifactId, version, true);
+                        list.add(dependency);
+                    } else if (!versionAsString.contains("${")) {
+                        Dependency dependency = new Dependency(groupId, artifactId, versionAsString, true);
+                        list.add(dependency);
+                    }
+                } else {
+                    if (json.has("scope") && json.asString("scope").equals("compile")) {
+                        URL mavenUrl = URI.create("https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
+                        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+                        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
+                        Dependency dependency = new Dependency(groupId, artifactId, v.get(v.size() - 1), true);
+                        list.add(dependency);
+                    }
                 }
             }
-        }
+        } catch (Exception ignored) {}
     }
 
-    public record Dependency(String group, String name, String version, boolean extra) {
+    public record Dependency(String group, String name, Object version, boolean extra) {
     }
 }
