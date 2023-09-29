@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.2--48.0.10-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.20.2--48.0.12-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.8+7-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.1.1-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.1.1/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -20,9 +20,9 @@
 Progress
 ------
 
-- [x] Rectify Forge([**d25ba7adc**](https://github.com/MinecraftForge/MinecraftForge/commit/d25ba7adc))
+- [x] Rectify Forge([**fcf9088aa**](https://github.com/MinecraftForge/MinecraftForge/commit/fcf9088aa))
 - [x] Start patch
-    * [x] Bukkit([**57b73d57**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/57b73d57))
+    * [x] Bukkit([**044d4ee9**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/044d4ee9))
     * [x] CraftBukkit([**851a32cff**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/851a32cff))
     * [x] Spigot ([**a0f3d486**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/a0f3d486))
         * [x] Bukkit-Patches

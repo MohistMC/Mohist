@@ -5,19 +5,16 @@
 
 package net.minecraftforge.network.packets;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 // TODO: Reevaluate if this is needed This is the same as ClientboundOpenScreenPacket packet but allows for additional data
 public class OpenContainer {
@@ -55,23 +52,20 @@ public class OpenContainer {
 
     @SuppressWarnings("unchecked")
     public static void handle(OpenContainer msg, CustomPayloadEvent.Context ctx) {
-        ctx.enqueueWork(() -> {
-            try {
-                var mc = Minecraft.getInstance();
-                var inv = mc.player.getInventory();
-                MenuScreens.getScreenFactory(msg.getType(), mc, msg.getWindowId(), msg.getName()).ifPresent(f -> {
-                    AbstractContainerMenu c = msg.getType().create(msg.getWindowId(), inv, msg.getAdditionalData());
+        try {
+            var mc = Minecraft.getInstance();
+            var inv = mc.player.getInventory();
+            var factory = MenuScreens.getScreenFactory(msg.getType(), mc, msg.getWindowId(), msg.getName());
+            factory.ifPresent(f -> {
+                var c = msg.getType().create(msg.getWindowId(), inv, msg.getAdditionalData());
 
-                    Screen s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>)f).create(c, inv, msg.getName());
-                    mc.player.containerMenu = ((MenuAccess<?>)s).getMenu();
-                    mc.setScreen(s);
-                });
-            } finally {
-                msg.getAdditionalData().release();
-            }
-
-        });
-        ctx.setPacketHandled(true);
+                var s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>)f).create(c, inv, msg.getName());
+                mc.player.containerMenu = s.getMenu();
+                mc.setScreen(s);
+            });
+        } finally {
+            msg.getAdditionalData().release();
+        }
     }
 
     @SuppressWarnings("deprecation")
