@@ -19,6 +19,8 @@ public class AutoDeleteMods {
             "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
             "me.wesley1808.servercore.common.ServerCore" /*ServerCore*/,
             "i18nupdatemod.I18nUpdateMod" /*I18nUpdateMod*/,
+            "dev.tr7zw.skinlayers.SkinLayersMod" /*skinlayers3d*/,
+            "dev.tr7zw.notenoughanimations.NEAnimationsModForge" /*notenoughanimations*/,
             "optifine.Differ" /*OptiFine*/));
 
     public static void jar() throws Exception {
