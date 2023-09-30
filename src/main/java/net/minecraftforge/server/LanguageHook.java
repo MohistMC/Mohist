@@ -8,24 +8,27 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.locale.Language;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeI18n;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.FileNotFoundException;
+import com.mohistmc.MohistConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.common.ForgeI18n;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LanguageHook
 {
@@ -72,14 +75,20 @@ public class LanguageHook
     }
 
     private static void loadLanguage(String langName, MinecraftServer server) {
-        String langFile = String.format(Locale.ROOT, "lang/%s.json", langName);
+        String langFile = String.format(Locale.ROOT, "lang/%s.json", "en_us");
+        String langFile_mohist = String.format(Locale.ROOT, "lang/%s.json", langName);
         ResourceManager resourceManager = server.getServerResources().resourceManager();
         resourceManager.getNamespaces().forEach(namespace -> {
             try {
-                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
+                ResourceLocation langResource = new ResourceLocation(namespace, langFile_mohist);
                 loadLocaleData(resourceManager.getResourceStack(langResource));
             } catch (Exception exception) {
-                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
+                try {
+                    ResourceLocation langResource = new ResourceLocation(namespace, langFile);
+                    loadLocaleData(resourceManager.getResourceStack(langResource));
+                } catch (Exception exception1) {
+                    LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception1);
+                }
             }
         });
 
@@ -98,7 +107,7 @@ public class LanguageHook
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         // Possible multi-language server support?
-        for (String lang : Arrays.asList("en_us")) {
+        for (String lang : Arrays.asList(MohistConfig.mohist_lang().toLowerCase())) {
             loadLanguage(lang, server);
         }
         capturedTables.forEach(t->t.putAll(modTable));
