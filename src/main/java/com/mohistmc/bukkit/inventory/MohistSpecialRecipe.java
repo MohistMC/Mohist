@@ -30,6 +30,6 @@ public class MohistSpecialRecipe extends CraftComplexRecipe {
 
     @Override
     public void addToCraftingManager() {
-        ServerLifecycleHooks.getCurrentServer().getRecipeManager().addRecipe((new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), this.recipe)));
+        ServerLifecycleHooks.getCurrentServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), this.recipe));
     }
 }

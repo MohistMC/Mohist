@@ -146,7 +146,7 @@
     public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
     private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
     private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
-@@ -223,14 +_,36 @@
+@@ -223,14 +_,35 @@
     private boolean waitingForSwitchToConfig;
  
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
@@ -164,7 +164,6 @@
 +   }
 +
 +   // CraftBukkit start - add fields
-+   public boolean processedDisconnect;
 +   private int lastTick = MinecraftServer.currentTick;
 +   private int allowedPlayerTicks = 1;
 +   private int lastDropTick = MinecraftServer.currentTick;
@@ -842,8 +841,26 @@
                 return;
              }
           }
-@@ -1094,7 +_,17 @@
-       this.server.getPlayerList().broadcastSystemMessage(Component.translatable("multiplayer.player.left", this.player.getDisplayName()).withStyle(ChatFormatting.YELLOW), false);
+@@ -1083,6 +_,13 @@
+    }
+ 
+    public void onDisconnect(Component p_9825_) {
++      // CraftBukkit start - Rarely it would send a disconnect line twice
++      if (this.processedDisconnect) {
++         return;
++      } else {
++         this.processedDisconnect = true;
++      }
++      // CraftBukkit end
+       LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_9825_.getString());
+       this.removePlayerFromWorld();
+       super.onDisconnect(p_9825_);
+@@ -1090,10 +_,13 @@
+ 
+    private void removePlayerFromWorld() {
+       this.chatMessageChain.close();
+-      this.server.invalidateStatus();
+-      this.server.getPlayerList().broadcastSystemMessage(Component.translatable("multiplayer.player.left", this.player.getDisplayName()).withStyle(ChatFormatting.YELLOW), false);
        this.player.disconnect();
        this.server.getPlayerList().remove(this.player);
 +      String quitMessage = this.server.getPlayerList().quitMessage;
@@ -852,14 +869,8 @@
 +      }
 +      // CraftBukkit end
        this.player.getTextFilter().leave();
-+      if (this.isSingleplayerOwner()) {
-+         LOGGER.info("Stopping singleplayer server as player logged out");
-+         this.server.halt(false);
-+      }
-+
     }
  
-    public void ackBlockChangesUpTo(int p_215202_) {
 @@ -1107,7 +_,16 @@
  
     public void handleSetCarriedItem(ServerboundSetCarriedItemPacket p_9909_) {
@@ -877,7 +888,7 @@
           if (this.player.getInventory().selected != p_9909_.getSlot() && this.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
              this.player.stopUsingItem();
           }
-@@ -1115,36 +_,42 @@
+@@ -1115,36 +_,43 @@
           this.player.getInventory().selected = p_9909_.getSlot();
           this.player.resetLastActionTime();
        } else {
@@ -931,16 +942,23 @@
 +                  if (component == null) return;
 +                  PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
 +                  this.broadcastChatMessage(playerchatmessage1);
-+               }, p_296593_);
++               }, this.server.chatExecutor); // CraftBukkit - async chat
              });
++            // }); // CraftBukkit - async chat
           }
 -
        }
     }
  
-@@ -1156,7 +_,7 @@
+@@ -1155,8 +_,13 @@
+          Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.command(), p_215225_.timeStamp(), p_215225_.lastSeenMessages());
           if (optional.isPresent()) {
              this.server.submit(() -> {
++               // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands
++               if (player.hasDisconnected()) {
++                  return;
++               }
++               // CraftBukkit end
                 this.performChatCommand(p_215225_, optional.get());
 -               this.detectRateSpam();
 +               this.detectRateSpam(); // Spigot
