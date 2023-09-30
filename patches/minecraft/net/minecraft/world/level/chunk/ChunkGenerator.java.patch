@@ -49,28 +49,6 @@
     public void applyBiomeDecoration(WorldGenLevel p_223087_, ChunkAccess p_223088_, StructureManager p_223089_) {
        ChunkPos chunkpos = p_223088_.getPos();
        if (!SharedConstants.debugVoidTerrain(chunkpos)) {
-@@ -363,6 +_,21 @@
-             throw new ReportedException(crashreport);
-          }
-       }
-+      org.bukkit.World world = p_223087_.getMinecraftWorld().getWorld();
-+      // only call when a populator is present (prevents unnecessary entity conversion)
-+      if (!world.getPopulators().isEmpty()) {
-+         CraftLimitedRegion limitedRegion = new CraftLimitedRegion(p_223087_, p_223088_.getPos());
-+         int x = p_223088_.getPos().x;
-+         int z = p_223088_.getPos().z;
-+         for (BlockPopulator populator : world.getPopulators()) {
-+            WorldgenRandom seededrandom = new WorldgenRandom(new LegacyRandomSource(p_223087_.getSeed()));
-+            seededrandom.setDecorationSeed(p_223087_.getSeed(), x, z);
-+            populator.populate(world, new RandomSourceWrapper.RandomWrapper(seededrandom), x, z, limitedRegion);
-+         }
-+         limitedRegion.saveEntities();
-+         limitedRegion.breakLink();
-+      }
-+      // CraftBukkit end
-    }
- 
-    private static BoundingBox getWritableArea(ChunkAccess p_187718_) {
 @@ -480,6 +_,14 @@
        Predicate<Holder<Biome>> predicate = holderset::contains;
        StructureStart structurestart = structure.generate(p_223107_, this, this.biomeSource, p_223108_, p_223109_, p_223110_, p_223112_, i, p_223111_, predicate);
