@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -11,18 +_,21 @@
+@@ -11,18 +_,22 @@
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -14,6 +14,7 @@
  import java.util.UUID;
 +import java.util.concurrent.CopyOnWriteArrayList;
 +import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Function;
  import java.util.function.Predicate;
 +import java.util.stream.Collectors;
@@ -336,12 +337,12 @@
     }
  
 +   // Mohist start
-+   private ServerPlayer entity = null;
++   private AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
     @Nullable
     public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
 -      if (this.f_11198_.m_11406_(p_11258_)) {
 +      ServerPlayer serverPlayer = m_215624_(p_11258_);
-+      entity = serverPlayer;
++      entity.set(serverPlayer);
 +      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
 +      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
 +      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress());
@@ -387,8 +388,8 @@
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-+      if(entity != null) {
-+         return entity;
++      if(entity.get() != null) {
++         return entity.getAndSet(null);
 +      }
        UUID uuid = UUIDUtil.m_235875_(p_215625_);
        List<ServerPlayer> list = Lists.newArrayList();
