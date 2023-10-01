@@ -51,7 +51,7 @@
           this.f_10013_.m_129512_(new ClientboundLoginDisconnectPacket(p_10054_));
           this.f_10013_.m_129507_(p_10054_);
        } catch (Exception exception) {
-@@ -92,14 +_,44 @@
+@@ -92,9 +_,40 @@
  
     }
  
@@ -92,23 +92,7 @@
 +         // this.gameProfile = this.createFakeProfile(this.gameProfile); // Spigot - Moved to initUUID
        }
  
--      Component component = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
--      if (component != null) {
--         this.m_10053_(component);
-+      ServerPlayer s = this.f_10018_.m_6846_().canPlayerLogin(this, this.f_10021_);
-+      if (s == null) {
-       } else {
-          this.f_10019_ = ServerLoginPacketListenerImpl.State.ACCEPTED;
-          if (this.f_10018_.m_6328_() >= 0 && !this.f_10013_.m_129531_()) {
-@@ -112,7 +_,7 @@
-          ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
- 
-          try {
--            ServerPlayer serverplayer1 = this.f_10018_.m_6846_().m_215624_(this.f_10021_);
-+            ServerPlayer serverplayer1 = this.f_10018_.m_6846_().getPlayerForLogin(this.f_10021_, s);
-             if (serverplayer != null) {
-                this.f_10019_ = ServerLoginPacketListenerImpl.State.DELAY_ACCEPT;
-                this.f_10024_ = serverplayer1;
+       Component component = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
 @@ -134,31 +_,57 @@
     }
  

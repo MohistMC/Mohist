@@ -1,8 +1,9 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -1,11 +_,15 @@
+@@ -1,11 +_,16 @@
  package net.minecraft.world.food;
  
++import java.util.concurrent.atomic.AtomicInteger;
  import net.minecraft.nbt.CompoundTag;
 +import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 +import net.minecraft.server.level.ServerPlayer;
@@ -16,30 +17,20 @@
  
  public class FoodData {
     public int f_38696_ = 20;
-@@ -14,7 +_,23 @@
+@@ -14,6 +_,13 @@
     public int f_38699_;
     public int f_38700_ = 20;
  
 +   // CraftBukkit start
-+   private Player entityhuman;
++   public Player entityhuman = null;
 +   public int saturatedRegenRate = 10;
 +   public int unsaturatedRegenRate = 80;
 +   public int starvationRate = 80;
 +   // CraftBukkit end
 +
-+   // CraftBukkit start - added Player constructor
-+   public FoodData(Player entityhuman) {
-+      org.apache.commons.lang3.Validate.notNull(entityhuman);
-+      this.entityhuman = entityhuman;
-+      this.f_38697_ = 5.0F;
-+   }
-+   // CraftBukkit end
-+
     public FoodData() {
-+      this.entityhuman = null;
        this.f_38697_ = 5.0F;
     }
- 
 @@ -23,16 +_,38 @@
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
@@ -82,7 +73,7 @@
        this.f_38700_ = this.f_38696_;
        if (this.f_38698_ > 4.0F) {
           this.f_38698_ -= 4.0F;
-@@ -40,28 +_,41 @@
+@@ -40,28 +_,45 @@
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
              this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
@@ -114,7 +105,11 @@
        } else if (flag && this.f_38696_ >= 18 && p_38711_.m_36325_()) {
           ++this.f_38699_;
 -         if (this.f_38699_ >= 80) {
-+         if (this.f_38699_ >= this.unsaturatedRegenRate) { // CraftBukkit - add regen rate manipulation
++         AtomicInteger atomicInteger = new AtomicInteger(80);
++         if (unsaturatedRegenRate != atomicInteger.get()) {
++            atomicInteger.set(unsaturatedRegenRate);
++         }
++         if (this.f_38699_ >= atomicInteger.get()) { // CraftBukkit - add regen rate manipulation
 +            p_38711_.regainReason0.set(EntityRegainHealthEvent.RegainReason.SATIATED);
              p_38711_.m_5634_(1.0F);
 -            this.m_38703_(6.0F);

@@ -314,7 +314,7 @@
        this.f_11195_.m_129901_().m_136305_(p_11287_);
        UUID uuid = p_11287_.m_20148_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
-@@ -364,32 +_,85 @@
+@@ -364,35 +_,68 @@
           this.f_11203_.remove(uuid);
        }
  
@@ -335,63 +335,35 @@
 +      quitMessage = playerQuitEvent.getQuitMessage();
     }
  
--   @Nullable
--   public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
++   // Mohist start
++   private ServerPlayer entity = null;
+    @Nullable
+    public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
 -      if (this.f_11198_.m_11406_(p_11258_)) {
--         UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(p_11258_);
--         MutableComponent mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
-+   // CraftBukkit start - Whole method, SocketAddress to LoginListener, added hostname to signature, return EntityPlayer
-+   public ServerPlayer canPlayerLogin(ServerLoginPacketListenerImpl loginlistener, GameProfile pGameProfile) {
-+      MutableComponent mutablecomponent1 = Component.m_237119_();
-+      // Moved from processLogin
-+      UUID uuid = UUIDUtil.m_235875_(pGameProfile);
-+      List<ServerPlayer> list = Lists.newArrayList();
++      ServerPlayer serverPlayer = m_215624_(p_11258_);
++      entity = serverPlayer;
++      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
++      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
++      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress());
 +
-+      ServerPlayer entityplayer;
-+
-+      for (int i = 0; i < this.f_11196_.size(); ++i) {
-+         entityplayer = (ServerPlayer) this.f_11196_.get(i);
-+         if (entityplayer.m_20148_().equals(uuid)) {
-+            list.add(entityplayer);
-+         }
-+      }
-+
-+      Iterator iterator = list.iterator();
-+      while (iterator.hasNext()) {
-+         entityplayer = (ServerPlayer) iterator.next();
-+         m_6765_(entityplayer); // CraftBukkit - Force the player's inventory to be saved
-+         entityplayer.f_8906_.m_9942_(Component.m_237115_("multiplayer.disconnect.duplicate_login"));
-+      }
-+
-+      // Instead of kicking then returning, we need to store the kick reason
-+      // in the event, check with plugins to see if it's ok, and THEN kick
-+      // depending on the outcome.
-+      SocketAddress socketaddress = loginlistener.f_10013_.m_129523_();
-+
-+      ServerPlayer entity = m_215624_(pGameProfile);
-+      org.bukkit.entity.Player player = entity.getBukkitEntity();
-+      PlayerLoginEvent event = new PlayerLoginEvent(player, loginlistener.f_10013_.hostname, ((java.net.InetSocketAddress) socketaddress).getAddress());
-+
-+      if (m_11295_().m_11406_(pGameProfile) && !m_11295_().m_11388_(pGameProfile).m_7524_()) {
-+         UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(pGameProfile);
-+         mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
++      if (m_11295_().m_11406_(p_11258_) && !m_11295_().m_11388_(p_11258_).m_7524_()) {
+          UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(p_11258_);
+          MutableComponent mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
           if (userbanlistentry.m_10961_() != null) {
              mutablecomponent1.m_7220_(Component.m_237110_("multiplayer.disconnect.banned.expiration", f_11194_.format(userbanlistentry.m_10961_())));
           }
  
 -         return mutablecomponent1;
--      } else if (!this.m_5764_(p_11258_)) {
++         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
+       } else if (!this.m_5764_(p_11258_)) {
 -         return Component.m_237115_("multiplayer.disconnect.not_whitelisted");
 -      } else if (this.f_11199_.m_11041_(p_11257_)) {
--         IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(p_11257_);
--         MutableComponent mutablecomponent = Component.m_237110_("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.m_10962_());
-+         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
-+      } else if (!this.m_5764_(pGameProfile)) {
-+         mutablecomponent1 = Component.m_237115_("multiplayer.disconnect.not_whitelisted");
++         MutableComponent mutablecomponent1 = Component.m_237115_("multiplayer.disconnect.not_whitelisted");
 +         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CraftChatMessage.fromComponent(mutablecomponent1));
-+      } else if (m_11299_().m_11041_(socketaddress) && !m_11299_().m_11043_(socketaddress).m_7524_()) {
-+         IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(socketaddress);
-+         mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.m_10962_());
++      } else if (m_11299_().m_11041_(p_11257_) && !m_11299_().m_11043_(p_11257_).m_7524_()) {
+          IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(p_11257_);
+-         MutableComponent mutablecomponent = Component.m_237110_("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.m_10962_());
++         MutableComponent mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.m_10962_());
           if (ipbanlistentry.m_10961_() != null) {
 -            mutablecomponent.m_7220_(Component.m_237110_("multiplayer.disconnect.banned_ip.expiration", f_11194_.format(ipbanlistentry.m_10961_())));
 +            mutablecomponent1.m_7220_(Component.m_237110_("multiplayer.disconnect.banned_ip.expiration", f_11194_.format(ipbanlistentry.m_10961_())));
@@ -402,28 +374,29 @@
        } else {
 -         return this.f_11196_.size() >= this.f_11193_ && !this.m_5765_(p_11258_) ? Component.m_237115_("multiplayer.disconnect.server_full") : null;
 -      }
-+         if (this.f_11196_.size() >= this.f_11193_ && !this.m_5765_(pGameProfile)) {
++         if (this.f_11196_.size() >= this.f_11193_ && !this.m_5765_(p_11258_)) {
 +            event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
 +         }
 +      }
 +
 +      cserver.getPluginManager().callEvent(event);
 +      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-+         loginlistener.disconnect(event.getKickMessage());
-+         return null;
++         return Component.m_237113_(event.getKickMessage());
 +      }
-+      return entity;
++      return null;
     }
  
     public ServerPlayer m_215624_(GameProfile p_215625_) {
-@@ -415,76 +_,171 @@
++      if(entity != null) {
++         return entity;
++      }
+       UUID uuid = UUIDUtil.m_235875_(p_215625_);
+       List<ServerPlayer> list = Lists.newArrayList();
+ 
+@@ -415,76 +_,167 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
-+   public ServerPlayer getPlayerForLogin(GameProfile pProfile, ServerPlayer player) {
-+      return player;
-+   }
-+
 +   // Mohist TODO start
 +   public Location mohist$location = null;
 +   public PlayerRespawnEvent.RespawnReason mohist$reason = null;
