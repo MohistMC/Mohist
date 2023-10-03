@@ -70,6 +70,14 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
+@@ -442,6 +_,7 @@
+       protected BlockBehaviour.BlockStateBase.Cache f_60593_;
+       private FluidState f_243896_ = Fluids.f_76191_.m_76145_();
+       private boolean f_244227_;
++      public final boolean isOpaque() { return this.f_60601_; } // Paper - OBFHELPER
+ 
+       protected BlockStateBase(Block p_60608_, ImmutableMap<Property<?>, Comparable<?>> p_60609_, MapCodec<BlockState> p_60610_) {
+          super(p_60608_, p_60609_, p_60610_);
 @@ -548,12 +_,14 @@
           return this.f_60595_;
        }
