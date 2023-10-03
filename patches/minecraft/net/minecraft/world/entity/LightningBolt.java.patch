@@ -17,13 +17,7 @@
  
  public class LightningBolt extends Entity {
     private static final int START_LIFE = 2;
-@@ -32,11 +_,13 @@
-    private int life;
-    public long seed;
-    private int flashes;
--   private boolean visualOnly;
-+   public boolean visualOnly;
-    @Nullable
+@@ -37,6 +_,8 @@
     private ServerPlayer cause;
     private final Set<Entity> hitEntities = Sets.newHashSet();
     private int blocksSetOnFire;

@@ -8,11 +8,12 @@
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
  import net.minecraft.Util;
-@@ -24,6 +_,10 @@
+@@ -24,6 +_,11 @@
  import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 +import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
++import org.bukkit.craftbukkit.v1_20_R2.CraftLootTable;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 +import org.bukkit.event.world.LootGenerateEvent;
@@ -28,7 +29,12 @@
           return p_297012_.pools;
        }), ExtraCodecs.strictOptionalField(LootItemFunctions.CODEC.listOf(), "functions", List.of()).forGetter((p_297010_) -> {
           return p_297010_.functions;
-@@ -50,7 +_,7 @@
+@@ -46,11 +_,12 @@
+    private final List<LootPool> pools;
+    private final List<LootItemFunction> functions;
+    private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
++   public CraftLootTable craftLootTable; // CraftBukkit
+ 
     LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
        this.paramSet = p_287716_;
        this.randomSequence = p_298628_;

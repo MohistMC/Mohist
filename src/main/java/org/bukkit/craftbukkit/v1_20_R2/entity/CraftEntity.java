@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.mohistmc.bukkit.entity.CraftFakePlayer;
 import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
@@ -25,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
@@ -832,6 +834,23 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public boolean isVisibleByDefault() {
         return getHandle().visibleByDefault;
+    }
+
+    @Override
+    public Set<Player> getTrackedBy() {
+        Preconditions.checkState(!entity.generation, "Cannot get tracking players during world generation");
+        ImmutableSet.Builder<Player> players = ImmutableSet.builder();
+
+        ServerLevel world = ((CraftWorld) getWorld()).getHandle();
+        ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(getEntityId());
+
+        if (entityTracker != null) {
+            for (ServerPlayerConnection connection : entityTracker.seenBy) {
+                players.add(connection.getPlayer().getBukkitEntity());
+            }
+        }
+
+        return players.build();
     }
 
     @Override

@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -83,6 +_,7 @@
+@@ -79,7 +_,6 @@
+ import net.minecraft.world.level.block.SweetBerryBushBlock;
+ import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+-import net.minecraft.world.level.block.entity.BlockEntityType;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-+import net.minecraft.world.level.block.state.properties.IntegerProperty;
- import net.minecraft.world.level.material.Fluid;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- import net.minecraft.world.level.pathfinder.Path;
 @@ -130,7 +_,8 @@
     @Nullable
     BlockPos savedFlowerPos;
@@ -92,6 +92,24 @@
     public Vec3 getLeashOffset() {
        return new Vec3(0.0D, (double)(0.5F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.2F));
     }
+@@ -710,7 +_,7 @@
+    @VisibleForDebug
+    public class BeeGoToHiveGoal extends Bee.BaseBeeGoal {
+       public static final int MAX_TRAVELLING_TICKS = 600;
+-      int travellingTicks = Bee.this.level().random.nextInt(10);
++      int travellingTicks = Bee.this.random.nextInt(10); // CraftBukkit - SPIGOT-7495: Give Bees another chance and let them use their own random, avoid concurrency issues
+       private static final int MAX_BLACKLISTED_TARGETS = 3;
+       final List<BlockPos> blacklistedTargets = Lists.newArrayList();
+       @Nullable
+@@ -822,7 +_,7 @@
+ 
+    public class BeeGoToKnownFlowerGoal extends Bee.BaseBeeGoal {
+       private static final int MAX_TRAVELLING_TICKS = 600;
+-      int travellingTicks = Bee.this.level().random.nextInt(10);
++      int travellingTicks = Bee.this.random.nextInt(10); // CraftBukkit - SPIGOT-7495: Give Bees another chance and let them use their own random, avoid concurrency issues
+ 
+       BeeGoToKnownFlowerGoal() {
+          this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 @@ -911,7 +_,7 @@
                       ((BonemealableBlock)blockstate.getBlock()).performBonemeal((ServerLevel)Bee.this.level(), Bee.this.random, blockpos, blockstate);
                    }

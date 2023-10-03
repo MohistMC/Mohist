@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataManager.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataManager.java
+@@ -19,6 +_,8 @@
+ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
++import org.bukkit.craftbukkit.v1_20_R2.CraftLootTable;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
+ import org.slf4j.Logger;
+ 
+ public class LootDataManager implements PreparableReloadListener, LootDataResolver {
 @@ -27,6 +_,7 @@
     public static final LootDataId<LootTable> EMPTY_LOOT_TABLE_KEY = new LootDataId<>(LootDataType.TABLE, BuiltInLootTables.EMPTY);
     private Map<LootDataId<?>, ?> elements = Map.of();
@@ -8,15 +17,17 @@
  
     public final CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_279240_, ResourceManager p_279377_, ProfilerFiller p_279135_, ProfilerFiller p_279088_, Executor p_279148_, Executor p_279169_) {
        Map<LootDataType<?>, Map<ResourceLocation, ?>> map = new HashMap<>();
-@@ -84,6 +_,11 @@
+@@ -82,6 +_,13 @@
+       validationcontext.getProblems().forEach((p_279487_, p_279312_) -> {
+          LOGGER.warn("Found loot table element validation problem in {}: {}", p_279487_, p_279312_);
        });
++      // CraftBukkit start
++      map.forEach((key, lootTable) -> {
++         if (object instanceof LootTable table) {
++            table.craftLootTable = new CraftLootTable(CraftNamespacedKey.fromMinecraft(key.location()), table);
++         }
++      });
++      // CraftBukkit end
        this.elements = map;
        this.typeKeys = builder1.build();
-+      // CraftBukkit start - build a reversed registry map
-+      ImmutableMap.Builder<Object, ResourceLocation> lootTableToKeyBuilder = ImmutableMap.builder();
-+      this.elements.forEach((key, lootTable) -> lootTableToKeyBuilder.put(lootTable, key.location()));
-+      this.lootTableToKey = lootTableToKeyBuilder.build();
-+      // CraftBukkit end
     }
- 
-    private static <T> void castAndValidate(ValidationContext p_279270_, LootDataId<T> p_279249_, Object p_279342_) {
