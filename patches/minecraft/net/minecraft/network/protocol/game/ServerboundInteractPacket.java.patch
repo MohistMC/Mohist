@@ -1,13 +1,17 @@
 --- a/net/minecraft/network/protocol/game/ServerboundInteractPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundInteractPacket.java
-@@ -10,8 +_,8 @@
- import net.minecraft.world.phys.Vec3;
- 
- public class ServerboundInteractPacket implements Packet<ServerGamePacketListener> {
--   private final int f_134030_;
--   private final ServerboundInteractPacket.Action f_134031_;
-+   private final int f_134030_; public final int getEntityId() { return this.f_134030_; } // Paper - add accessor
-+   private final ServerboundInteractPacket.Action f_134031_; public final ServerboundInteractPacket.ActionType getActionType() { return this.f_134031_.m_142249_(); } // Paper - add accessor
-    private final boolean f_134034_;
-    static final ServerboundInteractPacket.Action f_179595_ = new ServerboundInteractPacket.Action() {
-       public ServerboundInteractPacket.ActionType m_142249_() {
+@@ -158,4 +_,14 @@
+          p_179665_.m_130068_(this.f_179656_);
+       }
+    }
++
++   // Paper start - PlayerUseUnknownEntityEvent
++   public int getEntityId() {
++      return this.f_134030_;
++   }
++
++   public boolean isAttack() {
++      return this.f_134031_.m_142249_() == ActionType.ATTACK;
++   }
++   // Paper end - PlayerUseUnknownEntityEvent
+ }

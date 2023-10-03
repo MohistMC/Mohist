@@ -1347,6 +1347,48 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
+@@ -1481,8 +_,39 @@
+             });
+          }
+       }
+-
+-   }
++      // Paper start - PlayerUseUnknownEntityEvent
++      else {
++         p_9866_.m_179617_(new net.minecraft.network.protocol.game.ServerboundInteractPacket.Handler() {
++            @Override
++            public void m_142299_(net.minecraft.world.InteractionHand hand) {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, hand, null);
++            }
++
++            @Override
++            public void m_142143_(net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.Vec3 pos) {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, hand, pos);
++            }
++
++            @Override
++            public void m_141994_() {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, net.minecraft.world.InteractionHand.MAIN_HAND, null);
++            }
++         });
++      }
++
++   }
++
++
++   private void callPlayerUseUnknownEntityEvent(ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
++      this.cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent(
++              this.getCraftPlayer(),
++              packet.getEntityId(),
++              packet.isAttack(),
++              hand == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND,
++              vector != null ? new org.bukkit.util.Vector(vector.f_82479_, vector.f_82480_, vector.f_82481_) : null)
++      );
++   }
++   // Paper end - PlayerUseUnknownEntityEvent
+ 
+    public void m_6272_(ServerboundClientCommandPacket p_9843_) {
+       PacketUtils.m_131359_(p_9843_, this, this.f_9743_.m_284548_());
 @@ -1492,6 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.f_9743_.f_8944_) {
