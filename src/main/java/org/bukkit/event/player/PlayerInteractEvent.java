@@ -1,5 +1,6 @@
 package org.bukkit.event.player;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -240,6 +241,21 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
     public Vector getClickedPosition() {
         return clickedPosistion;
     }
+
+    // Paper start
+    /**
+     * The exact point at which the interaction occurred. May be null.
+     *
+     * @return the exact interaction point. May be null.
+     */
+    @Nullable
+    public Location getInteractionPoint() {
+        if (this.blockClicked == null || this.clickedPosistion == null) {
+            return null;
+        }
+        return this.blockClicked.getLocation().add(this.clickedPosistion);
+    }
+    // Paper end
 
     @NotNull
     @Override
