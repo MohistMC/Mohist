@@ -486,7 +486,7 @@
                       d6 = d0 - this.player.getX();
                       d7 = d1 - this.player.getY();
                       if (d7 > -0.5D || d7 < 0.5D) {
-@@ -887,13 +_,75 @@
+@@ -887,13 +_,74 @@
                       d8 = d2 - this.player.getZ();
                       d10 = d6 * d6 + d7 * d7 + d8 * d8;
                       boolean flag2 = false;
@@ -496,7 +496,6 @@
                          LOGGER.warn("{} moved wrongly!", (Object)this.player.getName().getString());
                       }
  
-+                     this.player.absMoveTo(d0, d1, d2, f, f1);
                       if (this.player.noPhysics || this.player.isSleeping() || (!flag2 || !serverlevel.noCollision(this.player, aabb)) && !this.isPlayerCollidingWithAnythingNew(serverlevel, aabb, d0, d1, d2)) {
 -                        this.player.absMoveTo(d0, d1, d2, f, f1);
 +                        // CraftBukkit start - fire PlayerMoveEvent
