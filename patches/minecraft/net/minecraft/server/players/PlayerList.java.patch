@@ -448,7 +448,7 @@
 +               mohist$location = CraftLocation.toBukkit(vec3d, worldserver1.getWorld(), f1, 0.0F);
 +            } else if (blockpos != null) {
 +               p_11237_.f_8906_.m_9829_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
-+               p_11237_.setRespawnPosition(Level.f_46428_, null, 0f, false, false, PlayerSpawnChangeEvent.Cause.RESET);
++               p_11237_.setRespawnPosition(null, null, 0f, false, false, PlayerSpawnChangeEvent.Cause.RESET);
 +            }
 +         }
 +         if (mohist$location == null) {

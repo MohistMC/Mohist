@@ -594,7 +594,7 @@
                       d6 = d0 - this.f_9743_.m_20185_();
                       d7 = d1 - this.f_9743_.m_20186_();
                       if (d7 > -0.5D || d7 < 0.5D) {
-@@ -910,13 +_,75 @@
+@@ -910,13 +_,74 @@
                       d8 = d2 - this.f_9743_.m_20189_();
                       d10 = d6 * d6 + d7 * d7 + d8 * d8;
                       boolean flag2 = false;
@@ -604,7 +604,6 @@
                          f_9744_.warn("{} moved wrongly!", (Object)this.f_9743_.m_7755_().getString());
                       }
  
-+                     this.f_9743_.m_19890_(d0, d1, d2, f, f1);
                       if (this.f_9743_.f_19794_ || this.f_9743_.m_5803_() || (!flag2 || !serverlevel.m_45756_(this.f_9743_, aabb)) && !this.m_288208_(serverlevel, aabb, d0, d1, d2)) {
 -                        this.f_9743_.m_19890_(d0, d1, d2, f, f1);
 +                        // CraftBukkit start - fire PlayerMoveEvent
