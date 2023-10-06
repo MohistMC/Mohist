@@ -1,5 +1,3 @@
-import thermos.CreateChangelog
-import thermos.InstallBundle
 import groovy.json.JsonSlurper
 
 buildscript {
@@ -16,19 +14,33 @@ buildscript {
             name 'spigot'
             url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
         }
+        maven {
+            name = "juanmuscaria"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
+        }
 
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'com.anatawa12.forge:ForgeGradle:1.2-1.1.0'
+        classpath 'io.github.cruciblemc:CrucibleGradle:1.1-SNAPSHOT'
     }
 }
 
-apply plugin: 'maven'
-apply plugin: 'cauldron'
+apply plugin: 'base'
+apply plugin: 'maven-publish'
+apply plugin: 'crucible'
 
 repositories {
     mavenLocal()
+    maven {
+        name = "juanmuscaria"
+        url = "https://github.com/juanmuscaria/maven/raw/master"
+    }
+    maven {
+        name 'thermos'
+        url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
+    }
     maven {
         name 'sonatype'
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
@@ -58,9 +70,15 @@ minecraft {
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
     srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
-    tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
-    }
+
+    // Repos used on the generated subprojects
+    repos = [
+            'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs',
+            'https://github.com/juanmuscaria/maven/raw/master',
+            'https://maven.minecraftforge.net/',
+            'https://oss.sonatype.org/content/repositories/snapshots/',
+            'https://libraries.minecraft.net/'
+    ]
 }
 
 group = 'com.mohistmc'
@@ -70,13 +88,10 @@ ext.forgeVersion = "10.13.4.1614"
 version = '1.7.10-' + JenkinsNumber()
 
 configurations {
-    compile.extendsFrom exported
     libraries
-    bootstrap
 }
 
 dependencies {
-    bootstrap 'pw.prok:KBootstrap:0.2.+'
     libraries 'net.minecraft:launchwrapper:1.12@jar'
     libraries 'org.ow2.asm:asm-all:5.0.3'
     libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
@@ -110,14 +125,41 @@ dependencies {
     libraries 'org.apache.logging.log4j:log4j-core:2.17.0'
 }
 
-packageUniversal {
-    from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
+packageServer {
+    manifest {
+        attributes([
+                'Implementation-Vendor' : 'MohistMC',
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.version,
+                'Specification-Vendor'  : 'Bukkit Team',
+                'Specification-Title'   : 'Bukkit',
+                'Specification-Version' : '1.7.10-R0.1-SNAPSHOT',
+                'Forge-Version'         : '10.13.4.1614',
+                'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
+                'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+                'Class-Path'            : generateClasspath()
+        ])
+    }
+    dependsOn("packageLibraries")
 }
 
-def String repeat(String string, int times) {
-    StringBuilder builder = new StringBuilder(string.length() * times)
-    times.times { builder.append(string) }
-    builder as String
+// TODO: Move this into the gradle plugin, generate md5 as well
+tasks.register('packageLibraries', Zip) {
+    archiveFileName = 'libraries.zip'
+    destinationDirectory = file("$buildDir/distributions")
+    outputs.upToDateWhen {
+        false // TODO: Not 100% sure how to make this task re-run when libraries are changed...
+    }
+
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
+        def moduleVersion = it.moduleVersion
+        from (it.file) {
+            into ("${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
+        }
+    }
+
+    group('crucible')
+    description("Package all necessary libraries to run Crucible, in case the server is unable to download them at runtime")
 }
 
 def generateClasspath(boolean legacy = false) {
@@ -128,132 +170,6 @@ def generateClasspath(boolean legacy = false) {
     }
     classpath += " libraries/net/minecraft/server/1.7.10/server-1.7.10.jar"
     return classpath.trim()
-}
-
-def generateManifest(boolean legacy = false) {
-    [
-            'Manifest-Version' : '1.1',
-            'Implementation-Title'  : project.name,
-            'Implementation-Version': project.version,
-            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
-            'Main-Class'            : 'com.mohistmc.MohistMC',
-            'Class-Path'            : generateClasspath(legacy)
-    ]
-}
-
-tasks.packageUniversal {
-    classifier = 'server'
-    setManifest {}
-    manifest.attributes(generateManifest(true))
-}
-
-task jar(type: Jar, dependsOn: packageUniversal) {
-    destinationDir file("${buildDir}/distributions")
-    from zipTree(tasks.packageUniversal.archivePath)
-    manifest.attributes(generateManifest())
-}
-
-tasks.createChangelog.onlyIf { false }
-tasks.packageInstaller.onlyIf { false }
-
-task packageChangelog(type: CreateChangelog) {
-    onlyIf { project.hasProperty('officialBuild') }
-    classifier = 'changelog'
-    extension = 'txt'
-    oldChangelogUrl = "https://i.tcpr.ca/thermos/changelog.txt"
-    //hash = gitInfo('hash')
-    //message = gitInfo('message')
-    version = project.version
-}
-
-task bundleStub(type: Jar) {
-    classifier = 'stub'
-    manifest.attributes([
-            'Main-Class': 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
-            'Class-Path': "bin/${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar"
-    ])
-}
-
-task installBundle(type: InstallBundle, dependsOn: jar) {
-    serverJar tasks.jar.archivePath
-    bootstrapClasspath configurations.bootstrap
-    bootstrapMain 'pw.prok.bootstrap.Main'
-}
-
-task packageBundle(type: Zip, dependsOn: installBundle) {
-    classifier = 'bundle'
-    from fileTree(installBundle.installLocation)
-    from bundleStub
-    rename bundleStub.archiveName, 'Thermos.jar'
-}
-
-task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar, 'generatePomFileForMavenPublication']) {
-    sign packageUniversal
-    sign packageChangelog
-    sign packageBundle
-    sign jar
-}
-
-task signPom(type: Sign, dependsOn: 'generatePomFileForMavenPublication') {
-    outputs.upToDateWhen { false }
-    sign file("${buildDir}/publications/maven/pom-default.xml")
-}
-
-task preparePublication(dependsOn: [signJars, signPom]) {}
-
-def getPomSignature = {
-    return project.tasks.signPom.signatureFiles.collect { it }[0]
-}
-
-def getSignatureFiles = {
-    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
-    def signedServer = allFiles.find { it.name.contains('-server') }
-    def signedChangelog = allFiles.find { it.name.contains('-changelog') }
-    def signedBundle = allFiles.find { it.name.contains('-bundle') }
-    def signedJar = (allFiles - [signedServer, signedChangelog, signedBundle])[0]
-    return [
-            [archive: signedServer, classifier: 'server', extension: 'jar.asc'],
-            [archive: signedChangelog, classifier: 'changelog', extension: 'txt.asc'],
-            [archive: signedBundle, classifier: 'bundle', extension: 'zip.asc'],
-            [archive: signedJar, classifier: null, extension: 'jar.asc']
-    ]
-}
-
-tasks.generateProjectCauldron << {
-    def file = new File('eclipse/cauldron/build.gradle')
-    file.append('''
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-    mavenLocal()
-    maven { url 'https://maven.mohistmc.com/' }
-    maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
-    maven {
-        name 'forge'
-        url 'https://maven.minecraftforge.net/'
-    }
-    maven {
-        name 'minecraft'
-        url 'https://libraries.minecraft.net/'
-    }
-    mavenCentral()
-}
-dependencies {
-''')
-    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
-        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
-            return
-        }
-        file.append("    compile '${module}'\n")
-    }
-    file.append('}')
-}
-
-task resolveAllDependencies {
-    doLast {
-        configurations.each { it.resolve() }
-    }
 }
 
 def JenkinsNumber() {

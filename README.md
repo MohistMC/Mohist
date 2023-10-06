@@ -1,5 +1,4 @@
 <div align="center">
-<img src="https://i.loli.net/2021/01/17/yLBVlWPbfa76EJu.png">
   <h1>Mohist 1.7.10</h1>
   <h3>This version is end of life. <a href="https://wiki.mohistmc.com/#/about/end-of-life">See more</a></h3>
 
