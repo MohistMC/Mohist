@@ -30,6 +30,7 @@ buildscript {
 apply plugin: 'base'
 apply plugin: 'maven-publish'
 apply plugin: 'crucible'
+apply plugin: 'java'
 
 repositories {
     mavenLocal()
@@ -85,6 +86,13 @@ group = 'com.mohistmc'
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "10.13.4.1614"
 version = '1.7.10-' + JenkinsNumber()
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.warnings = false // Shutup deprecated for removal warnings
+}
 
 configurations {
     libraries
