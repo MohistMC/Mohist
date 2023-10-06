@@ -25,14 +25,18 @@ public class MohistMC {
         if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || MohistConfigUtil.bMohist("use_custom_java8", "false"))
             DownloadJava.run(args);
         if(MohistConfigUtil.bMohist("showlogo")) {
-            System.out.println("\n" + "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" + "\n");
-            System.out.println("                                      " + i18n.get("forge.serverlanunchwrapper.1"));
+            String test =
+                     "\n" +
+                     " ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗\n" +
+                     " ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝\n" +
+                     " ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║\n" +
+                     " ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║\n" +
+                     " ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║\n" +
+                     " ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝\n" +
+                     "\n"+
+                     "\n"+
+                     "%s, Java(%s) %s";
+            System.out.println(String.format(test, getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")) + i18n.get("forge.serverlanunchwrapper.1"));
         }
 
         if (MohistConfigUtil.bMohist("check_libraries")) DefaultLibraries.loadDefaultLibs();
