@@ -1,8 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.MapMaker;
-
+import com.mojang.authlib.GameProfile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -16,39 +15,43 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
-import com.mojang.authlib.GameProfile;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.server.S02PacketChat;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.world.WorldServer;
-
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.*;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Achievement;
+import org.bukkit.BanList;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Instrument;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
+import org.bukkit.WeatherType;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
-import org.bukkit.craftbukkit.block.CraftSign;
-import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.CraftEffect;
 import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftSign;
+import org.bukkit.craftbukkit.conversations.ConversationTracker;
 import org.bukkit.craftbukkit.map.CraftMapView;
 import org.bukkit.craftbukkit.map.RenderData;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
@@ -59,7 +62,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.InventoryView.Property;
 import org.bukkit.map.MapView;

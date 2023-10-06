@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.util;
 
 import java.util.HashSet;
 import java.util.List;
-
 import org.bukkit.entity.Player;
 
 public class LazyPlayerSet extends LazyHashSet<Player> {

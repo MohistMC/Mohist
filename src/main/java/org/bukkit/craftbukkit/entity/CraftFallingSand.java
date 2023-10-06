@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.item.EntityFallingBlock;
-
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;

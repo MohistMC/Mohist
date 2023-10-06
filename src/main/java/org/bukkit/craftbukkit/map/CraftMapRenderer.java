@@ -1,14 +1,13 @@
 package org.bukkit.craftbukkit.map;
 
 import java.util.UUID;
-
+import net.minecraftforge.cauldron.command.CauldronCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import net.minecraftforge.cauldron.command.*;
 
 public class CraftMapRenderer extends MapRenderer {
 

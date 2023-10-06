@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.Map;
-
-
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;

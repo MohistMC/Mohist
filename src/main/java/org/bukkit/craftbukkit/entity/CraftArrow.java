@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.projectile.EntityArrow;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Arrow;

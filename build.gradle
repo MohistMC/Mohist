@@ -99,6 +99,7 @@ configurations {
 }
 
 dependencies {
+    implementation project(path: ':eclipse:cauldron')
     libraries 'net.minecraft:launchwrapper:1.12@jar'
     libraries 'org.ow2.asm:asm-all:5.0.3'
     libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'

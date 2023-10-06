@@ -1,21 +1,17 @@
 package org.bukkit.craftbukkit.inventory;
 
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS;
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_ID;
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
-
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_ID;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import com.google.common.collect.ImmutableMap;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {

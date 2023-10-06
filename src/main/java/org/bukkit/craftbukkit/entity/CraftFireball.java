@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.util.MathHelper;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;

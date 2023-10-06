@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.entity;
 
+import cpw.mods.fml.common.registry.EntityRegistry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,8 +38,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
-
-import cpw.mods.fml.common.registry.EntityRegistry; // Cauldron
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     private CraftEntityEquipment equipment;

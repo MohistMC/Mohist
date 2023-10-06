@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.tileentity.TileEntityBeacon;
-
-import org.bukkit.block.Block;
 import org.bukkit.block.Beacon;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
 import org.bukkit.inventory.Inventory;

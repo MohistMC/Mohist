@@ -1,13 +1,9 @@
 package thermos.wrapper;
 
-import gnu.trove.map.TLongObjectMap;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
-
-import java.util.HashMap;
-import java.util.concurrent.*;
-
 import org.bukkit.craftbukkit.util.LongHash;
 
 public class VanillaChunkHashMap extends LongHashMap {

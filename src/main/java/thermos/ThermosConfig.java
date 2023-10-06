@@ -1,12 +1,10 @@
 package thermos;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.configuration.BoolSetting;
 import net.minecraftforge.cauldron.configuration.ConfigBase;
 import net.minecraftforge.cauldron.configuration.Setting;
-import net.minecraftforge.cauldron.configuration.StringSetting;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ThermosConfig extends ConfigBase {
     public BoolSetting commandEnable = new BoolSetting(this, "command.enable", true, "Enable Thermos command");

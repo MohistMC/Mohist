@@ -1,18 +1,16 @@
 package thermos;
 
+import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.GETFIELD;
-
-import org.apache.logging.log4j.Level;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
-
 import pw.prok.imagine.asm.ImagineASM;
 import pw.prok.imagine.asm.Transformer;
-import cpw.mods.fml.common.FMLLog;
 
 @Transformer.RegisterTransformer
 public class ThermosClassTransformer implements Transformer {

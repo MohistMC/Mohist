@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.boss.EntityDragon;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.ComplexLivingEntity;

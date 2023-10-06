@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.util;
 
+import com.mojang.util.QueueLogAppender;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jline.console.ConsoleReader;
-import com.mojang.util.QueueLogAppender;
-import net.minecraft.server.MinecraftServer; // Cauldron
+import net.minecraft.server.MinecraftServer;
 
 public class TerminalConsoleWriterThread implements Runnable {
     final private ConsoleReader reader;
