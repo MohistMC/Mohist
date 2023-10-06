@@ -20,6 +20,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -61,7 +62,7 @@ public enum DownloadSource {
     }
 
     public static boolean isCN() {
-        return MohistMCStart.i18n.isCN();
+        return MohistMCStart.i18n.isCN() && getUrlMillis(CHINA.url) < getUrlMillis(MOHIST.url);
     }
 
     public static boolean isDown(String s) {
@@ -73,6 +74,20 @@ public enum DownloadSource {
             return httpUrlConnection.getResponseCode() != 200;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    public static long getUrlMillis(String link) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) URI.create(link).toURL().openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            long start = System.currentTimeMillis();
+            int responseCode = connection.getResponseCode();
+            long end = System.currentTimeMillis();
+            return end - start;
+        } catch (Exception e) {
+            return -0L;
         }
     }
 }
