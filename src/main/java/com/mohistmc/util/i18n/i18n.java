@@ -1,12 +1,11 @@
 package com.mohistmc.util.i18n;
 
+import com.mohistmc.configuration.MohistConfigUtil;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-
-import com.mohistmc.configuration.MohistConfigUtil;
 
 public class i18n {
 

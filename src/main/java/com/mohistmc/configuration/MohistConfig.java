@@ -1,18 +1,17 @@
 package com.mohistmc.configuration;
 
+import com.mohistmc.api.ServerAPI;
+import com.mohistmc.command.DumpCommand;
+import com.mohistmc.command.MohistCommand;
+import com.mohistmc.util.i18n.i18n;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import com.mohistmc.util.i18n.i18n;
 import net.minecraftforge.cauldron.configuration.BoolSetting;
 import net.minecraftforge.cauldron.configuration.ConfigBase;
 import net.minecraftforge.cauldron.configuration.Setting;
 import net.minecraftforge.cauldron.configuration.StringSetting;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import com.mohistmc.api.ServerAPI;
-import com.mohistmc.command.DumpCommand;
-import com.mohistmc.command.MohistCommand;
 import org.spigotmc.SpigotConfig;
 
 public class MohistConfig extends ConfigBase {

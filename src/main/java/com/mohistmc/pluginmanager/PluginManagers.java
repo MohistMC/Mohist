@@ -1,5 +1,6 @@
 package com.mohistmc.pluginmanager;
 
+import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.mohistmc.util.i18n.i18n;
 
 public class PluginManagers {
 

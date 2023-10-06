@@ -7,7 +7,6 @@ import com.mohistmc.network.DownloadJava;
 import com.mohistmc.network.UpdateUtils;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.i18n.i18n;
-
 import java.util.Arrays;
 import java.util.Scanner;
 

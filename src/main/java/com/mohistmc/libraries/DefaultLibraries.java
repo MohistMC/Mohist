@@ -1,5 +1,11 @@
 package com.mohistmc.libraries;
 
+import com.mohistmc.configuration.MohistConfigUtil;
+import com.mohistmc.network.UpdateUtils;
+import com.mohistmc.util.JarLoader;
+import com.mohistmc.util.JarTool;
+import com.mohistmc.util.MD5Util;
+import com.mohistmc.util.i18n.i18n;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -8,13 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.mohistmc.configuration.MohistConfigUtil;
-import com.mohistmc.network.UpdateUtils;
-import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
-import com.mohistmc.util.i18n.i18n;
 
 public class DefaultLibraries {
     public static HashMap<String, String> fail = new HashMap<>();

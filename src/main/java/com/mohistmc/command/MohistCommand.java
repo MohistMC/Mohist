@@ -1,5 +1,8 @@
 package com.mohistmc.command;
 
+import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.api.ServerAPI;
+import com.mohistmc.util.i18n.i18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,9 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.mohistmc.api.PlayerAPI;
-import com.mohistmc.api.ServerAPI;
-import com.mohistmc.util.i18n.i18n;
 
 public class MohistCommand extends Command {
 

@@ -1,7 +1,7 @@
 package com.mohistmc.api;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
