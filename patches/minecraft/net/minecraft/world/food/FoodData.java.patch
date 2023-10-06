@@ -31,7 +31,7 @@
     public FoodData() {
        this.f_38697_ = 5.0F;
     }
-@@ -23,16 +_,38 @@
+@@ -23,45 +_,83 @@
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
  
@@ -73,10 +73,10 @@
        this.f_38700_ = this.f_38696_;
        if (this.f_38698_ > 4.0F) {
           this.f_38698_ -= 4.0F;
-@@ -40,28 +_,45 @@
+          if (this.f_38697_ > 0.0F) {
              this.f_38697_ = Math.max(this.f_38697_ - 1.0F, 0.0F);
           } else if (difficulty != Difficulty.PEACEFUL) {
-             this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
+-            this.f_38696_ = Math.max(this.f_38696_ - 1, 0);
 +            // CraftBukkit start
 +            org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.f_38696_ - 1, 0));
 +
