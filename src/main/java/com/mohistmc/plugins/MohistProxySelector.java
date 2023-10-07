@@ -3,7 +3,7 @@ package com.mohistmc.plugins;
 import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.event.MohistNetworkEvent;
-import com.mohistmc.util.IOUtil;
+import com.mohistmc.tools.IOUtil;
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;

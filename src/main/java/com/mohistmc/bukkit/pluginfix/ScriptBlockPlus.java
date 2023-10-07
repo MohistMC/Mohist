@@ -35,7 +35,7 @@ public class ScriptBlockPlus {
      * @return A {@link Map} whose keys are Maven artifact IDs and whose values are {@link Version}s
      */
     public static Map<String, ScriptBlockPlus> identify() {
-        Map<String, ScriptBlockPlus> versions = new TreeMap<String, ScriptBlockPlus>();
+        Map<String, ScriptBlockPlus> versions = new TreeMap<>();
         ScriptBlockPlus scriptBlockPlus = new ScriptBlockPlus(
                 "netty-common",
                 "4.1.82.Final",
@@ -64,16 +64,10 @@ public class ScriptBlockPlus {
             Enumeration<URL> resources = classLoader.getResources("META-INF/io.netty.versions.properties");
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                InputStream in = url.openStream();
-                try {
+                try (InputStream in = url.openStream()) {
                     props.load(in);
-                } finally {
-                    try {
-                        in.close();
-                    } catch (Exception ignore) {
-                        // Ignore.
-                    }
                 }
+                // Ignore.
             }
         } catch (Exception ignore) {
             // Not critical. Just ignore.
@@ -104,7 +98,7 @@ public class ScriptBlockPlus {
             artifactIds.add(artifactId);
         }
 
-        Map<String, ScriptBlockPlus> versions = new TreeMap<String, ScriptBlockPlus>();
+        Map<String, ScriptBlockPlus> versions = new TreeMap<>();
         for (String artifactId: artifactIds) {
             versions.put(
                     artifactId,

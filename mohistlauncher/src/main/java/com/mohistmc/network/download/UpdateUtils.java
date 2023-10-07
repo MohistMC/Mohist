@@ -20,9 +20,8 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -55,8 +54,8 @@ public class UpdateUtils {
             else {
                 System.out.println(I18n.as("update.detect", build_number, jar_sha, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
-                    downloadFile(json.asString("url"), JarTool.getFile());
-                    restartServer(Arrays.asList("java", "-jar", JarTool.getJarName()), true);
+                    downloadFile(json.asString("url"), MohistMCStart.jarTool.getFile());
+                    restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
                 }
             }
         } catch (Throwable e) {
@@ -77,7 +76,7 @@ public class UpdateUtils {
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        String MD5 = MD5Util.getMd5(f);
+        String MD5 = MD5Util.get(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
             if (showlog) System.out.println(I18n.as("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
@@ -95,7 +94,7 @@ public class UpdateUtils {
         if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
             System.out.println(I18n.as("xmswarn"));
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(JarTool.getJarDir());
+        pb.directory(MohistMCStart.jarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
         if(shutdown) System.exit(0);

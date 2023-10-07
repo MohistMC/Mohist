@@ -2,9 +2,8 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +22,7 @@ public class v_1_20_R2 {
             System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
         }
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(JarTool.getJarDir());
+        pb.directory(MohistMCStart.jarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
         if (shutdown) {
@@ -161,8 +160,8 @@ public class v_1_20_R2 {
 
             String storedServerMD5 = null;
             String storedMohistMD5 = null;
-            String serverMD5 = MD5Util.getMd5(serverJar);
-            String mohistMD5 = MD5Util.getMd5(JarTool.getFile());
+            String serverMD5 = MD5Util.get(serverJar);
+            String mohistMD5 = MD5Util.get(MohistMCStart.jarTool.getFile());
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
@@ -197,7 +196,7 @@ public class v_1_20_R2 {
                                 libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
                         )));
                 unmute();
-                serverMD5 = MD5Util.getMd5(serverJar);
+                serverMD5 = MD5Util.get(serverJar);
             }
 
             FileWriter fw = new FileWriter(installInfo);

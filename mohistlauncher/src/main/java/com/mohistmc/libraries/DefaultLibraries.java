@@ -18,14 +18,14 @@
 
 package com.mohistmc.libraries;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.v_1_20_R2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarLoader;
-import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -58,7 +58,7 @@ public class DefaultLibraries {
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
             }
-            if (lib.exists() && Objects.equals(MD5Util.getMd5(lib), libs.get(lib))) {
+            if (lib.exists() && Objects.equals(MD5Util.get(lib), libs.get(lib))) {
                 currentSize.addAndGet(lib.length());
                 continue;
             }
@@ -108,7 +108,7 @@ public class DefaultLibraries {
         String str;
         while ((str = b.readLine()) != null) {
             String[] s = str.split("\\|");
-            temp.put(new File(JarTool.getJarDir() + "/" + s[0]), s[1]);
+            temp.put(new File(MohistMCStart.jarTool.getJarDir() + "/" + s[0]), s[1]);
             allSize.addAndGet(Long.parseLong(s[2]));
         }
         b.close();

@@ -6,7 +6,7 @@ import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
-import com.mohistmc.util.ListUtils;
+import com.mohistmc.tools.ListUtils;
 import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

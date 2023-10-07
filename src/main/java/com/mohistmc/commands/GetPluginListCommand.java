@@ -18,7 +18,7 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.util.HasteUtils;
+import com.mohistmc.tools.HasteUtils;
 import com.mohistmc.util.I18n;
 import java.io.IOException;
 import org.bukkit.Bukkit;

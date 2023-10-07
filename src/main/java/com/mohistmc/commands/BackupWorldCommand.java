@@ -19,8 +19,8 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistMC;
+import com.mohistmc.tools.ZipUtil;
 import com.mohistmc.util.I18n;
-import com.mohistmc.util.ZipUtil;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;

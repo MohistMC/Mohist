@@ -21,7 +21,7 @@ package com.mohistmc.commands;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ServerAPI;
-import com.mohistmc.util.HasteUtils;
+import com.mohistmc.tools.HasteUtils;
 import com.mohistmc.util.I18n;
 import java.io.File;
 import java.io.IOException;

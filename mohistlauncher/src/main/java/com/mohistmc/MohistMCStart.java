@@ -24,12 +24,11 @@ import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,6 +39,7 @@ public class MohistMCStart {
     public static String MCVERSION;
     public static final List<String> mainArgs = new ArrayList<>();
     public static i18n i18n;
+    public static JarTool jarTool;
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
@@ -47,6 +47,7 @@ public class MohistMCStart {
 
     public static void main(String[] args) throws Exception {
         mainArgs.addAll(List.of(args));
+        jarTool = new JarTool(MohistMCStart.class);
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
         MohistConfigUtil.copyMohistConfig();
