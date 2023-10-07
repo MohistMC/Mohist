@@ -38,7 +38,7 @@ public class PacketLogger {
         common(connection.getReceiving(), connection.getSending(), packet);
     }
 
-    public void recv( Packet<?> packet) {
+    public void recv(Packet<?> packet) {
         common(connection.getReceiving(), connection.getReceiving(), packet);
     }
 
@@ -56,6 +56,7 @@ public class PacketLogger {
             LOGGER.info(MARKER, "{} {} {}", side(side), dir(flow), packet.getClass().getName());
         }
     }
+
     private static String side(PacketFlow side) {
         return side == PacketFlow.CLIENTBOUND ? "CLIENT" : "SERVER";
     }

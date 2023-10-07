@@ -7,23 +7,18 @@ package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.ConfigSpec;
-import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import org.slf4j.Logger;
 
 public class FMLConfig
 {
@@ -45,7 +40,6 @@ public class FMLConfig
         private final String entry;
         private final Object defaultValue;
         private final String comment;
-        private final Class<?> valueType;
         private final Function<Object, Object> entryFunction;
 
         ConfigValue(final String entry, final Object defaultValue, final String comment) {
@@ -55,7 +49,6 @@ public class FMLConfig
             this.entry = entry;
             this.defaultValue = defaultValue;
             this.comment = comment;
-            this.valueType = defaultValue.getClass();
             this.entryFunction = entryFunction;
         }
 

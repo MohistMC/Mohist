@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ModFileParser {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -36,7 +35,7 @@ public class ModFileParser {
         LOGGER.debug(LogMarkers.LOADING,"Considering mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.findResource("META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
-            if (!modFile.getFilePath().toFile().toString().contains("minecraftforge")) LOGGER.warn(LogMarkers.LOADING, "Mod file {} is missing mods.toml file", modFile.getFilePath()); // Mohist - Ignore internal jar check
+            LOGGER.warn(LogMarkers.LOADING, "Mod file {} is missing mods.toml file", modFile.getFilePath());
             return null;
         }
 

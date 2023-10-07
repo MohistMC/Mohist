@@ -179,18 +179,18 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                     StringBuffer sb = new StringBuffer();
                     sb.append(c.getSubjectX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
                     boolean selfSigned = false;
-                    try {
-                        c.verify(c.getPublicKey());
-                        selfSigned = true;
-                    } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
-                        // not self signed
-                    }
-                    if (selfSigned) {
-                        sb.append(" self-signed");
-                    } else {
-                        sb.append(" signed by ").append(c.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
-                    };
-                    return sb.toString();
+                   try {
+                       c.verify(c.getPublicKey());
+                       selfSigned = true;
+                   } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
+                       // not self signed
+                   }
+                   if (selfSigned) {
+                    sb.append(" self-signed");
+                   } else {
+                       sb.append(" signed by ").append(c.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
+                   };
+                   return sb.toString();
                 });
     }
 

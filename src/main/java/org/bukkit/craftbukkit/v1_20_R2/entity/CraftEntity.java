@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.mohistmc.bukkit.entity.CraftFakePlayer;
 import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
 import com.mohistmc.bukkit.entity.MohistModsAnimals;
 import com.mohistmc.bukkit.entity.MohistModsChestHorse;
@@ -69,7 +68,6 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.entity.vehicle.MinecartCommandBlock;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -130,9 +128,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             // Players
             if (entity instanceof net.minecraft.world.entity.player.Player) {
                 if (entity instanceof ServerPlayer) {
-                    if (entity instanceof FakePlayer) {
-                        return new CraftFakePlayer(server, (FakePlayer) entity);
-                    }
                     return new CraftPlayer(server, (ServerPlayer) entity);
                 } else { return new CraftHumanEntity(server, (net.minecraft.world.entity.player.Player) entity); }
             }

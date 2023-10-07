@@ -5,6 +5,8 @@
 
 package net.minecraftforge.network.packets;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -14,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import org.jetbrains.annotations.ApiStatus;
 
 // TODO: Reevaluate if this is needed This is the same as ClientboundOpenScreenPacket packet but allows for additional data
 public class OpenContainer {

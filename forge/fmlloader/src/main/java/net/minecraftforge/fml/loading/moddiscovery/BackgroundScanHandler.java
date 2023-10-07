@@ -6,18 +6,16 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.slf4j.Logger;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class BackgroundScanHandler
 {
@@ -41,7 +39,6 @@ public class BackgroundScanHandler
         modContentScanner = Executors.newSingleThreadExecutor(r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             thread.setDaemon(true);
-            thread.setName("Background Scan Handler");
             return thread;
         });
         status = ScanStatus.NOT_STARTED;

@@ -1,11 +1,13 @@
 import com.mohistmc.tasks.JenkinsNumber
 import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.forge.tasks.checks.*
-import net.minecraftforge.gradle.common.tasks.*
+import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
+import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
+import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import java.nio.file.Files
 import java.util.stream.Collectors
@@ -50,6 +52,7 @@ ext {
     SLF4J_API_VERSION = '1.8.0-beta4'
     APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
     JARJAR_VERSION = '0.3.19'
+    JIMFS_VERSION = '1.3.0' // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
     MOJANG_LOGGING_VERSION = '1.1.1'
     LOG4J_VERSION = '2.19.0'
     GUAVA_VERSION = '31.1-jre'
@@ -159,6 +162,9 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
+    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") { transitive = false }
+    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") { transitive = false } // Need by jimfs
+    moduleonly("com.google.guava:failureaccess:1.0.1"){ transitive = false} // Needed by guava
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer 'net.minecraftforge:srgutils:0.5.4'
@@ -230,8 +236,6 @@ def sharedDeps = {
 
     compileOnly 'me.clip:placeholderapi:2.11.3'
 
-    installer 'com.google.guava:failureaccess:1.0.1'
-    installer "com.google.guava:guava:${GUAVA_VERSION}"
     installer 'com.google.code.gson:gson:2.10'
     installer 'commons-lang:commons-lang:2.6-mohist'
     installer 'org.slf4j:slf4j-api:2.0.7'
@@ -264,62 +268,10 @@ def sharedDeps = {
 }
 
 def sharedFmlonlyForge = { Project prj ->
-    ['Client', 'Server', 'Joined'].each { side ->
-        ['slim', 'extra'].each { type ->
-            prj.task([type: DownloadMavenArtifact], "download${side}${type.capitalize()}") {
-                artifact = "net.minecraft:${side.toLowerCase()}:${MC_VERSION}-${MCP_VERSION}:${type}"
-            }
-        }
-
-        if (side.equals('Joined')) {
-            prj.task([type: DownloadMavenArtifact], "createJoinedSRG") {
-                artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:srg"
-            }
-        } else {
-            prj.task([type: RenameJar, dependsOn: prj.tasks.createMcp2Srg], "create${side}SRG") {
-                tool = FART
-                args = [
-                        '--input', '{input}',
-                        '--output', '{output}',
-                        '--names', '{mappings}',
-                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
-                ]
-                mappings = prj.tasks.createMcp2Srg.srg
-                input = prj.tasks.getByName("download${side}Slim").output
-                output = prj.file("build/create${side}SRG/output.jar")
-            }
-        }
-
-        def gen = prj.tasks.getByName("gen${side}BinPatches")
-        def createSRG = prj.tasks.getByName("create${side}SRG")
-        gen.dependsOn(createSRG)
-        gen.tool = BINPATCH_TOOL
-        gen.cleanJar = createSRG.output
-
-        prj.task([type: ApplyBinPatches, dependsOn: gen], "apply${side}BinPatches") {
-            clean = gen.cleanJar
-            patch = gen.output
-            tool = BINPATCH_TOOL
-        }
-    }
-
-    prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
-        changing = true
-    }
-
-    eclipse.project.resourceFilter {
-        appliesTo = 'FOLDERS'
-        type = 'EXCLUDE_ALL'
-        matcher {
-            id = 'org.eclipse.ui.ide.multiFilter'
-            arguments = '1.0-name-matches-false-false-run'
-        }
-    }
 
     def MODULE_PATH = getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
     def tokens = [
-            TASK:          'forgeserver',
+            TASK:          'forge_server',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
             FORGE_VERSION: FORGE_VERSION,
             MC_VERSION:    MC_VERSION,
@@ -380,8 +332,23 @@ project(':mohist') {
             }
         }
     }
-    //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
-    eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
+
+    eclipse {
+        classpath.file.whenMerged {
+            // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
+            def src = entries.find { it.path == 'src/main/java' }
+            src.entryAttributes['ignore_optional_problems'] = 'true'
+        }
+
+        project.resourceFilter {
+            appliesTo = 'FOLDERS'
+            type = 'EXCLUDE_ALL'
+            matcher {
+                id = 'org.eclipse.ui.ide.multiFilter'
+                arguments = '1.0-name-matches-false-false-run'
+            }
+        }
+    }
 
     ext {
         SPEC_VERSION = gradleutils.gitInfo.tag
@@ -403,6 +370,7 @@ project(':mohist') {
         api.extendsFrom(installer)
     }
 
+    // Mohist
     task downloadJars(type: Copy) {
         from configurations.installer
         into 'libraries'
@@ -573,14 +541,14 @@ project(':mohist') {
         libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(Collectors.toList()) }
     }
 
-    task findFieldInstanceChecks(type: FieldCompareFinder, dependsOn: ['createJoinedSRG']) {
+    tasks.register("findFieldInstanceChecks", FieldCompareFinder) {
         jar = createJoinedSRG.output
         output = rootProject.file('src/main/resources/coremods/field_to_instanceof.json')
         fields {
         }
     }
 
-    task findFinalizeSpawnTargets(type: BytecodePredicateFinder, dependsOn: ['createJoinedSRG']) {
+    tasks.register("findFinalizeSpawnTargets", BytecodePredicateFinder) {
         jar = createJoinedSRG.output
         output = rootProject.file('src/main/resources/coremods/finalize_spawn_targets.json')
         predicate = {
@@ -598,6 +566,73 @@ project(':mohist') {
     }
 
     tasks.jar.finalizedBy 'validateDeprecations'
+
+    tasks.register("downloadInstaller", DownloadMavenArtifact) {
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        changing = true
+    }
+    tasks.register("downloadClientSlim", DownloadMavenArtifact) {
+        artifact = "net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim"
+    }
+    tasks.register("downloadClientExtra", DownloadMavenArtifact) {
+        artifact = "net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:extra"
+    }
+    tasks.register("downloadServerSlim", DownloadMavenArtifact) {
+        artifact = "net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim"
+    }
+    tasks.register("downloadServerExtra", DownloadMavenArtifact) {
+        artifact = "net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:extra"
+    }
+    tasks.register("downloadJoinedSlim", DownloadMavenArtifact) {
+        artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:slim"
+    }
+    tasks.register("downloadJoinedExtra", DownloadMavenArtifact) {
+        artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:extra"
+    }
+    tasks.register("createJoinedSRG", DownloadMavenArtifact) {
+        artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:srg"
+    }
+    tasks.register("createClientSRG", RenameJar) {
+        tool = FART
+        args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix']
+        mappings = createMcp2Srg.srg
+        input = downloadClientSlim.output
+        output = file("build/createClientSRG/output.jar")
+    }
+    tasks.register("createServerSRG", RenameJar) {
+        tool = FART
+        args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix']
+        mappings = createMcp2Srg.srg
+        input = downloadServerSlim.output
+        output = file("build/createServerSRG/output.jar")
+    }
+    genClientBinPatches {
+        tool = BINPATCH_TOOL
+        cleanJar = createClientSRG.output
+    }
+    genServerBinPatches {
+        tool = BINPATCH_TOOL
+        cleanJar = createServerSRG.output
+    }
+    genJoinedBinPatches {
+        tool = BINPATCH_TOOL
+        cleanJar = createJoinedSRG.output
+    }
+    tasks.register("applyClientBinPatches", ApplyBinPatches) {
+        tool = BINPATCH_TOOL
+        clean = genClientBinPatches.cleanJar
+        patch = genClientBinPatches.output
+    }
+    tasks.register("applyServerBinPatches", ApplyBinPatches) {
+        tool = BINPATCH_TOOL
+        clean = genServerBinPatches.cleanJar
+        patch = genServerBinPatches.output
+    }
+    tasks.register("applyJoinedBinPatches", ApplyBinPatches) {
+        tool = BINPATCH_TOOL
+        clean = genJoinedBinPatches.cleanJar
+        patch = genJoinedBinPatches.output
+    }
 
     tasks.register('checkAll') {
         group = 'checks'
@@ -715,7 +750,7 @@ project(':mohist') {
                 ]
         def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
         def tokens = [
-                TASK         : 'forgeserver',
+                TASK         : 'forge_server',
                 MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
                 FORGE_VERSION: FORGE_VERSION,
                 MC_VERSION   : MC_VERSION,

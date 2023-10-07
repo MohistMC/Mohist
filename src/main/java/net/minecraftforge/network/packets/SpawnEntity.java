@@ -5,9 +5,12 @@
 
 package net.minecraftforge.network.packets;
 
-import io.netty.buffer.Unpooled;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.jetbrains.annotations.ApiStatus;
+
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Used to spawn a custom entity without the same restrictions as

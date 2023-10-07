@@ -1,15 +1,14 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,5 +_,8 @@
+@@ -1,5 +_,7 @@
  package net.minecraft.server;
  
 +import com.google.common.base.Charsets;
 +import com.mohistmc.MohistMC;
-+import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
-@@ -9,12 +_,16 @@
+@@ -9,12 +_,15 @@
  import java.awt.GraphicsEnvironment;
  import java.io.File;
  import java.io.IOException;
@@ -21,17 +20,11 @@
  import java.nio.file.Paths;
 +import java.util.Arrays;
  import java.util.Optional;
-+import java.util.UUID;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
-@@ -52,10 +_,12 @@
- import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.presets.WorldPresets;
-+import net.minecraft.world.level.storage.LevelResource;
- import net.minecraft.world.level.storage.LevelStorageSource;
+@@ -56,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;
  import net.minecraft.world.level.storage.WorldData;
@@ -188,8 +181,8 @@
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
 +               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
-+               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.groupTestsIntoBatches(net.minecraft.gametest.framework.GameTestRegistry.getAllTestFunctions());
-+               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
++               var testBatches = net.minecraft.gametest.framework.GameTestRunner.groupTestsIntoBatches(net.minecraft.gametest.framework.GameTestRegistry.getAllTestFunctions());
++               var spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
 +               // Mohist start - fix mixin

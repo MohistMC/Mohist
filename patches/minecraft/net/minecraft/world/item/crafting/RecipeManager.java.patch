@@ -20,7 +20,7 @@
  import org.slf4j.Logger;
  
  public class RecipeManager extends SimpleJsonResourceReloadListener {
-@@ -40,35 +_,62 @@
+@@ -40,35 +_,58 @@
     public Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
     private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
     private boolean hasErrors;
@@ -55,28 +55,22 @@
 +         if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
           try {
--            RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
--            map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
--               return ImmutableMap.builder();
--            }).put(resourcelocation, recipeholder);
--            builder.put(resourcelocation, recipeholder);
-+            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.ForgeHooks.readAndTestCondition(this.context, entry.getValue().getAsJsonObject())) {
 +               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
-+            RecipeHolder<?> recipe = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
-+            if (recipe == null) {
-+               LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
-+               continue;
-+            }
+             RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
+-            map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
+-               return ImmutableMap.builder();
+-            }).put(resourcelocation, recipeholder);
 +
 +            // CraftBukkit start
-+            map1.computeIfAbsent(recipe.value().getType(), (recipes) -> {
++            map1.computeIfAbsent(recipeholder.value().getType(), (recipes) -> {
 +               return new Object2ObjectLinkedOpenHashMap<>();
 +               // CraftBukkit end
-+            }).putAndMoveToFirst(resourcelocation, recipe);
++            }).putAndMoveToFirst(resourcelocation, recipeholder);
 +
-+            builder.put(resourcelocation, recipe);
+             builder.put(resourcelocation, recipeholder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
              LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
           }
