@@ -40,7 +40,6 @@ class LibraryLoader {
                 Dependency dependency = new Dependency(args[0], args[1], args[2], false);
                 dependencies.add(dependency);
             }
-
         }
 
         List<File> libraries = new ArrayList<>();
@@ -112,32 +111,39 @@ class LibraryLoader {
         return list;
     }
 
-    public static List<Dependency> initDependencies(URL url) throws MalformedURLException {
+    public static List<Dependency> initDependencies(URL url) {
         List<Dependency> list = new ArrayList<>();
         Json json2Json = Json.readXml(url).at("project");
         String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
+        String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
 
         if (!json2Json.has("dependencies")) return list;
         if (!json2Json.at("dependencies").toString().startsWith("{\"dependency\"")) return list;
         Json json3Json = json2Json.at("dependencies").at("dependency");
         if (json3Json.isArray()) {
             for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
-                dependency(o, list, version);
+                dependency(o, list, version, groupId);
             }
         } else {
-            dependency(json3Json, list, null);
+            dependency(json3Json, list, version, groupId);
         }
         return list;
     }
 
-    public static void dependency(Json json, List<Dependency> list, String version) {
+    public static void dependency(Json json, List<Dependency> list, String version, String parent_groupId) {
         try {
             if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
                 String groupId = json.asString("groupId");
                 String artifactId = json.asString("artifactId");
                 if (json.toString().contains("version")) {
+                    if (json.has("scope") && json.asString("scope").equals("test")) {
+                        return;
+                    }
+                    if (groupId.equals("${project.parent.groupId}")) {
+                        groupId = parent_groupId;
+                    }
                     String versionAsString = json.asString("version");
-                    if (versionAsString.contains("${project.version}")) {
+                    if (versionAsString.contains("${project.version}") || versionAsString.contains("${project.parent.version}")) {
                         Dependency dependency = new Dependency(groupId, artifactId, version, true);
                         list.add(dependency);
                     } else if (!versionAsString.contains("${")) {
