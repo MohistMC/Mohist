@@ -44,6 +44,8 @@ import javax.annotation.Nullable;
  */
 public class InventoryOwner {
 
+    public static IItemHandler itemHandler;
+
     public static InventoryHolder get(BlockEntity te) {
         return get(te.getLevel(), te.getBlockPos());
     }

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.items;
 
+import com.mohistmc.bukkit.inventory.InventoryOwner;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +25,7 @@ public class ItemHandlerHelper
         if (dest == null || stack.isEmpty())
             return stack;
 
+        InventoryOwner.itemHandler = dest;
         for (int i = 0; i < dest.getSlots(); i++)
         {
             stack = dest.insertItem(i, stack, simulate);
