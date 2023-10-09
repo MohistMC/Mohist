@@ -15,3 +15,14 @@
        this.entityData.set(DATA_STRENGTH_ID, Math.max(1, Math.min(5, p_30841_)));
     }
  
+@@ -366,6 +_,10 @@
+    }
+ 
+    public boolean causeFallDamage(float p_149538_, float p_149539_, DamageSource p_149540_) {
++      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149538_, p_149539_);
++      if (event.isCanceled()) return false;
++      p_149538_ = event.getDistance();
++      p_149539_ = event.getDamageMultiplier();
+       int i = this.calculateFallDamage(p_149538_, p_149539_);
+       if (i <= 0) {
+          return false;
