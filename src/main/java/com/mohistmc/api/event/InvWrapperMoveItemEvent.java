@@ -27,7 +27,7 @@ public class InvWrapperMoveItemEvent extends Event implements Cancellable {
     }
 
     @NotNull
-    public Inventory getSource() {
+    public Inventory getInventory() {
         return inventory;
     }
 
