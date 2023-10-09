@@ -3,18 +3,19 @@ package org.bukkit.craftbukkit.v1_20_R2.entity;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Color;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionType;
 import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil;
 import org.bukkit.entity.Arrow;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftTippedArrow extends CraftArrow implements Arrow {
 
@@ -102,12 +103,25 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
     @Override
     public void setBasePotionData(PotionData data) {
         Preconditions.checkArgument(data != null, "PotionData cannot be null");
-        this.getHandle().potion = BuiltInRegistries.POTION.get(new ResourceLocation(CraftPotionUtil.fromBukkit(data)));
+        this.getHandle().potion = CraftPotionType.bukkitToMinecraft(CraftPotionUtil.fromBukkit(data));
     }
 
     @Override
     public PotionData getBasePotionData() {
-        return CraftPotionUtil.toBukkit(BuiltInRegistries.POTION.getKey(this.getHandle().potion).toString());
+        return CraftPotionUtil.toBukkit(CraftPotionType.minecraftToBukkit(getHandle().potion));
+    }
+
+    public void setBasePotionType(@NotNull PotionType potionType) {
+        // TODO: 10/6/23 Change PotionType.UNCRAFTABLE to PotionType.EMPTY in error message
+        Preconditions.checkArgument(potionType != null, "PotionType cannot be null use PotionType.UNCRAFTABLE to represent no effect instead.");
+
+        getHandle().potion = CraftPotionType.bukkitToMinecraft(potionType);
+    }
+
+    @NotNull
+    @Override
+    public PotionType getBasePotionType() {
+        return CraftPotionType.minecraftToBukkit(getHandle().potion);
     }
 
     @Override

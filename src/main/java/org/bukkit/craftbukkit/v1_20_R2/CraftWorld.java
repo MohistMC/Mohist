@@ -53,6 +53,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ImposterProtoChunk;
@@ -81,6 +82,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBiome;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
@@ -92,6 +94,7 @@ import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R2.metadata.BlockMetadataStore;
 import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftBiomeSearchResult;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
@@ -127,6 +130,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+import org.bukkit.util.BiomeSearchResult;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.StructureSearchResult;
@@ -1873,6 +1877,30 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         }
 
         return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), CraftLocation.toBukkit(found.getFirst(), this));
+    }
+
+    @Override
+    public BiomeSearchResult locateNearestBiome(Location origin, int radius, Biome... biomes) {
+        return locateNearestBiome(origin, radius, 32, 64, biomes);
+    }
+
+    @Override
+    public BiomeSearchResult locateNearestBiome(Location origin, int radius, int horizontalInterval, int verticalInterval, Biome... biomes) {
+        BlockPos originPos = BlockPos.containing(origin.getX(), origin.getY(), origin.getZ());
+        Set<Holder<net.minecraft.world.level.biome.Biome>> holders = new HashSet<>();
+
+        for (Biome biome : biomes) {
+            holders.add(CraftBiome.bukkitToMinecraftHolder(biome));
+        }
+
+        Climate.Sampler sampler = getHandle().getChunkSource().randomState().sampler();
+        // The given predicate is evaluated once at the start of the search, so performance isn't a large concern.
+        Pair<BlockPos, Holder<net.minecraft.world.level.biome.Biome>> found = getHandle().getChunkSource().getGenerator().getBiomeSource().findClosestBiome3d(originPos, radius, horizontalInterval, verticalInterval, holders::contains, sampler, getHandle());
+        if (found == null) {
+            return null;
+        }
+
+        return new CraftBiomeSearchResult(CraftBiome.minecraftHolderToBukkit(found.getSecond()), new Location(this, found.getFirst().getX(), found.getFirst().getY(), found.getFirst().getZ()));
     }
 
     // Spigot start

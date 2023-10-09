@@ -53,7 +53,6 @@ import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftHangingSign;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 import org.bukkit.entity.Entity;
@@ -174,7 +173,7 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.POTIONS;
         for (Potion potion : ForgeRegistries.POTIONS) {
             ResourceLocation resourceLocation = registry.getKey(potion);
-            if (CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
+            if (potion != Potions.EMPTY) {
                 String name = normalizeName(resourceLocation.toString());
                 MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
                 PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : BuiltInRegistries.MOB_EFFECT.getId(effectInstance.getEffect()) + 1, false, false));
