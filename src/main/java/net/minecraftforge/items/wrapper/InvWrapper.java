@@ -5,14 +5,10 @@
 
 package net.minecraftforge.items.wrapper;
 
-import com.mohistmc.bukkit.inventory.InventoryOwner;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class InvWrapper implements IItemHandlerModifiable
@@ -176,22 +172,8 @@ public class InvWrapper implements IItemHandlerModifiable
             int m = Math.min(stackInSlot.getCount(), amount);
 
             ItemStack decrStackSize = getInv().removeItem(slot, m);
-            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(decrStackSize); // Spigot
-            org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get(getInv());
-
-            if (InventoryOwner.itemHandler != null) {
-                org.bukkit.inventory.Inventory destinationInventory = InventoryOwner.inventoryFromForge(InventoryOwner.itemHandler);
-                InventoryMoveItemEvent event = new InventoryMoveItemEvent(owner.getInventory(), oitemstack.clone(), destinationInventory, true);
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return ItemStack.EMPTY;
-                }
-                decrStackSize = CraftItemStack.asNMSCopy(event.getItem());
-                InventoryOwner.itemHandler = null;
-            }
             getInv().setChanged();
             return decrStackSize;
-            // Mohist end
         }
     }
 
