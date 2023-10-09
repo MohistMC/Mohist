@@ -107,7 +107,7 @@
        Container container = m_155592_(p_155563_, p_155564_, p_155565_);
        if (container == null) {
           return false;
-@@ -175,11 +_,13 @@
+@@ -175,6 +_,8 @@
     }
  
     public static boolean m_155552_(Level p_155553_, Hopper p_155554_) {
@@ -116,65 +116,6 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
-          return m_59397_(container, direction) ? false : m_59339_(container, direction).anyMatch((p_59363_) -> {
--            return m_59354_(p_155554_, container, p_59363_, direction);
-+            return tryTakeInItemFromSlot(p_155554_, container, p_59363_, direction, p_155553_);
-          });
-       } else {
-          for(ItemEntity itementity : m_155589_(p_155553_, p_155554_)) {
-@@ -192,17 +_,46 @@
-       }
-    }
- 
--   private static boolean m_59354_(Hopper p_59355_, Container p_59356_, int p_59357_, Direction p_59358_) {
--      ItemStack itemstack = p_59356_.m_8020_(p_59357_);
--      if (!itemstack.m_41619_() && m_271906_(p_59355_, p_59356_, itemstack, p_59357_, p_59358_)) {
-+   private static boolean tryTakeInItemFromSlot(Hopper pHopper, Container pContainer, int pSlot, Direction pDirection, Level world) { // Spigot // Mohist TODO mixin
-+      ItemStack itemstack = pContainer.m_8020_(pSlot);
-+      if (!itemstack.m_41619_() && m_271906_(pHopper, pContainer, itemstack, pSlot, pDirection)) {
-          ItemStack itemstack1 = itemstack.m_41777_();
--         ItemStack itemstack2 = m_59326_(p_59356_, p_59355_, p_59356_.m_7407_(p_59357_, 1), (Direction)null);
-+         // ItemStack itemstack2 = addItem(iinventory, ihopper, iinventory.removeItem(i, 1), (EnumDirection) null);
-+         // CraftBukkit start - Call event on collection of items from inventories into the hopper
-+         CraftItemStack oitemstack = CraftItemStack.asCraftMirror(pContainer.m_7407_(pSlot, world.spigotConfig.hopperAmount)); // Spigot
-+
-+         org.bukkit.inventory.Inventory sourceInventory;
-+         // Have to special case large chests as they work oddly
-+         if (pContainer instanceof CompoundContainer) {
-+            sourceInventory = new CraftInventoryDoubleChest((CompoundContainer) pContainer);
-+         } else if (pContainer.getOwner() != null) {
-+            sourceInventory = pContainer.getOwner().getInventory();
-+         } else {
-+            sourceInventory = new CraftInventory(pContainer);
-+         }
-+
-+         InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), pHopper.getOwner().getInventory(), false);
-+
-+         Bukkit.getServer().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
-+            pContainer.m_6836_(pSlot, itemstack1);
-+
-+            if (pHopper instanceof HopperBlockEntity) {
-+               ((HopperBlockEntity) pHopper).m_59395_(world.spigotConfig.hopperTransfer); // Spigot
-+            }
-+
-+            return false;
-+         }
-+         int origCount = event.getItem().getAmount(); // Spigot
-+         ItemStack itemstack2 = m_59326_(pContainer, pHopper, CraftItemStack.asNMSCopy(event.getItem()), null);
-+         // CraftBukkit end
-          if (itemstack2.m_41619_()) {
--            p_59356_.m_6596_();
-+            pContainer.m_6596_();
-             return true;
-          }
- 
--         p_59356_.m_6836_(p_59357_, itemstack1);
-+         itemstack1.m_41774_(origCount - itemstack2.m_41613_()); // Spigot
-+         pContainer.m_6836_(pSlot, itemstack1);
-       }
- 
-       return false;
 @@ -210,6 +_,13 @@
  
     public static boolean m_59331_(Container p_59332_, ItemEntity p_59333_) {
@@ -241,8 +182,9 @@
     }
  
     @Nullable
-    private static Container m_155596_(Level p_155597_, Hopper p_155598_) {
+-   private static Container m_155596_(Level p_155597_, Hopper p_155598_) {
 -      return m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
++   public static Container m_155596_(Level p_155597_, Hopper p_155598_) {
 +      // CraftBukkit start
 +      Container inventory = m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
 +
