@@ -65,6 +65,12 @@ public class InvWrapper implements IItemHandlerModifiable
             return ItemStack.EMPTY;
 
         ItemStack stackInSlot = getInv().getItem(slot);
+        var oitemstack = CraftItemStack.asCraftMirror(stackInSlot);
+        var event = new InvWrapperMoveItemEvent.Insert(InventoryOwner.getInventory(getInv()), oitemstack);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return stack;
+        }
 
         int m;
         if (!stackInSlot.isEmpty())
