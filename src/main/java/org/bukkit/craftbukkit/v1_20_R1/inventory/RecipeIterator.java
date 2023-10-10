@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.bukkit.Keyed;
 import org.bukkit.inventory.Recipe;
 
 import java.util.Iterator;
@@ -13,10 +14,12 @@ import java.util.Map;
 
 public class RecipeIterator implements Iterator<Recipe> {
     private final Iterator<Map.Entry<RecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, net.minecraft.world.item.crafting.Recipe<?>>>> recipes;
+    private final Iterator<Map.Entry<RecipeType<?>, Map<ResourceLocation, net.minecraft.world.item.crafting.Recipe<?>>>> recipesV;
     private Iterator<net.minecraft.world.item.crafting.Recipe<?>> current;
 
     public RecipeIterator() {
         this.recipes = MinecraftServer.getServer().getRecipeManager().recipesCB.entrySet().iterator();
+        this.recipesV = MinecraftServer.getServer().getRecipeManager().recipes.entrySet().iterator();
     }
 
     @Override
@@ -28,6 +31,11 @@ public class RecipeIterator implements Iterator<Recipe> {
         if (recipes.hasNext()) {
             current = recipes.next().getValue().values().iterator();
             return hasNext();
+        } else {
+            if (recipesV.hasNext()) {
+                current = recipesV.next().getValue().values().iterator();
+                return hasNext();
+            }
         }
 
         return false;
@@ -35,18 +43,25 @@ public class RecipeIterator implements Iterator<Recipe> {
 
     @Override
     public Recipe next() {
-        if (current == null || !current.hasNext()) {
-            current = recipes.next().getValue().values().iterator();
-            return next();
+        try {
+            if (current == null || !current.hasNext()) {
+                current = recipes.next().getValue().values().iterator();
+                return next();
+            }
+        } catch (Throwable e) {
+            if (!current.hasNext()) {
+                current = recipesV.next().getValue().values().iterator();
+                return next();
+            }
         }
 
         net.minecraft.world.item.crafting.Recipe<?> recipe = current.next();
-        try {
+
+        if (recipe.toBukkitRecipe() instanceof Keyed) {
             return recipe.toBukkitRecipe();
-        } catch (Throwable e) {
-            //throw new RuntimeException("Error converting recipe " + recipe.getId(), e);
-            return new MohistSpecialRecipe(recipe);
         }
+        return new MohistSpecialRecipe(recipe);
+
     }
 
     @Override
