@@ -1120,7 +1120,7 @@
              this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.disabled.options").m_130940_(ChatFormatting.RED), false));
              return Optional.empty();
           } else {
-@@ -1316,13 +_,41 @@
+@@ -1316,13 +_,36 @@
     }
  
     private void m_243086_(PlayerChatMessage p_243277_) {
@@ -1132,12 +1132,7 @@
 +         f_9744_.warn(this.f_9743_.m_6302_() + " tried to send an empty message");
 +      } else if (getCraftPlayer().isConversing()) {
 +         final String conversationInput = s;
-+         this.f_9745_.processQueue.add(new Runnable() {
-+            @Override
-+            public void run() {
-+               getCraftPlayer().acceptConversationInput(conversationInput);
-+            }
-+           });
++         this.f_9745_.processQueue.add(() -> getCraftPlayer().acceptConversationInput(conversationInput));
 +      } else if (this.f_9743_.m_9241_() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
 +         this.m_9829_(new ClientboundSystemChatPacket(Component.m_237115_("chat.cannotSend").m_130940_(ChatFormatting.RED), false));
 +      } else {

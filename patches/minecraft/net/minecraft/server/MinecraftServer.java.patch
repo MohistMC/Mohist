@@ -25,10 +25,12 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -156,6 +_,12 @@
+@@ -156,6 +_,14 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
@@ -160,7 +162,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
-@@ -373,13 +_,38 @@
+@@ -373,13 +_,39 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registries.f_256858_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -191,6 +193,7 @@
 +
 +      for (ServerLevel worldserver : this.m_129785_()) {
 +         this.prepareLevels(worldserver.m_7726_().f_8325_.f_140144_, worldserver);
++         worldserver.f_143244_.m_157506_(); // SPIGOT-6526: Load pending entities so they are available to the API
 +         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
 +      }
 +
@@ -224,7 +227,7 @@
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
              BlockPos blockpos = chunkpos.m_45615_();
-@@ -442,40 +_,87 @@
+@@ -442,40 +_,88 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -239,7 +242,6 @@
 +      }
 +      WorldBorder worldborder = serverlevel.m_6857_();
 +      worldborder.m_61931_(serverleveldata.m_5813_()); // CraftBukkit - move up so that WorldBorder is set during WorldInitEvent
-+      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(serverlevel.getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
 +
 +      if (!serverleveldata.m_6535_()) {
 +         try {
@@ -272,8 +274,10 @@
 +   }
 +
 +   public void m_129940_(ChunkProgressListener p_129941_) {
-+      this.forceTicks = true;
++      this.markWorldsDirty();
 +      ServerLevel serverlevel = prepareLevels$serverlevel.getAndSet(this.m_129783_());
++      MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverlevel));
++      this.forceTicks = true;
        f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
        BlockPos blockpos = serverlevel.m_220360_();
        p_129941_.m_7647_(new ChunkPos(blockpos));
@@ -563,7 +567,7 @@
              this.m_6988_();
           }
  
-@@ -714,8 +_,14 @@
+@@ -714,8 +_,17 @@
     }
  
     private boolean m_129960_() {
@@ -574,6 +578,9 @@
 +
 +   private void executeModerately() {
 +      this.m_18699_();
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
@@ -640,7 +647,7 @@
     }
  
     private ServerStatus.Players m_271961_() {
-@@ -847,39 +_,60 @@
+@@ -847,21 +_,27 @@
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
@@ -650,12 +657,6 @@
        this.f_129754_.m_6182_("levels");
  
 -      for(ServerLevel serverlevel : this.m_129785_()) {
-+      // CraftBukkit start
-+      // Run tasks that are waiting on processing
-+      while (!processQueue.isEmpty()) {
-+         processQueue.remove().run();
-+      }
-+
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.f_129766_ % 20 == 0) {
 +         for (int i = 0; i < this.m_6846_().f_11196_.size(); ++i) {
@@ -680,16 +681,7 @@
  
           try {
              serverlevel.m_8793_(p_129954_);
-          } catch (Throwable throwable) {
--            CrashReport crashreport = CrashReport.m_127521_(throwable, "Exception ticking world");
-+            // Spigot Start
-+            CrashReport crashreport;
-+            try {
-+               crashreport = CrashReport.m_127521_(throwable, "Exception ticking world");
-+            } catch (Throwable t) {
-+               throw new RuntimeException("Error generating crash report", t);
-+            }
-+            // Spigot End
+@@ -870,16 +_,18 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
