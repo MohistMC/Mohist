@@ -155,9 +155,12 @@ public class MohistConfig {
         return config.getDouble(path, config.getDouble(path));
     }
 
+    public static String mohist_lang() {
+        return yml.getString("mohist.lang", Locale.getDefault().toString());
+    }
+
     public static boolean show_logo;
     public static String mohist_lang;
-    public static String mohist_vanilla_lang;
     public static boolean check_update;
     public static int maximumRepairCost;
     public static boolean enchantment_fix;
@@ -206,7 +209,6 @@ public class MohistConfig {
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
-        mohist_vanilla_lang = getString("mohist.vanilla_lang", "en_us");
         check_update = getBoolean("mohist.check_update", true);
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
