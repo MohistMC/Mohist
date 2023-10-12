@@ -134,7 +134,7 @@ public class ConfigByWorlds {
                         init();
                         canload = false;
                     }
-                    if (!isMods) {
+                    if (!isMohist) {
                         canload = false;
                     }
                     if (canload) {

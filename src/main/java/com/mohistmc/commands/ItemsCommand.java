@@ -24,6 +24,10 @@ import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.plugins.item.ItemsConfig;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -172,13 +176,20 @@ public class ItemsCommand extends Command {
     public static void info(Player player) {
         ItemStack itemStack = player.getInventory().getItemInMainHand();
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
-        // item name and i18n name
-        player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType());
-        player.sendMessage(ChatColor.GRAY + "Name(Translate) - " + ChatColor.GREEN + nmsItem.getDisplayName().getString());
-        player.sendMessage(ChatColor.GRAY + "ForgeItem - " + itemStack.getType().isForgeItem);
-        player.sendMessage(ChatColor.GRAY + "ForgeBlock - " + itemStack.getType().isForgeBlock);
-        player.sendMessage(ChatColor.GRAY + "NBT(CraftBukkit) - " + ItemAPI.getNBTAsString(itemStack));
-        player.sendMessage(ChatColor.GRAY + "NBT(Vanilla) - " + ItemAPI.getNbtAsString(PlayerAPI.getNMSPlayer(player).getMainHandItem().getTag())); // Use vanilla method
-        player.sendMessage(ChatColor.GRAY + "NBT(Forge) - " + ItemAPI.getNbtAsString(nmsItem.getForgeCaps()));
+
+        sendMessageByCopy(player, ChatColor.GRAY + "Type - ", itemStack.getType().name());
+        player.sendMessage(ChatColor.GRAY + "Name - %s".formatted(nmsItem.getHoverName().getString()));
+        player.sendMessage(ChatColor.GRAY + "ForgeItem - %s".formatted(itemStack.getType().isForgeItem));
+        player.sendMessage(ChatColor.GRAY + "ForgeBlock - %s".formatted(itemStack.getType().isForgeBlock));
+        sendMessageByCopy(player, ChatColor.GRAY + "NBT(CraftBukkit) - ", ItemAPI.getNBTAsString(itemStack));
+        sendMessageByCopy(player, ChatColor.GRAY + "NBT(Vanilla) - ", ItemAPI.getNbtAsString(PlayerAPI.getNMSPlayer(player).getMainHandItem().getTag()));
+        sendMessageByCopy(player, ChatColor.GRAY + "NBT(Forge) - ", ItemAPI.getNbtAsString(nmsItem.getForgeCaps()));
+    }
+
+    public static void sendMessageByCopy(Player player, String des, String info) {
+        TextComponent textComponent = new TextComponent(des + info);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§c%s".formatted(MohistMC.i18n.get("itemscmd.copy"))).create()));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, info));
+        player.spigot().sendMessage(textComponent);
     }
 }

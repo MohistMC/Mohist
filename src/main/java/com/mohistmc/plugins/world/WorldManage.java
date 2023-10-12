@@ -5,9 +5,6 @@ import com.mohistmc.plugins.world.utils.ConfigByWorlds;
 
 import java.io.File;
 
-
-// TODO 核心内置 处理方式是否与插件相同？
-
 public class WorldManage {
 
     public static final String command = "worlds";
