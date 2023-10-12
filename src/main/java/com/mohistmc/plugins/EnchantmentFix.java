@@ -1,14 +1,13 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Mgazul by MohistMC

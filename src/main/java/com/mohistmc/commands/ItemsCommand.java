@@ -18,12 +18,16 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.plugins.item.ItemsConfig;
+import com.mohistmc.util.I18n;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -37,18 +41,13 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 public class ItemsCommand extends Command {
 
     private final List<String> params = Arrays.asList("info", "name", "save", "remove", "list", "get");
 
     public ItemsCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("itemscmd.description");
+        this.description = I18n.as("itemscmd.description");
         this.usageMessage = "/items [info|name|save|list|get|remove]";
         this.setPermission("mohist.command.items");
     }
@@ -74,7 +73,7 @@ public class ItemsCommand extends Command {
         }
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
+            sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
             return false;
         }
 
@@ -87,7 +86,7 @@ public class ItemsCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "info" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
+                    player.sendMessage(ChatColor.RED + I18n.as("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 ItemsCommand.info(player);
@@ -95,7 +94,7 @@ public class ItemsCommand extends Command {
             }
             case "name" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
+                    player.sendMessage(ChatColor.RED + I18n.as("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 if (args.length != 2) {
@@ -108,7 +107,7 @@ public class ItemsCommand extends Command {
             }
             case "save" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
+                    player.sendMessage(ChatColor.RED + I18n.as("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 if (args.length != 2) {
@@ -117,16 +116,16 @@ public class ItemsCommand extends Command {
                 }
                 ItemsConfig.yaml.set("items." + args[1], itemStack);
                 ItemsConfig.save();
-                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.completeSet"));
+                sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.completeSet"));
                 return true;
             }
             case "lore" -> {
                 if (itemStack == null || itemStack.getType().isAir()) {
-                    player.sendMessage(ChatColor.RED + MohistMC.i18n.get("itemscmd.mainhandEmpty"));
+                    player.sendMessage(ChatColor.RED + I18n.as("itemscmd.mainhandEmpty"));
                     return false;
                 }
                 ItemAPI.lore(itemStack, List.of("§4test §2LO§3RE"));
-                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.completeLore"));
+                sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.completeLore"));
                 return true;
             }
             case "get" -> {
@@ -137,7 +136,7 @@ public class ItemsCommand extends Command {
                 if (player.getInventory().firstEmpty() != -1) {
                     player.getInventory().addItem(ItemsConfig.get(args[1]));
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.inventoryFull"));
+                    sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.inventoryFull"));
                     return false;
                 }
                 return true;
@@ -148,7 +147,7 @@ public class ItemsCommand extends Command {
                     return false;
                 }
                 ItemsConfig.remove(args[1]);
-                sender.sendMessage(ChatColor.GREEN + MohistMC.i18n.get("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + MohistMC.i18n.get("itemscmd.removedItemp2") );
+                sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + I18n.as("itemscmd.removedItemp2") );
                 return true;
             }
             case "list" ->{
@@ -188,7 +187,7 @@ public class ItemsCommand extends Command {
 
     public static void sendMessageByCopy(Player player, String des, String info) {
         TextComponent textComponent = new TextComponent(des + info);
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§c%s".formatted(MohistMC.i18n.get("itemscmd.copy"))).create()));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§c%s".formatted(I18n.as("itemscmd.copy"))).create()));
         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, info));
         player.spigot().sendMessage(textComponent);
     }

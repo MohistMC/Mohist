@@ -18,21 +18,20 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
-import com.mohistmc.util.HasteUtils;
+import com.mohistmc.tools.HasteUtils;
+import com.mohistmc.util.I18n;
+import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-
-import java.io.IOException;
 
 public class GetPluginListCommand extends Command {
     private static String sendToHaste = "";
 
     public GetPluginListCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("getPluginList.description");
+        this.description = I18n.as("getPluginList.description");
         this.usageMessage = "/getpluginlist";
         this.setPermission("mohist.command.getpluginlist");
     }
@@ -46,7 +45,7 @@ public class GetPluginListCommand extends Command {
             sendToHaste = sendToHaste + "\nName : " + p.getName() + "\nVersion : " + p.getDescription().getVersion() + "\n---------";
         }
         try {
-            sender.sendMessage(MohistMC.i18n.get("getPluginList.pluginList") + HasteUtils.pasteMohist(sendToHaste));
+            sender.sendMessage(I18n.as("getPluginList.pluginList") + HasteUtils.pasteMohist(sendToHaste));
         } catch (IOException e) {
             System.out.println("Unable to paste the list of your plugins.");
         }

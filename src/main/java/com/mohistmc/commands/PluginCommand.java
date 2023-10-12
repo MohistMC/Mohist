@@ -18,18 +18,17 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.plugins.pluginmanager.PluginManagers;
+import com.mohistmc.util.I18n;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 public class PluginCommand extends Command {
 
@@ -37,7 +36,7 @@ public class PluginCommand extends Command {
 
     public PluginCommand(String name) {
         super(name);
-        this.description = MohistMC.i18n.get("plugincmd.description");
+        this.description = I18n.as("plugincmd.description");
         this.usageMessage = "/plugin [load|unload|reload] [name]";
         this.setPermission("mohist.command.plugin");
     }

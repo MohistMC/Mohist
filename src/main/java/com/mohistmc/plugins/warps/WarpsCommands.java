@@ -1,9 +1,13 @@
 package com.mohistmc.plugins.warps;
 
-import com.mohistmc.MohistMC;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.util.I18n;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -12,11 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Mgazul by MohistMC
@@ -43,17 +42,17 @@ public class WarpsCommands extends Command {
                     case "set" -> {
                         String name = args[1];
                         WarpsUtils.add(player.getLocation(), name);
-                        player.sendMessage(MohistMC.i18n.get("warpscommands.set.success", name));
+                        player.sendMessage(I18n.as("warpscommands.set.success", name));
                         return true;
                     }
                     case "del" -> {
                         String name = args[1];
                         if (WarpsUtils.has(name)) {
                             WarpsUtils.del(name);
-                            player.sendMessage(MohistMC.i18n.get("warpscommands.nowarp"));
+                            player.sendMessage(I18n.as("warpscommands.nowarp"));
                             return true;
                         } else {
-                            player.sendMessage(MohistMC.i18n.get("warpscommands.del.success", name));
+                            player.sendMessage(I18n.as("warpscommands.del.success", name));
                             return false;
                         }
                     }
@@ -63,18 +62,18 @@ public class WarpsCommands extends Command {
                             player.teleport(WarpsUtils.get(name));
                             return true;
                         } else {
-                            player.sendMessage(MohistMC.i18n.get("warpscommands.nowarp"));
+                            player.sendMessage(I18n.as("warpscommands.nowarp"));
                             return false;
                         }
                     }
                 }
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
-                Warehouse wh = new Warehouse(MohistMC.i18n.get("warpscommands.prefix"));
+                Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
                 for (String w : WarpsUtils.config.getKeys(false)) {
                     wh.addItem(new GUIItem(new ItemStackFactory(Material.BAMBOO_SIGN)
                             .setDisplayName(w)
-                            .setLore(List.of(MohistMC.i18n.get("warpscommands.gui.click"), "§f" + WarpsUtils.get(w).asString()))
+                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsUtils.get(w).asString()))
                             .toItemStack()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
@@ -90,14 +89,14 @@ public class WarpsCommands extends Command {
             String playerName = args[1];
             String warpsName = args[2];
             if (Bukkit.getPlayer(playerName) == null) {
-                sender.sendMessage(MohistMC.i18n.get("warpscommands.noplayer"));
+                sender.sendMessage(I18n.as("warpscommands.noplayer"));
                 return false;
             }
             if (WarpsUtils.has(warpsName)) {
                 Bukkit.getPlayer(playerName).teleport(WarpsUtils.get(warpsName));
                 return true;
             } else {
-                sender.sendMessage(MohistMC.i18n.get("warpscommands.nowarp"));
+                sender.sendMessage(I18n.as("warpscommands.nowarp"));
                 return false;
             }
 
@@ -123,11 +122,11 @@ public class WarpsCommands extends Command {
 
 
     private void sendHelp(CommandSender player) {
-        String prefix = MohistMC.i18n.get("warpscommands.prefix");
-        player.sendMessage(prefix + " /warps set <Name> " + MohistMC.i18n.get("warpscommands.set"));
-        player.sendMessage(prefix + " /warps del <Name> " + MohistMC.i18n.get("warpscommands.del"));
-        player.sendMessage(prefix + " /warps tp <Name> " + MohistMC.i18n.get("warpscommands.tp"));
-        player.sendMessage(prefix + " /warps tp <Player> <Name> " + MohistMC.i18n.get("warpscommands.tp0"));
-        player.sendMessage(prefix + " /warps gui " + MohistMC.i18n.get("warpscommands.gui"));
+        String prefix = I18n.as("warpscommands.prefix");
+        player.sendMessage(prefix + " /warps set <Name> " + I18n.as("warpscommands.set"));
+        player.sendMessage(prefix + " /warps del <Name> " + I18n.as("warpscommands.del"));
+        player.sendMessage(prefix + " /warps tp <Name> " + I18n.as("warpscommands.tp"));
+        player.sendMessage(prefix + " /warps tp <Player> <Name> " + I18n.as("warpscommands.tp0"));
+        player.sendMessage(prefix + " /warps gui " + I18n.as("warpscommands.gui"));
     }
 }

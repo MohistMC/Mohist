@@ -4,13 +4,12 @@ import com.mohistmc.MohistConfig;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
-import com.mohistmc.util.ListUtils;
+import com.mohistmc.tools.ListUtils;
+import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-
-import java.util.List;
 
 /**
  * @author Mgazul by MohistMC

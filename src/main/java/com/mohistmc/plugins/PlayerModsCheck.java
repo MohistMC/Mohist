@@ -1,7 +1,7 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
-
+import com.mohistmc.tools.ListUtils;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -17,7 +17,7 @@ public class PlayerModsCheck {
 
     public static boolean init(List<String> stringList) {
         if (MohistConfig.server_modlist_whitelist_enable) {
-            if (!equalList(stringList, server_modlist_whitelist())) {
+            if (!ListUtils.is(stringList, server_modlist_whitelist())) {
                 canLog.set(false);
                 return true;
             }
@@ -40,10 +40,5 @@ public class PlayerModsCheck {
 
     public static boolean canLog(boolean trunDef) {
         return trunDef ? canLog.getAndSet(true) : canLog.get();
-    }
-
-    public static boolean equalList(List list1, List list2) {
-        if (list1.size() != list2.size()) return false;
-        return list2.containsAll(list1);
     }
 }

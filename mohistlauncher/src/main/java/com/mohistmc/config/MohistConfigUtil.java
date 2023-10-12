@@ -22,7 +22,6 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;

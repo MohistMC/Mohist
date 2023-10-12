@@ -1,15 +1,14 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.MohistMC;
+import com.mohistmc.util.I18n;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Mgazul by MohistMC
@@ -48,7 +47,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("ERROR.notPlayer"));
+                sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
                 return false;
             }
         } else if(args.length == 1) {
@@ -58,7 +57,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep1") + args[1] + MohistMC.i18n.get("mohistcmd.playermods.playernotOnlinep2"));
+                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep1") + args[1] + I18n.as("mohistcmd.playermods.playernotOnlinep2"));
                 return false;
             }
         }

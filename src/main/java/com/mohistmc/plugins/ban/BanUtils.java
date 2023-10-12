@@ -1,7 +1,6 @@
 package com.mohistmc.plugins.ban;
 
 import com.mohistmc.MohistConfig;
-
 import java.util.List;
 
 /**

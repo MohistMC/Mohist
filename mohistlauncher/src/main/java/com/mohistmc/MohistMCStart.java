@@ -18,18 +18,18 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_20;
+import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,6 +40,7 @@ public class MohistMCStart {
     public static String MCVERSION;
     public static final List<String> mainArgs = new ArrayList<>();
     public static i18n i18n;
+    public static JarTool jarTool;
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
@@ -47,6 +48,7 @@ public class MohistMCStart {
 
     public static void main(String[] args) throws Exception {
         mainArgs.addAll(List.of(args));
+        jarTool = new JarTool(MohistMCStart.class);
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
         MohistConfigUtil.copyMohistConfig();
@@ -64,7 +66,7 @@ public class MohistMCStart {
                     
                     %s - %s, Java(%s) %s
                     """;
-            System.out.println(test.formatted(i18n.get("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
+            System.out.println(test.formatted(i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
@@ -78,7 +80,7 @@ public class MohistMCStart {
         }
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
-            v_1_20.run();
+            v_1_20_1.run();
         }
 
         AutoDeleteMods.jar();
@@ -92,7 +94,7 @@ public class MohistMCStart {
         new MohistModuleManager(DataParser.launchArgs);
 
         if (!EulaUtil.hasAcceptedEULA()) {
-            System.out.println(i18n.get("eula"));
+            System.out.println(i18n.as("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
             }
             EulaUtil.writeInfos();

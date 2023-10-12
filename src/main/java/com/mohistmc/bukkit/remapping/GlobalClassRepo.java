@@ -3,16 +3,15 @@ package com.mohistmc.bukkit.remapping;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.service.MixinService;
-
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.service.MixinService;
 
 /**
  * GlobalClassRepo

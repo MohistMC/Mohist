@@ -1,17 +1,16 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistMC;
-import net.minecraftforge.eventbus.ASMEventHandler;
-import net.minecraftforge.eventbus.EventBus;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IGenericEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraftforge.eventbus.ASMEventHandler;
+import net.minecraftforge.eventbus.EventBus;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IGenericEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * @author Mgazul by MohistMC

@@ -1,16 +1,15 @@
 package com.mohistmc.api;
 
 import com.mohistmc.forge.ForgeInjectBukkit;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 
 /**
  * @author Mgazul by MohistMC

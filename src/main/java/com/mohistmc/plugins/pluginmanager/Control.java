@@ -19,6 +19,13 @@
 package com.mohistmc.plugins.pluginmanager;
 
 import com.mohistmc.MohistMC;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -28,14 +35,6 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 public class Control {
 

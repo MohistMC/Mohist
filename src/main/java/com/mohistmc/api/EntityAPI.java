@@ -1,10 +1,9 @@
 package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
+import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 public class EntityAPI {
 

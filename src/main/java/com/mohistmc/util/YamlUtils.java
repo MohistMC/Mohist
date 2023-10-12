@@ -1,9 +1,8 @@
 package com.mohistmc.util;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.io.File;
 import java.io.IOException;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * @author Mgazul by MohistMC

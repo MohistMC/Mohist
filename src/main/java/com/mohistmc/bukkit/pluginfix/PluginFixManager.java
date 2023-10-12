@@ -1,8 +1,10 @@
 package com.mohistmc.bukkit.pluginfix;
 
+import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import static org.objectweb.asm.Opcodes.ARETURN;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -12,10 +14,6 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import java.util.function.Consumer;
-
-import static org.objectweb.asm.Opcodes.ARETURN;
 
 public class PluginFixManager {
 

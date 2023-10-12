@@ -19,6 +19,9 @@
 package com.mohistmc.eventhandler.dispatcher;
 
 import io.izzel.tools.collection.XmapList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -33,10 +36,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class EntityEventDispatcher {
 

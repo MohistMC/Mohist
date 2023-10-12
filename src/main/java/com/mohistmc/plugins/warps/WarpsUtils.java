@@ -1,11 +1,10 @@
 package com.mohistmc.plugins.warps;
 
 import com.mohistmc.util.YamlUtils;
+import java.io.File;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
 
 /**
  * @author Mgazul by MohistMC

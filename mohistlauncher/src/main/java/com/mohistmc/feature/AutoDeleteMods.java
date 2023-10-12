@@ -1,7 +1,6 @@
 package com.mohistmc.feature;
 
-import com.mohistmc.MohistMCStart;
-
+import com.mohistmc.util.I18n;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -23,7 +22,7 @@ public class AutoDeleteMods {
             "optifine.Differ" /*OptiFine*/));
 
     public static void jar() throws Exception {
-        System.out.println(MohistMCStart.i18n.get("update.mods"));
+        System.out.println(I18n.as("update.mods"));
         for (String t : classlist) {
             check(t);
         }
@@ -35,7 +34,7 @@ public class AutoDeleteMods {
         if (!mods.exists()) mods.mkdir();
         for (File f : mods.listFiles((dir, name) -> name.endsWith(".jar"))) {
             if (fileExists(f, cl)) {
-                System.out.println(MohistMCStart.i18n.get("update.deleting", f.getName()));
+                System.out.println(I18n.as("update.deleting", f.getName()));
                 System.gc();
                 Thread.sleep(100);
                 File newf = new File("delete/mods");
