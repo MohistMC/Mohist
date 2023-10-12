@@ -1,5 +1,6 @@
 package org.bukkit.plugin;
 
+import java.awt.print.Paper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import org.bukkit.Server;
 import org.bukkit.command.TabExecutor;
@@ -180,6 +181,29 @@ public interface Plugin extends TabExecutor {
      */
     @NotNull
     public Logger getLogger();
+
+    // Paper start - Adventure component logger
+    @NotNull
+    default net.kyori.adventure.text.logger.slf4j.ComponentLogger getComponentLogger() {
+        return net.kyori.adventure.text.logger.slf4j.ComponentLogger.logger(getLogger().getName());
+    }
+    // Paper end
+
+    // Paper start - Add SLF4J/Log4J loggers
+    @NotNull
+    default org.slf4j.Logger getSLF4JLogger() {
+        return org.slf4j.LoggerFactory.getLogger(getLogger().getName());
+    }
+
+    /**
+     * @deprecated use {@link #getSLF4JLogger()}
+     */
+    @Deprecated
+    @NotNull
+    default org.apache.logging.log4j.Logger getLog4JLogger() {
+        return org.apache.logging.log4j.LogManager.getLogger(getLogger().getName());
+    }
+    // Paper end
 
     /**
      * Returns the name of the plugin.

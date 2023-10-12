@@ -12,6 +12,81 @@
  
  public class ExperienceOrb extends Entity {
     private static final int f_147073_ = 6000;
+@@ -31,14 +_,67 @@
+    public int f_20770_;
+    private int f_147072_ = 1;
+    private Player f_20771_;
+-
++   // Paper start
++   @javax.annotation.Nullable
++   public java.util.UUID sourceEntityId;
++   @javax.annotation.Nullable
++   public java.util.UUID triggerEntityId;
++   public org.bukkit.entity.ExperienceOrb.SpawnReason spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN;
++
++   private void loadPaperNBT(CompoundTag nbttagcompound) {
++      if (!nbttagcompound.m_128425_("Paper.ExpData", 10)) { // 10 = compound
++         return;
++      }
++      CompoundTag comp = nbttagcompound.m_128469_("Paper.ExpData");
++      if (comp.m_128403_("source")) {
++         this.sourceEntityId = comp.m_128342_("source");
++      }
++      if (comp.m_128403_("trigger")) {
++         this.triggerEntityId = comp.m_128342_("trigger");
++      }
++      if (comp.m_128441_("reason")) {
++         String reason = comp.m_128461_("reason");
++         try {
++            this.spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.valueOf(reason);
++         } catch (Exception e) {
++            this.m_9236_().getCraftServer().getLogger().warning("Invalid spawnReason set for experience orb: " + e.getMessage() + " - " + reason);
++         }
++      }
++   }
++   private void savePaperNBT(CompoundTag nbttagcompound) {
++      CompoundTag comp = new CompoundTag();
++      if (this.sourceEntityId != null) {
++         comp.m_128362_("source", this.sourceEntityId);
++      }
++      if (this.triggerEntityId != null) {
++         comp.m_128362_("trigger", triggerEntityId);
++      }
++      if (this.spawnReason != null && this.spawnReason != org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN) {
++         comp.m_128359_("reason", this.spawnReason.name());
++      }
++      nbttagcompound.m_128365_("Paper.ExpData", comp);
++   }
++
++   @Deprecated
+    public ExperienceOrb(Level p_20776_, double p_20777_, double p_20778_, double p_20779_, int p_20780_) {
+-      this(EntityType.f_20570_, p_20776_);
+-      this.m_6034_(p_20777_, p_20778_, p_20779_);
+-      this.m_146922_((float)(this.f_19796_.m_188500_() * 360.0D));
+-      this.m_20334_((this.f_19796_.m_188500_() * (double)0.2F - (double)0.1F) * 2.0D, this.f_19796_.m_188500_() * 0.2D * 2.0D, (this.f_19796_.m_188500_() * (double)0.2F - (double)0.1F) * 2.0D);
+-      this.f_20770_ = p_20780_;
+-   }
++      this(p_20776_, p_20777_, p_20778_, p_20779_, p_20780_, null, null);
++   }
++
++   public ExperienceOrb(Level world, double d0, double d1, double d2, int i, @javax.annotation.Nullable org.bukkit.entity.ExperienceOrb.SpawnReason reason, @javax.annotation.Nullable Entity triggerId) {
++      this(world, d0, d1, d2, i, reason, triggerId, null);
++   }
++
++   public ExperienceOrb(Level world, double d0, double d1, double d2, int i, @javax.annotation.Nullable org.bukkit.entity.ExperienceOrb.SpawnReason reason, @javax.annotation.Nullable Entity triggerId, @javax.annotation.Nullable Entity sourceId) {
++      this(EntityType.f_20570_, world);
++      this.sourceEntityId = sourceId != null ? sourceId.m_20148_() : null;
++      this.triggerEntityId = triggerId != null ? triggerId.m_20148_() : null;
++      this.spawnReason = reason != null ? reason : org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN;
++      this.m_6034_(d0, d1, d2);
++      this.m_146922_((float) (this.f_19796_.m_188500_() * 360.0D));
++      this.m_20334_((this.f_19796_.m_188500_() * 0.20000000298023224D - 0.10000000149011612D) * 2.0D, this.f_19796_.m_188500_() * 0.2D * 2.0D, (this.f_19796_.m_188500_() * 0.20000000298023224D - 0.10000000149011612D) * 2.0D);
++      this.f_20770_ = i;
++   }
++   // Paper end
+ 
+    public ExperienceOrb(EntityType<? extends ExperienceOrb> p_20773_, Level p_20774_) {
+       super(p_20773_, p_20774_);
 @@ -53,6 +_,7 @@
  
     public void m_8119_() {

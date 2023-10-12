@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/inventory/MerchantResultSlot.java
++++ b/net/minecraft/world/inventory/MerchantResultSlot.java
+@@ -42,13 +_,32 @@
+    }
+ 
+    public void m_142406_(Player p_150631_, ItemStack p_150632_) {
+-      this.m_5845_(p_150632_);
++      // this.checkTakeAchievements(pStack); // Paper - move to after event is called and not cancelled
+       MerchantOffer merchantoffer = this.f_40078_.m_40025_();
++      // Paper start
++      io.papermc.paper.event.player.PlayerPurchaseEvent event = null;
++      if (merchantoffer != null && f_40079_ instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
++         if (this.f_40081_ instanceof net.minecraft.world.entity.npc.AbstractVillager abstractVillager) {
++            event = new io.papermc.paper.event.player.PlayerTradeEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.AbstractVillager) abstractVillager.getBukkitEntity(), merchantoffer.asBukkit(), true, true);
++         } else if (this.f_40081_ instanceof org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantCustom.MinecraftMerchant) {
++            event = new io.papermc.paper.event.player.PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
++         }
++         if (event != null) {
++            if (!event.callEvent()) {
++               p_150632_.m_41764_(0);
++               event.getPlayer().updateInventory();
++               return;
++            }
++            merchantoffer = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMerchantRecipe.fromBukkit(event.getTrade()).toMinecraft();
++         }
++      }
++      this.m_5845_(p_150632_);
++      // Paper end
+       if (merchantoffer != null) {
+          ItemStack itemstack = this.f_40078_.m_8020_(0);
+          ItemStack itemstack1 = this.f_40078_.m_8020_(1);
+          if (merchantoffer.m_45361_(itemstack, itemstack1) || merchantoffer.m_45361_(itemstack1, itemstack)) {
+-            this.f_40081_.m_6996_(merchantoffer);
++            this.f_40081_.processTrade(merchantoffer, event); // Paper
+             p_150631_.m_36220_(Stats.f_12941_);
+             this.f_40078_.m_6836_(0, itemstack);
+             this.f_40078_.m_6836_(1, itemstack1);

@@ -29,7 +29,30 @@
  
     public AbstractVillager(EntityType<? extends AbstractVillager> p_35267_, Level p_35268_) {
        super(p_35267_, p_35268_);
-@@ -116,6 +_,7 @@
+@@ -108,14 +_,28 @@
+    public void m_6621_(int p_35322_) {
+    }
+ 
++   // Paper start
++   @Override
++   public void processTrade(MerchantOffer recipe, @Nullable io.papermc.paper.event.player.PlayerPurchaseEvent event) { // The MerchantRecipe passed in here is the one set by the PlayerPurchaseEvent
++      if (event == null || event.willIncreaseTradeUses()) {
++         recipe.m_45374_();
++      }
++      if (event == null || event.isRewardingExp()) {
++         this.m_8058_(recipe);
++      }
++      this.m_6996_(recipe);
++   }
++   // Paper end
++
+    public void m_6996_(MerchantOffer p_35274_) {
+-      p_35274_.m_45374_();
++      // pOffer.increaseUses(); // Paper - handled in processTrade
+       this.f_21363_ = -this.m_8100_();
+-      this.m_8058_(p_35274_);
++      // this.rewardTradeXp(pOffer); // Paper - handled in processTrade
+       if (this.f_35263_ instanceof ServerPlayer) {
           CriteriaTriggers.f_10585_.m_70959_((ServerPlayer)this.f_35263_, this, p_35274_.m_45368_());
        }
  

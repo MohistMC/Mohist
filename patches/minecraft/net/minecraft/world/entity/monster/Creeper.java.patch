@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.entity.monster;
+ 
+ import java.util.Collection;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import javax.annotation.Nullable;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
 @@ -40,6 +_,9 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
@@ -10,6 +18,15 @@
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> f_32268_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135028_);
+@@ -116,7 +_,7 @@
+       }
+ 
+       if (p_32296_.m_128471_("ignited")) {
+-         this.m_32312_();
++         this.f_19804_.m_135381_(f_32275_, true); // Paper api - set directly to avoid firing event
+       }
+ 
+    }
 @@ -196,9 +_,19 @@
  
     public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
@@ -73,3 +90,29 @@
           this.m_9236_().m_7967_(areaeffectcloud);
        }
  
+@@ -255,9 +_,23 @@
+       return this.f_19804_.m_135370_(f_32275_);
+    }
+ 
++   // Mohist start - paper api
++   public AtomicBoolean ignited = new AtomicBoolean(true);
+    public void m_32312_() {
+-      this.f_19804_.m_135381_(f_32275_, true);
+-   }
++      boolean i = ignited.getAndSet(true);
++      if (m_32311_() != i) {
++         com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
++         if (event.callEvent()) {
++            this.f_19804_.m_135381_(f_32275_, event.isIgnited());
++         }
++      }
++   }
++
++   public void setIgnited(boolean ignited) {
++      this.ignited.set(ignited);
++      m_32312_();
++   }
++   // Mohist end
+ 
+    public boolean m_32313_() {
+       return this.m_7090_() && this.f_32273_ < 1;
