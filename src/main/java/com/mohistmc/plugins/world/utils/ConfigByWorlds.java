@@ -126,7 +126,7 @@ public class ConfigByWorlds {
                         modName = config.getString("worlds." + w + ".modName");
                     }
                     if (config.get("worlds." + w + ".mohist") != null) {
-                        modName = config.getString("worlds." + w + ".mohist");
+                        isMohist = config.getBoolean("worlds." + w + ".mohist");
                     }
                     // Worlds created by mods are no longer loaded when the mod is unloaded
                     if (isMods && !ServerAPI.hasMod(modName)) {
