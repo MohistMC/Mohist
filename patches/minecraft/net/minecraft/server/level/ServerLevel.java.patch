@@ -139,7 +139,7 @@
 +      convertable = p_215001_;
 +      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
-+      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit.getName() : worldFile.getName();
++      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {

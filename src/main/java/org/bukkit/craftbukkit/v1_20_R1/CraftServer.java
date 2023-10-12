@@ -1022,6 +1022,7 @@ public final class CraftServer implements Server {
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
         Level2LevelStem.bukkit = folder;
+        Level2LevelStem.bukkit_name = name;
         if (world != null) {
             return world;
         }
@@ -1107,10 +1108,6 @@ public final class CraftServer implements Server {
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences());
 
-        if (name.contains("/")) {
-            String[] strings = name.split("/");
-            name = strings[strings.length - 1];
-        }
         name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
         if (!(worlds.containsKey(name))) {
             Level2LevelStem.initPluginWorld.set(false); // Mohist
