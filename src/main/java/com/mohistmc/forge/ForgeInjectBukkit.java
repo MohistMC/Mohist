@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.bukkit.Art;
 import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -99,7 +100,7 @@ public class ForgeInjectBukkit {
         //addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
-        //addEnumArt();
+        addEnumArt();
         addEnumParticle();
         addStatistic();
         addEnumEnvironment();
@@ -342,6 +343,25 @@ public class ForgeInjectBukkit {
             if (pose.ordinal() > 14) {
                 org.bukkit.entity.Pose bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.Pose.class, pose.name());
                 MohistMC.LOGGER.debug("Registered forge Pose as Pose(Bukkit) {}", bukkit);
+            }
+        }
+    }
+
+    public static void addEnumArt() {
+        int i = Art.values().length;
+        for (var entry : ForgeRegistries.PAINTING_VARIANTS) {
+            int width = entry.getWidth();
+            int height = entry.getHeight();
+            ResourceLocation resourceLocation = ForgeRegistries.PAINTING_VARIANTS.getKey(entry);
+            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                String name = normalizeName(resourceLocation.toString());
+                String lookupName = resourceLocation.getPath().toLowerCase(Locale.ROOT);
+                int id = i - 1;
+                Art art = MohistDynamEnum.addEnum(Art.class, name, List.of(Integer.TYPE, Integer.TYPE, Integer.TYPE), List.of(id, width, height));
+                Art.BY_NAME.put(lookupName, art);
+                Art.BY_ID.put(id, art);
+                MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
+                i++;
             }
         }
     }
