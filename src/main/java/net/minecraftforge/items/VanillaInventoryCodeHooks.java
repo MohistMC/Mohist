@@ -45,7 +45,7 @@ public class VanillaInventoryCodeHooks
                     Container container = HopperBlockEntity.getSourceContainer(level, dest);
                     for (int i = 0; i < handler.getSlots(); i++)
                     {
-                        ItemStack extractItem = handler.extractItem(i, 1, true);
+                        ItemStack extractItem = handler.extractItem(i, level.spigotConfig.hopperAmount, true);
                         if (!extractItem.isEmpty()) {
                             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
 
@@ -101,7 +101,7 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) dropper);
+                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
                     org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     Bukkit.getPluginManager().callEvent(event);
@@ -147,7 +147,7 @@ public class VanillaInventoryCodeHooks
                             if (!hopper.getItem(i).isEmpty())
                             {
                                 ItemStack originalSlotContents = hopper.getItem(i).copy();
-                                ItemStack insertStack = hopper.removeItem(i, 1);
+                                ItemStack insertStack = hopper.removeItem(i, hopper.getLevel().spigotConfig.hopperAmount);
                                 ItemStack stack = insertStack;
                                 if (!insertStack.isEmpty()) {
                                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(insertStack);

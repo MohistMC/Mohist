@@ -237,13 +237,13 @@ public class SpigotWorldConfig
     private void hoppers()
     {
         // Set the tick delay between hopper item movements
-        hopperTransfer = getInt( "ticks-per.hopper-transfer", 24 );
+        hopperTransfer = getInt( "ticks-per.hopper-transfer", 8 );
         if ( SpigotConfig.version < 11 )
         {
-            set( "ticks-per.hopper-check", 24 );
+            set( "ticks-per.hopper-check", 1 );
         }
-        hopperCheck = getInt( "ticks-per.hopper-check", 24 );
-        hopperAmount = getInt( "hopper-amount", 3 );
+        hopperCheck = getInt( "ticks-per.hopper-check", 1 );
+        hopperAmount = getInt( "hopper-amount", 1 );
         hopperCanLoadChunks = getBoolean( "hopper-can-load-chunks", false );
         log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount + " Hopper Can Load Chunks: " + hopperCanLoadChunks );
     }
