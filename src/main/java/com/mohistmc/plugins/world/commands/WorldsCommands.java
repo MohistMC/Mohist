@@ -113,7 +113,7 @@ public class WorldsCommands extends Command {
                 } catch (Exception e3) {
                     File loadWorld = new File(worldName); // TODO forge and bukkit world file path?
                     if (loadWorld.exists()) {
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + "worldcommands.world.loadworld");
+                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + MohistMC.i18n.get("worldcommands.world.loadworld"));
                         Bukkit.createWorld(new WorldCreator(worldName));
                         World w = Bukkit.getWorld(worldName);
                         Location location = w.getSpawnLocation();
