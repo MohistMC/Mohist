@@ -43,6 +43,11 @@ import org.bukkit.inventory.InventoryHolder;
  */
 public class InventoryOwner {
 
+    public static Inventory getInventory(Container inventory) {
+        InventoryHolder owner = get(inventory);
+        return (owner == null ? new CraftCustomInventory(inventory).getInventory() : owner.getInventory());
+    }
+
     public static InventoryHolder get(BlockEntity te) {
         return get(te.getLevel(), te.getBlockPos());
     }

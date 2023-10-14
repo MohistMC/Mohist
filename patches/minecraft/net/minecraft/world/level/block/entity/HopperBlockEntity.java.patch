@@ -232,8 +232,9 @@
     }
  
     @Nullable
-    private static Container getSourceContainer(Level p_155597_, Hopper p_155598_) {
+-   private static Container getSourceContainer(Level p_155597_, Hopper p_155598_) {
 -      return getContainerAt(p_155597_, p_155598_.getLevelX(), p_155598_.getLevelY() + 1.0D, p_155598_.getLevelZ());
++   public static Container getSourceContainer(Level p_155597_, Hopper p_155598_) {
 +      // CraftBukkit start
 +      Container inventory = getContainerAt(p_155597_, p_155598_.getLevelX(), p_155598_.getLevelY() + 1.0D, p_155598_.getLevelZ());
 +
