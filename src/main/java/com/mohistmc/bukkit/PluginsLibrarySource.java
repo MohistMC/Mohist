@@ -1,8 +1,7 @@
 package com.mohistmc.bukkit;
 
 import com.mohistmc.MohistMC;
-import java.net.HttpURLConnection;
-import java.net.URI;
+import com.mohistmc.tools.ConnectionUtil;
 
 /**
  * @author Mgazul by MohistMC
@@ -22,20 +21,6 @@ public enum PluginsLibrarySource {
     }
 
     public static boolean isCN() {
-        return MohistMC.i18n.isCN() && getUrlMillis(ALIBABA.url) < getUrlMillis(MAVEN2.url);
-    }
-
-    public static long getUrlMillis(String link) {
-        try {
-            var connection = (HttpURLConnection) URI.create(link).toURL().openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            var start = System.currentTimeMillis();
-            var responseCode = connection.getResponseCode();
-            var end = System.currentTimeMillis();
-            return end - start;
-        } catch (Exception e) {
-            return -0L;
-        }
+        return MohistMC.i18n.isCN() && ConnectionUtil.getUrlMillis(ALIBABA.url) < ConnectionUtil.getUrlMillis(MAVEN2.url);
     }
 }
