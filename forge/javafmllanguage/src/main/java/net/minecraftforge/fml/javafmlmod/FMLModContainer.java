@@ -5,6 +5,13 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
@@ -20,12 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class FMLModContainer extends ModContainer
 {
@@ -112,6 +113,11 @@ public class FMLModContainer extends ModContainer
         }
         catch (Throwable e)
         {
+            // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
+            // actual exception from the mod loading error screen.
+            if (e instanceof InvocationTargetException wrapped)
+                e = Objects.requireNonNullElse(wrapped.getCause(), e); // unwrap the exception
+
             LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
