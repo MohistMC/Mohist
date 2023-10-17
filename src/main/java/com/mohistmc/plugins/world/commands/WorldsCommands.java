@@ -51,7 +51,7 @@ public class WorldsCommands extends Command {
                 WorldsGUI.openWorldGui(player, MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey());
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("addtoconfig")) {
-                ConfigByWorlds.addWorld(player.getWorld().getName());
+                ConfigByWorlds.addWorld(player.getWorld().getName(), false);
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("create")) {
                 type = args[1].toLowerCase(java.util.Locale.ENGLISH);
@@ -117,7 +117,7 @@ public class WorldsCommands extends Command {
                         World w = Bukkit.getWorld(worldName);
                         Location location = w.getSpawnLocation();
                         player.teleport(location);
-                        ConfigByWorlds.addWorld(worldName);
+                        ConfigByWorlds.addWorld(worldName, true);
                         ConfigByWorlds.addSpawn(location);
                         player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.loadWorldSuccessful"));
                     } else {

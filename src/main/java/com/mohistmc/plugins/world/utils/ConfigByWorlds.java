@@ -51,16 +51,18 @@ public class ConfigByWorlds {
         }
     }
 
-    public static void addWorld(String w) {
+    public static void addWorld(String w, boolean isMohist) {
         if (Bukkit.getWorld(w) != null) {
             World world = Bukkit.getWorld(w);
+            String world_name = world.getName();
             if (ConfigByWorlds.f.exists()) {
-                if (config.getString("worlds." + world.getName()) == null) {
-                    config.set("worlds." + world.getName() + ".seed", world.getSeed());
-                    config.set("worlds." + world.getName() + ".environment", world.getEnvironment().name());
-                    config.set("worlds." + world.getName() + ".name", world.getName());
-                    config.set("worlds." + world.getName() + ".info", "-/-");
-                    config.set("worlds." + world.getName() + ".difficulty", world.getDifficulty().name());
+                if (config.getString("worlds." + world_name + ".mohist") == null) {
+                    config.set("worlds." + world_name + ".seed", world.getSeed());
+                    config.set("worlds." + world_name + ".environment", world.getEnvironment().name());
+                    config.set("worlds." + world_name + ".name", world_name);
+                    config.set("worlds." + world_name + ".info", "-/-");
+                    config.set("worlds." + world_name + ".difficulty", world.getDifficulty().name());
+                    config.set("worlds." + world_name + ".mohist", isMohist);
                 }
                 init();
             }
@@ -103,6 +105,7 @@ public class ConfigByWorlds {
                 String environment = "NORMAL";
                 String difficulty = "EASY";
                 boolean isMods = false;
+                boolean isMohist = false;
                 String modName = null;
                 if (Bukkit.getWorld(w) == null) {
                     long seed = -1L;
@@ -121,10 +124,16 @@ public class ConfigByWorlds {
                     if (config.get("worlds." + w + ".modName") != null) {
                         modName = config.getString("worlds." + w + ".modName");
                     }
+                    if (config.get("worlds." + w + ".mohist") != null) {
+                        modName = config.getString("worlds." + w + ".mohist");
+                    }
                     // Worlds created by mods are no longer loaded when the mod is unloaded
                     if (isMods && !ServerAPI.hasMod(modName)) {
                         config.set("worlds." + w, null);
                         init();
+                        canload = false;
+                    }
+                    if (!isMohist) {
                         canload = false;
                     }
                     if (canload) {

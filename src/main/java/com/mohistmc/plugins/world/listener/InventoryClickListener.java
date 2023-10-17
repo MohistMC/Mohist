@@ -49,7 +49,7 @@ public class InventoryClickListener {
         world.setSpawnLocation(spawnLocation);
         p.sendMessage(ChatColor.GREEN + I18n.as("worldlistener.ICL.worldCreateSuccess" , worldName));
         try {
-            ConfigByWorlds.addWorld(world.getName());
+            ConfigByWorlds.addWorld(world.getName(), true);
             ConfigByWorlds.addSpawn(spawnLocation);
         } catch (Exception e) {
             e.fillInStackTrace();

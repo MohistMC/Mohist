@@ -9,7 +9,7 @@ public class WorldManage {
     public static void onEnable() {
         ConfigByWorlds.init();
         ConfigByWorlds.loadWorlds();
-        ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName);
+        ConfigByWorlds.addWorld(ServerAPI.getNMSServer().server.getServer().getProperties().levelName, false);
     }
 
 

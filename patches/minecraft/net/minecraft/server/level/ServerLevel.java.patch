@@ -10,18 +10,16 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -14,12 +_,16 @@
+@@ -14,12 +_,14 @@
  import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
  import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-+
 +import java.io.File;
  import java.io.IOException;
  import java.io.Writer;
  import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.ArrayList;
-+import java.util.Collections;
  import java.util.Comparator;
 +import java.util.Iterator;
  import java.util.List;
@@ -35,14 +33,14 @@
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
  import java.util.function.Predicate;
-@@ -40,6 +_,7 @@
- import net.minecraft.core.Direction;
- import net.minecraft.core.Holder;
- import net.minecraft.core.HolderSet;
-+import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.SectionPos;
- import net.minecraft.core.particles.ParticleOptions;
- import net.minecraft.core.registries.BuiltInRegistries;
+@@ -94,7 +_,6 @@
+ import net.minecraft.world.entity.animal.Animal;
+ import net.minecraft.world.entity.animal.WaterAnimal;
+ import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.entity.npc.Npc;
+ import net.minecraft.world.entity.player.Player;
 @@ -114,6 +_,7 @@
  import net.minecraft.world.level.StructureManager;
  import net.minecraft.world.level.WorldGenLevel;
@@ -80,18 +78,16 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -155,6 +_,17 @@
+@@ -155,6 +_,15 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
-+import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R2.generator.CraftWorldInfo;
 +import org.bukkit.craftbukkit.v1_20_R2.generator.CustomWorldChunkManager;
 +import org.bukkit.craftbukkit.v1_20_R2.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.bukkit.generator.WorldInfo;
@@ -131,7 +127,7 @@
 +      convertable = p_215001_;
 +      File worldFile = DimensionType.getStorageFolder(p_215003_, p_215001_.levelDirectory.path()).toFile();
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
-+      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit.getName() : worldFile.getName();
++      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.K = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {

@@ -1,15 +1,15 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -4,13 +_,22 @@
- import net.minecraft.network.chat.Component;
+@@ -5,6 +_,17 @@
  import net.minecraft.network.protocol.Packet;
  
--public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
-+public record ClientboundSystemChatPacket(String content, boolean overlay) implements Packet<ClientGamePacketListener> {
+ public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
 +
-+   public ClientboundSystemChatPacket(Component content, boolean overlay) {
-+      this(Component.Serializer.toJson(content), overlay);
++   // Mohist start
++   public ClientboundSystemChatPacket(String f_237849_, boolean f_240374_) {
++      this(Component.Serializer.fromJson(f_237849_), f_240374_);
 +   }
++   // Mohist end
 +
 +   public ClientboundSystemChatPacket(net.md_5.bungee.api.chat.BaseComponent[] content, boolean overlay) {
 +      this(net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
@@ -18,10 +18,3 @@
     public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
        this(p_237852_.readComponent(), p_237852_.readBoolean());
     }
- 
-    public void write(FriendlyByteBuf p_237860_) {
--      p_237860_.writeComponent(this.content);
-+      p_237860_.writeUtf(this.content, 262144); // Spigot
-       p_237860_.writeBoolean(this.overlay);
-    }
- 

@@ -18,12 +18,14 @@ public class Level2LevelStem {
     public static Path worldPath_cache; // Mohist
     public static final Map<String, World> plugin_worlds = new LinkedHashMap<>();
     public static File bukkit;
+    public static String bukkit_name;
 
     public static void reloadAndInit(World world) {
         Level2LevelStem.plugin_worlds.put("name", world); // Add to cache
         Level2LevelStem.initPluginWorld.set(false); // check is plugin
         Level2LevelStem.worldPath_cache = null;
         Level2LevelStem.bukkit = null;
+        Level2LevelStem.bukkit_name = null;
     }
 
     public static Path checkPath(Path path) {

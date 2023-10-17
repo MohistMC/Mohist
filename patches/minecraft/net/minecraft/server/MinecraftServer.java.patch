@@ -25,15 +25,14 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -155,6 +_,12 @@
+@@ -155,6 +_,11 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.LazyPlayerSet;
-+import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 +import org.bukkit.event.server.ServerLoadEvent;
  import org.slf4j.Logger;
  
@@ -229,7 +228,7 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -440,40 +_,87 @@
+@@ -440,40 +_,88 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
@@ -244,7 +243,6 @@
 +      }
 +      WorldBorder worldborder = serverlevel.getWorldBorder();
 +      worldborder.applySettings(serverleveldata.getWorldBorder()); // CraftBukkit - move up so that WorldBorder is set during WorldInitEvent
-+      this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(serverlevel.getWorld())); // CraftBukkit - SPIGOT-5569: Call WorldInitEvent before any chunks are generated
 +
 +      if (!serverleveldata.isInitialized()) {
 +         try {
@@ -277,8 +275,10 @@
 +   }
 +
 +   public void prepareLevels(ChunkProgressListener p_129941_) {
-+      this.forceTicks = true;
++      this.markWorldsDirty();
 +      ServerLevel serverlevel = prepareLevels$serverlevel.getAndSet(this.overworld());
++      MinecraftForge.EVENT_BUS.post(new LevelEvent.Load(serverlevel));
++      this.forceTicks = true;
        LOGGER.info("Preparing start region for dimension {}", (Object)serverlevel.dimension().location());
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
@@ -573,7 +573,7 @@
              this.onServerExit();
           }
  
-@@ -709,8 +_,14 @@
+@@ -709,8 +_,17 @@
     }
  
     private boolean haveTime() {
@@ -584,6 +584,9 @@
 +
 +   private void executeModerately() {
 +      this.runAllTasks();
++      while (!processQueue.isEmpty()) {
++         processQueue.remove().run();
++      }
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
@@ -653,7 +656,7 @@
     }
  
     private ServerStatus.Players buildPlayerStatus() {
-@@ -845,42 +_,60 @@
+@@ -845,24 +_,27 @@
     }
  
     public void tickChildren(BooleanSupplier p_129954_) {
@@ -666,12 +669,6 @@
        this.profiler.popPush("levels");
  
 -      for(ServerLevel serverlevel : this.getAllLevels()) {
-+      // CraftBukkit start
-+      // Run tasks that are waiting on processing
-+      while (!processQueue.isEmpty()) {
-+         processQueue.remove().run();
-+      }
-+
 +      // Send time updates to everyone, it will get the right time from the world the player is in.
 +      if (this.tickCount % 20 == 0) {
 +         for (int i = 0; i < this.getPlayerList().players.size(); ++i) {
@@ -696,16 +693,7 @@
  
           try {
              serverlevel.tick(p_129954_);
-          } catch (Throwable throwable) {
--            CrashReport crashreport = CrashReport.forThrowable(throwable, "Exception ticking world");
-+            // Spigot Start
-+            CrashReport crashreport;
-+            try {
-+               crashreport = CrashReport.forThrowable(throwable, "Exception ticking world");
-+            } catch (Throwable t) {
-+               throw new RuntimeException("Error generating crash report", t);
-+            }
-+            // Spigot End
+@@ -871,16 +_,18 @@
              serverlevel.fillReportDetails(crashreport);
              throw new ReportedException(crashreport);
           }
