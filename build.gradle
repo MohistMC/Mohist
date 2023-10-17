@@ -65,6 +65,7 @@ ext {
     VERSION = MC_VERSION + "-" + project.forge_version
     FORGE_VERSION = project.forge_version
     MOHIST_VERSION = JenkinsNumber.info()
+    ADVENTURE_VERSION = '4.14.0'
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
@@ -266,6 +267,21 @@ def sharedDeps = {
     installer 'io.netty:netty-transport:4.1.97.Final'
     installer 'io.netty:netty-transport-classes-epoll:4.1.97.Final'
     installer 'io.netty:netty-transport-native-unix-common:4.1.97.Final'
+
+    // Paper start
+    installer "net.kyori:adventure-api:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-key:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-minimessage:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-serializer-gson:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-serializer-json:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-serializer-legacy:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-serializer-plain:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-serializer-ansi:${ADVENTURE_VERSION}"
+    installer "net.kyori:adventure-text-logger-slf4j:${ADVENTURE_VERSION}"
+    installer "net.kyori:ansi:1.0.3"
+    installer "net.kyori:examination-api:1.3.0"
+    installer "net.kyori:examination-string:1.3.0"
+    // Paper end
 }
 
 def sharedFmlonlyForge = { Project prj ->
