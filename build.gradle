@@ -162,9 +162,9 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
-    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") { transitive = false }
-    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") { transitive = false } // Need by jimfs
-    moduleonly("com.google.guava:failureaccess:1.0.1"){ transitive = false} // Needed by guava
+    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}")
+    moduleonly("com.google.guava:guava:${GUAVA_VERSION}")
+    moduleonly("com.google.guava:failureaccess:1.0.1")
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer 'net.minecraftforge:srgutils:0.5.4'
@@ -270,7 +270,7 @@ def sharedDeps = {
 
 def sharedFmlonlyForge = { Project prj ->
 
-    def MODULE_PATH = getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
+    def MODULE_PATH = getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
     def tokens = [
             TASK:          'forge_server',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
@@ -278,7 +278,7 @@ def sharedFmlonlyForge = { Project prj ->
             MC_VERSION:    MC_VERSION,
             MCP_VERSION:   MCP_VERSION,
             FORGE_GROUP:   prj.group,
-            IGNORE_LIST: getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
+            IGNORE_LIST: getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
 
@@ -289,6 +289,11 @@ def sharedFmlonlyForge = { Project prj ->
                 'libraries/' + getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                 "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
             ]
+            def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                    .findAll{ it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+            }
 
             configure(prj.installerJar) {
                 from(rootProject.file('server_files/args.txt')) {
@@ -300,6 +305,17 @@ def sharedFmlonlyForge = { Project prj ->
                     filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
                     rename { 'data/unix_args.txt' }
                 }
+            }
+        }
+    }
+
+    prj.afterEvaluate {
+        prj.installerJar {
+            dependsOn('makeClasspathFiles')
+            from(rootProject.file('server_files/')) {
+                exclude 'args.txt'
+                filter(ReplaceTokens, tokens: tokens)
+                into('data/')
             }
         }
     }
@@ -363,11 +379,9 @@ project(':mohist') {
     }
 
     configurations {
-        installer {
-            // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-            transitive = false
-        }
-        moduleonly
+        // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
+        installer { transitive = false }
+        moduleonly  { transitive = false }
         api.extendsFrom(installer)
     }
 
