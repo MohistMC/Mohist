@@ -53,7 +53,9 @@ public class CraftChunk implements Chunk {
     private final int x;
     private final int z;
     private static final PalettedContainer<net.minecraft.world.level.block.state.BlockState> emptyBlockIDs = new PalettedContainer<>(net.minecraft.world.level.block.Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES);
-    private static final byte[] emptyLight = new byte[2048];
+
+    private static final byte[] FULL_LIGHT = new byte[2048];
+    private static final byte[] EMPTY_LIGHT = new byte[2048];
 
     public CraftChunk(net.minecraft.world.level.chunk.LevelChunk chunk) {
         worldServer = (chunk.r == null ? null :chunk.r);
@@ -315,14 +317,14 @@ public class CraftChunk implements Chunk {
             LevelLightEngine lightengine = worldServer.getLightEngine();
             DataLayer skyLightArray = lightengine.getLayerListener(LightLayer.SKY).getDataLayerData(SectionPos.of(x, chunk.getSectionYFromSectionIndex(i), z)); // SPIGOT-7498: Convert section index
             if (skyLightArray == null) {
-                sectionSkyLights[i] = emptyLight;
+                sectionSkyLights[i] = worldServer.dimensionType().hasSkyLight() ? FULL_LIGHT : EMPTY_LIGHT;
             } else {
                 sectionSkyLights[i] = new byte[2048];
                 System.arraycopy(skyLightArray.getData(), 0, sectionSkyLights[i], 0, 2048);
             }
             DataLayer emitLightArray = lightengine.getLayerListener(LightLayer.BLOCK).getDataLayerData(SectionPos.of(x, chunk.getSectionYFromSectionIndex(i), z)); // SPIGOT-7498: Convert section index
             if (emitLightArray == null) {
-                sectionEmitLights[i] = emptyLight;
+                sectionEmitLights[i] = EMPTY_LIGHT;
             } else {
                 sectionEmitLights[i] = new byte[2048];
                 System.arraycopy(emitLightArray.getData(), 0, sectionEmitLights[i], 0, 2048);
@@ -394,8 +396,8 @@ public class CraftChunk implements Chunk {
 
         for (int i = 0; i < hSection; i++) {
             blockIDs[i] = emptyBlockIDs;
-            skyLight[i] = emptyLight;
-            emitLight[i] = emptyLight;
+            skyLight[i] = world.getHandle().dimensionType().hasSkyLight() ? FULL_LIGHT : EMPTY_LIGHT;
+            emitLight[i] = EMPTY_LIGHT;
             empty[i] = true;
 
             if (biome != null) {
@@ -413,6 +415,6 @@ public class CraftChunk implements Chunk {
     }
 
     static {
-        Arrays.fill(emptyLight, (byte) 0xFF);
+        Arrays.fill(FULL_LIGHT, (byte) 0xFF);
     }
 }

@@ -1103,7 +1103,7 @@ public final class CraftServer implements Server {
         net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider);
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11),
                 worlddata.isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, console.overworld().getRandomSequences());
-
+        internal.keepSpawnInMemory = creator.keepSpawnInMemory();
         if (name.contains("/")) {
             String[] strings = name.split("/");
             name = strings[strings.length - 1];
