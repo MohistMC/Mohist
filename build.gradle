@@ -308,17 +308,6 @@ def sharedFmlonlyForge = { Project prj ->
             }
         }
     }
-
-    prj.afterEvaluate {
-        prj.installerJar {
-            dependsOn('makeClasspathFiles')
-            from(rootProject.file('server_files/')) {
-                exclude 'args.txt'
-                filter(ReplaceTokens, tokens: tokens)
-                into('data/')
-            }
-        }
-    }
 }
 
 project(':mohist') {
@@ -763,7 +752,7 @@ project(':mohist') {
                         "libraries/io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-x86_64.jar",
                         "libraries/io/netty/netty-transport-native-epoll/4.1.97.Final/netty-transport-native-epoll-4.1.97.Final-linux-aarch_64.jar"
                 ]
-        def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }
+        def MODULE_PATH = getArtifacts(project, project.configurations.moduleonly, false).values().collect { "libraries/${it.downloads.artifact.path}" }.sort()
         def tokens = [
                 TASK         : 'forge_server',
                 MAVEN_PATH   : project.ext.MAVEN_PATH.toString(),
@@ -771,7 +760,7 @@ project(':mohist') {
                 MC_VERSION   : MC_VERSION,
                 MCP_VERSION  : MCP_VERSION,
                 FORGE_GROUP  : project.group,
-                IGNORE_LIST  : getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.join(',').replace("2.1.2", "mohist-2.1.11"),
+                IGNORE_LIST  : getArtifacts(project, project.configurations.moduleonly, false).values().collect { it.downloads.artifact.path.rsplit('/', 1)[1] }.sort().join(',').replace("2.1.2", "mohist-2.1.11"),
                 MODULES      : 'ALL-MODULE-PATH'
         ]
 
