@@ -44,6 +44,11 @@ import javax.annotation.Nullable;
  */
 public class InventoryOwner {
 
+    public static Inventory getInventory(IInventory inventory) {
+        InventoryHolder owner = get(inventory);
+        return (owner == null ? new CraftCustomInventory(inventory).getInventory() : owner.getInventory());
+    }
+
     public static InventoryHolder get(TileEntity te) {
         return get(te.level, te.getBlockPos(), true);
     }
