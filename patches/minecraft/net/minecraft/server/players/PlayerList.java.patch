@@ -315,7 +315,7 @@
        this.f_11195_.m_129901_().m_136305_(p_11287_);
        UUID uuid = p_11287_.m_20148_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
-@@ -364,35 +_,68 @@
+@@ -364,35 +_,69 @@
           this.f_11203_.remove(uuid);
        }
  
@@ -382,6 +382,7 @@
 +
 +      cserver.getPluginManager().callEvent(event);
 +      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
++         entity.set(null);
 +         return Component.m_237113_(event.getKickMessage());
 +      }
 +      return null;
