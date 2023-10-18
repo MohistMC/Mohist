@@ -245,6 +245,6 @@ public class MohistConfig {
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
-        worldmanage = getBoolean("velocity", false);
+        velocity = getBoolean("velocity", false);
     }
 }
