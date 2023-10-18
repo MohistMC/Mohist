@@ -204,6 +204,7 @@ public class MohistConfig {
     public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
+    public static boolean velocity ;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -244,5 +245,6 @@ public class MohistConfig {
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
+        worldmanage = getBoolean("velocity", false);
     }
 }
