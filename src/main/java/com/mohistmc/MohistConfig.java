@@ -210,6 +210,7 @@ public class MohistConfig {
     public static boolean bukkitpermissionshandler;
 
     public static String serverbranding;
+    public static boolean velocity ;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -251,5 +252,6 @@ public class MohistConfig {
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
         serverbranding = ColorsAPI.of(getString("server_branding", MohistMC.modid));
+        velocity = getBoolean("velocity", false);
     }
 }

@@ -5,34 +5,31 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.util.ProxyUtils;
+import io.netty.util.Attribute;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.Channel.VersionTest;
 import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import io.netty.util.Attribute;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.spigotmc.SpigotConfig;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Tracks channels created by {@link ChannelBuilder}. This class is not intended for use by modders.
@@ -72,7 +69,7 @@ public class NetworkRegistry {
                 results.add(net.getChannelName().toString());
         }
 
-        if (!SpigotConfig.bungee && !results.isEmpty()) {
+        if (!ProxyUtils.ignoreRejected() && !results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections", String.join(", ", results));
             return results;
         }
