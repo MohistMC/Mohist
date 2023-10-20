@@ -17,7 +17,7 @@
     private final int additionalDecayRate;
     private List<SculkSpreader.ChargeCursor> cursors = new ArrayList<>();
     private static final Logger LOGGER = LogUtils.getLogger();
-+   Level level; // CraftBukkit
++   public Level level; // CraftBukkit
  
     public SculkSpreader(boolean p_222248_, TagKey<Block> p_222249_, int p_222250_, int p_222251_, int p_222252_, int p_222253_) {
        this.isWorldGeneration = p_222248_;

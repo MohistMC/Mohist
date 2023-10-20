@@ -16,7 +16,7 @@
        this.catalystListener.sculkSpreader.load(p_222787_);
     }
  
-@@ -55,6 +_,7 @@
+@@ -55,11 +_,13 @@
        final SculkSpreader sculkSpreader;
        private final BlockState blockState;
        private final PositionSource positionSource;
@@ -24,6 +24,12 @@
  
        public CatalystListener(BlockState p_283224_, PositionSource p_283095_) {
           this.blockState = p_283224_;
+          this.positionSource = p_283095_;
+          this.sculkSpreader = SculkSpreader.createLevelSpreader();
++         this.sculkSpreader.level = level; // CraftBukkit
+       }
+ 
+       public PositionSource getListenerSource() {
 @@ -104,7 +_,7 @@
           return this.sculkSpreader;
        }
