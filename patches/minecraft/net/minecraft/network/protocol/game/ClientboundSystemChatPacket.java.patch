@@ -1,20 +1,40 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -5,6 +_,17 @@
+@@ -4,18 +_,35 @@
+ import net.minecraft.network.chat.Component;
  import net.minecraft.network.protocol.Packet;
  
- public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
+-public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
++public record ClientboundSystemChatPacket(String a, boolean overlay) implements Packet<ClientGamePacketListener> {
 +
-+   // Mohist start
-+   public ClientboundSystemChatPacket(String f_237849_, boolean f_240374_) {
-+      this(Component.Serializer.fromJson(f_237849_), f_240374_);
++   public ClientboundSystemChatPacket(Component content, boolean overlay) {
++      this(Component.Serializer.toJson(content), overlay);
 +   }
-+   // Mohist end
 +
 +   public ClientboundSystemChatPacket(net.md_5.bungee.api.chat.BaseComponent[] content, boolean overlay) {
-+      this(net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
++      this(content.length == 1 ? net.md_5.bungee.chat.ComponentSerializer.toString(content[0]) : net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
 +   }
 +   // Spigot end
     public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
        this(p_237852_.readComponent(), p_237852_.readBoolean());
     }
+ 
+    public void write(FriendlyByteBuf p_237860_) {
+-      p_237860_.writeComponent(this.content);
++      p_237860_.writeUtf(this.a, 262144); // Spigot
+       p_237860_.writeBoolean(this.overlay);
+    }
+ 
+    public void handle(ClientGamePacketListener p_237864_) {
+       p_237864_.handleSystemChat(this);
++   }
++
++   public Component content() {
++      return Component.Serializer.fromJson(a);
++   }
++
++   public String content0() {
++      return a;
+    }
+ 
+    public boolean isSkippable() {

@@ -868,12 +868,12 @@
           this.setScore(p_9016_.getScore());
           this.portalEntrancePos = p_9016_.portalEntrancePos;
 -      } else if (this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || p_9016_.isSpectator()) {
-+      } else if (KeepInventory.inventory(this) || p_9016_.isSpectator()) {
++      } else if (KeepInventory.inventory(p_9016_) || p_9016_.isSpectator()) {
           this.getInventory().replaceWith(p_9016_.getInventory());
 -         this.experienceLevel = p_9016_.experienceLevel;
 -         this.totalExperience = p_9016_.totalExperience;
 -         this.experienceProgress = p_9016_.experienceProgress;
-+         if (KeepInventory.exp(this) || this.keepLevel) {
++         if (KeepInventory.exp(p_9016_) || this.keepLevel) {
 +            this.experienceLevel = p_9016_.experienceLevel;
 +            this.totalExperience = p_9016_.totalExperience;
 +            this.experienceProgress = p_9016_.experienceProgress;
