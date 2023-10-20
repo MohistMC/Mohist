@@ -522,7 +522,7 @@
        serverplayer.m_20234_(p_11237_.m_19879_());
        serverplayer.m_36163_(p_11237_.m_5737_());
  
-@@ -434,51 +_,82 @@
+@@ -434,51 +_,81 @@
           serverplayer.m_20049_(s);
        }
  
@@ -614,7 +614,6 @@
        return serverplayer;
     }
  
-+
 +   public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_, PlayerRespawnEvent.RespawnReason reason) {
 +      return this.respawn(p_11237_, this.f_11195_.m_129880_(p_11237_.m_8963_()), p_11238_, null, true, reason);
 +   }
