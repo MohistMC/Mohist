@@ -3,7 +3,6 @@ package com.mohistmc.plugins.ban.bans;
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ItemAPI;
-import com.mohistmc.api.ServerAPI;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.BanUtils;
 import com.mohistmc.tools.ListUtils;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**
@@ -34,7 +34,7 @@ public class BanEntity {
                     ItemStack nmsItem = ItemAPI.toNMSItem(itemStack);
                     if (nmsItem.getItem() instanceof SpawnEggItem spawnEggItem) {
                         EntityType<?> entitytype = spawnEggItem.getType(nmsItem.getTag());
-                        ListUtils.isDuplicate(old, ServerAPI.entityTypeMap.get(entitytype));
+                        ListUtils.isDuplicate(old, CraftEntityType.minecraftToBukkit(entitytype).name());
                     }
                 }
             }
