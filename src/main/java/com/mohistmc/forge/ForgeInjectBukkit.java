@@ -52,6 +52,7 @@ import org.bukkit.craftbukkit.v1_20_R2.block.CraftHangingSign;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftSign;
 import org.bukkit.craftbukkit.v1_20_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftSpawnCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -244,10 +245,12 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.ENTITY_TYPES;
         for (net.minecraft.world.entity.EntityType<?> entity : registry) {
             ResourceLocation resourceLocation = registry.getKey(entity);
+            NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             String entityType = normalizeName(resourceLocation.toString());
             if (isMods(resourceLocation)) {
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), Entity.class, typeId, false));
+                bukkitType.key = key;
                 EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity, entityType);

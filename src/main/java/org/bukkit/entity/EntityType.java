@@ -320,7 +320,7 @@ public enum EntityType implements Keyed, Translatable {
     private final Class<? extends Entity> clazz;
     private final short typeId;
     private final boolean independent, living;
-    private final NamespacedKey key;
+    public NamespacedKey key;
 
     public static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
     public static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
@@ -379,7 +379,7 @@ public enum EntityType implements Keyed, Translatable {
     @NotNull
     @Override
     public NamespacedKey getKey() {
-        Preconditions.checkArgument(key != null, "EntityType doesn't have key! Is it UNKNOWN?");
+        Preconditions.checkArgument(key != null, "EntityType doesn't have key! Is it: %s".formatted(name()) );
 
         return key;
     }
