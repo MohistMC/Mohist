@@ -1,32 +1,19 @@
 package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
-import java.util.Objects;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.entity.EntityType;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
 
 public class EntityAPI {
 
     public static String entityName(Entity entity) {
-        String entityName = ServerAPI.entityTypeMap.get(entity.getType());
+        String entityName = CraftEntityType.minecraftToBukkit(entity.getType()).name();
         if (entityName == null) {
             entityName = entity.getName().getString();
         }
         return entityName;
     }
 
-    public static EntityType entityType(String entityName) {
-        EntityType type = EntityType.fromName(entityName);
-        return Objects.requireNonNullElse(type, EntityType.UNKNOWN);
-    }
-
-    public static EntityType entityType(EntityType type, EntityType defType) {
-        if (type != null) {
-            return type;
-        } else {
-            return defType;
-        }
-    }
 
     public static boolean isBan(org.bukkit.entity.Entity entity) {
         return MohistConfig.ban_entity_types.contains(entity.getType().name());

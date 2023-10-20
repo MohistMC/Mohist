@@ -23,7 +23,6 @@ public class ServerAPI {
     public static List<String> modlists_All = new ArrayList<>();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap<>();
     public static List<Command> forgecmd = new ArrayList<>();
-    public static Map<net.minecraft.world.entity.EntityType<?>, String> entityTypeMap = new ConcurrentHashMap<>();
     public static Map<Integer, EnderDragon.Phase> phasetypeMap = new ConcurrentHashMap<>();
 
     static {
