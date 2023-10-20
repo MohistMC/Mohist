@@ -164,6 +164,9 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEffectAndPotion() {
         // Points
+        int origin = PotionEffectType.values().length;
+        int size = ForgeRegistries.MOB_EFFECTS.getEntries().size();
+        PotionEffectType.byId = new PotionEffectType[Math.max(origin + 1, size + 1)];
         for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
             String name = normalizeName(ForgeRegistries.MOB_EFFECTS.getKey(effect).toString());
             MohistPotionEffect pet = new MohistPotionEffect(effect, name);
