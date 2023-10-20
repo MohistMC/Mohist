@@ -2102,6 +2102,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return (getHandle().requestedViewDistance() == 0) ? Bukkit.getViewDistance() : getHandle().requestedViewDistance();
     }
 
+    // Paper start
+    @Override
+    public java.util.Locale locale() {
+        return net.kyori.adventure.translation.Translator.parseLocale(this.getHandle().getLanguage());
+    }
+    // Paper end
+
     @Override
     public int getPing() {
         return getHandle().connection.latency();

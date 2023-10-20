@@ -1837,6 +1837,15 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public int getClientViewDistance();
 
+    // Paper start
+    /**
+     * Gets the player's current locale.
+     *
+     * @return the player's locale
+     */
+    @NotNull java.util.Locale locale();
+    // Paper end
+
     /**
      * Gets the player's estimated ping in milliseconds.
      *
