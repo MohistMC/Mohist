@@ -8,7 +8,6 @@ import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.inventory.MohistPotionEffect;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,14 +15,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.StatType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -174,10 +171,9 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.POTIONS;
         for (Potion potion : ForgeRegistries.POTIONS) {
             ResourceLocation resourceLocation = registry.getKey(potion);
-            if (potion != Potions.EMPTY) {
+            if (potion != Potions.EMPTY && !resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 String name = normalizeName(resourceLocation.toString());
-                MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
-                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : BuiltInRegistries.MOB_EFFECT.getId(effectInstance.getEffect()) + 1, false, false));
+                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, List.of(String.class), List.of(name));
                 if (potionType != null) {
                     MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
                 }
