@@ -10,6 +10,7 @@ import com.mohistmc.bukkit.entity.MohistModsProjectileEntity;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
@@ -414,7 +415,7 @@ public enum EntityType implements Keyed, Translatable {
         if (name == null) {
             return null;
         }
-        return NAME_MAP.get(name.toLowerCase(java.util.Locale.ENGLISH));
+        return Objects.requireNonNullElse(NAME_MAP.get(name.toLowerCase(java.util.Locale.ENGLISH)), EntityType.UNKNOWN);
     }
 
     /**

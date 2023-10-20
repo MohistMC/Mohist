@@ -1,7 +1,6 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.api.EntityAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
@@ -16,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public class BansCommand extends Command {
                     case "entity" -> {
                         Warehouse wh = new Warehouse("§2Show bans entity");
                         for (String s : MohistConfig.ban_entity_types) {
-                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
+                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityType.fromName(s)))
                                     .setDisplayName(s)
                                     .toItemStack()));
                         }
