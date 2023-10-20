@@ -373,7 +373,7 @@ public enum EntityType implements Keyed, Translatable {
     @Deprecated
     @Nullable
     public String getName() {
-        return name;
+        return name == null ? name() : name; // Mohist
     }
 
     @NotNull

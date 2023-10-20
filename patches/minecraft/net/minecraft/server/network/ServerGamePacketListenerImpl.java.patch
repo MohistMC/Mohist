@@ -949,7 +949,7 @@
        }
     }
  
-@@ -1155,8 +_,13 @@
+@@ -1155,8 +_,14 @@
           Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.command(), p_215225_.timeStamp(), p_215225_.lastSeenMessages());
           if (optional.isPresent()) {
              this.server.submit(() -> {
@@ -960,6 +960,7 @@
 +               // CraftBukkit end
                 this.performChatCommand(p_215225_, optional.get());
 -               this.detectRateSpam();
++               this.s = "/" + p_215225_.command();
 +               this.detectRateSpam(); // Spigot
              });
           }
@@ -1013,6 +1014,54 @@
              this.send(new ClientboundSystemChatPacket(Component.translatable("chat.disabled.options").withStyle(ChatFormatting.RED), false));
              return Optional.empty();
           } else {
+@@ -1264,11 +_,43 @@
+    }
+ 
+    private void broadcastChatMessage(PlayerChatMessage p_243277_) {
+-      this.server.getPlayerList().broadcastChatMessage(p_243277_, this.player, ChatType.bind(ChatType.CHAT, this.player));
+-      this.detectRateSpam();
+-   }
+-
++      String s = p_243277_.signedContent();
++      if (s.isEmpty()) {
++         LOGGER.warn(this.player.getScoreboardName() + " tried to send an empty message");
++      } else if (getCraftPlayer().isConversing()) {
++         final String conversationInput = s;
++         this.server.processQueue.add(new Runnable() {
++            @Override
++            public void run() {
++               getCraftPlayer().acceptConversationInput(conversationInput);
++            }
++         });
++      } else if (this.player.getChatVisibility() == ChatVisiblity.SYSTEM) { // Re-add "Command Only" flag check
++         this.send(new ClientboundSystemChatPacket(Component.translatable("chat.cannotSend").withStyle(ChatFormatting.RED), false)); // Paper - Adventure
++      } else {
++         this.chat(s, p_243277_, true);
++      }
++      // this.server.getPlayerList().broadcastChatMessage(p_243277_, this.player, ChatType.bind(ChatType.CHAT, this.player));
++      this.detectRateSpam(s);
++   }
++
++   private String s = null;
++
++   private void detectRateSpam(String string) {
++      s = string;
++      detectRateSpam();
++   }
+    private void detectRateSpam() {
++      boolean counted = true;
++      for ( String exclude : org.spigotmc.SpigotConfig.spamExclusions)
++      {
++         if ( exclude != null && s != null && s.startsWith( exclude ) )
++         {
++            counted = false;
++            break;
++         }
++      }
++      if (!counted) return;
+       this.chatSpamTickCount += 20;
+       if (this.chatSpamTickCount > 200 && !this.server.getPlayerList().isOp(this.player.getGameProfile())) {
+          this.disconnect(Component.translatable("disconnect.spam"));
 @@ -1288,12 +_,61 @@
  
     public void handleAnimate(ServerboundSwingPacket p_9926_) {
