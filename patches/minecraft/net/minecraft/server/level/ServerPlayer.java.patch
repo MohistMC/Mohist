@@ -912,7 +912,7 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1346,25 +_,32 @@
+@@ -1346,25 +_,37 @@
     }
  
     public void m_8999_(ServerLevel p_9000_, double p_9001_, double p_9002_, double p_9003_, float p_9004_, float p_9005_) {
@@ -923,10 +923,14 @@
 +      // CraftBukkit end
        this.m_9213_(this);
        this.m_8127_();
++
++      if (cause != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
++         this.getBukkitEntity().teleport(new Location(p_9000_.getWorld(), p_9001_, p_9002_, p_9003_, p_9004_, p_9005_), cause);
++         return;
++      }
        if (p_9000_ == this.f_19853_) {
--         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 -      } else {
-+         this.f_8906_.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, cause);
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
           ServerLevel serverlevel = this.m_183503_();
           LevelData leveldata = p_9000_.m_6106_();
@@ -940,8 +944,7 @@
           this.m_143425_(p_9000_);
           p_9000_.m_8622_(this);
           this.m_9209_(serverlevel);
--         this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-+         this.f_8906_.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_, cause);
+          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 +         this.f_8941_.m_9260_(p_9000_);
           this.f_8924_.m_6846_().m_11229_(this, p_9000_);
           this.f_8924_.m_6846_().m_11292_(this);
