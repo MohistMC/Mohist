@@ -82,6 +82,7 @@ public class ForgeInjectBukkit {
     public static Map<StatType<?>, Statistic> statisticMap = new HashMap<>();
     public static Map<net.minecraft.world.level.biome.Biome, Biome> biomeBiomeMap = new HashMap<>();
     public static Map<NamespacedKey, EntityType> entityTypeMap = new HashMap<>();
+    public static Map<NamespacedKey, Particle> particleMap = new HashMap<>();
 
 
     public static void init() {
@@ -192,9 +193,11 @@ public class ForgeInjectBukkit {
             ResourceLocation resourceLocation = registry.getKey(particleType);
             String name = normalizeName(resourceLocation.toString());
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                Particle particle = MohistDynamEnum.addEnum(Particle.class, name);
+                NamespacedKey namespacedKey = CraftNamespacedKey.fromMinecraft(resourceLocation);
+                Particle particle = MohistDynamEnum.addEnum(Particle.class, name, List.of(String.class), List.of(namespacedKey.toString()));
                 if (particle != null) {
-                    org.bukkit.craftbukkit.v1_20_R2.CraftParticle.putParticles(particle, resourceLocation);
+                    particle.key = namespacedKey;
+                    particleMap.put(namespacedKey, particle);
                     MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
                 }
             }

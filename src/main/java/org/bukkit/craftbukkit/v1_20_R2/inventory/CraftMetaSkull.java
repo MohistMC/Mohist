@@ -11,7 +11,6 @@ import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -143,12 +142,13 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             // SPIGOT-6558: Set initial textures
             tag.put(SKULL_OWNER.NBT, serializedProfile);
             // Fill in textures
-            SkullBlockEntity.fillProfileTextures(profile).thenAccept((optional) -> {
-                optional.ifPresent((filledProfile) -> {
-                    setProfile(filledProfile);
+            PlayerProfile ownerProfile = getOwnerProfile();
+            if (ownerProfile.getTextures().isEmpty()) {
+                ownerProfile.update().thenAccept((filledProfile) -> {
+                    setOwnerProfile(filledProfile);
                     tag.put(SKULL_OWNER.NBT, serializedProfile);
                 });
-            });
+            }
         }
 
         if (noteBlockSound != null) {
