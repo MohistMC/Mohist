@@ -1,17 +1,16 @@
 package com.mohistmc.api;
 
 import io.netty.util.internal.ConcurrentSet;
-import net.minecraft.server.MinecraftServer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 public class ServerAPI {
 

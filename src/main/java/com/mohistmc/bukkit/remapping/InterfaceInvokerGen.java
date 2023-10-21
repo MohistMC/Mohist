@@ -2,6 +2,9 @@ package com.mohistmc.bukkit.remapping;
 
 import com.google.common.collect.Maps;
 import com.mohistmc.MohistMC;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.Opcodes;
@@ -11,10 +14,6 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * InterfaceInvokerGen

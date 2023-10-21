@@ -1,5 +1,16 @@
 package com.mohistmc.bukkit.remapping;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.regex.Pattern;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -14,18 +25,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.regex.Pattern;
 
 public class ASMUtils {
 

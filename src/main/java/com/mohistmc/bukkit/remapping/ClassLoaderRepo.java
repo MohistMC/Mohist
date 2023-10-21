@@ -1,14 +1,13 @@
 package com.mohistmc.bukkit.remapping;
 
-import net.md_5.specialsource.repo.ClassRepo;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
  * ClassLoaderRepo

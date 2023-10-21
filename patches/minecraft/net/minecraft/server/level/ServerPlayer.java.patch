@@ -1,27 +1,14 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.server.level;
  
  import com.google.common.collect.Lists;
-+import com.mohistmc.entity.MohistModsAbstractHorse;
-+import com.mohistmc.inventory.MohistModsInventory;
++import com.mohistmc.bukkit.inventory.MohistModsInventory;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
-@@ -10,6 +_,7 @@
- import java.util.OptionalInt;
- import java.util.Random;
- import java.util.UUID;
-+import java.util.concurrent.atomic.AtomicReference;
- import javax.annotation.Nullable;
- import net.minecraft.BlockUtil;
- import net.minecraft.ChatFormatting;
-@@ -79,9 +_,11 @@
- import net.minecraft.stats.Stats;
- import net.minecraft.util.Mth;
- import net.minecraft.util.Unit;
-+import net.minecraft.util.datafix.fixes.BlockEntityKeepPacked;
+@@ -82,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -53,7 +40,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -132,9 +_,25 @@
+@@ -132,9 +_,23 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -64,12 +51,10 @@
 +import org.bukkit.craftbukkit.v1_18_R2.CraftWorldBorder;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryHorse;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftDimensionUtil;
 +import org.bukkit.event.player.*;
-+import org.bukkit.inventory.HorseInventory;
 +import org.bukkit.inventory.MainHand;
  import org.slf4j.Logger;
 +import org.bukkit.Bukkit;

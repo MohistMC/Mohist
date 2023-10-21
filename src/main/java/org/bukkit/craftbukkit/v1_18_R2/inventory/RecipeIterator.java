@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.v1_18_R2.inventory;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.mohistmc.inventory.MohistSpecialRecipe;
+import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.RecipeType;

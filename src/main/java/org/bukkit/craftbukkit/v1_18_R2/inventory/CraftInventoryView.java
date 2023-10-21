@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_18_R2.inventory;
 
-import com.mohistmc.inventory.MohistModsInventory;
+import com.mohistmc.bukkit.inventory.MohistModsInventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;

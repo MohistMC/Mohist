@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.v1_18_R2.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mohistmc.inventory.MohistSpecialIngredient;
+import com.mohistmc.bukkit.inventory.MohistSpecialIngredient;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;

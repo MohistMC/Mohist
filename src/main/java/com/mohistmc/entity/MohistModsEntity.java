@@ -1,11 +1,10 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
+import java.util.Objects;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 public class MohistModsEntity extends CraftEntity {
 

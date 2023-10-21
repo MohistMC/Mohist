@@ -6,22 +6,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.JarRemapper;
-import net.md_5.specialsource.RemappingClassAdapter;
-import net.md_5.specialsource.repo.ClassRepo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.spongepowered.asm.service.MixinService;
-
 import java.io.File;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
@@ -41,6 +25,21 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.JarRemapper;
+import net.md_5.specialsource.RemappingClassAdapter;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.spongepowered.asm.service.MixinService;
 
 /**
  * ClassLoaderAdapter

@@ -1,12 +1,11 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
+import java.util.Objects;
 import net.minecraft.world.entity.TamableAnimal;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftTameableAnimal;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 /**
  * Mohist

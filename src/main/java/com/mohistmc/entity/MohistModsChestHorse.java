@@ -1,14 +1,13 @@
 package com.mohistmc.entity;
 
 import com.mohistmc.api.EntityAPI;
+import java.util.Objects;
 import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftChestedHorse;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
-
-import java.util.Objects;
 
 public class MohistModsChestHorse extends CraftChestedHorse {
 

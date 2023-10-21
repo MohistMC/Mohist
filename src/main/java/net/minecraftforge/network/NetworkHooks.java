@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.mohistmc.inventory.MohistModsInventory;
+import com.mohistmc.bukkit.inventory.MohistModsInventory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.TextComponent;

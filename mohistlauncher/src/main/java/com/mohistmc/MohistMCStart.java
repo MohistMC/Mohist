@@ -52,14 +52,19 @@ public class MohistMCStart {
         MohistConfigUtil.copyMohistConfig();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
-            System.out.println("\n" + "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" + "\n" +
-                    "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+            String test = """
+
+                     ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
+                     ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝
+                     ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║
+                     ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║
+                     ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
+                     ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
+                                        
+                    
+                    %s - %s, Java(%s) %s
+                    """;
+            System.out.println(test.formatted(i18n.get("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {

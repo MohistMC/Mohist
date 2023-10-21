@@ -7,6 +7,21 @@ import com.mohistmc.MohistMC;
 import io.izzel.tools.func.Func4;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+import java.security.SecureClassLoader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -25,22 +40,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.spongepowered.asm.util.Bytecode;
-
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.nio.ByteBuffer;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
-import java.security.SecureClassLoader;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ArclightRedirectAdapter

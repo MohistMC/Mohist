@@ -16,8 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.inventory;
+package com.mohistmc.bukkit.inventory;
 
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.world.Container;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
@@ -36,9 +38,6 @@ import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class CraftCustomInventory implements InventoryHolder {
 

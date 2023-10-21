@@ -1,73 +1,52 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -1,25 +_,23 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.server.players;
  
 +import com.google.common.base.Predicate;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-+import com.mohistmc.forge.ForgeInjectBukkit;
- import com.mojang.authlib.GameProfile;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
+@@ -9,7 +_,6 @@
  import io.netty.buffer.Unpooled;
  import java.io.File;
  import java.net.SocketAddress;
 -import java.nio.file.Path;
  import java.text.SimpleDateFormat;
--import java.util.List;
--import java.util.Map;
--import java.util.Optional;
--import java.util.Set;
--import java.util.UUID;
-+import java.util.*;
+ import java.util.List;
+ import java.util.Map;
+@@ -17,9 +_,9 @@
+ import java.util.Set;
+ import java.util.UUID;
  import java.util.function.Function;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
-+
  import net.minecraft.ChatFormatting;
 -import net.minecraft.FileUtil;
  import net.minecraft.Util;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.RegistryAccess;
-@@ -27,43 +_,18 @@
- import net.minecraft.nbt.NbtOps;
- import net.minecraft.network.Connection;
- import net.minecraft.network.FriendlyByteBuf;
--import net.minecraft.network.chat.ChatType;
--import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.MutableComponent;
--import net.minecraft.network.chat.TranslatableComponent;
-+import net.minecraft.network.chat.*;
+@@ -30,9 +_,11 @@
+ import net.minecraft.network.chat.ChatType;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.MutableComponent;
++import net.minecraft.network.chat.TextComponent;
+ import net.minecraft.network.chat.TranslatableComponent;
  import net.minecraft.network.protocol.Packet;
--import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
--import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
--import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
--import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
--import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
--import net.minecraft.network.protocol.game.ClientboundLoginPacket;
--import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
--import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
--import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
--import net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket;
--import net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket;
--import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket;
--import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket;
--import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket;
--import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
--import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
--import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
--import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
--import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
--import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
--import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
--import net.minecraft.network.protocol.game.ClientboundSoundPacket;
--import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
--import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
--import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
-+import net.minecraft.network.protocol.game.*;
- import net.minecraft.resources.ResourceKey;
+ import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
++import net.minecraft.network.protocol.game.ClientboundChatPacket;
+ import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+ import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+ import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+@@ -49,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
++import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+ import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+ import net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket;
+@@ -61,9 +_,11 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.ServerScoreboard;
@@ -79,11 +58,10 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -90,6 +_,15 @@
+@@ -90,6 +_,18 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
-+import org.apache.logging.log4j.LogManager;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
@@ -91,7 +69,11 @@
 +import org.bukkit.craftbukkit.v1_18_R2.command.ColouredConsoleSender;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
-+import org.bukkit.event.player.*;
++import org.bukkit.event.player.PlayerChangedWorldEvent;
++import org.bukkit.event.player.PlayerJoinEvent;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
++import org.bukkit.event.player.PlayerRespawnEvent;
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
@@ -115,7 +97,7 @@
     public final PlayerDataStorage f_11204_;
     private boolean f_11205_;
     private final RegistryAccess.Frozen f_11206_;
-@@ -118,9 +_,20 @@
+@@ -118,9 +_,19 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -131,7 +113,6 @@
 +      // CraftBukkit end
 +
        this.f_11195_ = p_203842_;
-+      LogManager.getLogger().info("Forge Injected Bukkit!");
 +      p_203842_.console = ColouredConsoleSender.getInstance();
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
@@ -187,34 +168,19 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -174,19 +_,57 @@
+@@ -174,19 +_,62 @@
        } else {
           mutablecomponent = new TranslatableComponent("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
        }
--
--      this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
 +      // CraftBukkit start
 +      mutablecomponent.m_130940_(ChatFormatting.YELLOW);
 +      String joinMessage = CraftChatMessage.fromComponent(mutablecomponent);
-+      CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
-+      // Ensure that player inventory is populated with its viewer
-+      p_11263_.f_36096_.transferTo(p_11263_.f_36096_, bukkitPlayer);
-+
-+      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
-+      Bukkit.getPluginManager().callEvent(playerJoinEvent);
-+
-+      joinMessage = playerJoinEvent.getJoinMessage();
-+
-+      if (joinMessage != null && joinMessage.length() > 0) {
-+         for (Component line : org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage.fromString(joinMessage)) {
-+            f_11195_.m_6846_().m_11268_(new ClientboundChatPacket(line, ChatType.SYSTEM, Util.f_137441_));
-+         }
-+      }
-+      // CraftBukkit end
-+
+ 
+-      this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
 -      this.f_11196_.add(p_11263_);
 +      this.addPlayer(p_11263_);
++      this.playersByName.put(p_11263_.m_6302_().toLowerCase(java.util.Locale.ROOT), p_11263_); // Spigot
        this.f_11197_.put(p_11263_.m_142081_(), p_11263_);
 -      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
 -
@@ -224,6 +190,25 @@
 -
 -      serverlevel1.m_8834_(p_11263_);
 -      this.f_11195_.m_129901_().m_136293_(p_11263_);
++      CraftPlayer bukkitPlayer = p_11263_.getBukkitEntity();
++      // Ensure that player inventory is populated with its viewer
++      p_11263_.f_36096_.transferTo(p_11263_.f_36096_, bukkitPlayer);
++
++      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
++      Bukkit.getPluginManager().callEvent(playerJoinEvent);
++
++      if (!p_11263_.f_8906_.f_9742_.m_129536_()) {
++         return;
++      }
++      joinMessage = playerJoinEvent.getJoinMessage();
++
++      if (joinMessage != null && joinMessage.length() > 0) {
++         for (Component line : org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage.fromString(joinMessage)) {
++            f_11195_.m_6846_().m_11268_(new ClientboundChatPacket(line, ChatType.SYSTEM, Util.f_137441_));
++         }
++      }
++      // CraftBukkit end
++
 +      // CraftBukkit start - sendAll above replaced with this loop
 +      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_);
 +
