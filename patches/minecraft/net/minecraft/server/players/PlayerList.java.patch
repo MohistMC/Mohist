@@ -635,7 +635,7 @@
 +      serverplayer.f_8906_.m_141995_(new ClientboundSetSimulationDistancePacket(serverlevel1.spigotConfig.simulationDistance)); // Spigot
 +      serverplayer.spawnIn(serverlevel1);
 +      serverplayer.m_146912_();
-+      serverplayer.f_8906_.teleport(new Location(serverlevel1.getWorld(), serverplayer.m_20182_().m_7096_(), serverplayer.m_20182_().m_7098_(), serverplayer.m_20182_().m_7094_(), serverplayer.m_146908_(), serverplayer.m_146909_()));
++      serverplayer.f_8906_.teleport(new Location(serverlevel1.getWorld(), serverplayer.m_20185_(), serverplayer.m_20186_(), serverplayer.m_20189_(), serverplayer.m_146908_(), serverplayer.m_146909_()));
 +      serverplayer.m_20260_(false);
        serverplayer.f_8906_.m_141995_(new ClientboundSetDefaultSpawnPositionPacket(serverlevel1.m_8900_(), serverlevel1.m_8901_()));
 -      serverplayer.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
