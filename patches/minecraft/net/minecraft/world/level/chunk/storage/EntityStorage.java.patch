@@ -1,5 +1,21 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
+@@ -48,15 +_,6 @@
+             this.f_156540_.add(p_156551_.m_45588_());
+             return m_156568_(p_156551_);
+          } else {
+-            try {
+-               ChunkPos chunkpos = m_156570_(p_223458_.get());
+-               if (!Objects.equals(p_156551_, chunkpos)) {
+-                  f_156535_.error("Chunk file at {} is in the wrong location. (Expected {}, got {})", p_156551_, p_156551_, chunkpos);
+-               }
+-            } catch (Exception exception) {
+-               f_156535_.warn("Failed to parse chunk {} position info", p_156551_, exception);
+-            }
+-
+             CompoundTag compoundtag = this.m_156572_(p_223458_.get());
+             ListTag listtag = compoundtag.m_128437_("Entities", 10);
+             List<Entity> list = EntityType.m_147045_(listtag, this.f_156538_).collect(ImmutableList.toImmutableList());
 @@ -89,8 +_,12 @@
           ListTag listtag = new ListTag();
           p_156559_.m_156792_().forEach((p_156567_) -> {

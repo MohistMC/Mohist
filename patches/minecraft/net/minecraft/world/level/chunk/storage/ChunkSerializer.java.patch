@@ -9,6 +9,16 @@
     private static final Logger f_63449_ = LogUtils.getLogger();
     private static final String f_156511_ = "UpgradeData";
     private static final String f_188228_ = "block_ticks";
+@@ -78,9 +_,6 @@
+ 
+    public static ProtoChunk m_188230_(ServerLevel p_188231_, PoiManager p_188232_, ChunkPos p_188233_, CompoundTag p_188234_) {
+       ChunkPos chunkpos = new ChunkPos(p_188234_.m_128451_("xPos"), p_188234_.m_128451_("zPos"));
+-      if (!Objects.equals(p_188233_, chunkpos)) {
+-         f_63449_.error("Chunk file at {} is in the wrong location; relocating. (Expected {}, got {})", p_188233_, p_188233_, chunkpos);
+-      }
+ 
+       UpgradeData upgradedata = p_188234_.m_128425_("UpgradeData", 10) ? new UpgradeData(p_188234_.m_128469_("UpgradeData"), p_188231_) : UpgradeData.f_63320_;
+       boolean flag = p_188234_.m_128471_("isLightOn");
 @@ -108,9 +_,9 @@
                 palettedcontainer = new PalettedContainer<>(Block.f_49791_, Blocks.f_50016_.m_49966_(), PalettedContainer.Strategy.f_188137_);
              }
