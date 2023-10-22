@@ -143,7 +143,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             tag.put(SKULL_OWNER.NBT, serializedProfile);
             // Fill in textures
             PlayerProfile ownerProfile = getOwnerProfile();
-            if (ownerProfile.getTextures().isEmpty()) {
+            if (ownerProfile != null && ownerProfile.getTextures().isEmpty()) {
                 ownerProfile.update().thenAccept((filledProfile) -> {
                     setOwnerProfile(filledProfile);
                     tag.put(SKULL_OWNER.NBT, serializedProfile);
