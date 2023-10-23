@@ -586,7 +586,40 @@
                             f_9744_.warn("{} moved too quickly! {},{},{}", this.f_9743_.m_7755_().getString(), d6, d7, d8);
                             this.m_9774_(this.f_9743_.m_20185_(), this.f_9743_.m_20186_(), this.f_9743_.m_20189_(), this.f_9743_.m_146908_(), this.f_9743_.m_146909_());
                             return;
-@@ -901,6 +_,7 @@
+@@ -896,11 +_,39 @@
+                      d8 = d2 - this.f_9758_;
+                      boolean flag = d7 > 0.0D;
+                      if (this.f_9743_.m_20096_() && !p_9874_.m_134139_() && flag) {
+-                        this.f_9743_.m_6135_();
++                        // Paper start - Add player jump event
++                        org.bukkit.entity.Player player = this.getCraftPlayer();
++                        Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
++                        Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
++
++                        // If the packet contains movement information then we update the To location with the correct XYZ.
++                        if (p_9874_.f_134124_) {
++                           to.setX(p_9874_.f_134118_);
++                           to.setY(p_9874_.f_134119_);
++                           to.setZ(p_9874_.f_134120_);
++                        }
++
++                        // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
++                        if (p_9874_.f_134125_) {
++                           to.setYaw(p_9874_.f_134121_);
++                           to.setPitch(p_9874_.f_134122_);
++                        }
++
++                        com.destroystokyo.paper.event.player.PlayerJumpEvent event = new com.destroystokyo.paper.event.player.PlayerJumpEvent(player, from, to);
++
++                        if (event.callEvent()) {
++                           this.f_9743_.m_6135_();
++                        } else {
++                           from = event.getFrom();
++                           this.internalTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch(), Collections.emptySet());
++                           return;
++                        }
++                        // Paper end
+                      }
  
                       boolean flag1 = this.f_9743_.f_201939_;
                       this.f_9743_.m_6478_(MoverType.PLAYER, new Vec3(d6, d7, d8));
