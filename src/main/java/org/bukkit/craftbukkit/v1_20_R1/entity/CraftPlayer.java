@@ -1277,6 +1277,41 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    // Paper start
+    public int applyMending(int amount) {
+        ServerPlayer handle = this.getHandle();
+        // Logic copied from EntityExperienceOrb and remapped to unobfuscated methods/properties
+        final var stackEntry = net.minecraft.world.item.enchantment.EnchantmentHelper
+                .getRandomItemWith(net.minecraft.world.item.enchantment.Enchantments.MENDING, handle);
+        final net.minecraft.world.item.ItemStack itemstack = stackEntry != null ? stackEntry.getValue() : net.minecraft.world.item.ItemStack.EMPTY;
+        if (!itemstack.isEmpty() && itemstack.getItem().canBeDepleted()) {
+            net.minecraft.world.entity.ExperienceOrb orb = net.minecraft.world.entity.EntityType.EXPERIENCE_ORB.create(handle.level());
+            orb.value = amount;
+            orb.spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM;
+            orb.setPosRaw(handle.getX(), handle.getY(), handle.getZ());
+
+            int i = Math.min(orb.xpToDurability(amount), itemstack.getDamageValue());
+            org.bukkit.event.player.PlayerItemMendEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callPlayerItemMendEvent(handle, orb, itemstack, stackEntry.getKey(), i, orb::durabilityToXp); // Paper
+            i = event.getRepairAmount();
+            orb.discard();
+            if (!event.isCancelled()) {
+                amount -= event.getDurabilityToXpOperation().applyAsInt(i); // Paper
+                itemstack.setDamageValue(itemstack.getDamageValue() - i);
+            }
+        }
+        return amount;
+    }
+
+    @Override
+    public void giveExp(int exp, boolean applyMending) {
+        if (applyMending) {
+            exp = this.applyMending(exp);
+        }
+        // Paper end
+        this.getHandle().giveExperiencePoints(exp);
+    }
+
+    @Override
     public void giveExp(int exp) {
         getHandle().giveExperiencePoints(exp);
     }

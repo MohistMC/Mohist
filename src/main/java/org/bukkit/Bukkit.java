@@ -1419,6 +1419,24 @@ public final class Bukkit {
         return server.createInventory(owner, size);
     }
 
+    // Paper start
+    /**
+     * Creates an empty inventory of type {@link InventoryType#CHEST} with the
+     * specified size and title.
+     *
+     * @param owner the holder of the inventory, or null to indicate no holder
+     * @param size a multiple of 9 as the size of inventory to create
+     * @param title the title of the inventory, displayed when inventory is
+     *     viewed
+     * @return a new inventory
+     * @throws IllegalArgumentException if the size is not a multiple of 9
+     */
+    @NotNull
+    public static Inventory createInventory(@Nullable InventoryHolder owner, int size, net.kyori.adventure.text.@NotNull Component title) throws IllegalArgumentException {
+        return server.createInventory(owner, size, title);
+    }
+    // Paper end
+
     /**
      * Creates an empty inventory of type {@link InventoryType#CHEST} with the
      * specified size and title.

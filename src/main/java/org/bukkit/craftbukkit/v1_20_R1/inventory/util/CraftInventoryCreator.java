@@ -53,6 +53,13 @@ public final class CraftInventoryCreator {
         return DEFAULT_CONVERTER.createInventory(holder, size);
     }
 
+    // Paper start
+    public Inventory createInventory(InventoryHolder holder, int size, net.kyori.adventure.text.Component title) {
+        return DEFAULT_CONVERTER.createInventory(holder, size, title);
+    }
+    // Paper end
+
+
     public Inventory createInventory(InventoryHolder holder, int size, String title) {
         return DEFAULT_CONVERTER.createInventory(holder, size, title);
     }

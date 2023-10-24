@@ -17,6 +17,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.WorldBorder;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.ban.ProfileBanList;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -26,6 +27,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -953,6 +955,15 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public void resetPlayerWeather();
 
+    // Paper start
+    /**
+     * Gives the player the amount of experience specified.
+     *
+     * @param amount Exp amount to give
+     */
+    public default void giveExp(int amount) {
+        giveExp(amount, false);
+    }
     /**
      * Gets the player's cooldown between picking up experience orbs.
      *
@@ -978,8 +989,20 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Gives the player the amount of experience specified.
      *
      * @param amount Exp amount to give
+     * @param applyMending Mend players items with mending, with same behavior as picking up orbs. calls {@link #applyMending(int)}
      */
-    public void giveExp(int amount);
+    public void giveExp(int amount, boolean applyMending);
+
+    /**
+     * Applies the mending effect to any items just as picking up an orb would.
+     *
+     * Can also be called with {@link #giveExp(int, boolean)} by passing true to applyMending
+     *
+     * @param amount Exp to apply
+     * @return the remaining experience
+     */
+    public int applyMending(int amount);
+    // Paper end
 
     /**
      * Gives the player the amount of experience levels specified. Levels can

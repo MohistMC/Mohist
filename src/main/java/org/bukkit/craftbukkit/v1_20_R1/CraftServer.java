@@ -1892,6 +1892,14 @@ public final class CraftServer implements Server {
         return CraftInventoryCreator.INSTANCE.createInventory(owner, size);
     }
 
+    // Paper start
+    @Override
+    public Inventory createInventory(InventoryHolder owner, int size, net.kyori.adventure.text.Component title) throws IllegalArgumentException {
+        Preconditions.checkArgument(9 <= size && size <= 54 && size % 9 == 0, "Size for custom inventory must be a multiple of 9 between 9 and 54 slots (got " + size + ")");
+        return CraftInventoryCreator.INSTANCE.createInventory(owner, size, title);
+    }
+    // Paper end
+
     @Override
     public Inventory createInventory(InventoryHolder owner, int size, String title) throws IllegalArgumentException {
         Validate.isTrue(9 <= size && size <= 54 && size % 9 == 0, "Size for custom inventory must be a multiple of 9 between 9 and 54 slots (got " + size + ")");
