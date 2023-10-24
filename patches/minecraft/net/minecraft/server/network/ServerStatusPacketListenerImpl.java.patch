@@ -71,7 +71,7 @@
 +         }
 +         // Spigot End
 +
-+         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), profiles.size(), (server.m_183306_()) ? Collections.emptyList() : profiles);
++         ServerStatus.Players playerSample = new ServerStatus.Players(event.getMaxPlayers(), (server.m_183306_()) ? 0 : profiles.size(), (server.m_183306_()) ? Collections.emptyList() : profiles);
 +
 +         ServerStatus ping = new ServerStatus(
 +                 CraftChatMessage.fromString(event.getMotd(), true)[0],
