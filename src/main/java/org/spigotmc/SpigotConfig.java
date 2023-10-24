@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
+import com.mohistmc.api.ServerAPI;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -269,7 +270,7 @@ public class SpigotConfig
     public static int playerSample;
     private static void playerSample()
     {
-        playerSample = getInt( "settings.sample-count", 12 );
+        playerSample = getInt( "settings.sample-count", ServerAPI.getNMSServer().getMaxPlayers());
         System.out.println( "Server Ping Player Sample Count: " + playerSample );
     }
 
