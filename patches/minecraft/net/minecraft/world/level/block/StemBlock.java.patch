@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
+@@ -18,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
+ 
+ public class StemBlock extends BushBlock implements BonemealableBlock {
+    public static final int f_154724_ = 7;
 @@ -43,22 +_,23 @@
     }
  
@@ -27,6 +35,15 @@
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
           }
  
+       }
+@@ -79,7 +_,7 @@
+    public void m_214148_(ServerLevel p_222528_, RandomSource p_222529_, BlockPos p_222530_, BlockState p_222531_) {
+       int i = Math.min(7, p_222531_.m_61143_(f_57013_) + Mth.m_216271_(p_222528_.f_46441_, 2, 5));
+       BlockState blockstate = p_222531_.m_61124_(f_57013_, Integer.valueOf(i));
+-      p_222528_.m_7731_(p_222530_, blockstate, 2);
++      CraftEventFactory.handleBlockGrowEvent(p_222528_, p_222530_, blockstate, 2); // CraftBukkit
+       if (i == 7) {
+          blockstate.m_222972_(p_222528_, p_222530_, p_222528_.f_46441_);
        }
 @@ -92,5 +_,11 @@
  
