@@ -660,7 +660,7 @@ project(':mohist') {
         if (rootProject.downloadServerRaw.dest.exists()) {
             try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
                 CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
-                        .findAll { it.startsWith('libraries/') && !it.contains("brigadier") && !claimed.contains(it.rsplit('/', 2)[0]) }
+                        .findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
             }
         } else {
             println("Can't read server")
@@ -741,12 +741,12 @@ project(':mohist') {
         }
 
         from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';').replace("libraries/com/mojang/brigadier/1.1.8/brigadier-1.1.8.jar;", "")])
             rename { 'data/win_args.txt' }
         }
 
         from(rootProject.file('server_files/args.txt')) {
-            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+            filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':').replace("libraries/com/mojang/brigadier/1.1.8/brigadier-1.1.8.jar;", "")])
             rename { 'data/unix_args.txt' }
         }
     }
