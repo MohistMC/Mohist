@@ -11,15 +11,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     compileOnly 'org.projectlombok:lombok:1.18.30'
 
-    implementation 'com.mohistmc:yaml:0.6'
-    implementation 'com.mohistmc:i18n:0.4'
-    implementation 'org.yaml:snakeyaml:2.2'
-    implementation 'com.mohistmc:json:0.2'
-    implementation 'com.mohistmc:tools:0.2'
+    implementation(libs.yaml)
+    implementation(libs.snakeyaml)
+    implementation(libs.i18n)
+    implementation(libs.json)
+    implementation(libs.tools)
     implementation(libs.bootstrap)
     implementation 'me.tongfei:progressbar:0.10.0'
     implementation 'org.jline:jline:3.23.0'

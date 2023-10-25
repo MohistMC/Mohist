@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenLocal()
+        mavenCentral()
         maven { url = 'https://maven.minecraftforge.net/' }
         maven { url = 'https://hub.spigotmc.org/nexus/content/groups/public/' }
         maven { url = 'https://maven.mohistmc.com/' }
@@ -102,6 +103,27 @@ dependencyResolutionManagement {
             library('lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'   ).versionRef('lwjgl')
             library('lwjgl-tinyfd', 'org.lwjgl', 'lwjgl-tinyfd').versionRef('lwjgl')
             bundle('lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb', 'lwjgl-tinyfd'])
+
+            version('adventure', '4.14.0')
+            library('adventure-api', 'net.kyori', 'adventure-api').versionRef('adventure')
+            library('adventure-key', 'net.kyori', 'adventure-api').versionRef('adventure')
+            library('minimessage', 'net.kyori', 'adventure-text-minimessage').versionRef('adventure')
+            library('serializer-gson', 'net.kyori', 'adventure-text-serializer-gson').versionRef('adventure')
+            library('serializer-json', 'net.kyori', 'adventure-text-serializer-json').versionRef('adventure')
+            library('serializer-legacy', 'net.kyori', 'adventure-text-serializer-legacy').versionRef('adventure')
+            library('serializer-plain', 'net.kyori', 'adventure-text-serializer-plain').versionRef('adventure')
+            library('serializer-ansi', 'net.kyori', 'adventure-text-serializer-ansi').versionRef('adventure')
+            library('text-logger-slf4j', 'net.kyori', 'adventure-text-logger-slf4j').versionRef('adventure')
+            library('ansi', 'net.kyori:ansi:1.0.3')
+            library('examination-api', 'net.kyori:examination-api:1.3.0')
+            library('examination-string', 'net.kyori:examination-string:1.3.0')
+            bundle('adventure', ['adventure-api', 'adventure-key', 'minimessage', 'serializer-gson', 'serializer-json', 'serializer-legacy', 'serializer-plain', 'serializer-ansi', 'text-logger-slf4j', 'ansi', 'examination-api', 'examination-string'])
+
+            library('i18n', 'com.mohistmc:i18n:0.4')
+            library('json', 'com.mohistmc:json:0.2')
+            library('tools', 'com.mohistmc:tools:0.2')
+            library('snakeyaml', 'org.yaml:snakeyaml:2.2')
+            library('yaml', 'com.mohistmc:yaml:0.6')
         }
     }
 }
