@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
+@@ -227,7 +_,6 @@
+ import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.BlockItem;
+-import net.minecraft.world.item.CreativeModeTabs;
+ import net.minecraft.world.item.Item;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.PlayerHeadItem;
 @@ -252,7 +_,7 @@
  import org.slf4j.Logger;
  
@@ -96,7 +104,7 @@
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
        if (checkModStatus().shouldReportAsModified()) {
 -         stringbuilder.append("*");
-+         stringbuilder.append(' ').append(net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.BRANDING_NAME).append('*');
++         stringbuilder.append(" Forge").append('*');
        }
  
        stringbuilder.append(" ");

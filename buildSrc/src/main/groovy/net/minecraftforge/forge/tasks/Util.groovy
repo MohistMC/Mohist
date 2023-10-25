@@ -134,7 +134,7 @@ public class Util {
 		return getArtifacts(project, cfg, true)
 	}
 
-	private static boolean checkExists(url) {
+	static boolean checkExists(url) {
 		try {
 			def code = new URL(url).openConnection().with {
 				requestMethod = 'HEAD'

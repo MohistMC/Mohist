@@ -28,11 +28,11 @@ import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
-import cpw.mods.bootstraplauncher.BootstrapLauncher;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
+import net.minecraftforge.bootstrap.BootstrapLauncher;
 
 public class MohistMCStart {
 

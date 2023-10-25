@@ -72,7 +72,8 @@
 +
              builder.put(resourcelocation, recipeholder);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+-            LOGGER.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
++            LOGGER.debug("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
           }
        }
  

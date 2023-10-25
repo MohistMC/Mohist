@@ -20,7 +20,7 @@ dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'com.mohistmc:json:0.2'
     implementation 'com.mohistmc:tools:0.2'
-    implementation "cpw.mods:bootstraplauncher:1.1.2"
+    implementation(libs.bootstrap)
     implementation 'me.tongfei:progressbar:0.10.0'
     implementation 'org.jline:jline:3.23.0'
 }
