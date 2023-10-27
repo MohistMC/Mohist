@@ -1,8 +1,9 @@
 package com.mohistmc.api.event;
 
 import com.mohistmc.api.color.ColorsAPI;
-import java.net.SocketAddress;
+import com.mojang.authlib.GameProfile;
 import java.util.List;
+import java.util.UUID;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -15,13 +16,16 @@ public class PlayerModsCheckEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel;
-    private final SocketAddress address;
+    private final String name;
+    private final UUID uuid;
+
     private final List<String> mods;
     private String message = "Connection closed - PlayerModsCheck";
 
-    public PlayerModsCheckEvent(SocketAddress address, List<String> mods) {
+    public PlayerModsCheckEvent(GameProfile profile, List<String> mods) {
         super(true);
-        this.address = address;
+        this.name = profile.getName();
+        this.uuid = profile.getId();
         this.mods = mods;
     }
 
@@ -43,8 +47,12 @@ public class PlayerModsCheckEvent extends Event implements Cancellable {
         this.cancel = cancel;
     }
 
-    public SocketAddress address() {
-        return this.address;
+    public String name() {
+        return this.name;
+    }
+
+    public UUID uuid() {
+        return this.uuid;
     }
 
     /**

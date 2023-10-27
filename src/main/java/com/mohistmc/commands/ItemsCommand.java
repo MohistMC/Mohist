@@ -73,7 +73,7 @@ public class ItemsCommand extends Command {
         }
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
+            sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
             return false;
         }
 

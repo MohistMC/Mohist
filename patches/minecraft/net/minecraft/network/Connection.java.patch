@@ -1,14 +1,15 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -37,6 +_,7 @@
- import java.util.function.Supplier;
- import javax.annotation.Nullable;
- import javax.crypto.Cipher;
-+
- import net.minecraft.SharedConstants;
- import net.minecraft.Util;
- import net.minecraft.network.chat.Component;
-@@ -102,15 +_,28 @@
+@@ -3,6 +_,8 @@
+ import com.google.common.base.Suppliers;
+ import com.google.common.collect.Queues;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import com.mohistmc.api.PlayerAPI;
++import com.mojang.authlib.GameProfile;
+ import com.mojang.logging.LogUtils;
+ import io.netty.bootstrap.Bootstrap;
+ import io.netty.channel.Channel;
+@@ -102,15 +_,29 @@
     private volatile Component delayedDisconnect;
     @Nullable
     BandwidthDebugMonitor bandwidthDebugMonitor;
@@ -20,6 +21,7 @@
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
++   public GameProfile player;
  
     public Connection(PacketFlow p_129482_) {
        this.receiving = p_129482_;
@@ -72,7 +74,7 @@
        }
     }
  
-@@ -403,9 +_,11 @@
+@@ -403,11 +_,16 @@
        if (this.channel == null) {
           this.delayedDisconnect = p_129508_;
        }
@@ -85,6 +87,11 @@
 +         this.channel.close(); // We can't wait as this may be called from an event loop.
           this.disconnectedReason = p_129508_;
        }
++      if (player != null && PlayerAPI.modlist.containsKey(player.getId())) {
++         PlayerAPI.modlist.remove(player.getId());
++      }
+ 
+    }
  
 @@ -435,6 +_,8 @@
     }

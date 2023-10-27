@@ -49,7 +49,7 @@ public class PermissionCommand extends Command {
                 if (player != null) {
                     sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
                 } else {
-                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep", args[1]));
+                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotonline", args[1]));
                 }
             }
             default -> {

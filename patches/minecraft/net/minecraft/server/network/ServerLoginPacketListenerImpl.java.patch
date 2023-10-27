@@ -1,13 +1,5 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -1,6 +_,7 @@
- package net.minecraft.server.network;
- 
- import com.google.common.primitives.Ints;
-+import com.mohistmc.plugins.PlayerModsCheck;
- import com.mojang.authlib.GameProfile;
- import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
- import com.mojang.authlib.yggdrasil.ProfileResult;
 @@ -32,11 +_,15 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
@@ -142,7 +134,7 @@
              }
  
           }
-@@ -219,22 +_,87 @@
+@@ -219,22 +_,88 @@
        thread.start();
     }
  
@@ -182,7 +174,8 @@
 +            }
 +         }
 +         // CraftBukkit end
-+         if (PlayerModsCheck.canLog()) LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
++         LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
++         ServerLoginPacketListenerImpl.this.connection.player = gameprofile;
 +         ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
 +      }
 +   }

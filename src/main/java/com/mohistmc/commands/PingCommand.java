@@ -47,7 +47,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
+                sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
                 return false;
             }
         } else if(args.length == 1) {
@@ -57,7 +57,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep", args[1]));
+                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotonline", args[1]));
                 return false;
             }
         }
