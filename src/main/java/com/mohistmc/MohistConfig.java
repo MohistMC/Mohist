@@ -162,6 +162,10 @@ public class MohistConfig {
         return yml.getString("mohist.lang", Locale.getDefault().toString());
     }
 
+    public static String networkmanager_enable() {
+        return yml.getString("networkmanager.enable", Locale.getDefault().toString());
+    }
+
     public static boolean show_logo;
     public static String mohist_lang;
     public static boolean check_update;
@@ -169,13 +173,16 @@ public class MohistConfig {
     public static boolean enchantment_fix;
     public static int max_enchantment_level;
 
-    public static boolean player_modlist_blacklist_enable;
-    public static List<String> player_modlist_blacklist;
+    public static boolean modlist_check_blacklist_enable;
+    public static List<String> modlist_check_blacklist;
+    public static String modlist_check_blacklist_message;
 
-    public static boolean server_modlist_whitelist_enable;
-    public static String server_modlist_whitelist;
+    public static boolean modlist_check_whitelist_enable;
+    public static String modlist_check_whitelist;
+    public static String modlist_check_whitelist_message;
     public static int maxBees;
     public static boolean bookAnimationTick;
+    public static boolean networkmanager_enable;
     public static boolean networkmanager_debug;
     public static List<String> networkmanager_intercept;
     public static boolean keepinventory_global;
@@ -210,7 +217,7 @@ public class MohistConfig {
     public static boolean bukkitpermissionshandler;
 
     public static String serverbranding;
-    public static boolean velocity ;
+    public static boolean velocity;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -219,12 +226,15 @@ public class MohistConfig {
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
-        player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
-        player_modlist_blacklist = getList("player_modlist_blacklist.list", new ArrayList<>());
-        server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
-        server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
+        modlist_check_blacklist_enable = getBoolean("modlist_check.blacklist.enable", false);
+        modlist_check_blacklist = getList("modlist_check.blacklist.list", new ArrayList<>());
+        modlist_check_blacklist_message = getString("modlist_check.blacklist.message", "Connection closed - PlayerModsCheck blacklist");
+        modlist_check_whitelist_enable = getBoolean("modlist_check.whitelist.enable", false);
+        modlist_check_whitelist = getString("modlist_check.whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
+        modlist_check_whitelist_message = getString("modlist_check.whitelist.message", "Connection closed - PlayerModsCheck whitelist");
         maxBees = getInt("max-bees-in-hive", 3);
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
+        networkmanager_debug = getBoolean("networkmanager.enable", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
         networkmanager_intercept = getList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);

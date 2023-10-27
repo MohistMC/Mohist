@@ -1,7 +1,6 @@
 package com.mohistmc.api.event;
 
 import java.net.URI;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,7 +13,7 @@ public class MohistNetworkEvent extends Event implements Cancellable {
     private String msg;
 
     public MohistNetworkEvent(final URI url, final String msg) {
-        super(!Bukkit.getServer().isPrimaryThread());
+        super(true);
         this.url = url;
         this.msg = msg;
     }

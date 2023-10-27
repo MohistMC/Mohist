@@ -6,6 +6,7 @@
 package net.minecraftforge.network;
 
 import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.plugins.PlayerModsCheck;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayList;
@@ -90,11 +91,16 @@ public class ForgePacketHandler {
     void handleModVersions(ModVersions list, CustomPayloadEvent.Context ctx) {
         ctx.setPacketHandled(true);
         LOGGER.debug(MARKER, "Received {} connection with modlist [{}]", ctx.isClientSide() ? "server" : "client", list.mods().keySet().stream().sorted().collect(Collectors.joining(", ")));
+        // Mohist start
+        var modlist = Collections.singletonList(list.mods().keySet().stream().sorted().collect(Collectors.joining(", ")));
+        var address = ctx.getConnection().address;
+        PlayerModsCheck.init(ctx.getConnection(), modlist);
+        PlayerAPI.mods.put(address, modlist.size());
+        PlayerAPI.modlist.put(address, modlist);
+        // Mohist end
         var nctx = NetworkContext.get(ctx.getConnection());
         nctx.modList.clear();
         nctx.modList.putAll(list.mods());
-        PlayerAPI.mods.put(ctx.getConnection().address, nctx.getModList().size());
-        PlayerAPI.modlist.put(ctx.getConnection().address, Collections.singletonList(list.mods().keySet().stream().sorted().collect(Collectors.joining(", "))));
         if (ctx.isClientSide()) {
             NetworkInitialization.PLAY.send(ModVersions.create(), ctx.getConnection());
             /*

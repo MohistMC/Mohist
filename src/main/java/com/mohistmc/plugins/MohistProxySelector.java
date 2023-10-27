@@ -16,6 +16,10 @@ public class MohistProxySelector extends ProxySelector {
 
     private final ProxySelector defaultSelector;
 
+    public static void init() {
+        if (MohistConfig.networkmanager_enable) ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
+    }
+
     public MohistProxySelector(ProxySelector defaultSelector) {
         this.defaultSelector = defaultSelector;
     }
@@ -37,7 +41,7 @@ public class MohistProxySelector extends ProxySelector {
                 }
             }
         }
-        if (Bukkit.getServer() != null && Bukkit.getServer().isPrimaryThread()) {
+        if (Bukkit.getServer() != null) {
             MohistNetworkEvent event = new MohistNetworkEvent(uri, defaultMsg);
             Bukkit.getPluginManager().callEvent(event);
             event.setCancelled(intercept);

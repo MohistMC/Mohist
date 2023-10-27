@@ -4,9 +4,7 @@ import com.mohistmc.eventhandler.EventDispatcherRegistry;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.plugins.MohistProxySelector;
 import com.mohistmc.util.VersionInfo;
-import java.net.ProxySelector;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,13 +26,12 @@ public class MohistMC {
 
     public MohistMC() {
         classLoader = MohistMC.class.getClassLoader();
-        String mohist_lang = MohistConfig.yml.getString("mohist.lang", Locale.getDefault().toString());
-        i18n = new i18n(MohistMC.class.getClassLoader(), mohist_lang);
+        i18n = new i18n(MohistMC.class.getClassLoader(), MohistConfig.mohist_lang());
 
         //TODO: do something when mod loading
         LOGGER.info("Mohist mod loading.....");
         EventDispatcherRegistry.init();
-        ProxySelector.setDefault(new MohistProxySelector(ProxySelector.getDefault()));
+        MohistProxySelector.init();
     }
 
     public static void initVersion() {
