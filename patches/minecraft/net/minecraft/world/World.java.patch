@@ -79,7 +79,7 @@
 +
 +   // CraftBukkit start Added the following
 +   private RegistryKey<DimensionType> typeKey;
-+   public CraftWorld craftWorld;//Mohist - compat for Forge
++   public CraftWorld craftWorld; //Mohist - compat for Forge
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
 +   public static org.bukkit.generator.ChunkGenerator generator;

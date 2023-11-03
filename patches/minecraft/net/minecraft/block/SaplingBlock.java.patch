@@ -8,10 +8,11 @@
  import java.util.Random;
  import net.minecraft.block.trees.Tree;
  import net.minecraft.state.IntegerProperty;
-@@ -11,11 +_,15 @@
+@@ -11,11 +_,16 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.event.world.StructureGrowEvent;
@@ -29,7 +30,7 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
 -      if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextInt(7) == 0) {
-+      if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextInt(Math.max(2, (int) (((100.0F / p_225542_2_.spigotConfig.saplingModifier) * 7) + 0.5F))) == 0) { // Spigot
++      if (p_225542_2_.func_201696_r(p_225542_3_.func_177984_a()) >= 9 && p_225542_4_.nextFloat() < (100.0F / p_225542_2_.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot
 +      if (!p_225542_2_.isAreaLoaded(p_225542_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
 +         // CraftBukkit start
 +         p_225542_2_.captureTreeGeneration = true;
@@ -37,7 +38,7 @@
           this.func_226942_a_(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_);
 +         // CraftBukkit start
 +         p_225542_2_.captureTreeGeneration = false;
-+         if(p_225542_2_.capturedBlockStates.size() > 0){
++         if(!p_225542_2_.capturedBlockStates.isEmpty()){
 +            TreeType treeType = SaplingBlock.treeType;
 +            SaplingBlock.treeType = null;
 +            Location location = new Location(p_225542_2_.getWorld(), p_225542_3_.func_177958_n(), p_225542_3_.func_177956_o(), p_225542_3_.func_177952_p());
@@ -46,7 +47,7 @@
 +            StructureGrowEvent event = null;
 +            if(treeType != null){
 +               event = new StructureGrowEvent(location, treeType, false, null, blocks);
-+               p_225542_2_.getCBServer().getPluginManager().callEvent(event);
++               Bukkit.getPluginManager().callEvent(event);
 +            }
 +            if(event == null || !event.isCancelled()){
 +               for (org.bukkit.block.BlockState block : blocks) {

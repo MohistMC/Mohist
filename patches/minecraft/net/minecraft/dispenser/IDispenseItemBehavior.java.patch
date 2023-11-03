@@ -15,15 +15,17 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.IEquipable;
-@@ -67,8 +_,15 @@
+@@ -67,8 +_,17 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
++import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_16_R3.util.DummyGeneratorAccess;
 +import org.bukkit.event.block.BlockDispenseEvent;
++import org.bukkit.event.block.BlockFertilizeEvent;
 +import org.bukkit.event.world.StructureGrowEvent;
  
  public interface IDispenseItemBehavior {
@@ -142,11 +144,11 @@
 +               IDispenseItemBehavior idispensebehavior = (IDispenseItemBehavior) DispenserBlock.field_149943_a.get(eventStack.func_77973_b());
 +               if (idispensebehavior != IDispenseItemBehavior.field_223216_a_ && idispensebehavior != this) {
 +                  idispensebehavior.dispense(p_82487_1_, eventStack);
-+                  return itemstack1;
++                  return p_82487_2_;
 +               }
 +            }
 +            itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
-+            FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(p_82487_1_.func_197524_h(), itemstack1, p_82487_1_.func_82615_a(), p_82487_1_.func_82617_b(), p_82487_1_.func_82615_a(), true); // Paper - GH-2871 - fix last firework in stack having no effects when dispensed
++            FireworkRocketEntity fireworkrocketentity = new FireworkRocketEntity(p_82487_1_.func_197524_h(), p_82487_2_, p_82487_1_.func_82615_a(), p_82487_1_.func_82617_b(), p_82487_1_.func_82615_a(), true); // Paper - GH-2871 - fix last firework in stack having no effects when dispensed
              IDispenseItemBehavior.func_239785_a_(p_82487_1_, fireworkrocketentity, direction);
              fireworkrocketentity.func_70186_c((double)direction.func_82601_c(), (double)direction.func_96559_d(), (double)direction.func_82599_e(), 0.5F, 1.0F);
              p_82487_1_.func_197524_h().func_217376_c(fireworkrocketentity);
@@ -261,7 +263,7 @@
 +                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_82487_2_);
 +                  BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()));
 +                  if (!DispenserBlock.eventFired) {
-+                     ((World) iworld).getCBServer().getPluginManager().callEvent(event);
++                     Bukkit.getPluginManager().callEvent(event);
 +                  }
 +                  if (event.isCancelled()) {
 +                     return p_82487_2_;
@@ -328,7 +330,7 @@
                 world.func_217377_a(blockpos, false);
              } else {
                 this.func_239796_a_(false);
-@@ -392,12 +_,54 @@
+@@ -392,12 +_,59 @@
              this.func_239796_a_(true);
              World world = p_82487_1_.func_197524_h();
              BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
@@ -361,7 +363,7 @@
  
 +            // CraftBukkit start
 +            world.captureTreeGeneration = false;
-+            if (world.capturedBlockStates.size() > 0) {
++            if (!world.capturedBlockStates.isEmpty()) { // Mohist
 +               TreeType treeType = SaplingBlock.treeType;
 +               SaplingBlock.treeType = null;
 +               Location location = new Location(world.getWorld(), blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
@@ -372,7 +374,12 @@
 +                  structureEvent = new StructureGrowEvent(location, treeType, false, null, blocks);
 +                  org.bukkit.Bukkit.getPluginManager().callEvent(structureEvent);
 +               }
-+               if (structureEvent == null || !structureEvent.isCancelled()) {
++
++               BlockFertilizeEvent fertilizeEvent = new BlockFertilizeEvent(location.getBlock(), null, blocks);
++               fertilizeEvent.setCancelled(structureEvent != null && structureEvent.isCancelled());
++               org.bukkit.Bukkit.getPluginManager().callEvent(fertilizeEvent);
++
++               if (!fertilizeEvent.isCancelled()) {
 +                  for (org.bukkit.block.BlockState blockstate : blocks) {
 +                     blockstate.update(true);
 +                  }

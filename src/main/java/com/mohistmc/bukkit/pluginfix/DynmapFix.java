@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.bukkit.pluginfix.fix;
+package com.mohistmc.bukkit.pluginfix;
 
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import org.objectweb.asm.ClassReader;
