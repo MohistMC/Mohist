@@ -59,8 +59,8 @@ ext {
     COMMONS_IO_VERSION = '2.11.0'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = MC_VERSION + "-" + project.neoforge_version
-    FORGE_VERSION = project.neoforge_version
+    VERSION = MC_VERSION + "-" + project.forge_version
+    FORGE_VERSION = project.forge_version
     MOHIST_VERSION = JenkinsNumber.info()
     ADVENTURE_VERSION = '4.14.0'
 
