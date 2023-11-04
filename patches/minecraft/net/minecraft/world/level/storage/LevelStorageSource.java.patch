@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -70,6 +_,7 @@
+ import net.minecraft.world.level.validation.DirectoryValidator;
+ import net.minecraft.world.level.validation.ForbiddenSymlinkInfo;
+ import net.minecraft.world.level.validation.PathAllowList;
++import net.minecraftforge.common.ForgeHooks;
+ import org.slf4j.Logger;
+ 
+ public class LevelStorageSource {
 @@ -79,7 +_,7 @@
     private static final String f_202311_ = "Data";
     private static final PathAllowList f_289833_ = new PathAllowList(List.of());
@@ -17,7 +25,56 @@
           return Pair.of(primaryleveldata, worlddimensions$complete);
        };
     }
-@@ -394,11 +_,11 @@
+@@ -343,15 +_,48 @@
+       }
+    }
+ 
++   public LevelStorageSource.LevelStorageAccess validateAndCreateAccess(String s, ResourceKey<LevelStem> dimensionType) throws IOException, ContentValidationException { // CraftBukkit
++      Path path = this.m_289874_(s);
++      List<ForbiddenSymlinkInfo> list = this.f_289816_.m_289885_(path, true);
++
++      if (!list.isEmpty()) {
++         throw new ContentValidationException(path, list);
++      } else {
++         return new LevelStorageSource.LevelStorageAccess(s, path, dimensionType); // CraftBukkit
++      }
++   }
++
+    public LevelStorageSource.LevelStorageAccess m_78260_(String p_78261_) throws IOException {
+       Path path = this.m_289874_(p_78261_);
+       return new LevelStorageSource.LevelStorageAccess(p_78261_, path);
+    }
+ 
++   // CraftBukkit start
++   public LevelStorageSource.LevelStorageAccess createAccess(String s, ResourceKey<LevelStem> dimensionType) throws IOException {
++      Path path = this.m_289874_(s);
++
++      return new LevelStorageAccess(s, path, dimensionType);
++   }
++   // CraftBukkit end
++
+    public DirectoryValidator m_289863_() {
+       return this.f_289816_;
+    }
+ 
++   // CraftBukkit start
++   public static Path getStorageFolder(Path path, ResourceKey<LevelStem> dimensionType) {
++      if (dimensionType == LevelStem.f_63971_) {
++         return path;
++      } else if (dimensionType == LevelStem.f_63972_) {
++         return path.resolve("DIM-1");
++      } else if (dimensionType == LevelStem.f_63973_) {
++         return path.resolve("DIM1");
++      } else {
++         return path.resolve("dimensions").resolve(dimensionType.m_135782_().m_135827_()).resolve(dimensionType.m_135782_().m_135815_());
++      }
++   }
++   // CraftBukkit end
++
+    public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
+       public boolean m_230843_() {
+          return this.f_230840_.isEmpty();
+@@ -394,14 +_,24 @@
  
     public class LevelStorageAccess implements AutoCloseable {
        final DirectoryLock f_78270_;
@@ -25,12 +82,34 @@
 +      public final LevelStorageSource.LevelDirectory f_230867_;
        private final String f_78272_;
        private final Map<LevelResource, Path> f_78273_ = Maps.newHashMap();
++      public final ResourceKey<LevelStem> dimensionType;
  
 -      LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
 +      public LevelStorageAccess(String p_289967_, Path p_289988_) throws IOException {
           this.f_78272_ = p_289967_;
           this.f_230867_ = new LevelStorageSource.LevelDirectory(p_289988_);
           this.f_78270_ = DirectoryLock.m_13640_(p_289988_);
++         this.dimensionType = null;
++      }
++
++      public LevelStorageAccess(String s, Path path, ResourceKey<LevelStem> dimensionType) throws IOException {
++         this.dimensionType = dimensionType;
++         // CraftBukkit end
++         this.f_78272_ = s;
++         this.f_230867_ = new LevelStorageSource.LevelDirectory(path);
++         this.f_78270_ = DirectoryLock.m_13640_(path);
+       }
+ 
+       public String m_78277_() {
+@@ -413,7 +_,7 @@
+       }
+ 
+       public Path m_197394_(ResourceKey<Level> p_197395_) {
+-         return DimensionType.m_196975_(p_197395_, this.f_230867_.f_230850_());
++         return dimensionType != null ? LevelStorageSource.getStorageFolder(this.f_230867_.f_230850_(), this.dimensionType) : DimensionType.m_196975_(p_197395_, this.f_230867_.f_230850_());
+       }
+ 
+       private void m_78313_() {
 @@ -439,6 +_,19 @@
           return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
        }
@@ -40,7 +119,7 @@
 +         LevelStorageSource.this.m_230817_(this.f_230867_, (path, dataFixer) -> {
 +            try {
 +               CompoundTag compoundTag = NbtIo.m_128937_(path.toFile());
-+               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.f_230867_);
++               ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.f_230867_);
 +            } catch (Exception e) {
 +                f_78191_.error("Exception reading {}", path, e);
 +            }
@@ -55,7 +134,7 @@
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.m_128365_("Data", compoundtag);
  
-+         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
++         ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
 +
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
