@@ -106,7 +106,7 @@ dependencyResolutionManagement {
 
             version('adventure', '4.14.0')
             library('adventure-api', 'net.kyori', 'adventure-api').versionRef('adventure')
-            library('adventure-key', 'net.kyori', 'adventure-api').versionRef('adventure')
+            library('adventure-key', 'net.kyori', 'adventure-key').versionRef('adventure')
             library('minimessage', 'net.kyori', 'adventure-text-minimessage').versionRef('adventure')
             library('serializer-gson', 'net.kyori', 'adventure-text-serializer-gson').versionRef('adventure')
             library('serializer-json', 'net.kyori', 'adventure-text-serializer-json').versionRef('adventure')

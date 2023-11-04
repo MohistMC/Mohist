@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.entity.monster;
+ 
+ import java.util.Collection;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import javax.annotation.Nullable;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
 @@ -40,6 +_,9 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
@@ -73,3 +81,29 @@
           this.level().addFreshEntity(areaeffectcloud);
        }
  
+@@ -255,9 +_,23 @@
+       return this.entityData.get(DATA_IS_IGNITED);
+    }
+ 
++   // Mohist start - paper api
++   public AtomicBoolean ignited = new AtomicBoolean(true);
+    public void ignite() {
+-      this.entityData.set(DATA_IS_IGNITED, true);
+-   }
++      boolean i = ignited.getAndSet(true);
++      if (isIgnited() != i) {
++         com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
++         if (event.callEvent()) {
++            this.entityData.set(DATA_IS_IGNITED, event.isIgnited());
++         }
++      }
++   }
++
++   public void setIgnited(boolean ignited) {
++      this.ignited.set(ignited);
++      ignite();
++   }
++   // Mohist end
+ 
+    public boolean canDropMobsSkull() {
+       return this.isPowered() && this.droppedSkulls < 1;

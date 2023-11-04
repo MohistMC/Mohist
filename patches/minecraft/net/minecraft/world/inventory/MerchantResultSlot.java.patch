@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/inventory/MerchantResultSlot.java
++++ b/net/minecraft/world/inventory/MerchantResultSlot.java
+@@ -42,13 +_,32 @@
+    }
+ 
+    public void onTake(Player p_150631_, ItemStack p_150632_) {
+-      this.checkTakeAchievements(p_150632_);
++      // this.checkTakeAchievements(p_150632_); // Paper - move to after event is called and not cancelled
+       MerchantOffer merchantoffer = this.slots.getActiveOffer();
++      // Paper start
++      io.papermc.paper.event.player.PlayerPurchaseEvent event = null;
++      if (merchantoffer != null && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
++         if (this.merchant instanceof net.minecraft.world.entity.npc.AbstractVillager abstractVillager) {
++            event = new io.papermc.paper.event.player.PlayerTradeEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.AbstractVillager) abstractVillager.getBukkitEntity(), merchantoffer.asBukkit(), true, true);
++         } else if (this.merchant instanceof org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantCustom.MinecraftMerchant) {
++            event = new io.papermc.paper.event.player.PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
++         }
++         if (event != null) {
++            if (!event.callEvent()) {
++               p_150632_.setCount(0);
++               event.getPlayer().updateInventory();
++               return;
++            }
++            merchantoffer = org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchantRecipe.fromBukkit(event.getTrade()).toMinecraft();
++         }
++      }
++      this.checkTakeAchievements(p_150632_);
++      // Paper end
+       if (merchantoffer != null) {
+          ItemStack itemstack = this.slots.getItem(0);
+          ItemStack itemstack1 = this.slots.getItem(1);
+          if (merchantoffer.take(itemstack, itemstack1) || merchantoffer.take(itemstack1, itemstack)) {
+-            this.merchant.notifyTrade(merchantoffer);
++            this.merchant.processTrade(merchantoffer, event); // Paper
+             p_150631_.awardStat(Stats.TRADED_WITH_VILLAGER);
+             this.slots.setItem(0, itemstack);
+             this.slots.setItem(1, itemstack1);

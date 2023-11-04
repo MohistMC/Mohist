@@ -12,6 +12,81 @@
  
  public class ExperienceOrb extends Entity {
     private static final int LIFETIME = 6000;
+@@ -32,13 +_,67 @@
+    private int count = 1;
+    private Player followingPlayer;
+ 
+-   public ExperienceOrb(Level p_20776_, double p_20777_, double p_20778_, double p_20779_, int p_20780_) {
+-      this(EntityType.EXPERIENCE_ORB, p_20776_);
+-      this.setPos(p_20777_, p_20778_, p_20779_);
+-      this.setYRot((float)(this.random.nextDouble() * 360.0D));
+-      this.setDeltaMovement((this.random.nextDouble() * (double)0.2F - (double)0.1F) * 2.0D, this.random.nextDouble() * 0.2D * 2.0D, (this.random.nextDouble() * (double)0.2F - (double)0.1F) * 2.0D);
+-      this.value = p_20780_;
+-   }
++   // Paper start
++   @javax.annotation.Nullable
++   public java.util.UUID sourceEntityId;
++   @javax.annotation.Nullable
++   public java.util.UUID triggerEntityId;
++   public org.bukkit.entity.ExperienceOrb.SpawnReason spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN;
++
++   private void loadPaperNBT(CompoundTag nbttagcompound) {
++      if (!nbttagcompound.contains("Paper.ExpData", 10)) { // 10 = compound
++         return;
++      }
++      CompoundTag comp = nbttagcompound.getCompound("Paper.ExpData");
++      if (comp.hasUUID("source")) {
++         this.sourceEntityId = comp.getUUID("source");
++      }
++      if (comp.hasUUID("trigger")) {
++         this.triggerEntityId = comp.getUUID("trigger");
++      }
++      if (comp.contains("reason")) {
++         String reason = comp.getString("reason");
++         try {
++            this.spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.valueOf(reason);
++         } catch (Exception e) {
++            this.level().getCraftServer().getLogger().warning("Invalid spawnReason set for experience orb: " + e.getMessage() + " - " + reason);
++         }
++      }
++   }
++   private void savePaperNBT(CompoundTag nbttagcompound) {
++      CompoundTag comp = new CompoundTag();
++      if (this.sourceEntityId != null) {
++         comp.putUUID("source", this.sourceEntityId);
++      }
++      if (this.triggerEntityId != null) {
++         comp.putUUID("trigger", triggerEntityId);
++      }
++      if (this.spawnReason != null && this.spawnReason != org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN) {
++         comp.putString("reason", this.spawnReason.name());
++      }
++      nbttagcompound.put("Paper.ExpData", comp);
++   }
++
++   @Deprecated
++   public ExperienceOrb(Level pLevel, double pX, double pY, double pZ, int pValue) {
++      this(pLevel, pX, pY, pZ, pValue, null, null);
++   }
++
++   public ExperienceOrb(Level world, double d0, double d1, double d2, int i, @javax.annotation.Nullable org.bukkit.entity.ExperienceOrb.SpawnReason reason, @javax.annotation.Nullable Entity triggerId) {
++      this(world, d0, d1, d2, i, reason, triggerId, null);
++   }
++
++   public ExperienceOrb(Level world, double d0, double d1, double d2, int i, @javax.annotation.Nullable org.bukkit.entity.ExperienceOrb.SpawnReason reason, @javax.annotation.Nullable Entity triggerId, @javax.annotation.Nullable Entity sourceId) {
++      this(EntityType.EXPERIENCE_ORB, world);
++      this.sourceEntityId = sourceId != null ? sourceId.getUUID() : null;
++      this.triggerEntityId = triggerId != null ? triggerId.getUUID() : null;
++      this.spawnReason = reason != null ? reason : org.bukkit.entity.ExperienceOrb.SpawnReason.UNKNOWN;
++      this.setPos(d0, d1, d2);
++      this.setYRot((float) (this.random.nextDouble() * 360.0D));
++      this.setDeltaMovement((this.random.nextDouble() * 0.20000000298023224D - 0.10000000149011612D) * 2.0D, this.random.nextDouble() * 0.2D * 2.0D, (this.random.nextDouble() * 0.20000000298023224D - 0.10000000149011612D) * 2.0D);
++      this.value = i;
++   }
++   // Paper end
+ 
+    public ExperienceOrb(EntityType<? extends ExperienceOrb> p_20773_, Level p_20774_) {
+       super(p_20773_, p_20774_);
 @@ -53,6 +_,7 @@
  
     public void tick() {
@@ -77,14 +152,14 @@
              }
  
              --this.count;
-@@ -224,9 +_,18 @@
+@@ -224,20 +_,29 @@
        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();
 -         int i = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
 +         int i = Math.min((int) (this.value * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
 +         // CraftBukkit start
-+         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i);
++         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i, this::durabilityToXp); // Paper
 +         i = event.getRepairAmount();
 +         if (event.isCancelled()) {
 +            return p_147094_;
@@ -97,6 +172,19 @@
           return j > 0 ? this.repairPlayerItems(p_147093_, j) : 0;
        } else {
           return p_147094_;
+       }
+    }
+ 
+-   private int durabilityToXp(int p_20794_) {
++   public int durabilityToXp(int p_20794_) {
+       return p_20794_ / 2;
+    }
+ 
+-   private int xpToDurability(int p_20799_) {
++   public int xpToDurability(int p_20799_) {
+       return p_20799_ * 2;
+    }
+ 
 @@ -270,6 +_,24 @@
     }
  

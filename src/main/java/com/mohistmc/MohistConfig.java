@@ -6,6 +6,7 @@ import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.BansCommand;
 import com.mohistmc.commands.DumpCommand;
+import com.mohistmc.commands.EntityCommand;
 import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
@@ -83,6 +84,7 @@ public class MohistConfig {
         commands.put("bans", new BansCommand("bans"));
         commands.put("shows", new ShowsCommand("shows"));
         commands.put("ping", new PingCommand("ping"));
+        commands.put("enetity", new EntityCommand("enetity"));
 
         if (getBoolean("worldmanage", true)) {
             commands.put("worlds", new WorldsCommands("worlds"));

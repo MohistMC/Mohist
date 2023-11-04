@@ -8,6 +8,15 @@
  
  public interface Merchant {
     void setTradingPlayer(@Nullable Player p_45307_);
+@@ -19,6 +_,8 @@
+ 
+    void overrideOffers(MerchantOffers p_45306_);
+ 
++   default void processTrade(MerchantOffer merchantRecipe, @Nullable io.papermc.paper.event.player.PlayerPurchaseEvent event) { this.notifyTrade(merchantRecipe); } // Paper
++
+    void notifyTrade(MerchantOffer p_45305_);
+ 
+    void notifyTradeUpdated(ItemStack p_45308_);
 @@ -49,4 +_,6 @@
     }
  

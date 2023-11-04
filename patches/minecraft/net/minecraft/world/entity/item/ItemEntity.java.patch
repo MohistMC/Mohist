@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -28,6 +_,9 @@
+@@ -28,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
++import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
  
  public class ItemEntity extends Entity implements TraceableEntity {
@@ -157,7 +158,7 @@
  
        if (p_32034_.hasUUID("Owner")) {
           this.target = p_32034_.getUUID("Owner");
-@@ -316,10 +_,58 @@
+@@ -316,10 +_,75 @@
  
     public void playerTouch(Player p_32040_) {
        if (!this.level().isClientSide) {
@@ -170,6 +171,23 @@
 +         // CraftBukkit start - fire PlayerPickupItemEvent
 +         int canHold = p_32040_.getInventory().canHold(itemstack);
 +         int remaining = i - canHold;
++         boolean flyAtPlayer = false; // Paper
++
++         // Paper start
++         if (this.pickupDelay <= 0) {
++            PlayerAttemptPickupItemEvent attemptEvent = new PlayerAttemptPickupItemEvent((org.bukkit.entity.Player) p_32040_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++            this.level().getCraftServer().getPluginManager().callEvent(attemptEvent);
++
++            flyAtPlayer = attemptEvent.getFlyAtPlayer();
++            if (attemptEvent.isCancelled()) {
++               if (flyAtPlayer) {
++                  p_32040_.take(this, i);
++               }
++
++               return;
++            }
++         }
++         // Paper end
 +
 +         if (this.pickupDelay <= 0 && canHold > 0) {
 +            itemstack.setCount(canHold);

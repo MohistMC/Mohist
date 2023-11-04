@@ -478,7 +478,40 @@
                             LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getName().getString(), d6, d7, d8);
                             this.teleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYRot(), this.player.getXRot());
                             return;
-@@ -878,6 +_,7 @@
+@@ -873,11 +_,39 @@
+                      d8 = d2 - this.lastGoodZ;
+                      boolean flag = d7 > 0.0D;
+                      if (this.player.onGround() && !p_9874_.isOnGround() && flag) {
+-                        this.player.jumpFromGround();
++                        // Paper start - Add player jump event
++                        org.bukkit.entity.Player player = this.getCraftPlayer();
++                        Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
++                        Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
++
++                        // If the packet contains movement information then we update the To location with the correct XYZ.
++                        if (p_9874_.hasPos) {
++                           to.setX(p_9874_.x);
++                           to.setY(p_9874_.y);
++                           to.setZ(p_9874_.z);
++                        }
++
++                        // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
++                        if (p_9874_.hasRot) {
++                           to.setYaw(p_9874_.yRot);
++                           to.setPitch(p_9874_.xRot);
++                        }
++
++                        com.destroystokyo.paper.event.player.PlayerJumpEvent event = new com.destroystokyo.paper.event.player.PlayerJumpEvent(player, from, to);
++
++                        if (event.callEvent()) {
++                           this.player.jumpFromGround();
++                        } else {
++                           from = event.getFrom();
++                           this.internalTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch(), Collections.emptySet());
++                           return;
++                        }
++                        // Paper end
+                      }
  
                       boolean flag1 = this.player.verticalCollisionBelow;
                       this.player.move(MoverType.PLAYER, new Vec3(d6, d7, d8));
@@ -1254,6 +1287,46 @@
                       }
                    } else {
                       ServerGamePacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.invalid_entity_attacked"));
+@@ -1439,8 +_,37 @@
+             });
+          }
+       }
+-
+-   }
++      // Paper start - PlayerUseUnknownEntityEvent
++      else {
++         p_9866_.dispatch(new net.minecraft.network.protocol.game.ServerboundInteractPacket.Handler() {
++            @Override
++            public void onInteraction(net.minecraft.world.InteractionHand hand) {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, hand, null);
++            }
++
++            @Override
++            public void onInteraction(net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.Vec3 pos) {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, hand, pos);
++            }
++
++            @Override
++            public void onAttack() {
++               ServerGamePacketListenerImpl.this.callPlayerUseUnknownEntityEvent(p_9866_, net.minecraft.world.InteractionHand.MAIN_HAND, null);
++            }
++         });
++      }
++   }
++
++   private void callPlayerUseUnknownEntityEvent(ServerboundInteractPacket packet, InteractionHand hand, @Nullable net.minecraft.world.phys.Vec3 vector) {
++      this.cserver.getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent(
++              this.getCraftPlayer(),
++              packet.getEntityId(),
++              packet.isAttack(),
++              hand == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND,
++              vector != null ? new org.bukkit.util.Vector(vector.x, vector.y, vector.z) : null)
++      );
++   }
++   // Paper end - PlayerUseUnknownEntityEvent
+ 
+    public void handleClientCommand(ServerboundClientCommandPacket p_9843_) {
+       PacketUtils.ensureRunningOnSameThread(p_9843_, this, this.player.serverLevel());
 @@ -1450,6 +_,7 @@
           case PERFORM_RESPAWN:
              if (this.player.wonGame) {
