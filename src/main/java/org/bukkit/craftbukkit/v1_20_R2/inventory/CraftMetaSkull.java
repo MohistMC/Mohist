@@ -312,11 +312,6 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
     private void checkForInconsistency() {
         if (profile != null && serializedProfile == null) {
-            // SPIGOT-7510: Fix broken reflection usage from plugins
-            Bukkit.getLogger().warning("""
-                    Found inconsistent skull meta, this should normally not happen and is not a Bukkit / Spigot issue, but one from a plugin you are using.
-                    Bukkit will attempt to fix it this time for you, but may not be able to do this every time.
-                    If you see this message after typing a command from a plugin, please report this to the plugin developer, they should use the api instead of relying on reflection (and doing it the wrong way).""");
             serializedProfile = NbtUtils.writeGameProfile(new CompoundTag(), profile);
         }
     }
