@@ -17,16 +17,18 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
  import net.minecraft.world.level.block.state.properties.SlabType;
-@@ -706,12 +_,9 @@
+@@ -706,12 +_,17 @@
              BlockPos blockpos = this.getWorldPos(5, 3, 6);
              if (p_229639_.isInside(blockpos)) {
                 this.hasPlacedSpawner = true;
--               p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
--               BlockEntity blockentity = p_229635_.getBlockEntity(blockpos);
--               if (blockentity instanceof SpawnerBlockEntity) {
--                  SpawnerBlockEntity spawnerblockentity = (SpawnerBlockEntity)blockentity;
--                  spawnerblockentity.setEntityId(EntityType.SILVERFISH, p_229638_);
--               }
++               /*
+                p_229635_.setBlock(blockpos, Blocks.SPAWNER.defaultBlockState(), 2);
+                BlockEntity blockentity = p_229635_.getBlockEntity(blockpos);
+                if (blockentity instanceof SpawnerBlockEntity) {
+                   SpawnerBlockEntity spawnerblockentity = (SpawnerBlockEntity)blockentity;
+                   spawnerblockentity.setEntityId(EntityType.SILVERFISH, p_229638_);
+                }
++               */
 +               // CraftBukkit start
 +               placeCraftSpawner(p_229635_, blockpos, org.bukkit.entity.EntityType.SILVERFISH, 2);
 +               // CraftBukkit end

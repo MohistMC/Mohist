@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
@@ -770,7 +771,7 @@ public final class CraftServer implements Server {
     @Override
     public long getConnectionThrottle() {
         // Spigot Start - Automatically set connection throttle for bungee configurations
-        if (org.spigotmc.SpigotConfig.bungee) {
+        if (org.spigotmc.SpigotConfig.bungee || MohistConfig.velocity_enabled) {
             return -1;
         } else {
             return this.configuration.getInt("settings.connection-throttle");

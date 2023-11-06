@@ -19,7 +19,7 @@
        } else {
           throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
        }
-@@ -36,4 +_,8 @@
+@@ -36,4 +_,18 @@
     public void handle(ClientLoginPacketListener p_134754_) {
        p_134754_.handleCustomQuery(this);
     }
@@ -27,4 +27,14 @@
 +   @Override public int getIndex() { return transactionId(); }
 +   @Override public ResourceLocation getName() { return this.payload.id(); }
 +   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return ((DiscardedQueryPayload)this.payload).data(); }
++
++   // Paper start - MC Utils - default query payloads
++   public static record PlayerInfoChannelPayload(ResourceLocation id, FriendlyByteBuf buffer) implements CustomQueryPayload {
++
++      @Override
++      public void write(final FriendlyByteBuf buf) {
++         buf.writeBytes(this.buffer.copy());
++      }
++   }
++   // Paper end - MC Utils - default query payloads
  }

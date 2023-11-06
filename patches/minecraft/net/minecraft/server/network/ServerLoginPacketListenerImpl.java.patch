@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.server.network;
+ 
+ import com.google.common.primitives.Ints;
++import com.mohistmc.MohistConfig;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+ import com.mojang.authlib.yggdrasil.ProfileResult;
 @@ -32,11 +_,15 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
@@ -25,11 +33,12 @@
     private volatile ServerLoginPacketListenerImpl.State state = ServerLoginPacketListenerImpl.State.HELLO;
     private int tick;
     @Nullable
-@@ -55,6 +_,8 @@
+@@ -55,6 +_,9 @@
     private GameProfile authenticatedProfile;
     private final String serverId = "";
  
 +   private ServerPlayer player; // CraftBukkit
++   private int velocityLoginMessageId = -1; // Paper - Velocity support
 +
     public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
        this.server = p_10027_;
@@ -57,11 +66,21 @@
        this.requestedUsername = p_10047_.name();
        GameProfile gameprofile = this.server.getSingleplayerProfile();
        if (gameprofile != null && this.requestedUsername.equalsIgnoreCase(gameprofile.getName())) {
-@@ -116,7 +_,16 @@
+@@ -116,7 +_,26 @@
              this.state = ServerLoginPacketListenerImpl.State.KEY;
              this.connection.send(new ClientboundHelloPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.challenge));
           } else {
 -            this.startClientVerification(createOfflineProfile(this.requestedUsername));
++            // Paper start - Velocity support
++            if (MohistConfig.velocity_enabled) {
++               this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
++               net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
++               buf.writeByte(com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++               net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket.PlayerInfoChannelPayload(com.destroystokyo.paper.proxy.VelocityProxy.PLAYER_INFO_CHANNEL, buf));
++               this.connection.send(packet1);
++               return;
++            }
++            // Paper end
 +            // Spigot start
 +            authenticatorPool.execute(() -> {
 +               try {
@@ -134,7 +153,7 @@
              }
  
           }
-@@ -219,22 +_,88 @@
+@@ -219,22 +_,137 @@
        thread.start();
     }
  
@@ -142,6 +161,12 @@
 +   public class LoginHandler {
 +
 +      public void fireEvents(GameProfile gameprofile) throws Exception {
++         // Paper start - Velocity support
++         if (ServerLoginPacketListenerImpl.this.velocityLoginMessageId == -1 && MohistConfig.velocity_enabled) {
++            disconnect("This server requires you to connect with Velocity.");
++            return;
++         }
++         // Paper end
 +         String playerName = gameprofile.getName();
 +         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
 +         java.util.UUID uniqueId = gameprofile.getId();
@@ -182,6 +207,49 @@
 +   // Spigot end
 +
     public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
++      // Paper start - Velocity support
++      if (MohistConfig.velocity_enabled && p_297965_.transactionId() == this.velocityLoginMessageId) {
++         ServerboundCustomQueryAnswerPacket.QueryAnswerPayload payload = (ServerboundCustomQueryAnswerPacket.QueryAnswerPayload)p_297965_.payload();
++         if (payload == null) {
++            this.disconnect("This server requires you to connect with Velocity.");
++            return;
++         }
++
++         net.minecraft.network.FriendlyByteBuf buf = payload.buffer;
++
++         if (!com.destroystokyo.paper.proxy.VelocityProxy.checkIntegrity(buf)) {
++            this.disconnect("Unable to verify player details");
++            return;
++         }
++
++         int version = buf.readVarInt();
++         if (version > com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION) {
++            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted upto " + com.destroystokyo.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++         }
++
++         java.net.SocketAddress listening = this.connection.getRemoteAddress();
++         int port = 0;
++         if (listening instanceof java.net.InetSocketAddress) {
++            port = ((java.net.InetSocketAddress) listening).getPort();
++         }
++         this.connection.address = new java.net.InetSocketAddress(com.destroystokyo.paper.proxy.VelocityProxy.readAddress(buf), port);
++
++         this.authenticatedProfile = com.destroystokyo.paper.proxy.VelocityProxy.createProfile(buf);
++
++         //TODO Update handling for lazy sessions, might not even have to do anything?
++
++         // Proceed with login
++         authenticatorPool.execute(() -> {
++            try {
++               new LoginHandler().fireEvents(this.authenticatedProfile);
++            } catch (Exception ex) {
++               disconnect("Failed to verify username!");
++               server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + this.authenticatedProfile.getName(), ex);
++            }
++         });
++         return;
++      }
++      // Paper end
 +      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
        this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
     }
