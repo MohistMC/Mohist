@@ -63,27 +63,29 @@ public class BlockEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof ServerPlayerEntity) {
-            ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
-            Player player = ((CraftServer) Bukkit.getServer()).getPlayer(playerEntity);
-            Direction direction = event.direction;
-            if (direction != null) {
-                Hand hand = event.hand == null ? Hand.MAIN_HAND : event.hand;
-                CraftBlock placedBlock = CraftCustomSnapshot.fromBlockSnapshot(event.getBlockSnapshot(), true);
-                CraftBlock againstBlock = CraftBlock.at(event.getWorld(), event.getPos().relative(direction.getOpposite()));
-                ItemStack bukkitStack;
-                EquipmentSlot bukkitHand;
-                if (hand == Hand.MAIN_HAND) {
-                    bukkitStack = player.getInventory().getItemInMainHand();
-                    bukkitHand = EquipmentSlot.HAND;
-                } else {
-                    bukkitStack = player.getInventory().getItemInOffHand();
-                    bukkitHand = EquipmentSlot.OFF_HAND;
+        if (!event.getWorld().isClientSide() && event.getWorld() instanceof ServerWorld) {
+            if (entity instanceof ServerPlayerEntity) {
+                ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
+                Player player = ((CraftServer) Bukkit.getServer()).getPlayer(playerEntity);
+                Direction direction = event.getPlaceEventDirection();
+                if (direction != null) {
+                    Hand hand = event.getPlaceEventHand();
+                    CraftBlock placedBlock = CraftCustomSnapshot.fromBlockSnapshot(event.getBlockSnapshot(), true);
+                    CraftBlock againstBlock = CraftBlock.at(event.getWorld(), event.getPos().relative(direction.getOpposite()));
+                    ItemStack bukkitStack;
+                    EquipmentSlot bukkitHand;
+                    if (hand == Hand.MAIN_HAND) {
+                        bukkitStack = player.getInventory().getItemInMainHand();
+                        bukkitHand = EquipmentSlot.HAND;
+                    } else {
+                        bukkitStack = player.getInventory().getItemInOffHand();
+                        bukkitHand = EquipmentSlot.OFF_HAND;
+                    }
+                    BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, placedBlock.getState(), againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
+                    placeEvent.setCancelled(event.isCanceled());
+                    Bukkit.getPluginManager().callEvent(placeEvent);
+                    event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
                 }
-                BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock,  placedBlock.getState(), againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
-                placeEvent.setCancelled(event.isCanceled());
-                Bukkit.getPluginManager().callEvent(placeEvent);
-                event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
             }
         }
     }
@@ -91,27 +93,29 @@ public class BlockEventDispatcher {
     @SubscribeEvent(receiveCanceled = true)
     public void onMultiPlace(BlockEvent.EntityMultiPlaceEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof ServerPlayerEntity) {
-            ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
-            Player player = ((CraftServer) Bukkit.getServer()).getPlayer(playerEntity);
-            Direction direction = event.direction;
-            if (direction != null) {
-                Hand hand = event.hand == null ? Hand.MAIN_HAND : event.hand;
-                List<BlockState> placedBlocks = new ArrayList<>(event.getReplacedBlockSnapshots().size());
-                for (BlockSnapshot snapshot : event.getReplacedBlockSnapshots()) {
-                    placedBlocks.add(CraftCustomSnapshot.fromBlockSnapshot(snapshot, true).getState());
+        if (!event.getWorld().isClientSide() && event.getWorld() instanceof ServerWorld) {
+            if (entity instanceof ServerPlayerEntity) {
+                ServerPlayerEntity playerEntity = (ServerPlayerEntity) entity;
+                Player player = ((CraftServer) Bukkit.getServer()).getPlayer(playerEntity);
+                Direction direction = event.getPlaceEventDirection();
+                if (direction != null) {
+                    Hand hand = event.getPlaceEventHand();
+                    List<BlockState> placedBlocks = new ArrayList<>(event.getReplacedBlockSnapshots().size());
+                    for (BlockSnapshot snapshot : event.getReplacedBlockSnapshots()) {
+                        placedBlocks.add(CraftCustomSnapshot.fromBlockSnapshot(snapshot, true).getState());
+                    }
+                    CraftBlock againstBlock = CraftBlock.at(event.getWorld(), event.getPos().relative(direction.getOpposite()));
+                    ItemStack bukkitStack;
+                    if (hand == Hand.MAIN_HAND) {
+                        bukkitStack = player.getInventory().getItemInMainHand();
+                    } else {
+                        bukkitStack = player.getInventory().getItemInOffHand();
+                    }
+                    BlockPlaceEvent placeEvent = new BlockMultiPlaceEvent(placedBlocks, againstBlock, bukkitStack, player, !event.isCanceled());
+                    placeEvent.setCancelled(event.isCanceled());
+                    Bukkit.getPluginManager().callEvent(placeEvent);
+                    event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
                 }
-                CraftBlock againstBlock = CraftBlock.at(event.getWorld(), event.getPos().relative(direction.getOpposite()));
-                ItemStack bukkitStack;
-                if (hand == Hand.MAIN_HAND) {
-                    bukkitStack = player.getInventory().getItemInMainHand();
-                } else {
-                    bukkitStack = player.getInventory().getItemInOffHand();
-                }
-                BlockPlaceEvent placeEvent = new BlockMultiPlaceEvent(placedBlocks, againstBlock, bukkitStack, player, !event.isCanceled());
-                placeEvent.setCancelled(event.isCanceled());
-                Bukkit.getPluginManager().callEvent(placeEvent);
-                event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
             }
         }
     }

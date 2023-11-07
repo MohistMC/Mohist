@@ -132,8 +132,8 @@ public class BlockEvent extends Event
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
         // Mohist start
-        public static Direction direction = null;
-        public static Hand hand = null;
+        public static Direction placeEventDirection = null;
+        public static Hand placeEventHand = Hand.MAIN_HAND;
         // Mohist end
 
         public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
@@ -155,6 +155,20 @@ public class BlockEvent extends Event
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public BlockState getPlacedBlock() { return placedBlock; }
         public BlockState getPlacedAgainst() { return placedAgainst; }
+        // Mohist start
+        public void setPlaceEventDirection(Direction placeEventDirection) {
+            this.placeEventDirection = placeEventDirection;
+        }
+        public Direction getPlaceEventDirection() {
+            return placeEventDirection;
+        }
+        public void setPlaceEventHand(Hand placeEventHand) {
+            this.placeEventHand = placeEventHand;
+        }
+        public Hand getPlaceEventHand() {
+            return placeEventHand;
+        }
+        // Mohist end
     }
 
     /**

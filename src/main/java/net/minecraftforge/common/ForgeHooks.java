@@ -625,7 +625,6 @@ public class ForgeHooks
 
     public static ActionResultType onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
-        EntityPlaceEvent.hand = context.getHand();
         ItemStack itemstack = context.getItemInHand();
         World world = context.getLevel();
 
@@ -668,15 +667,16 @@ public class ForgeHooks
             itemstack.setTag(nbt);
 
             Direction side = context.getClickedFace();
+            Hand hand = context.getHand(); // Mohist
 
             boolean eventResult = false;
             if (blockSnapshots.size() > 1)
             {
-                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
+                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side, hand); // Mohist add hand
             }
             else if (blockSnapshots.size() == 1)
             {
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side, hand); // Mohist add hand
             }
 
             if (eventResult)
@@ -709,7 +709,6 @@ public class ForgeHooks
             }
         }
         world.capturedBlockSnapshots.clear();
-        EntityPlaceEvent.hand = Hand.MAIN_HAND;
         return ret;
     }
 

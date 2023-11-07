@@ -149,11 +149,29 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
+    public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction, Hand hand)
+    {
+        BlockSnapshot snap = blockSnapshots.get(0);
+        BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().relative(direction.getOpposite()));
+        EntityMultiPlaceEvent event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
+        event.setPlaceEventDirection(direction); // Mohist
+        event.setPlaceEventHand(hand); // Mohist
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
+
     public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction)
     {
         BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
         EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
-        event.direction = direction;
+        return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction, Hand hand)
+    {
+        BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
+        EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
+        event.setPlaceEventDirection(direction); // Mohist
+        event.setPlaceEventHand(hand); // Mohist
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
