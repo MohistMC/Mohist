@@ -92,6 +92,7 @@ import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
@@ -442,6 +443,7 @@ public class ForgeMod {
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
+        MinecraftForge.EVENT_BUS.addListener(this::tagsUpdated);
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
         MinecraftForge.EVENT_BUS.register(new ForgeNetworkConfigurationHandler());
 
@@ -465,6 +467,10 @@ public class ForgeMod {
     }
 
     public void mappingChanged(IdMappingEvent evt) {
+        Ingredient.invalidateAll();
+    }
+
+    public void tagsUpdated(TagsUpdatedEvent evt) {
         Ingredient.invalidateAll();
     }
 
