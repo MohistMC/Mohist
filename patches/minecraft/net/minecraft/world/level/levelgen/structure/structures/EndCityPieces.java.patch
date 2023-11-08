@@ -1,9 +1,18 @@
 --- a/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
 +++ b/net/minecraft/world/level/levelgen/structure/structures/EndCityPieces.java
-@@ -250,6 +_,9 @@
+@@ -16,7 +_,6 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.level.block.Rotation;
+-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+ import net.minecraft.world.level.levelgen.structure.BoundingBox;
+ import net.minecraft.world.level.levelgen.structure.StructurePiece;
+ import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
+@@ -249,7 +_,9 @@
+          if (p_227505_.startsWith("Chest")) {
              BlockPos blockpos = p_227506_.below();
              if (p_227509_.isInside(blockpos)) {
-                RandomizableContainerBlockEntity.setLootTable(p_227507_, p_227508_, blockpos, BuiltInLootTables.END_CITY_TREASURE);
+-               RandomizableContainerBlockEntity.setLootTable(p_227507_, p_227508_, blockpos, BuiltInLootTables.END_CITY_TREASURE);
 +               // CraftBukkit start - ensure block transformation
 +               setCraftLootTable(p_227507_, blockpos, p_227508_, BuiltInLootTables.END_CITY_TREASURE);
 +               // CraftBukkit end
