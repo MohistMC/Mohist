@@ -131,8 +131,7 @@
           GameProfileCache.m_11004_(this.m_129797_());
 +         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
--         this.m_130006_();
-+         this.loadLevel(f_129744_.m_78277_());
+          this.m_130006_();
           long j = Util.m_137569_() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           f_139598_.info("Done ({})! For help, type \"help\"", (Object)s);
