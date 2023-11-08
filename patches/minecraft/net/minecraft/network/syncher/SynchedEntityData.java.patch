@@ -24,7 +24,7 @@
        SynchedEntityData.DataItem<T> dataitem = this.getItem(p_276368_);
        if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.getValue())) {
           dataitem.setValue(p_276363_);
-@@ -209,6 +_,26 @@
+@@ -209,6 +_,42 @@
     public boolean isEmpty() {
        return this.itemsById.isEmpty();
     }
@@ -48,6 +48,22 @@
 +      }
 +   }
 +    // CraftBukkit end
++
++
++   // This method allows you to specifically resend certain data accessor keys to the client
++   public void resendPossiblyDesyncedDataValues(List<EntityDataAccessor<?>> keys, ServerPlayer to) {
++      if (!to.getBukkitEntity().canSee(this.entity.getBukkitEntity())) {
++         return;
++      }
++      List<SynchedEntityData.DataValue<?>> values = new ArrayList<>(keys.size());
++      for (EntityDataAccessor<?> key : keys) {
++         SynchedEntityData.DataItem<?> synchedValue = this.getItem(key);
++         values.add(synchedValue.value());
++      }
++
++      to.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), values));
++   }
++   // Paper end
  
     public static class DataItem<T> {
        final EntityDataAccessor<T> accessor;

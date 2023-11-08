@@ -271,7 +271,7 @@
           int i = p_9264_.getCount();
           int j = p_9264_.getDamageValue();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
-@@ -294,13 +_,61 @@
+@@ -294,13 +_,63 @@
        }
     }
  
@@ -289,6 +289,7 @@
 +      if (BanItem.check(p_9266_, ItemAPI.toNMSItem(CraftBlock.at(p_9267_, blockpos).getType()))) return InteractionResult.FAIL; // Block
 +      InteractionResult enuminteractionresult = InteractionResult.PASS;
 +      boolean cancelledBlock = false;
++      boolean cancelledItem = false; // Paper - correctly handle items on cooldown
 +
        if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
           return InteractionResult.FAIL;
@@ -301,7 +302,7 @@
 +      }
 +
 +      if (p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
-+         cancelledBlock = true;
++         cancelledItem = true; // Paper - correctly handle items on cooldown
 +      }
 +
 +      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.getDirection(), p_9268_, cancelledBlock, p_9269_, p_9270_.getLocation());
@@ -326,6 +327,7 @@
 +            p_9266_.connection.send(new ClientboundBlockUpdatePacket(p_9267_, blockpos.above()));
 +         }
 +         p_9266_.getBukkitEntity().updateInventory(); // SPIGOT-2867
++         this.player.resyncUsingItem(this.player); // Paper - Resend player's using item status
 +         enuminteractionresult = (eventCB.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
        } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
           MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
@@ -362,13 +364,19 @@
              InteractionResult interactionresult1;
              if (this.isCreative()) {
                 int i = p_9268_.getCount();
-@@ -335,10 +_,9 @@
+@@ -335,10 +_,14 @@
              }
  
              return interactionresult1;
 -         } else {
 -            return InteractionResult.PASS;
-          }
+-         }
++         }
++         // Paper start - Cancel only if cancelled + if the interact result is different from default response
++         else if (this.interactResult && this.interactResult != cancelledItem) {
++            this.player.resyncUsingItem(this.player);
++         }
++         // Paper end
        }
 +      return enuminteractionresult;
     }
