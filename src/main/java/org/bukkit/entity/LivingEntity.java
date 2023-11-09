@@ -85,6 +85,27 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
     public Block getTargetBlock(@Nullable Set<Material> transparent, int maxDistance);
 
     /**
+     * Gets information about the entity being targeted
+     *
+     * @param maxDistance this is the maximum distance to scan
+     * @return entity being targeted, or null if no entity is targeted
+     */
+    @Nullable
+    public default Entity getTargetEntity(int maxDistance) {
+        return getTargetEntity(maxDistance, false);
+    }
+
+    /**
+     * Gets information about the entity being targeted
+     *
+     * @param maxDistance this is the maximum distance to scan
+     * @param ignoreBlocks true to scan through blocks
+     * @return entity being targeted, or null if no entity is targeted
+     */
+    @Nullable
+    public Entity getTargetEntity(int maxDistance, boolean ignoreBlocks);
+
+    /**
      * Gets the last two blocks along the living entity's line of sight.
      * <p>
      * The target block will be the last block in the list. This method
