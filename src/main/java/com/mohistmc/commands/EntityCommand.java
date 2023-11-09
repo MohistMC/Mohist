@@ -4,10 +4,11 @@ import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,9 +56,16 @@ public class EntityCommand extends Command {
             return false;
         }
 
-        Location location = player.getLocation();
-        for (var e : player.getWorld().getNearbyEntities(location, 5, 5, 5)) {
-            player.sendMessage("获取到实体: %s".formatted(e.toString()));
+        switch (args[0].toLowerCase(Locale.ENGLISH)) {
+            case "info" -> {
+                player.sendMessage("Entity: %s".formatted(player.getTargetEntity(3)));
+                return true;
+            }
+            case "remove" -> {
+                Entity entity = player.getTargetEntity(3);
+                if (entity != null) entity.remove();
+                return true;
+            }
         }
 
         return false;

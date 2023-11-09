@@ -84,7 +84,7 @@ public class MohistConfig {
         commands.put("bans", new BansCommand("bans"));
         commands.put("shows", new ShowsCommand("shows"));
         commands.put("ping", new PingCommand("ping"));
-        commands.put("enetity", new EntityCommand("enetity"));
+        commands.put("entity", new EntityCommand("entity"));
 
         if (getBoolean("worldmanage", true)) {
             commands.put("worlds", new WorldsCommands("worlds"));
