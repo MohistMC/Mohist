@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/EvokerFangs.java
 +++ b/net/minecraft/world/entity/projectile/EvokerFangs.java
+@@ -16,7 +_,7 @@
+    public static final int ATTACK_DURATION = 20;
+    public static final int LIFE_OFFSET = 2;
+    public static final int ATTACK_TRIGGER_TICKS = 14;
+-   private int warmupDelayTicks;
++   public int warmupDelayTicks;
+    private boolean sentSpikeEvent;
+    private int lifeTicks = 22;
+    private boolean clientSideAttackStarted;
 @@ -113,7 +_,9 @@
        LivingEntity livingentity = this.getOwner();
        if (p_36945_.isAlive() && !p_36945_.isInvulnerable() && p_36945_ != livingentity) {

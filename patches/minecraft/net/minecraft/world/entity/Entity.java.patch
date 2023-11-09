@@ -100,7 +100,8 @@
 -   private float maxUpStep;
 +   public float maxUpStep;
     public boolean noPhysics;
-    protected final RandomSource random = RandomSource.create();
+-   protected final RandomSource random = RandomSource.create();
++   public final RandomSource random = RandomSource.create();
     public int tickCount;
     public int remainingFireTicks = -this.getFireImmuneTicks();
 -   protected boolean wasTouchingWater;

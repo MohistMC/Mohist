@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R2.entity;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
 import org.bukkit.entity.EvokerFangs;
 import org.bukkit.entity.LivingEntity;
@@ -30,5 +31,15 @@ public class CraftEvokerFangs extends CraftEntity implements EvokerFangs {
     @Override
     public void setOwner(LivingEntity owner) {
         getHandle().setOwner(owner == null ? null : ((CraftLivingEntity) owner).getHandle());
+    }
+
+    @Override
+    public int getAttackDelay() {
+        return getHandle().warmupDelayTicks;
+    }
+    @Override
+    public void setAttackDelay(int delay) {
+        Preconditions.checkArgument(delay >= 0, "Delay must be positive");
+        getHandle().warmupDelayTicks = delay;
     }
 }

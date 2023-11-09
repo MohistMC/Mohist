@@ -325,6 +325,14 @@
        }
  
     }
+@@ -463,6 +_,7 @@
+ 
+    public void handleRecipeBookChangeSettingsPacket(ServerboundRecipeBookChangeSettingsPacket p_9895_) {
+       PacketUtils.ensureRunningOnSameThread(p_9895_, this, this.player.serverLevel());
++      CraftEventFactory.callRecipeBookSettingsEvent(this.player, p_9895_.getBookType(), p_9895_.isOpen(), p_9895_.isFiltering()); // CraftBukkit
+       this.player.getRecipeBook().setBookSetting(p_9895_.getBookType(), p_9895_.isOpen(), p_9895_.isFiltering());
+    }
+ 
 @@ -486,8 +_,9 @@
        }
  
