@@ -1,5 +1,7 @@
 package com.mohistmc.commands;
 
+import com.mohistmc.api.ChatComponentAPI;
+import com.mohistmc.api.EntityAPI;
 import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,8 +60,12 @@ public class EntityCommand extends Command {
 
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "info" -> {
-                player.sendMessage("Entity: %s".formatted(player.getTargetEntity(3)));
-                return true;
+                Entity entity = player.getTargetEntity(3);
+                if (entity != null) {
+                    ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "Type: ", entity.getType().name());
+                    ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "NBT(CraftBukkit) - ", EntityAPI.getNBTAsString(entity));
+                    return true;
+                }
             }
             case "remove" -> {
                 Entity entity = player.getTargetEntity(3);

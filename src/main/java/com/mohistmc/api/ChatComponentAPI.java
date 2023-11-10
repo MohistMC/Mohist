@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mohistmc.util.I18n;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -39,6 +40,13 @@ public class ChatComponentAPI {
 
     public static TextComponent getSuggestCommand(String message, String hover, String command) {
         return new ChatComponent(getHoverChat(message, hover)).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)).create();
+    }
+
+    public static void sendMessageByCopy(Player player, String des, String info) {
+        TextComponent textComponent = new TextComponent(des + info);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§c%s".formatted(I18n.as("itemscmd.copy"))).create()));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, info));
+        player.spigot().sendMessage(textComponent);
     }
 
     private static class ChatComponent {
