@@ -74,7 +74,7 @@ public class ScriptBlockPlus {
         }
 
         // Collect all artifactIds.
-        Set<String> artifactIds = new HashSet<String>();
+        Set<String> artifactIds = new HashSet<>();
         for (Object o: props.keySet()) {
             String k = (String) o;
 

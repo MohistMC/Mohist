@@ -109,10 +109,6 @@ public class DumpCommand extends Command {
                 case "entitytypes" -> dumpEntityTypes(sender, mode);
                 case "biomes" -> dumpBiomes(sender, mode);
                 case "pattern" -> dumpPattern(sender, mode);
-
-                /*case "worldgen":
-                    dumpWorldGen(sender, mode);
-                    break;*/
                 case "worldtype" -> dumpWorldType(sender, mode);
                 case "material" -> dumpMaterial(sender, mode);
                 case "channels" -> dumpChannels(sender, mode);
