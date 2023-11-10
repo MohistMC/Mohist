@@ -33,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,13 +53,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements", "plugins");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements", "plugins", "mods");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
         super(name);
         this.description = I18n.as("dumpcmd.description");
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements|plugins]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements|plugins|mods]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -116,6 +118,7 @@ public class DumpCommand extends Command {
                 case "channels" -> dumpChannels(sender, mode);
                 case "advancements" -> dumpAdvancements(sender, mode);
                 case "plugins" -> dumpPlugins(sender, mode);
+                case "mods" -> dumpMods(sender, mode);
                 default -> {
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
@@ -260,9 +263,17 @@ public class DumpCommand extends Command {
     private void dumpPlugins(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
         for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
-            sb.append("%s -%s".formatted(p.getName(), p.getDescription().getVersion())).append("\n");
+            sb.append("%s - %s".formatted(p.getName(), p.getDescription().getVersion())).append("\n");
         }
         dump(sender, "plugins", sb, mode);
+    }
+
+    private void dumpMods(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (IModInfo modInfo : ModLoader.getModList().getMods()) {
+            sb.append("%s - %s".formatted(modInfo.getModId(), modInfo.getVersion().toString())).append("\n");
+        }
+        dump(sender, "mods", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, String path, String type) {
