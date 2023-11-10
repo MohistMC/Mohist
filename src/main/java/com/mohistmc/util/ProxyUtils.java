@@ -10,6 +10,6 @@ import org.spigotmc.SpigotConfig;
 public class ProxyUtils {
 
     public static boolean ignoreRejected() {
-        return MohistConfig.ignoreConnectionType && (MohistConfig.velocity_enabled || SpigotConfig.bungee);
+        return /*MohistConfig.ignoreConnectionType && */ (MohistConfig.velocity_enabled || SpigotConfig.bungee);
     }
 }
