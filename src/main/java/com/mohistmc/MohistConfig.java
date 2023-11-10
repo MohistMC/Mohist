@@ -7,7 +7,6 @@ import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.BansCommand;
 import com.mohistmc.commands.DumpCommand;
 import com.mohistmc.commands.EntityCommand;
-import com.mohistmc.commands.GetPluginListCommand;
 import com.mohistmc.commands.ItemsCommand;
 import com.mohistmc.commands.MohistCommand;
 import com.mohistmc.commands.PermissionCommand;
@@ -75,7 +74,6 @@ public class MohistConfig {
 
         commands = new HashMap<>();
         commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("getpluginlist", new GetPluginListCommand("getpluginlist"));
         commands.put("dump", new DumpCommand("dump"));
         commands.put("plugin", new PluginCommand("plugin"));
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
@@ -222,6 +220,7 @@ public class MohistConfig {
     public static boolean velocity_enabled;
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
+    @Deprecated(forRemoval = true, since = "1.21")
     public static boolean ignoreConnectionType;
 
     private static void mohist() {

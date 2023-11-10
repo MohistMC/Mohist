@@ -63,6 +63,7 @@ public class EntityCommand extends Command {
                 Entity entity = player.getTargetEntity(3);
                 if (entity != null) {
                     ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "Type: ", entity.getType().name());
+                    ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "UUID: ", entity.getUniqueId().toString());
                     ChatComponentAPI.sendMessageByCopy(player, ChatColor.GRAY + "NBT(CraftBukkit) - ", EntityAPI.getNBTAsString(entity));
                     return true;
                 }
@@ -71,6 +72,10 @@ public class EntityCommand extends Command {
                 Entity entity = player.getTargetEntity(3);
                 if (entity != null) entity.remove();
                 return true;
+            }
+            default -> {
+                sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+                return false;
             }
         }
 

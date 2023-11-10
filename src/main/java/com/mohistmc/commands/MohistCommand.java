@@ -136,7 +136,7 @@ public class MohistCommand extends Command {
                         }
                     }
                 } else {
-                    sender.sendMessage("§c" + I18n.as("控制台不能覆盖这个设置"));
+                    sender.sendMessage("§c" + I18n.as("error.notplayer"));
                 }
             }
             default -> {

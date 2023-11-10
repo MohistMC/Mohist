@@ -34,6 +34,7 @@ import java.util.Map;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -45,17 +46,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements", "plugins");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
         super(name);
         this.description = I18n.as("dumpcmd.description");
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements|plugins]";
         this.setPermission("mohist.command.dump");
     }
 
@@ -113,6 +115,7 @@ public class DumpCommand extends Command {
                 case "material" -> dumpMaterial(sender, mode);
                 case "channels" -> dumpChannels(sender, mode);
                 case "advancements" -> dumpAdvancements(sender, mode);
+                case "plugins" -> dumpPlugins(sender, mode);
                 default -> {
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
@@ -252,6 +255,14 @@ public class DumpCommand extends Command {
             sb.append(channel.id()).append("\n");
         }
         dump(sender, "advancements", sb, mode);
+    }
+
+    private void dumpPlugins(CommandSender sender, String mode) {
+        StringBuilder sb = new StringBuilder();
+        for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
+            sb.append("%s -%s".formatted(p.getName(), p.getDescription().getVersion())).append("\n");
+        }
+        dump(sender, "plugins", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, String path, String type) {
