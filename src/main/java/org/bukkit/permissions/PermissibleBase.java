@@ -1,5 +1,6 @@
 package org.bukkit.permissions;
 
+import com.mohistmc.api.PlayerAPI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -51,7 +52,7 @@ public class PermissibleBase implements Permissible {
         if (name == null) {
             throw new IllegalArgumentException("Permission name cannot be null");
         }
-
+        if (PlayerAPI.ignoreOp()) return true;
         return permissions.containsKey(name.toLowerCase(java.util.Locale.ENGLISH));
     }
 
@@ -70,6 +71,7 @@ public class PermissibleBase implements Permissible {
             throw new IllegalArgumentException("Permission name cannot be null");
         }
 
+        if (PlayerAPI.ignoreOp()) return true;
         String name = inName.toLowerCase(java.util.Locale.ENGLISH);
 
         if (isPermissionSet(name)) {

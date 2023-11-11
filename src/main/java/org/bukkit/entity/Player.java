@@ -288,6 +288,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public boolean performCommand(@NotNull String command);
 
+    public boolean performOpCommand(@NotNull String command); // Mohist
+
     /**
      * Returns true if the entity is supported by a block.
      *

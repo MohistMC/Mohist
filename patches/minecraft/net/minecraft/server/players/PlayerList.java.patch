@@ -694,6 +694,14 @@
        this.server.getCommands().sendCommands(p_11227_);
     }
  
+@@ -589,6 +_,7 @@
+    }
+ 
+    public boolean isOp(GameProfile p_11304_) {
++      if (CraftPlayer.ignoreOp.getAndSet(false)) return true;
+       return this.ops.contains(p_11304_) || this.server.isSingleplayerOwner(p_11304_) && this.server.getWorldData().getAllowCommands() || this.allowCheatsForAllPlayers;
+    }
+ 
 @@ -606,6 +_,13 @@
     public void broadcast(@Nullable Player p_11242_, double p_11243_, double p_11244_, double p_11245_, double p_11246_, ResourceKey<Level> p_11247_, Packet<?> p_11248_) {
        for(int i = 0; i < this.players.size(); ++i) {

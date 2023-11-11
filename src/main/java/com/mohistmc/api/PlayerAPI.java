@@ -29,4 +29,12 @@ public class PlayerAPI {
     public static boolean hasMod(Player player, String modid) {
         return modlist(player).contains(modid);
     }
+
+    public static boolean ignoreOp() {
+        return CraftPlayer.ignoreOp.getAndSet(false);
+    }
+
+    public boolean performOpCommand(Player player, String command) {
+        return player.performOpCommand(command);
+    }
 }

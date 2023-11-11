@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nullable;
@@ -412,6 +413,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         Preconditions.checkArgument(command != null, "command cannot be null");
         return server.dispatchCommand(this, command);
     }
+
+
+    // Mohist start
+    public static AtomicBoolean ignoreOp = new AtomicBoolean(false);
+    @Override
+    public boolean performOpCommand(String command) {
+        Preconditions.checkArgument(command != null, "command cannot be null");
+        ignoreOp.set(true); // Mohist
+        return server.dispatchCommand(this, command);
+    }
+    // Mohist end
 
     @Override
     public void playNote(Location loc, byte instrument, byte note) {
