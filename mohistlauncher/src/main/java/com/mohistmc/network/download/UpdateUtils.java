@@ -20,10 +20,11 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.tools.MD5Util;
+import com.mohistmc.util.DataParser;
 import com.mohistmc.util.I18n;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -45,7 +46,7 @@ public class UpdateUtils {
         try {
             Json json = Json.read(new URL("https://mohistmc.com/api/" + MohistMCStart.MCVERSION + "/latest"));
 
-            var jar_version = Integer.parseInt(MohistMCStart.getVersion().split("-")[1]);
+            var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
             var build_number = json.asInteger("number");
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("timeinmillis")));
 
@@ -68,8 +69,8 @@ public class UpdateUtils {
     }
 
     public static void downloadFile(String URL, File f, String md5, boolean showlog) throws Exception {
-        URLConnection conn = getConn(URL);
-        if (showlog) System.out.println(I18n.as("download.file", f.getName(), getSize(conn.getContentLength())));
+        URLConnection conn = ConnectionUtil.getConn(URL);
+        if (showlog) System.out.println(I18n.as("download.file", f.getName(), ConnectionUtil.getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
@@ -85,10 +86,6 @@ public class UpdateUtils {
         if (showlog) System.out.println(I18n.as("download.file.ok", f.getName()));
     }
 
-    public static String getSize(long size) {
-        return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
-    }
-
     public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
         System.out.println(I18n.as("jarfile.restart"));
         if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
@@ -98,16 +95,5 @@ public class UpdateUtils {
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
         if(shutdown) System.exit(0);
-    }
-
-    public static URLConnection getConn(String URL) {
-        URLConnection conn = null;
-        try {
-            conn = new URL(URL).openConnection();
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
-        } catch (IOException e) {
-            e.fillInStackTrace();
-        }
-        return conn;
     }
 }

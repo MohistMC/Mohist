@@ -43,7 +43,7 @@ public class MohistMCStart {
     public static JarTool jarTool;
 
     public static String getVersion() {
-        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
+        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : MCVERSION;
     }
 
     public static void main(String[] args) throws Exception {

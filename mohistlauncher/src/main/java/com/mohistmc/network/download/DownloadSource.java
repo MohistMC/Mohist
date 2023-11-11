@@ -25,10 +25,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-
 @Getter
 @ToString
 @AllArgsConstructor
@@ -46,10 +42,10 @@ public enum DownloadSource {
         DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url)) {
-                    if (ds.equals("CHINA")) {
+                if (ConnectionUtil.isDown(me.url)) {
+                    if (ds.equals(CHINA.name())) {
                         urL = MOHIST;
-                        if (isDown(urL.url)) {
+                        if (ConnectionUtil.isDown(urL.url)) {
                             return GITHUB;
                         }
                     }
@@ -63,17 +59,5 @@ public enum DownloadSource {
 
     public static boolean isCN() {
         return MohistMCStart.i18n.isCN() && ConnectionUtil.getUrlMillis(CHINA.getUrl()) < ConnectionUtil.getUrlMillis(MOHIST.getUrl());
-    }
-
-    public static boolean isDown(String s) {
-        try {
-            URL url = new URL(s);
-            URLConnection rulConnection = url.openConnection();
-            HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
-            httpUrlConnection.connect();
-            return httpUrlConnection.getResponseCode() != 200;
-        } catch (Exception e) {
-            return true;
-        }
     }
 }
