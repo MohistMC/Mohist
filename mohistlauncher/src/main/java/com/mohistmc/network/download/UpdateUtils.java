@@ -44,18 +44,18 @@ public class UpdateUtils {
         System.out.println(I18n.as("update.stopcheck"));
 
         try {
-            Json json = Json.read(new URL("https://mohistmc.com/api/" + MohistMCStart.MCVERSION + "/latest"));
+            Json json = Json.read(new URL("https://mohistmc.com/api/v2/sources/jenkins/Mohist-1.20.2/builds/latest"));
 
             var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
-            var build_number = json.asInteger("number");
-            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("timeinmillis")));
+            var build_number = json.asInteger("id");
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("createdAt")));
 
             if (jar_version >= build_number) {
                 System.out.println(I18n.as("update.latest", jar_version, build_number));
             } else {
                 System.out.println(I18n.as("update.detect", build_number, jar_version, time));
                 if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
-                    downloadFile(json.asString("url"), MohistMCStart.jarTool.getFile());
+                    downloadFile(json.asString("originUrl"), MohistMCStart.jarTool.getFile());
                     restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
                 }
             }
