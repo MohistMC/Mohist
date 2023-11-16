@@ -1964,7 +1964,7 @@ public final class Bukkit {
      * @return new data instance
      */
     @NotNull
-    public static BlockData createBlockData(@NotNull Material material, @Nullable Consumer<BlockData> consumer) {
+    public static BlockData createBlockData(@NotNull Material material, @Nullable Consumer<? super BlockData> consumer) {
         return server.createBlockData(material, consumer);
     }
 

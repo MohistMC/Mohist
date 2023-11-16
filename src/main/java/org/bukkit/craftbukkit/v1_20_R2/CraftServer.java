@@ -2283,7 +2283,7 @@ public final class CraftServer implements Server {
     }
 
     @Override
-    public BlockData createBlockData(org.bukkit.Material material, Consumer<BlockData> consumer) {
+    public BlockData createBlockData(org.bukkit.Material material, Consumer<? super BlockData> consumer) {
         BlockData data = createBlockData(material);
 
         if (consumer != null) {

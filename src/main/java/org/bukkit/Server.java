@@ -1672,7 +1672,7 @@ public interface Server extends PluginMessageRecipient {
      * @return new data instance
      */
     @NotNull
-    public BlockData createBlockData(@NotNull Material material, @Nullable Consumer<BlockData> consumer);
+    public BlockData createBlockData(@NotNull Material material, @Nullable Consumer<? super BlockData> consumer);
 
     /**
      * Creates a new {@link BlockData} instance with material and properties

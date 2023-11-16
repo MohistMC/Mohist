@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -32,10 +_,16 @@
+@@ -32,12 +_,18 @@
     }
  
     public InteractionResult useOn(UseOnContext p_40637_) {
@@ -16,8 +16,20 @@
 -      if (growCrop(p_40637_.getItemInHand(), level, blockpos)) {
 +      if (applyBonemeal(p_40637_.getItemInHand(), level, blockpos, p_40637_.getPlayer())) {
           if (!level.isClientSide) {
-             p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+-            p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
++            if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
              level.levelEvent(1505, blockpos, 0);
+          }
+ 
+@@ -47,7 +_,7 @@
+          boolean flag = blockstate.isFaceSturdy(level, blockpos, p_40637_.getClickedFace());
+          if (flag && growWaterPlant(p_40637_.getItemInHand(), level, blockpos1, p_40637_.getClickedFace())) {
+             if (!level.isClientSide) {
+-               p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
++               if (p_40637_.getPlayer() != null) p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH); // CraftBukkit - SPIGOT-7518
+                level.levelEvent(1505, blockpos1, 0);
+             }
+ 
 @@ -57,9 +_,19 @@
           }
        }

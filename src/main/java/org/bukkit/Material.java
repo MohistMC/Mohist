@@ -4518,7 +4518,7 @@ public enum Material implements Keyed, Translatable {
      * @return new data instance
      */
     @NotNull
-    public BlockData createBlockData(@Nullable Consumer<BlockData> consumer) {
+    public BlockData createBlockData(@Nullable Consumer<? super BlockData> consumer) {
         return Bukkit.createBlockData(this, consumer);
     }
 

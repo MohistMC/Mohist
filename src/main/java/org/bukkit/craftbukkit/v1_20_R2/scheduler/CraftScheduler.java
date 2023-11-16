@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The fundamental concepts for this implementation:
@@ -122,7 +123,7 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTask(Plugin plugin, Consumer<BukkitTask> task) throws IllegalArgumentException {
+    public void runTask(@NotNull Plugin plugin, @NotNull Consumer<? super BukkitTask> task) throws IllegalArgumentException {
         runTaskLater(plugin, task, 0L);
     }
 
@@ -138,7 +139,7 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskAsynchronously(Plugin plugin, Consumer<BukkitTask> task) throws IllegalArgumentException {
+    public void runTaskAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task) throws IllegalArgumentException {
         runTaskLaterAsynchronously(plugin, task, 0L);
     }
 
@@ -153,7 +154,7 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskLater(Plugin plugin, Consumer<BukkitTask> task, long delay) throws IllegalArgumentException {
+    public void runTaskLater(Plugin plugin, Consumer<? super BukkitTask> task, long delay) throws IllegalArgumentException {
         runTaskTimer(plugin, task, delay, CraftTask.NO_REPEATING);
     }
 
@@ -169,12 +170,12 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskLaterAsynchronously(Plugin plugin, Consumer<BukkitTask> task, long delay) throws IllegalArgumentException {
+    public void runTaskLaterAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task, long delay) throws IllegalArgumentException {
         runTaskTimerAsynchronously(plugin, task, delay, CraftTask.NO_REPEATING);
     }
 
     @Override
-    public void runTaskTimerAsynchronously(Plugin plugin, Consumer<BukkitTask> task, long delay, long period) throws IllegalArgumentException {
+    public void runTaskTimerAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task, long delay, long period) throws IllegalArgumentException {
         runTaskTimerAsynchronously(plugin, (Object) task, delay, CraftTask.NO_REPEATING);
     }
 
@@ -189,7 +190,7 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskTimer(Plugin plugin, Consumer<BukkitTask> task, long delay, long period) throws IllegalArgumentException {
+    public void runTaskTimer(Plugin plugin, Consumer<? super BukkitTask> task, long delay, long period) throws IllegalArgumentException {
         runTaskTimer(plugin, (Object) task, delay, period);
     }
 
