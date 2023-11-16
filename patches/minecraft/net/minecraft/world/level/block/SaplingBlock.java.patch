@@ -1,10 +1,13 @@
 --- a/net/minecraft/world/level/block/SaplingBlock.java
 +++ b/net/minecraft/world/level/block/SaplingBlock.java
-@@ -14,12 +_,14 @@
+@@ -14,12 +_,17 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.Location;
 +import org.bukkit.TreeType;
++import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.event.world.StructureGrowEvent;
  
  public class SaplingBlock extends BushBlock implements BonemealableBlock {
     public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
@@ -15,13 +18,40 @@
  
     public SaplingBlock(AbstractTreeGrower p_55978_, BlockBehaviour.Properties p_55979_) {
        super(p_55979_);
-@@ -32,7 +_,8 @@
+@@ -32,8 +_,34 @@
     }
  
     public void randomTick(BlockState p_222011_, ServerLevel p_222012_, BlockPos p_222013_, RandomSource p_222014_) {
 -      if (p_222012_.getMaxLocalRawBrightness(p_222013_.above()) >= 9 && p_222014_.nextInt(7) == 0) {
+-         this.advanceTree(p_222012_, p_222013_, p_222011_, p_222014_);
 +      if (!p_222012_.isAreaLoaded(p_222013_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
 +      if (p_222012_.getMaxLocalRawBrightness(p_222013_.above()) >= 9 && p_222014_.nextFloat() < (p_222012_.spigotConfig.saplingModifier / (100.0f * 7))) { // Spigot - SPIGOT-7159: Better modifier resolution
-          this.advanceTree(p_222012_, p_222013_, p_222011_, p_222014_);
++         // CraftBukkit start
++         if (p_222012_.captureTreeGeneration) {
++            this.treeGrower.growTree(p_222012_, p_222012_.getChunkSource().getGenerator(), p_222013_, p_222011_, p_222014_);
++         } else {
++            p_222012_.captureTreeGeneration = true;
++            this.treeGrower.growTree(p_222012_, p_222012_.getChunkSource().getGenerator(), p_222013_, p_222011_, p_222014_);
++            p_222012_.captureTreeGeneration = false;
++            if (p_222012_.capturedBlockStates.size() > 0) {
++               TreeType treeType = SaplingBlock.treeType;
++               SaplingBlock.treeType = null;
++               Location location = CraftLocation.toBukkit(p_222013_, p_222012_.getWorld());
++               java.util.List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<>(p_222012_.capturedBlockStates.values());
++               p_222012_.capturedBlockStates.clear();
++               StructureGrowEvent event = null;
++               if (treeType != null) {
++                  event = new StructureGrowEvent(location, treeType, false, null, blocks);
++                  org.bukkit.Bukkit.getPluginManager().callEvent(event);
++               }
++               if (event == null || !event.isCancelled()) {
++                  for (org.bukkit.block.BlockState blockstate : blocks) {
++                     blockstate.update(true);
++                  }
++               }
++            }
++         }
++         // CraftBukkit end
        }
  
+    }
