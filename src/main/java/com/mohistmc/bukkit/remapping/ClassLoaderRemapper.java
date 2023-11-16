@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
-import java.io.File;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,7 +13,6 @@ import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Arrays;
@@ -323,7 +321,7 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
         ClassWriter wr = new PluginClassWriter(node.version == Opcodes.V1_5 ? ClassWriter.COMPUTE_MAXS : ClassWriter.COMPUTE_FRAMES);
         node.accept(wr);
 
-        return dump(wr.toByteArray());
+        return wr.toByteArray();
     }
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -337,7 +335,6 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             ClassVisitor visitor = new ClassRemapper(writer, new NameRemapper(name));
             node.accept(visitor);
             byte[] bytes = writer.toByteArray();
-            dump(bytes);
             Class<?> cl = Unsafe.defineClass(name.replace('/', '.'), bytes, 0, bytes.length, getClass().getClassLoader(), getClass().getProtectionDomain());
             Unsafe.ensureClassInitialized(cl);
 
@@ -442,23 +439,5 @@ public class ClassLoaderRemapper extends LenientJarRemapper {
             result = 31 * result + Arrays.hashCode(pTypes);
             return result;
         }
-    }
-
-    private static byte[] dump(byte[] bytes) {
-        try {
-            if (Remapper.DUMP != null) {
-                String className = new ClassReader(bytes).getClassName() + ".class";
-                int index = className.lastIndexOf('/');
-                if (index != -1) {
-                    File file = new File(Remapper.DUMP, className.substring(0, index));
-                    file.mkdirs();
-                    Files.write(file.toPath().resolve(className.substring(index + 1)), bytes);
-                } else {
-                    Files.write(Remapper.DUMP.toPath().resolve(className), bytes);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return bytes;
     }
 }

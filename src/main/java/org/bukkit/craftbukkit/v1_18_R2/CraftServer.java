@@ -738,6 +738,10 @@ public final class CraftServer implements Server {
         return new ArrayList<World>(worlds.values());
     }
 
+    public Set<String> getWorldsByName() {
+        return new HashSet<>(worlds.keySet());
+    }
+
     public DedicatedPlayerList getHandle() {
         return playerList;
     }
