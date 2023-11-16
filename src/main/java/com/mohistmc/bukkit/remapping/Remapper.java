@@ -3,10 +3,10 @@ package com.mohistmc.bukkit.remapping;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.JarRemapper;
@@ -23,12 +23,12 @@ import net.md_5.specialsource.provider.JointProvider;
 public class Remapper {
 
     public static final Remapper INSTANCE;
-    public static final File DUMP;
+    public static final Function<byte[], byte[]> SWITCH_TABLE_FIXER;
 
     static {
         try {
             INSTANCE = new Remapper();
-            DUMP = null;
+            SWITCH_TABLE_FIXER = (Function<byte[], byte[]>) Class.forName("com.mohistmc.asm.SwitchTableFixer").getField("INSTANCE").get(null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

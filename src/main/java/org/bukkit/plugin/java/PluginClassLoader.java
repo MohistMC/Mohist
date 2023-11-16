@@ -176,6 +176,7 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
                     byteSource = () -> {
                         try (InputStream is = connection.getInputStream()) {
                             byte[] classBytes = ByteStreams.toByteArray(is);
+                            classBytes = Remapper.SWITCH_TABLE_FIXER.apply(classBytes);
                             classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
                             classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
 
