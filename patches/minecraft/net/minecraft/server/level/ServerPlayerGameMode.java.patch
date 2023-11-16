@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -2,17 +_,23 @@
+@@ -2,17 +_,22 @@
  
  import com.mojang.logging.LogUtils;
  import java.util.Objects;
@@ -19,29 +19,26 @@
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.InteractionResultHolder;
  import net.minecraft.world.MenuProvider;
-+import net.minecraft.world.entity.EquipmentSlot;
 +import net.minecraft.world.item.DoubleHighBlockItem;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.context.UseOnContext;
  import net.minecraft.world.level.ChunkPos;
-@@ -20,10 +_,22 @@
+@@ -20,10 +_,20 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
 +import net.minecraft.world.level.block.CakeBlock;
 +import net.minecraft.world.level.block.DoorBlock;
  import net.minecraft.world.level.block.GameMasterBlock;
++import net.minecraft.world.level.block.TrapDoorBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
  import net.minecraft.world.phys.BlockHitResult;
 +import org.bukkit.GameMode;
-+import org.bukkit.block.data.type.TrapDoor;
-+import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
-+import org.bukkit.event.block.BlockBreakEvent;
 +import org.bukkit.event.player.PlayerGameModeChangeEvent;
 +import org.bukkit.event.player.PlayerInteractEvent;
  import org.slf4j.Logger;
@@ -151,7 +148,7 @@
 +                  boolean bottom = data.m_61143_(DoorBlock.f_52730_) == DoubleBlockHalf.LOWER;
 +                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_9282_));
 +                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, bottom ? p_9282_.m_7494_() : p_9282_.m_7495_()));
-+               } else if (data.m_60734_() instanceof TrapDoor) {
++               } else if (data.m_60734_() instanceof TrapDoorBlock) {
 +                  this.f_9245_.f_8906_.m_141995_(new ClientboundBlockUpdatePacket(this.f_9244_, p_9282_));
 +               }
 +            } else if (!blockstate.m_60795_()) {
