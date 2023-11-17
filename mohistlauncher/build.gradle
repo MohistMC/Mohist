@@ -18,12 +18,14 @@ dependencies {
 
     implementation 'com.mohistmc:yaml:0.5'
     implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'com.mohistmc:tools:0.2'
 }
 
 shadowJar {
     dependencies {
         include(dependency('com.mohistmc:yaml:0.5'))
         include(dependency('org.yaml:snakeyaml:2.0'))
+        include(dependency('com.mohistmc:tools'))
     }
     relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
