@@ -1,0 +1,22 @@
+--- a/net/minecraft/ChatFormatting.java
++++ b/net/minecraft/ChatFormatting.java
+@@ -112,6 +_,19 @@
+       return p_126658_ == null ? null : f_126619_.get(m_126662_(p_126658_));
+    }
+ 
++   // Paper start
++   @Nullable
++   public static ChatFormatting getByHexValue(int i) {
++      for (ChatFormatting value : values()) {
++         if (value.m_126665_() != null && value.m_126665_() == i) {
++            return value;
++         }
++      }
++
++      return null;
++   }
++   // Paper end
++
+    @Nullable
+    public static ChatFormatting m_126647_(int p_126648_) {
+       if (p_126648_ < 0) {

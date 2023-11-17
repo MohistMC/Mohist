@@ -825,6 +825,23 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return !(hasDisplayName() || hasLocalizedName() || hasEnchants() || (lore != null) || hasCustomModelData() || hasBlockData() || hasRepairCost() || !unhandledTags.isEmpty() || !persistentDataContainer.isEmpty() || hideFlag != 0 || isUnbreakable() || hasDamage() || hasAttributeModifiers());
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component displayName() {
+        return displayName == null ? null : net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().deserialize(displayName);
+    }
+
+    @Override
+    public void displayName(final net.kyori.adventure.text.Component displayName) {
+        this.displayName = displayName == null ? null : net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson().serialize(displayName);
+    }
+
+    @Override
+    public net.md_5.bungee.api.chat.BaseComponent[] getDisplayNameComponent() {
+        return displayName == null ? new net.md_5.bungee.api.chat.BaseComponent[0] : net.md_5.bungee.chat.ComponentSerializer.parse(displayName);
+    }
+    // Paper end
+
     @Override
     public String getDisplayName() {
         return CraftChatMessage.fromJSONComponent(displayName);
@@ -859,6 +876,25 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     public boolean hasLore() {
         return this.lore != null && !this.lore.isEmpty();
     }
+
+    // Paper start
+    @Override
+    public List<net.kyori.adventure.text.Component> lore() {
+        return this.lore != null ? io.papermc.paper.adventure.PaperAdventure.asAdventureFromJson(this.lore) : null;
+    }
+
+    @Override
+    public void lore(final List<? extends net.kyori.adventure.text.Component> lore) {
+        this.lore = lore != null ? io.papermc.paper.adventure.PaperAdventure.asJson(lore) : null;
+    }
+
+    @Override
+    public List<net.md_5.bungee.api.chat.BaseComponent[]> getLoreComponents() {
+        return this.lore == null ? null : new ArrayList<>(this.lore.stream().map(entry ->
+                net.md_5.bungee.chat.ComponentSerializer.parse(entry)
+        ).collect(java.util.stream.Collectors.toList()));
+    }
+    // Paper end
 
     @Override
     public boolean hasRepairCost() {

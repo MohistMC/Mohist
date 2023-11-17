@@ -19,11 +19,13 @@
     public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.player"));
     public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.entity"));
     public final CommandSource f_81288_;
-@@ -60,6 +_,7 @@
+@@ -60,6 +_,9 @@
     private final CommandSigningContext f_230878_;
     private final TaskChainer f_241659_;
     private final IntConsumer f_279552_;
 +   public volatile CommandNode currentCommand; // CraftBukkit
++
++   public boolean bypassSelectorPermissions = false; // Paper
  
     public CommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
        this(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_, false, (p_81361_, p_81362_, p_81363_) -> {

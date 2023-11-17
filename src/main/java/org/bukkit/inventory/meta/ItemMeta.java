@@ -32,6 +32,37 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      */
     boolean hasDisplayName();
 
+    // Paper start
+    /**
+     * Gets the display name.
+     *
+     * <p>Plugins should check that {@link #hasDisplayName()} returns <code>true</code> before calling this method.</p>
+     *
+     * @return the display name
+     */
+    net.kyori.adventure.text.@Nullable Component displayName();
+
+    /**
+     * Sets the display name.
+     *
+     * @param displayName the display name to set
+     */
+    void displayName(final net.kyori.adventure.text.@Nullable Component displayName);
+
+    /**
+     * Gets the display name that is set.
+     * <p>
+     * Plugins should check that hasDisplayName() returns <code>true</code>
+     * before calling this method.
+     *
+     * @return the display name that is set
+     * @deprecated use {@link #displayName()}
+     */
+    @NotNull
+    @Deprecated
+    net.md_5.bungee.api.chat.BaseComponent[] getDisplayNameComponent();
+    // Paper end
+
     /**
      * Gets the display name that is set.
      * <p>
@@ -92,6 +123,37 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      */
     @Nullable
     List<String> getLore();
+
+    // Paper start
+    /**
+     * Gets the lore that is set.
+     * <p>
+     * Plugins should check if hasLore() returns <code>true</code> before
+     * calling this method.
+     *
+     * @return a list of lore that is set
+     * @deprecated use {@link #lore()}
+     */
+    @Nullable
+    @Deprecated
+    List<net.md_5.bungee.api.chat.BaseComponent[]> getLoreComponents();
+
+    /**
+     * Gets the lore.
+     *
+     * <p>Plugins should check that {@link #hasLore()} returns <code>true</code> before calling this method.</p>
+     *
+     * @return the lore
+     */
+    @Nullable List<net.kyori.adventure.text.Component> lore();
+
+    /**
+     * Sets the lore.
+     *
+     * @param lore the lore to set
+     */
+    void lore(final @Nullable List<? extends net.kyori.adventure.text.Component> lore);
+    // Paper end
 
     /**
      * Sets the lore for this item.
