@@ -66,7 +66,7 @@ public class MohistMCStart {
                     
                     %s - %s, Java(%s) %s
                     """;
-            System.out.println(test.formatted(i18n.get("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
+            System.out.printf(test + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
@@ -94,7 +94,7 @@ public class MohistMCStart {
         new MohistModuleManager(DataParser.launchArgs);
 
         if (!EulaUtil.hasAcceptedEULA()) {
-            System.out.println(i18n.get("eula"));
+            System.out.println(i18n.as("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
             }
             EulaUtil.writeInfos();
