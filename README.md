@@ -22,8 +22,8 @@ Progress
 
 - [x] Rectify Forge([**0d820eddd**](https://github.com/MinecraftForge/MinecraftForge/commit/0d820eddd))
 - [x] Start patch
-    * [x] Bukkit([**cbfe0ff0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/cbfe0ff0))
-    * [x] CraftBukkit([**d433f086d**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/d433f086d))
+    * [x] Bukkit([**96340858**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/96340858))
+    * [x] CraftBukkit([**8e162d008**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/8e162d008))
     * [x] Spigot ([**7de1049b**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/7de1049b))
         * [x] Bukkit-Patches
         * [x] CraftBukkit-Patches

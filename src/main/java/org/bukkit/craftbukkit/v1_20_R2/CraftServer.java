@@ -849,7 +849,6 @@ public final class CraftServer implements Server {
         return new HashSet<>(worlds.keySet());
     }
 
-
     public DedicatedPlayerList getHandle() {
         return playerList;
     }
