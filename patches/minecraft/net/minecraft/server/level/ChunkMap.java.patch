@@ -8,15 +8,7 @@
  import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Either;
-@@ -27,6 +_,7 @@
- import java.io.Writer;
- import java.nio.file.Path;
- import java.util.ArrayList;
-+import java.util.BitSet;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Locale;
-@@ -39,12 +_,14 @@
+@@ -39,6 +_,7 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
  import java.util.concurrent.Executor;
@@ -24,40 +16,18 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
- import java.util.function.IntFunction;
- import java.util.function.IntSupplier;
- import java.util.function.Supplier;
-+import java.util.stream.Collectors;
- import javax.annotation.Nullable;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
-@@ -56,7 +_,11 @@
- import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.protocol.Packet;
- import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
-+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
- import net.minecraft.network.protocol.game.ClientboundSetChunkCacheCenterPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
-+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
-+import net.minecraft.network.protocol.game.DebugPackets;
- import net.minecraft.server.level.progress.ChunkProgressListener;
- import net.minecraft.server.network.ServerPlayerConnection;
- import net.minecraft.util.CsvOutput;
-@@ -67,8 +_,8 @@
- import net.minecraft.util.thread.ProcessorMailbox;
+@@ -68,7 +_,6 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-+import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
 -import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.chunk.ChunkAccess;
-@@ -93,6 +_,8 @@
+@@ -93,6 +_,7 @@
  import net.minecraft.world.level.storage.LevelStorageSource;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.mutable.MutableBoolean;
-+import org.apache.commons.lang3.mutable.MutableObject;
 +import org.bukkit.craftbukkit.v1_20_R2.generator.CustomChunkGenerator;
  import org.slf4j.Logger;
  
@@ -165,14 +135,6 @@
              }
  
              return levelchunk;
-@@ -756,6 +_,7 @@
-       for(ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
-          if (serverplayer.getChunkTrackingView().contains(chunkpos)) {
-             markChunkPendingToSend(serverplayer, p_299599_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(serverplayer, p_299599_, this.level);
-          }
-       }
- 
 @@ -801,7 +_,7 @@
        }
     }
@@ -190,14 +152,6 @@
              this.write(chunkpos, compoundtag);
              this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
-@@ -877,6 +_,7 @@
-       LevelChunk levelchunk = this.getChunkToSend(p_298062_.toLong());
-       if (levelchunk != null) {
-          markChunkPendingToSend(p_297974_, levelchunk);
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_297974_, levelchunk, this.level);
-       }
- 
-    }
 @@ -955,11 +_,26 @@
        return this.upgradeChunkTag(this.level.dimension(), this.overworldDataStorage, p_214948_, this.generator.getTypeNameForDataFixer());
     }
@@ -257,14 +211,6 @@
        if (p_140194_) {
           this.playerMap.addPlayer(p_140193_, flag);
           this.updatePlayerPos(p_140193_);
-@@ -1099,6 +_,7 @@
-             this.markChunkPendingToSend(p_301380_, p_296566_);
-          }, (p_296568_) -> {
-             dropChunk(p_301380_, p_296568_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.level);
-          });
-          p_301380_.setChunkTrackingView(p_301057_);
-       }
 @@ -1118,9 +_,10 @@
     }
  
