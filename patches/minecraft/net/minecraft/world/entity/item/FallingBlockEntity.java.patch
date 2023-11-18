@@ -1,31 +1,49 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -41,6 +_,7 @@
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.entity.item;
+ 
+ import com.mojang.logging.LogUtils;
++import java.util.concurrent.atomic.AtomicReference;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReportCategory;
+@@ -41,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.CreatureSpawnEvent;
  import org.slf4j.Logger;
  
  public class FallingBlockEntity extends Entity {
-@@ -73,9 +_,16 @@
+@@ -72,13 +_,25 @@
+       this.m_31959_(this.m_20183_());
     }
  
++   // Mohist start - fix mixin form blueprint
++   public static AtomicReference<CreatureSpawnEvent.SpawnReason> fallspawnReason = new AtomicReference<>(CreatureSpawnEvent.SpawnReason.DEFAULT);
++
     public static FallingBlockEntity m_201971_(Level p_201972_, BlockPos p_201973_, BlockState p_201974_) {
 +      // CraftBukkit start
-+      return fall(p_201972_, p_201973_, p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
-+   }
-+
-+   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-+      // CraftBukkit end
        FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_201972_, (double)p_201973_.m_123341_() + 0.5D, (double)p_201973_.m_123342_(), (double)p_201973_.m_123343_() + 0.5D, p_201974_.m_61138_(BlockStateProperties.f_61362_) ? p_201974_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(false)) : p_201974_);
 +      if (CraftEventFactory.callEntityChangeBlockEvent(fallingblockentity, p_201973_, p_201974_.m_60819_().m_76188_()).isCancelled()) return fallingblockentity; // CraftBukkit
        p_201972_.m_7731_(p_201973_, p_201974_.m_60819_().m_76188_(), 3);
 -      p_201972_.m_7967_(fallingblockentity);
-+      p_201972_.addFreshEntity(fallingblockentity, spawnReason); // CraftBukkit
++      p_201972_.addFreshEntity(fallingblockentity, fallspawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT)); // CraftBukkit
        return fallingblockentity;
     }
  
++   public static FallingBlockEntity fall(Level p_201972_, BlockPos p_201973_, BlockState p_201974_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      fallspawnReason.set(spawnReason);
++      return m_201971_(p_201972_, p_201973_, p_201974_);
++   }
++   // CraftBukkit end
++   // Mohist end
++
+    public boolean m_6097_() {
+       return false;
+    }
 @@ -117,11 +_,11 @@
           if (!this.f_19853_.f_46443_) {
              BlockPos blockpos = this.m_20183_();
