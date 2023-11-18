@@ -11,13 +11,13 @@
  
     public LargeFireball(EntityType<? extends LargeFireball> p_37199_, Level p_37200_) {
        super(p_37199_, p_37200_);
-+      isIncendiary = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_); // CraftBukkit
++      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_37282_()); // Mohist
     }
  
     public LargeFireball(Level p_181151_, LivingEntity p_181152_, double p_181153_, double p_181154_, double p_181155_, int p_181156_) {
        super(EntityType.f_20463_, p_181152_, p_181153_, p_181154_, p_181155_, p_181151_);
        this.f_37197_ = p_181156_;
-+      isIncendiary = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_); // CraftBukkit
++      isIncendiary = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_37282_()); // Mohist
     }
  
     protected void m_6532_(HitResult p_37218_) {
