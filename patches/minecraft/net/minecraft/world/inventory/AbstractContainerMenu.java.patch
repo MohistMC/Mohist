@@ -175,6 +175,19 @@
              }
  
              this.m_38951_();
+@@ -374,8 +_,11 @@
+          if (p_150431_ == -999) {
+             if (!this.m_142621_().m_41619_()) {
+                if (clickaction == ClickAction.PRIMARY) {
+-                  p_150434_.m_36176_(this.m_142621_(), true);
++                  // CraftBukkit start
++                  ItemStack carried = this.m_142621_();
+                   this.m_142503_(ItemStack.f_41583_);
++                  p_150434_.m_36176_(carried, true);
++                  // CraftBukkit start
+                } else {
+                   p_150434_.m_36176_(this.m_142621_().m_41620_(1), true);
+                }
 @@ -434,6 +_,21 @@
              }
  
@@ -188,7 +201,7 @@
 +                     ((ServerPlayer) p_150434_).f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
 +                  }
 +               } catch ( AbstractMethodError error ){
-+                  MohistMC.LOGGER.error( error );
++                  f_207773_.error(error.getMessage());
 +                  ((ServerPlayer) p_150434_).f_8906_.m_141995_(new ClientboundContainerSetSlotPacket(this.f_38840_, this.m_182425_(), 0, this.m_38853_(0).m_7993_()));
 +
 +               }
@@ -242,6 +255,18 @@
        }
  
        p_38925_.m_41769_(p_38926_);
+@@ -749,6 +_,11 @@
+    }
+ 
+    public ItemStack m_142621_() {
++      // CraftBukkit start
++      if (this.f_150393_.m_41619_()) {
++         this.m_142503_(ItemStack.f_41583_);
++      }
++      // CraftBukkit end
+       return this.f_150393_;
+    }
+ 
 @@ -798,4 +_,13 @@
        this.f_182405_ = this.f_182405_ + 1 & 32767;
        return this.f_182405_;
