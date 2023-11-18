@@ -25,7 +25,7 @@
 -               this.m_51661_(p_51703_, blockpos, i);
 +               // CraftBukkit start - add event
 +               if (CraftEventFactory.handleBlockSpreadEvent(p_51703_, p_51704_, blockpos, this.m_49966_().m_61124_(ChorusFlowerBlock.f_51647_, Integer.valueOf(i)), 2)) {
-+                  p_51703_.m_7731_(p_51704_, this.f_51648_.m_51710_(p_51703_, blockpos), 2);
++                  p_51703_.m_7731_(p_51704_, this.f_51648_.m_51710_(p_51703_, p_51704_), 2);
 +                  this.m_51661_(p_51703_, blockpos, i);
 +               }
 +               // CraftBukkit end

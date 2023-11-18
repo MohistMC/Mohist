@@ -58,7 +58,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -240,30 +_,57 @@
+@@ -240,30 +_,56 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -66,8 +66,8 @@
 +         Recipe<?> recipe = p_155014_.m_7465_().m_44015_((RecipeType<AbstractCookingRecipe>)p_155017_.f_58312_, p_155017_, p_155014_).orElse(null);
           int i = p_155017_.m_6893_();
 -         if (!p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
+-            p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
 +         if (!p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
-             p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
 +            // CraftBukkit start
 +            CraftItemStack fuel = CraftItemStack.asCraftMirror(itemstack);
 +
@@ -103,7 +103,7 @@
 +         if (p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
 +
 +            // CraftBukkit start
-+            if (p_155017_ != null && p_155017_.f_58318_ == 0) {
++            if (recipe != null && p_155017_.f_58318_ == 0) {
 +               CraftItemStack source = CraftItemStack.asCraftMirror(p_155017_.f_58310_.get(0));
 +               CookingRecipe<?> brecipe = (CookingRecipe<?>) recipe.toBukkitRecipe();
 +

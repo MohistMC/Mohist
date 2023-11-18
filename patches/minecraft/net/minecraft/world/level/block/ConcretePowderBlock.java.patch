@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -10,6 +_,11 @@
+@@ -10,6 +_,10 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
 +import org.bukkit.Bukkit;
-+import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockState;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
 +import org.bukkit.event.block.BlockFormEvent;
@@ -57,7 +56,7 @@
 +      // CraftBukkit start
 +      if (m_52064_(p_52077_, p_52078_)) {
 +         // Suppress during worldgen
-+         if (!(p_52077_ instanceof World)) {
++         if (!(p_52077_ instanceof Level)) {
 +            return this.f_52058_;
 +         }
 +         CraftBlockState blockState = CraftBlockStates.getBlockState(p_52077_, p_52078_);
