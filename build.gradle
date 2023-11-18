@@ -75,7 +75,6 @@ println('Version: ' + VERSION +
         ' Arch: ' + System.getProperty('os.arch'))
 
 subprojects {
-    apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'java'
 
@@ -109,7 +108,6 @@ subprojects {
 
 project(':mcp') {
     apply plugin: 'net.neoforged.gradle.mcp'
-    tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
@@ -119,7 +117,6 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'net.neoforged.gradle.patcher'
-    tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
         implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
