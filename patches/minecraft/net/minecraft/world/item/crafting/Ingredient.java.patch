@@ -40,7 +40,7 @@
              for(ItemStack itemstack : this.f_43903_) {
 +               // CraftBukkit start
 +               if (exact) {
-+                  if (itemstack.m_41720_() == itemstack.m_41720_() && ItemStack.m_41658_(itemstack, itemstack)) {
++                  if (itemstack.m_41720_() == itemstack.m_41720_() && ItemStack.m_41658_(p_43914_, itemstack)) {
 +                     return true;
 +                  }
 +

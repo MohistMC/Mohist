@@ -1,13 +1,15 @@
 --- a/net/minecraft/world/item/ArmorItem.java
 +++ b/net/minecraft/world/item/ArmorItem.java
-@@ -10,6 +_,7 @@
- import net.minecraft.core.BlockSource;
- import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
- import net.minecraft.core.dispenser.DispenseItemBehavior;
-+import net.minecraft.server.level.ServerLevel;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.stats.Stats;
- import net.minecraft.world.InteractionHand;
+@@ -1,8 +_,8 @@
+ package net.minecraft.world.item;
+ 
+ import com.google.common.collect.ImmutableMultimap;
+-import com.google.common.collect.Multimap;
+ import com.google.common.collect.ImmutableMultimap.Builder;
++import com.google.common.collect.Multimap;
+ import java.util.List;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
 @@ -25,6 +_,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -23,7 +25,7 @@
           ItemStack itemstack = p_40400_.m_41620_(1);
 -         livingentity.m_8061_(equipmentslot, itemstack);
 +         // CraftBukkit start
-+         ServerLevel world = p_40399_.m_7727_();
++         Level world = p_40399_.m_7727_();
 +         org.bukkit.block.Block block = world.getWorld().getBlockAt(p_40399_.m_7961_().m_123341_(), p_40399_.m_7961_().m_123342_(), p_40399_.m_7961_().m_123343_());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +

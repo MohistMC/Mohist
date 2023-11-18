@@ -87,7 +87,7 @@
 -               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
 -               if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
-+               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack, blockhitresult.m_82434_(), blockpos, itemstack)) { // CraftBukkit)) {
++               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, blockhitresult.m_82434_(), blockpos, itemstack)) { // CraftBukkit
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
                       CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
@@ -100,11 +100,11 @@
 +   private AtomicReference<BlockPos> mohist$clickedPos = new AtomicReference<>(null);
 +   private AtomicReference<ItemStack> mohist$itemstack = new AtomicReference<>(null);
 +
-+   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
++   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, Direction enumdirection, BlockPos clicked, ItemStack itemstack) {
 +      mohist$direction.set(enumdirection);
 +      mohist$clickedPos.set(clicked);
 +      mohist$itemstack.set(itemstack);
-+      return emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, container);
++      return m_142073_(p_150716_, p_150717_, p_150718_, p_150719_);
 +   }
 +
 +   @Deprecated //Forge: use the ItemStack sensitive version
@@ -138,7 +138,7 @@
 +         // CraftBukkit end
           if (!flag1) {
 -            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null);
-+            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null, container, enumdirection, clicked, itemstack); // CraftBukkit
++            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null, enumdirection, clicked, itemstack); // CraftBukkit
 +         } else if (p_150717_.m_6042_().m_63951_() && containedFluidStack.isPresent() && this.f_40687_.getAttributes().doesVaporize(p_150717_, p_150718_, containedFluidStack.get())) {
 +            this.f_40687_.getAttributes().vaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
 +            return true;

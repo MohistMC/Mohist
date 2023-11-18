@@ -19,7 +19,7 @@
           }
  
           if (!m_40862_(p_40860_, p_40861_, itemstack, k > 0, flag)) {
-@@ -217,10 +_,28 @@
+@@ -217,10 +_,27 @@
              projectile.m_6686_((double)vector3f.m_122239_(), (double)vector3f.m_122260_(), (double)vector3f.m_122269_(), p_40902_, p_40903_);
           }
  
@@ -34,7 +34,7 @@
           p_40898_.m_41622_(flag ? 3 : 1, p_40896_, (p_40858_) -> {
              p_40858_.m_21190_(p_40897_);
           });
-          p_40895_.m_7967_(projectile);
+-         p_40895_.m_7967_(projectile);
 +         // CraftBukkit start
 +         if (event.getProjectile() == ((Entity) projectile).getBukkitEntity()) {
 +            if (!p_40895_.m_7967_((Entity) projectile)) {
