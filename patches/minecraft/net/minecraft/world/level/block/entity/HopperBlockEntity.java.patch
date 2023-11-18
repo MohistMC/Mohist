@@ -138,7 +138,7 @@
        ItemStack itemstack = p_59333_.m_32055_().m_41777_();
        ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
        if (itemstack1.m_41619_()) {
-@@ -295,7 +_,7 @@
+@@ -295,13 +_,13 @@
     }
  
     @Nullable
@@ -147,6 +147,13 @@
        Direction direction = p_155595_.m_61143_(HopperBlock.f_54021_);
        return m_59390_(p_155593_, p_155594_.m_142300_(direction));
     }
+ 
+    @Nullable
+-   private static Container m_155596_(Level p_155597_, Hopper p_155598_) {
++   public static Container m_155596_(Level p_155597_, Hopper p_155598_) {
+       return m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
+    }
+ 
 @@ -399,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {

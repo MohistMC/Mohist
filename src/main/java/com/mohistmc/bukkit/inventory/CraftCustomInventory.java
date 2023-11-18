@@ -19,19 +19,8 @@
 package com.mohistmc.bukkit.inventory;
 
 import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.world.Container;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerInvWrapper;
-import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryCustom;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryPlayer;
@@ -53,45 +42,6 @@ public class CraftCustomInventory implements InventoryHolder {
 
     public CraftCustomInventory(net.minecraft.world.entity.player.Inventory playerInventory) {
         this.container = new CraftInventoryPlayer(playerInventory);
-    }
-
-    @Nullable
-    @Deprecated
-    public static InventoryHolder holderFromForge(IItemHandler handler) {
-        if (handler == null) {
-            return null;
-        }
-        if (handler instanceof ItemStackHandler) {
-            return new CraftCustomInventory((ItemStackHandler) handler);
-        }
-        if (handler instanceof SlotItemHandler) {
-            return new CraftCustomInventory(((SlotItemHandler) handler).container);
-        }
-        if (handler instanceof InvWrapper) {
-            return new CraftCustomInventory(((InvWrapper) handler).getInv());
-        }
-        if (handler instanceof SidedInvWrapper) {
-            return new CraftCustomInventory(((SidedInvWrapper) handler).getInv());
-        }
-        if (handler instanceof PlayerInvWrapper) {
-            IItemHandlerModifiable[] piw = ObfuscationReflectionHelper.getPrivateValue(CombinedInvWrapper.class, (PlayerInvWrapper) handler, "itemHandler");
-            for (IItemHandlerModifiable itemHandler : piw) {
-                if (itemHandler instanceof PlayerMainInvWrapper) {
-                    return new CraftCustomInventory(((PlayerMainInvWrapper) itemHandler).getInventoryPlayer());
-                }
-                if (itemHandler instanceof PlayerArmorInvWrapper) {
-                    return new CraftCustomInventory(((PlayerArmorInvWrapper) itemHandler).getInventoryPlayer());
-                }
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    @Deprecated
-    public static Inventory inventoryFromForge(IItemHandler handler) {
-        InventoryHolder holder = holderFromForge(handler);
-        return holder != null ? holder.getInventory() : null;
     }
 
     @Override
