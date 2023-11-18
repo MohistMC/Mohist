@@ -18,16 +18,12 @@
 
 package com.mohistmc.network.download;
 
+import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.util.i18n.i18n;
+import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 
 @Getter
 @ToString
@@ -38,30 +34,30 @@ public enum DownloadSource {
     CHINA("http://s1.devicloud.cn:25119/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
-    public static final DownloadSource defaultSource = i18n.isCN() ? CHINA : MOHIST;
-    final
-    String url;
+    public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
+    public final String url;
 
-    public static DownloadSource get(){
-        String ds = MohistConfigUtil.defaultSource();
+    public static DownloadSource get() {
+        String ds = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
+        DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url) != 200) return GITHUB;
+                if (ConnectionUtil.isDown(me.url)) {
+                    if (ds.equals(CHINA.name())) {
+                        urL = MOHIST;
+                        if (ConnectionUtil.isDown(urL.url)) {
+                            return GITHUB;
+                        }
+                    }
+                    return GITHUB;
+                }
                 return me;
             }
         }
         return defaultSource;
     }
 
-    public static int isDown(String s) {
-        try {
-            URL url = new URL(s);
-            URLConnection rulConnection = url.openConnection();
-            HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
-            httpUrlConnection.connect();
-            return httpUrlConnection.getResponseCode();
-        } catch (Exception e) {
-            return 0;
-        }
+    public static boolean isCN() {
+        return MohistMCStart.i18n.isCN() && ConnectionUtil.getUrlMillis(CHINA.getUrl()) < ConnectionUtil.getUrlMillis(MOHIST.getUrl());
     }
 }

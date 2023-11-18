@@ -1,5 +1,5 @@
 /*
- * MohistMC
+ * Mohist - MohistMC
  * Copyright (C) 2018-2023.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,63 +18,82 @@
 
 package com.mohistmc.network.download;
 
-import com.mohistmc.util.MD5Util;
-import com.mohistmc.util.i18n.i18n;
-
+import com.mohistmc.MohistMCStart;
+import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.ConnectionUtil;
+import com.mohistmc.tools.MD5Util;
+import com.mohistmc.util.DataParser;
+import com.mohistmc.util.I18n;
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import static com.mohistmc.network.download.NetworkUtil.getConn;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import mjson.Json;
 
 public class UpdateUtils {
 
-    private static int percentage = 0;
+    public static void versionCheck() {
+        System.out.println(I18n.as("update.check"));
+        System.out.println(I18n.as("update.stopcheck"));
 
-    public static void downloadFile(String URL, File f) throws Exception {
-        downloadFile(URL, f, null);
+        try {
+            Json json = Json.read(new URL("https://mohistmc.com/api/v2/sources/jenkins/Mohist-1.18.2/builds/latest"));
+
+            var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
+            var build_number = json.asInteger("id");
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.asLong("createdAt")));
+
+            if (jar_version == build_number) {
+                System.out.println(I18n.as("update.latest", jar_version, build_number));
+            } else {
+                System.out.println(I18n.as("update.detect", build_number, jar_version, time));
+                if(MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
+                    downloadFile(json.asString("originUrl"), MohistMCStart.jarTool.getFile());
+                    restartServer(Arrays.asList("java", "-jar", MohistMCStart.jarTool.getJarName()), true);
+                }
+            }
+        } catch (Throwable e) {
+            System.out.println(I18n.as("check.update.noci"));
+        }
     }
 
-    public static void downloadFile(String URL, File f, String md5) throws Exception {
-        URLConnection conn = getConn(URL);
-        System.out.println(i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+    public static void downloadFile(String URL, File f) throws Exception {
+        downloadFile(URL, f, null, true);
+    }
+
+    public static void downloadFile(String URL, File f, String md5, boolean showlog) throws Exception {
+        URLConnection conn = ConnectionUtil.getConn(URL);
+        if (showlog) System.out.println(I18n.as("download.file", f.getName(), ConnectionUtil.getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        int fS = conn.getContentLength();
 
-        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(2);
-        scheduledExecutorService.scheduleAtFixedRate(
-                () -> {
-                    if (rbc.isOpen()) {
-                        if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100) {
-                            System.out.println(i18n.get("file.download.percentage", f.getName(), percentage));
-                        }
-                        percentage = Math.round((float) f.length() / fS * 100);
-                    }
-                }, 3000, 1000, TimeUnit.SECONDS);
         fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         fc.close();
         rbc.close();
-        percentage = 0;
-        String MD5 = MD5Util.getMd5(f);
+        String MD5 = MD5Util.get(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            System.out.println(i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
-            throw new Exception("md5");
+            if (showlog) System.out.println(I18n.as("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            return;
         }
-        System.out.println(i18n.get("download.file.ok", f.getName()));
+        if (showlog) System.out.println(I18n.as("download.file.ok", f.getName()));
     }
 
-    public static String getSize(long size) {
-        return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
+    public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
+        System.out.println(I18n.as("jarfile.restart"));
+        if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
+            System.out.println(I18n.as("xmswarn"));
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.directory(MohistMCStart.jarTool.getJarDir());
+        pb.inheritIO().start().waitFor();
+        Thread.sleep(2000);
+        if(shutdown) System.exit(0);
     }
 }

@@ -22,23 +22,25 @@ import com.mohistmc.action.v_1_18_2;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
+import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.BootstrapLauncher;
 import com.mohistmc.util.DataParser;
+import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
+import static com.mohistmc.util.EulaUtil.writeInfos;
 import com.mohistmc.util.MohistModuleManager;
-import com.mohistmc.util.i18n.i18n;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import static com.mohistmc.util.EulaUtil.hasAcceptedEULA;
-import static com.mohistmc.util.EulaUtil.writeInfos;
-
 public class MohistMCStart {
 
+
+    public static String MCVERSION;
     public static List<String> mainArgs = new ArrayList<>();
-    public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
+    public static com.mohistmc.i18n.i18n i18n;
+    public static JarTool jarTool;
 
     public static String getVersion() {
         return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
@@ -46,11 +48,11 @@ public class MohistMCStart {
 
     public static void main(String[] args) throws Exception {
         mainArgs.addAll(List.of(args));
+        jarTool = new JarTool(MohistMCStart.class);
         DataParser.parseVersions();
         DataParser.parseLaunchArgs();
-
         MohistConfigUtil.copyMohistConfig();
-
+        MohistConfigUtil.i18n();
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             String test = """
 
@@ -64,19 +66,24 @@ public class MohistMCStart {
                     
                     %s - %s, Java(%s) %s
                     """;
-            System.out.println(test.formatted(i18n.get("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
+            System.out.println(test.formatted(i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        CustomLibraries.loadCustomLibs();
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
+
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
+        }
+
+        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_18_2.run();
         }
 
+        CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
             forgeArgs.add(arg.split(" ")[0]);
@@ -85,7 +92,7 @@ public class MohistMCStart {
         new MohistModuleManager(DataParser.launchArgs);
 
         if (!hasAcceptedEULA()) {
-            System.out.println(i18n.get("eula"));
+            System.out.println(i18n.as("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
             }
             writeInfos();

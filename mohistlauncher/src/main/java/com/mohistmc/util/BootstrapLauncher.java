@@ -21,7 +21,6 @@ package com.mohistmc.util;
 import cpw.mods.cl.JarModuleFinder;
 import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.jarhandling.SecureJar;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
