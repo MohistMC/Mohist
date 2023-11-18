@@ -53,7 +53,7 @@ public class CraftSpawnCategory {
             case WATER_AMBIENT -> SpawnCategory.WATER_AMBIENT;
             case UNDERGROUND_WATER_CREATURE -> SpawnCategory.WATER_UNDERGROUND_CREATURE;
             case MISC -> SpawnCategory.MISC;
-            default -> throw new UnsupportedOperationException("Unknown MobCategory " + enumCreatureType + " for SpawnCategory");
+            default -> SpawnCategory.valueOf(enumCreatureType.name());
         };
     }
 

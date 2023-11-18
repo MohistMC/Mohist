@@ -14,6 +14,7 @@ import java.util.Map;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
@@ -31,7 +32,9 @@ import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.v1_19_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftSpawnCategory;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.entity.Villager;
 import org.bukkit.potion.PotionEffectType;
 
@@ -65,6 +68,7 @@ public class ForgeInjectBukkit {
         addEnumEntity();
         addEnumVillagerProfession();
         //addEnumArt();
+        loadSpawnCategory();
     }
 
 
@@ -196,6 +200,19 @@ public class ForgeInjectBukkit {
             }
         }
     }
+
+    private static void loadSpawnCategory() {
+        for (MobCategory category : MobCategory.values()) {
+            try {
+                CraftSpawnCategory.toBukkit(category);
+            } catch (Exception e) {
+                String name = category.name();
+                SpawnCategory spawnCategory = MohistEnumHelper.addEnum0(SpawnCategory.class, name, new Class[0]);
+                MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
+            }
+        }
+    }
+
 
     public static String normalizeName(String name) {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
