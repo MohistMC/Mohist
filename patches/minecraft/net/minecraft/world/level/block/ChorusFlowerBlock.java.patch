@@ -26,7 +26,7 @@
 +               // CraftBukkit start - add event
 +               if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(AGE, Integer.valueOf(i)), 2)) {
 +                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
-+                  this.placeGrownFlower(p_220981_, p_220982_, i);
++                  this.placeGrownFlower(p_220981_, blockpos, i);
 +               }
 +               // CraftBukkit end
              } else if (i < 4) {
