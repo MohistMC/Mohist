@@ -393,6 +393,22 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return CraftFeatureFlag.getFromNMS(namespacedKey);
     }
 
+    // Paper start
+    @Override
+    public io.papermc.paper.inventory.ItemRarity getItemRarity(org.bukkit.Material material) {
+        Item item = getItem(material);
+        if (item == null) {
+            throw new IllegalArgumentException(material + " is not an item, and rarity does not apply to blocks");
+        }
+        return io.papermc.paper.inventory.ItemRarity.values()[item.rarity.ordinal()];
+    }
+
+    @Override
+    public io.papermc.paper.inventory.ItemRarity getItemStackRarity(org.bukkit.inventory.ItemStack itemStack) {
+        return io.papermc.paper.inventory.ItemRarity.values()[getItem(itemStack.getType()).getRarity(CraftItemStack.asNMSCopy(itemStack)).ordinal()];
+    }
+    // Paper end
+
     /**
      * This helper class represents the different NBT Tags.
      * <p>

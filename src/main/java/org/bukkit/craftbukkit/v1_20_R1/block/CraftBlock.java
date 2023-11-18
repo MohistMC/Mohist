@@ -641,4 +641,9 @@ public class CraftBlock implements Block {
     public String getTranslationKey() {
         return getNMS().getBlock().getDescriptionId();
     }
+
+    @Override
+    public String translationKey() {
+        return this.getNMS().getBlock().getDescriptionId();
+    }
 }

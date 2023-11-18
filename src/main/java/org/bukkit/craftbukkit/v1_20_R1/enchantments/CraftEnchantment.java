@@ -194,4 +194,11 @@ public class CraftEnchantment extends Enchantment {
     public net.minecraft.world.item.enchantment.Enchantment getHandle() {
         return target;
     }
+
+    // Paper start
+    @Override
+    public String translationKey() {
+        return this.target.getDescriptionId();
+    }
+    // Paper end
 }

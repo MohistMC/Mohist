@@ -145,7 +145,7 @@ public interface Villager extends AbstractVillager {
      * Represents the various different Villager professions there may be.
      * Villagers have different trading options depending on their profession,
      */
-    public enum Profession implements Keyed {
+    public enum Profession implements Keyed, net.kyori.adventure.translation.Translatable { // Paper
         NONE,
         /**
          * Armorer profession. Wears a black apron. Armorers primarily trade for
@@ -228,5 +228,12 @@ public interface Villager extends AbstractVillager {
         public NamespacedKey getKey() {
             return key;
         }
+
+        // Paper start
+        @Override
+        public @NotNull String translationKey() {
+            return "entity.minecraft.villager." + this.key.getKey();
+        }
+        // Paper end
     }
 }

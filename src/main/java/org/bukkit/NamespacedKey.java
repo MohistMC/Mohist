@@ -19,7 +19,7 @@ import java.util.UUID;
  * underscores, hyphens, and forward slashes.
  *
  */
-public final class NamespacedKey {
+public final class NamespacedKey implements net.kyori.adventure.key.Key, com.destroystokyo.paper.Namespaced { // Paper - implement Key and Namespaced
 
     /**
      * The namespace representing all inbuilt keys.
@@ -250,4 +250,24 @@ public final class NamespacedKey {
     public static NamespacedKey fromString(@NotNull String key) {
         return fromString(key, null);
     }
+
+    // Paper start
+    @NotNull
+    @Override
+    public String namespace() {
+        return this.getNamespace();
+    }
+
+    @NotNull
+    @Override
+    public String value() {
+        return this.getKey();
+    }
+
+    @NotNull
+    @Override
+    public String asString() {
+        return this.namespace + ':' + this.key;
+    }
+    // Paper end
 }

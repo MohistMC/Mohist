@@ -63,4 +63,10 @@ public class EnchantmentWrapper extends Enchantment {
     public boolean conflictsWith(@NotNull Enchantment other) {
         return getEnchantment().conflictsWith(other);
     }
+
+    @Override
+    public @NotNull String translationKey() {
+        return getEnchantment().translationKey();
+    }
+    // Paper end
 }

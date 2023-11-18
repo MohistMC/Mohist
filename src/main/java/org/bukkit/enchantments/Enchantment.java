@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The various type of enchantments that may be added to armour or weapons
  */
-public abstract class Enchantment implements Keyed {
+public abstract class Enchantment implements Keyed, net.kyori.adventure.translation.Translatable { // Paper - Adventure translations
     /**
      * Provides protection against environmental damage
      */

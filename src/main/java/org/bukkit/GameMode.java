@@ -10,7 +10,7 @@ import java.util.Map;
  * Represents the various type of game modes that {@link HumanEntity}s may
  * have
  */
-public enum GameMode {
+public enum GameMode implements net.kyori.adventure.translation.Translatable { // Paper - implement Translatable
     /**
      * Creative mode may fly, build instantly, become invulnerable and create
      * free items.
@@ -36,9 +36,18 @@ public enum GameMode {
 
     private final int value;
     private static final Map<Integer, GameMode> BY_ID = Maps.newHashMap();
+    // Paper start - translation keys
+    private final String translationKey;
+
+    @Override
+    public @org.jetbrains.annotations.NotNull String translationKey() {
+        return this.translationKey;
+    }
+    // Paper end
 
     private GameMode(final int value) {
         this.value = value;
+        this.translationKey = "gameMode." +  this.name().toLowerCase(java.util.Locale.ENGLISH); // Paper
     }
 
     /**

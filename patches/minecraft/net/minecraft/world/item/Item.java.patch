@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -50,9 +_,9 @@
+@@ -50,16 +_,16 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
@@ -12,6 +12,14 @@
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
+    public static final int f_150885_ = 32;
+    public static final int f_150886_ = 13;
+    private final Holder.Reference<Item> f_204113_ = BuiltInRegistries.f_257033_.m_203693_(this);
+-   private final Rarity f_41369_;
++   public final Rarity f_41369_;
+    private final int f_41370_;
+    private final int f_41371_;
+    private final boolean f_41372_;
 @@ -99,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }

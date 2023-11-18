@@ -3,12 +3,11 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a single firework effect.
@@ -19,28 +18,44 @@ public final class FireworkEffect implements ConfigurationSerializable {
     /**
      * The type or shape of the effect.
      */
-    public enum Type {
+    public enum Type implements net.kyori.adventure.translation.Translatable { // Paper - Adventure translations
         /**
          * A small ball effect.
          */
-        BALL,
+        BALL("small_ball"), // Paper - add name
         /**
          * A large ball effect.
          */
-        BALL_LARGE,
+        BALL_LARGE("large_ball"), // Paper - add name
         /**
          * A star-shaped effect.
          */
-        STAR,
+        STAR("star"), // Paper - add name
         /**
          * A burst effect.
          */
-        BURST,
+        BURST("burst"), // Paper - add name
         /**
          * A creeper-face effect.
          */
-        CREEPER,
+        CREEPER("creeper"), // Paper - add name
         ;
+        // Paper start
+        /**
+         * The name map.
+         */
+        public static final net.kyori.adventure.util.Index<String, org.bukkit.FireworkEffect.Type> NAMES = net.kyori.adventure.util.Index.create(Type.class, type -> type.name);
+        private final String name;
+
+        Type(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NotNull String translationKey() {
+            return "item.minecraft.firework_star.shape." + this.name;
+        }
+        // Paper end
     }
 
     /**
@@ -284,11 +299,11 @@ public final class FireworkEffect implements ConfigurationSerializable {
         @NotNull
         public FireworkEffect build() {
             return new FireworkEffect(
-                flicker,
-                trail,
-                colors.build(),
-                fadeColors == null ? ImmutableList.<Color>of() : fadeColors.build(),
-                type
+                    flicker,
+                    trail,
+                    colors.build(),
+                    fadeColors == null ? ImmutableList.<Color>of() : fadeColors.build(),
+                    type
             );
         }
     }
@@ -375,23 +390,23 @@ public final class FireworkEffect implements ConfigurationSerializable {
         Type type = Type.valueOf((String) map.get(TYPE));
 
         return builder()
-            .flicker((Boolean) map.get(FLICKER))
-            .trail((Boolean) map.get(TRAIL))
-            .withColor((Iterable<?>) map.get(COLORS))
-            .withFade((Iterable<?>) map.get(FADE_COLORS))
-            .with(type)
-            .build();
+                .flicker((Boolean) map.get(FLICKER))
+                .trail((Boolean) map.get(TRAIL))
+                .withColor((Iterable<?>) map.get(COLORS))
+                .withFade((Iterable<?>) map.get(FADE_COLORS))
+                .with(type)
+                .build();
     }
 
     @NotNull
     @Override
     public Map<String, Object> serialize() {
         return ImmutableMap.<String, Object>of(
-            FLICKER, flicker,
-            TRAIL, trail,
-            COLORS, colors,
-            FADE_COLORS, fadeColors,
-            TYPE, type.name()
+                FLICKER, flicker,
+                TRAIL, trail,
+                COLORS, colors,
+                FADE_COLORS, fadeColors,
+                TYPE, type.name()
         );
     }
 

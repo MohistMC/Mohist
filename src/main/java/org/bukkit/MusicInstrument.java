@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
-public abstract class MusicInstrument implements Keyed {
+public abstract class MusicInstrument implements Keyed, net.kyori.adventure.translation.Translatable { // Paper - translation keys
 
     public static final MusicInstrument PONDER = getInstrument("ponder_goat_horn");
     public static final MusicInstrument SING = getInstrument("sing_goat_horn");
@@ -54,4 +54,11 @@ public abstract class MusicInstrument implements Keyed {
 
         return instrument;
     }
+
+    // Paper start - translation key
+    @Override
+    public @NotNull String translationKey() {
+        return "instrument.minecraft." + this.getKey().value();
+    }
+    // Paper end - translation key
 }

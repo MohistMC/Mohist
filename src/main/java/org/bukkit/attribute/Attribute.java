@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Types of attributes which may be present on an {@link Attributable}.
  */
-public enum Attribute implements Keyed {
+public enum Attribute implements Keyed, net.kyori.adventure.translation.Translatable { // Paper - Adventure translations
 
     /**
      * Maximum health of an Entity.
@@ -73,4 +73,11 @@ public enum Attribute implements Keyed {
     public NamespacedKey getKey() {
         return key;
     }
+
+    // Paper start
+    @Override
+    public @NotNull String translationKey() {
+        return "attribute.name." + this.key.getKey();
+    }
+    // Paper end
 }

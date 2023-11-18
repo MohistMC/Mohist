@@ -123,7 +123,7 @@ import java.util.function.Consumer;
 /**
  * An enum of all material IDs accepted by the official server and client
  */
-public enum Material implements Keyed, Translatable {
+public enum Material implements Keyed, Translatable, net.kyori.adventure.translation.Translatable { // Paper
     //<editor-fold desc="Materials" defaultstate="collapsed">
     AIR(9648, 0),
     STONE(22948),
@@ -4449,6 +4449,42 @@ public enum Material implements Keyed, Translatable {
             throw new AssertionError(ex);
         }
     }
+
+    // Paper start
+
+    /**
+     * @return If the type is either AIR, CAVE_AIR or VOID_AIR
+     */
+    public boolean isEmpty() {
+        switch (this) {
+            case AIR:
+            case CAVE_AIR:
+            case VOID_AIR:
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public @NotNull String translationKey() {
+        if (this.isItem()) {
+            return Bukkit.getUnsafe().getItemTranslationKey(this);
+        } else {
+            return Bukkit.getUnsafe().getBlockTranslationKey(this);
+        }
+    }
+
+    /**
+     * Returns the item rarity for the item. The Material <b>MUST</b> be an Item not a block.
+     * Use {@link #isItem()} before this.
+     *
+     * @return the item rarity
+     */
+    @NotNull
+    public io.papermc.paper.inventory.ItemRarity getItemRarity() {
+        return Bukkit.getUnsafe().getItemRarity(this);
+    }
+    // Paper end
 
     /**
      * Do not use for any reason.
@@ -10954,6 +10990,7 @@ public enum Material implements Keyed, Translatable {
      */
     @Override
     @NotNull
+    @Deprecated(forRemoval = true) // Paper
     public String getTranslationKey() {
         if (this.isItem()) {
             return Bukkit.getUnsafe().getItemTranslationKey(this);
