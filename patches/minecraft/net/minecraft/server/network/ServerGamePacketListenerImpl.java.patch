@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,24 +_,31 @@
+@@ -2,18 +_,23 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
@@ -11,9 +11,9 @@
 +import com.mysql.cj.util.StringUtils;
  import io.netty.util.concurrent.Future;
  import io.netty.util.concurrent.GenericFutureListener;
- import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap.Entry;
-+
++import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 +import java.nio.charset.StandardCharsets;
  import java.util.Collections;
  import java.util.List;
@@ -25,13 +25,6 @@
  import java.util.function.BiFunction;
  import java.util.function.Consumer;
  import java.util.function.UnaryOperator;
- import java.util.stream.Collectors;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
-+
- import net.minecraft.ChatFormatting;
- import net.minecraft.CrashReport;
- import net.minecraft.CrashReportCategory;
 @@ -41,6 +_,7 @@
  import net.minecraft.network.chat.TranslatableComponent;
  import net.minecraft.network.protocol.Packet;
@@ -78,7 +71,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -141,16 +_,56 @@
+@@ -141,15 +_,56 @@
  import net.minecraft.world.level.block.entity.JigsawBlockEntity;
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.entity.StructureBlockEntity;
@@ -93,14 +86,18 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
 -import org.apache.commons.lang3.StringUtils;
 +import net.minecraftforge.server.ServerLifecycleHooks;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CraftSign;
++import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.v1_18_R2.util.LazyPlayerSet;
 +import org.bukkit.craftbukkit.v1_18_R2.util.Waitable;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
@@ -115,6 +112,7 @@
 +import org.bukkit.event.player.AsyncPlayerChatEvent;
 +import org.bukkit.event.player.PlayerAnimationEvent;
 +import org.bukkit.event.player.PlayerChatEvent;
++import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 +import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 +import org.bukkit.event.player.PlayerInteractEntityEvent;
 +import org.bukkit.event.player.PlayerKickEvent;
@@ -130,13 +128,8 @@
 +import org.bukkit.inventory.InventoryView;
 +import org.bukkit.inventory.SmithingInventory;
  import org.slf4j.Logger;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_18_R2.util.LazyPlayerSet;
-+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
  
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
-    static final Logger f_9744_ = LogUtils.getLogger();
 @@ -162,7 +_,9 @@
     private long f_9747_;
     private boolean f_9748_;
@@ -753,11 +746,25 @@
        double d0 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.X) ? this.f_9743_.m_20185_() : 0.0D;
        double d1 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.Y) ? this.f_9743_.m_20186_() : 0.0D;
        double d2 = p_143623_.contains(ClientboundPlayerPositionPacket.RelativeArgument.Z) ? this.f_9743_.m_20189_() : 0.0D;
-@@ -914,8 +_,12 @@
+@@ -909,13 +_,26 @@
+          this.f_9767_ = 0;
+       }
+ 
++      // CraftBukkit start - update last location
++      this.lastPosX = this.f_9766_.f_82479_;
++      this.lastPosY = this.f_9766_.f_82480_;
++      this.lastPosZ = this.f_9766_.f_82481_;
++      this.lastYaw = p_143621_;
++      this.lastPitch = p_143622_;
++      // CraftBukkit end
++
+       this.f_9735_ = this.f_9746_;
+       this.f_9743_.m_19890_(p_143618_, p_143619_, p_143620_, p_143621_, p_143622_);
        this.f_9743_.f_8906_.m_141995_(new ClientboundPlayerPositionPacket(p_143618_ - d0, p_143619_ - d1, p_143620_ - d2, p_143621_ - f, p_143622_ - f1, p_143623_, this.f_9767_, p_143624_));
     }
  
 +   public void teleport(Location to) {
++      this.f_9743_.m_143425_(((CraftWorld)to.getWorld()).getHandle());
 +      internalTeleport(to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch(), Collections.emptySet(), true);
 +   }
     public void m_7502_(ServerboundPlayerActionPacket p_9889_) {
