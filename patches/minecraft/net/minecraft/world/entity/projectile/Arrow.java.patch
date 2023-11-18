@@ -9,6 +9,20 @@
        this.f_36853_ = true;
        this.f_19804_.m_135381_(f_36854_, p_36883_);
     }
+@@ -178,11 +_,13 @@
+       Entity entity = this.m_150173_();
+ 
+       for(MobEffectInstance mobeffectinstance : this.f_36855_.m_43488_()) {
++         p_36873_.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+          p_36873_.m_147207_(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_19557_() / 8, 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity);
+       }
+ 
+       if (!this.f_36852_.isEmpty()) {
+          for(MobEffectInstance mobeffectinstance1 : this.f_36852_) {
++            p_36873_.addEffectCause(org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+             p_36873_.m_147207_(mobeffectinstance1, entity);
+          }
+       }
 @@ -221,4 +_,23 @@
        }
  
