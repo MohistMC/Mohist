@@ -71,7 +71,7 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -147,7 +_,18 @@
+@@ -147,7 +_,19 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
@@ -86,6 +86,7 @@
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.generator.WorldInfo;
  import org.slf4j.Logger;
++import org.spigotmc.AsyncCatcher;
 +import org.spigotmc.SpigotWorldConfig;
  
  public class ServerLevel extends Level implements WorldGenLevel {
@@ -318,7 +319,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -781,18 +_,35 @@
+@@ -781,18 +_,37 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -333,8 +334,10 @@
           return false;
        } else {
 -         return this.f_143244_.m_157533_(p_8873_);
-+         if (p_8873_ instanceof LivingEntity && p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
-+            return false;
++         if (!AsyncCatcher.catchAsync()) {
++            if (p_8873_ instanceof LivingEntity && p_8873_.spawnReason.get() != null && !CraftEventFactory.doEntityAddEventCalling(this, p_8873_, p_8873_.spawnReason.getAndSet(CreatureSpawnEvent.SpawnReason.DEFAULT))) {
++               return false;
++            }
 +         }
 +         if (this.f_143244_.m_157533_(p_8873_)) {
 +            p_8873_.onAddedToWorld();
