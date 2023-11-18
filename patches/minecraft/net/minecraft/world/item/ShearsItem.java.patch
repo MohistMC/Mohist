@@ -17,14 +17,14 @@
 +   @Override
 +   public net.minecraft.world.InteractionResult m_6880_(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
 +      if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
-+         // CraftBukkit start
-+         if (!CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
-+            return InteractionResult.PASS;
-+         }
-+         // CraftBukkit end
 +         if (entity.f_19853_.f_46443_) return net.minecraft.world.InteractionResult.SUCCESS;
 +         BlockPos pos = new BlockPos(entity.m_20185_(), entity.m_20186_(), entity.m_20189_());
 +         if (target.isShearable(stack, entity.f_19853_, pos)) {
++            // CraftBukkit start
++            if (!CraftEventFactory.handlePlayerShearEntityEvent(playerIn, entity, stack, hand)) {
++               return InteractionResult.PASS;
++            }
++            // CraftBukkit end
 +            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.f_19853_, pos,
 +                    net.minecraft.world.item.enchantment.EnchantmentHelper.m_44843_(net.minecraft.world.item.enchantment.Enchantments.f_44987_, stack));
 +            java.util.Random rand = new java.util.Random();
