@@ -628,17 +628,14 @@
           LOGGER.debug("Autosave started");
           this.profiler.push("save");
           this.saveEverything(true, false, false);
-@@ -812,16 +_,24 @@
-       long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
-       this.averageTickTime = this.averageTickTime * 0.8F + (float)j / 1000000.0F * 0.19999999F;
+@@ -814,6 +_,18 @@
        long k = Util.getNanos();
--      this.logTickTime(k - i);
+       this.logTickTime(k - i);
        this.profiler.pop();
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
-    }
- 
--   protected void logTickTime(long p_298126_) {
++   }
++
 +   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
 +   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
 +   private void resetStatusCache(ServerStatus status) {
@@ -648,6 +645,9 @@
 +   public String getStatusJson() {
 +      return cachedServerStatus;
     }
+ 
+    protected void logTickTime(long p_298126_) {
+@@ -821,7 +_,7 @@
  
     private ServerStatus buildServerStatus() {
        ServerStatus.Players serverstatus$players = this.buildPlayerStatus();

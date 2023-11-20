@@ -75,11 +75,10 @@
     }
  
     public ObjectArrayList<ItemStack> getRandomItems(LootParams p_287574_, long p_287773_) {
-@@ -113,10 +_,10 @@
-    public ObjectArrayList<ItemStack> getRandomItems(LootParams p_287616_) {
+@@ -114,9 +_,10 @@
        return this.getRandomItems((new LootContext.Builder(p_287616_)).create(this.randomSequence));
     }
--
+ 
 -   private ObjectArrayList<ItemStack> getRandomItems(LootContext p_230923_) {
 +   public ObjectArrayList<ItemStack> getRandomItems(LootContext p_230923_) {
        ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();

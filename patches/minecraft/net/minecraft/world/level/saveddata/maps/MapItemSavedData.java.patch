@@ -118,15 +118,6 @@
        p_77956_.putInt("xCenter", this.centerX);
        p_77956_.putInt("zCenter", this.centerZ);
        p_77956_.putByte("scale", this.scale);
-@@ -410,7 +_,7 @@
- 
-    public boolean isExplorationMap() {
-       for(MapDecoration mapdecoration : this.decorations.values()) {
--         if (mapdecoration.type().isExplorationMapElement()) {
-+         if (mapdecoration.type() == MapDecoration.Type.MANSION || mapdecoration.type() == MapDecoration.Type.MONUMENT) {
-             return true;
-          }
-       }
 @@ -471,24 +_,54 @@
           return new MapItemSavedData.MapPatch(i, j, k, l, abyte);
        }

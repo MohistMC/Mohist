@@ -1007,7 +1007,7 @@
              });
           }
  
-@@ -1164,21 +_,34 @@
+@@ -1164,11 +_,24 @@
     }
  
     private void performChatCommand(ServerboundChatCommandPacket p_251139_, LastSeenMessages p_250484_) {
@@ -1034,13 +1034,9 @@
        } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
           this.handleMessageDecodeFailure(signedmessagechain$decodeexception);
           return;
-       }
- 
-       CommandSigningContext commandsigningcontext = new CommandSigningContext.SignedArguments(map);
--      parseresults = Commands.mapSource(parseresults, (p_296586_) -> {
--         return p_296586_.withSigningContext(commandsigningcontext, this.chatMessageChain);
-+      parseresults = Commands.<CommandSourceStack>mapSource(parseresults, (p_242749_) -> {
-+         return p_242749_.withSigningContext(commandsigningcontext, this.chatMessageChain);
+@@ -1178,7 +_,7 @@
+       parseresults = Commands.mapSource(parseresults, (p_296586_) -> {
+          return p_296586_.withSigningContext(commandsigningcontext, this.chatMessageChain);
        });
 -      this.server.getCommands().performCommand(parseresults, p_251139_.command());
 +      this.server.getCommands().performCommand(parseresults, command); // CraftBukkit

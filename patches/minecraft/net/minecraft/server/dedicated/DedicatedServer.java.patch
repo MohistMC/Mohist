@@ -189,20 +189,16 @@
        }
  
     }
-@@ -395,12 +_,7 @@
+@@ -395,8 +_,7 @@
     }
  
     public boolean enforceSecureProfile() {
 -      DedicatedServerProperties dedicatedserverproperties = this.getProperties();
 -      return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
--   }
--
--   public boolean logIPs() {
--      return this.getProperties().logIPs;
 +      return false; // Mohist chat verify
     }
  
-    protected boolean convertOldUsers() {
+    public boolean logIPs() {
 @@ -478,15 +_,49 @@
     }
  

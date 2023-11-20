@@ -68,27 +68,6 @@
     }
  
     public CompoundTag createTag(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
-@@ -178,7 +_,7 @@
-       p_78547_.putBoolean("allowCommands", this.settings.allowCommands());
-       p_78547_.putBoolean("initialized", this.initialized);
-       this.worldBorder.write(p_78547_);
--      p_78547_.putByte("Difficulty", (byte)this.settings.difficulty().getId());
-+      p_78547_.putByte("Difficulty", (byte) this.settings.difficulty().getId());
-       p_78547_.putBoolean("DifficultyLocked", this.difficultyLocked);
-       p_78547_.put("GameRules", this.settings.gameRules().createTag());
-       p_78547_.put("DragonFight", Util.getOrThrow(EndDragonFight.Data.CODEC.encodeStart(NbtOps.INSTANCE, this.endDragonFightData), IllegalStateException::new));
-@@ -188,9 +_,9 @@
- 
-       DataResult<Tag> dataresult = WorldDataConfiguration.CODEC.encodeStart(NbtOps.INSTANCE, this.settings.getDataConfiguration());
-       dataresult.get().ifLeft((p_248505_) -> {
--         p_78547_.merge((CompoundTag)p_248505_);
-+         p_78547_.merge((CompoundTag) p_248505_);
-       }).ifRight((p_248506_) -> {
--         LOGGER.warn("Failed to encode configuration {}", (Object)p_248506_.message());
-+         LOGGER.warn("Failed to encode configuration {}", (Object) p_248506_.message());
-       });
-       if (this.customBossEvents != null) {
-          p_78547_.put("CustomBossEvents", this.customBossEvents);
 @@ -203,6 +_,14 @@
           p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
        }

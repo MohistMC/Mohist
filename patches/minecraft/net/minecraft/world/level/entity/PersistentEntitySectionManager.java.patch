@@ -107,22 +107,6 @@
        boolean flag = this.storeChunkSections(p_157569_, (p_157595_) -> {
           p_157595_.getPassengersAndSelf().forEach(this::unloadEntity);
        });
-@@ -237,9 +_,12 @@
-    }
- 
-    private void processUnloads() {
--      this.chunksToUnload.removeIf((long p_157584_) -> {
--         return this.chunkVisibility.get(p_157584_) != Visibility.HIDDEN ? true : this.processChunkUnload(p_157584_);
--      });
-+      try {
-+         this.chunksToUnload.removeIf((long p_157584_) -> {
-+            return this.chunkVisibility.get(p_157584_) != Visibility.HIDDEN ? true : this.processChunkUnload(p_157584_);
-+         });
-+      } catch (Exception ignored) {
-+      }
-    }
- 
-    private void processPendingLoads() {
 @@ -247,8 +_,13 @@
        while((chunkentities = this.loadingInbox.poll()) != null) {
           chunkentities.getEntities().forEach((p_157593_) -> {
