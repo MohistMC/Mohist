@@ -151,7 +151,7 @@
           this.kill();
           this.dropItem((Entity)null);
        }
-@@ -170,7 +_,7 @@
+@@ -170,12 +_,20 @@
     }
  
     public void push(double p_31744_, double p_31745_, double p_31746_) {
@@ -160,6 +160,19 @@
           this.kill();
           this.dropItem((Entity)null);
        }
+ 
+    }
++
++   @Override
++   public void addAdditionalSaveData(CompoundTag nbttagcompound, boolean includeAll) {
++      if (includeAll) {
++         addAdditionalSaveData(nbttagcompound);
++      }
++   }
++   // CraftBukkit end
+ 
+    public void addAdditionalSaveData(CompoundTag p_31736_) {
+       BlockPos blockpos = this.getPos();
 @@ -187,7 +_,7 @@
     public void readAdditionalSaveData(CompoundTag p_31730_) {
        BlockPos blockpos = new BlockPos(p_31730_.getInt("TileX"), p_31730_.getInt("TileY"), p_31730_.getInt("TileZ"));

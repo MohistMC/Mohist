@@ -18,6 +18,28 @@
     Bee.BeePollinateGoal beePollinateGoal;
     Bee.BeeGoToHiveGoal goToHiveGoal;
     private Bee.BeeGoToKnownFlowerGoal goToKnownFlowerGoal;
+@@ -179,12 +_,19 @@
+    }
+ 
+    public void addAdditionalSaveData(CompoundTag p_27823_) {
++      // CraftBukkit start - selectively save data
++      addAdditionalSaveData(p_27823_, true);
++   }
++
++   @Override
++   public void addAdditionalSaveData(CompoundTag p_27823_, boolean includeAll) {
++      // CraftBukkit end
+       super.addAdditionalSaveData(p_27823_);
+-      if (this.hasHive()) {
++      if (includeAll && this.hasHive()) { // CraftBukkit - selectively save hive
+          p_27823_.put("HivePos", NbtUtils.writeBlockPos(this.getHivePos()));
+       }
+ 
+-      if (this.hasSavedFlowerPos()) {
++      if (includeAll && this.hasSavedFlowerPos()) { // CraftBukkit - selectively save flower
+          p_27823_.put("FlowerPos", NbtUtils.writeBlockPos(this.getSavedFlowerPos()));
+       }
+ 
 @@ -230,7 +_,7 @@
              }
  

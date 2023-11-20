@@ -63,7 +63,7 @@
 +
 +            if (hatching) {
 +               for (int i1 = 0; i1 < i; ++i1) {
-+                  Chicken entity = (Chicken) level.getWorld().createEntity(new org.bukkit.Location(level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass());
++                  Chicken entity = (Chicken) level.getWorld().makeEntity(new org.bukkit.Location(level().getWorld(), this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F), hatchingType.getEntityClass());
 +                  if (entity != null) {
 +                     // CraftBukkit start
 +                     if (entity.getBukkitEntity() instanceof Ageable) {

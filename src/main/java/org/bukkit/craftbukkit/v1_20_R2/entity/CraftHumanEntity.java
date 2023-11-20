@@ -678,4 +678,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         boolean success = getHandle().level.addFreshEntity(fireworks, SpawnReason.CUSTOM);
         return success ? (Firework) fireworks.getBukkitEntity() : null;
     }
+
+    @Override
+    public org.bukkit.entity.Entity copy() {
+        throw new UnsupportedOperationException("Cannot copy human entities");
+    }
+    @Override
+    public org.bukkit.entity.Entity copy(Location location) {
+        throw new UnsupportedOperationException("Cannot copy human entities");
+    }
 }

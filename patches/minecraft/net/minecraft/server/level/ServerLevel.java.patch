@@ -687,6 +687,14 @@
     }
  
     public LevelEntityGetter<Entity> getEntities() {
+@@ -1445,6 +_,7 @@
+ 
+    final class EntityCallbacks implements LevelCallback<Entity> {
+       public void onCreated(Entity p_143355_) {
++         p_143355_.inWorld = true; // CraftBukkit - Mark entity as in world
+       }
+ 
+       public void onDestroyed(Entity p_143359_) {
 @@ -1475,16 +_,41 @@
              ServerLevel.this.navigatingMobs.add(mob);
           }
