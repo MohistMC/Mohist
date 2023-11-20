@@ -1024,7 +1024,7 @@
 +      }
 +      command = event.getMessage().substring(1);
 +
-+      ParseResults parseresults = this.parseCommand(command);
++      ParseResults<CommandSourceStack> parseresults = this.parseCommand(command);
 +      // CraftBukkit end
  
        Map<String, PlayerChatMessage> map;
