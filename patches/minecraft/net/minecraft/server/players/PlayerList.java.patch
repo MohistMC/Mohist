@@ -348,7 +348,7 @@
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -332,135 +_,288 @@
+@@ -332,135 +_,290 @@
        serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.m_8960_().m_135978_();
        this.f_11196_.remove(p_11287_);
@@ -551,12 +551,13 @@
 +               f1 = (float) Mth.m_14175_(Mth.m_14136_(vec3d2.f_82481_, vec3d2.f_82479_) * 57.2957763671875 - 90.0);
 +            }
 +
++            p_11237_.m_9158_(worldserver1.m_46472_(), blockpos, f1, flag, false);
 +            flag2 = (!p_11238_ && flag3);
 +            isBedSpawn = true;
-+            mohist$location = new Location(worldserver1.getWorld(), vec3d.m_7096_(), vec3d.m_7098_(), vec3d.m_7094_(), f1, 0.0F);
++            mohist$location = new Location(worldserver1.getWorld(), vec3d.m_7096_(), vec3d.m_7098_(), vec3d.m_7094_());
 +         } else if (blockpos != null) {
 +            p_11237_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
-+            p_11237_.m_9158_(null, null, 0f, false, false);
++            p_11237_.m_9158_(Level.f_46428_, null, 0f, false, false);
 +         }
 +
 +         if (mohist$location == null) {
@@ -618,7 +619,8 @@
 -      }
 -
 -      while(!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double)serverlevel1.m_151558_()) {
-+      serverplayer.forceSetPositionRotation(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
++      serverplayer.m_7678_(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
++      serverplayer.f_8906_.m_9953_();
 +      // CraftBukkit end
 +
 +      while (!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double) serverlevel1.m_151558_()) {
