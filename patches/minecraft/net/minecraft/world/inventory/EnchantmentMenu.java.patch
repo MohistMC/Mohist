@@ -1,8 +1,9 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.world.inventory;
  
++import com.mohistmc.util.EnchantmentMenuUtils;
  import java.util.List;
 +import java.util.Map;
 +
@@ -27,7 +28,7 @@
  
  public class EnchantmentMenu extends AbstractContainerMenu {
     private final Container f_39449_ = new SimpleContainer(2) {
-@@ -29,6 +_,13 @@
+@@ -29,13 +_,24 @@
           super.m_6596_();
           EnchantmentMenu.this.m_6199_(this);
        }
@@ -39,9 +40,10 @@
 +      }
 +      // CraftBukkit end
     };
-    private final ContainerLevelAccess f_39450_;
+-   private final ContainerLevelAccess f_39450_;
++   public final ContainerLevelAccess f_39450_;
     private final RandomSource f_39451_ = RandomSource.m_216327_();
-@@ -36,6 +_,10 @@
+    private final DataSlot f_39452_ = DataSlot.m_39401_();
     public final int[] f_39446_ = new int[3];
     public final int[] f_39447_ = new int[]{-1, -1, -1};
     public final int[] f_39448_ = new int[]{-1, -1, -1};
@@ -142,59 +144,30 @@
                 this.m_38946_();
              });
           } else {
-@@ -142,9 +_,24 @@
-             this.f_39450_.m_39292_((p_39481_, p_39482_) -> {
+@@ -143,8 +_,12 @@
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentInstance> list = this.m_39471_(itemstack, p_39466_, this.f_39446_[p_39466_]);
--               if (!list.isEmpty()) {
+                if (!list.isEmpty()) {
 -                  p_39465_.m_7408_(itemstack, i);
-+               if (true || !list.isEmpty()) {
 +                  //p_39465_.onEnchantmentPerformed(itemstack, i);
                    boolean flag = itemstack.m_150930_(Items.f_42517_);
-+                  Map<Enchantment, Integer> enchants = new java.util.HashMap<org.bukkit.enchantments.Enchantment, Integer>();
-+                  for (Object obj : list) {
-+                     EnchantmentInstance instance = (EnchantmentInstance) obj;
-+                     enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.f_122825_.m_7981_(instance.f_44947_))), instance.f_44948_);
-+                  }
-+                  CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
-+
-+                  EnchantItemEvent event = new EnchantItemEvent((org.bukkit.entity.Player) p_39465_.getBukkitEntity(), this.getBukkitView(), f_39450_.getLocation().getBlock(), item, this.f_39446_[p_39466_], enchants, p_39466_);
-+                  Bukkit.getPluginManager().callEvent(event);
-+
-+                  int level = event.getExpLevelCost();
-+                  if (event.isCancelled() || (level > p_39465_.f_36078_ && !p_39465_.m_150110_().f_35937_) || event.getEnchantsToAdd().isEmpty()) {
++                  if (EnchantmentMenuUtils.isCancelledEnchantItemEvent(p_39465_, p_39466_, this, list, itemstack2)) {
 +                     return;
 +                  }
 +
                    if (flag) {
                       itemstack2 = new ItemStack(Items.f_42690_);
                       CompoundTag compoundtag = itemstack.m_41783_();
-@@ -155,15 +_,29 @@
+@@ -154,7 +_,7 @@
+ 
                       this.f_39449_.m_6836_(0, itemstack2);
                    }
- 
--                  for(int j = 0; j < list.size(); ++j) {
--                     EnchantmentInstance enchantmentinstance = list.get(j);
--                     if (flag) {
--                        EnchantedBookItem.m_41153_(itemstack2, enchantmentinstance);
--                     } else {
--                        itemstack2.m_41663_(enchantmentinstance.f_44947_, enchantmentinstance.f_44948_);
-+                  for (Map.Entry<org.bukkit.enchantments.Enchantment, Integer> entry : event.getEnchantsToAdd().entrySet()) {
-+                     try {
-+                        if (flag) {
-+                           NamespacedKey enchantId = entry.getKey().getKey();
-+                           net.minecraft.world.item.enchantment.Enchantment nms = Registry.f_122825_.m_7745_(CraftNamespacedKey.toMinecraft(enchantId));
-+                           if (nms == null) {
-+                              continue;
-+                           }
-+
-+                           EnchantmentInstance weightedrandomenchant = new EnchantmentInstance(nms, entry.getValue());
-+                           EnchantedBookItem.m_41153_(itemstack2, weightedrandomenchant);
-+                        } else {
-+                           item.addUnsafeEnchantment(entry.getKey(), entry.getValue());
-+                        }
-+                     } catch (IllegalArgumentException e) {
-+                        /* Just swallow invalid enchantments */
+-
++                  EnchantmentMenuUtils.initCBList(list);
+                   for(int j = 0; j < list.size(); ++j) {
+                      EnchantmentInstance enchantmentinstance = list.get(j);
+                      if (flag) {
+@@ -164,6 +_,10 @@
                       }
                    }
  
