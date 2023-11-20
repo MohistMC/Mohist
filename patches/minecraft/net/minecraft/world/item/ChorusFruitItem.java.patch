@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ChorusFruitItem.java
 +++ b/net/minecraft/world/item/ChorusFruitItem.java
-@@ -33,13 +_,22 @@
+@@ -33,8 +_,17 @@
              }
  
              Vec3 vec3 = p_40714_.position();
@@ -17,12 +17,5 @@
 +            if (status.get()) {
 +               // CraftBukkit end
                 SoundEvent soundevent = p_40714_ instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
--               p_40713_.playSound((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
-+               p_40713_.playSound((Player) null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                p_40713_.playSound((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                 p_40714_.playSound(soundevent, 1.0F, 1.0F);
--               p_40714_.resetFallDistance();
-                break;
-+
-             }
-          }
- 
