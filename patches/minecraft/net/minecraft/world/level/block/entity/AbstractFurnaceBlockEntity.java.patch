@@ -1,16 +1,39 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -42,6 +_,15 @@
+@@ -2,10 +_,12 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
++import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicReference;
+ import javax.annotation.Nullable;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.Util;
+@@ -42,6 +_,24 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.capabilities.Capability;
++import net.minecraftforge.common.util.LazyOptional;
++import net.minecraftforge.items.CapabilityItemHandler;
++import net.minecraftforge.items.IItemHandler;
++import net.minecraftforge.items.wrapper.SidedInvWrapper;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.block.BlockExpEvent;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
 +import org.bukkit.event.inventory.FurnaceExtractEvent;
++import org.bukkit.event.inventory.FurnaceSmeltEvent;
 +import org.bukkit.event.inventory.FurnaceStartSmeltEvent;
 +import org.bukkit.inventory.CookingRecipe;
  
@@ -58,7 +81,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -240,30 +_,56 @@
+@@ -240,30 +_,57 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -119,6 +142,7 @@
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_155009_(p_155014_, p_155017_.f_58312_, p_155017_);
 -               if (m_155026_(recipe, p_155017_.f_58310_, i)) {
++               putBurn_level_pos(p_155017_.f_58857_, p_155017_.f_58858_); // Mohist
 +               if (p_155017_.m_155026_(recipe, p_155017_.f_58310_, i)) {
                    p_155017_.m_6029_(recipe);
                 }
@@ -148,32 +172,73 @@
              }
           }
        } else {
-@@ -310,15 +_,15 @@
+@@ -310,16 +_,52 @@
        }
     }
  
 -   private static boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
 -      if (p_155027_ != null && m_155005_(p_155027_, p_155028_, p_155029_)) {
++   // Mohist start
++   private static AtomicReference<Level> burn_level = new AtomicReference<>();
++   private static AtomicReference<BlockPos> burn_pos = new AtomicReference<>();
++
++   private static void putBurn_level_pos(Level level, BlockPos blockposition) {
++      burn_level.set(level);
++      burn_pos.set(blockposition);
++   }
++
++   private boolean burn(Level level, BlockPos blockposition, @Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
++      burn_level.set(level);
++      burn_pos.set(blockposition);
++      return m_155026_(p_155027_, p_155028_, p_155029_);
++   }
 +   private boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
 +      if (p_155027_ != null && this.m_155005_(p_155027_, p_155028_, p_155029_)) {
           ItemStack itemstack = p_155028_.get(0);
 -         ItemStack itemstack1 = p_155027_.m_8043_();
 +         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_155027_).m_5874_(this);
           ItemStack itemstack2 = p_155028_.get(2);
-          if (itemstack2.m_41619_()) {
-             p_155028_.set(2, itemstack1.m_41777_());
-          } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
+-         if (itemstack2.m_41619_()) {
+-            p_155028_.set(2, itemstack1.m_41777_());
+-         } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
 -            itemstack2.m_41769_(1);
-+            itemstack2.m_41769_(itemstack1.m_41613_());
-          }
+-         }
++
++         // CraftBukkit start - fire FurnaceSmeltEvent
++         CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
++         org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
++         if (burn_level.get() != null && burn_pos.get() != null) { //Do not fire event if level or blockpos are null
++            FurnaceSmeltEvent furnaceSmeltEvent = new FurnaceSmeltEvent(CraftBlock.at(burn_level.getAndSet(null), burn_pos.getAndSet(null)), source, result);
++            Bukkit.getPluginManager().callEvent(furnaceSmeltEvent);
++
++            if (furnaceSmeltEvent.isCancelled()) {
++               return false;
++            }
++
++            result = furnaceSmeltEvent.getResult();
++         }
++
++         itemstack1 = CraftItemStack.asNMSCopy(result);
++
++         if (!itemstack1.m_41619_()) {
++            if (itemstack2.m_41619_()) {
++               p_155028_.set(2, itemstack1.m_41777_());
++            } else if (CraftItemStack.asCraftMirror(itemstack2).isSimilar(result)) {
++               itemstack2.m_41769_(itemstack1.m_41613_());
++            } else {
++               return false;
++            }
++         }
++         // CraftBukkit end
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
+             p_155028_.set(1, new ItemStack(Items.f_42447_));
 @@ -337,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
 -         return m_58423_().getOrDefault(item, 0);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58343_, this.f_58312_);
++         return ForgeHooks.getBurnTime(p_58343_, this.f_58312_);
        }
     }
  
@@ -182,7 +247,7 @@
  
     public static boolean m_58399_(ItemStack p_58400_) {
 -      return m_58423_().containsKey(p_58400_.m_41720_());
-+      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58400_, null) > 0;
++      return ForgeHooks.getBurnTime(p_58400_, null) > 0;
     }
  
     public int[] m_7071_(Direction p_58363_) {
@@ -191,7 +256,7 @@
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
 -         return m_58399_(p_58390_) || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58390_, this.f_58312_) > 0 || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
++         return ForgeHooks.getBurnTime(p_58390_, this.f_58312_) > 0 || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
        }
     }
  
@@ -199,7 +264,7 @@
        this.f_58320_.clear();
     }
  
-+   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) {
++   public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_, ItemStack itemstack, int amount) { // CraftBukkit
 +      List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.m_183503_(), p_155004_.m_20182_(), this.f_58858_, p_155004_, itemstack, amount); // CraftBukkit
 +      p_155004_.m_7281_(list);
 +      this.f_58320_.clear();
@@ -236,7 +301,7 @@
 +      // CraftBukkit start - fire FurnaceExtractEvent / BlockExpEvent
 +      BlockExpEvent event;
 +      if (amount != 0) {
-+         event = new FurnaceExtractEvent(( org.bukkit.entity.Player ) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
++         event = new FurnaceExtractEvent(( org.bukkit.entity.Player ) entityhuman.getBukkitEntity(), CraftBlock.at(p_154999_, blockposition), CraftMagicNumbers.getMaterial(itemstack.m_41720_()), amount, i);
 +      } else {
 +         event = new BlockExpEvent(CraftBlock.at(p_154999_, blockposition), i);
 +      }
@@ -252,12 +317,12 @@
  
     }
 +
-+   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
-+           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++   LazyOptional<? extends IItemHandler>[] handlers =
++           SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
 +
 +   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++   public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
++      if (!this.f_58859_ && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == Direction.UP)
 +            return handlers[0].cast();
 +         else if (facing == Direction.DOWN)
@@ -278,12 +343,12 @@
 +   @Override
 +   public void reviveCaps() {
 +      super.reviveCaps();
-+      this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++      this.handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
 +   }
 +
 +   // CraftBukkit start - add fields and methods
 +   private int maxStack = MAX_STACK;
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   public List<HumanEntity> transaction = new ArrayList<HumanEntity>();
 +
 +   public List<ItemStack> getContents() {
 +      return this.f_58310_;
