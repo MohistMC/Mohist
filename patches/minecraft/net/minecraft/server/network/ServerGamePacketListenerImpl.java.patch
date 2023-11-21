@@ -71,7 +71,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -141,15 +_,56 @@
+@@ -141,15 +_,57 @@
  import net.minecraft.world.level.block.entity.JigsawBlockEntity;
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.entity.StructureBlockEntity;
@@ -115,6 +115,7 @@
 +import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 +import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 +import org.bukkit.event.player.PlayerInteractEntityEvent;
++import org.bukkit.event.player.PlayerItemHeldEvent;
 +import org.bukkit.event.player.PlayerKickEvent;
 +import org.bukkit.event.player.PlayerMoveEvent;
 +import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -141,7 +142,7 @@
     private int f_9751_;
     private double f_9753_;
     private double f_9754_;
-@@ -189,6 +_,27 @@
+@@ -189,6 +_,28 @@
     private int f_9740_;
     private int f_9741_;
  
@@ -160,6 +161,7 @@
 +   private float lastPitch = Float.MAX_VALUE;
 +   private float lastYaw = Float.MAX_VALUE;
 +   private boolean justTeleported = false;
++   private boolean hasMoved; // Spigot
 +   // CraftBukkit end
 +
 +   public CraftPlayer getCraftPlayer() {
@@ -295,7 +297,7 @@
                 f_9744_.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), d6, d7, d8);
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -380,18 +_,74 @@
+@@ -380,18 +_,90 @@
              d8 = d5 - entity.m_20189_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -304,19 +306,37 @@
                 flag2 = true;
                 f_9744_.warn("{} (vehicle of {}) moved wrongly! {}", entity.m_7755_().getString(), this.f_9743_.m_7755_().getString(), Math.sqrt(d10));
              }
++            Location curPos = this.getCraftPlayer().getLocation(); // Spigot
  
 -            entity.m_19890_(d3, d4, d5, f, f1);
-+            this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-             boolean flag3 = serverlevel.m_45756_(entity, entity.m_142469_().m_82406_(0.0625D));
+-            boolean flag3 = serverlevel.m_45756_(entity, entity.m_142469_().m_82406_(0.0625D));
++            entity.m_19890_( d3, d4, d5, f, f1 );
++            f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // CraftBukkit
++            this.f_9743_.m_19890_( d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_() ); // Forge - Resync player position on vehicle moving
++            boolean flag3 = serverlevel.m_45756_( entity, entity.m_142469_().m_82406_( 0.0625D ) );
              if (flag && (flag2 || !flag3)) {
 -               entity.m_19890_(d0, d1, d2, f, f1);
-+               this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-                this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
+-               this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
++               entity.m_19890_( d0, d1, d2, f, f1 );
++               f_9743_.m_19890_(d0, d1, d2, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // CraftBukkit
++               this.f_9743_.m_19890_( d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_() ); // Forge - Resync player position on vehicle moving
++               this.f_9742_.m_129512_( new ClientboundMoveVehiclePacket( entity ) );
                 return;
              }
 +
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            org.bukkit.entity.Player player = this.getCraftPlayer();
++            // Spigot Start
++            if ( !hasMoved )
++            {
++               lastPosX = curPos.getX();
++               lastPosY = curPos.getY();
++               lastPosZ = curPos.getZ();
++               lastYaw = curPos.getYaw();
++               lastPitch = curPos.getPitch();
++               hasMoved = true;
++            }
++            // Spigot End
 +            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
 +            Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
 +
@@ -341,11 +361,11 @@
 +               this.lastYaw = to.getYaw();
 +               this.lastPitch = to.getPitch();
 +
-+               // Skip the first time we do this
-+               if (from.getX() != Double.MAX_VALUE) {
-+                  Location oldTo = to.clone();
-+                  PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-+                  this.cserver.getPluginManager().callEvent(event);
++                    // Skip the first time we do this
++                    if (true) { // Spigot - don't skip any move events
++                        Location oldTo = to.clone();
++                        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++                        this.cserver.getPluginManager().callEvent(event);
 +
 +                  // If the event is cancelled we move the player back to their old location.
 +                  if (event.isCancelled()) {
@@ -529,8 +549,8 @@
                 } else {
 +                  // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
 +                  prevX = f_9743_.m_20185_();
-+                  prevY = f_9743_.m_20185_();
-+                  prevZ = f_9743_.m_20185_();
++                  prevY = f_9743_.m_20186_();
++                  prevZ = f_9743_.m_20189_();
 +                  prevYaw = f_9743_.m_146908_();
 +                  prevPitch = f_9743_.m_146909_();
 +                  // CraftBukkit end
@@ -949,7 +969,7 @@
  
     public void m_9831_(Packet<?> p_9832_, @Nullable GenericFutureListener<? extends Future<? super Void>> p_9833_) {
 +      // CraftBukkit start
-+      if (p_9832_ == null) {
++      if (p_9832_ == null || this.processedDisconnect) { // Spigot
 +         return;
 +      } else if (p_9832_ instanceof ClientboundSetDefaultSpawnPositionPacket) {
 +         ClientboundSetDefaultSpawnPositionPacket packet6 = (ClientboundSetDefaultSpawnPositionPacket) p_9832_;
@@ -959,6 +979,24 @@
        try {
           this.f_9742_.m_129514_(p_9832_, p_9833_);
        } catch (Throwable throwable) {
+@@ -1086,7 +_,16 @@
+ 
+    public void m_7798_(ServerboundSetCarriedItemPacket p_9909_) {
+       PacketUtils.m_131359_(p_9909_, this, this.f_9743_.m_183503_());
+-      if (p_9909_.m_134498_() >= 0 && p_9909_.m_134498_() < Inventory.m_36059_()) {
++        if (this.f_9743_.m_6107_()) return; // CraftBukkit
++        if (p_9909_.m_134498_() >= 0 && p_9909_.m_134498_() < Inventory.m_36059_()) {
++            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getCraftPlayer(), this.f_9743_.m_150109_().f_35977_, p_9909_.m_134498_());
++            this.cserver.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                this.m_141995_(new ClientboundSetCarriedItemPacket(this.f_9743_.m_150109_().f_35977_));
++                this.f_9743_.m_9243_();
++                return;
++            }
++            // CraftBukkit end
+          if (this.f_9743_.m_150109_().f_35977_ != p_9909_.m_134498_() && this.f_9743_.m_7655_() == InteractionHand.MAIN_HAND) {
+             this.f_9743_.m_5810_();
+          }
 @@ -1095,11 +_,18 @@
           this.f_9743_.m_9243_();
        } else {
@@ -1159,15 +1197,23 @@
        this.f_9743_.m_9243_();
        switch(p_9891_.m_134320_()) {
        case PRESS_SHIFT_KEY:
-@@ -1207,6 +_,7 @@
+@@ -1207,8 +_,15 @@
  
     public void m_6946_(ServerboundInteractPacket p_9866_) {
        PacketUtils.m_131359_(p_9866_, this, this.f_9743_.m_183503_());
 +      if (this.f_9743_.m_6107_()) return; // CraftBukkit
        ServerLevel serverlevel = this.f_9743_.m_183503_();
        final Entity entity = p_9866_.m_179603_(serverlevel);
++      // Spigot Start
++      if ( entity == f_9743_ && !f_9743_.m_5833_() )
++      {
++         disconnect( "Cannot interact with self!" );
++         return;
++      }
        this.f_9743_.m_9243_();
-@@ -1216,11 +_,38 @@
+       this.f_9743_.m_20260_(p_9866_.m_134061_());
+       if (entity != null) {
+@@ -1216,12 +_,44 @@
              return;
           }
  
@@ -1207,8 +1253,14 @@
 +                  }
 +                  // CraftBukkit end
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
++                  // CraftBukkit start
++                  if (!itemInHand.m_41619_() && itemInHand.m_41613_() <= -1) {
++                     f_9743_.f_36096_.m_150429_();
++                  }
++                  // CraftBukkit end
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
+                      if (interactionresult.m_19080_()) {
 @@ -1232,18 +_,28 @@
                 }
  
