@@ -943,7 +943,7 @@
     }
  
     public void m_5938_(ServerboundPaddleBoatPacket p_9878_) {
-@@ -1113,12 +_,21 @@
+@@ -1113,12 +_,22 @@
     }
  
     public void m_7026_(Component p_9825_) {
@@ -959,8 +959,8 @@
 -      this.f_9745_.m_129929_();
 -      this.f_9745_.m_6846_().m_240416_(Component.m_237110_("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW), false);
        this.f_9743_.m_9231_();
--      this.f_9745_.m_6846_().m_11286_(this.f_9743_);
-+      String quitMessage = this.f_9745_.m_6846_().remove(this.f_9743_);
+       this.f_9745_.m_6846_().m_11286_(this.f_9743_);
++      String quitMessage = this.f_9745_.m_6846_().quitMessage;
 +      if ((quitMessage != null) && (quitMessage.length() > 0)) {
 +         this.f_9745_.m_6846_().broadcastMessage(CraftChatMessage.fromString(quitMessage));
 +      }
