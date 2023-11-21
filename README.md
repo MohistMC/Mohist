@@ -15,15 +15,7 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version | Support     | Stability | Mod compatibility   | Plugin compatibility |
-|---------|-------------|-----------|---------------------|----------------------|
-| 1.20.1  | Active      | Good      | Good                | Good                 |
-| 1.19.4  | WIP         | Poor      | Zero                | Zero                 |
-| 1.19.2  | WIP         | Poor      | Zero                | Zero                 |
-| 1.18.2  | WIP         | Poor      | Zero                | Zero                 |
-| 1.16.5  | Active      | Good      | Better than plugins | Good                 |
-| 1.12.2  | End Of Life | High      | Very good           | Very good            |
-| 1.7.10  | End Of Life | Poor      | Poor                | Poor                 |
+<img height="400px" alt="Mohist Project Status" src="https://mohistmc.com/api/v2/projects/mohist/table?" />
 
 Progress
 ------
