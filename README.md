@@ -1,6 +1,5 @@
 <div align="center">
   <h1>Mohist 1.12.2</h1>
-  <h3>This version is end of life. <a href="https://wiki.mohistmc.com/#/about/end-of-life">See more</a></h3>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
