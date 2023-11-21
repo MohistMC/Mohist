@@ -82,6 +82,15 @@ public class MohistConfigUtil {
         return yml.getBoolean(key, true);
     }
 
+    public static boolean CHECK_CLIENT_MODS() {
+        String key = "mohist.check_client_mods";
+        if (yml.get(key) == null) {
+            yml.set(key, false);
+            save();
+        }
+        return yml.getBoolean(key, false);
+    }
+
     public static boolean aBoolean(String key, boolean defaultReturn) {
         return yml.getBoolean(key, defaultReturn);
     }

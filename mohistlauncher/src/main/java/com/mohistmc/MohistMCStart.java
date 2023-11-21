@@ -83,7 +83,9 @@ public class MohistMCStart {
             v_1_20_R2.run();
         }
 
-        AutoDeleteMods.jar();
+        if (MohistConfigUtil.CHECK_CLIENT_MODS()) {
+            AutoDeleteMods.jar();
+        }
 
         CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
