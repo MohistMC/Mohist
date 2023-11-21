@@ -88,11 +88,9 @@
     private final IpBanList f_11199_ = new IpBanList(f_11190_);
     private final ServerOpList f_11200_ = new ServerOpList(f_11191_);
     private final UserWhiteList f_11201_ = new UserWhiteList(f_11192_);
--   private final Map<UUID, ServerStatsCounter> f_11202_ = Maps.newHashMap();
--   private final Map<UUID, PlayerAdvancements> f_11203_ = Maps.newHashMap();
 +   // CraftBukkit start
-+   //private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
-+   //private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
+    private final Map<UUID, ServerStatsCounter> f_11202_ = Maps.newHashMap();
+    private final Map<UUID, PlayerAdvancements> f_11203_ = Maps.newHashMap();
 +   // CraftBukkit end
     public final PlayerDataStorage f_11204_;
     private boolean f_11205_;
@@ -305,29 +303,21 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -300,22 +_,39 @@
+@@ -300,6 +_,8 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
 +      if (!p_11277_.getBukkitEntity().isPersistent()) return; // CraftBukkit
 +      if (p_11277_.f_8906_ == null) return;
        this.f_11204_.m_78433_(p_11277_);
--      ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_142081_());
-+      ServerStatsCounter serverstatscounter = p_11277_.m_8951_();
+       ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_142081_());
        if (serverstatscounter != null) {
-          serverstatscounter.m_12818_();
-       }
- 
--      PlayerAdvancements playeradvancements = this.f_11203_.get(p_11277_.m_142081_());
-+      PlayerAdvancements playeradvancements = p_11277_.m_8960_();
-       if (playeradvancements != null) {
-          playeradvancements.m_135991_();
-       }
+@@ -313,9 +_,25 @@
  
     }
  
--   public void m_11286_(ServerPlayer p_11287_) {
-+   public String remove(ServerPlayer p_11287_) { // CraftBukkit - return string
++   public String quitMessage;
+    public void m_11286_(ServerPlayer p_11287_) {
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
        ServerLevel serverlevel = p_11287_.m_183503_();
        p_11287_.m_36220_(Stats.f_12989_);
@@ -358,14 +348,12 @@
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
        if (serverplayer == p_11287_) {
           this.f_11197_.remove(uuid);
--         this.f_11202_.remove(uuid);
--         this.f_11203_.remove(uuid);
++         // CraftBukkit start
+          this.f_11202_.remove(uuid);
+          this.f_11203_.remove(uuid);
 -      }
 -
 -      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, p_11287_));
-+         // CraftBukkit start
-+         // this.stats.remove(uuid);
-+         // this.advancements.remove(uuid);
 +         // CraftBukkit end
 +      }
 +
@@ -384,7 +372,7 @@
 +      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
 +      // CraftBukkit end
 +
-+      return playerQuitEvent.getQuitMessage(); // CraftBukkit
++      quitMessage = playerQuitEvent.getQuitMessage();
     }
  
     @Nullable
@@ -619,7 +607,7 @@
 -      }
 -
 -      while(!serverlevel1.m_45786_(serverplayer) && serverplayer.m_20186_() < (double)serverlevel1.m_151558_()) {
-+      serverplayer.m_7678_(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
++      serverplayer.m_19890_(mohist$location.getX(), mohist$location.getY(), mohist$location.getZ(), mohist$location.getYaw(), mohist$location.getPitch());
 +      serverplayer.f_8906_.m_9953_();
 +      // CraftBukkit end
 +
