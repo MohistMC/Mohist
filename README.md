@@ -18,12 +18,7 @@
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
 
-| Version                                                  |  Support                                                   | Mod compatibility   | Plugin compatibility|
-|----------------------------------------------------------|------------------------------------------------------------|---------------------|---------------------|
-| [1.19.2](https://github.com/MohistMC/Mohist/tree/1.19.2) | [WIP](https://mohistmc.com/download/)                      | Zero                | Zero                |
-| [1.16.5](https://github.com/MohistMC/Mohist/tree/1.16.5) | [Active](https://mohistmc.com/download/)                   | Better than plugins | Good                |
-| [1.12.2](https://github.com/MohistMC/Mohist/tree/1.12.2) | [Disabled](https://wiki.mohistmc.com/#/about/end-of-life)  | Very good           | Very good           |
-| [1.7.10](https://github.com/MohistMC/Mohist/tree/1.7.10) | [Disabled](https://wiki.mohistmc.com/#/about/end-of-life)  | Poor                | Poor                |
+<img height="400px" alt="Mohist Project Status" src="https://mohistmc.com/api/v2/projects/mohist/table?" />
 
 Progress
 ------
