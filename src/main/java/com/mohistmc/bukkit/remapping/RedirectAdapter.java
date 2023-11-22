@@ -84,6 +84,7 @@ public class RedirectAdapter implements PluginTransformer {
         redirect(MethodHandles.Lookup.class, "findClass", "lookupFindClass", String.class);
         modify(MethodHandles.Lookup.class, "findVarHandle", "lookupFindVarHandle", Class.class, String.class, Class.class);
         modify(MethodHandles.Lookup.class, "findStaticVarHandle", "lookupFindStaticVarHandle", Class.class, String.class, Class.class);
+        modify(MethodHandles.Lookup.class, "findConstructor", "lookupFindConstructor", Class.class, MethodType[].class);
         modify(ClassLoader.class, "loadClass", "classLoaderLoadClass", String.class);
         redirect(Class.class, "getResource", "classGetResource", String.class);
         redirect(Class.class, "getResourceAsStream", "classGetResourceAsStream", String.class);

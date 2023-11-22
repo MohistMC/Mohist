@@ -418,6 +418,11 @@ public class ReflectionHandler extends ClassLoader {
         return lookup.findStaticVarHandle(cl, field, type);
     }
 
+    // bukkit -> srg
+    public static MethodHandle handleLookupFindConstructor(MethodHandles.Lookup lookup, Class<?> cl, MethodType methodType) throws IllegalAccessException, NoSuchMethodException {
+        return lookup.findConstructor(cl, methodType);
+    }
+
     public static Object[] handleClassLoaderLoadClass(ClassLoader loader, String binaryName) {
         return new Object[]{loader, remapper.mapType(binaryName.replace('.', '/')).replace('/', '.')};
     }
