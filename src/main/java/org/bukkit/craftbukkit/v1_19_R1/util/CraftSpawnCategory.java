@@ -6,7 +6,7 @@ import org.bukkit.entity.SpawnCategory;
 public class CraftSpawnCategory {
 
     public static boolean isValidForLimits(SpawnCategory spawnCategory) {
-        return spawnCategory != null && spawnCategory != SpawnCategory.MISC;
+        return spawnCategory != null && spawnCategory.ordinal() < SpawnCategory.MISC.ordinal();
     }
 
     public static String getConfigNameSpawnLimit(SpawnCategory spawnCategory) {
@@ -67,7 +67,7 @@ public class CraftSpawnCategory {
             case WATER_AMBIENT -> MobCategory.WATER_AMBIENT;
             case WATER_UNDERGROUND_CREATURE -> MobCategory.UNDERGROUND_WATER_CREATURE;
             case MISC -> MobCategory.MISC;
-            default -> throw new UnsupportedOperationException("Unknown SpawnCategory " + spawnCategory + " for MobCategory");
+            default -> MobCategory.valueOf(spawnCategory.name());
         };
     }
 
