@@ -1,20 +1,24 @@
 --- a/net/minecraft/world/Container.java
 +++ b/net/minecraft/world/Container.java
-@@ -1,9 +_,13 @@
+@@ -1,9 +_,17 @@
  package net.minecraft.world;
  
++import com.mohistmc.bukkit.inventory.InventoryOwner;
 +import java.util.ArrayList;
 +import java.util.Collections;
  import java.util.Set;
++import net.minecraft.core.BlockPos;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
 +import net.minecraft.world.item.crafting.Recipe;
++import net.minecraft.world.level.block.entity.BlockEntity;
++import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
  
  public interface Container extends Clearable {
     int f_146642_ = 64;
-@@ -61,4 +_,35 @@
+@@ -61,4 +_,47 @@
  
        return false;
     }
@@ -24,9 +28,11 @@
 +      return Collections.emptyList();
 +   }
 +
-+   void onOpen(CraftHumanEntity who);
++   default void onOpen(CraftHumanEntity who) {
++   }
 +
-+   void onClose(CraftHumanEntity who);
++   default void onClose(CraftHumanEntity who) {
++   }
 +
 +   // Mohist start - fix exoticbirds mod
 +   default java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
@@ -34,11 +40,21 @@
 +   }
 +   // Mohist end
 +
-+   org.bukkit.inventory.InventoryHolder getOwner();
++   default org.bukkit.inventory.InventoryHolder getOwner() {
++      return this instanceof BlockEntity blockEntity ? InventoryOwner.get(blockEntity) : null;
++   }
 +
-+   void setMaxStackSize(int size);
++   default void setMaxStackSize(int size) {
++   }
 +
-+   org.bukkit.Location getLocation();
++   default org.bukkit.Location getLocation(){
++      if (this instanceof BlockEntity entity) {
++         BlockPos blockPos = entity.m_58899_();
++         return new Location(entity.m_58904_().getWorld(), blockPos.m_123341_(), blockPos.m_123342_(), blockPos.m_123343_());
++      } else {
++         return null;
++      }
++   }
 +
 +   default Recipe getCurrentRecipe() {
 +      return null;
