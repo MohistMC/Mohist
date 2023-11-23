@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
+@@ -27,6 +_,7 @@
+ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public class ShulkerBullet extends Projectile {
+    private static final double f_150183_ = 0.15D;
 @@ -57,7 +_,20 @@
        this.f_37312_ = p_37332_;
        this.f_37313_ = Direction.UP;
@@ -31,15 +39,14 @@
              this.m_6532_(hitresult);
           }
        }
-@@ -271,7 +_,7 @@
+@@ -271,6 +_,7 @@
        if (flag) {
           this.m_19970_(livingentity, entity);
           if (entity instanceof LivingEntity) {
--            ((LivingEntity)entity).m_147207_(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this));
-+            ((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++            ((LivingEntity)entity).addEffectCause(EntityPotionEffectEvent.Cause.ATTACK);  // CraftBukkit // Mohist
+             ((LivingEntity)entity).m_147207_(new MobEffectInstance(MobEffects.f_19620_, 200), MoreObjects.firstNonNull(entity1, this));
           }
        }
- 
 @@ -293,6 +_,11 @@
     }
  

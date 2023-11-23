@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
+@@ -20,6 +_,7 @@
+ import net.minecraft.world.item.alchemy.PotionUtils;
+ import net.minecraft.world.item.alchemy.Potions;
+ import net.minecraft.world.level.Level;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public class Arrow extends AbstractArrow {
+    private static final int f_150131_ = 600;
 @@ -128,7 +_,7 @@
        return this.f_19804_.m_135370_(f_36854_);
     }
@@ -9,21 +17,20 @@
        this.f_36853_ = true;
        this.f_19804_.m_135381_(f_36854_, p_36883_);
     }
-@@ -178,12 +_,12 @@
+@@ -178,11 +_,13 @@
        Entity entity = this.m_150173_();
  
        for(MobEffectInstance mobeffectinstance : this.f_36855_.m_43488_()) {
--         p_36873_.m_147207_(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_19557_() / 8, 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity);
-+         p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_19557_() / 8, 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
++         p_36873_.addEffectCause(EntityPotionEffectEvent.Cause.ARROW);  // CraftBukkit // Mohist
+          p_36873_.m_147207_(new MobEffectInstance(mobeffectinstance.m_19544_(), Math.max(mobeffectinstance.m_19557_() / 8, 1), mobeffectinstance.m_19564_(), mobeffectinstance.m_19571_(), mobeffectinstance.m_19572_()), entity);
        }
  
        if (!this.f_36852_.isEmpty()) {
           for(MobEffectInstance mobeffectinstance1 : this.f_36852_) {
--            p_36873_.m_147207_(mobeffectinstance1, entity);
-+            p_36873_.addEffect(mobeffectinstance1, entity, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
++            p_36873_.addEffectCause(EntityPotionEffectEvent.Cause.ARROW);  // CraftBukkit // Mohist
+             p_36873_.m_147207_(mobeffectinstance1, entity);
           }
        }
- 
 @@ -221,4 +_,23 @@
        }
  

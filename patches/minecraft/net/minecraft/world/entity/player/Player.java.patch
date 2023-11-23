@@ -22,7 +22,7 @@
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -110,8 +_,18 @@
+@@ -110,8 +_,19 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
@@ -33,6 +33,7 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;
  
@@ -109,15 +110,14 @@
     }
  
     public boolean m_36341_() {
-@@ -293,7 +_,7 @@
+@@ -293,6 +_,7 @@
     private void m_36372_() {
        ItemStack itemstack = this.m_6844_(EquipmentSlot.HEAD);
        if (itemstack.m_150930_(Items.f_42354_) && !this.m_204029_(FluidTags.f_13131_)) {
--         this.m_7292_(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true));
-+         this.addEffect(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TURTLE_HELMET); // CraftBukkit
++         this.addEffectCause(EntityPotionEffectEvent.Cause.TURTLE_HELMET);  // CraftBukkit // Mohist
+          this.m_7292_(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true));
        }
  
-    }
 @@ -346,6 +_,10 @@
     }
  

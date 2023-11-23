@@ -1,14 +1,21 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
-@@ -149,7 +_,7 @@
+@@ -41,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
+ 
+ public abstract class Raider extends PatrollingMonster {
+    protected static final EntityDataAccessor<Boolean> f_37835_ = SynchedEntityData.m_135353_(Raider.class, EntityDataSerializers.f_135035_);
+@@ -149,6 +_,7 @@
                 i = Mth.m_14045_(i, 0, 4);
                 MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.f_19594_, 120000, i, false, false, true);
                 if (!this.f_19853_.m_46469_().m_46207_(GameRules.f_46154_)) {
--                  player.m_7292_(mobeffectinstance);
-+                  player.addEffect(mobeffectinstance, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.PATROL_CAPTAIN); // CraftBukkit
++                  player.addEffectCause(EntityPotionEffectEvent.Cause.PATROL_CAPTAIN);  // CraftBukkit // Mohist
+                   player.m_7292_(mobeffectinstance);
                 }
              }
-          }
 @@ -296,7 +_,7 @@
           this.f_37903_.m_21573_().m_26573_();
  

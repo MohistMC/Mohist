@@ -1,9 +1,10 @@
 --- a/net/minecraft/world/entity/projectile/WitherSkull.java
 +++ b/net/minecraft/world/entity/projectile/WitherSkull.java
-@@ -20,6 +_,7 @@
+@@ -20,6 +_,8 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class WitherSkull extends AbstractHurtingProjectile {
@@ -17,15 +18,14 @@
     }
  
     protected void m_5790_(EntityHitResult p_37626_) {
-@@ -73,7 +_,7 @@
+@@ -73,6 +_,7 @@
              }
  
              if (i > 0) {
--               ((LivingEntity)entity).m_147207_(new MobEffectInstance(MobEffects.f_19615_, 20 * i, 1), this.m_150173_());
-+               ((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.f_19615_, 20 * i, 1), this.m_150173_(), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
++               ((LivingEntity)entity).addEffectCause(EntityPotionEffectEvent.Cause.ATTACK);  // CraftBukkit // Mohist
+                ((LivingEntity)entity).m_147207_(new MobEffectInstance(MobEffects.f_19615_, 20 * i, 1), this.m_150173_());
              }
           }
- 
 @@ -83,8 +_,15 @@
     protected void m_6532_(HitResult p_37628_) {
        super.m_6532_(p_37628_);
