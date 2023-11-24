@@ -901,12 +901,17 @@
              this.m_5496_(soundtype.m_56779_(), soundtype.m_56773_() * 0.5F, soundtype.m_56774_() * 0.75F);
           }
  
-@@ -1539,7 +_,7 @@
+@@ -1537,9 +_,12 @@
+    protected void m_7909_(float p_21316_) {
+    }
  
++   // Mohist start
++   protected AtomicBoolean apoli_mixin = new AtomicBoolean(false);
     protected float m_21161_(DamageSource p_21162_, float p_21163_) {
        if (!p_21162_.m_269533_(DamageTypeTags.f_268490_)) {
 -         this.m_6472_(p_21162_, p_21163_);
-+         // this.hurtArmor(pDamageSource, pDamageAmount); // CraftBukkit - Moved into damageEntity0(DamageSource, float)
++         apoli_mixin.set(true);
++         this.m_6472_(p_21162_, p_21163_); // Mohist
           p_21163_ = CombatRules.m_19272_(p_21163_, (float)this.m_21230_(), (float)this.m_21133_(Attributes.f_22285_));
        }
  

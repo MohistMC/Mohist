@@ -343,7 +343,7 @@
           this.m_36384_(true);
        }
  
-@@ -837,13 +_,28 @@
+@@ -837,16 +_,32 @@
     }
  
     public boolean m_7099_(Player p_36169_) {
@@ -378,6 +378,10 @@
     }
  
     protected void m_6472_(DamageSource p_36251_, float p_36252_) {
++      if (apoli_mixin.getAndSet(false)) return;
+       this.f_36093_.m_150072_(p_36251_, p_36252_, Inventory.f_150068_);
+    }
+ 
 @@ -855,7 +_,7 @@
     }
  
