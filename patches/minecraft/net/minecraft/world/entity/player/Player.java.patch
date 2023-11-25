@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.entity.player;
+ 
++import com.google.common.base.Function;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Lists;
 @@ -70,7 +_,6 @@
  import net.minecraft.world.entity.animal.Parrot;
  import net.minecraft.world.entity.animal.Pig;
@@ -22,16 +29,26 @@
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -110,8 +_,19 @@
+@@ -105,13 +_,29 @@
+ import net.minecraft.world.level.block.entity.StructureBlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
++import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 +import org.bukkit.craftbukkit.v1_18_R2.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_18_R2.util.CraftVector;
 +import org.bukkit.entity.Item;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
@@ -328,47 +345,192 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -875,28 +_,40 @@
-       }
-    }
+@@ -877,26 +_,171 @@
  
--   protected void m_6475_(DamageSource p_36312_, float p_36313_) {
-+      protected void m_6475_(DamageSource p_36312_, float p_36313_) {
-+         damageEntity0(p_36312_, p_36313_);
-+      }
-+
-+      protected boolean damageEntity0(DamageSource p_36312_, float p_36313_) { // void -> boolean
-+      if (true) {
-+         return super.damageEntity0(p_36312_, p_36313_);
-+      }
-+      // CraftBukkit end
+    protected void m_6475_(DamageSource p_36312_, float p_36313_) {
        if (!this.m_6673_(p_36312_)) {
-+         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
-+         if (p_36313_ <= 0) return false;
-          p_36313_ = this.m_21161_(p_36312_, p_36313_);
-          p_36313_ = this.m_6515_(p_36312_, p_36313_);
-          float f2 = Math.max(p_36313_ - this.m_6103_(), 0.0F);
-          this.m_7911_(this.m_6103_() - (p_36313_ - f2));
-+         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_36312_, f2);
-          float f = p_36313_ - f2;
-          if (f > 0.0F && f < 3.4028235E37F) {
-             this.m_36222_(Stats.f_12933_, Math.round(f * 10.0F));
-          }
- 
-          if (f2 != 0.0F) {
+-         p_36313_ = this.m_21161_(p_36312_, p_36313_);
+-         p_36313_ = this.m_6515_(p_36312_, p_36313_);
+-         float f2 = Math.max(p_36313_ - this.m_6103_(), 0.0F);
+-         this.m_7911_(this.m_6103_() - (p_36313_ - f2));
+-         float f = p_36313_ - f2;
+-         if (f > 0.0F && f < 3.4028235E37F) {
+-            this.m_36222_(Stats.f_12933_, Math.round(f * 10.0F));
+-         }
+-
+-         if (f2 != 0.0F) {
 -            this.m_36399_(p_36312_.m_19377_());
-+            this.causeFoodExhaustion(p_36312_.m_19377_(), EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
++         if (p_36313_ <= 0) {
++            this.canDamage.set(true);
++            return;
++         }
++         final boolean human = this instanceof Player;
++         float originalDamage = p_36313_;
++         Function<Double, Double> hardHat = f12 -> {
++            if (p_36312_.m_146705_() && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++               return -(f12 - (f12 * 0.75F));
++
++            }
++            return -0.0;
++         };
++         float hardHatModifier = hardHat.apply((double) p_36313_).floatValue();
++         p_36313_ += hardHatModifier;
++
++         Function<Double, Double> blocking;
++         boolean shieldTakesDamage = false;
++         if (this.m_21275_(p_36312_)) {
++            ShieldBlockEvent shieldEvent = ForgeHooks.onShieldBlock(this, p_36312_, p_36313_);
++            if (!shieldEvent.isCanceled()) {
++               float blocked = shieldEvent.getBlockedDamage();
++               shieldTakesDamage = shieldEvent.shieldTakesDamage();
++               blocking = f13 -> -(double) blocked;
++            } else {
++               blocking = f13 -> 0d;
++            }
++         } else {
++            blocking = f13 -> 0d;
++         }
++         float blockingModifier = blocking.apply((double) p_36313_).floatValue();
++         p_36313_ += blockingModifier;
++
++         Function<Double, Double> armor = f16 -> -(f16 - this.m_21161_(p_36312_, f16.floatValue()));
++         float armorModifier = armor.apply((double) p_36313_).floatValue();
++         p_36313_ += armorModifier;
++
++         Function<Double, Double> resistance = f17 -> {
++            if (!p_36312_.m_19379_() && this.m_21023_(MobEffects.f_19606_) && p_36312_ != DamageSource.f_19317_) {
++               int i = (this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
++               int j = 25 - i;
++               float f1 = f17.floatValue() * (float) j;
++               return -(f17 - (f1 / 25.0F));
++            }
++            return -0.0;
++         };
++         float resistanceModifier = resistance.apply((double) p_36313_).floatValue();
++         p_36313_ += resistanceModifier;
++
++         Function<Double, Double> magic = f15 -> -(f15 - this.m_6515_(p_36312_, f15.floatValue()));
++         float magicModifier = magic.apply((double) p_36313_).floatValue();
++         p_36313_ += magicModifier;
++
++         Function<Double, Double> absorption = f14 -> -(Math.max(f14 - Math.max(f14 - this.m_6103_(), 0.0F), 0.0F));
++         float absorptionModifier = absorption.apply((double) p_36313_).floatValue();
++
++         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_36312_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
++         if (p_36312_.m_7639_() instanceof Player) {
++            ((Player) p_36312_.m_7639_()).m_36334_(); // Moved from EntityHuman in order to make the cooldown reset get called after the damage event is fired
++         }
++         if (event.isCancelled()) {
++            this.canDamage.set(false);
++            return;
++         }
++
++         p_36313_ = (float) event.getFinalDamage();
++
++         // Resistance
++         if (event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE) < 0) {
++            float f3 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.RESISTANCE);
++            if (f3 > 0.0F && f3 < 3.4028235E37F) {
++               if (this instanceof ServerPlayer) {
++                  ((ServerPlayer) this).m_36222_(Stats.f_12934_, Math.round(f3 * 10.0F));
++               } else if (p_36312_.m_7639_() instanceof ServerPlayer) {
++                  ((ServerPlayer) p_36312_.m_7639_()).m_36222_(Stats.f_12930_, Math.round(f3 * 10.0F));
++               }
++            }
++         }
++
++         // Apply damage to helmet
++         if (p_36312_.m_146705_() && !this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++            this.m_142642_(p_36312_, p_36313_);
++         }
++
++         // Apply damage to armor
++         if (!p_36312_.m_19376_()) {
++            float armorDamage = (float) (event.getDamage() + event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) + event.getDamage(EntityDamageEvent.DamageModifier.HARD_HAT));
++            this.m_6472_(p_36312_, armorDamage);
++         }
++
++         // Apply blocking code // PAIL: steal from above
++         if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
++            this.f_19853_.m_7605_(this, (byte) 29); // SPIGOT-4635 - shield damage sound
++            if (shieldTakesDamage) {
++               this.m_7909_((float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING));
++            }
++            Entity entity = p_36312_.m_7640_();
++
++            if (entity instanceof LivingEntity) {
++               this.m_6728_((LivingEntity) entity);
++            }
++         }
++
++         absorptionModifier = (float) -event.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION);
++         this.m_7911_(Math.max(this.m_6103_() - absorptionModifier, 0.0F));
++         float f2 = absorptionModifier;
++
++         if (f2 > 0.0F && f2 < 3.4028235E37F && this instanceof Player) {
++            ((Player) this).m_36222_(Stats.f_12933_, Math.round(f2 * 10.0F));
++         }
++         if (f2 > 0.0F && f2 < 3.4028235E37F && p_36312_.m_7639_() instanceof ServerPlayer) {
++            ((ServerPlayer)  p_36312_.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f2 * 10.0F));
++         }
++
++         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_36312_, p_36313_);
++
++         if (p_36313_ > 0 || !human) {
++            if (human) {
++               // PAIL: Be sure to drag all this code from the EntityHuman subclass each update.
++               ((Player) this).causeFoodExhaustion(p_36312_.m_19377_(), org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.DAMAGED); // CraftBukkit - EntityExhaustionEvent
++               if (p_36313_ < 3.4028235E37F) {
++                  ((Player) this).m_36222_(Stats.f_12931_, Math.round(p_36313_ * 10.0F));
++               }
++            }
++            // CraftBukkit end
              float f1 = this.m_21223_();
 -            this.m_21153_(this.m_21223_() - f2);
-             this.m_21231_().m_19289_(p_36312_, f1, f2);
-+            this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048
-             if (f2 < 3.4028235E37F) {
-                this.m_36222_(Stats.f_12931_, Math.round(f2 * 10.0F));
-             }
- 
+-            this.m_21231_().m_19289_(p_36312_, f1, f2);
+-            if (f2 < 3.4028235E37F) {
+-               this.m_36222_(Stats.f_12931_, Math.round(f2 * 10.0F));
+-            }
+-
++            this.m_21231_().m_19289_(p_36312_, f1, p_36313_);
++            this.m_21153_(f1 - p_36313_); // Forge: moved to fix MC-121048+                /
++            // CraftBukkit start
++            if (!human) {
++               this.m_7911_(this.m_6103_() - p_36313_);
++            }
++            this.m_146852_(GameEvent.f_157808_, p_36312_.m_7639_());
++
++            this.canDamage.set(true);
++            return;
++         } else {
++            // Duplicate triggers if blocking
++            if (event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING) < 0) {
++               if (this instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10574_.m_35174_((ServerPlayer) this, p_36312_, p_36313_, originalDamage, true);
++                  f2 = (float) -event.getDamage(EntityDamageEvent.DamageModifier.BLOCKING);
++                  if (f2 > 0.0F && f2 < 3.4028235E37F) {
++                     ((ServerPlayer) this).m_36222_(Stats.f_12932_, Math.round(originalDamage * 10.0F));
++                  }
++               }
++
++               if (p_36312_.m_7639_() instanceof ServerPlayer) {
++                  CriteriaTriggers.f_10573_.m_60112_((ServerPlayer) p_36312_.m_7639_(), this, p_36312_, p_36313_, originalDamage, true);
++               }
++               this.canDamage.set(false);
++               return;
++            } else {
++               boolean flag = originalDamage > 0;
++               this.canDamage.set(flag);
++               return;
++            }
++            // CraftBukkit end
           }
        }
-+      return false; // CraftBukkit
++      this.canDamage.set(false);
++   }
++   protected boolean damageEntity0(DamageSource p_36312_, float p_36313_) { // void -> boolean
++      return super.damageEntity0(p_36312_, p_36313_);
     }
  
     protected boolean m_6046_() {
