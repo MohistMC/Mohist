@@ -397,7 +397,7 @@
           }
        }
  
-@@ -475,12 +_,13 @@
+@@ -475,12 +_,15 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
@@ -406,7 +406,9 @@
 -         }
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
 +            if (biome.func_201848_a(this, blockpos3)) {
-+               org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleBlockFormEvent(this, blockpos3, Blocks.field_150432_aD.func_176223_P(), null); // CraftBukkit
++               this.callEvent.set(true);
++               this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
++               org.bukkit.craftbukkit.v1_16_R3.event.CraftEventFactory.handleBlockFormEvent(this, blockpos3, this.mohist$defaultBlockState, null); // CraftBukkit // Mohist
 +            }
  
           if (flag && biome.func_201850_b(this, blockpos2)) {
