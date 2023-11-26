@@ -116,7 +116,7 @@ public class ForgeInjectBukkit {
                 // inject item materials into Bukkit for FML
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
-                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(new ItemStack(item)), false, resourceLocation);
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(new ItemStack(item)), false, true, resourceLocation);
 
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
@@ -135,7 +135,7 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(block.asItem());
                 Item item = Item.byId(id);
-                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(new ItemStack(item)), true, resourceLocation);
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(new ItemStack(item)), true, false, resourceLocation);
 
                 if (material != null) {
                     CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
@@ -374,5 +374,9 @@ public class ForgeInjectBukkit {
 
     public static boolean isMods(ResourceLocation resourceLocation) {
         return !resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT);
+    }
+
+    public static boolean isMods(NamespacedKey namespacedkey) {
+        return !namespacedkey.getNamespace().equals(NamespacedKey.MINECRAFT);
     }
 }
