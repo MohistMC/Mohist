@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -1,10 +_,13 @@
+@@ -1,10 +_,14 @@
  package net.minecraft.world.level;
  
  import com.google.common.collect.Lists;
@@ -11,6 +11,7 @@
  import java.util.Iterator;
  import java.util.List;
 +import java.util.Map;
++import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.Supplier;
@@ -287,6 +288,23 @@
           }
        }
     }
+@@ -269,9 +_,16 @@
+    public void m_142052_(BlockPos p_151531_, BlockState p_151532_) {
+    }
+ 
++   // Mohist start
++   public AtomicBoolean callEvent = new AtomicBoolean(false);
++   public BlockState mohist$defaultBlockState;
++
+    public boolean m_46597_(BlockPos p_46598_, BlockState p_46599_) {
++      mohist$defaultBlockState = p_46599_;
++      if (callEvent.getAndSet(false)) return false;
+       return this.m_7731_(p_46598_, p_46599_, 3);
+    }
++   // Mohist end
+ 
+    public abstract void m_7260_(BlockPos p_46612_, BlockState p_46613_, BlockState p_46614_, int p_46615_);
+ 
 @@ -279,6 +_,7 @@
     }
  
