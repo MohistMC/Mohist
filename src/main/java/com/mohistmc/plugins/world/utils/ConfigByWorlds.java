@@ -77,11 +77,12 @@ public class ConfigByWorlds {
         // Mohist - set worldborder size to worlds.ymls
         if (level != null && level instanceof ServerLevel serverLevel) {
             CraftWorld world = serverLevel.getWorld();
-            ConfigByWorlds.addFlag(world, "worldborder", pSize);
+            config.set("worlds." + world.getName() + ".worldborder", pSize);
             if (world.isMods()) {
-                ConfigByWorlds.addFlag(world, "ismods", world.isMods());
-                ConfigByWorlds.addFlag(world, "modName", world.getModid());
+                config.set("worlds." + world.getName() + ".ismods", world.isMods());
+                config.set("worlds." + world.getName() + ".modName", world.getModid());
             }
+            init();
         }
     }
 
@@ -197,13 +198,6 @@ public class ConfigByWorlds {
             } else {
                 player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.MOHIST);
             }
-        }
-    }
-
-    public static void addFlag(World world, String key, Object v) {
-        if (config.get("worlds." + world.getName() + "." + key) == null) {
-            config.set("worlds." + world.getName() + "." + key, v);
-            init();
         }
     }
 }
