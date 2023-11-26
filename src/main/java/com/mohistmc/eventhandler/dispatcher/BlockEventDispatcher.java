@@ -104,17 +104,19 @@ public class BlockEventDispatcher {
                     for (BlockSnapshot snapshot : event.getReplacedBlockSnapshots()) {
                         placedBlocks.add(CraftCustomSnapshot.fromBlockSnapshot(snapshot, true).getState());
                     }
-                    CraftBlock againstBlock = CraftBlock.at(event.getWorld(), event.getPos().relative(direction.getOpposite()));
+                    CraftBlock againstBlock = CraftBlock.at((ServerWorld)event.getWorld(), event.getPos().relative(direction.getOpposite()));
                     ItemStack bukkitStack;
                     if (hand == Hand.MAIN_HAND) {
                         bukkitStack = player.getInventory().getItemInMainHand();
                     } else {
                         bukkitStack = player.getInventory().getItemInOffHand();
                     }
-                    BlockPlaceEvent placeEvent = new BlockMultiPlaceEvent(placedBlocks, againstBlock, bukkitStack, player, !event.isCanceled());
-                    placeEvent.setCancelled(event.isCanceled());
-                    Bukkit.getPluginManager().callEvent(placeEvent);
-                    event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
+                    if (placedBlocks.get(0).isPlaced()) {
+                        BlockPlaceEvent placeEvent = new BlockMultiPlaceEvent(placedBlocks, againstBlock, bukkitStack, player, !event.isCanceled());
+                        placeEvent.setCancelled(event.isCanceled());
+                        Bukkit.getPluginManager().callEvent(placeEvent);
+                        event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
+                    }
                 }
             }
         }
