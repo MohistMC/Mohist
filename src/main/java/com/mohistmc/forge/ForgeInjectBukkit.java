@@ -121,7 +121,6 @@ public class ForgeInjectBukkit {
         }
     }
 
-
     public static void addEnumMaterialsInBlocks() {
         var registry = ForgeRegistries.BLOCKS;
         for (Block block : registry) {
