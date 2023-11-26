@@ -225,43 +225,46 @@
  
     @Nullable
     public ItemEntity m_7197_(ItemStack p_36179_, boolean p_36180_, boolean p_36181_) {
-@@ -656,11 +_,48 @@
+@@ -656,11 +_,50 @@
              itementity.m_20334_((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.f_19796_.m_188501_() - this.f_19796_.m_188501_()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
  
+-         return itementity;
 +         // CraftBukkit start - fire PlayerDropItemEvent
-+         if (!callEventA.getAndSet(true)) { // SPIGOT-2942: Add boolean to call event
++         if (callEventA.getAndSet(true)) { // SPIGOT-2942: Add boolean to call event
++            org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
++            Item drop = (Item) itementity.getBukkitEntity();
++
++            PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
++            this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++               // CraftBukkit end
++               if (p_36179_.m_41720_() == Items.f_42573_) {
++                  net.minecraft.world.level.saveddata.maps.MapItemSavedData worldmap = net.minecraft.world.item.MapItem.m_42853_(p_36179_, this.m_9236_());
++                  if (worldmap != null) {
++                     worldmap.m_77918_(this, p_36179_);
++                  }
++               }
++               return itementity;
++            } else {
++               org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
++               if (p_36181_ && (cur == null || cur.getAmount() == 0)) {
++                  // The complete stack was dropped
++                  player.getInventory().setItemInHand(drop.getItemStack());
++               } else if (p_36181_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++                  // Only one item is dropped
++                  cur.setAmount(cur.getAmount() + 1);
++                  player.getInventory().setItemInHand(cur);
++               } else {
++                  // Fallback
++                  player.getInventory().addItem(drop.getItemStack());
++               }
++               return null;
++            }
++         } else {
 +            return itementity;
 +         }
-+         org.bukkit.entity.Player player = (org.bukkit.entity.Player) this.getBukkitEntity();
-+         Item drop = (Item) itementity.getBukkitEntity();
-+
-+         PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
-+         this.f_19853_.getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (event.isCancelled()) {
-+            org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
-+            if (p_36181_ && (cur == null || cur.getAmount() == 0)) {
-+               // The complete stack was dropped
-+               player.getInventory().setItemInHand(drop.getItemStack());
-+            } else if (p_36181_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
-+               // Only one item is dropped
-+               cur.setAmount(cur.getAmount() + 1);
-+               player.getInventory().setItemInHand(cur);
-+            } else {
-+               // Fallback
-+               player.getInventory().addItem(drop.getItemStack());
-+            }
-+            return null;
-+         }
-+         // CraftBukkit end
-+         if (p_36179_.m_41720_() == Items.f_42573_) {
-+            net.minecraft.world.level.saveddata.maps.MapItemSavedData worldmap = net.minecraft.world.item.MapItem.m_42853_(p_36179_, this.m_9236_());
-+            if (worldmap != null) {
-+               worldmap.m_77918_(this, p_36179_);
-+            }
-+         }
-          return itementity;
        }
     }
  
