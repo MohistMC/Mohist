@@ -57,6 +57,9 @@ public class MohistConfigUtil {
 
     public static boolean CHECK_LIBRARIES() {
         String key = "mohist.libraries.check";
+        if (System.getProperty("libraries.check") != null) {
+            return Boolean.parseBoolean(System.getProperty("libraries.check"));
+        }
         if (yml.get(key) == null) {
             yml.set(key, true);
             save();

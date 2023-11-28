@@ -32,26 +32,31 @@ public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
     CHINA("http://s1.devicloud.cn:25119/"),
-    GITHUB("https://mohistmc.github.io/maven/");
+    GITHUB("https://mohistmc.github.io/maven/"),
+    CUSTOM(null);
 
     public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
-    public final String url;
+    public String url;
 
     public static DownloadSource get() {
-        String ds = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
+        String ds = System.getProperty("libraries.downloadsource") == null ? MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE() : System.getProperty("libraries.downloadsource");
+        if (ds.startsWith("http")) {
+            CUSTOM.url = ds;
+            return CUSTOM;
+        }
         DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
+                urL = me;
                 if (ConnectionUtil.isDown(me.url)) {
-                    if (ds.equals(CHINA.name())) {
+                    if (me.equals(CHINA)) {
                         urL = MOHIST;
-                        if (ConnectionUtil.isDown(urL.url)) {
-                            return GITHUB;
-                        }
                     }
+                }
+                if (ConnectionUtil.isDown(urL.url)) {
                     return GITHUB;
                 }
-                return me;
+                return urL;
             }
         }
         return defaultSource;
