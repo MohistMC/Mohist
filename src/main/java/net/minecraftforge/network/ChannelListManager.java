@@ -118,7 +118,7 @@ public class ChannelListManager {
             channels.add(new String(data, last, data.length - last, StandardCharsets.UTF_8));
         var changed = new HashSet<ResourceLocation>();
         for (var channel : channels) {
-            // It also says nothing about the format of channels of channels so ignore bad channels.
+            // It also says nothing about the format of channels so ignore bad channels.
             if (channel.isEmpty())
                 continue;
             try {
