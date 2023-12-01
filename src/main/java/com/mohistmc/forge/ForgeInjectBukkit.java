@@ -63,6 +63,7 @@ import org.bukkit.craftbukkit.v1_16_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_16_R3.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.permissions.PermissionDefault;
@@ -231,17 +232,16 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumEntity() {
-        Map<String, EntityType> NAME_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-        Map<Short, EntityType> ID_MAP = ObfuscationReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
-
         for (Map.Entry<RegistryKey<net.minecraft.entity.EntityType<?>>, net.minecraft.entity.EntityType<?>> entity : ForgeRegistries.ENTITIES.getEntries()) {
             ResourceLocation resourceLocation = entity.getValue().getRegistryName();
+            NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 String entityType = normalizeName(resourceLocation.toString());
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistEnumHelper.addEnum0(EntityType.class, entityType, new Class[]{String.class, Class.class, Integer.TYPE, Boolean.TYPE}, entityType.toLowerCase(), CraftCustomEntity.class, typeId, false);
-                NAME_MAP.put(entityType.toLowerCase(), bukkitType);
-                ID_MAP.put((short) typeId, bukkitType);
+                bukkitType.key = key;
+                EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
             }
         }
