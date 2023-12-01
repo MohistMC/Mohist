@@ -35,6 +35,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
@@ -99,14 +100,13 @@ public class ForgeInjectBukkit {
 
 
     public static void addEnumMaterialInItems(){
-        for (Map.Entry<RegistryKey<Item>, Item> entry : ForgeRegistries.ITEMS.getEntries()) {
-            ResourceLocation resourceLocation = entry.getValue().getRegistryName();
+        for (Item item : ForgeRegistries.ITEMS) {
+            ResourceLocation resourceLocation = item.getRegistryName();
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject item materials into Bukkit for FML
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_ITEM__", "");
-                Item item = entry.getValue();
+                String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
-                Material material = Material.addMaterial(materialName, id, false, resourceLocation.getNamespace());
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), false, true, resourceLocation);
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
                 if (material != null) {
@@ -118,14 +118,14 @@ public class ForgeInjectBukkit {
 
 
     public static void addEnumMaterialsInBlocks(){
-        for (Map.Entry<RegistryKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries()) {
-            ResourceLocation resourceLocation = entry.getValue().getRegistryName();
+        for (Block block : ForgeRegistries.BLOCKS) {
+            ResourceLocation resourceLocation = block.getRegistryName();
             if(!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 // inject block materials into Bukkit for FML
-                String materialName = normalizeName(entry.getKey().toString()).replace("RESOURCEKEYMINECRAFT_BLOCK__", "");
-                Block block = entry.getValue();
+                String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(block.asItem());
-                Material material = Material.addMaterial(materialName, id, true, resourceLocation.getNamespace());
+                Item item = Item.byId(id);
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), true, false, resourceLocation);
                 CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
                 CraftMagicNumbers.MATERIAL_BLOCK.put(material, block);
                 if (material != null) {
