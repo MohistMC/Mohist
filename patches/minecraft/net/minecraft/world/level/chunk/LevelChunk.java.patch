@@ -247,15 +247,6 @@
           }
  
        });
-@@ -530,7 +_,7 @@
-          blockentity.m_142339_(this.f_62776_);
-          this.m_142170_(blockentity);
-       } else {
--         f_62771_.warn("Tried to load a block entity for block {} but failed at location {}", blockstate, p_62871_);
-+         f_62771_.debug("Tried to load a block entity for block {} but failed at location {}", blockstate, p_62871_);
-       }
- 
-       return blockentity;
 @@ -564,6 +_,7 @@
     }
  
