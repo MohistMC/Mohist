@@ -19,15 +19,14 @@
 package com.mohistmc.api.mc;
 
 import com.mojang.datafixers.util.Either;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ChunkHolder;
 import net.minecraft.world.server.ChunkHolder.IChunkLoadingError;
 import net.minecraft.world.server.ChunkHolder.LocationType;
 import net.minecraft.world.server.ServerWorld;
-
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Mohist API for Minecraft chunks.

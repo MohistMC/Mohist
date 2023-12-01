@@ -60,7 +60,7 @@ public class DefaultLibraries {
 			lib.getParentFile().mkdirs();
 
 			String u = url + "libraries/" + lib.getAbsolutePath().replaceAll("\\\\", "/").split("/libraries/")[1];
-			System.out.println(i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
+			System.out.println(i18n.get("libraries.global.percentage", Math.min(Math.round((float) (currentSize.get() * 100) / allSize.get()), 100) + "%")); //Global percentage
 			try {
 				UpdateUtils.downloadFile(u, lib, libs.get(lib));
 				if (lib.getName().endsWith(".jar") && !lib.getName().contains("asm-tree-6.1.1.jar"))

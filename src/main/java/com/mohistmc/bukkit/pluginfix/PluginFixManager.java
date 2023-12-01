@@ -18,66 +18,83 @@
 
 package com.mohistmc.bukkit.pluginfix;
 
+import java.util.function.Consumer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.IRETURN;
 
 public class PluginFixManager {
 
     public static byte[] injectPluginFix(String className, byte[] clazz) {
         if (className.endsWith("PaperLib")) {
-            return PluginFixManager.removePaper(clazz);
+            return patch(clazz, PluginFixManager::removePaper);
+        }
+        if (className.equals("com.onarandombox.MultiverseCore.utils.WorldManager")) {
+            return patch(clazz, MultiverseCore::fix);
         }
         if (className.equals("org.dynmap.bukkit.helper.v116_4.BukkitVersionHelperSpigot116_4")) {
             return DynmapFix.replaceBukkitVersionHelperSpigot116_4(clazz);
         }
-        if (className.equals("org.dynmap.bukkit.helper.BukkitVersionHelperGeneric")) {
-            return helloWorld(clazz, "[Lnet.minecraft.server.BiomeBase;", "[Lnet.minecraft.world.biome.Biome;");
+        if (className.equals("com.sk89q.worldedit.bukkit.adapter.impl.Spigot_v1_16_R3")) {
+            return WorldEdit.patchSpigot_v1_16_R3(clazz);
         }
-        if (className.equals("com.earth2me.essentials.utils.VersionUtil")) {
-            return helloWorld(clazz, "net.minecraftforge.common.MinecraftForge", "hello.World");
+
+        Consumer<ClassNode> patcher;
+        switch (className) {
+            case "com.sk89q.worldedit.bukkit.adapter.Refraction":
+                patcher = WorldEdit::handlePickName;
+                break;
+            case "com.earth2me.essentials.utils.VersionUtil":
+                patcher = node -> helloWorld(node, 110, 109);
+                break;
+            case "org.dynmap.bukkit.helper.BukkitVersionHelperGeneric":
+                patcher = node -> helloWorld(node, "[Lnet.minecraft.server.BiomeBase;", "[Lnet.minecraft.world.biome.Biome;");
+                break;
+            case "net.Zrips.CMILib.Reflections":
+                patcher = node -> helloWorld(node, "bR", "f_36096_");
+                break;
+            default:
+                patcher = null;
+                break;
         }
-        return clazz;
+        return patcher == null ? clazz : patch(clazz, patcher);
     }
 
-    public static byte[] removePaper(byte[] basicClass) {
-        ClassReader classReader = new ClassReader(basicClass);
-        ClassNode classNode = new ClassNode();
-        ClassWriter classWriter = new ClassWriter(0);
-        classReader.accept(classNode, 0);
-        for (MethodNode methodNode : classNode.methods) {
+    private static byte[] patch(byte[] basicClass, Consumer<ClassNode> handler) {
+        ClassNode node = new ClassNode();
+        new ClassReader(basicClass).accept(node, 0);
+        handler.accept(node);
+        ClassWriter writer = new ClassWriter(0);
+        node.accept(writer);
+        return writer.toByteArray();
+    }
+
+    private static void removePaper(ClassNode node) {
+        for (MethodNode methodNode : node.methods) {
             if (methodNode.name.equals("isPaper") && methodNode.desc.equals("()Z")) {
                 InsnList toInject = new InsnList();
-                toInject.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(PluginFixManager.class), "isPaper", "()Z"));
-                toInject.add(new InsnNode(IRETURN));
+                toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(PluginFixManager.class), "isPaper", "()Z"));
+                toInject.add(new InsnNode(Opcodes.IRETURN));
                 methodNode.instructions = toInject;
             }
         }
-        classNode.accept(classWriter);
-        return classWriter.toByteArray();
     }
 
     public static boolean isPaper() {
         return false;
     }
 
-    public static byte[] helloWorld(byte[] basicClass, String a, String b) {
-        ClassReader classReader = new ClassReader(basicClass);
-        ClassNode classNode = new ClassNode();
-        ClassWriter classWriter = new ClassWriter(0);
-        classReader.accept(classNode, 0);
-
-        for (MethodNode method : classNode.methods) {
+    private static void helloWorld(ClassNode node, String a, String b) {
+        node.methods.forEach(method -> {
             for (AbstractInsnNode next : method.instructions) {
                 if (next instanceof LdcInsnNode) {
                     LdcInsnNode ldcInsnNode = (LdcInsnNode) next;
@@ -89,10 +106,20 @@ public class PluginFixManager {
                     }
                 }
             }
-        }
+        });
+    }
 
-        classNode.accept(classWriter);
-        return classWriter.toByteArray();
+    private static void helloWorld(ClassNode node, int a, int b) {
+        node.methods.forEach(method -> {
+            for (AbstractInsnNode next : method.instructions) {
+                if (next instanceof IntInsnNode) {
+                    IntInsnNode ldcInsnNode = (IntInsnNode) next;
+                    if (ldcInsnNode.operand == a) {
+                        ldcInsnNode.operand = b;
+                    }
+                }
+            }
+        });
     }
 
 }

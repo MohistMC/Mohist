@@ -21,6 +21,9 @@ package com.mohistmc.forge;
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
@@ -40,10 +43,6 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftMinecartCommand;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ModCustomCommand extends BukkitCommand {
 

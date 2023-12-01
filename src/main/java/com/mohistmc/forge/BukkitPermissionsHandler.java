@@ -20,6 +20,8 @@ package com.mohistmc.forge;
 
 import com.mohistmc.api.PlayerAPI;
 import com.mojang.authlib.GameProfile;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import net.minecraftforge.server.permission.IPermissionHandler;
@@ -28,9 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * https://github.com/CJ-MC-Mods/ForgeToBukkitPermissions

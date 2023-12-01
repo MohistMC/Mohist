@@ -12,12 +12,6 @@ import com.mohistmc.command.PluginCommand;
 import com.mohistmc.command.UpdateMohistCommand;
 import com.mohistmc.command.WhitelistModsCommand;
 import com.mohistmc.plugins.WorldCommand;
-import net.minecraft.server.MinecraftServer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MohistConfig {
 

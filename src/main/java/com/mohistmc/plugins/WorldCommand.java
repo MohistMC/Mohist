@@ -19,6 +19,7 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.api.ItemAPI;
+import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -27,8 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-
-import java.util.ArrayList;
 
 public class WorldCommand extends Command {
 

@@ -19,6 +19,9 @@
 package com.mohistmc.bukkit.nms.remappers;
 
 import com.mohistmc.bukkit.nms.model.ClassMapping;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
 import net.md_5.specialsource.RemapperProcessor;
@@ -27,13 +30,8 @@ import net.md_5.specialsource.SpecialSource;
 import net.md_5.specialsource.repo.ClassRepo;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
  *

@@ -19,7 +19,6 @@
 package com.mohistmc.forge;
 
 import com.mohistmc.MohistConfig;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;

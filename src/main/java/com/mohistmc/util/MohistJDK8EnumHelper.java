@@ -18,7 +18,6 @@
 
 package com.mohistmc.util;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -27,6 +26,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class MohistJDK8EnumHelper {
 

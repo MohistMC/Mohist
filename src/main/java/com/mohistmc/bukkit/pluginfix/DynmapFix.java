@@ -21,13 +21,12 @@ package com.mohistmc.bukkit.pluginfix;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import static org.objectweb.asm.Opcodes.ARETURN;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import static org.objectweb.asm.Opcodes.ARETURN;
 
 public class DynmapFix {
 

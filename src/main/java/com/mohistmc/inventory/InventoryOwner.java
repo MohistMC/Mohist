@@ -18,6 +18,7 @@
 
 package com.mohistmc.inventory;
 
+import javax.annotation.Nullable;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -35,8 +36,6 @@ import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockEntityState;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-
-import javax.annotation.Nullable;
 
 /**
  * @author Mgazul

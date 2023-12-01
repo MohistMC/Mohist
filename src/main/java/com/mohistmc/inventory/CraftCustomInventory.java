@@ -18,6 +18,7 @@
 
 package com.mohistmc.inventory;
 
+import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.items.ItemStackHandler;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventory;
@@ -25,8 +26,6 @@ import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftInventoryCustom;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-
-import java.util.List;
 
 public class CraftCustomInventory implements InventoryHolder {
 

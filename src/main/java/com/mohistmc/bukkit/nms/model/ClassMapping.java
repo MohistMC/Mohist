@@ -20,7 +20,6 @@ package com.mohistmc.bukkit.nms.model;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-
 import java.util.HashMap;
 import java.util.Map;
 
