@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/npc/WanderingTraderSpawner.java
++++ b/net/minecraft/world/entity/npc/WanderingTraderSpawner.java
+@@ -111,7 +_,7 @@
+                }
+ 
+                this.f_35909_.m_8115_(wanderingtrader.m_142081_());
+-               wanderingtrader.m_35891_(48000);
++               // wanderingtrader.setDespawnDelay(48000); // CraftBukkit - moved to WanderingTrader constructor. This lets the value be modified by plugins on CreatureSpawnEvent
+                wanderingtrader.m_35883_(blockpos1);
+                wanderingtrader.m_21446_(blockpos1, 16);
+                return true;

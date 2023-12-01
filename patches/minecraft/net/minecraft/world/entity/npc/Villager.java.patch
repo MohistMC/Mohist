@@ -56,10 +56,26 @@
        this.m_35319_(40);
        if (!this.f_19853_.m_5776_()) {
           this.m_5496_(SoundEvents.f_12507_, this.m_6121_(), this.m_6100_());
-@@ -397,6 +_,13 @@
-       if (i != 0) {
+@@ -330,7 +_,13 @@
+       this.m_35523_();
+ 
+       for(MerchantOffer merchantoffer : this.m_6616_()) {
+-         merchantoffer.m_45372_();
++         // CraftBukkit start
++         VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
++         Bukkit.getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            merchantoffer.m_45372_();
++         }
++         // CraftBukkit end
+       }
+ 
+       this.f_35363_ = this.f_19853_.m_46467_();
+@@ -375,7 +_,13 @@
+       int i = 2 - this.f_35364_;
+       if (i > 0) {
           for(MerchantOffer merchantoffer : this.m_6616_()) {
-             merchantoffer.m_45353_(-Mth.m_14143_((float)i * merchantoffer.m_45378_()));
+-            merchantoffer.m_45372_();
 +            // CraftBukkit start
 +            VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((org.bukkit.entity.Villager) this.getBukkitEntity(), merchantoffer.asBukkit());
 +            Bukkit.getPluginManager().callEvent(event);
@@ -70,6 +86,15 @@
           }
        }
  
+@@ -548,7 +_,7 @@
+    }
+ 
+    public void m_6667_(DamageSource p_35419_) {
+-      f_201976_.info("Villager {} died, message: '{}'", this, p_35419_.m_6157_(this).getString());
++      if (org.spigotmc.SpigotConfig.logVillagerDeaths) f_201976_.info("Villager {} died, message: '{}'", this, p_35419_.m_6157_(this).getString()); // Spigot
+       Entity entity = p_35419_.m_7639_();
+       if (entity != null) {
+          this.m_35420_(entity);
 @@ -558,7 +_,7 @@
        super.m_6667_(p_35419_);
     }

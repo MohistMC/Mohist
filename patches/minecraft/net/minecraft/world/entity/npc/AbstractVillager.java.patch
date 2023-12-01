@@ -41,10 +41,11 @@
     }
  
     protected void m_7996_() {
-@@ -220,6 +_,16 @@
+@@ -219,7 +_,16 @@
+          VillagerTrades.ItemListing villagertrades$itemlisting = p_35279_[integer];
           MerchantOffer merchantoffer = villagertrades$itemlisting.m_5670_(this, this.f_19796_);
           if (merchantoffer != null) {
-             p_35278_.add(merchantoffer);
+-            p_35278_.add(merchantoffer);
 +            // CraftBukkit start
 +            VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((org.bukkit.entity.AbstractVillager) getBukkitEntity(), merchantoffer.asBukkit());
 +            // Suppress during worldgen
