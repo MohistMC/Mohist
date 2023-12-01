@@ -7,25 +7,14 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -9,7 +_,6 @@
- import io.netty.buffer.Unpooled;
- import java.io.File;
- import java.net.SocketAddress;
--import java.nio.file.Path;
- import java.text.SimpleDateFormat;
- import java.util.List;
- import java.util.Map;
-@@ -17,9 +_,9 @@
+@@ -17,6 +_,7 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.function.Function;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.ChatFormatting;
--import net.minecraft.FileUtil;
- import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.RegistryAccess;
+ import net.minecraft.FileUtil;
 @@ -30,9 +_,11 @@
  import net.minecraft.network.chat.ChatType;
  import net.minecraft.network.chat.Component;
@@ -689,15 +678,11 @@
     public void m_11289_(ServerPlayer p_11290_) {
        GameProfile gameprofile = p_11290_.m_36316_();
        int i = this.f_11195_.m_129944_(gameprofile);
-@@ -469,11 +_,40 @@
+@@ -469,12 +_,42 @@
  
     public void m_11288_() {
        if (++this.f_11210_ > 600) {
 -         this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.f_11196_));
--         this.f_11210_ = 0;
--      }
--
--   }
 +         // CraftBukkit start
 +         for (int i = 0; i < this.f_11196_.size(); ++i) {
 +            final ServerPlayer target = (ServerPlayer ) this.f_11196_.get(i);
@@ -709,11 +694,12 @@
 +               }
 +            }).collect( Collectors.toList())));
 +         }
-+         // CraftBukkit end this.sendAllPlayerInfoIn = 0;
-+      }
-+
-+   }
-+
++         // CraftBukkit end
+          this.f_11210_ = 0;
+       }
+ 
+    }
+ 
 +   // CraftBukkit start - add a world/entity limited version
 +   public void broadcastAll(Packet packet, Player entityhuman) {
 +      for (int i = 0; i < this.f_11196_.size(); ++i) {
@@ -732,9 +718,10 @@
 +
 +   }
 +   // CraftBukkit end
- 
++
     public void m_11268_(Packet<?> p_11269_) {
        for(ServerPlayer serverplayer : this.f_11196_) {
+          serverplayer.f_8906_.m_141995_(p_11269_);
 @@ -538,6 +_,7 @@
     }
  
@@ -852,7 +839,7 @@
  
     public void m_11264_(Component p_11265_, ChatType p_11266_, UUID p_11267_) {
        this.f_11195_.m_6352_(p_11265_, p_11267_);
-@@ -727,40 +_,45 @@
+@@ -727,15 +_,20 @@
        }
  
     }
@@ -865,55 +852,27 @@
 -   public ServerStatsCounter m_11239_(Player p_11240_) {
 -      UUID uuid = p_11240_.m_142081_();
 -      ServerStatsCounter serverstatscounter = this.f_11202_.get(uuid);
--      if (serverstatscounter == null) {
 +   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
 +      ServerPlayer player = m_11259_(uuid);
-+      ServerStatsCounter serverstatisticsmanager = player == null ? null : (ServerStatsCounter) player.m_8951_();
-+      if (serverstatisticsmanager == null) {
++      ServerStatsCounter serverstatscounter = player == null ? null : this.f_11202_.get(uuid);
+       if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");
           if (!file2.exists()) {
 -            File file3 = new File(file1, p_11240_.m_7755_().getString() + ".json");
--            Path path = file3.toPath();
--            if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
 +            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
-+            if (file3.exists() && file3.isFile()) {
+             Path path = file3.toPath();
+             if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
                 file3.renameTo(file2);
-             }
-          }
- 
--         serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
--         this.f_11202_.put(uuid, serverstatscounter);
-+         serverstatisticsmanager = new ServerStatsCounter(this.f_11195_, file2);
-+         //this.stats.put(uuid, serverstatisticsmanager);
+@@ -759,6 +_,8 @@
+          this.f_11203_.put(uuid, playeradvancements);
        }
  
--      return serverstatscounter;
-+      return serverstatisticsmanager;
-    }
- 
-    public PlayerAdvancements m_11296_(ServerPlayer p_11297_) {
-       UUID uuid = p_11297_.m_142081_();
--      PlayerAdvancements playeradvancements = this.f_11203_.get(uuid);
--      if (playeradvancements == null) {
-+      PlayerAdvancements advancementdataplayer = (PlayerAdvancements) p_11297_.m_8960_(); // CraftBukkit
-+      if (advancementdataplayer == null) {
-          File file1 = this.f_11195_.m_129843_(LevelResource.f_78174_).toFile();
-          File file2 = new File(file1, uuid + ".json");
--         playeradvancements = new PlayerAdvancements(this.f_11195_.m_129933_(), this, this.f_11195_.m_129889_(), file2, p_11297_);
--         this.f_11203_.put(uuid, playeradvancements);
-+         advancementdataplayer = new PlayerAdvancements(this.f_11195_.m_129933_(), this, this.f_11195_.m_129889_(), file2, p_11297_);
-+         //this.advancements.put(uuid, playeradvancements);
-       }
- 
--      playeradvancements.m_135979_(p_11297_);
--      return playeradvancements;
 +      // Forge: don't overwrite active player with a fake one.
-+      if (!(p_11297_ instanceof net.minecraftforge.common.util.FakePlayer)) advancementdataplayer.m_135979_(p_11297_);
-+      return advancementdataplayer;
++      if (!(p_11297_ instanceof net.minecraftforge.common.util.FakePlayer))
+       playeradvancements.m_135979_(p_11297_);
+       return playeradvancements;
     }
- 
-    public void m_11217_(int p_11218_) {
 @@ -788,7 +_,7 @@
     }
  
