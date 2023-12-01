@@ -21,12 +21,11 @@
                 this.m_37774_();
                 return;
              }
-@@ -267,14 +_,17 @@
- 
+@@ -268,13 +_,16 @@
              if (!this.f_37675_.m_8802_(this.f_37674_)) {
                 if (this.f_37681_ > 0) {
-+                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidFinishEvent(this, new java.util.ArrayList<>()); // CraftBukkit
                    this.f_37687_ = Raid.RaidStatus.LOSS;
++                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidFinishEvent(this, new java.util.ArrayList<>()); // CraftBukkit
                 } else {
 +                  org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callRaidStopEvent(this, org.bukkit.event.raid.RaidStopEvent.Reason.NOT_IN_VILLAGE); // CraftBukkit
                    this.m_37774_();

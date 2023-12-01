@@ -118,6 +118,15 @@
        if (this.m_38176_() > 0) {
           this.m_38154_(this.m_38176_() - 1);
        }
+@@ -268,7 +_,7 @@
+       }
+ 
+       this.m_146871_();
+-      this.m_20157_();
++      // this.handleNetherPortal(); // CraftBukkit - handled in postTick
+       if (this.f_19853_.f_46443_) {
+          if (this.f_38070_ > 0) {
+             double d5 = this.m_20185_() + (this.f_38071_ - this.m_20185_()) / (double)this.f_38070_;
 @@ -300,9 +_,9 @@
  
           BlockPos blockpos = new BlockPos(k, i, j);

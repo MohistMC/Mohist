@@ -13,15 +13,6 @@
  
  public class Boat extends Entity {
     private static final EntityDataAccessor<Integer> f_38282_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
-@@ -59,7 +_,7 @@
-    public static final int f_150268_ = 0;
-    public static final int f_150269_ = 1;
-    private static final int f_150266_ = 60;
--   private static final float f_150267_ = ((float)Math.PI / 8F);
-+   private static final double f_150267_ = (double)((float)Math.PI / 8F);
-    public static final double f_150270_ = (double)((float)Math.PI / 4F);
-    public static final int f_150271_ = 60;
-    private final float[] f_38263_ = new float[2];
 @@ -87,6 +_,15 @@
     private float f_38260_;
     private float f_38261_;

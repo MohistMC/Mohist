@@ -20,10 +20,11 @@
     }
  
     public SmallFireball(Level p_37367_, double p_37368_, double p_37369_, double p_37370_, double p_37371_, double p_37372_, double p_37373_) {
-@@ -34,6 +_,14 @@
+@@ -33,7 +_,14 @@
+          if (!entity.m_5825_()) {
              Entity entity1 = this.m_37282_();
              int i = entity.m_20094_();
-             entity.m_20254_(5);
+-            entity.m_20254_(5);
 +            // CraftBukkit start - Entity damage by entity event + combust event
 +            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +            entity.f_19853_.getCraftServer().getPluginManager().callEvent(event);

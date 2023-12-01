@@ -17,15 +17,17 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double f_150120_ = 2.0D;
-@@ -184,7 +_,7 @@
+@@ -184,8 +_,8 @@
                 }
              }
  
 -            if (hitresult != null && !flag) {
+-               this.m_6532_(hitresult);
 +            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-                this.m_6532_(hitresult);
++               this.preOnHit(hitresult); // CraftBukkit - projectile hit event
                 this.f_19812_ = true;
              }
+ 
 @@ -320,7 +_,13 @@
        boolean flag = entity.m_6095_() == EntityType.f_20566_;
        int k = entity.m_20094_();

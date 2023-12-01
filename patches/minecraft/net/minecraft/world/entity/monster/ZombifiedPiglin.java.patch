@@ -27,7 +27,7 @@
        if (this.m_5448_() == null && p_34478_ != null) {
           this.f_34417_ = f_34424_.m_142270_(this.f_19796_);
           this.f_34422_ = f_34421_.m_142270_(this.f_19796_);
-@@ -154,11 +_,21 @@
+@@ -154,11 +_,20 @@
           this.m_6598_((Player)p_34478_);
        }
  
@@ -36,7 +36,7 @@
     }
  
     public void m_6825_() {
-       this.m_7870_(f_34418_.m_142270_(this.f_19796_));
+-      this.m_7870_(f_34418_.m_142270_(this.f_19796_));
 +      // CraftBukkit start
 +      Entity entity = ((ServerLevel) this.f_19853_).m_8791_(m_6120_());
 +      org.bukkit.event.entity.PigZombieAngerEvent event = new org.bukkit.event.entity.PigZombieAngerEvent((org.bukkit.entity.PigZombie) this.getBukkitEntity(), (entity == null) ? null : entity.getBukkitEntity(), f_34418_.m_142270_(this.f_19796_));

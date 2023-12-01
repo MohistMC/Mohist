@@ -31,13 +31,15 @@
     public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36826_, LivingEntity p_36827_, double p_36828_, double p_36829_, double p_36830_, Level p_36831_) {
        this(p_36826_, p_36827_.m_20185_(), p_36827_.m_20186_(), p_36827_.m_20189_(), p_36828_, p_36829_, p_36830_, p_36831_);
        this.m_5602_(p_36827_);
-@@ -64,8 +_,13 @@
+@@ -64,8 +_,14 @@
           }
  
           HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
 -         if (hitresult.m_6662_() != HitResult.Type.MISS) {
+-            this.m_6532_(hitresult);
 +         if (hitresult.m_6662_() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-             this.m_6532_(hitresult);
++            this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++
 +            // CraftBukkit start - Fire ProjectileHitEvent
 +            if (this.m_146910_()) {
 +               CraftEventFactory.callProjectileHitEvent(this, hitresult);

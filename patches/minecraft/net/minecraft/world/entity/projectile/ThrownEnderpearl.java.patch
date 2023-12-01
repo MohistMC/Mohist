@@ -68,7 +68,8 @@
 -   public Entity m_5489_(ServerLevel p_37506_) {
 +   public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
        Entity entity = this.m_37282_();
-       if (entity != null && entity.f_19853_.m_46472_() != p_37506_.m_46472_()) {
+-      if (entity != null && entity.f_19853_.m_46472_() != p_37506_.m_46472_()) {
++      if (entity != null && p_37506_ != null && entity.f_19853_.m_46472_() != p_37506_.m_46472_()) { // CraftBukkit - SPIGOT-6113
           this.m_5602_((Entity)null);
        }
  

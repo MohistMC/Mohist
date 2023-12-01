@@ -41,10 +41,11 @@
     }
  
     private void m_37080_() {
-@@ -162,6 +_,11 @@
+@@ -161,7 +_,11 @@
+    protected void m_5790_(EntityHitResult p_37071_) {
        super.m_5790_(p_37071_);
        if (!this.f_19853_.f_46443_) {
-          this.m_37080_();
+-         this.m_37080_();
 +         // CraftBukkit start
 +         if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.m_37080_();
@@ -53,10 +54,11 @@
        }
     }
  
-@@ -170,6 +_,11 @@
+@@ -169,7 +_,11 @@
+       BlockPos blockpos = new BlockPos(p_37069_.m_82425_());
        this.f_19853_.m_8055_(blockpos).m_60682_(this.f_19853_, blockpos, this);
        if (!this.f_19853_.m_5776_() && this.m_37086_()) {
-          this.m_37080_();
+-         this.m_37080_();
 +         // CraftBukkit start
 +         if (!org.bukkit.craftbukkit.v1_18_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.m_37080_();
