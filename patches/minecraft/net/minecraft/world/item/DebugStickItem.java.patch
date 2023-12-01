@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/item/DebugStickItem.java
 +++ b/net/minecraft/world/item/DebugStickItem.java
-@@ -49,7 +_,7 @@
+@@ -49,8 +_,8 @@
        return InteractionResult.sidedSuccess(level.isClientSide);
     }
  
 -   private boolean handleInteraction(Player p_150803_, BlockState p_150804_, LevelAccessor p_150805_, BlockPos p_150806_, boolean p_150807_, ItemStack p_150808_) {
+-      if (!p_150803_.canUseGameMasterBlocks()) {
 +   public boolean handleInteraction(Player p_150803_, BlockState p_150804_, LevelAccessor p_150805_, BlockPos p_150806_, boolean p_150807_, ItemStack p_150808_) {
-       if (!p_150803_.canUseGameMasterBlocks()) {
++      if (!p_150803_.canUseGameMasterBlocks() && !(p_150803_.getAbilities().instabuild && p_150803_.getBukkitEntity().hasPermission("minecraft.debugstick")) && !p_150803_.getBukkitEntity().hasPermission("minecraft.debugstick.always")) { // Spigot
           return false;
        } else {
+          Block block = p_150804_.getBlock();
