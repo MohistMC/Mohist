@@ -128,7 +128,7 @@ public class ReflectionHandler extends ClassLoader {
     // srg -> bukkit
     public static String redirectClassGetSimpleName(Class<?> cl) {
         String simpleName = cl.getSimpleName();
-        if (simpleName.length() == 0) {
+        if (simpleName.isEmpty()) {
             return simpleName; // anon class
         }
         Class<?> enclosingClass = cl.getEnclosingClass();
@@ -434,7 +434,7 @@ public class ReflectionHandler extends ClassLoader {
     }
 
     public static String findMappedResource(Class<?> cl, String name) {
-        if (name.isEmpty() || !name.endsWith(".class")) return null;
+        if (!name.endsWith(".class")) return null;
         name = name.substring(0, name.length() - 6);
         String className;
         if (cl != null) {
@@ -523,7 +523,7 @@ public class ReflectionHandler extends ClassLoader {
         }
     }
 
-    public static Object[] handleMethodInvoke(Method method, Object src, Object[] param) throws Throwable {
+    public static Object[] handleMethodInvoke(Method method, Object src, Object[] param) {
         Object[] ret = RedirectAdapter.runHandle(remapper, method, src, param);
         return Objects.requireNonNullElseGet(ret, () -> new Object[]{method, src, param});
     }

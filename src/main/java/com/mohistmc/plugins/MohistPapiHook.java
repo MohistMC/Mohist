@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 
 public class MohistPapiHook extends PlaceholderExpansion {
 
-    private static String hook_name = "mohist";
-
     public static void init() {
         new MohistPapiHook().register();
     }
@@ -33,7 +31,7 @@ public class MohistPapiHook extends PlaceholderExpansion {
 
     @Override
     public String getIdentifier() {
-        return hook_name;
+        return "mohist";
     }
 
     @Override

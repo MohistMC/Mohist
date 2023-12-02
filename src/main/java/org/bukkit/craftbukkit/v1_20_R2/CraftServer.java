@@ -2448,6 +2448,18 @@ public final class CraftServer implements Server {
         }
 
         @Override
+        public YamlConfiguration getBukkitConfig()
+        {
+            return configuration;
+        }
+
+        @Override
+        public YamlConfiguration getSpigotConfig()
+        {
+            return org.spigotmc.SpigotConfig.config;
+        }
+
+        @Override
         public void restart() {
             MohistMC.LOGGER.error("Mohist Not supported yet, This causes unknown issues with the mod.");
         }

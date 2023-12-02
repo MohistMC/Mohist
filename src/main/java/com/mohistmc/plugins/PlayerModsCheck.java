@@ -17,7 +17,7 @@ import org.bukkit.Bukkit;
  */
 public class PlayerModsCheck {
 
-    private static AtomicBoolean canLog = new AtomicBoolean(true);
+    private static final AtomicBoolean canLog = new AtomicBoolean(true);
 
     public static void init(GameProfile profile, String mods) {
         List<String> modlist = fixList(mods);

@@ -12,6 +12,6 @@ public enum GUIType {
     FIVEBYNINE,
     SIXBYNINE,
     UNKNOWN,
-    CANCEL;
+    CANCEL
 
 }
