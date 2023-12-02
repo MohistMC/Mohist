@@ -74,8 +74,8 @@
        this.f_187943_ = p_196858_;
 -   }
 +      this.capProvider.initInternal();
-+        // CraftBukkit start
-+        this.bukkitChunk = new org.bukkit.craftbukkit.v1_18_R2.CraftChunk( this );
++      // CraftBukkit start
++      if (p_196855_ != null) this.bukkitChunk = new org.bukkit.craftbukkit.v1_18_R2.CraftChunk( this );
 +    }
 +    // CraftBukkit end
  
