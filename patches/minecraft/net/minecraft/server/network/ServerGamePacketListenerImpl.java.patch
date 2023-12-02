@@ -600,7 +600,7 @@
                       d7 = d0 - this.f_9743_.m_20185_();
                       d8 = d1 - this.f_9743_.m_20186_();
                       if (d8 > -0.5D || d8 < 0.5D) {
-@@ -844,15 +_,79 @@
+@@ -844,15 +_,78 @@
                       d9 = d2 - this.f_9743_.m_20189_();
                       d11 = d7 * d7 + d8 * d8 + d9 * d9;
                       boolean flag2 = false;
@@ -675,14 +675,22 @@
 +                           }
 +                        }
 +                        this.f_9743_.m_19890_(d0, d1, d2, f, f1); // Copied from above
-+
-+                        // MC-135989, SPIGOT-5564: isRiptiding
-+                        this.f_9736_ = d8 >= -0.03125D && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR && !this.f_9745_.m_129915_() && !this.f_9743_.m_150110_().f_35936_ && !this.f_9743_.m_21023_(MobEffects.f_19620_) && !this.f_9743_.m_21255_() && this.m_9793_(this.f_9743_) && !this.f_9743_.m_21209_();
 +                        // CraftBukkit end
++                        this.f_9736_ = d8 >= -0.03125D && this.f_9743_.f_8941_.m_9290_() != GameType.SPECTATOR && !this.f_9745_.m_129915_() && !this.f_9743_.m_150110_().f_35936_ && !this.f_9743_.m_21023_(MobEffects.f_19620_) && !this.f_9743_.m_21255_() && this.m_9793_(this.f_9743_) && !this.f_9743_.m_21209_();
++
 +						this.f_9743_.m_183503_().m_7726_().m_8385_(this.f_9743_);
                          this.f_9743_.m_8972_(this.f_9743_.m_20186_() - d6, p_9874_.m_134139_());
                          this.f_9743_.m_6853_(p_9874_.m_134139_());
                          if (flag) {
+@@ -864,7 +_,7 @@
+                         this.f_9757_ = this.f_9743_.m_20186_();
+                         this.f_9758_ = this.f_9743_.m_20189_();
+                      } else {
+-                        this.m_9774_(d3, d4, d5, f, f1);
++                        this.internalTeleport(d3, d4, d5, f, f1, Collections.emptySet(), true); // CraftBukkit - SPIGOT-1807: Don't call teleport event, when the client thinks the player is falling, because the chunks are not loaded on the client yet.
+                      }
+                   }
+                }
 @@ -886,19 +_,76 @@
        return false;
     }
