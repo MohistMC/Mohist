@@ -218,7 +218,7 @@
 +         this.m_146912_();
 +         Vec3 position = null;
 +         if (this.f_8935_ != null) {
-+            world = this.m_183503_().getCraftServer().getHandle().m_7873_().m_129880_(this.f_8935_);
++            world = this.f_8924_.m_129880_(this.f_8935_);
 +            if (world != null && this.m_8961_() != null) {
 +               position = Player.m_36130_((ServerLevel ) world, this.m_8961_(), this.m_8962_(), false, false).orElse(null);
 +            }
@@ -228,7 +228,7 @@
 +            position = Vec3.m_82512_(((ServerLevel) world).m_8900_());
 +         }
 +         this.f_19853_ = world;
-+         this.m_6034_(position.m_7096_(), position.m_7098_(), position.m_7094_());
++         this.m_146884_(position);
 +      }
 +      this.f_8941_.m_9260_((ServerLevel ) world);
 +   }

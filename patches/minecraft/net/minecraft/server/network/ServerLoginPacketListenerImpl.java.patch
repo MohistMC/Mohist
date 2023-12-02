@@ -47,28 +47,21 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -80,6 +_,20 @@
+@@ -80,6 +_,13 @@
        return this.f_10013_;
     }
  
 +   // CraftBukkit start
 +   @Deprecated
 +   public void disconnect(String s) {
-+      try {
-+         Component ichatbasecomponent = new TextComponent(s);
-+         f_10015_.info("Disconnecting {}: {}", this.m_10056_(), s);
-+         this.f_10013_.m_129512_(new ClientboundLoginDisconnectPacket(ichatbasecomponent));
-+         this.f_10013_.m_129507_(ichatbasecomponent);
-+      } catch (Exception exception) {
-+         f_10015_.error("Error whilst disconnecting player", exception);
-+      }
++      m_10053_(new TextComponent(s)); // Mohist
 +   }
 +   // CraftBukkit end
 +
     public void m_10053_(Component p_10054_) {
        try {
           f_10015_.info("Disconnecting {}: {}", this.m_10056_(), p_10054_.getString());
-@@ -91,14 +_,38 @@
+@@ -91,13 +_,37 @@
  
     }
  
@@ -103,44 +96,53 @@
 +       */
 +      // Spigot end
  
--      Component component = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
+       Component component = this.f_10018_.m_6846_().m_6418_(this.f_10013_.m_129523_(), this.f_10021_);
 -      if (component != null) {
--         this.m_10053_(component);
-+      ServerPlayer s = this.f_10018_.m_6846_().canPlayerLogin(this, this.f_10021_, hostname);
-+      if (s == null) {
-+         //this.disconnect(component);
++      if (component == null) {
+          this.m_10053_(component);
        } else {
           this.f_10019_ = ServerLoginPacketListenerImpl.State.ACCEPTED;
-          if (this.f_10018_.m_6328_() >= 0 && !this.f_10013_.m_129531_()) {
-@@ -111,7 +_,7 @@
-          ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
+@@ -140,15 +_,41 @@
+       return this.f_10021_ != null ? this.f_10021_ + " (" + this.f_10013_.m_129523_() + ")" : String.valueOf((Object)this.f_10013_.m_129523_());
+    }
  
-          try {
--            ServerPlayer serverplayer1 = this.f_10018_.m_6846_().m_11300_(this.f_10021_);
-+            ServerPlayer serverplayer1 = this.f_10018_.m_6846_().getPlayerForLogin(this.f_10021_, s);
-             if (serverplayer != null) {
-                this.f_10019_ = ServerLoginPacketListenerImpl.State.DELAY_ACCEPT;
-                this.f_10024_ = serverplayer1;
-@@ -148,7 +_,21 @@
++   // Paper start - Cache authenticator threads
++   private static final AtomicInteger threadId = new AtomicInteger(0);
++   private static final java.util.concurrent.ExecutorService authenticatorPool = java.util.concurrent.Executors.newCachedThreadPool(
++           r -> {
++              Thread ret = new Thread(r, "User Authenticator #" + threadId.incrementAndGet());
++
++              ret.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_10015_));
++
++              return ret;
++           }
++   );
++   // Paper end
++
+    public void m_5990_(ServerboundHelloPacket p_10047_) {
+       Validate.validState(this.f_10019_ == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet");
+       this.f_10021_ = p_10047_.m_134849_();
+-      Validate.validState(m_203792_(this.f_10021_.getName()), "Invalid characters in username");
++      // Validate.validState(isValidUsername(this.gameProfile.getName()), "Invalid characters in username"); // Mohist Chinese and other special characters are allowed
+       if (this.f_10018_.m_129797_() && !this.f_10013_.m_129531_()) {
           this.f_10019_ = ServerLoginPacketListenerImpl.State.KEY;
           this.f_10013_.m_129512_(new ClientboundHelloPacket("", this.f_10018_.m_129790_().getPublic().getEncoded(), this.f_10017_));
        } else {
 -         this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
 +         // this.state = ServerLoginPacketListenerImpl.State.NEGOTIATING;
 +         // Spigot start
-+         new Thread("User Authenticator #" + ServerLoginPacketListenerImpl.f_10014_.incrementAndGet()) {
-+            @Override
-+            public void run() {
++         // Paper start - Cache authenticator threads
++         authenticatorPool.execute(() -> {
 +               try {
-+                  initUUID();
++                  this.initUUID();
 +                  new LoginHandler().fireEvents();
 +               } catch (Exception ex) {
 +                  disconnect("Failed to verify username!");
 +                  f_10018_.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + f_10021_.getName(), ex);
 +               }
-+            }
-+         }.start();
++         });
 +         // Spigot end
++         // Paper end
        }
  
     }
@@ -154,8 +156,7 @@
              GameProfile gameprofile = ServerLoginPacketListenerImpl.this.f_10021_;
  
              try {
--               ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
-+               ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.getAddress());
+                ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
                 if (ServerLoginPacketListenerImpl.this.f_10021_ != null) {
 -                  ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
 -                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
@@ -167,17 +168,20 @@
 +                  new LoginHandler().fireEvents();
                 } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
                    ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
-                   ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
+-                  ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
 -                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
 +                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
                 } else {
                    ServerLoginPacketListenerImpl.this.m_10053_(new TranslatableComponent("multiplayer.disconnect.unverified_username"));
                    ServerLoginPacketListenerImpl.f_10015_.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
-@@ -200,17 +_,22 @@
+@@ -199,12 +_,17 @@
+             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
                 if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
                    ServerLoginPacketListenerImpl.f_10015_.warn("Authentication servers are down but will let them in anyway!");
-                   ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
+-                  ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
 -                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
 +                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
                 } else {
                    ServerLoginPacketListenerImpl.this.m_10053_(new TranslatableComponent("multiplayer.disconnect.authservers_down"));
@@ -190,13 +194,6 @@
 +               // CraftBukkit end
              }
  
-          }
- 
-          @Nullable
--         private InetAddress m_10064_() {
-+         private InetAddress getAddress() {
-             SocketAddress socketaddress = ServerLoginPacketListenerImpl.this.f_10013_.m_129523_();
-             return ServerLoginPacketListenerImpl.this.f_10018_.m_129798_() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress)socketaddress).getAddress() : null;
           }
 @@ -220,6 +_,7 @@
     }

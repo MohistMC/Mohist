@@ -7,9 +7,11 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -17,6 +_,7 @@
+@@ -16,7 +_,9 @@
+ import java.util.Optional;
  import java.util.Set;
  import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Function;
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -90,7 +92,7 @@
     private int f_11210_;
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
 +
-+   private CraftServer cserver;
++   private final CraftServer cserver;
 +   private final Map<String,ServerPlayer> playersByName = new java.util.HashMap<>();
  
     public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
@@ -104,7 +106,7 @@
        this.f_11206_ = p_203843_;
        this.f_11193_ = p_203845_;
        this.f_11204_ = p_203844_;
-@@ -133,6 +_,12 @@
+@@ -133,11 +_,17 @@
        String s = optional.map(GameProfile::getName).orElse(gameprofile.getName());
        gameprofilecache.m_10991_(gameprofile);
        CompoundTag compoundtag = this.m_11224_(p_11263_);
@@ -117,6 +119,12 @@
        ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.m_63911_(new Dynamic<>(NbtOps.f_128958_, compoundtag.m_128423_("Dimension"))).resultOrPartial(f_11188_::error).orElse(Level.f_46428_) : Level.f_46428_;
        ServerLevel serverlevel = this.f_11195_.m_129880_(resourcekey);
        ServerLevel serverlevel1;
+       if (serverlevel == null) {
+-         f_11188_.warn("Unknown respawn dimension {}, defaulting to overworld", (Object)resourcekey);
++         f_11188_.warn("Unknown respawn dimension {}, defaulting to overworld", resourcekey);
+          serverlevel1 = this.f_11195_.m_129783_();
+       } else {
+          serverlevel1 = serverlevel;
 @@ -149,18 +_,35 @@
           s1 = p_11262_.m_129523_().toString();
        }
@@ -200,7 +208,7 @@
 +      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_);
 +
 +      for (int i = 0; i < this.f_11196_.size(); ++i) {
-+         ServerPlayer entityplayer1 = (ServerPlayer) this.f_11196_.get(i);
++         ServerPlayer entityplayer1 = this.f_11196_.get(i);
 +
 +         if (entityplayer1.getBukkitEntity().canSee(bukkitPlayer)) {
 +            entityplayer1.f_8906_.m_141995_(packet);
@@ -210,7 +218,7 @@
 +            continue;
 +         }
 +
-+         p_11263_.f_8906_.m_141995_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, new ServerPlayer[]{entityplayer1}));
++         p_11263_.f_8906_.m_141995_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, entityplayer1));
 +      }
 +      p_11263_.sentListPacket = true;
 +      // CraftBukkit end
@@ -327,7 +335,7 @@
        this.m_6765_(p_11287_);
        if (p_11287_.m_20159_()) {
           Entity entity = p_11287_.m_20201_();
-@@ -332,135 +_,290 @@
+@@ -332,6 +_,7 @@
        serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.m_8960_().m_135978_();
        this.f_11196_.remove(p_11287_);
@@ -335,22 +343,14 @@
        this.f_11195_.m_129901_().m_136305_(p_11287_);
        UUID uuid = p_11287_.m_142081_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
-       if (serverplayer == p_11287_) {
-          this.f_11197_.remove(uuid);
-+         // CraftBukkit start
-          this.f_11202_.remove(uuid);
+@@ -341,35 +_,67 @@
           this.f_11203_.remove(uuid);
--      }
--
+       }
+ 
 -      this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, p_11287_));
-+         // CraftBukkit end
-+      }
-+
 +      // CraftBukkit start
 +      ClientboundPlayerInfoPacket packet = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, p_11287_);
-+      for (int i = 0; i < f_11196_.size(); i++) {
-+         ServerPlayer entityplayer2 = (ServerPlayer) this.f_11196_.get(i);
-+
++      for (ServerPlayer entityplayer2 : f_11196_) {
 +         if (entityplayer2.getBukkitEntity().canSee(p_11287_.getBukkitEntity())) {
 +            entityplayer2.f_8906_.m_141995_(packet);
 +         } else {
@@ -360,49 +360,23 @@
 +      // This removes the scoreboard (and player reference) for the specific player in the manager
 +      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
 +      // CraftBukkit end
-+
 +      quitMessage = playerQuitEvent.getQuitMessage();
     }
  
++   // Mohist start
++   private AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
     @Nullable
--   public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
+    public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
 -      if (this.f_11198_.m_11406_(p_11258_)) {
-+   public ServerPlayer canPlayerLogin( ServerLoginPacketListenerImpl serverLoginPacketListener, GameProfile p_11258_, String hostname) {
-+      MutableComponent mutablecomponent1;
-+      // Moved from processLogin
-+      UUID uuid = Player.m_36198_(p_11258_);
-+      List<ServerPlayer> list = Lists.newArrayList();
-+
-+      for(int i = 0; i < this.f_11196_.size(); ++i) {
-+         ServerPlayer serverplayer = this.f_11196_.get(i);
-+         if (serverplayer.m_142081_().equals(uuid)) {
-+            list.add(serverplayer);
-+         }
-+      }
-+
-+      ServerPlayer serverplayer2 = this.f_11197_.get(p_11258_.getId());
-+      if (serverplayer2 != null && !list.contains(serverplayer2)) {
-+         list.add(serverplayer2);
-+      }
-+
-+      for(ServerPlayer serverPlayer : list){
-+         m_6765_(serverPlayer); // CraftBukkit - Force the player's inventory to be saved
-+         serverPlayer.f_8906_.m_9942_(new TranslatableComponent("multiplayer.disconnect.duplicate_login"));
-+      }
-+
-+      // Instead of kicking then returning, we need to store the kick reason
-+      // in the event, check with plugins to see if it's ok, and THEN kick
-+      // depending on the outcome.
-+      SocketAddress socketaddress = serverLoginPacketListener.f_10013_.m_129523_();
-+
-+      ServerPlayer entity = new ServerPlayer(this.f_11195_, this.f_11195_.m_129880_(Level.f_46428_), p_11258_);
-+      org.bukkit.entity.Player player = entity.getBukkitEntity();
-+      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress());
++      ServerPlayer serverPlayer = m_11300_(p_11258_);
++      entity.set(serverPlayer);
++      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
++      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
++      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress());
 +
 +      if (m_11295_().m_11406_(p_11258_) && !m_11295_().m_11388_(p_11258_).m_7524_()) {
           UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(p_11258_);
--         MutableComponent mutablecomponent1 = new TranslatableComponent("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
-+         mutablecomponent1 = new TranslatableComponent("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
+          MutableComponent mutablecomponent1 = new TranslatableComponent("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());
           if (userbanlistentry.m_10961_() != null) {
              mutablecomponent1.m_7220_(new TranslatableComponent("multiplayer.disconnect.banned.expiration", f_11194_.format(userbanlistentry.m_10961_())));
           }
@@ -412,11 +386,10 @@
        } else if (!this.m_5764_(p_11258_)) {
 -         return new TranslatableComponent("multiplayer.disconnect.not_whitelisted");
 -      } else if (this.f_11199_.m_11041_(p_11257_)) {
--         IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(p_11257_);
-+         mutablecomponent1 = new TranslatableComponent("multiplayer.disconnect.not_whitelisted");
++         MutableComponent mutablecomponent1 = new TranslatableComponent("multiplayer.disconnect.not_whitelisted");
 +         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CraftChatMessage.fromComponent(mutablecomponent1));
-+      } else if (m_11299_().m_11041_(socketaddress) && !m_11299_().m_11043_(socketaddress).m_7524_()) {
-+         IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(socketaddress);
++      } else if (m_11299_().m_11041_(p_11257_) && !m_11299_().m_11043_(p_11257_).m_7524_()) {
+          IpBanListEntry ipbanlistentry = this.f_11199_.m_11043_(p_11257_);
           MutableComponent mutablecomponent = new TranslatableComponent("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.m_10962_());
           if (ipbanlistentry.m_10961_() != null) {
              mutablecomponent.m_7220_(new TranslatableComponent("multiplayer.disconnect.banned_ip.expiration", f_11194_.format(ipbanlistentry.m_10961_())));
@@ -434,45 +407,21 @@
 +      }
 +      cserver.getPluginManager().callEvent(event);
 +      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-+         serverLoginPacketListener.m_10053_(new TextComponent( event.getKickMessage() ));
-+         return null;
++         entity.set(null);
++         return Component.m_130674_(event.getKickMessage());
 +      }
-+      return entity;
++      return null;
     }
  
--   public ServerPlayer m_11300_(GameProfile p_11301_) {
--      UUID uuid = Player.m_36198_(p_11301_);
-+   public ServerPlayer getPlayerForLogin(GameProfile p_11301_, ServerPlayer player) { // CraftBukkit - added EntityPlayer
-+      /* // CraftBukkit startMoved up
-+      UUID uuid = Player.createPlayerUUID(p_11301_);
+    public ServerPlayer m_11300_(GameProfile p_11301_) {
++      if(entity.get() != null) {
++         return entity.getAndSet(null);
++      }
+       UUID uuid = Player.m_36198_(p_11301_);
        List<ServerPlayer> list = Lists.newArrayList();
  
--      for(int i = 0; i < this.f_11196_.size(); ++i) {
--         ServerPlayer serverplayer = this.f_11196_.get(i);
--         if (serverplayer.m_142081_().equals(uuid)) {
-+      for(int i = 0; i < this.players.size(); ++i) {
-+         ServerPlayer serverplayer = this.players.get(i);
-+         if (serverplayer.getUUID().equals(uuid)) {
-             list.add(serverplayer);
-          }
-       }
- 
--      ServerPlayer serverplayer2 = this.f_11197_.get(p_11301_.getId());
-+      ServerPlayer serverplayer2 = this.playersByUUID.get(p_11301_.getId());
-       if (serverplayer2 != null && !list.contains(serverplayer2)) {
-          list.add(serverplayer2);
-       }
- 
-       for(ServerPlayer serverplayer1 : list) {
--         serverplayer1.f_8906_.m_9942_(new TranslatableComponent("multiplayer.disconnect.duplicate_login"));
-+         serverplayer1.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.duplicate_login"));
-       }
- 
--      return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_11301_);
-+      return new ServerPlayer(this.server, this.server.overworld(), p_11301_);
-+      */
-+      return player;
-+      // CraftBukkit end
+@@ -392,75 +_,168 @@
+       return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_11301_);
     }
  
 +   // Mohist TODO start
@@ -685,7 +634,7 @@
 -         this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.f_11196_));
 +         // CraftBukkit start
 +         for (int i = 0; i < this.f_11196_.size(); ++i) {
-+            final ServerPlayer target = (ServerPlayer ) this.f_11196_.get(i);
++            final ServerPlayer target = this.f_11196_.get(i);
 +
 +            target.f_8906_.m_141995_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.UPDATE_LATENCY, this.f_11196_.stream().filter(new Predicate<ServerPlayer>() {
 +               @Override
@@ -707,7 +656,7 @@
 +         if (entityhuman != null && !entityplayer.getBukkitEntity().canSee(entityhuman.getBukkitEntity())) {
 +            continue;
 +         }
-+         ((ServerPlayer) this.f_11196_.get(i)).f_8906_.m_141995_(packet);
++         this.f_11196_.get(i).f_8906_.m_141995_(packet);
 +      }
 +   }
 +
