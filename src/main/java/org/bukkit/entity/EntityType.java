@@ -300,7 +300,7 @@ public enum EntityType implements Keyed {
     private final Class<? extends Entity> clazz;
     private final short typeId;
     private final boolean independent, living;
-    private final NamespacedKey key;
+    public NamespacedKey key;
 
     public static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
     public static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
@@ -353,7 +353,7 @@ public enum EntityType implements Keyed {
     @Deprecated
     @Nullable
     public String getName() {
-        return name;
+        return name == null ? name() : name; // Mohist
     }
 
     @NotNull

@@ -3925,7 +3925,6 @@ public enum Material implements Keyed {
     public static final String LEGACY_PREFIX = "LEGACY_";
 
     private final int id;
-    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private static final Map<String, Material> BY_NAME = Maps.newHashMap();
     private final int maxStack;
@@ -3941,9 +3940,10 @@ public enum Material implements Keyed {
     }
 
     // Mohist start - constructor used to set if the Material is a block or not
-    private Material(final int id, final int stack, boolean flag) {
+    private Material(final int id, final int stack, boolean isForgeBlock, boolean isForgeItem) {
         this(id, stack);
-        this.isForgeBlock = flag;
+        this.isForgeBlock = isForgeBlock;
+        this.isForgeItem = isForgeItem;
     }
     // Mohist end
 
@@ -4113,6 +4113,9 @@ public enum Material implements Keyed {
      * @return true if this material is a block
      */
     public boolean isBlock() {
+        if (isForgeBlock) {
+            return true;
+        }
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isBlock">
             case ACACIA_BUTTON:
@@ -9786,20 +9789,19 @@ public enum Material implements Keyed {
         return Bukkit.getUnsafe().getCreativeCategory(this);
     }
 
-    public static Material addMaterial(String materialName, int id, int stack, boolean isBlock, ResourceLocation resourceLocation) {
+    public static Material addMaterial(String materialName, int id, int stack, boolean isBlock, boolean isItem, ResourceLocation resourceLocation) {
         if (isBlock) {
             Material material = BY_NAME.get(materialName);
             if (material != null){
-                material.blockID = id;
                 material.isForgeBlock = true;
             }else {
-                material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE), List.of(id, stack, isBlock));
+                material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE), List.of(id, stack, isBlock, isItem));
             }
             BY_NAME.put(materialName, material);
             material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             return material;
         } else { // Forge Items
-            Material material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE), List.of(id, stack, isBlock));
+            Material material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE), List.of(id, stack, isBlock, isItem));
             BY_NAME.put(materialName, material);
             material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             return material;

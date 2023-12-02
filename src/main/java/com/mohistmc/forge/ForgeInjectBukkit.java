@@ -26,13 +26,17 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -45,10 +49,12 @@ import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlockStates;
+import org.bukkit.craftbukkit.v1_18_R2.block.CraftChest;
 import org.bukkit.craftbukkit.v1_18_R2.block.CraftSign;
 import org.bukkit.craftbukkit.v1_18_R2.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_18_R2.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftSpawnCategory;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -105,7 +111,7 @@ public class ForgeInjectBukkit {
                 // inject item materials into Bukkit for FML
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(item);
-                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), false, resourceLocation);
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), false, true, resourceLocation);
 
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
@@ -124,7 +130,7 @@ public class ForgeInjectBukkit {
                 String materialName = normalizeName(resourceLocation.toString());
                 int id = Item.getId(block.asItem());
                 Item item = Item.byId(id);
-                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), true, resourceLocation);
+                Material material = Material.addMaterial(materialName, id, item.getMaxStackSize(), true, false, resourceLocation);
 
                 if (material != null) {
                     CraftMagicNumbers.BLOCK_MATERIAL.put(block, material);
@@ -135,6 +141,13 @@ public class ForgeInjectBukkit {
                         BlockEntity blockEntity = signBlock.newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
                         if (blockEntity instanceof SignBlockEntity) {
                             CraftBlockStates.register(material, CraftSign.class, CraftSign::new, SignBlockEntity::new);
+                        }
+                    } else if (block instanceof ChestBlock chestBlock) {
+                        BlockEntity blockEntity = chestBlock.newBlockEntity(BlockPos.ZERO, block.defaultBlockState());
+                        if (blockEntity instanceof TrappedChestBlockEntity) {
+                            CraftBlockStates.register(material, CraftChest.class, CraftChest::new, TrappedChestBlockEntity::new);
+                        } else if (blockEntity instanceof ChestBlockEntity) {
+                            CraftBlockStates.register(material, CraftChest.class, CraftChest::new, ChestBlockEntity::new);
                         }
                     }
                     MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + material.key);
@@ -240,10 +253,12 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.ENTITIES;
         for (net.minecraft.world.entity.EntityType<?> entity : registry) {
             ResourceLocation resourceLocation = registry.getKey(entity);
+            NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             String entityType = normalizeName(resourceLocation.toString());
             if (isMods(resourceLocation)) {
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), Entity.class, typeId, false));
+                bukkitType.key = key;
                 EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
                 ServerAPI.entityTypeMap.put(entity, entityType);
