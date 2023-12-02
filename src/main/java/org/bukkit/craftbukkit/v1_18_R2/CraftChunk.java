@@ -54,9 +54,9 @@ public class CraftChunk implements Chunk {
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(net.minecraft.world.level.chunk.LevelChunk chunk) {
-        this.weakChunk = new WeakReference<net.minecraft.world.level.chunk.LevelChunk>(chunk);
+        this.weakChunk = new WeakReference<>(chunk);
 
-        worldServer = (ServerLevel) getHandle().level;
+        worldServer = chunk.q;
         x = getHandle().getPos().x;
         z = getHandle().getPos().z;
     }
