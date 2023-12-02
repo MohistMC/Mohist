@@ -44,7 +44,7 @@ public class VanillaInventoryCodeHooks
                     for (int i = 0; i < handler.getSlots(); i++)
                     {
                         ItemStack extractItem = handler.extractItem(i, level.spigotConfig.hopperAmount, true);
-                        if (!extractItem.isEmpty()) {
+                        if (!extractItem.isEmpty() && container != null) {
                             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
 
                             org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get(dest);
