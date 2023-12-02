@@ -4391,7 +4391,6 @@ public enum Material implements Keyed, Translatable, net.kyori.adventure.transla
     public static final String LEGACY_PREFIX = "LEGACY_";
 
     private final int id;
-    private int blockID;
     private final Constructor<? extends MaterialData> ctor;
     private static final Map<String, Material> BY_NAME = Maps.newHashMap();
     private final int maxStack;
@@ -11038,7 +11037,6 @@ public enum Material implements Keyed, Translatable, net.kyori.adventure.transla
         if (isBlock) {
             Material material = BY_NAME.get(materialName);
             if (material != null){
-                material.blockID = id;
                 material.isForgeBlock = true;
             }else {
                 material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE), List.of(id, stack, isBlock, isItem));
