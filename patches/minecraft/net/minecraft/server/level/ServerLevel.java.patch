@@ -81,7 +81,7 @@
     private final boolean f_8561_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
-+   public PrimaryLevelData serverLevelDataCB;  // CraftBukkit - type
++   public PrimaryLevelData M;  // CraftBukkit - type
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
 +
@@ -96,9 +96,9 @@
 +      this.pvpMode = p_203762_.m_129799_();
 +
 +      if (p_203765_ instanceof PrimaryLevelData) {
-+         this.serverLevelDataCB = (PrimaryLevelData) p_203765_;
++         this.M = (PrimaryLevelData) p_203765_;
 +      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {
-+         this.serverLevelDataCB = MohistDerivedLevelData.create(derivedLevelData);
++         this.M = MohistDerivedLevelData.create(derivedLevelData);
 +      }
 +      File worldFile = DimensionType.m_196975_(p_203766_, p_203764_.f_78271_).toFile();
 +      uuid = WorldUUID.getUUID(worldFile);
@@ -122,7 +122,7 @@
 +      this.initCapabilities();
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      m_6857_().world = this;
-+      serverLevelDataCB.setWorld(this);
++      M.setWorld(this);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
     }
  
@@ -497,7 +497,7 @@
     @Nullable
     public BlockPos m_207561_(TagKey<ConfiguredStructureFeature<?, ?>> p_207562_, BlockPos p_207563_, int p_207564_, boolean p_207565_) {
 -      if (!this.f_8548_.m_129910_().m_5961_().m_64657_()) {
-+      if (!this.serverLevelDataCB.m_5961_().m_64657_()) {
++      if (!this.M.m_5961_().m_64657_()) {
           return null;
        } else {
           Optional<HolderSet.Named<ConfiguredStructureFeature<?, ?>>> optional = this.m_5962_().m_175515_(Registry.f_122882_).m_203431_(p_207562_);
@@ -540,12 +540,12 @@
  
     public boolean m_8584_() {
 -      return this.f_8548_.m_129910_().m_5961_().m_64669_();
-+      return this.serverLevelDataCB.m_5961_().m_64669_();
++      return this.M.m_5961_().m_64669_();
     }
  
     public long m_7328_() {
 -      return this.f_8548_.m_129910_().m_5961_().m_64619_();
-+      return this.serverLevelDataCB.m_5961_().m_64619_();
++      return this.M.m_5961_().m_64619_();
     }
  
     @Nullable
