@@ -142,8 +142,8 @@
        this.f_185933_ = ChunkPos.f_186419_;
        this.f_19838_ = Vec3.f_82478_;
 +      // Spigot start
-+      if (f_19853_ != null) {
-+         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, f_19853_.spigotConfig);
++      if (p_19871_ != null && p_19871_ instanceof ServerLevel) {
++         this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, p_19871_.spigotConfig);
 +      } else {
 +         this.defaultActivationState = false;
 +      }
