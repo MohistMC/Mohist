@@ -55,21 +55,18 @@
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
        this.f_21345_ = new GoalSelector(p_21369_.m_46658_());
-@@ -128,7 +_,13 @@
-          this.m_8099_();
-       }
+@@ -130,6 +_,11 @@
  
--   }
-+      this.f_21353_ = !m_6785_( 0 );
-+   }
-+
+    }
+ 
 +   public void setPersistenceRequired(boolean persistenceRequired) {
 +      this.f_21353_ = persistenceRequired;
 +   }
 +   // CraftBukkit end
- 
++
     protected void m_8099_() {
     }
+ 
 @@ -205,7 +_,40 @@
     }
  
