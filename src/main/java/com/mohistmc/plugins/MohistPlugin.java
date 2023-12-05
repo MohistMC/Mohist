@@ -62,7 +62,7 @@ public class MohistPlugin {
     }
 
     public static void registerCommands(Map<String, Command> map) {
-        if (MohistConfig.yml.getBoolean("worldmanage", true)) map.put(WorldManage.command, new WorldsCommands(WorldManage.command));
+        if (MohistConfig.yml.getBoolean("worldmanage", true)) map.put("worlds", new WorldsCommands("worlds"));
         map.put("warps", new WarpsCommands("warps"));
     }
 

@@ -9,10 +9,7 @@ import org.spigotmc.SpigotConfig;
  */
 public class ProxyUtils {
 
-    public static boolean ignoreRejected() {
-        if (MohistConfig.velocity) {
-            return true;
-        }
-        return SpigotConfig.bungee;
+    public static boolean is() {
+        return MohistConfig.velocity_enabled || SpigotConfig.bungee;
     }
 }

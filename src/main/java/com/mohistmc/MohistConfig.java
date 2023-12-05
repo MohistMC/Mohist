@@ -204,7 +204,9 @@ public class MohistConfig {
     public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
-    public static boolean velocity ;
+    public static boolean velocity_enabled;
+    public static boolean velocity_onlineMode;
+    public static String velocity_secret;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -245,6 +247,8 @@ public class MohistConfig {
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
-        velocity = getBoolean("velocity", false);
+        velocity_enabled = getBoolean("velocity.enabled", false);
+        velocity_onlineMode = getBoolean("velocity.onlineMode", false);
+        velocity_secret = getString("velocity.secret", "");
     }
 }

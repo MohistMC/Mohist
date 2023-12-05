@@ -6,8 +6,6 @@ import java.io.File;
 
 public class WorldManage {
 
-    public static final String command = "worlds";
-
     public static void onEnable() {
         ConfigByWorlds.init();
         ConfigByWorlds.loadWorlds();

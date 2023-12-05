@@ -62,7 +62,7 @@
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
-@@ -118,9 +_,11 @@
+@@ -118,9 +_,10 @@
           }
        }
  
@@ -70,8 +70,7 @@
        this.m_8094_(p_196851_.m_6332_());
        this.f_187603_ = true;
 +      this.needsDecoration = true; // CraftBukkit
-+      // CraftBukkit start
-+      this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1
++      this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
     }
  
     public TickContainerAccess<Block> m_183531_() {
@@ -99,7 +98,7 @@
              } else {
 -               if (!this.f_62776_.f_46443_) {
 +               // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-+               if (!this.f_62776_.f_46443_ && mohist$doPlace.get() && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
++               if (!this.f_62776_.f_46443_ && mohist$doPlace.getAndSet(true) && (!this.f_62776_.captureBlockStates || block instanceof net.minecraft.world.level.block.BaseEntityBlock)) {
                    p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
                 }
  
