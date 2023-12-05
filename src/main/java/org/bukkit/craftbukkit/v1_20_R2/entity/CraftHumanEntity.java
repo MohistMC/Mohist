@@ -139,7 +139,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             return false;
         }
 
-        if (getHandle().forceSleepInBed(force).startSleepInBed(blockposition).left().isPresent()) {
+        if (getHandle().forceSleepInBed(force).startSleepInBed(blockposition).left().isPresent()) { // Mohist
             return false;
         }
 

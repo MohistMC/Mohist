@@ -3,7 +3,7 @@
  */
 package org.bukkit.craftbukkit.v1_20_R2.block.impl;
 
-public final class CraftTurtleEgg extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.TurtleEgg {
+public final class CraftTurtleEgg extends org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData implements org.bukkit.block.data.type.TurtleEgg, org.bukkit.block.data.Hatchable {
 
     public CraftTurtleEgg() {
         super();

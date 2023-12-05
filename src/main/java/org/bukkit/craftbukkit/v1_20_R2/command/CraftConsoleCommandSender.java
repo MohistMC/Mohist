@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R2.command;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -28,7 +29,7 @@ public class CraftConsoleCommandSender extends ServerCommandSender implements Co
 
     @Override
     public void sendRawMessage(String message) {
-        LOGGER.info(message);
+        LOGGER.info(ChatColor.stripColor(message));
     }
 
     @Override
