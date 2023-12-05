@@ -14,6 +14,7 @@ import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Translatable;
 import org.bukkit.World;
@@ -26,6 +27,7 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -294,6 +296,12 @@ public enum EntityType implements Keyed, Translatable {
 
     SNIFFER("sniffer", Sniffer.class, -1),
     TEXT_DISPLAY("text_display", TextDisplay.class, -1),
+    @MinecraftExperimental
+    @ApiStatus.Experimental
+    BREEZE("breeze", Breeze.class, -1),
+    @MinecraftExperimental
+    @ApiStatus.Experimental
+    WIND_CHARGE("wind_charge", WindCharge.class, -1),
     /**
      * A fishing line and bobber.
      */

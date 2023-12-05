@@ -89,10 +89,7 @@ public class ForgeInjectBukkit {
         addEnumMaterialInItems();
         addEnumMaterialsInBlocks();
         addEnumBiome();
-        addEnumEnchantment();
-        addEnumEffectAndPotion();
         addFluid();
-        //addEnumPattern();
         addEnumEntity();
         addEnumVillagerProfession();
         addEnumArt();
@@ -148,39 +145,6 @@ public class ForgeInjectBukkit {
                         }
                     }
                     MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + material.key);
-                }
-            }
-        }
-    }
-
-
-    public static void addEnumEnchantment() {
-        // Enchantment
-        for (Enchantment enchantment : ForgeRegistries.ENCHANTMENTS) {
-            org.bukkit.enchantments.Enchantment.registerEnchantment(new CraftEnchantment(enchantment));
-        }
-        org.bukkit.enchantments.Enchantment.stopAcceptingRegistrations();
-    }
-
-    public static void addEnumEffectAndPotion() {
-        // Points
-        int origin = PotionEffectType.values().length;
-        int size = ForgeRegistries.MOB_EFFECTS.getEntries().size();
-        PotionEffectType.byId = new PotionEffectType[Math.max(origin + 1, size + 1)];
-        for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
-            String name = normalizeName(ForgeRegistries.MOB_EFFECTS.getKey(effect).toString());
-            MohistPotionEffect pet = new MohistPotionEffect(effect, name);
-            PotionEffectType.registerPotionEffectType(pet);
-        }
-        PotionEffectType.stopAcceptingRegistrations();
-        var registry = ForgeRegistries.POTIONS;
-        for (Potion potion : ForgeRegistries.POTIONS) {
-            ResourceLocation resourceLocation = registry.getKey(potion);
-            if (potion != Potions.EMPTY && !resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                String name = normalizeName(resourceLocation.toString());
-                PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, List.of(String.class), List.of(name));
-                if (potionType != null) {
-                    MohistMC.LOGGER.debug("Save-PotionType:" + name + " - " + potionType.name());
                 }
             }
         }
