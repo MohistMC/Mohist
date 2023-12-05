@@ -177,8 +177,9 @@ public class ForgeInjectBukkit {
 
     public static void addEnumEffectAndPotion() {
         // Points
-        for (MobEffect effect : ForgeRegistries.MOB_EFFECTS) {
-            String name = normalizeName(ForgeRegistries.MOB_EFFECTS.getKey(effect).toString());
+        var registry_effect = ForgeRegistries.MOB_EFFECTS;
+        for (MobEffect effect : registry_effect) {
+            String name = normalizeName(registry_effect.getKey(effect).toString());
             MohistPotionEffect pet = new MohistPotionEffect(effect, name);
             PotionEffectType.registerPotionEffectType(pet);
         }
@@ -186,7 +187,7 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.POTIONS;
         for (Potion potion : ForgeRegistries.POTIONS) {
             ResourceLocation resourceLocation = registry.getKey(potion);
-            if (CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
+            if (isMods(resourceLocation) && CraftPotionUtil.toBukkit(resourceLocation.toString()).getType() == PotionType.UNCRAFTABLE && potion != Potions.EMPTY) {
                 String name = normalizeName(resourceLocation.toString());
                 MobEffectInstance effectInstance = potion.getEffects().isEmpty() ? null : potion.getEffects().get(0);
                 PotionType potionType = MohistDynamEnum.addEnum(PotionType.class, name, Arrays.asList(PotionEffectType.class, Boolean.TYPE, Boolean.TYPE), Arrays.asList(effectInstance == null ? null : PotionEffectType.getById(MobEffect.getId(effectInstance.getEffect())), false, false));

@@ -157,7 +157,7 @@
        this.f_268497_ = new DamageSources(p_270200_);
 +      // CraftBukkit start
 +      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment.get(getTypeKey());
++         environment = ForgeInjectBukkit.environment.getOrDefault(getTypeKey(), World.Environment.CUSTOM);
 +      }
 +      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
