@@ -16,7 +16,7 @@
  import net.minecraft.util.ProblemReporter;
  import net.minecraft.util.profiling.ProfilerFiller;
  import net.minecraft.world.level.storage.loot.LootDataManager;
-@@ -32,15 +_,28 @@
+@@ -32,17 +_,35 @@
     public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
     private AdvancementTree tree = new AdvancementTree();
     private final LootDataManager lootData;
@@ -43,5 +43,13 @@
 +         }
 +         // Spigot end
           try {
-             Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
+-            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
++            var json = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(null, (com.google.gson.JsonObject)p_308596_);
++            if (json == null) {
++                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_308595_);
++                return;
++            }
++            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, json), JsonParseException::new);
              this.validate(p_308595_, advancement);
+             builder.put(p_308595_, new AdvancementHolder(p_308595_, advancement));
+          } catch (Exception exception) {

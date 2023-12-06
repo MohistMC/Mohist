@@ -30,17 +30,27 @@
           p_60516_.removeBlockEntity(p_60517_);
        }
  
-@@ -187,8 +_,8 @@
+@@ -183,7 +_,8 @@
+       if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
+          Block block = p_310712_.getBlock();
+          boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
+-         if (block.dropFromExplosion(p_312709_) && p_311693_ instanceof ServerLevel) {
++         if (p_310712_.canDropFromExplosion(p_311693_, p_311490_, p_312709_) && p_311693_ instanceof ServerLevel) {
++
              ServerLevel serverlevel = (ServerLevel)p_311693_;
              BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
              LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, p_312709_.getDirectSourceEntity());
--            if (p_312709_.getBlockInteraction() == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
--               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, p_312709_.radius());
-+            if (p_312709_.yield < 1.0F) {
-+               lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / p_312709_.yield);
-             }
+@@ -196,9 +_,7 @@
+                p_311277_.accept(p_309419_, p_311490_);
+             });
+          }
+-
+-         p_311693_.setBlock(p_311490_, Blocks.AIR.defaultBlockState(), 3);
+-         block.wasExploded(p_311693_, p_311490_, p_312709_);
++         p_310712_.onBlockExploded(p_311693_, p_311490_, p_312709_);
+       }
+    }
  
-             p_310712_.spawnAfterBreak(serverlevel, p_311490_, ItemStack.EMPTY, flag);
 @@ -400,14 +_,15 @@
        if (f == -1.0F) {
           return 0.0F;
@@ -136,14 +146,17 @@
           return this.pushReaction;
        }
  
-@@ -1032,6 +_,7 @@
+@@ -1032,8 +_,9 @@
        boolean spawnTerrainParticles = true;
        NoteBlockInstrument instrument = NoteBlockInstrument.HARP;
        boolean replaceable;
 +      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
        BlockBehaviour.StateArgumentPredicate<EntityType<?>> isValidSpawn = (p_284893_, p_284894_, p_284895_, p_284896_) -> {
-          return p_284893_.isFaceSturdy(p_284894_, p_284895_, Direction.UP) && p_284893_.getLightEmission() < 14;
+-         return p_284893_.isFaceSturdy(p_284894_, p_284895_, Direction.UP) && p_284893_.getLightEmission() < 14;
++         return p_284893_.isFaceSturdy(p_284894_, p_284895_, Direction.UP) && p_284893_.getLightEmission(p_284894_, p_284895_) < 14;
        };
+       BlockBehaviour.StatePredicate isRedstoneConductor = (p_284888_, p_284889_, p_284890_) -> {
+          return p_284888_.isCollisionShapeFullBlock(p_284889_, p_284890_);
 @@ -1187,9 +_,15 @@
           return this;
        }

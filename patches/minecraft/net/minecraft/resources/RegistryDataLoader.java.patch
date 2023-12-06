@@ -19,3 +19,17 @@
  
        for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_256349_).entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
+@@ -139,7 +_,12 @@
+ 
+          try (Reader reader = resource.openAsReader()) {
+             JsonElement jsonelement = JsonParser.parseReader(reader);
+-            DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
++            var result = conditional.decode(registryops, jsonelement);
++            if (result.result().map(p -> p.getFirst()).isEmpty()) {
++               LOGGER.debug("Skipping {} conditions not met", resourcelocation);
++               continue;
++            }
++            DataResult<E> dataresult = result.map(p -> p.mapFirst(Optional::get)).map(p -> p.getFirst());
+             E e = dataresult.getOrThrow(false, (p_248715_) -> {
+             });
+             p_256211_.register(resourcekey, e, resource.isBuiltin() ? Lifecycle.stable() : dataresult.lifecycle());

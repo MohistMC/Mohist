@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -16,13 +_,12 @@
- import net.minecraft.network.syncher.SynchedEntityData;
+@@ -17,12 +_,12 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
--import net.minecraft.tags.EntityTypeTags;
+ import net.minecraft.tags.EntityTypeTags;
 -import net.minecraft.tags.FluidTags;
  import net.minecraft.util.ByIdMap;
  import net.minecraft.util.Mth;
@@ -214,32 +213,6 @@
                    if (!fluidstate.isSource()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
-@@ -644,17 +_,15 @@
- 
-    protected void positionRider(Entity p_289552_, Entity.MoveFunction p_289571_) {
-       super.positionRider(p_289552_, p_289571_);
--      if (!p_289552_.getType().is(EntityTypeTags.CAN_TURN_IN_BOATS)) {
--         p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
--         p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
--         this.clampRotation(p_289552_);
--         if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
--            int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
--            p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
--            p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
--         }
--
-+      p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
-+      p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
-+      this.clampRotation(p_289552_);
-+      if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
-+         int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
-+         p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
-+         p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
-       }
-+
-    }
- 
-    public Vec3 getDismountLocationForPassenger(LivingEntity p_38357_) {
 @@ -738,21 +_,27 @@
  
                 this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
@@ -277,44 +250,6 @@
              this.fallDistance -= (float)p_38307_;
           }
  
-@@ -763,6 +_,22 @@
-       return this.entityData.<Boolean>get(p_38314_ == 0 ? DATA_ID_PADDLE_LEFT : DATA_ID_PADDLE_RIGHT) && this.getControllingPassenger() != null;
-    }
- 
-+   public void setDamage(float p_38312_) {
-+      this.entityData.set(DATA_ID_DAMAGE, p_38312_);
-+   }
-+
-+   public float getDamage() {
-+      return this.entityData.get(DATA_ID_DAMAGE);
-+   }
-+
-+   public void setHurtTime(int p_38355_) {
-+      this.entityData.set(DATA_ID_HURT, p_38355_);
-+   }
-+
-+   public int getHurtTime() {
-+      return this.entityData.get(DATA_ID_HURT);
-+   }
-+
-    private void setBubbleTime(int p_38367_) {
-       this.entityData.set(DATA_ID_BUBBLE_TIME, p_38367_);
-    }
-@@ -775,6 +_,14 @@
-       return Mth.lerp(p_38353_, this.bubbleAngleO, this.bubbleAngle);
-    }
- 
-+   public void setHurtDir(int p_38363_) {
-+      this.entityData.set(DATA_ID_HURTDIR, p_38363_);
-+   }
-+
-+   public int getHurtDir() {
-+      return this.entityData.get(DATA_ID_HURTDIR);
-+   }
-+
-    public void setVariant(Boat.Type p_38333_) {
-       this.entityData.set(DATA_ID_TYPE, p_38333_.ordinal());
-    }
 @@ -784,7 +_,7 @@
     }
  

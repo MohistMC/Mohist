@@ -11,14 +11,7 @@
  
     public int getSuccessCount() {
        return this.successCount;
-@@ -113,13 +_,13 @@
-             if (minecraftserver.isCommandBlockEnabled() && !StringUtil.isNullOrEmpty(this.command)) {
-                try {
-                   this.lastOutput = null;
--                  CommandSourceStack commandsourcestack = this.createCommandSourceStack().withCallback((p_45418_, p_45419_) -> {
-+                  CommandSourceStack commandsourcestack = this.createCommandSourceStack().withCallback((p_45417_, p_45418_, p_45419_) -> {
-                      if (p_45418_) {
-                         ++this.successCount;
+@@ -119,7 +_,7 @@
                       }
  
                    });

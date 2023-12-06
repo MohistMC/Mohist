@@ -131,7 +131,7 @@
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
 +         Metrics.MohistMetrics.startMetrics();
-+         this.nextTickTime = Util.getMillis(); //Forge: Update server time to prevent watchdog/spaming during long load.
++         this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
           if (dedicatedserverproperties.announcePlayerAchievements != null) {
              this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
           }
@@ -189,17 +189,6 @@
        }
  
     }
-@@ -373,8 +_,8 @@
- 
-    public void setPlayerIdleTimeout(int p_139676_) {
-       super.setPlayerIdleTimeout(p_139676_);
--      this.settings.update((p_308934_) -> {
--         return p_308934_.playerIdleTimeout.update(this.registryAccess(), p_139676_);
-+      this.settings.update((p_296558_) -> {
-+         return p_296558_.playerIdleTimeout.update(this.registryAccess(), p_139676_);
-       });
-    }
- 
 @@ -395,8 +_,7 @@
     }
  
@@ -210,7 +199,7 @@
     }
  
     public boolean logIPs() {
-@@ -478,25 +_,64 @@
+@@ -478,15 +_,49 @@
     }
  
     public String getPluginNames() {
@@ -264,11 +253,7 @@
     }
  
     public void storeUsingWhiteList(boolean p_139689_) {
--      this.settings.update((p_308931_) -> {
--         return p_308931_.whiteList.update(this.registryAccess(), p_139689_);
-+      this.settings.update((p_296556_) -> {
-+         return p_296556_.whiteList.update(this.registryAccess(), p_139689_);
-       });
+@@ -496,7 +_,12 @@
     }
  
     public void stopServer() {

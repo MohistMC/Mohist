@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface IForgeBucketPickup {
     private BucketPickup self() {
-        return (BucketPickup) this;
+        return (BucketPickup)this;
     }
 
     /**

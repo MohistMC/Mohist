@@ -17,26 +17,19 @@
  
  public class PointedDripstoneBlock extends Block implements Fallable, SimpleWaterloggedBlock {
     public static final MapCodec<PointedDripstoneBlock> CODEC = simpleCodec(PointedDripstoneBlock::new);
-@@ -120,18 +_,23 @@
-    }
- 
-    public void onProjectileHit(Level p_154042_, BlockState p_154043_, BlockHitResult p_154044_, Projectile p_154045_) {
--      if (!p_154042_.isClientSide) {
--         BlockPos blockpos = p_154044_.getBlockPos();
--         if (p_154045_.mayInteract(p_154042_, blockpos) && p_154045_.mayBreak(p_154042_) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
--            p_154042_.destroyBlock(blockpos, true);
-+      BlockPos blockpos = p_154044_.getBlockPos();
-+      if (!p_154042_.isClientSide && p_154045_.mayInteract(p_154042_, blockpos) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
-+         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(p_154045_, blockpos, Blocks.AIR.defaultBlockState())) {
-+            return;
+@@ -123,6 +_,11 @@
+       if (!p_154042_.isClientSide) {
+          BlockPos blockpos = p_154044_.getBlockPos();
+          if (p_154045_.mayInteract(p_154042_, blockpos) && p_154045_.mayBreak(p_154042_) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
++         	// CraftBukkit start
++         	if (!CraftEventFactory.callEntityChangeBlockEvent(p_154045_, blockpos, Blocks.AIR.defaultBlockState())) {
++            	return;
++         	}
++         	// CraftBukkit end
+             p_154042_.destroyBlock(blockpos, true);
           }
--
-+         // CraftBukkit end
-+         p_154042_.destroyBlock(blockpos, true);
-       }
-+
-    }
+ 
+@@ -131,7 +_,9 @@
  
     public void fallOn(Level p_154047_, BlockState p_154048_, BlockPos p_154049_, Entity p_154050_, float p_154051_) {
        if (p_154048_.getValue(TIP_DIRECTION) == Direction.UP && p_154048_.getValue(THICKNESS) == DripstoneThickness.TIP) {

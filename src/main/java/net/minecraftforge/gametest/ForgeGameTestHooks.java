@@ -153,7 +153,7 @@ public class ForgeGameTestHooks {
 
     private static String getDefaultBatch() {
         try {
-            return (String) ObfuscationReflectionHelper.findMethod(GameTest.class, "m_177043" + '_').getDefaultValue();
+            return (String)ObfuscationReflectionHelper.findMethod(GameTest.class, "m_177043" + '_').getDefaultValue();
         } catch (Exception e) {
             e.printStackTrace(); // Should never happen, but just in case.
             return "defaultBatch";

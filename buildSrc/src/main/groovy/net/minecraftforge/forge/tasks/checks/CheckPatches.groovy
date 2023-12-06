@@ -35,7 +35,7 @@ abstract class CheckPatches extends CheckTask {
             }
         }
     }
-
+    
     def accessChange(previous, current) {
         //return ACCESS_MAP[previous] < ACCESS_MAP[current]
         return previous != current

@@ -20,6 +20,15 @@
  import org.slf4j.Logger;
  
  public class LootTable {
+@@ -35,7 +_,7 @@
+          return p_297013_.paramSet;
+       }), ExtraCodecs.strictOptionalField(ResourceLocation.CODEC, "random_sequence").forGetter((p_297014_) -> {
+          return p_297014_.randomSequence;
+-      }), ExtraCodecs.strictOptionalField(LootPool.CODEC.listOf(), "pools", List.of()).forGetter((p_297012_) -> {
++      }), ExtraCodecs.strictOptionalField(LootPool.CONDITIONAL_CODEC.listOf(), "pools", List.of()).forGetter((p_297012_) -> {
+          return p_297012_.pools;
+       }), ExtraCodecs.strictOptionalField(LootItemFunctions.CODEC.listOf(), "functions", List.of()).forGetter((p_297010_) -> {
+          return p_297010_.functions;
 @@ -46,11 +_,12 @@
     private final List<LootPool> pools;
     private final List<LootItemFunction> functions;

@@ -33,7 +33,7 @@
           if (blockplacecontext == null) {
              return InteractionResult.FAIL;
           } else {
-@@ -77,15 +_,28 @@
+@@ -77,13 +_,26 @@
                    blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
                    this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
                    blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
@@ -57,14 +57,11 @@
  
 -               SoundType soundtype = blockstate1.getSoundType();
 -               level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-                level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
--               if (player == null || !player.getAbilities().instabuild) {
 +               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.getPlayer());
 +               level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-+               if ((player == null || !player.getAbilities().instabuild) && itemstack != ItemStack.EMPTY) { // CraftBukkit
+                level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
+                if (player == null || !player.getAbilities().instabuild) {
                    itemstack.shrink(1);
-                }
- 
 @@ -95,10 +_,16 @@
        }
     }

@@ -17,10 +17,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.WorldWorkerManager;
 
-class GenerateCommand
-{
-    static ArgumentBuilder<CommandSourceStack, ?> register()
-    {
+class GenerateCommand {
+    static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("generate")
             .requires(cs->cs.hasPermission(4)) //permission
             .then(Commands.argument("pos", BlockPosArgument.blockPos())
@@ -36,13 +34,11 @@ class GenerateCommand
             );
     }
 
-    private static int getInt(CommandContext<CommandSourceStack> ctx, String name)
-    {
+    private static int getInt(CommandContext<CommandSourceStack> ctx, String name) {
         return IntegerArgumentType.getInteger(ctx, name);
     }
 
-    private static int execute(CommandSourceStack source, BlockPos pos, int count, ServerLevel dim, int interval)
-    {
+    private static int execute(CommandSourceStack source, BlockPos pos, int count, ServerLevel dim, int interval) {
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);

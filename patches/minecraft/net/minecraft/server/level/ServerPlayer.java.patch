@@ -10,23 +10,15 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
-@@ -12,7 +_,7 @@
+@@ -12,6 +_,7 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
--import java.util.stream.Collectors;
 +import java.util.concurrent.atomic.AtomicReference;
+ import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
- import net.minecraft.ChatFormatting;
-@@ -85,13 +_,13 @@
- import net.minecraft.stats.Stat;
- import net.minecraft.stats.Stats;
- import net.minecraft.tags.DamageTypeTags;
--import net.minecraft.tags.FluidTags;
- import net.minecraft.util.Mth;
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.Unit;
+@@ -92,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -34,22 +26,10 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.effect.MobEffects;
-@@ -102,18 +_,15 @@
- import net.minecraft.world.entity.Mob;
- import net.minecraft.world.entity.NeutralMob;
- import net.minecraft.world.entity.RelativeMovement;
--import net.minecraft.world.entity.animal.Pig;
- import net.minecraft.world.entity.animal.horse.AbstractHorse;
- import net.minecraft.world.entity.item.ItemEntity;
- import net.minecraft.world.entity.monster.Monster;
--import net.minecraft.world.entity.monster.Strider;
- import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
- import net.minecraft.world.entity.player.ChatVisiblity;
- import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
+@@ -114,6 +_,7 @@
  import net.minecraft.world.entity.projectile.AbstractArrow;
--import net.minecraft.world.entity.vehicle.AbstractMinecart;
--import net.minecraft.world.entity.vehicle.Boat;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ import net.minecraft.world.entity.vehicle.Boat;
 +import net.minecraft.world.food.FoodData;
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
@@ -62,7 +42,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -141,23 +_,48 @@
+@@ -141,19 +_,45 @@
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.border.WorldBorder;
@@ -109,10 +89,6 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
--   private static final int FLY_STAT_RECORDING_SPEED = 25;
-    public ServerGamePacketListenerImpl connection;
-    public final MinecraftServer server;
-    public final ServerPlayerGameMode gameMode;
 @@ -250,6 +_,21 @@
     public int containerCounter;
     public boolean wonGame;
@@ -406,13 +382,11 @@
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-@@ -643,10 +_,14 @@
+@@ -643,10 +_,12 @@
        if (p_9050_ != this) {
           super.awardKillScore(p_9050_, p_9051_, p_9052_);
           this.increaseScore(p_9051_);
 -         this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
-+         String s = this.getScoreboardName();
-+         String s1 = p_9050_.getScoreboardName();
 +         // CraftBukkit - Get our scores instead
 +         this.level.getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
           if (p_9050_ instanceof Player) {
@@ -749,20 +723,6 @@
        }
  
     }
-@@ -934,13 +_,6 @@
-       }
-    }
- 
--   protected void pushEntities() {
--      if (this.level().tickRateManager().runsNormally()) {
--         super.pushEntities();
--      }
--
--   }
--
-    public void openTextEdit(SignBlockEntity p_277909_, boolean p_277495_) {
-       this.connection.send(new ClientboundBlockUpdatePacket(this.level(), p_277909_.getBlockPos()));
-       this.connection.send(new ClientboundOpenSignEditorPacket(p_277909_.getBlockPos(), p_277495_));
 @@ -950,16 +_,53 @@
        this.containerCounter = this.containerCounter % 100 + 1;
     }
@@ -826,7 +786,7 @@
 +            this.connection.send(new ClientboundOpenScreenPacket(abstractcontainermenu.containerId, abstractcontainermenu.getType(), abstractcontainermenu.getTitle()));
              this.initMenu(abstractcontainermenu);
 -            this.containerMenu = abstractcontainermenu;
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.containerMenu));
++            net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
              return OptionalInt.of(this.containerCounter);
           }
        }
@@ -858,7 +818,7 @@
 -      this.containerMenu = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
 +      this.containerMenu = container; // CraftBukkit
        this.initMenu(this.containerMenu);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.containerMenu));
++      net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
@@ -870,7 +830,7 @@
        this.containerMenu = this.inventoryMenu;
     }
  
-@@ -1027,101 +_,21 @@
+@@ -1027,6 +_,16 @@
           }
  
           this.jumping = p_8983_;
@@ -887,126 +847,6 @@
           this.setShiftKeyDown(p_8984_);
        }
  
-    }
- 
--   public void travel(Vec3 p_312746_) {
--      double d0 = this.getX();
--      double d1 = this.getY();
--      double d2 = this.getZ();
--      super.travel(p_312746_);
--      this.checkMovementStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
--   }
--
--   public void rideTick() {
--      double d0 = this.getX();
--      double d1 = this.getY();
--      double d2 = this.getZ();
--      super.rideTick();
--      this.checkRidingStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
--   }
--
--   public void checkMovementStatistics(double p_310268_, double p_310728_, double p_313145_) {
--      if (!this.isPassenger() && !didNotMove(p_310268_, p_310728_, p_313145_)) {
--         if (this.isSwimming()) {
--            int i = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
--            if (i > 0) {
--               this.awardStat(Stats.SWIM_ONE_CM, i);
--               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
--            }
--         } else if (this.isEyeInFluid(FluidTags.WATER)) {
--            int j = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
--            if (j > 0) {
--               this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
--               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
--            }
--         } else if (this.isInWater()) {
--            int k = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
--            if (k > 0) {
--               this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
--               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
--            }
--         } else if (this.onClimbable()) {
--            if (p_310728_ > 0.0D) {
--               this.awardStat(Stats.CLIMB_ONE_CM, (int)Math.round(p_310728_ * 100.0D));
--            }
--         } else if (this.onGround()) {
--            int l = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
--            if (l > 0) {
--               if (this.isSprinting()) {
--                  this.awardStat(Stats.SPRINT_ONE_CM, l);
--                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
--               } else if (this.isCrouching()) {
--                  this.awardStat(Stats.CROUCH_ONE_CM, l);
--                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
--               } else {
--                  this.awardStat(Stats.WALK_ONE_CM, l);
--                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
--               }
--            }
--         } else if (this.isFallFlying()) {
--            int i1 = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
--            this.awardStat(Stats.AVIATE_ONE_CM, i1);
--         } else {
--            int j1 = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
--            if (j1 > 25) {
--               this.awardStat(Stats.FLY_ONE_CM, j1);
--            }
--         }
--
--      }
--   }
--
--   private void checkRidingStatistics(double p_310768_, double p_312944_, double p_309791_) {
--      if (this.isPassenger() && !didNotMove(p_310768_, p_312944_, p_309791_)) {
--         int i = Math.round((float)Math.sqrt(p_310768_ * p_310768_ + p_312944_ * p_312944_ + p_309791_ * p_309791_) * 100.0F);
--         Entity entity = this.getVehicle();
--         if (entity instanceof AbstractMinecart) {
--            this.awardStat(Stats.MINECART_ONE_CM, i);
--         } else if (entity instanceof Boat) {
--            this.awardStat(Stats.BOAT_ONE_CM, i);
--         } else if (entity instanceof Pig) {
--            this.awardStat(Stats.PIG_ONE_CM, i);
--         } else if (entity instanceof AbstractHorse) {
--            this.awardStat(Stats.HORSE_ONE_CM, i);
--         } else if (entity instanceof Strider) {
--            this.awardStat(Stats.STRIDER_ONE_CM, i);
--         }
--
--      }
--   }
--
--   private static boolean didNotMove(double p_310773_, double p_310271_, double p_312126_) {
--      return p_310773_ == 0.0D && p_310271_ == 0.0D && p_312126_ == 0.0D;
--   }
--
-    public void awardStat(Stat<?> p_9026_, int p_9027_) {
-       this.stats.increment(this, p_9026_, p_9027_);
-       this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
-@@ -1142,17 +_,16 @@
-       CriteriaTriggers.RECIPE_CRAFTED.trigger(this, p_299743_.id(), p_282336_);
-    }
- 
--   public void awardRecipesByKey(List<ResourceLocation> p_312871_) {
--      List<RecipeHolder<?>> list = p_312871_.stream().flatMap((p_308947_) -> {
--         return this.server.getRecipeManager().byKey(p_308947_).stream();
--      }).collect(Collectors.toList());
-+   public void awardRecipesByKey(ResourceLocation[] p_9168_) {
-+      List<RecipeHolder<?>> list = Lists.newArrayList();
-+
-+      for(ResourceLocation resourcelocation : p_9168_) {
-+         this.server.getRecipeManager().byKey(resourcelocation).ifPresent(list::add);
-+      }
-+
-       this.awardRecipes(list);
-    }
- 
--   public int resetRecipes(Collection<RecipeHolder<?>> p_9195_) {
--      return this.recipeBook.removeRecipes(p_9195_, this);
--   }
--
-    public void giveExperiencePoints(int p_9208_) {
-       super.giveExperiencePoints(p_9208_);
-       this.lastSentExp = -1;
 @@ -1173,6 +_,7 @@
  
     public void resetSentInfo() {
@@ -1107,11 +947,12 @@
        this.language = p_297843_.language();
        this.requestedViewDistance = p_297843_.viewDistance();
        this.chatVisibility = p_297843_.chatVisibility();
-@@ -1447,6 +_,7 @@
+@@ -1447,6 +_,8 @@
     public void setCamera(@Nullable Entity p_9214_) {
        Entity entity = this.getCamera();
        this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
-+      while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity) this.camera = partEntity.getParent(); // FORGE: fix MC-46486
++      while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity)
++         this.camera = partEntity.getParent(); // FORGE: fix MC-46486
        if (entity != this.camera) {
           Level level = this.camera.level();
           if (level instanceof ServerLevel) {
@@ -1318,12 +1159,7 @@
     }
  
     public boolean allowsListing() {
-@@ -1731,8 +_,153 @@
-       }
- 
-    }
--
-+   
+@@ -1735,4 +_,149 @@
     public CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel p_301182_) {
        return new CommonPlayerSpawnInfo(p_301182_.dimensionTypeId(), p_301182_.dimension(), BiomeManager.obfuscateSeed(p_301182_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_301182_.isDebug(), p_301182_.isFlat(), this.getLastDeathLocation(), this.getPortalCooldown());
     }

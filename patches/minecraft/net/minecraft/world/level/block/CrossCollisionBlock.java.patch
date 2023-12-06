@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CrossCollisionBlock.java
++++ b/net/minecraft/world/level/block/CrossCollisionBlock.java
+@@ -32,7 +_,7 @@
+    protected final VoxelShape[] shapeByIndex;
+    private final Object2IntMap<BlockState> stateToIndex = new Object2IntOpenHashMap<>();
+ 
+-   protected CrossCollisionBlock(float p_52320_, float p_52321_, float p_52322_, float p_52323_, float p_52324_, BlockBehaviour.Properties p_52325_) {
++   public CrossCollisionBlock(float p_52320_, float p_52321_, float p_52322_, float p_52323_, float p_52324_, BlockBehaviour.Properties p_52325_) {
+       super(p_52325_);
+       this.collisionShapeByIndex = this.makeShapes(p_52320_, p_52321_, p_52324_, 0.0F, p_52324_);
+       this.shapeByIndex = this.makeShapes(p_52320_, p_52321_, p_52322_, 0.0F, p_52323_);

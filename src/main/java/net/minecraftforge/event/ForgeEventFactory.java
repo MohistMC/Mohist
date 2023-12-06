@@ -815,6 +815,14 @@ public class ForgeEventFactory {
         post(new ChunkEvent.Load(chunk, newChunk));
     }
 
+    public static void onLevelUnload(Level level) {
+         post(new LevelEvent.Unload(level));
+    }
+
+    public static void onLevelLoad(Level level) {
+         post(new LevelEvent.Load(level));
+    }
+
     public static void onChunkDataSave(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {
         post(new ChunkDataEvent.Save(chunk, world, data));
     }

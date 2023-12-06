@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
++++ b/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
+@@ -10,7 +_,7 @@
+       return BehaviorBuilder.create((p_259197_) -> {
+          return p_259197_.group(p_259197_.absent(MemoryModuleType.ADMIRING_ITEM)).apply(p_259197_, (p_259512_) -> {
+             return (p_309208_, p_309209_, p_309210_) -> {
+-               if (!p_309209_.getOffhandItem().isEmpty() && !p_309209_.getOffhandItem().is(Items.SHIELD)) {
++               if (!p_309209_.getOffhandItem().isEmpty() && !p_309209_.getOffhandItem().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
+                   PiglinAi.stopHoldingOffHandItem(p_309209_, true);
+                   return true;
+                } else {

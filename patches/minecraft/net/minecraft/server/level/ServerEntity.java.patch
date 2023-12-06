@@ -21,7 +21,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EquipmentSlot;
  import net.minecraft.world.entity.LivingEntity;
-@@ -38,14 +_,13 @@
+@@ -38,6 +_,8 @@
  import net.minecraft.world.item.MapItem;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
  import net.minecraft.world.phys.Vec3;
@@ -30,14 +30,6 @@
  import org.slf4j.Logger;
  
  public class ServerEntity {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int TOLERANCE_LEVEL_ROTATION = 1;
--   private static final double TOLERANCE_LEVEL_POSITION = (double)7.6293945E-6F;
--   public static final int FORCED_POS_UPDATE_PERIOD = 60;
--   private static final int FORCED_TELEPORT_PERIOD = 400;
-    private final ServerLevel level;
-    private final Entity entity;
-    private final int updateInterval;
 @@ -63,8 +_,12 @@
     private boolean wasOnGround;
     @Nullable
@@ -52,17 +44,6 @@
        this.level = p_8528_;
        this.broadcast = p_8532_;
        this.entity = p_8529_;
-@@ -82,8 +_,8 @@
-       List<Entity> list = this.entity.getPassengers();
-       if (!list.equals(this.lastPassengers)) {
-          this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));
--         removedPassengers(list, this.lastPassengers).forEach((p_308940_) -> {
--            if (p_308940_ instanceof ServerPlayer serverplayer1) {
-+         removedPassengers(list, this.lastPassengers).forEach((p_296578_) -> {
-+            if (p_296578_ instanceof ServerPlayer serverplayer1) {
-                serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
-             }
- 
 @@ -95,10 +_,9 @@
        if ($$11 instanceof ItemFrame itemframe) {
           if (this.tickCount % 10 == 0) {

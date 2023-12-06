@@ -108,12 +108,10 @@
                 if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
                    return false;
                 }
-@@ -151,7 +_,23 @@
-       if (this.isInvulnerableTo(p_31715_)) {
+@@ -152,6 +_,22 @@
           return false;
        } else {
--         if (!this.isRemoved() && !this.level().isClientSide) {
-+         if (!this.isRemoved() && !this.level.isClientSide) {
+          if (!this.isRemoved() && !this.level().isClientSide) {
 +            // CraftBukkit start - fire break events
 +            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
 +            HangingBreakEvent event;

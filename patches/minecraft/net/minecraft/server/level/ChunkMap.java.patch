@@ -97,20 +97,6 @@
                 }
  
                 this.save(p_203002_);
-@@ -564,10 +_,10 @@
- 
-             return flag;
-          });
--      }).<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>thenApplyAsync((p_308939_) -> {
-+      }).<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>thenApplyAsync((p_269770_) -> {
-          this.level.getProfiler().incrementCounter("chunkLoad");
--         if (p_308939_.isPresent()) {
--            ChunkAccess chunkaccess = ChunkSerializer.read(this.level, this.poiManager, p_140418_, p_308939_.get());
-+         if (p_269770_.isPresent()) {
-+            ChunkAccess chunkaccess = ChunkSerializer.read(this.level, this.poiManager, p_140418_, p_269770_.get());
-             this.markPosition(p_140418_, chunkaccess.getStatus().getChunkType());
-             return Either.left(chunkaccess);
-          } else {
 @@ -679,7 +_,21 @@
  
     private static void postLoadProtoChunk(ServerLevel p_143065_, List<CompoundTag> p_143066_) {

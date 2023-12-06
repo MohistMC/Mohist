@@ -177,15 +177,6 @@
              }
           }
        }
-@@ -285,7 +_,7 @@
- 
-       for(int i = 0; i < listtag.size(); ++i) {
-          CompoundTag compoundtag = listtag.getCompound(i);
--         BeehiveBlockEntity.BeeData beehiveblockentity$beedata = new BeehiveBlockEntity.BeeData(compoundtag.getCompound("EntityData").copy(), compoundtag.getInt("TicksInHive"), compoundtag.getInt("MinOccupationTicks"));
-+         BeehiveBlockEntity.BeeData beehiveblockentity$beedata = new BeehiveBlockEntity.BeeData(compoundtag.getCompound("EntityData"), compoundtag.getInt("TicksInHive"), compoundtag.getInt("MinOccupationTicks"));
-          this.stored.add(beehiveblockentity$beedata);
-       }
- 
 @@ -294,6 +_,11 @@
           this.savedFlowerPos = NbtUtils.readBlockPos(p_155156_.getCompound("FlowerPos"));
        }

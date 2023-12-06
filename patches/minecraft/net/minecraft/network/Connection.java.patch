@@ -39,6 +39,14 @@
        if (this.delayedDisconnect != null) {
           this.disconnect(this.delayedDisconnect);
        }
+@@ -169,6 +_,7 @@
+          } else {
+             if (packetlistener.shouldHandleMessage(p_129488_)) {
+                try {
++                  packetLogger.recv(p_129488_);
+                   genericsFtw(p_129488_, packetlistener);
+                } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
+                } catch (RejectedExecutionException rejectedexecutionexception) {
 @@ -237,7 +_,8 @@
        this.runOnceConnected((p_296374_) -> {
           p_296374_.setClientboundProtocolAfterHandshake(p_297789_);

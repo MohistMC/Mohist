@@ -9,18 +9,6 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String TAG_UPGRADE_DATA = "UpgradeData";
     private static final String BLOCK_TICKS_TAG = "block_ticks";
-@@ -108,9 +_,9 @@
-                palettedcontainer = new PalettedContainer<>(Block.BLOCK_STATE_REGISTRY, Blocks.AIR.defaultBlockState(), PalettedContainer.Strategy.SECTION_STATES);
-             }
- 
--            PalettedContainerRO<Holder<Biome>> palettedcontainerro;
-+            PalettedContainer<Holder<Biome>> palettedcontainerro;
-             if (compoundtag.contains("biomes", 10)) {
--               palettedcontainerro = codec.parse(NbtOps.INSTANCE, compoundtag.getCompound("biomes")).promotePartial((p_188274_) -> {
-+               palettedcontainerro = (PalettedContainer<Holder<Biome>>) codec.parse(NbtOps.INSTANCE, compoundtag.getCompound("biomes")).promotePartial((p_188274_) -> {
-                   logErrors(p_188233_, k, p_188274_);
-                }).getOrThrow(false, LOGGER::error);
-             } else {
 @@ -159,6 +_,7 @@
              return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(p_258990_));
           }, p_188233_);

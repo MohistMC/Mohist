@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PipeBlock.java
++++ b/net/minecraft/world/level/block/PipeBlock.java
+@@ -34,7 +_,7 @@
+    }));
+    protected final VoxelShape[] shapeByIndex;
+ 
+-   protected PipeBlock(float p_55159_, BlockBehaviour.Properties p_55160_) {
++   public PipeBlock(float p_55159_, BlockBehaviour.Properties p_55160_) {
+       super(p_55160_);
+       this.shapeByIndex = this.makeShapes(p_55159_);
+    }

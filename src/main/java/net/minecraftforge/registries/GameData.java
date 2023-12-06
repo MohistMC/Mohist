@@ -165,9 +165,9 @@ public class GameData
     static RegistryBuilder<ItemDisplayContext> getItemDisplayContextRegistryBuilder()
     {
         return new RegistryBuilder<ItemDisplayContext>()
-                .setMaxID(128 * 2) /* 0 -> 127 gets positive ID, 128 -> 256 gets negative ID */.disableOverrides().disableSaving()
-                .setDefaultKey(new ResourceLocation("minecraft:none"))
-                .onAdd(ItemDisplayContext.ADD_CALLBACK);
+            .setMaxID(128 * 2) /* 0 -> 127 gets positive ID, 128 -> 256 gets negative ID */.disableOverrides().disableSaving()
+            .setDefaultKey(new ResourceLocation("minecraft:none"))
+            .onAdd(ItemDisplayContext.ADD_CALLBACK);
     }
 
     private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key)
@@ -646,8 +646,8 @@ public class GameData
                 if (!lst.isEmpty())
                 {
                     LOGGER.error(REGISTRIES, () -> LogMessageAdapter.adapt(sb -> {
-                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                        lst.stream().sorted().forEach(map -> sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       sb.append("Unidentified mapping from registry ").append(name).append('\n');
+                       lst.stream().sorted().forEach(map -> sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings(reg.getRegistryKey()).stream()
@@ -663,9 +663,9 @@ public class GameData
             if (!defaulted.isEmpty())
             {
                 String header = "Forge Mod Loader detected missing registry entries.\n\n" +
-                        "There are " + defaulted.size() + " missing entries in this save.\n" +
-                        "If you continue the missing entries will get removed.\n" +
-                        "A world backup will be automatically created in your saves directory.\n\n";
+                   "There are " + defaulted.size() + " missing entries in this save.\n" +
+                   "If you continue the missing entries will get removed.\n" +
+                   "A world backup will be automatically created in your saves directory.\n\n";
 
                 StringBuilder buf = new StringBuilder();
                 defaulted.asMap().forEach((name, entries) ->

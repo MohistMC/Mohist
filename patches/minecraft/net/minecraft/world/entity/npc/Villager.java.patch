@@ -27,7 +27,7 @@
  import org.slf4j.Logger;
  
  public class Villager extends AbstractVillager implements ReputationEventHandler, VillagerDataHolder {
-@@ -205,10 +_,25 @@
+@@ -205,9 +_,24 @@
        return this.assignProfessionWhenSpawned;
     }
  
@@ -45,16 +45,14 @@
     protected void customServerAiStep() {
        this.level().getProfiler().push("villagerBrain");
 -      this.getBrain().tick((ServerLevel)this.level(), this);
--      this.level().getProfiler().pop();
 +      // Mohist start
 +      if (OptVillager.getInstance().isLobotomized(this)) {
 +         this.getBrain().tick((ServerLevel)this.level(), this);
 +      }
 +      // Mohist end
-+      this.level.getProfiler().pop();
+       this.level().getProfiler().pop();
        if (this.assignProfessionWhenSpawned) {
           this.assignProfessionWhenSpawned = false;
-       }
 @@ -221,7 +_,7 @@
                 this.increaseProfessionLevelOnUpdate = false;
              }
@@ -174,7 +172,7 @@
           }).limit(5L).collect(Collectors.toList());
           if (list1.size() >= p_35400_) {
 -            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM).isEmpty()) {
-+            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isPresent()) {
++            if (!SpawnUtil.trySpawnMob(EntityType.IRON_GOLEM, MobSpawnType.MOB_SUMMONED, p_35398_, this.blockPosition(), 10, 8, 6, SpawnUtil.Strategy.LEGACY_IRON_GOLEM, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE).isEmpty()) {
                 list.forEach(GolemSensor::golemDetected);
              }
           }

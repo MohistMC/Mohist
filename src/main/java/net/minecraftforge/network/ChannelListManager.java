@@ -116,11 +116,13 @@ public class ChannelListManager {
         // Add the end of the data because the spec doesn't actually say null terminated, just null separated
         if (last < data.length)
             channels.add(new String(data, last, data.length - last, StandardCharsets.UTF_8));
+
         var changed = new HashSet<ResourceLocation>();
         for (var channel : channels) {
             // It also says nothing about the format of channels so ignore bad channels.
             if (channel.isEmpty())
                 continue;
+
             try {
                 changed.add(new ResourceLocation(channel));
             } catch (ResourceLocationException ex) {
@@ -128,7 +130,6 @@ public class ChannelListManager {
                 LOGGER.warn("Invalid channel name received: {}. Ignoring", channel);
             }
         }
-
 
         ForgeEventFactory.onChannelRegistrationChange(source.getConnection(), changeType, changed);
 

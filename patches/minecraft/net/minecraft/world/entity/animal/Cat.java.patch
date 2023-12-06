@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
+@@ -366,8 +_,8 @@
+             if (this.isOwnedBy(p_28153_)) {
+                if (!(item instanceof DyeItem)) {
+                   if (item.isEdible() && this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
++                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
+                      this.usePlayerItem(p_28153_, p_28154_, itemstack);
+-                     this.heal((float)item.getFoodProperties().getNutrition());
+                      return InteractionResult.CONSUME;
+                   }
+ 
 @@ -392,7 +_,7 @@
              }
           } else if (this.isFood(itemstack)) {

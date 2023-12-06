@@ -106,11 +106,10 @@
     }
  
     public boolean setText(SignText p_277733_, boolean p_277720_) {
-@@ -211,10 +_,33 @@
+@@ -211,6 +_,29 @@
        return flag;
     }
  
--   private static CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
 +   // CraftBukkit start
 +   @Override
 +   public void sendSystemMessage(Component ichatbasecomponent) {}
@@ -134,14 +133,9 @@
 +   public boolean shouldInformAdmins() {
 +      return false;
 +   }
-+   private CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
+    private static CommandSourceStack createCommandSourceStack(@Nullable Player p_279428_, Level p_279359_, BlockPos p_279430_) {
        String s = p_279428_ == null ? "Sign" : p_279428_.getName().getString();
        Component component = (Component)(p_279428_ == null ? Component.literal("Sign") : p_279428_.getDisplayName());
--      return new CommandSourceStack(CommandSource.NULL, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
-+      return new CommandSourceStack(this, Vec3.atCenterOf(p_279430_), Vec2.ZERO, (ServerLevel)p_279359_, 2, s, component, p_279359_.getServer(), p_279428_);
-    }
- 
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
 @@ -240,7 +_,7 @@
  
     private void markUpdated() {

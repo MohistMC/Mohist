@@ -49,6 +49,21 @@
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
+@@ -97,6 +_,14 @@
+       this.zo = p_38094_;
+    }
+ 
++   public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() {
++      return COLLISIONS;
++   }
++
++   public static void registerCollisionHandler(@Nullable net.minecraftforge.common.IMinecartCollisionHandler handler) {
++      COLLISIONS = handler;
++   }
++
+    public static AbstractMinecart createMinecart(ServerLevel p_310486_, double p_38121_, double p_38122_, double p_38123_, AbstractMinecart.Type p_38124_, ItemStack p_311363_, @Nullable Player p_310754_) {
+       Object object;
+       switch (p_38124_) {
 @@ -143,7 +_,7 @@
     }
  

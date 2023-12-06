@@ -9,12 +9,11 @@
  
  public class FishingRodItem extends Item implements Vanishable {
     public FishingRodItem(Item.Properties p_41285_) {
-@@ -20,20 +_,34 @@
-       ItemStack itemstack = p_41291_.getItemInHand(p_41292_);
+@@ -21,19 +_,33 @@
        if (p_41291_.fishing != null) {
           if (!p_41290_.isClientSide) {
-+            ItemStack original = itemstack.copy();
              int i = p_41291_.fishing.retrieve(itemstack);
++            ItemStack original = itemstack.copy();
              itemstack.hurtAndBreak(i, p_41291_, (p_41288_) -> {
                 p_41288_.broadcastBreakEvent(p_41292_);
              });

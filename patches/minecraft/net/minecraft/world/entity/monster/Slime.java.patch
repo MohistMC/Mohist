@@ -56,11 +56,10 @@
           for(int l = 0; l < k; ++l) {
              float f1 = ((float)(l % 2) - 0.5F) * f;
              float f2 = ((float)(l / 2) - 0.5F) * f;
-@@ -204,7 +_,14 @@
+@@ -204,6 +_,13 @@
                 slime.setInvulnerable(this.isInvulnerable());
                 slime.setSize(j, true);
                 slime.moveTo(this.getX() + (double)f1, this.getY() + 0.5D, this.getZ() + (double)f2, this.random.nextFloat() * 360.0F, 0.0F);
--               this.level().addFreshEntity(slime);
 +               // CraftBukkit start
 +               if (CraftEventFactory.callEntityTransformEvent(this, slime, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
 +                  super.remove(p_149847_);
@@ -68,10 +67,9 @@
 +               }
 +               // CraftBukkit end
 +               slime.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT);
-+               this.level.addFreshEntity(slime);
+                this.level().addFreshEntity(slime);
              }
           }
-       }
 @@ -337,6 +_,12 @@
     public EntityDimensions getDimensions(Pose p_33597_) {
        return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());

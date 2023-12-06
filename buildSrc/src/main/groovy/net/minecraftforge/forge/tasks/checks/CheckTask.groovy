@@ -36,7 +36,7 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
         final doFix = getMode().get() === CheckMode.FIX
         final Reporter reporter = new Reporter(doFix)
         check(reporter, doFix)
-        
+
         if (reporter.messages) {
             if (getMode().get() === CheckMode.CHECK) {
                 logger.error("Check task '{}' found errors:\n{}", name, reporter.messages.join('\n'))

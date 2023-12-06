@@ -88,7 +88,7 @@
 +               return InteractionResult.FAIL;
 +            }
 +            // CraftBukkit end
-+            if (!level.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
++            if (!serverlevel.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
 +            serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), level.getBlockState(blockpos.below())));
           }
  

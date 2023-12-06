@@ -165,15 +165,6 @@
        if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
           Pose pose;
           if (this.isFallFlying()) {
-@@ -388,7 +_,7 @@
-    }
- 
-    public int getPortalWaitTime() {
--      return Math.max(1, this.level().getGameRules().getInt(this.abilities.invulnerable ? GameRules.RULE_PLAYERS_NETHER_PORTAL_CREATIVE_DELAY : GameRules.RULE_PLAYERS_NETHER_PORTAL_DEFAULT_DELAY));
-+      return this.abilities.invulnerable ? 1 : 80;
-    }
- 
-    protected SoundEvent getSwimSound() {
 @@ -418,7 +_,7 @@
        return SoundSource.PLAYERS;
     }
@@ -183,7 +174,7 @@
        return 20;
     }
  
-@@ -457,11 +_,21 @@
+@@ -457,8 +_,14 @@
     public void rideTick() {
        if (!this.level().isClientSide && this.wantsToStopRiding() && this.isPassenger()) {
           this.stopRiding();
@@ -197,16 +188,9 @@
 +      }
 +      {
 +         // CraftBukkit end
-+         double d0 = this.getX();
-+         double d1 = this.getY();
-+         double d2 = this.getZ();
           super.rideTick();
           this.oBob = this.bob;
           this.bob = 0.0F;
-+         this.checkRidingStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
-       }
-    }
- 
 @@ -478,7 +_,8 @@
  
        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION)) {
@@ -217,15 +201,6 @@
           }
  
           if (this.foodData.needsFood() && this.tickCount % 10 == 0) {
-@@ -535,7 +_,7 @@
-          String s = p_36368_.getString("id");
-          EntityType.byString(s).filter((p_36280_) -> {
-             return p_36280_ == EntityType.PARROT;
--         }).ifPresent((p_309219_) -> {
-+         }).ifPresent((p_296855_) -> {
-             if (!Parrot.imitateNearbyMobs(this.level(), this)) {
-                this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), Parrot.getAmbient(this.level(), this.level().random), this.getSoundSource(), 1.0F, Parrot.getPitch(this.level().random));
-             }
 @@ -572,6 +_,7 @@
     }
  
@@ -881,16 +856,7 @@
        } else {
           boolean flag = block.isPossibleToRespawnInThis(blockstate);
           BlockState blockstate1 = p_36131_.getBlockState(p_36132_.above());
-@@ -1344,7 +_,7 @@
-    public void triggerRecipeCrafted(RecipeHolder<?> p_298309_, List<ItemStack> p_283609_) {
-    }
- 
--   public void awardRecipesByKey(List<ResourceLocation> p_312830_) {
-+   public void awardRecipesByKey(ResourceLocation[] p_36228_) {
-    }
- 
-    public int resetRecipes(Collection<RecipeHolder<?>> p_36263_) {
-@@ -1355,34 +_,44 @@
+@@ -1355,8 +_,10 @@
        super.jumpFromGround();
        this.awardStat(Stats.JUMP);
        if (this.isSprinting()) {
@@ -901,32 +867,9 @@
           this.causeFoodExhaustion(0.05F);
        }
  
-    }
- 
-    public void travel(Vec3 p_36359_) {
-+      double d0 = this.getX();
-+      double d1 = this.getY();
-+      double d2 = this.getZ();
-       if (this.isSwimming() && !this.isPassenger()) {
--         double d0 = this.getLookAngle().y;
--         double d1 = d0 < -0.2D ? 0.085D : 0.06D;
--         if (d0 <= 0.0D || this.jumping || !this.level().getBlockState(BlockPos.containing(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()) {
-+         double d3 = this.getLookAngle().y;
-+         double d4 = d3 < -0.2D ? 0.085D : 0.06D;
-+         if (d3 <= 0.0D || this.jumping || !this.level().getBlockState(BlockPos.containing(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()) {
-             Vec3 vec3 = this.getDeltaMovement();
--            this.setDeltaMovement(vec3.add(0.0D, (d0 - vec3.y) * d1, 0.0D));
-+            this.setDeltaMovement(vec3.add(0.0D, (d3 - vec3.y) * d4, 0.0D));
-          }
-       }
- 
-       if (this.abilities.flying && !this.isPassenger()) {
--         double d2 = this.getDeltaMovement().y;
-+         double d5 = this.getDeltaMovement().y;
-          super.travel(p_36359_);
+@@ -1378,7 +_,11 @@
           Vec3 vec31 = this.getDeltaMovement();
--         this.setDeltaMovement(vec31.x, d2 * 0.6D, vec31.z);
-+         this.setDeltaMovement(vec31.x, d5 * 0.6D, vec31.z);
+          this.setDeltaMovement(vec31.x, d2 * 0.6D, vec31.z);
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
@@ -937,93 +880,8 @@
        } else {
           super.travel(p_36359_);
        }
+@@ -1404,6 +_,7 @@
  
-+      this.checkMovementStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
-    }
- 
-    public void updateSwimming() {
-@@ -1402,8 +_,87 @@
-       return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED);
-    }
- 
-+   public void checkMovementStatistics(double p_36379_, double p_36380_, double p_36381_) {
-+      if (!this.isPassenger()) {
-+         if (this.isSwimming()) {
-+            int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-+            if (i > 0) {
-+               this.awardStat(Stats.SWIM_ONE_CM, i);
-+               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.SWIM);
-+               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
-+            }
-+         } else if (this.isEyeInFluid(FluidTags.WATER)) {
-+            int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-+            if (j > 0) {
-+               this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
-+               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK_UNDERWATER);
-+               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
-+            }
-+         } else if (this.isInWater()) {
-+            int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
-+            if (k > 0) {
-+               this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
-+               this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK_ON_WATER);
-+               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
-+            }
-+         } else if (this.onClimbable()) {
-+            if (p_36380_ > 0.0D) {
-+               this.awardStat(Stats.CLIMB_ONE_CM, (int)Math.round(p_36380_ * 100.0D));
-+            }
-+         } else if (this.onGround()) {
-+            int l = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
-+            if (l > 0) {
-+               if (this.isSprinting()) {
-+                  this.awardStat(Stats.SPRINT_ONE_CM, l);
-+                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.SPRINT);
-+                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
-+               } else if (this.isCrouching()) {
-+                  this.awardStat(Stats.CROUCH_ONE_CM, l);
-+                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.CROUCH);
-+                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+               } else {
-+                  this.awardStat(Stats.WALK_ONE_CM, l);
-+                  this.exhaustionReason(EntityExhaustionEvent.ExhaustionReason.WALK);
-+                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
-+               }
-+            }
-+         } else if (this.isFallFlying()) {
-+            int i1 = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-+            this.awardStat(Stats.AVIATE_ONE_CM, i1);
-+         } else {
-+            int j1 = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
-+            if (j1 > 25) {
-+               this.awardStat(Stats.FLY_ONE_CM, j1);
-+            }
-+         }
-+
-+      }
-+   }
-+
-+   private void checkRidingStatistics(double p_36388_, double p_36389_, double p_36390_) {
-+      if (this.isPassenger()) {
-+         int i = Math.round((float)Math.sqrt(p_36388_ * p_36388_ + p_36389_ * p_36389_ + p_36390_ * p_36390_) * 100.0F);
-+         if (i > 0) {
-+            Entity entity = this.getVehicle();
-+            if (entity instanceof AbstractMinecart) {
-+               this.awardStat(Stats.MINECART_ONE_CM, i);
-+            } else if (entity instanceof Boat) {
-+               this.awardStat(Stats.BOAT_ONE_CM, i);
-+            } else if (entity instanceof Pig) {
-+               this.awardStat(Stats.PIG_ONE_CM, i);
-+            } else if (entity instanceof AbstractHorse) {
-+               this.awardStat(Stats.HORSE_ONE_CM, i);
-+            } else if (entity instanceof Strider) {
-+               this.awardStat(Stats.STRIDER_ONE_CM, i);
-+            }
-+         }
-+      }
-+
-+   }
-+
     public boolean causeFallDamage(float p_150093_, float p_150094_, DamageSource p_150095_) {
        if (this.abilities.mayfly) {
 +         net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, p_150093_, p_150093_);
@@ -1067,6 +925,22 @@
     }
  
     protected void doWaterSplashEffect() {
+@@ -1445,13 +_,13 @@
+    protected void playStepSound(BlockPos p_282121_, BlockState p_282194_) {
+       if (this.isInWater()) {
+          this.waterSwimSound();
+-         this.playMuffledStepSound(p_282194_);
++         this.playMuffledStepSound(p_282194_, p_282121_);
+       } else {
+          BlockPos blockpos = this.getPrimaryStepSoundBlockPos(p_282121_);
+          if (!p_282121_.equals(blockpos)) {
+             BlockState blockstate = this.level().getBlockState(blockpos);
+             if (blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS)) {
+-               this.playCombinationStepSounds(blockstate, p_282194_);
++               this.playCombinationStepSounds(blockstate, p_282194_, blockpos, p_282121_);
+             } else {
+                super.playStepSound(blockpos, blockstate);
+             }
 @@ -1479,6 +_,10 @@
     }
  
@@ -1199,7 +1073,7 @@
  
     public abstract boolean isSpectator();
  
-@@ -1713,14 +_,18 @@
+@@ -1713,7 +_,11 @@
     }
  
     public Component getDisplayName() {
@@ -1210,15 +1084,6 @@
 +      mutablecomponent = mutablecomponent.append(PlayerTeam.formatNameForTeam(this.getTeam(), this.displayname));
 +      mutablecomponent = suffixes.stream().reduce(mutablecomponent, MutableComponent::append);
        return this.decorateDisplayNameComponent(mutablecomponent);
-    }
- 
-    private MutableComponent decorateDisplayNameComponent(MutableComponent p_36219_) {
-       String s = this.getGameProfile().getName();
--      return p_36219_.withStyle((p_309216_) -> {
--         return p_309216_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tell " + s + " ")).withHoverEvent(this.createHoverEvent()).withInsertion(s);
-+      return p_36219_.withStyle((p_296857_) -> {
-+         return p_296857_.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tell " + s + " ")).withHoverEvent(this.createHoverEvent()).withInsertion(s);
-       });
     }
  
 @@ -1786,7 +_,7 @@

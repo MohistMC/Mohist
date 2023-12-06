@@ -20,11 +20,10 @@
        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, Boolean.valueOf(false)).setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
  
-@@ -80,6 +_,17 @@
-          if (!list.isEmpty()) {
+@@ -81,6 +_,17 @@
              flag1 = true;
           }
-+
+ 
 +         // CraftBukkit start
 +         if (flag != flag1) {
 +            org.bukkit.block.Block block = CraftBlock.at(p_52433_, p_52434_);
@@ -35,6 +34,26 @@
 +            flag1 = eventRedstone.getNewCurrent() > 0;
 +         }
 +         // CraftBukkit end
- 
++
           if (flag1 && !flag) {
              BlockState blockstate = p_52435_.setValue(POWERED, Boolean.valueOf(true));
+             p_52433_.setBlock(p_52434_, blockstate, 3);
+@@ -141,7 +_,9 @@
+             return list.get(0).getCommandBlock().getSuccessCount();
+          }
+ 
+-         List<AbstractMinecart> list1 = this.getInteractingMinecartOfType(p_52455_, p_52456_, AbstractMinecart.class, EntitySelector.CONTAINER_ENTITY_SELECTOR);
++         List<AbstractMinecart> carts = this.getInteractingMinecartOfType(p_52455_, p_52456_, AbstractMinecart.class, e -> e.isAlive());
++         if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
++         List<AbstractMinecart> list1 = carts.stream().filter(EntitySelector.CONTAINER_ENTITY_SELECTOR).collect(java.util.stream.Collectors.toList());
+          if (!list1.isEmpty()) {
+             return AbstractContainerMenu.getRedstoneSignalFromContainer((Container)list1.get(0));
+          }
+@@ -276,6 +_,6 @@
+    }
+ 
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_52469_) {
+-      p_52469_.add(SHAPE, POWERED, WATERLOGGED);
++      p_52469_.add(getShapeProperty(), POWERED, WATERLOGGED);
+    }
+ }

@@ -10,6 +10,14 @@
     private final List<FluidState> stateCache;
     public static final VoxelShape STABLE_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final ImmutableList<Direction> POSSIBLE_FLOW_DIRECTIONS = ImmutableList.of(Direction.DOWN, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
+@@ -65,6 +_,7 @@
+       return CODEC;
+    }
+ 
++   @Deprecated  // Forge: Use the constructor that takes a supplier
+    public LiquidBlock(FlowingFluid p_54694_, BlockBehaviour.Properties p_54695_) {
+       super(p_54695_);
+       this.fluid = p_54694_;
 @@ -77,6 +_,19 @@
  
        this.stateCache.add(p_54694_.getFlowing(8, true));
@@ -21,12 +29,12 @@
 +   /**
 +    * @param p_54694_ A fluid supplier such as {@link net.minecraftforge.registries.RegistryObject<FlowingFluid>}
 +    */
-+   public LiquidBlock(java.util.function.Supplier<? extends FlowingFluid> fluid, BlockBehaviour.Properties p_54695_) {
++   public LiquidBlock(java.util.function.Supplier<? extends FlowingFluid> p_54694_, BlockBehaviour.Properties p_54695_) {
 +      super(p_54695_);
 +      this.fluid = null;
 +      this.stateCache = Lists.newArrayList();
 +      this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, Integer.valueOf(0)));
-+      this.supplier = fluid;
++      this.supplier = p_54694_;
     }
  
     public VoxelShape getCollisionShape(BlockState p_54760_, BlockGetter p_54761_, BlockPos p_54762_, CollisionContext p_54763_) {

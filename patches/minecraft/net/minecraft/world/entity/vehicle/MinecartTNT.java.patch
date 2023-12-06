@@ -13,17 +13,6 @@
  
     public MinecartTNT(EntityType<? extends MinecartTNT> p_38649_, Level p_38650_) {
        super(p_38649_, p_38650_);
-@@ -75,8 +_,8 @@
- 
-    public void destroy(DamageSource p_38664_) {
-       double d0 = this.getDeltaMovement().horizontalDistanceSqr();
--      if (!damageSourceIgnitesTnt(p_38664_) && !(d0 >= (double)0.01F)) {
--         this.destroy(this.getDropItem());
-+      if (!p_38664_.is(DamageTypeTags.IS_FIRE) && !p_38664_.is(DamageTypeTags.IS_EXPLOSION) && !(d0 >= (double)0.01F)) {
-+         super.destroy(p_38664_);
-       } else {
-          if (this.fuse < 0) {
-             this.primeFuse();
 @@ -90,7 +_,7 @@
        return Items.TNT_MINECART;
     }
@@ -50,17 +39,3 @@
           this.discard();
        }
  
-@@ -170,13 +_,5 @@
-    protected void addAdditionalSaveData(CompoundTag p_38687_) {
-       super.addAdditionalSaveData(p_38687_);
-       p_38687_.putInt("TNTFuse", this.fuse);
--   }
--
--   boolean shouldSourceDestroy(DamageSource p_310072_) {
--      return damageSourceIgnitesTnt(p_310072_);
--   }
--
--   private static boolean damageSourceIgnitesTnt(DamageSource p_311405_) {
--      return p_311405_.is(DamageTypeTags.IS_FIRE) || p_311405_.is(DamageTypeTags.IS_EXPLOSION);
-    }
- }

@@ -17,3 +17,22 @@
        private final String levelId;
        private final Map<LevelResource, Path> resources = Maps.newHashMap();
  
+@@ -483,6 +_,7 @@
+          CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
+          CompoundTag compoundtag1 = new CompoundTag();
+          compoundtag1.put("Data", compoundtag);
++         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
+          this.saveLevelData(compoundtag1);
+       }
+ 
+@@ -503,6 +_,10 @@
+ 
+       public Optional<Path> getIconFile() {
+          return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
++      }
++
++      public Path getWorldDir() {
++         return baseDir;
+       }
+ 
+       public void deleteLevel() throws IOException {

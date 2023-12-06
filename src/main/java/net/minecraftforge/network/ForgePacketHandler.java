@@ -95,6 +95,7 @@ public class ForgePacketHandler {
         var nctx = NetworkContext.get(ctx.getConnection());
         nctx.modList.clear();
         nctx.modList.putAll(list.mods());
+
         if (ctx.isClientSide()) {
             NetworkInitialization.PLAY.send(ModVersions.create(), ctx.getConnection());
             /*

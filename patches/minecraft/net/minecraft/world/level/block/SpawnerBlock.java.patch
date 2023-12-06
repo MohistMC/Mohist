@@ -52,34 +52,3 @@
  
     public RenderShape getRenderShape(BlockState p_56794_) {
        return RenderShape.MODEL;
-@@ -53,6 +_,29 @@
- 
-    public void appendHoverText(ItemStack p_255714_, @Nullable BlockGetter p_255801_, List<Component> p_255708_, TooltipFlag p_255667_) {
-       super.appendHoverText(p_255714_, p_255801_, p_255708_, p_255667_);
--      Spawner.appendHoverText(p_255714_, p_255708_, "SpawnData");
-+      Optional<Component> optional = this.getSpawnEntityDisplayName(p_255714_);
-+      if (optional.isPresent()) {
-+         p_255708_.add(optional.get());
-+      } else {
-+         p_255708_.add(CommonComponents.EMPTY);
-+         p_255708_.add(Component.translatable("block.minecraft.spawner.desc1").withStyle(ChatFormatting.GRAY));
-+         p_255708_.add(CommonComponents.space().append(Component.translatable("block.minecraft.spawner.desc2").withStyle(ChatFormatting.BLUE)));
-+      }
-+
-+   }
-+
-+   private Optional<Component> getSpawnEntityDisplayName(ItemStack p_256057_) {
-+      CompoundTag compoundtag = BlockItem.getBlockEntityData(p_256057_);
-+      if (compoundtag != null && compoundtag.contains("SpawnData", 10)) {
-+         String s = compoundtag.getCompound("SpawnData").getCompound("entity").getString("id");
-+         ResourceLocation resourcelocation = ResourceLocation.tryParse(s);
-+         if (resourcelocation != null) {
-+            return BuiltInRegistries.ENTITY_TYPE.getOptional(resourcelocation).map((p_255782_) -> {
-+               return Component.translatable(p_255782_.getDescriptionId()).withStyle(ChatFormatting.GRAY);
-+            });
-+         }
-+      }
-+
-+      return Optional.empty();
-    }
- }

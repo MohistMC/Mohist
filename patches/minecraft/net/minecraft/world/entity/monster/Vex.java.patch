@@ -1,11 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Vex.java
 +++ b/net/minecraft/world/entity/monster/Vex.java
-@@ -49,12 +_,13 @@
-    public static final int TICKS_PER_FLAP = Mth.ceil(3.9269907F);
-    protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(Vex.class, EntityDataSerializers.BYTE);
-    private static final int FLAG_IS_CHARGING = 1;
-+   private static final double RIDING_OFFSET = 0.4D;
-    @Nullable
+@@ -53,8 +_,8 @@
     Mob owner;
     @Nullable
     private BlockPos boundOrigin;

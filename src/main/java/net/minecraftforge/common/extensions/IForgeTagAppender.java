@@ -28,6 +28,7 @@ public interface IForgeTagAppender<T>
     default TagsProvider.TagAppender<T> addOptionalTag(TagKey<T> value) {
         return self().addOptionalTag(value.location());
     }
+
     @SuppressWarnings("unchecked")
     default TagsProvider.TagAppender<T> addOptionalTags(TagKey<T>... values) {
         TagsProvider.TagAppender<T> builder = self();

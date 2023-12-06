@@ -1,12 +1,13 @@
 --- a/net/minecraft/nbt/CompoundTag.java
 +++ b/net/minecraft/nbt/CompoundTag.java
-@@ -19,6 +_,9 @@
+@@ -19,6 +_,10 @@
  import net.minecraft.ReportedException;
  
  public class CompoundTag implements Tag {
 +   public static net.minecraftforge.common.util.INBTBuilder.Builder builder() {
 +      return (new net.minecraftforge.common.util.INBTBuilder(){}).nbt();
 +   }
++
     public static final Codec<CompoundTag> CODEC = Codec.PASSTHROUGH.comapFlatMap((p_308555_) -> {
        Tag tag = p_308555_.convert(NbtOps.INSTANCE).getValue();
        if (tag instanceof CompoundTag compoundtag) {

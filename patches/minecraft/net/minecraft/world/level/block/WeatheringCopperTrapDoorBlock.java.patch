@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/WeatheringCopperTrapDoorBlock.java
++++ b/net/minecraft/world/level/block/WeatheringCopperTrapDoorBlock.java
+@@ -19,7 +_,7 @@
+       return CODEC;
+    }
+ 
+-   public WeatheringCopperTrapDoorBlock(BlockSetType p_310902_, WeatheringCopper.WeatherState p_310376_, BlockBehaviour.Properties p_311219_) {
++   protected WeatheringCopperTrapDoorBlock(BlockSetType p_310902_, WeatheringCopper.WeatherState p_310376_, BlockBehaviour.Properties p_311219_) {
+       super(p_310902_, p_311219_);
+       this.weatherState = p_310376_;
+    }

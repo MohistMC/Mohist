@@ -9,12 +9,3 @@
     private final GameTestInfo testInfo;
     private boolean finalCheckAdded;
  
-@@ -846,7 +_,7 @@
-       return this.testInfo.getTick();
-    }
- 
--   public AABB getBounds() {
-+   private AABB getBounds() {
-       return this.testInfo.getStructureBounds();
-    }
- 

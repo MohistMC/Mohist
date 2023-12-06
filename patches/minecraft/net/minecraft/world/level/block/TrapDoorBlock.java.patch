@@ -28,11 +28,10 @@
              if (p_57547_.getValue(OPEN) != flag) {
                 p_57547_ = p_57547_.setValue(OPEN, Boolean.valueOf(flag));
                 this.playSound((Player)null, p_57548_, p_57549_, flag);
-@@ -177,5 +_,18 @@
+@@ -174,6 +_,19 @@
  
-    protected BlockSetType getType() {
-       return this.type;
-+   }   
+       return super.updateShape(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
+    }
 +
 +   //Forge Start
 +   @Override
@@ -43,7 +42,9 @@
 +         return down.getBlock().makesOpenTrapdoorAboveClimbable(down, world, downPos, state);
 +      }
 +      return false;
-    }
++   }
 +   //Forge End
 +
- }
+ 
+    protected BlockSetType getType() {
+       return this.type;

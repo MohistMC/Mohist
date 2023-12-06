@@ -408,7 +408,7 @@
                 BlockPos blockpos1 = this.getOnPos();
                 BlockState blockstate1 = this.level().getBlockState(blockpos1);
                 boolean flag1 = this.isStateClimbable(blockstate1);
-@@ -719,12 +_,12 @@
+@@ -719,16 +_,16 @@
                    this.setRemainingFireTicks(-this.getFireImmuneTicks());
                 }
  
@@ -423,6 +423,11 @@
                 this.setRemainingFireTicks(-this.getFireImmuneTicks());
              }
  
+-            this.level().getProfiler().pop();
++            this.level.getProfiler().pop();
+          }
+       }
+    }
 @@ -816,7 +_,7 @@
              return blockpos;
           } else {
@@ -469,6 +474,33 @@
     protected void checkInsideBlocks() {
        AABB aabb = this.getBoundingBox();
        BlockPos blockpos = BlockPos.containing(aabb.minX + 1.0E-7D, aabb.minY + 1.0E-7D, aabb.minZ + 1.0E-7D);
+@@ -1040,19 +_,20 @@
+       return !blockstate.is(BlockTags.INSIDE_STEP_SOUND_BLOCKS) && !blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS) ? p_278049_ : blockpos;
+    }
+ 
+-   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_) {
+-      SoundType soundtype = p_277472_.getSoundType();
++   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_, BlockPos primaryPos, BlockPos secondaryPos) {
++      SoundType soundtype = p_277472_.getSoundType(this.level, primaryPos, this);
++      SoundType soundtype1 = p_277630_.getSoundType(this.level, secondaryPos, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+-      this.playMuffledStepSound(p_277630_);
++      this.playMuffledStepSound(p_277630_, secondaryPos);
+    }
+ 
+-   protected void playMuffledStepSound(BlockState p_283110_) {
+-      SoundType soundtype = p_283110_.getSoundType();
++   protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
++      SoundType soundtype = p_283110_.getSoundType(this.level, pos, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.05F, soundtype.getPitch() * 0.8F);
+    }
+ 
+    protected void playStepSound(BlockPos p_20135_, BlockState p_20136_) {
+-      SoundType soundtype = p_20136_.getSoundType();
++      SoundType soundtype = p_20136_.getSoundType(this.level, p_20135_, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+    }
+ 
 @@ -1187,31 +_,38 @@
  
     public void updateSwimming() {
@@ -1170,28 +1202,24 @@
           }
        } else {
           return null;
-@@ -2487,24 +_,38 @@
+@@ -2487,8 +_,14 @@
  
     @Nullable
     protected PortalInfo findDimensionEntryPoint(ServerLevel p_19923_) {
--      boolean flag = this.level().dimension() == Level.END && p_19923_.dimension() == Level.OVERWORLD;
 +      // CraftBukkit start
 +      if (p_19923_ == null) {
 +         return null;
 +      }
-+      boolean flag = this.level.dimension() == Level.END && p_19923_.dimension() == Level.OVERWORLD;
+       boolean flag = this.level().dimension() == Level.END && p_19923_.dimension() == Level.OVERWORLD;
        boolean flag1 = p_19923_.dimension() == Level.END;
 +      // CraftBukkit end
 +
        if (!flag && !flag1) {
           boolean flag2 = p_19923_.dimension() == Level.NETHER;
--         if (this.level().dimension() != Level.NETHER && !flag2) {
-+         if (this.level.dimension() != Level.NETHER && !flag2) {
-             return null;
-          } else {
+          if (this.level().dimension() != Level.NETHER && !flag2) {
+@@ -2497,8 +_,16 @@
              WorldBorder worldborder = p_19923_.getWorldBorder();
--            double d0 = DimensionType.getTeleportationScale(this.level().dimensionType(), p_19923_.dimensionType());
-+            double d0 = DimensionType.getTeleportationScale(this.level.dimensionType(), p_19923_.dimensionType());
+             double d0 = DimensionType.getTeleportationScale(this.level().dimensionType(), p_19923_.dimensionType());
              BlockPos blockpos1 = worldborder.clampToBounds(this.getX() * d0, this.getY(), this.getZ() * d0);
 -            return this.getExitPortal(p_19923_, blockpos1, flag2, worldborder).map((p_258249_) -> {
 -               BlockState blockstate = this.level().getBlockState(this.portalEntrancePos);
@@ -1208,14 +1236,6 @@
                 Direction.Axis direction$axis;
                 Vec3 vec3;
                 if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_AXIS)) {
-                   direction$axis = blockstate.getValue(BlockStateProperties.HORIZONTAL_AXIS);
--                  BlockUtil.FoundRectangle blockutil$foundrectangle = BlockUtil.getLargestRectangleAround(this.portalEntrancePos, direction$axis, 21, Direction.Axis.Y, 21, (p_284700_) -> {
--                     return this.level().getBlockState(p_284700_) == blockstate;
-+                  BlockUtil.FoundRectangle blockutil$foundrectangle = BlockUtil.getLargestRectangleAround(this.portalEntrancePos, direction$axis, 21, Direction.Axis.Y, 21, (p_185959_) -> {
-+                     return this.level.getBlockState(p_185959_) == blockstate;
-                   });
-                   vec3 = this.getRelativePortalPosition(direction$axis, blockutil$foundrectangle);
-                } else {
 @@ -2512,7 +_,7 @@
                    vec3 = new Vec3(0.5D, 0.0D, 0.0D);
                 }
@@ -1243,7 +1263,7 @@
        }
     }
  
-@@ -2531,12 +_,31 @@
+@@ -2531,10 +_,29 @@
        return PortalShape.getRelativePosition(p_20046_, p_20045_, this.position(), this.getDimensions(this.getPose()));
     }
  
@@ -1271,11 +1291,8 @@
 +   }
 +
     public boolean canChangeDimensions() {
--      return !this.isPassenger() && !this.isVehicle();
-+      return true;
+       return !this.isPassenger() && !this.isVehicle();
     }
- 
-    public float getBlockExplosionResistance(Explosion p_19992_, BlockGetter p_19993_, BlockPos p_19994_, BlockState p_19995_, FluidState p_19996_, float p_19997_) {
 @@ -2596,6 +_,7 @@
        return this.stringUUID;
     }

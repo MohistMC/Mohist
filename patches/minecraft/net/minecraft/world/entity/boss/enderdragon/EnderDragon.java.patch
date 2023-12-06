@@ -40,7 +40,7 @@
        this.noCulling = true;
        this.phaseManager = new EnderDragonPhaseManager(this);
 +      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
-+      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY); // CraftBukkit
++      this.explosionSource = new Explosion(p_31097_, this, null, null, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE); // CraftBukkit
 +   }
 +
 +   @Override
@@ -79,7 +79,7 @@
           }
        }
  
-@@ -426,15 +_,22 @@
+@@ -426,6 +_,9 @@
        int j1 = Mth.floor(p_31140_.maxZ);
        boolean flag = false;
        boolean flag1 = false;
@@ -89,14 +89,13 @@
  
        for(int k1 = i; k1 <= l; ++k1) {
           for(int l1 = j; l1 <= i1; ++l1) {
-             for(int i2 = k; i2 <= j1; ++i2) {
+@@ -433,8 +_,12 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
--               BlockState blockstate = this.level().getBlockState(blockpos);
-+               BlockState blockstate = this.level.getBlockState(blockpos);
+                BlockState blockstate = this.level().getBlockState(blockpos);
                 if (!blockstate.isAir() && !blockstate.is(BlockTags.DRAGON_TRANSPARENT)) {
 -                  if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
 -                     flag1 = this.level().removeBlock(blockpos, false) || flag1;
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.level, blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.level(), blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
 +                     // CraftBukkit start - Add blocks to list rather than destroying them
 +                     // flag1 = this.level.removeBlock(blockposition, false) || flag1;
 +                     flag1 = true;
@@ -157,17 +156,15 @@
        if (flag1) {
           BlockPos blockpos1 = new BlockPos(i + this.random.nextInt(l - i + 1), j + this.random.nextInt(i1 - j + 1), k + this.random.nextInt(j1 - k + 1));
           this.level().levelEvent(2008, blockpos1, 0);
-@@ -522,20 +_,39 @@
-          i = 12000;
+@@ -523,19 +_,38 @@
        }
  
--      if (this.level() instanceof ServerLevel) {
+       if (this.level() instanceof ServerLevel) {
 -         if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && flag) {
 -            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.08F));
-+      if (this.level instanceof ServerLevel) {
 +         if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && true) {  // CraftBukkit - SPIGOT-2420: Already checked for the game rule when calculating the xp
 +            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.08F));
-+            ExperienceOrb.award((ServerLevel)this.level, this.position(), award);
++            ExperienceOrb.award((ServerLevel)this.level(), this.position(), award);
           }
  
           if (this.dragonDeathTime == 1 && !this.isSilent()) {
@@ -194,13 +191,12 @@
        }
  
        this.move(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
--      if (this.dragonDeathTime == 200 && this.level() instanceof ServerLevel) {
+       if (this.dragonDeathTime == 200 && this.level() instanceof ServerLevel) {
 -         if (flag) {
 -            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.2F));
-+      if (this.dragonDeathTime == 200 && this.level instanceof ServerLevel) {
 +         if (true) { // CraftBukkit - SPIGOT-2420: Already checked for the game rule when calculating the xp
 +            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.2F));
-+            ExperienceOrb.award((ServerLevel)this.level, this.position(), award);
++            ExperienceOrb.award((ServerLevel)this.level(), this.position(), award);
           }
  
           if (this.dragonFight != null) {

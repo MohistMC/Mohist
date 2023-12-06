@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/ThrownTrident.java
 +++ b/net/minecraft/world/entity/projectile/ThrownTrident.java
-@@ -10,7 +_,6 @@
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
--import net.minecraft.tags.EntityTypeTags;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -139,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));

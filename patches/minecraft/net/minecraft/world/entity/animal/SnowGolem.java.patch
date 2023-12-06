@@ -16,40 +16,30 @@
     private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
     private static final byte PUMPKIN_FLAG = 16;
     private static final float EYE_HEIGHT = 1.7F;
-@@ -87,12 +_,12 @@
- 
-    public void aiStep() {
-       super.aiStep();
--      if (!this.level().isClientSide) {
--         if (this.level().getBiome(this.blockPosition()).is(BiomeTags.SNOW_GOLEM_MELTS)) {
--            this.hurt(this.damageSources().onFire(), 1.0F);
-+      if (!this.level.isClientSide) {
-+         if (this.level.getBiome(this.blockPosition()).is(BiomeTags.SNOW_GOLEM_MELTS)) {
-+            this.hurt(this.damageSources().melting, 1.0F); // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
+@@ -92,7 +_,7 @@
+             this.hurt(this.damageSources().onFire(), 1.0F);
           }
  
 -         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this)) {
++         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
              return;
           }
  
-@@ -103,9 +_,13 @@
+@@ -103,8 +_,12 @@
              int k = Mth.floor(this.getY());
              int l = Mth.floor(this.getZ() + (double)((float)(i / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(j, k, l);
 -            if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
 -               this.level().setBlockAndUpdate(blockpos, blockstate);
--               this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
-+            if (this.level.isEmptyBlock(blockpos) && blockstate.canSurvive(this.level, blockpos)) {
++            if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this.level, blockpos, blockstate, this)) {
++               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
 +                  continue;
 +               }
 +               // CraftBukkit end
-+               this.level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
+                this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
              }
           }
-       }
 @@ -130,7 +_,7 @@
  
     protected InteractionResult mobInteract(Player p_29920_, InteractionHand p_29921_) {

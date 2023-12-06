@@ -303,7 +303,7 @@
        if (this.isOutsideBuildHeight(p_46732_)) {
           return Blocks.VOID_AIR.defaultBlockState();
        } else {
-@@ -408,39 +_,62 @@
+@@ -408,10 +_,26 @@
        (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
     }
  
@@ -330,20 +330,7 @@
        if (!this.pendingBlockEntityTickers.isEmpty()) {
           this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
           this.pendingBlockEntityTickers.clear();
-       }
- 
-       Iterator<TickingBlockEntity> iterator = this.blockEntityTickers.iterator();
--      boolean flag = this.tickRateManager().runsNormally();
- 
-       while(iterator.hasNext()) {
-          TickingBlockEntity tickingblockentity = iterator.next();
-          if (tickingblockentity.isRemoved()) {
-             iterator.remove();
--         } else if (flag && this.shouldTickBlocksAt(tickingblockentity.getPos())) {
-+         } else if (this.shouldTickBlocksAt(tickingblockentity.getPos())) {
-             tickingblockentity.tick();
-          }
-       }
+@@ -431,16 +_,24 @@
  
        this.tickingBlockEntities = false;
        profilerfiller.pop();

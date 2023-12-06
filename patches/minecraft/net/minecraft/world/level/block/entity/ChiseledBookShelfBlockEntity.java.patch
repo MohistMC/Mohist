@@ -46,17 +46,15 @@
        }
  
        return itemstack;
-@@ -93,9 +_,7 @@
+@@ -93,7 +_,7 @@
     public void setItem(int p_256610_, ItemStack p_255789_) {
        if (p_255789_.is(ItemTags.BOOKSHELF_BOOKS)) {
           this.items.set(p_256610_, p_255789_);
 -         this.updateState(p_256610_);
--      } else if (p_255789_.isEmpty()) {
--         this.removeItem(p_256610_, 1);
 +         if (level != null) this.updateState(p_256610_); // CraftBukkit - SPIGOT-7381: check for null world
+       } else if (p_255789_.isEmpty()) {
+          this.removeItem(p_256610_, 1);
        }
- 
-    }
 @@ -111,7 +_,7 @@
     }
  
@@ -66,15 +64,10 @@
     }
  
     public boolean stillValid(Player p_256481_) {
-@@ -119,10 +_,66 @@
+@@ -122,7 +_,63 @@
+       return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty() && p_255922_.getCount() == this.getMaxStackSize();
     }
  
-    public boolean canPlaceItem(int p_256567_, ItemStack p_255922_) {
--      return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty() && p_255922_.getCount() == this.getMaxStackSize();
--   }
-+      return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty();
-+   }
-+
 +   @Override
 +   public List<ItemStack> getContents() {
 +      return this.items;
@@ -106,7 +99,7 @@
 +      return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
 +   }
 +   // CraftBukkit end
- 
++
     public int getLastInteractedSlot() {
        return this.lastInteractedSlot;
 +   }

@@ -233,12 +233,10 @@
     protected boolean canBurn(BlockState p_53489_) {
        return this.getIgniteOdds(p_53489_) > 0;
     }
-@@ -285,9 +_,22 @@
-       p_53465_.add(AGE, NORTH, EAST, SOUTH, WEST, UP);
+@@ -286,8 +_,21 @@
     }
  
--   public void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
-+   private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
+    public void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
 +      if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
        this.igniteOdds.put(p_53445_, p_53446_);
        this.burnOdds.put(p_53445_, p_53447_);

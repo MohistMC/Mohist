@@ -1,13 +1,6 @@
 --- a/net/minecraft/world/level/block/TntBlock.java
 +++ b/net/minecraft/world/level/block/TntBlock.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.level.block;
- 
--import com.mojang.serialization.MapCodec;
- import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.sounds.SoundEvents;
-@@ -25,24 +_,25 @@
+@@ -25,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.BlockHitResult;
@@ -15,15 +8,8 @@
 +import org.bukkit.event.block.TNTPrimeEvent;
  
  public class TntBlock extends Block {
--   public static final MapCodec<TntBlock> CODEC = simpleCodec(TntBlock::new);
-    public static final BooleanProperty UNSTABLE = BlockStateProperties.UNSTABLE;
- 
--   public MapCodec<TntBlock> codec() {
--      return CODEC;
--   }
--
-    public TntBlock(BlockBehaviour.Properties p_57422_) {
-       super(p_57422_);
+    public static final MapCodec<TntBlock> CODEC = simpleCodec(TntBlock::new);
+@@ -39,10 +_,14 @@
        this.registerDefaultState(this.defaultBlockState().setValue(UNSTABLE, Boolean.valueOf(false)));
     }
  

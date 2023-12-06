@@ -341,27 +341,14 @@
        this.player.getRecipeBook().setBookSetting(p_9895_.getBookType(), p_9895_.isOpen(), p_9895_.isFiltering());
     }
  
-@@ -487,8 +_,9 @@
-       }
+@@ -488,6 +_,7 @@
  
        ParseResults<CommandSourceStack> parseresults = this.server.getCommands().getDispatcher().parse(stringreader, this.player.createCommandSourceStack());
--      this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((p_296597_) -> {
--         this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_296597_));
-+      this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
-+         if (p_238197_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
-+         this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_238197_));
+       this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((p_296597_) -> {
++         if (p_296597_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
+          this.send(new ClientboundCommandSuggestionsPacket(p_9847_.getId(), p_296597_));
        });
     }
- 
-@@ -679,8 +_,6 @@
-             jigsawblockentity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, p_9917_.getPool()));
-             jigsawblockentity.setFinalState(p_9917_.getFinalState());
-             jigsawblockentity.setJoint(p_9917_.getJoint());
--            jigsawblockentity.setPlacementPriority(p_9917_.getPlacementPriority());
--            jigsawblockentity.setSelectionPriority(p_9917_.getSelectionPriority());
-             jigsawblockentity.setChanged();
-             this.player.level().sendBlockUpdated(blockpos, blockstate, blockstate, 3);
-          }
 @@ -706,6 +_,14 @@
        int i = p_9905_.getItem();
        AbstractContainerMenu abstractcontainermenu = this.player.containerMenu;
@@ -947,12 +934,13 @@
        LOGGER.info("{} lost connection: {}", this.player.getName().getString(), p_9825_.getString());
        this.removePlayerFromWorld();
        super.onDisconnect(p_9825_);
-@@ -1111,10 +_,13 @@
+@@ -1111,10 +_,14 @@
  
     private void removePlayerFromWorld() {
        this.chatMessageChain.close();
 -      this.server.invalidateStatus();
 -      this.server.getPlayerList().broadcastSystemMessage(Component.translatable("multiplayer.player.left", this.player.getDisplayName()).withStyle(ChatFormatting.YELLOW), false);
++	  this.server.invalidateStatus();
        this.player.disconnect();
        this.server.getPlayerList().remove(this.player);
 +      String quitMessage = this.server.getPlayerList().quitMessage;
@@ -980,14 +968,7 @@
           if (this.player.getInventory().selected != p_9909_.getSlot() && this.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
              this.player.stopUsingItem();
           }
-@@ -1136,34 +_,43 @@
-          this.player.getInventory().selected = p_9909_.getSlot();
-          this.player.resetLastActionTime();
-       } else {
--         LOGGER.warn("{} tried to set an invalid carried item", (Object)this.player.getName().getString());
-+         LOGGER.warn("{} tried to set an invalid carried item", this.player.getName().getString());
-+         this.disconnect("Invalid hotbar selection (Hacking?)"); // CraftBukkit
-       }
+@@ -1141,12 +_,18 @@
     }
  
     public void handleChat(ServerboundChatPacket p_9841_) {
@@ -1003,41 +984,26 @@
           Optional<LastSeenMessages> optional = this.tryHandleChat(p_9841_.lastSeenMessages());
           if (optional.isPresent()) {
 -            this.server.submit(() -> {
--               PlayerChatMessage playerchatmessage;
--               try {
--                  playerchatmessage = this.getSignedMessage(p_9841_, optional.get());
--               } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
--                  this.handleMessageDecodeFailure(signedmessagechain$decodeexception);
--                  return;
--               }
 +            // this.server.submit(() -> { // CraftBukkit - async chat
-+            PlayerChatMessage playerchatmessage;
-+            try {
-+               playerchatmessage = this.getSignedMessage(p_9841_, optional.get());
-+            } catch (SignedMessageChain.DecodeException signedmessagechain$decodeexception) {
-+               this.handleMessageDecodeFailure(signedmessagechain$decodeexception);
-+               return;
-+            }
-+            CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+                PlayerChatMessage playerchatmessage;
+                try {
+                   playerchatmessage = this.getSignedMessage(p_9841_, optional.get());
+@@ -1156,12 +_,13 @@
+                }
  
--               CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+                CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
 -               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
--               this.chatMessageChain.append(completablefuture, (p_296589_) -> {
-+            Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
-+            this.chatMessageChain.append((p_296593_) -> {
-+               return completablefuture.thenAcceptAsync((p_296589_) -> {
-+                  if (component == null) return;
++               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
+                this.chatMessageChain.append(completablefuture, (p_296589_) -> {
++                     if (component == null) return;
                    PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
                    this.broadcastChatMessage(playerchatmessage1);
--               });
-+               }, this.server.chatExecutor); // CraftBukkit - async chat
-             });
+                });
+-            });
 +            // }); // CraftBukkit - async chat
           }
--
-       }
-    }
  
+       }
 @@ -1174,8 +_,14 @@
           Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.lastSeenMessages());
           if (optional.isPresent()) {

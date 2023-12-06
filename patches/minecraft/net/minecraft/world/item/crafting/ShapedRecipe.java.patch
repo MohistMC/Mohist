@@ -50,9 +50,9 @@
 +      recipe.setGroup(this.group);
 +      recipe.setCategory(CraftRecipe.getCategory(this.category()));
 +
-+      switch (this.height) {
++      switch (this.pattern.height()) {
 +         case 1:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a");
 +                  break;
@@ -65,7 +65,7 @@
 +            }
 +            break;
 +         case 2:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a", "b");
 +                  break;
@@ -78,7 +78,7 @@
 +            }
 +            break;
 +         case 3:
-+            switch (this.width) {
++            switch (this.pattern.width()) {
 +               case 1:
 +                  recipe.shape("a", "b", "c");
 +                  break;
@@ -92,7 +92,7 @@
 +            break;
 +      }
 +      char c = 'a';
-+      for (Ingredient list : this.recipeItems) {
++      for (Ingredient list : this.pattern.ingredients()) {
 +         RecipeChoice choice = CraftRecipe.toBukkit(list);
 +         if (choice != null) {
 +            recipe.setIngredient(c, choice);
@@ -106,6 +106,27 @@
 +
     public RecipeSerializer<?> getSerializer() {
        return RecipeSerializer.SHAPED_RECIPE;
+    }
+@@ -37,10 +_,20 @@
+       return this.group;
+    }
+ 
++   @Override
++   public int getRecipeWidth() {
++      return getWidth();
++   }
++
+    public CraftingBookCategory category() {
+       return this.category;
+    }
+ 
++   @Override
++   public int getRecipeHeight() {
++      return getHeight();
++   }
++
+    public ItemStack getResultItem(RegistryAccess p_266881_) {
+       return this.result;
     }
 @@ -78,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {

@@ -33,13 +33,13 @@
        this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
           public boolean mayPlace(ItemStack p_39607_) {
 -            return p_39607_.isDamageableItem() || p_39607_.is(Items.ENCHANTED_BOOK) || p_39607_.isEnchanted();
-+            return true; //Allow all items in the slot, not just repairable
++            return p_39607_.isDamageableItem() || p_39607_.is(Items.ENCHANTED_BOOK) || p_39607_.isEnchanted() || p_39607_.canGrindstoneRepair();
           }
        });
        this.addSlot(new Slot(this.repairSlots, 1, 49, 40) {
           public boolean mayPlace(ItemStack p_39616_) {
 -            return p_39616_.isDamageableItem() || p_39616_.is(Items.ENCHANTED_BOOK) || p_39616_.isEnchanted();
-+            return true; //Allow all items in the slot, not just repairable
++            return p_39616_.isDamageableItem() || p_39616_.is(Items.ENCHANTED_BOOK) || p_39616_.isEnchanted() || p_39616_.canGrindstoneRepair();
           }
        });
        this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {

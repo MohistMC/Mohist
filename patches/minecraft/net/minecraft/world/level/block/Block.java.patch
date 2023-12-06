@@ -91,6 +91,33 @@
     }
  
     public void setPlacedBy(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
+@@ -379,8 +_,10 @@
+ 
+    public void updateEntityAfterFallOn(BlockGetter p_49821_, Entity p_49822_) {
+       p_49822_.setDeltaMovement(p_49822_.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
++      p_49822_.setDeltaMovement(p_49822_.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public ItemStack getCloneItemStack(LevelReader p_312699_, BlockPos p_49824_, BlockState p_49825_) {
+       return new ItemStack(this);
+    }
+@@ -414,6 +_,7 @@
+    public void handlePrecipitation(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public boolean dropFromExplosion(Explosion p_49826_) {
+       return true;
+    }
+@@ -449,6 +_,7 @@
+       return p_152456_.setValue(p_152457_, p_152455_.getValue(p_152457_));
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
+    public SoundType getSoundType(BlockState p_49963_) {
+       return this.soundType;
+    }
 @@ -458,7 +_,7 @@
           this.item = Item.byBlock(this);
        }

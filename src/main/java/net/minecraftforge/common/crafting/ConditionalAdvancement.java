@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+
+import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.ResourceLocation;
@@ -68,17 +71,13 @@ public class ConditionalAdvancement {
             return this;
         }
 
-        public IResult build() {
-            return new Result(List.copyOf(advancements));
-        }
-
-        public JsonObject write() {
+        public JsonObject build() {
             var json = new JsonObject();
             var array = new JsonArray();
             json.add("advancements", array);
 
             for (var pair : advancements) {
-                var holder = pair.adv().serializeToJson();
+                JsonObject holder = (JsonObject)Util.getOrThrow(Advancement.CODEC.encodeStart(JsonOps.INSTANCE, pair.adv()), IllegalStateException::new);
                 if (holder.has(ICondition.DEFAULT_FIELD))
                     throw new IllegalStateException("Recipe already serialized conditions!");
                 ForgeHooks.writeCondition(pair.condition(), holder);
@@ -87,29 +86,7 @@ public class ConditionalAdvancement {
             }
             return json;
         }
-    }
-
-    public interface IResult {
-        JsonObject serializeToJson();
     }
 
     private record Pair(ICondition condition, Advancement adv) {}
-    private record Result(List<Pair> advancements) implements IResult {
-        @Override
-        public JsonObject serializeToJson() {
-            var json = new JsonObject();
-            var array = new JsonArray();
-            json.add("advancements", array);
-
-            for (var pair : advancements) {
-                var holder = pair.adv().serializeToJson();
-                if (holder.has(ICondition.DEFAULT_FIELD))
-                    throw new IllegalStateException("Recipe already serialized conditions!");
-                ForgeHooks.writeCondition(pair.condition(), holder);
-
-                array.add(holder);
-            }
-            return json;
-        }
-    }
 }

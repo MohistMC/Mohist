@@ -33,22 +33,6 @@
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
  import java.util.function.Predicate;
-@@ -35,7 +_,6 @@
- import javax.annotation.Nonnull;
- import javax.annotation.Nullable;
- import net.minecraft.CrashReport;
--import net.minecraft.CrashReportCategory;
- import net.minecraft.Util;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
-@@ -79,7 +_,6 @@
- import net.minecraft.util.valueproviders.UniformInt;
- import net.minecraft.world.DifficultyInstance;
- import net.minecraft.world.RandomSequences;
--import net.minecraft.world.TickRateManager;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
 @@ -96,7 +_,6 @@
  import net.minecraft.world.entity.animal.Animal;
  import net.minecraft.world.entity.animal.WaterAnimal;
@@ -195,23 +179,11 @@
     }
  
     /** @deprecated */
-@@ -262,35 +_,35 @@
-    public void tick(BooleanSupplier p_8794_) {
-       ProfilerFiller profilerfiller = this.getProfiler();
-       this.handlingTick = true;
--      TickRateManager tickratemanager = this.tickRateManager();
--      boolean flag = tickratemanager.runsNormally();
--      if (flag) {
--         profilerfiller.push("world border");
--         this.getWorldBorder().tick();
--         profilerfiller.popPush("weather");
--         this.advanceWeatherCycle();
--      }
+@@ -270,15 +_,22 @@
+          profilerfiller.popPush("weather");
+          this.advanceWeatherCycle();
+       }
 -
-+      profilerfiller.push("world border");
-+      this.getWorldBorder().tick();
-+      profilerfiller.popPush("weather");
-+      this.advanceWeatherCycle();
        int i = this.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE);
        if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
 +         // CraftBukkit start
@@ -234,93 +206,31 @@
           if (this.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE) && this.isRaining()) {
              this.resetWeatherCycle();
           }
-       }
+@@ -313,7 +_,7 @@
  
-       this.updateSkyBrightness();
--      if (flag) {
--         this.tickTime();
--      }
--
-+      this.tickTime();
-       profilerfiller.popPush("tickPending");
--      if (!this.isDebug() && flag) {
-+      if (!this.isDebug()) {
-          long k = this.getGameTime();
-          profilerfiller.push("blockTicks");
-          this.blockTicks.tick(k, 65536, this::tickBlock);
-@@ -300,52 +_,49 @@
-       }
- 
-       profilerfiller.popPush("raid");
--      if (flag) {
--         this.raids.tick();
--      }
--
-+      this.raids.tick();
-       profilerfiller.popPush("chunkSource");
-       this.getChunkSource().tick(p_8794_, true);
-       profilerfiller.popPush("blockEvents");
--      if (flag) {
--         this.runBlockEvents();
--      }
--
-+      this.runBlockEvents();
        this.handlingTick = false;
        profilerfiller.pop();
 -      boolean flag1 = !this.players.isEmpty() || !this.getForcedChunks().isEmpty();
--      if (flag1) {
-+      boolean flag = !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
-+      if (flag) {
++      boolean flag1 = !this.players.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
+       if (flag1) {
           this.resetEmptyTime();
        }
- 
--      if (flag1 || this.emptyTime++ < 300) {
-+      if (flag || this.emptyTime++ < 300) {
-          profilerfiller.push("entities");
--         if (this.dragonFight != null && flag) {
-+         if (this.dragonFight != null) {
-             profilerfiller.push("dragonFight");
-             this.dragonFight.tick();
+@@ -326,6 +_,7 @@
              profilerfiller.pop();
           }
  
--         this.entityTickList.forEach((p_308944_) -> {
--            if (!p_308944_.isRemoved()) {
--               if (this.shouldDiscardEntity(p_308944_)) {
--                  p_308944_.discard();
--               } else if (!tickratemanager.isEntityFrozen(p_308944_)) {
 +         org.spigotmc.ActivationRange.activateEntities(this); // Spigot
-+         this.entityTickList.forEach((p_184065_) -> {
-+            if (!p_184065_.isRemoved()) {
-+               if (this.shouldDiscardEntity(p_184065_)) {
-+                  p_184065_.discard();
-+               } else {
-                   profilerfiller.push("checkDespawn");
--                  p_308944_.checkDespawn();
-+                  p_184065_.checkDespawn();
-                   profilerfiller.pop();
--                  if (this.chunkSource.chunkMap.getDistanceManager().inEntityTickingRange(p_308944_.chunkPosition().toLong())) {
--                     Entity entity = p_308944_.getVehicle();
-+                  if (this.chunkSource.chunkMap.getDistanceManager().inEntityTickingRange(p_184065_.chunkPosition().toLong())) {
-+                     Entity entity = p_184065_.getVehicle();
-                      if (entity != null) {
--                        if (!entity.isRemoved() && entity.hasPassenger(p_308944_)) {
-+                        if (!entity.isRemoved() && entity.hasPassenger(p_184065_)) {
-                            return;
-                         }
- 
--                        p_308944_.stopRiding();
-+                        p_184065_.stopRiding();
+          this.entityTickList.forEach((p_308944_) -> {
+             if (!p_308944_.isRemoved()) {
+                if (this.shouldDiscardEntity(p_308944_)) {
+@@ -344,6 +_,7 @@
+                         p_308944_.stopRiding();
                       }
  
++                     if (p_308944_.isRemoved() || p_308944_ instanceof net.minecraftforge.entity.PartEntity) return;
                       profilerfiller.push("tick");
--                     this.guardEntityTick(this::tickNonPassenger, p_308944_);
-+                     if (!p_184065_.isRemoved() && !(p_184065_ instanceof net.minecraftforge.entity.PartEntity)) {
-+                        this.guardEntityTick(this::tickNonPassenger, p_184065_);
-+                     }
+                      this.guardEntityTick(this::tickNonPassenger, p_308944_);
                       profilerfiller.pop();
-                   }
-                }
 @@ -409,7 +_,7 @@
        int j = chunkpos.getMinBlockZ();
        ProfilerFiller profilerfiller = this.getProfiler();
@@ -340,7 +250,7 @@
                 }
              }
  
-@@ -428,16 +_,42 @@
+@@ -428,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
                 lightningbolt.setVisualOnly(flag1);
@@ -349,52 +259,7 @@
              }
           }
        }
- 
-       profilerfiller.popPush("iceandsnow");
--
--      for(int i1 = 0; i1 < p_8716_; ++i1) {
--         if (this.random.nextInt(48) == 0) {
--            this.tickPrecipitation(this.getBlockRandomPos(i, 0, j, 15));
-+      if (this.random.nextInt(16) == 0) {
-+         BlockPos blockpos1 = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, this.getBlockRandomPos(i, 0, j, 15));
-+         BlockPos blockpos2 = blockpos1.below();
-+         Biome biome = this.getBiome(blockpos1).value();
-+         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-+         if (biome.shouldFreeze(this, blockpos2)) {
-+            CraftEventFactory.handleBlockFormEvent(this, blockpos2, Blocks.ICE.defaultBlockState(), null); // CraftBukkit
-+         }
-+
-+         if (flag) {
-+            int i1 = this.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT);
-+            if (i1 > 0 && biome.shouldSnow(this, blockpos1)) {
-+               BlockState blockstate = this.getBlockState(blockpos1);
-+               if (blockstate.is(Blocks.SNOW)) {
-+                  int k = blockstate.getValue(SnowLayerBlock.LAYERS);
-+                  if (k < Math.min(i1, 8)) {
-+                     BlockState blockstate1 = blockstate.setValue(SnowLayerBlock.LAYERS, Integer.valueOf(k + 1));
-+                     Block.pushEntitiesUp(blockstate, blockstate1, this, blockpos1);
-+                     CraftEventFactory.handleBlockFormEvent(this, blockpos1, blockstate1, null); // CraftBukkit
-+                  }
-+               } else {
-+                  CraftEventFactory.handleBlockFormEvent(this, blockpos1, Blocks.SNOW.defaultBlockState(), null); // CraftBukkit
-+               }
-+            }
-+
-+            Biome.Precipitation biome$precipitation = biome.getPrecipitationAt(blockpos2);
-+            if (biome$precipitation != Biome.Precipitation.NONE) {
-+               BlockState blockstate3 = this.getBlockState(blockpos2);
-+               blockstate3.getBlock().handlePrecipitation(blockstate3, this, blockpos2, biome$precipitation);
-+            }
-          }
-       }
- 
-@@ -473,16 +_,16 @@
-       profilerfiller.pop();
-    }
- 
--   @VisibleForTesting
--   public void tickPrecipitation(BlockPos p_300602_) {
-+   private void tickIceAndSnow(boolean p_298297_, BlockPos p_300602_) {
+@@ -478,6 +_,7 @@
        BlockPos blockpos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, p_300602_);
        BlockPos blockpos1 = blockpos.below();
        Biome biome = this.getBiome(blockpos).value();
@@ -402,26 +267,7 @@
        if (biome.shouldFreeze(this, blockpos1)) {
           this.setBlockAndUpdate(blockpos1, Blocks.ICE.defaultBlockState());
        }
- 
--      if (this.isRaining()) {
-+      if (p_298297_) {
-          int i = this.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT);
-          if (i > 0 && biome.shouldSnow(this, blockpos)) {
-             BlockState blockstate = this.getBlockState(blockpos);
-@@ -524,9 +_,9 @@
-       if (optional.isPresent()) {
-          return optional.get();
-       } else {
--         AABB aabb = AABB.encapsulatingFullBlocks(blockpos, new BlockPos(blockpos.atY(this.getMaxBuildHeight()))).inflate(3.0D);
--         List<LivingEntity> list = this.getEntitiesOfClass(LivingEntity.class, aabb, (p_308941_) -> {
--            return p_308941_ != null && p_308941_.isAlive() && this.canSeeSky(p_308941_.blockPosition());
-+         AABB aabb = (new AABB(blockpos, new BlockPos(blockpos.getX(), this.getMaxBuildHeight(), blockpos.getZ()))).inflate(3.0D);
-+         List<LivingEntity> list = this.getEntitiesOfClass(LivingEntity.class, aabb, (p_296579_) -> {
-+            return p_296579_ != null && p_296579_.isAlive() && this.canSeeSky(p_296579_.blockPosition());
-          });
-          if (!list.isEmpty()) {
-             return list.get(this.random.nextInt(list.size())).blockPosition();
-@@ -650,25 +_,39 @@
+@@ -650,25 +_,40 @@
           this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.THUNDER_LEVEL_CHANGE, this.thunderLevel), this.dimension());
        }
  
@@ -446,10 +292,9 @@
  
     }
  
--   @VisibleForTesting
--   public void resetWeatherCycle() {
+    @VisibleForTesting
+    public void resetWeatherCycle() {
 -      this.serverLevelData.setRainTime(0);
-+   private void resetWeatherCycle() {
        this.serverLevelData.setRaining(false);
 -      this.serverLevelData.setThunderTime(0);
 +      // If we stop due to everyone sleeping we should reset the weather duration to some other random value.
@@ -691,14 +536,10 @@
        this.neighborUpdater.updateNeighborsAtExceptFromFacing(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -986,15 +_,20 @@
-       return this.chunkSource;
-    }
+@@ -988,6 +_,11 @@
  
--   public Explosion explode(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_, ParticleOptions p_310962_, ParticleOptions p_310322_, SoundEvent p_309795_) {
--      Explosion explosion = this.explode(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_309795_);
-+   public Explosion explode(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_) {
-+      Explosion explosion = this.explode(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false);
+    public Explosion explode(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_, ParticleOptions p_310962_, ParticleOptions p_310322_, SoundEvent p_309795_) {
+       Explosion explosion = this.explode(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false, p_310962_, p_310322_, p_309795_);
 +      // CraftBukkit start
 +      if (explosion.wasCanceled) {
 +         return explosion;
@@ -707,14 +548,6 @@
        if (!explosion.interactsWithBlocks()) {
           explosion.clearToBlow();
        }
- 
-       for(ServerPlayer serverplayer : this.players) {
-          if (serverplayer.distanceToSqr(p_256067_, p_256370_, p_256153_) < 4096.0D) {
--            serverplayer.connection.send(new ClientboundExplodePacket(p_256067_, p_256370_, p_256153_, p_256045_, explosion.getToBlow(), explosion.getHitPlayers().get(serverplayer), explosion.getBlockInteraction(), explosion.getSmallExplosionParticles(), explosion.getLargeExplosionParticles(), explosion.getExplosionSound()));
-+            serverplayer.connection.send(new ClientboundExplodePacket(p_256067_, p_256370_, p_256153_, p_256045_, explosion.getToBlow(), explosion.getHitPlayers().get(serverplayer)));
-          }
-       }
- 
 @@ -1062,6 +_,21 @@
        return i;
     }
@@ -737,17 +570,6 @@
     public <T extends ParticleOptions> boolean sendParticles(ServerPlayer p_8625_, T p_8626_, boolean p_8627_, double p_8628_, double p_8629_, double p_8630_, int p_8631_, double p_8632_, double p_8633_, double p_8634_, double p_8635_) {
        Packet<?> packet = new ClientboundLevelParticlesPacket(p_8626_, p_8627_, p_8628_, p_8629_, p_8630_, (float)p_8632_, (float)p_8633_, (float)p_8634_, (float)p_8635_, p_8631_);
        return this.sendParticles(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
-@@ -1123,10 +_,6 @@
-       return this.server.getRecipeManager();
-    }
- 
--   public TickRateManager tickRateManager() {
--      return this.server.tickRateManager();
--   }
--
-    public boolean noSave() {
-       return this.noSave;
-    }
 @@ -1141,6 +_,7 @@
     }
  
@@ -827,18 +649,8 @@
     }
  
     public LevelEntityGetter<Entity> getEntities() {
-@@ -1465,16 +_,9 @@
-       return this.randomSequences;
-    }
+@@ -1475,6 +_,7 @@
  
--   public CrashReportCategory fillReportDetails(CrashReport p_311549_) {
--      CrashReportCategory crashreportcategory = super.fillReportDetails(p_311549_);
--      crashreportcategory.setDetail("Loaded entity count", () -> {
--         return String.valueOf(this.entityManager.count());
--      });
--      return crashreportcategory;
--   }
--
     final class EntityCallbacks implements LevelCallback<Entity> {
        public void onCreated(Entity p_143355_) {
 +         p_143355_.inWorld = true; // CraftBukkit - Mark entity as in world

@@ -17,33 +17,6 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
-@@ -114,10 +_,22 @@
-       }
- 
-       if (!this.chunksToUpdateFutures.isEmpty()) {
--         this.chunksToUpdateFutures.forEach((p_183908_) -> {
--            p_183908_.updateFutures(p_140806_, this.mainThreadExecutor);
--         });
--         this.chunksToUpdateFutures.clear();
-+         // CraftBukkit start
-+         // Iterate pending chunk updates with protection against concurrent modification exceptions
-+         java.util.Iterator<ChunkHolder> iter = this.chunksToUpdateFutures.iterator();
-+         int expectedSize = this.chunksToUpdateFutures.size();
-+         do {
-+            ChunkHolder playerchunk = iter.next();
-+            iter.remove();
-+            expectedSize--;
-+            playerchunk.updateFutures(p_140806_, this.mainThreadExecutor);
-+            // Reset iterator if set was modified using add()
-+            if (this.chunksToUpdateFutures.size() != expectedSize) {
-+               expectedSize = this.chunksToUpdateFutures.size();
-+               iter = this.chunksToUpdateFutures.iterator();
-+            }
-+         } while (iter.hasNext());
-+         // CraftBukkit end
-          return true;
-       } else {
-          if (!this.ticketsToRelease.isEmpty()) {
 @@ -159,6 +_,25 @@
           this.ticketTracker.update(p_140785_, p_140786_.getTicketLevel(), true);
        }

@@ -24,3 +24,14 @@
     T value();
  
     boolean isBound();
+@@ -193,6 +_,10 @@
+ 
+       public Stream<TagKey<T>> tags() {
+          return this.tags.stream();
++      }
++
++      public Type getType() {
++         return this.type;
+       }
+ 
+       public String toString() {

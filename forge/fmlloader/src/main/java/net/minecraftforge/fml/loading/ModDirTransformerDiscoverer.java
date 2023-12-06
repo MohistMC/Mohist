@@ -10,6 +10,8 @@ import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.nio.file.Files;
@@ -17,7 +19,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
 
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
     private static final Logger LOGGER = LogUtils.getLogger();

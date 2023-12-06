@@ -1,20 +1,6 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -23,7 +_,6 @@
- import net.minecraft.network.chat.numbers.NumberFormatTypes;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
--import net.minecraft.server.Bootstrap;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.stats.StatType;
-@@ -118,45 +_,94 @@
- public class BuiltInRegistries {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Map<ResourceLocation, Supplier<?>> LOADERS = Maps.newLinkedHashMap();
--   private static final WritableRegistry<WritableRegistry<?>> WRITABLE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(Registries.ROOT_REGISTRY_NAME), Lifecycle.stable());
-+   public static final ResourceLocation ROOT_REGISTRY_NAME = new ResourceLocation("root");
-+   private static final WritableRegistry<WritableRegistry<?>> WRITABLE_REGISTRY = new MappedRegistry<>(ResourceKey.createRegistryKey(ROOT_REGISTRY_NAME), Lifecycle.stable());
+@@ -122,41 +_,89 @@
     public static final DefaultedRegistry<GameEvent> GAME_EVENT = registerDefaultedWithIntrusiveHolders(Registries.GAME_EVENT, "step", (p_260052_) -> {
        return GameEvent.STEP;
     });
@@ -274,26 +260,6 @@
        return TreeDecoratorType.LEAVE_VINE;
     });
     public static final Registry<FeatureSizeType<?>> FEATURE_SIZE_TYPE = registerSimple(Registries.FEATURE_SIZE_TYPE, (p_259370_) -> {
-@@ -277,7 +_,7 @@
-    public static final Registry<Codec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = registerSimple(Registries.MATERIAL_CONDITION, (RegistryBootstrap)SurfaceRules.ConditionSource::bootstrap);
-    public static final Registry<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = registerSimple(Registries.MATERIAL_RULE, (RegistryBootstrap)SurfaceRules.RuleSource::bootstrap);
-    public static final Registry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = registerSimple(Registries.DENSITY_FUNCTION_TYPE, (RegistryBootstrap)DensityFunctions::bootstrap);
--   public static final Registry<MapCodec<? extends Block>> BLOCK_TYPE = registerSimple(Registries.BLOCK_TYPE, (RegistryBootstrap)BlockTypes::bootstrap);
-+   public static final Registry<MapCodec<? extends Block>> BLOCK_TYPE = registerSimple(Registries.BLOCK_TYPE, (RegistryBootstrap) BlockTypes::bootstrap);
-    public static final Registry<StructureProcessorType<?>> STRUCTURE_PROCESSOR = registerSimple(Registries.STRUCTURE_PROCESSOR, (p_259305_) -> {
-       return StructureProcessorType.BLOCK_IGNORE;
-    });
-@@ -293,8 +_,8 @@
-    public static final Registry<Instrument> INSTRUMENT = registerSimple(Registries.INSTRUMENT, Instruments::bootstrap);
-    public static final Registry<String> DECORATED_POT_PATTERNS = registerSimple(Registries.DECORATED_POT_PATTERNS, DecoratedPotPatterns::bootstrap);
-    public static final Registry<CreativeModeTab> CREATIVE_MODE_TAB = registerSimple(Registries.CREATIVE_MODE_TAB, CreativeModeTabs::bootstrap);
--   public static final Registry<CriterionTrigger<?>> TRIGGER_TYPES = registerSimple(Registries.TRIGGER_TYPE, (RegistryBootstrap)CriteriaTriggers::bootstrap);
--   public static final Registry<NumberFormatType<?>> NUMBER_FORMAT_TYPE = registerSimple(Registries.NUMBER_FORMAT_TYPE, (RegistryBootstrap)NumberFormatTypes::bootstrap);
-+   public static final Registry<CriterionTrigger<?>> TRIGGER_TYPES = registerSimple(Registries.TRIGGER_TYPE, (RegistryBootstrap) CriteriaTriggers::bootstrap);
-+   public static final Registry<NumberFormatType<?>> NUMBER_FORMAT_TYPE = registerSimple(Registries.NUMBER_FORMAT_TYPE, (RegistryBootstrap) NumberFormatTypes::bootstrap);
-    public static final Registry<? extends Registry<?>> REGISTRY = WRITABLE_REGISTRY;
- 
-    private static <T> Registry<T> registerSimple(ResourceKey<? extends Registry<T>> p_260095_, BuiltInRegistries.RegistryBootstrap<T> p_259057_) {
 @@ -305,10 +_,18 @@
        return internalRegister(p_297531_, new MappedRegistry<>(p_297531_, Lifecycle.stable(), true), p_298446_, Lifecycle.stable());
     }
@@ -313,7 +279,7 @@
     private static <T> DefaultedRegistry<T> registerDefaultedWithIntrusiveHolders(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
        return registerDefaultedWithIntrusiveHolders(p_259296_, p_259101_, Lifecycle.stable(), p_259485_);
     }
-@@ -317,18 +_,24 @@
+@@ -317,10 +_,19 @@
        return internalRegister(p_259121_, new MappedRegistry<>(p_259121_, p_259977_, false), p_259874_, p_259977_);
     }
  
@@ -333,14 +299,6 @@
     private static <T> DefaultedRegistry<T> registerDefaultedWithIntrusiveHolders(ResourceKey<? extends Registry<T>> p_260010_, String p_260220_, Lifecycle p_260139_, BuiltInRegistries.RegistryBootstrap<T> p_260185_) {
        return internalRegister(p_260010_, new DefaultedMappedRegistry<>(p_260220_, p_260010_, p_260139_, true), p_260185_, p_260139_);
     }
- 
-    private static <T, R extends WritableRegistry<T>> R internalRegister(ResourceKey<? extends Registry<T>> p_259230_, R p_260327_, BuiltInRegistries.RegistryBootstrap<T> p_259210_, Lifecycle p_259258_) {
--      Bootstrap.checkBootstrapCalled(() -> {
--         return "registry " + p_259230_;
--      });
-       ResourceLocation resourcelocation = p_259230_.location();
-       LOADERS.put(resourcelocation, () -> {
-          return p_259210_.run(p_260327_);
 @@ -369,7 +_,7 @@
  
           if (p_259410_ instanceof DefaultedRegistry) {

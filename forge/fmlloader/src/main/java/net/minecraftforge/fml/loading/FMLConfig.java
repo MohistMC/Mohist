@@ -12,13 +12,15 @@ import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
-import org.slf4j.Logger;
 
 public class FMLConfig
 {

@@ -8,7 +8,7 @@
  
  public class StemBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<StemBlock> CODEC = RecordCodecBuilder.mapCodec((p_311216_) -> {
-@@ -65,13 +_,14 @@
+@@ -65,27 +_,32 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -25,7 +25,9 @@
              } else {
                 Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
                 BlockPos blockpos = p_222540_.relative(direction);
-@@ -80,12 +_,15 @@
+                BlockState blockstate = p_222539_.getBlockState(blockpos.below());
++               // Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
+                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
                    Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
                    Optional<Block> optional = registry.getOptional(this.fruit);
                    Optional<Block> optional1 = registry.getOptional(this.attachedStem);

@@ -10,7 +10,7 @@
  import org.joml.Vector3f;
  
  public class Cow extends Animal {
-@@ -76,10 +_,18 @@
+@@ -76,8 +_,16 @@
     public InteractionResult mobInteract(Player p_28298_, InteractionHand p_28299_) {
        ItemStack itemstack = p_28298_.getItemInHand(p_28299_);
        if (itemstack.is(Items.BUCKET) && !this.isBaby()) {
@@ -26,8 +26,5 @@
 -         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, Items.MILK_BUCKET.getDefaultInstance());
 +         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_28298_, CraftItemStack.asNMSCopy(event.getItemStack())); // CraftBukkit
           p_28298_.setItemInHand(p_28299_, itemstack1);
--         return InteractionResult.sidedSuccess(this.level().isClientSide);
-+         return InteractionResult.sidedSuccess(this.level.isClientSide);
+          return InteractionResult.sidedSuccess(this.level().isClientSide);
        } else {
-          return super.mobInteract(p_28298_, p_28299_);
-       }

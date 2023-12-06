@@ -138,3 +138,27 @@
           return list;
        }
     }
+@@ -221,5 +_,23 @@
+       });
+ 
+       Collection<ItemStack> getItems();
++   }
++
++   @Override
++   public String toString() {
++       var buf = new StringBuilder();
++       buf.append("Ingredient[");
++       for (int x = 0; x < values.length; x++) {
++           if (x != 0)
++               buf.append(", ");
++           if (values[x] instanceof TagValue tag)
++               buf.append('#').append(tag.tag().location());
++           else if (values[x] instanceof ItemValue item)
++               buf.append(item.item());
++           else
++               buf.append(values[x]);
++       }
++       buf.append(']');
++       return buf.toString();
+    }
+ }

@@ -131,7 +131,7 @@
              }
  
           }
-@@ -214,18 +_,113 @@
+@@ -214,18 +_,118 @@
        thread.start();
     }
  
@@ -241,6 +241,11 @@
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
     }
++
++   @Nullable
++   public GameProfile getAuthenticatedProfile() {
++       return this.authenticatedProfile;
++   }
 +
 +   private static final java.util.concurrent.ExecutorService authenticatorPool = java.util.concurrent.Executors.newCachedThreadPool(new com.google.common.util.concurrent.ThreadFactoryBuilder().setNameFormat("User Authenticator #%d").setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER)).build()); // Paper - Cache authenticator threads
  

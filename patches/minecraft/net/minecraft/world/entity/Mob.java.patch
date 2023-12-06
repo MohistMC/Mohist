@@ -29,7 +29,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -72,6 +_,13 @@
+@@ -72,6 +_,14 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
@@ -40,6 +40,7 @@
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
++import org.jetbrains.annotations.VisibleForTesting;
  
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
@@ -396,7 +397,7 @@
        }
  
        boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
-@@ -1426,16 +_,25 @@
+@@ -1426,15 +_,25 @@
        return false;
     }
  
@@ -415,15 +416,14 @@
  
     }
  
--   @VisibleForTesting
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
 +   }
 +
+    @VisibleForTesting
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
-          return true;
 @@ -1449,6 +_,7 @@
  
     protected void removeAfterChangingDimensions() {

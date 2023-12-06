@@ -30,24 +30,6 @@
        }
  
        public Optional<MenuProvider> acceptSingle(ChestBlockEntity p_51602_) {
-@@ -226,8 +_,15 @@
-    }
- 
-    public void onRemove(BlockState p_51538_, Level p_51539_, BlockPos p_51540_, BlockState p_51541_, boolean p_51542_) {
--      Containers.dropContentsOnDestroy(p_51538_, p_51541_, p_51539_, p_51540_);
--      super.onRemove(p_51538_, p_51539_, p_51540_, p_51541_, p_51542_);
-+      if (!p_51538_.is(p_51541_.getBlock())) {
-+         BlockEntity blockentity = p_51539_.getBlockEntity(p_51540_);
-+         if (blockentity instanceof Container) {
-+            Containers.dropContents(p_51539_, p_51540_, (Container)blockentity);
-+            p_51539_.updateNeighbourForOutputSignal(p_51540_, this);
-+         }
-+
-+         super.onRemove(p_51538_, p_51539_, p_51540_, p_51541_, p_51542_);
-+      }
-    }
- 
-    public InteractionResult use(BlockState p_51531_, Level p_51532_, BlockPos p_51533_, Player p_51534_, InteractionHand p_51535_, BlockHitResult p_51536_) {
 @@ -276,6 +_,13 @@
        return this.combine(p_51574_, p_51575_, p_51576_, false).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider)null);
     }
