@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -3,10 +_,8 @@
- import com.mojang.datafixers.DataFixUtils;
- import com.mojang.serialization.MapCodec;
- import com.mojang.serialization.codecs.RecordCodecBuilder;
--import java.util.Optional;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
--import net.minecraft.core.Registry;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.server.level.ServerLevel;
 @@ -25,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
@@ -19,7 +8,7 @@
  
  public class StemBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<StemBlock> CODEC = RecordCodecBuilder.mapCodec((p_311216_) -> {
-@@ -65,27 +_,28 @@
+@@ -65,13 +_,14 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -36,21 +25,19 @@
              } else {
                 Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
                 BlockPos blockpos = p_222540_.relative(direction);
-                BlockState blockstate = p_222539_.getBlockState(blockpos.below());
--               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
--                  Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
--                  Optional<Block> optional = registry.getOptional(this.fruit);
--                  Optional<Block> optional1 = registry.getOptional(this.attachedStem);
+@@ -80,12 +_,15 @@
+                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
+                   Optional<Block> optional = registry.getOptional(this.fruit);
+                   Optional<Block> optional1 = registry.getOptional(this.attachedStem);
 -                  if (optional.isPresent() && optional1.isPresent()) {
 -                     p_222539_.setBlockAndUpdate(blockpos, optional.get().defaultBlockState());
 -                     p_222539_.setBlockAndUpdate(p_222540_, optional1.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
-+               if (p_222539_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit) || blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
 +                  // CraftBukkit start
-+                  if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, this.fruit.defaultBlockState())) {
++                  if (!CraftEventFactory.handleBlockGrowEvent(p_222539_, blockpos, optional.get().defaultBlockState())) {
 +                     return;
                    }
 +                  // CraftBukkit end
-+                  p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
++                  p_222539_.setBlockAndUpdate(p_222540_, optional.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);

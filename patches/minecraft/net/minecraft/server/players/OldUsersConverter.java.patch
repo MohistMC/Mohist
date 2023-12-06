@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/players/OldUsersConverter.java
 +++ b/net/minecraft/server/players/OldUsersConverter.java
-@@ -20,6 +_,8 @@
+@@ -20,6 +_,9 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
  import net.minecraft.core.UUIDUtil;
 +import net.minecraft.nbt.CompoundTag;
++import net.minecraft.nbt.NbtAccounter;
 +import net.minecraft.nbt.NbtIo;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
@@ -36,7 +37,7 @@
 +                  CompoundTag root = null;
 +
 +                  try {
-+                     root = NbtIo.readCompressed(new java.io.FileInputStream(file5));
++                     root = NbtIo.readCompressed(new java.io.FileInputStream(file5), NbtAccounter.unlimitedHeap());
 +                  } catch (Exception exception) {
 +                     exception.printStackTrace();
 +                  }

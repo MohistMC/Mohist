@@ -40,7 +40,7 @@
              p_57467_.removeBlock(p_57468_, false);
           }
  
-@@ -50,19 +_,19 @@
+@@ -50,16 +_,16 @@
     }
  
     public void neighborChanged(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
@@ -53,19 +53,14 @@
  
     }
  
--   public BlockState playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
+    public BlockState playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
 -      if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE)) {
 -         explode(p_57445_, p_57446_);
-+   public void playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
 +      if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE) && CraftEventFactory.callTNTPrimeEvent(p_57445_, p_57446_, TNTPrimeEvent.PrimeCause.BLOCK_BREAK, p_57448_, null)) { // CraftBukkit - TNTPrimeEvent
 +         onCaughtFire(p_57447_, p_57445_, p_57446_, null, null);
        }
  
--      return super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
-+      super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
-    }
- 
-    public void wasExploded(Level p_57441_, BlockPos p_57442_, Explosion p_57443_) {
+       return super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
 @@ -74,10 +_,12 @@
        }
     }

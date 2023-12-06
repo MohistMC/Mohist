@@ -1,47 +1,13 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -4,12 +_,9 @@
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Codec;
- import com.mojang.serialization.Lifecycle;
--import com.mojang.serialization.MapCodec;
- import java.util.Map;
- import java.util.function.Supplier;
- import net.minecraft.Util;
--import net.minecraft.advancements.CriteriaTriggers;
--import net.minecraft.advancements.CriterionTrigger;
- import net.minecraft.commands.synchronization.ArgumentTypeInfo;
- import net.minecraft.commands.synchronization.ArgumentTypeInfos;
- import net.minecraft.core.DefaultedMappedRegistry;
-@@ -19,11 +_,8 @@
- import net.minecraft.core.WritableRegistry;
- import net.minecraft.core.particles.ParticleType;
- import net.minecraft.core.particles.ParticleTypes;
--import net.minecraft.network.chat.numbers.NumberFormatType;
--import net.minecraft.network.chat.numbers.NumberFormatTypes;
+@@ -23,7 +_,6 @@
+ import net.minecraft.network.chat.numbers.NumberFormatTypes;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.resources.ResourceLocation;
 -import net.minecraft.server.Bootstrap;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.stats.StatType;
-@@ -63,7 +_,6 @@
- import net.minecraft.world.level.biome.BiomeSource;
- import net.minecraft.world.level.biome.BiomeSources;
- import net.minecraft.world.level.block.Block;
--import net.minecraft.world.level.block.BlockTypes;
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.entity.BannerPattern;
- import net.minecraft.world.level.block.entity.BannerPatterns;
-@@ -92,8 +_,6 @@
- import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
- import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
- import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElementType;
--import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBinding;
--import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBindings;
- import net.minecraft.world.level.levelgen.structure.templatesystem.PosRuleTestType;
- import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
- import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 @@ -118,45 +_,94 @@
  public class BuiltInRegistries {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -308,27 +274,23 @@
        return TreeDecoratorType.LEAVE_VINE;
     });
     public static final Registry<FeatureSizeType<?>> FEATURE_SIZE_TYPE = registerSimple(Registries.FEATURE_SIZE_TYPE, (p_259370_) -> {
-@@ -277,14 +_,12 @@
+@@ -277,7 +_,7 @@
     public static final Registry<Codec<? extends SurfaceRules.ConditionSource>> MATERIAL_CONDITION = registerSimple(Registries.MATERIAL_CONDITION, (RegistryBootstrap)SurfaceRules.ConditionSource::bootstrap);
     public static final Registry<Codec<? extends SurfaceRules.RuleSource>> MATERIAL_RULE = registerSimple(Registries.MATERIAL_RULE, (RegistryBootstrap)SurfaceRules.RuleSource::bootstrap);
     public static final Registry<Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPE = registerSimple(Registries.DENSITY_FUNCTION_TYPE, (RegistryBootstrap)DensityFunctions::bootstrap);
 -   public static final Registry<MapCodec<? extends Block>> BLOCK_TYPE = registerSimple(Registries.BLOCK_TYPE, (RegistryBootstrap)BlockTypes::bootstrap);
++   public static final Registry<MapCodec<? extends Block>> BLOCK_TYPE = registerSimple(Registries.BLOCK_TYPE, (RegistryBootstrap) BlockTypes::bootstrap);
     public static final Registry<StructureProcessorType<?>> STRUCTURE_PROCESSOR = registerSimple(Registries.STRUCTURE_PROCESSOR, (p_259305_) -> {
        return StructureProcessorType.BLOCK_IGNORE;
     });
-    public static final Registry<StructurePoolElementType<?>> STRUCTURE_POOL_ELEMENT = registerSimple(Registries.STRUCTURE_POOL_ELEMENT, (p_259361_) -> {
-       return StructurePoolElementType.EMPTY;
-    });
--   public static final Registry<Codec<? extends PoolAliasBinding>> POOL_ALIAS_BINDING_TYPE = registerSimple(Registries.POOL_ALIAS_BINDING, (RegistryBootstrap)PoolAliasBindings::bootstrap);
-    public static final Registry<CatVariant> CAT_VARIANT = registerSimple(Registries.CAT_VARIANT, CatVariant::bootstrap);
-    public static final Registry<FrogVariant> FROG_VARIANT = registerSimple(Registries.FROG_VARIANT, (p_259261_) -> {
-       return FrogVariant.TEMPERATE;
-@@ -293,8 +_,6 @@
+@@ -293,8 +_,8 @@
     public static final Registry<Instrument> INSTRUMENT = registerSimple(Registries.INSTRUMENT, Instruments::bootstrap);
     public static final Registry<String> DECORATED_POT_PATTERNS = registerSimple(Registries.DECORATED_POT_PATTERNS, DecoratedPotPatterns::bootstrap);
     public static final Registry<CreativeModeTab> CREATIVE_MODE_TAB = registerSimple(Registries.CREATIVE_MODE_TAB, CreativeModeTabs::bootstrap);
 -   public static final Registry<CriterionTrigger<?>> TRIGGER_TYPES = registerSimple(Registries.TRIGGER_TYPE, (RegistryBootstrap)CriteriaTriggers::bootstrap);
 -   public static final Registry<NumberFormatType<?>> NUMBER_FORMAT_TYPE = registerSimple(Registries.NUMBER_FORMAT_TYPE, (RegistryBootstrap)NumberFormatTypes::bootstrap);
++   public static final Registry<CriterionTrigger<?>> TRIGGER_TYPES = registerSimple(Registries.TRIGGER_TYPE, (RegistryBootstrap) CriteriaTriggers::bootstrap);
++   public static final Registry<NumberFormatType<?>> NUMBER_FORMAT_TYPE = registerSimple(Registries.NUMBER_FORMAT_TYPE, (RegistryBootstrap) NumberFormatTypes::bootstrap);
     public static final Registry<? extends Registry<?>> REGISTRY = WRITABLE_REGISTRY;
  
     private static <T> Registry<T> registerSimple(ResourceKey<? extends Registry<T>> p_260095_, BuiltInRegistries.RegistryBootstrap<T> p_259057_) {

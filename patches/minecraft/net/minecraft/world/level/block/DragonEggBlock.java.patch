@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -16,6 +_,7 @@
+@@ -16,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.event.block.BlockFromToEvent;
  
  public class DragonEggBlock extends FallingBlock {
     public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);

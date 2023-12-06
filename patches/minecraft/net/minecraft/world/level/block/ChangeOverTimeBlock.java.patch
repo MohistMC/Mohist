@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/level/block/ChangeOverTimeBlock.java
 +++ b/net/minecraft/world/level/block/ChangeOverTimeBlock.java
-@@ -59,6 +_,11 @@
+@@ -17,7 +_,7 @@
+       float f = 0.05688889F;
+       if (p_310572_.nextFloat() < 0.05688889F) {
+          this.getNextState(p_311790_, p_309416_, p_310092_, p_310572_).ifPresent((p_153039_) -> {
+-            p_309416_.setBlockAndUpdate(p_310092_, p_153039_);
++            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(p_309416_, p_310092_, p_153039_); // CraftBukkit
+          });
+       }
  
-       float f = (float)(k + 1) / (float)(k + j + 1);
-       float f1 = f * f * this.getChanceModifier();
--      return p_312041_.nextFloat() < f1 ? this.getNext(p_311503_) : Optional.empty();
-+      if (p_220956_.nextFloat() < f1) {
-+         this.getNext(p_220953_).ifPresent((p_153039_) -> {
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(p_220954_, p_220955_, p_153039_); // CraftBukkit
-+         });
-+      }
-+
-    }
- }

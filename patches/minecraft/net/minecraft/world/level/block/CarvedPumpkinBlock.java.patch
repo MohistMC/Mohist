@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
 +++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
+@@ -22,6 +_,7 @@
+ import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
+ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
+ import net.minecraft.world.level.block.state.properties.DirectionProperty;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class CarvedPumpkinBlock extends HorizontalDirectionalBlock {
+    public static final MapCodec<CarvedPumpkinBlock> CODEC = simpleCodec(CarvedPumpkinBlock::new);
 @@ -78,9 +_,14 @@
     }
  

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -7,6 +_,7 @@
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.tags.EntityTypeTags;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.projectile.Projectile;
+ import net.minecraft.world.level.BlockGetter;
 @@ -20,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.BlockHitResult;
@@ -25,7 +33,7 @@
 -               this.placeGrownFlower(p_220981_, blockpos, i);
 +               // CraftBukkit start - add event
 +               if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(AGE, Integer.valueOf(i)), 2)) {
-+                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
++                  p_220981_.setBlock(p_220982_, ChorusPlantBlock.getStateWithConnections(p_220981_, p_220982_, this.plant.defaultBlockState()), 2);
 +                  this.placeGrownFlower(p_220981_, blockpos, i);
 +               }
 +               // CraftBukkit end
@@ -48,8 +56,7 @@
                 }
  
                 if (flag2) {
--                  p_220981_.setBlock(p_220982_, ChorusPlantBlock.getStateWithConnections(p_220981_, p_220982_, this.plant.defaultBlockState()), 2);
-+                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
+                   p_220981_.setBlock(p_220982_, ChorusPlantBlock.getStateWithConnections(p_220981_, p_220982_, this.plant.defaultBlockState()), 2);
                 } else {
 -                  this.placeDeadFlower(p_220981_, p_220982_);
 +                  // CraftBukkit - add event

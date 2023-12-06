@@ -22,12 +22,12 @@
        BlockPos blockpos = p_123375_.pos().relative(direction);
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
-+      org.bukkit.block.Block block = CraftBlock.at(level, p_123375_.pos());
++      org.bukkit.block.Block block = CraftBlock.at(serverlevel, p_123375_.pos());
 +      CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +      BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2));
 +      if (!DispenserBlock.eventFired) {
-+         level.getCraftServer().getPluginManager().callEvent(event);
++         serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +      }
 +
 +      if (event.isCancelled()) {
@@ -46,7 +46,7 @@
 +         }
 +      }
 +
-+      Boat boat = this.isChestBoat ? new ChestBoat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
++      Boat boat = this.isChestBoat ? new ChestBoat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ()) : new Boat(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +      // CraftBukkit end
 +      boat.setVariant(this.type);
 +      boat.setYRot(direction.toYRot());
@@ -64,7 +64,7 @@
 -      serverlevel.addFreshEntity(boat);
 -      p_123376_.shrink(1);
 +      boat.setPos(d1, d2 + d4, d3);
-+      if (!level.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
++      if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
        return p_123376_;
     }
  

@@ -95,19 +95,6 @@
           }
  
        }
-@@ -130,9 +_,9 @@
- 
-    private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
-       PlayerList playerlist = this.server.getPlayerList();
--      Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_299507_);
--      if (component != null) {
--         this.disconnect(component);
-+      this.player = playerlist.canPlayerLogin(this, p_299507_);
-+      if (this.player == null) {
-+         // this.disconnect(component);
-       } else {
-          if (this.server.getCompressionThreshold() >= 0 && !this.connection.isMemoryConnection()) {
-             this.connection.send(new ClientboundLoginCompressionPacket(this.server.getCompressionThreshold()), PacketSendListener.thenRun(() -> {
 @@ -175,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }

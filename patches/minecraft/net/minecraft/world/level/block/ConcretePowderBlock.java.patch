@@ -18,7 +18,7 @@
 -      if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
 -         p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
 +      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-+         CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.concrete, 3); // CraftBukkit
++         CraftEventFactory.handleBlockFormEvent(p_52068_, p_52069_, this.concrete.defaultBlockState(), 3); // CraftBukkit
        }
  
     }
@@ -36,7 +36,7 @@
 +
 +      // TODO: An event factory call for methods like this
 +      CraftBlockState blockState = CraftBlockStates.getBlockState(blockgetter, blockpos);
-+      blockState.setData(this.concrete);
++      blockState.setData(this.concrete.defaultBlockState());
 +
 +      BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
 +      blockgetter.getServer().server.getPluginManager().callEvent(event);
@@ -54,7 +54,8 @@
     }
  
     private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_) {
-       return canSolidify(p_52083_) || touchesLiquid(p_52081_, p_52082_);
+-      return canSolidify(p_52083_) || touchesLiquid(p_52081_, p_52082_);
++      return shouldSolidify(p_52081_, p_52082_, p_52083_, p_52081_.getFluidState(p_52082_));
     }
  
 -   private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_) {
@@ -82,10 +83,10 @@
 +      if (touchesLiquid(p_52077_, p_52078_, p_52074_)) {
 +         // Suppress during worldgen
 +         if (!(p_52077_ instanceof Level)) {
-+            return this.concrete;
++            return this.concrete.defaultBlockState();
 +         }
 +         CraftBlockState blockState = CraftBlockStates.getBlockState(p_52077_, p_52078_);
-+         blockState.setData(this.concrete);
++         blockState.setData(this.concrete.defaultBlockState());
 +
 +         BlockFormEvent event = new BlockFormEvent(blockState.getBlock(), blockState);
 +         ((Level) p_52077_).getCraftServer().getPluginManager().callEvent(event);

@@ -1,16 +1,5 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -5,10 +_,8 @@
- import net.minecraft.core.dispenser.BlockSource;
- import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
- import net.minecraft.core.dispenser.DispenseItemBehavior;
--import net.minecraft.server.level.ServerLevel;
- import net.minecraft.tags.BlockTags;
- import net.minecraft.world.InteractionResult;
--import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.vehicle.AbstractMinecart;
- import net.minecraft.world.item.context.UseOnContext;
- import net.minecraft.world.level.Level;
 @@ -18,6 +_,10 @@
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -27,7 +16,7 @@
           BlockPos blockpos = p_42949_.pos().relative(direction);
           BlockState blockstate = serverlevel.getBlockState(blockpos);
 -         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
-+         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
++         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, serverlevel, blockpos, null) : RailShape.NORTH_SOUTH;
           double d3;
           if (blockstate.is(BlockTags.RAILS)) {
              if (railshape.isAscending()) {
@@ -40,12 +29,12 @@
 -         p_42950_.shrink(1);
 +         // CraftBukkit start
 +         ItemStack itemstack1 = p_42950_.split(1);
-+         org.bukkit.block.Block block2 = CraftBlock.at(level, p_42949_.pos());
++         org.bukkit.block.Block block2 = CraftBlock.at(serverlevel, p_42949_.pos());
 +         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +         BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
 +         if (!DispenserBlock.eventFired) {
-+            level.getCraftServer().getPluginManager().callEvent(event);
++            serverlevel.getCraftServer().getPluginManager().callEvent(event);
 +         }
 +
 +         if (event.isCancelled()) {
@@ -65,14 +54,14 @@
 +         }
 +
 +         itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
-+         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
++         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type, p_42950_, (Player)null);
 +
 +
 +         if (p_42950_.hasCustomHoverName()) {
 +            abstractminecart.setCustomName(p_42950_.getHoverName());
 +         }
 +
-+         if (!level.addFreshEntity(abstractminecart)) p_42950_.grow(1);
++         if (!serverlevel.addFreshEntity(abstractminecart)) p_42950_.grow(1);
           return p_42950_;
        }
  
@@ -87,10 +76,9 @@
                 d0 = 0.5D;
              }
  
--            AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type, itemstack, p_42943_.getPlayer());
+             AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type, itemstack, p_42943_.getPlayer());
 -            serverlevel.addFreshEntity(abstractminecart);
 -            serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), serverlevel.getBlockState(blockpos.below())));
-+            AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type);
 +            if (itemstack.hasCustomHoverName()) {
 +               abstractminecart.setCustomName(itemstack.getHoverName());
 +            }
