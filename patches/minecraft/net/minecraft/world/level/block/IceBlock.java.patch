@@ -1,11 +1,19 @@
 --- a/net/minecraft/world/level/block/IceBlock.java
 +++ b/net/minecraft/world/level/block/IceBlock.java
-@@ -47,6 +_,11 @@
+@@ -21,7 +_,6 @@
+    public MapCodec<? extends IceBlock> codec() {
+       return CODEC;
+    }
+-
+    public IceBlock(BlockBehaviour.Properties p_54155_) {
+       super(p_54155_);
+    }
+@@ -54,6 +_,11 @@
     }
  
     protected void melt(BlockState p_54169_, Level p_54170_, BlockPos p_54171_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.dimensionType().ultraWarm() ? Blocks.AIR.defaultBlockState() : Blocks.WATER.defaultBlockState()).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockFadeEvent(p_54170_, p_54171_, p_54170_.dimensionType().ultraWarm() ? Blocks.AIR.defaultBlockState() : Blocks.WATER.defaultBlockState()).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

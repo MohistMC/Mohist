@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -14,7 +_,6 @@
+@@ -9,13 +_,11 @@
+ import net.minecraft.network.protocol.game.ClientGamePacketListener;
+ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+ import net.minecraft.server.level.ServerLevel;
+-import net.minecraft.tags.EntityTypeTags;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.TraceableEntity;
  import net.minecraft.world.entity.player.Player;
@@ -8,7 +14,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -22,6 +_,7 @@
+@@ -23,6 +_,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -16,7 +22,7 @@
  
  public abstract class Projectile extends Entity implements TraceableEntity {
     @Nullable
-@@ -31,6 +_,10 @@
+@@ -32,6 +_,10 @@
     private boolean leftOwner;
     private boolean hasBeenShot;
  
@@ -27,7 +33,7 @@
     protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
        super(p_37248_, p_37249_);
     }
-@@ -40,6 +_,7 @@
+@@ -41,6 +_,7 @@
           this.ownerUUID = p_37263_.getUUID();
           this.cachedOwner = p_37263_;
        }
@@ -35,13 +41,48 @@
  
     }
  
-@@ -132,6 +_,16 @@
+@@ -48,16 +_,10 @@
+    public Entity getOwner() {
+       if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
+          return this.cachedOwner;
++      } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
++         this.cachedOwner = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
++         return this.cachedOwner;
+       } else {
+-         if (this.ownerUUID != null) {
+-            Level level = this.level();
+-            if (level instanceof ServerLevel) {
+-               ServerLevel serverlevel = (ServerLevel)level;
+-               this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
+-               return this.cachedOwner;
+-            }
+-         }
+-
+          return null;
+       }
+    }
+@@ -92,14 +_,6 @@
+       this.hasBeenShot = p_37262_.getBoolean("HasBeenShot");
+    }
+ 
+-   public void restoreFrom(Entity p_310133_) {
+-      super.restoreFrom(p_310133_);
+-      if (p_310133_ instanceof Projectile projectile) {
+-         this.cachedOwner = projectile.cachedOwner;
+-      }
+-
+-   }
+-
+    public void tick() {
+       if (!this.hasBeenShot) {
+          this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
+@@ -147,6 +_,16 @@
        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
     }
  
 +   // CraftBukkit start - call projectile hit event
 +   protected void preOnHit(HitResult movingobjectposition) {
-+      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
++      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
 +      this.hitCancelled = event != null && event.isCancelled();
 +      if (movingobjectposition.getType() == HitResult.Type.BLOCK || !this.hitCancelled) {
 +         this.onHit(movingobjectposition);
@@ -52,7 +93,7 @@
     protected void onHit(HitResult p_37260_) {
        HitResult.Type hitresult$type = p_37260_.getType();
        if (hitresult$type == HitResult.Type.ENTITY) {
-@@ -150,6 +_,11 @@
+@@ -165,6 +_,11 @@
     }
  
     protected void onHitBlock(BlockHitResult p_37258_) {
@@ -64,12 +105,16 @@
        BlockState blockstate = this.level().getBlockState(p_37258_.getBlockPos());
        blockstate.onProjectileHit(this.level(), blockstate, p_37258_, this);
     }
-@@ -214,7 +_,7 @@
+@@ -229,11 +_,7 @@
        if (entity instanceof Player) {
           return entity.mayInteract(p_150167_, p_150168_);
        } else {
 -         return entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 +         return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
        }
+-   }
+-
+-   public boolean mayBreak(Level p_313184_) {
+-      return this.getType().is(EntityTypeTags.IMPACT_PROJECTILES) && p_313184_.getGameRules().getBoolean(GameRules.RULE_PROJECTILESCANBREAKBLOCKS);
     }
  }

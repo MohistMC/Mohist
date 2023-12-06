@@ -1,12 +1,14 @@
 --- a/net/minecraft/commands/CommandSourceStack.java
 +++ b/net/minecraft/commands/CommandSourceStack.java
-@@ -1,12 +_,14 @@
+@@ -1,14 +_,13 @@
  package net.minecraft.commands;
  
  import com.google.common.collect.Lists;
+-import com.mojang.brigadier.CommandDispatcher;
+-import com.mojang.brigadier.Message;
 +import com.mohistmc.api.PlayerAPI;
- import com.mojang.brigadier.ResultConsumer;
  import com.mojang.brigadier.context.CommandContext;
+-import com.mojang.brigadier.exceptions.CommandExceptionType;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
  import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
  import com.mojang.brigadier.suggestion.Suggestions;
@@ -15,26 +17,40 @@
  import java.util.Collection;
  import java.util.Objects;
  import java.util.Set;
-@@ -39,8 +_,9 @@
+@@ -19,13 +_,11 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.commands.arguments.EntityAnchorArgument;
+-import net.minecraft.commands.execution.TraceCallbacks;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.RegistryAccess;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.network.chat.ChatType;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.OutgoingChatMessage;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+@@ -42,8 +_,9 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.command.VanillaCommandWrapper;
++import org.bukkit.craftbukkit.v1_20_R3.command.VanillaCommandWrapper;
  
--public class CommandSourceStack implements SharedSuggestionProvider {
-+public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
+-public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider {
++public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
     public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(Component.translatable("permissions.requires.player"));
     public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(Component.translatable("permissions.requires.entity"));
     public final CommandSource source;
-@@ -60,6 +_,7 @@
+@@ -61,6 +_,7 @@
+    private final Vec2 rotation;
     private final CommandSigningContext signingContext;
     private final TaskChainer chatMessageChainer;
-    private final IntConsumer returnValueConsumer;
 +   public volatile CommandNode currentCommand; // CraftBukkit
  
     public CommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
-       this(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_, false, (p_81361_, p_81362_, p_81363_) -> {
-@@ -168,9 +_,25 @@
+       this(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_, false, CommandResultCallback.EMPTY, EntityAnchorArgument.Anchor.FEET, CommandSigningContext.ANONYMOUS, TaskChainer.immediate(p_81309_));
+@@ -162,9 +_,25 @@
     }
  
     public boolean hasPermission(int p_81370_) {
@@ -60,7 +76,7 @@
     public Vec3 getPosition() {
        return this.worldPosition;
     }
-@@ -295,13 +_,13 @@
+@@ -285,13 +_,13 @@
        Component component = Component.translatable("chat.type.admin", this.getDisplayName(), p_81367_).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
        if (this.server.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
           for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
@@ -76,9 +92,9 @@
           this.server.sendSystemMessage(component);
        }
  
-@@ -359,4 +_,10 @@
-    public FeatureFlagSet enabledFeatures() {
-       return this.level.enabledFeatures();
+@@ -365,4 +_,10 @@
+    public boolean isSilent() {
+       return this.silent;
     }
 +
 +   // CraftBukkit start

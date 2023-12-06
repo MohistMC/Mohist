@@ -8,7 +8,7 @@
     public Guardian(EntityType<? extends Guardian> p_32810_, Level p_32811_) {
        super(p_32810_, p_32811_);
        this.xpReward = 10;
-@@ -120,7 +_,7 @@
+@@ -116,7 +_,7 @@
        return 80;
     }
  
@@ -17,7 +17,7 @@
        this.entityData.set(DATA_ID_ATTACK_TARGET, p_32818_);
     }
  
-@@ -340,9 +_,9 @@
+@@ -336,9 +_,9 @@
        return new Vector3f(0.0F, p_297893_.height + 0.125F * p_297810_, 0.0F);
     }
  

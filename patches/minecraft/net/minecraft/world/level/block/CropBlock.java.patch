@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -20,6 +_,7 @@
+@@ -21,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class CropBlock extends BushBlock implements BonemealableBlock {
-    public static final int MAX_AGE = 7;
-@@ -39,7 +_,7 @@
+    public static final MapCodec<CropBlock> CODEC = simpleCodec(CropBlock::new);
+@@ -45,7 +_,7 @@
        return p_52302_.is(Blocks.FARMLAND);
     }
  
@@ -17,7 +17,7 @@
        return AGE;
     }
  
-@@ -64,12 +_,25 @@
+@@ -70,12 +_,25 @@
     }
  
     public void randomTick(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
@@ -45,7 +45,7 @@
              }
           }
        }
-@@ -83,7 +_,7 @@
+@@ -89,7 +_,7 @@
           i = j;
        }
  
@@ -54,7 +54,7 @@
     }
  
     protected int getBonemealAgeIncrease(Level p_52262_) {
-@@ -98,9 +_,9 @@
+@@ -104,9 +_,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
              BlockState blockstate = p_52274_.getBlockState(blockpos.offset(i, 0, j));
@@ -66,7 +66,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -140,7 +_,7 @@
+@@ -146,7 +_,7 @@
     }
  
     public void entityInside(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {

@@ -1,21 +1,13 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -90,10 +_,11 @@
-                throw new IllegalStateException("Duplicate recipe " + p_300066_.id());
-             } else {
-                list.add(DataProvider.saveStable(p_254020_, p_300066_.serializeRecipe(), RecipeProvider.this.recipePathProvider.json(p_300066_.id())));
--               AdvancementHolder advancementholder = p_300066_.advancement();
--               if (advancementholder != null) {
--                  JsonObject jsonobject = advancementholder.value().serializeToJson();
--                  list.add(DataProvider.saveStable(p_254020_, jsonobject, RecipeProvider.this.advancementPathProvider.json(advancementholder.id())));
-+               var advancementdata = p_300066_.advancementData();
-+               if (advancementdata != null) {
-+                  var saveAdvancementFuture = saveAdvancement(p_254020_, advancementdata.id(), advancementdata.data(), p_300066_);
-+                  if (saveAdvancementFuture != null)
-+                     list.add(saveAdvancementFuture);
-                }
+@@ -2,6 +_,7 @@
  
-             }
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.Sets;
++import com.google.gson.JsonObject;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
 @@ -106,6 +_,16 @@
        return CompletableFuture.allOf(list.toArray((p_253414_) -> {
           return new CompletableFuture[p_253414_];

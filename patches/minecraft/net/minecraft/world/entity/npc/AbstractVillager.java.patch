@@ -4,7 +4,7 @@
  import net.minecraft.world.level.ServerLevelAccessor;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMerchant;
  
  public abstract class AbstractVillager extends AgeableMob implements InventoryCarrier, Npc, Merchant {
     private static final EntityDataAccessor<Integer> DATA_UNHAPPY_COUNTER = SynchedEntityData.defineId(AbstractVillager.class, EntityDataSerializers.INT);
@@ -13,7 +13,7 @@
     @Nullable
     protected MerchantOffers offers;
 -   private final SimpleContainer inventory = new SimpleContainer(8);
-+   private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R2.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
++   private final SimpleContainer inventory = new SimpleContainer(8, (org.bukkit.craftbukkit.v1_20_R3.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
 +
 +   // CraftBukkit start
 +   private CraftMerchant craftMerchant;

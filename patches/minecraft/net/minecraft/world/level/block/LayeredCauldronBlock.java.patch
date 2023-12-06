@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/level/block/LayeredCauldronBlock.java
 +++ b/net/minecraft/world/level/block/LayeredCauldronBlock.java
-@@ -16,6 +_,10 @@
+@@ -15,6 +_,10 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.material.Fluids;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockStates;
 +import org.bukkit.event.block.CauldronLevelChangeEvent;
  
  public class LayeredCauldronBlock extends AbstractCauldronBlock {
-    public static final int MIN_FILL_LEVEL = 1;
-@@ -51,10 +_,15 @@
+    public static final MapCodec<LayeredCauldronBlock> CODEC = RecordCodecBuilder.mapCodec((p_309287_) -> {
+@@ -55,10 +_,15 @@
  
     public void entityInside(BlockState p_153534_, Level p_153535_, BlockPos p_153536_, Entity p_153537_) {
        if (!p_153535_.isClientSide && p_153537_.isOnFire() && this.isEntityInsideContent(p_153534_, p_153536_, p_153537_)) {
@@ -28,7 +28,7 @@
        }
  
     }
-@@ -66,15 +_,38 @@
+@@ -75,15 +_,38 @@
     public static void lowerFillLevel(BlockState p_153560_, Level p_153561_, BlockPos p_153562_) {
        int i = p_153560_.getValue(LEVEL) - 1;
        BlockState blockstate = i == 0 ? Blocks.CAULDRON.defaultBlockState() : p_153560_.setValue(LEVEL, Integer.valueOf(i));
@@ -64,7 +64,8 @@
 +    // CraftBukkit end
  
     public void handlePrecipitation(BlockState p_153539_, Level p_153540_, BlockPos p_153541_, Biome.Precipitation p_153542_) {
-       if (CauldronBlock.shouldHandlePrecipitation(p_153540_, p_153542_) && p_153539_.getValue(LEVEL) != 3 && this.fillPredicate.test(p_153542_)) {
+-      if (CauldronBlock.shouldHandlePrecipitation(p_153540_, p_153542_) && p_153539_.getValue(LEVEL) != 3 && p_153542_ == this.precipitationType) {
++      if (CauldronBlock.shouldHandlePrecipitation(p_153540_, p_153542_) && p_153539_.getValue(LEVEL) != 3 && this.fillPredicate.test(p_153542_)) {
           BlockState blockstate = p_153539_.cycle(LEVEL);
 -         p_153540_.setBlockAndUpdate(p_153541_, blockstate);
 -         p_153540_.gameEvent(GameEvent.BLOCK_CHANGE, p_153541_, GameEvent.Context.of(blockstate));
@@ -72,7 +73,7 @@
        }
     }
  
-@@ -89,8 +_,11 @@
+@@ -98,8 +_,11 @@
     protected void receiveStalactiteDrip(BlockState p_153544_, Level p_153545_, BlockPos p_153546_, Fluid p_153547_) {
        if (!this.isFull(p_153544_)) {
           BlockState blockstate = p_153544_.setValue(LEVEL, Integer.valueOf(p_153544_.getValue(LEVEL) + 1));

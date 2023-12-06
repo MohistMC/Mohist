@@ -11,13 +11,12 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
  import net.minecraft.network.chat.Component;
-@@ -16,6 +_,10 @@
+@@ -16,6 +_,9 @@
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.level.block.AnvilBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.apache.commons.lang3.StringUtils;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 +import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -44,7 +43,7 @@
 +         return bukkitEntity;
 +      }
 +
-+      org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryAnvil(
++      org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryAnvil(
 +              access.getLocation(), this.inputSlots, this.resultSlots, this);
 +      bukkitEntity = new CraftInventoryView(this.player.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;

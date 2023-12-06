@@ -137,7 +137,7 @@
                    }
  
 -                  if (blockstate1 != null) {
-+                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
++                  if (blockstate1 != null && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(Bee.this, blockpos, blockstate1)) { // CraftBukkit
                       Bee.this.level().levelEvent(2005, blockpos, 0);
                       Bee.this.level().setBlockAndUpdate(blockpos, blockstate1);
                       Bee.this.incrementNumCropsGrownSincePollination();

@@ -8,7 +8,15 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import com.mojang.authlib.yggdrasil.ProfileResult;
-@@ -32,11 +_,15 @@
+@@ -15,7 +_,6 @@
+ import javax.annotation.Nullable;
+ import javax.crypto.Cipher;
+ import javax.crypto.SecretKey;
+-import net.minecraft.CrashReportCategory;
+ import net.minecraft.DefaultUncaughtExceptionHandler;
+ import net.minecraft.core.UUIDUtil;
+ import net.minecraft.network.Connection;
+@@ -32,12 +_,15 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
  import net.minecraft.server.MinecraftServer;
@@ -17,14 +25,15 @@
  import net.minecraft.util.Crypt;
  import net.minecraft.util.CryptException;
  import net.minecraft.util.RandomSource;
+-import net.minecraft.world.entity.player.Player;
  import org.apache.commons.lang3.Validate;
-+import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
++import org.bukkit.craftbukkit.v1_20_R3.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
  import org.slf4j.Logger;
  
  public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener, TickablePacketListener {
-@@ -46,7 +_,7 @@
+@@ -47,7 +_,7 @@
     private static final Component DISCONNECT_UNEXPECTED_QUERY = Component.translatable("multiplayer.disconnect.unexpected_query_response");
     private final byte[] challenge;
     final MinecraftServer server;
@@ -33,7 +42,7 @@
     private volatile ServerLoginPacketListenerImpl.State state = ServerLoginPacketListenerImpl.State.HELLO;
     private int tick;
     @Nullable
-@@ -55,6 +_,9 @@
+@@ -56,6 +_,9 @@
     private GameProfile authenticatedProfile;
     private final String serverId = "";
  
@@ -43,7 +52,7 @@
     public ServerLoginPacketListenerImpl(MinecraftServer p_10027_, Connection p_10028_) {
        this.server = p_10027_;
        this.connection = p_10028_;
-@@ -80,6 +_,13 @@
+@@ -81,6 +_,13 @@
        return this.connection.isConnected();
     }
  
@@ -57,20 +66,20 @@
     public void disconnect(Component p_10054_) {
        try {
           LOGGER.info("Disconnecting {}: {}", this.getUserName(), p_10054_.getString());
-@@ -106,7 +_,7 @@
+@@ -107,7 +_,7 @@
  
     public void handleHello(ServerboundHelloPacket p_10047_) {
        Validate.validState(this.state == ServerLoginPacketListenerImpl.State.HELLO, "Unexpected hello packet");
--      Validate.validState(isValidUsername(p_10047_.name()), "Invalid characters in username");
-+      // Validate.validState(isValidUsername(p_10047_.name()), "Invalid characters in username"); // Mohist Chinese and other special characters are allowed
+-      Validate.validState(Player.isValidUsername(p_10047_.name()), "Invalid characters in username");
++      // Validate.validState(Player.isValidUsername(p_10047_.name()), "Invalid characters in username"); // Mohist Chinese and other special characters are allowed
        this.requestedUsername = p_10047_.name();
        GameProfile gameprofile = this.server.getSingleplayerProfile();
        if (gameprofile != null && this.requestedUsername.equalsIgnoreCase(gameprofile.getName())) {
-@@ -116,7 +_,26 @@
+@@ -117,7 +_,26 @@
              this.state = ServerLoginPacketListenerImpl.State.KEY;
              this.connection.send(new ClientboundHelloPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.challenge));
           } else {
--            this.startClientVerification(createOfflineProfile(this.requestedUsername));
+-            this.startClientVerification(UUIDUtil.createOfflineProfile(this.requestedUsername));
 +            // Paper start - Velocity support
 +            if (MohistConfig.velocity_enabled) {
 +               this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
@@ -94,7 +103,7 @@
           }
  
        }
-@@ -129,9 +_,9 @@
+@@ -130,9 +_,9 @@
  
     private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
        PlayerList playerlist = this.server.getPlayerList();
@@ -107,7 +116,7 @@
        } else {
           if (this.server.getCompressionThreshold() >= 0 && !this.connection.isMemoryConnection()) {
              this.connection.send(new ClientboundLoginCompressionPacket(this.server.getCompressionThreshold()), PacketSendListener.thenRun(() -> {
-@@ -180,7 +_,7 @@
+@@ -175,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
@@ -116,7 +125,7 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -188,11 +_,15 @@
+@@ -183,8 +_,12 @@
                 ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
@@ -130,18 +139,8 @@
 +                  new LoginHandler().fireEvents(gameprofile);
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
                    ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
--                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
-                } else {
-                   ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
-                   ServerLoginPacketListenerImpl.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)s1);
-@@ -200,11 +_,16 @@
-             } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-                   ServerLoginPacketListenerImpl.LOGGER.warn("Authentication servers are down but will let them in anyway!");
--                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.createOfflineProfile(s1));
-+                  ServerLoginPacketListenerImpl.this.startClientVerification(ServerLoginPacketListenerImpl.this.createOfflineProfile(s1)); // Spigot
-                } else {
+                   ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
+@@ -200,6 +_,11 @@
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
                 }
@@ -153,7 +152,7 @@
              }
  
           }
-@@ -219,22 +_,137 @@
+@@ -214,18 +_,113 @@
        thread.start();
     }
  
@@ -170,7 +169,7 @@
 +         String playerName = gameprofile.getName();
 +         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
 +         java.util.UUID uniqueId = gameprofile.getId();
-+         final org.bukkit.craftbukkit.v1_20_R2.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
++         final org.bukkit.craftbukkit.v1_20_R3.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
 +
 +         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +         server.getPluginManager().callEvent(asyncEvent);
@@ -263,35 +262,8 @@
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
     }
- 
--   protected static GameProfile createOfflineProfile(String p_297551_) {
--      UUID uuid = UUIDUtil.createOfflinePlayerUUID(p_297551_);
--      return new GameProfile(uuid, p_297551_);
++
 +   private static final java.util.concurrent.ExecutorService authenticatorPool = java.util.concurrent.Executors.newCachedThreadPool(new com.google.common.util.concurrent.ThreadFactoryBuilder().setNameFormat("User Authenticator #%d").setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER)).build()); // Paper - Cache authenticator threads
-+
-+   // Spigot start
-+   protected GameProfile createOfflineProfile(String p_297551_) {
-+      UUID uuid;
-+      if ( connection.spoofedUUID != null )
-+      {
-+         uuid = connection.spoofedUUID;
-+      } else
-+      {
-+         uuid = UUIDUtil.createOfflinePlayerUUID( p_297551_ );
-+      }
-+
-+      GameProfile gameProfile = new GameProfile( uuid, p_297551_ );
-+
-+      if (connection.spoofedProfile != null)
-+      {
-+         for ( com.mojang.authlib.properties.Property property : connection.spoofedProfile )
-+         {
-+            if ( !ServerHandshakePacketListenerImpl.PROP_PATTERN.matcher( property.name()).matches() ) continue;
-+            gameProfile.getProperties().put( property.name(), property );
-+         }
-+      }
-+      return gameProfile;
-+      // Spigot end
-    }
  
-    static enum State {
+    public void fillListenerSpecificCrashDetails(CrashReportCategory p_310682_) {
+       p_310682_.setDetail("Login phase", () -> {

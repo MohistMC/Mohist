@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DoublePlantBlock.java
 +++ b/net/minecraft/world/level/block/DoublePlantBlock.java
-@@ -54,6 +_,7 @@
+@@ -60,6 +_,7 @@
           return super.canSurvive(p_52887_, p_52888_, p_52889_);
        } else {
           BlockState blockstate = p_52888_.getBlockState(p_52889_.below());
@@ -8,12 +8,12 @@
           return blockstate.is(this) && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER;
        }
     }
-@@ -85,6 +_,11 @@
+@@ -91,6 +_,11 @@
     }
  
-    protected static void preventCreativeDropFromBottomPart(Level p_52904_, BlockPos p_52905_, BlockState p_52906_, Player p_52907_) {
+    protected static void preventDropFromBottomPart(Level p_52904_, BlockPos p_52905_, BlockState p_52906_, Player p_52907_) {
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPhysicsEvent(p_52904_, p_52905_).isCancelled()) {
++      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockPhysicsEvent(p_52904_, p_52905_).isCancelled()) {
 +         return;
 +      }
 +      // CraftBukkit end

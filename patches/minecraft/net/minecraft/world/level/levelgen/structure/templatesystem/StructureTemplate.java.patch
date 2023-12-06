@@ -7,13 +7,13 @@
 +import net.minecraft.nbt.Tag;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.Clearable;
- import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.RandomizableContainer;
 @@ -51,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.BitSetDiscreteVoxelShape;
  import net.minecraft.world.phys.shapes.DiscreteVoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_20_R2.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry;
  
  public class StructureTemplate {
     public static final String PALETTE_TAG = "palette";
@@ -49,6 +49,15 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.pos;
                 if (boundingbox == null || boundingbox.isInside(blockpos)) {
                    FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
+@@ -240,7 +_,7 @@
+                      if (structuretemplate$structureblockinfo.nbt != null) {
+                         BlockEntity blockentity1 = p_230329_.getBlockEntity(blockpos);
+                         if (blockentity1 != null) {
+-                           if (blockentity1 instanceof RandomizableContainer) {
++                           if (blockentity1 instanceof RandomizableContainer) { // Mohist TODO - craftbukkit code
+                               structuretemplate$structureblockinfo.nbt.putLong("LootTableSeed", p_230333_.nextLong());
+                            }
+ 
 @@ -330,7 +_,7 @@
              }
  

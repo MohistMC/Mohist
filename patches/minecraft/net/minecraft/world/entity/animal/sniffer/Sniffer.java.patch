@@ -43,7 +43,7 @@
 +   public Optional<BlockPos> calculateDigPosition() {
        return IntStream.range(0, 5).mapToObj((p_273771_) -> {
           return LandRandomPos.getPos(this, 10 + 2 * p_273771_, 3);
-       }).filter(Objects::nonNull).map(BlockPos::containing).filter((p_296816_) -> {
+       }).filter(Objects::nonNull).map(BlockPos::containing).filter((p_309183_) -> {
 @@ -235,7 +_,7 @@
        }).map(BlockPos::below).filter(this::canDig).findFirst();
     }

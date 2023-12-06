@@ -20,15 +20,15 @@
  import net.minecraft.world.entity.Pose;
 +import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.AbstractArrow;
  import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ import net.minecraft.world.item.ItemStack;
 @@ -41,6 +_,10 @@
  import net.minecraft.world.level.material.PushReaction;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftEquipmentSlot;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
  
  public class ArmorStand extends LivingEntity {
@@ -120,15 +120,7 @@
              if (p_31579_.is(DamageTypeTags.IS_EXPLOSION)) {
                 this.brokenByAnything(p_31579_);
                 this.kill();
-@@ -418,14 +_,14 @@
-                      return false;
-                   } else {
-                      long i = this.level().getGameTime();
--                     if (i - this.lastHit > 5L && !flag1) {
-+                     if (i - this.lastHit > 5L && !flag) {
-                         this.level().broadcastEntityEvent(this, (byte)32);
-                         this.gameEvent(GameEvent.ENTITY_DAMAGE, p_31579_.getEntity());
-                         this.lastHit = i;
+@@ -417,7 +_,7 @@
                       } else {
                          this.brokenByPlayer(p_31579_);
                          this.showBreakingParticles();
@@ -137,7 +129,7 @@
                       }
  
                       return true;
-@@ -591,7 +_,24 @@
+@@ -583,7 +_,24 @@
        return this.isSmall();
     }
  
@@ -162,7 +154,7 @@
        this.remove(Entity.RemovalReason.KILLED);
        this.gameEvent(GameEvent.ENTITY_DIE);
     }
-@@ -608,7 +_,7 @@
+@@ -600,7 +_,7 @@
        return this.isMarker();
     }
  
@@ -171,7 +163,7 @@
        this.entityData.set(DATA_CLIENT_FLAGS, this.setBit(this.entityData.get(DATA_CLIENT_FLAGS), 1, p_31604_));
     }
  
-@@ -632,7 +_,7 @@
+@@ -624,7 +_,7 @@
        return (this.entityData.get(DATA_CLIENT_FLAGS) & 8) != 0;
     }
  

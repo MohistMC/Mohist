@@ -24,10 +24,10 @@
 +import net.minecraft.util.StringUtil;
  import net.minecraft.util.VisibleForDebug;
 +import net.minecraftforge.server.ServerLifecycleHooks;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
-+import org.bukkit.craftbukkit.v1_20_R2.util.Waitable;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R3.util.Waitable;
 +import org.bukkit.event.player.PlayerKickEvent;
 +import org.bukkit.event.player.PlayerResourcePackStatusEvent;
  import org.slf4j.Logger;
@@ -57,7 +57,7 @@
 +   }
 +
 +   protected final ServerPlayer player;
-+   protected final org.bukkit.craftbukkit.v1_20_R2.CraftServer cserver;
++   protected final org.bukkit.craftbukkit.v1_20_R3.CraftServer cserver;
 +   public boolean processedDisconnect;
 +
 +   public CraftPlayer getCraftPlayer() {
@@ -131,7 +131,7 @@
     public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
        PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
 @@ -74,13 +_,13 @@
-          LOGGER.info("Disconnecting {} due to resource pack rejection", (Object)this.playerProfile().getName());
+          LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
           this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
        }
 -

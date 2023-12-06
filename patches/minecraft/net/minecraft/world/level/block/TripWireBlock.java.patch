@@ -1,32 +1,15 @@
 --- a/net/minecraft/world/level/block/TripWireBlock.java
 +++ b/net/minecraft/world/level/block/TripWireBlock.java
-@@ -8,7 +_,6 @@
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.item.Items;
- import net.minecraft.world.item.context.BlockPlaceContext;
- import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.Level;
-@@ -21,6 +_,8 @@
+@@ -24,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class TripWireBlock extends Block {
-    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-@@ -69,7 +_,7 @@
-    }
- 
-    public void playerWillDestroy(Level p_57615_, BlockPos p_57616_, BlockState p_57617_, Player p_57618_) {
--      if (!p_57615_.isClientSide && !p_57618_.getMainHandItem().isEmpty() && p_57618_.getMainHandItem().is(Items.SHEARS)) {
-+      if (!p_57615_.isClientSide && !p_57618_.getMainHandItem().isEmpty() && p_57618_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_DISARM)) {
-          p_57615_.setBlock(p_57616_, p_57617_.setValue(DISARMED, Boolean.valueOf(true)), 4);
-          p_57615_.gameEvent(p_57618_, GameEvent.SHEAR, p_57616_);
-       }
-@@ -124,6 +_,39 @@
+    public static final MapCodec<TripWireBlock> CODEC = RecordCodecBuilder.mapCodec((p_312765_) -> {
+@@ -136,6 +_,39 @@
              }
           }
        }
@@ -43,7 +26,7 @@
 +               org.bukkit.event.Cancellable cancellable;
 +
 +               if (object instanceof Player player) {
-+                  cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_57609_, null, null, null);
++                  cancellable = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_57609_, null, null, null);
 +               } else if (object instanceof Entity) {
 +                  cancellable = new EntityInteractEvent(((Entity) object).getBukkitEntity(), block);
 +                  manager.callEvent((EntityInteractEvent) cancellable);

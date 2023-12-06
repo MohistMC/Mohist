@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/DoorBlock.java
 +++ b/net/minecraft/world/level/block/DoorBlock.java
-@@ -32,6 +_,8 @@
+@@ -36,6 +_,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class DoorBlock extends Block {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-@@ -178,8 +_,22 @@
+    public static final MapCodec<DoorBlock> CODEC = RecordCodecBuilder.mapCodec((p_310521_) -> {
+@@ -206,8 +_,22 @@
     }
  
     public void neighborChanged(BlockState p_52776_, Level p_52777_, BlockPos p_52778_, Block p_52779_, BlockPos p_52780_, boolean p_52781_) {

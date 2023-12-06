@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -22,8 +_,9 @@
+@@ -23,8 +_,9 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
 -public class VineBlock extends Block {
 +public class VineBlock extends Block implements net.minecraftforge.common.IForgeShearable {
+    public static final MapCodec<VineBlock> CODEC = simpleCodec(VineBlock::new);
     public static final BooleanProperty UP = PipeBlock.UP;
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
-    public static final BooleanProperty EAST = PipeBlock.EAST;
-@@ -158,7 +_,7 @@
+@@ -164,7 +_,7 @@
  
     public void randomTick(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
        if (p_222656_.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
@@ -20,7 +20,7 @@
              Direction direction = Direction.getRandom(p_222658_);
              BlockPos blockpos = p_222657_.above();
              if (direction.getAxis().isHorizontal() && !p_222655_.getValue(getPropertyForFace(direction))) {
-@@ -172,19 +_,24 @@
+@@ -178,19 +_,24 @@
                       boolean flag1 = p_222655_.getValue(getPropertyForFace(direction4));
                       BlockPos blockpos2 = blockpos4.relative(direction3);
                       BlockPos blockpos3 = blockpos4.relative(direction4);
@@ -50,7 +50,7 @@
                       }
                    } else if (isAcceptableNeighbour(p_222656_, blockpos4, direction)) {
                       p_222656_.setBlock(p_222657_, p_222655_.setValue(getPropertyForFace(direction), Boolean.valueOf(true)), 2);
-@@ -212,7 +_,7 @@
+@@ -218,7 +_,7 @@
                       }
  
                       if (this.hasHorizontalConnection(blockstate3)) {
@@ -59,7 +59,7 @@
                       }
  
                       return;
-@@ -226,7 +_,7 @@
+@@ -232,7 +_,7 @@
                       BlockState blockstate1 = blockstate.isAir() ? this.defaultBlockState() : blockstate;
                       BlockState blockstate2 = this.copyRandomFaces(p_222655_, blockstate1, p_222658_);
                       if (blockstate1 != blockstate2 && this.hasHorizontalConnection(blockstate2)) {

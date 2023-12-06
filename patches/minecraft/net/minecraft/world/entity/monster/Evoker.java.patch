@@ -1,14 +1,23 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -251,6 +_,7 @@
-                vex.setOwner(Evoker.this);
-                vex.setBoundOrigin(blockpos);
-                vex.setLimitedLife(20 * (30 + Evoker.this.random.nextInt(90)));
+@@ -39,7 +_,6 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+-import net.minecraft.world.scores.PlayerTeam;
+ 
+ public class Evoker extends SpellcasterIllager {
+    @Nullable
+@@ -256,7 +_,7 @@
+                if (playerteam != null) {
+                   serverlevel.getScoreboard().addPlayerToTeam(vex.getScoreboardName(), playerteam);
+                }
+-
 +               vex.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPELL); // CraftBukkit - Add SpawnReason
                 serverlevel.addFreshEntityWithPassengers(vex);
                 serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(Evoker.this));
              }
-@@ -279,7 +_,7 @@
+@@ -285,7 +_,7 @@
              return false;
           } else if (Evoker.this.tickCount < this.nextAttackTickCount) {
              return false;

@@ -1,15 +1,16 @@
 --- a/net/minecraft/world/entity/item/PrimedTnt.java
 +++ b/net/minecraft/world/entity/item/PrimedTnt.java
-@@ -14,12 +_,16 @@
- import net.minecraft.world.entity.Pose;
- import net.minecraft.world.entity.TraceableEntity;
+@@ -18,6 +_,8 @@
  import net.minecraft.world.level.Level;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.BlockState;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class PrimedTnt extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(PrimedTnt.class, EntityDataSerializers.INT);
-    private static final int DEFAULT_FUSE_TIME = 80;
+@@ -27,6 +_,8 @@
+    public static final String TAG_FUSE = "fuse";
     @Nullable
     public LivingEntity owner;
 +   public float yield = 4; // CraftBukkit - add field
@@ -17,7 +18,7 @@
  
     public PrimedTnt(EntityType<? extends PrimedTnt> p_32076_, Level p_32077_) {
        super(p_32076_, p_32077_);
-@@ -51,6 +_,7 @@
+@@ -59,6 +_,7 @@
     }
  
     public void tick() {
@@ -25,7 +26,7 @@
        if (!this.isNoGravity()) {
           this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
        }
-@@ -64,10 +_,13 @@
+@@ -72,10 +_,13 @@
        int i = this.getFuse() - 1;
        this.setFuse(i);
        if (i <= 0) {
@@ -40,7 +41,7 @@
        } else {
           this.updateInWaterStateAndDoFluidPushing();
           if (this.level().isClientSide) {
-@@ -78,8 +_,13 @@
+@@ -86,8 +_,13 @@
     }
  
     protected void explode() {

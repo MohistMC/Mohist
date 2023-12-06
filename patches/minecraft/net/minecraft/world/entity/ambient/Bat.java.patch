@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/ambient/Bat.java
 +++ b/net/minecraft/world/entity/ambient/Bat.java
-@@ -27,6 +_,7 @@
+@@ -28,6 +_,7 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class Bat extends AmbientCreature {
-    public static final float FLAP_DEGREES_PER_TICK = 74.48451F;
-@@ -125,16 +_,16 @@
+    public static final float FLAP_LENGTH_SECONDS = 0.5F;
+@@ -129,13 +_,13 @@
                 this.yHeadRot = (float)this.random.nextInt(360);
              }
  
@@ -16,20 +16,15 @@
 +            if (this.level().getNearestPlayer(BAT_RESTING_TARGETING, this) != null && CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
                 this.setResting(false);
                 if (!flag) {
--                  this.level().levelEvent((Player)null, 1025, blockpos, 0);
-+                  this.level().levelEvent((Player) null, 1025, blockpos, 0);
+                   this.level().levelEvent((Player)null, 1025, blockpos, 0);
                 }
              }
 -         } else {
 +         } else if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
              this.setResting(false);
              if (!flag) {
--               this.level().levelEvent((Player)null, 1025, blockpos, 0);
-+               this.level().levelEvent((Player) null, 1025, blockpos, 0);
-             }
-          }
-       } else {
-@@ -156,7 +_,7 @@
+                this.level().levelEvent((Player)null, 1025, blockpos, 0);
+@@ -160,7 +_,7 @@
           float f1 = Mth.wrapDegrees(f - this.getYRot());
           this.zza = 0.5F;
           this.setYRot(this.getYRot() + f1);
@@ -38,7 +33,7 @@
              this.setResting(true);
           }
        }
-@@ -178,7 +_,7 @@
+@@ -182,7 +_,7 @@
        if (this.isInvulnerableTo(p_27424_)) {
           return false;
        } else {

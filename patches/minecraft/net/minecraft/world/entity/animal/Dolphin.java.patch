@@ -11,10 +11,10 @@
 +      return TOTAL_AIR_SUPPLY;
 +   }
 +   // CraftBukkit end
-    public static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_296794_) -> {
-       return !p_296794_.hasPickUpDelay() && p_296794_.isAlive() && p_296794_.isInWater();
+    public static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_309164_) -> {
+       return !p_309164_.hasPickUpDelay() && p_309164_.isAlive() && p_309164_.isInWater();
     };
-@@ -178,7 +_,7 @@
+@@ -174,7 +_,7 @@
     }
  
     public int getMaxAirSupply() {
@@ -23,12 +23,12 @@
     }
  
     protected int increaseAirSupply(int p_28389_) {
-@@ -214,6 +_,12 @@
+@@ -210,6 +_,12 @@
        if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
           ItemStack itemstack = p_28357_.getItem();
           if (this.canHoldItem(itemstack)) {
 +            // CraftBukkit start - call EntityPickupItemEvent
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
 +               return;
 +            }
 +            itemstack = p_28357_.getItem(); // update ItemStack from event
@@ -36,7 +36,7 @@
              this.onItemPickup(p_28357_);
              this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
              this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
-@@ -445,7 +_,7 @@
+@@ -441,7 +_,7 @@
        }
  
        public void start() {
@@ -45,7 +45,7 @@
        }
  
        public void stop() {
-@@ -461,8 +_,8 @@
+@@ -457,8 +_,8 @@
              this.dolphin.getNavigation().moveTo(this.player, this.speedModifier);
           }
  

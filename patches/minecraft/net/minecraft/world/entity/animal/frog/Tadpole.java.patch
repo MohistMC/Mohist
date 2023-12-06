@@ -5,7 +5,7 @@
  
              frog.setPersistenceRequired();
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTransformEvent(this, frog, org.bukkit.event.entity.EntityTransformEvent.TransformReason.METAMORPHOSIS).isCancelled()) {
 +               this.setAge(0); // Sets the age to 0 for avoid a loop if the event is canceled
 +               return;
 +            }

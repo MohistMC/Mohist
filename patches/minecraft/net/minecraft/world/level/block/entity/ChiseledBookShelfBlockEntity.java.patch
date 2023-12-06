@@ -13,7 +13,7 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  import org.slf4j.Logger;
  
@@ -66,10 +66,15 @@
     }
  
     public boolean stillValid(Player p_256481_) {
-@@ -122,7 +_,63 @@
-       return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty();
+@@ -119,10 +_,66 @@
     }
  
+    public boolean canPlaceItem(int p_256567_, ItemStack p_255922_) {
+-      return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty() && p_255922_.getCount() == this.getMaxStackSize();
+-   }
++      return p_255922_.is(ItemTags.BOOKSHELF_BOOKS) && this.getItem(p_256567_).isEmpty();
++   }
++
 +   @Override
 +   public List<ItemStack> getContents() {
 +      return this.items;
@@ -101,7 +106,7 @@
 +      return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
 +   }
 +   // CraftBukkit end
-+
+ 
     public int getLastInteractedSlot() {
        return this.lastInteractedSlot;
 +   }

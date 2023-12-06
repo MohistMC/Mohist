@@ -1,7 +1,7 @@
 package com.mohistmc.bukkit.inventory;
 
 import net.minecraft.world.effect.MobEffect;
-import org.bukkit.craftbukkit.v1_20_R2.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
 
 /**
  * @author Mgazul by MohistMC

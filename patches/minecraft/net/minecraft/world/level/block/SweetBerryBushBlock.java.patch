@@ -1,24 +1,17 @@
 --- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.level.block;
- 
-+import java.util.Collections;
- import net.minecraft.core.BlockPos;
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.sounds.SoundEvents;
-@@ -26,6 +_,10 @@
+@@ -27,6 +_,10 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
  
  public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {
-    private static final float HURT_SPEED_THRESHOLD = 0.003F;
-@@ -57,10 +_,11 @@
+    public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
+@@ -63,10 +_,11 @@
  
     public void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {
        int i = p_222563_.getValue(AGE);
@@ -32,7 +25,7 @@
        }
  
     }
-@@ -72,7 +_,9 @@
+@@ -78,7 +_,9 @@
              double d0 = Math.abs(p_57273_.getX() - p_57273_.xOld);
              double d1 = Math.abs(p_57273_.getZ() - p_57273_.zOld);
              if (d0 >= (double)0.003F || d1 >= (double)0.003F) {
@@ -42,7 +35,7 @@
              }
           }
  
-@@ -86,7 +_,15 @@
+@@ -92,7 +_,15 @@
           return InteractionResult.PASS;
        } else if (i > 1) {
           int j = 1 + p_57276_.random.nextInt(2);

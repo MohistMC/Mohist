@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/raid/Raider.java
 +++ b/net/minecraft/world/entity/raid/Raider.java
+@@ -44,8 +_,8 @@
+ 
+ public abstract class Raider extends PatrollingMonster {
+    protected static final EntityDataAccessor<Boolean> IS_CELEBRATING = SynchedEntityData.defineId(Raider.class, EntityDataSerializers.BOOLEAN);
+-   static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_309223_) -> {
+-      return !p_309223_.hasPickUpDelay() && p_309223_.isAlive() && ItemStack.matches(p_309223_.getItem(), Raid.getLeaderBannerInstance());
++   static final Predicate<ItemEntity> ALLOWED_ITEMS = (p_296862_) -> {
++      return !p_296862_.hasPickUpDelay() && p_296862_.isAlive() && ItemStack.matches(p_296862_.getItem(), Raid.getLeaderBannerInstance());
+    };
+    @Nullable
+    protected Raid raid;
 @@ -149,6 +_,7 @@
                 i = Mth.clamp(i, 0, 4);
                 MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.BAD_OMEN, 120000, i, false, false, true);

@@ -1,12 +1,19 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -40,8 +_,13 @@
+@@ -26,7 +_,6 @@
+ import net.minecraft.world.entity.LightningBolt;
+ import net.minecraft.world.entity.MobSpawnType;
+ import net.minecraft.world.entity.Shearable;
+-import net.minecraft.world.entity.VariantHolder;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -40,8 +_,12 @@
  import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.apache.commons.lang3.tuple.Pair;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityDropItemEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
  

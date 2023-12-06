@@ -16,7 +16,7 @@
 +   }
 +   // Spigot end
     public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
-       this(p_237852_.readComponent(), p_237852_.readBoolean());
+       this(p_237852_.readComponentTrusted(), p_237852_.readBoolean());
     }
  
     public void write(FriendlyByteBuf p_237860_) {

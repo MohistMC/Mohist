@@ -12,8 +12,8 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  import org.slf4j.Logger;
  
  public class BrushableBlockEntity extends BlockEntity {
@@ -33,6 +33,15 @@
  
     public BrushableBlockEntity(BlockPos p_277558_, BlockState p_278093_) {
        super(BlockEntityType.BRUSHABLE_BLOCK, p_277558_, p_278093_);
+@@ -65,7 +_,7 @@
+             this.brushingCompleted(p_277520_);
+             return true;
+          } else {
+-            this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 2);
++            this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 40);
+             int j = this.getCompletionState();
+             if (i != j) {
+                BlockState blockstate = this.getBlockState();
 @@ -141,7 +_,10 @@
              double d5 = (double)blockpos.getZ() + 0.5D * d1 + d2;
              ItemEntity itementity = new ItemEntity(this.level, d3, d4, d5, this.item.split(this.level.random.nextInt(21) + 10));
@@ -45,6 +54,15 @@
              this.item = ItemStack.EMPTY;
           }
  
+@@ -167,7 +_,7 @@
+             this.brushCountResetsAtTick = 0L;
+             this.coolDownEndsAtTick = 0L;
+          } else {
+-            this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), 2);
++            this.level.scheduleTick(this.getBlockPos(), this.getBlockState().getBlock(), (int)(this.brushCountResetsAtTick - this.level.getGameTime()));
+          }
+ 
+       }
 @@ -211,6 +_,7 @@
     }
  

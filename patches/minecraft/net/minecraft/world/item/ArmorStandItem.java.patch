@@ -5,7 +5,7 @@
                 float f = (float)Mth.floor((Mth.wrapDegrees(p_40510_.getRotation() - 180.0F) + 22.5F) / 45.0F) * 45.0F;
                 armorstand.moveTo(armorstand.getX(), armorstand.getY(), armorstand.getZ(), f, 0.0F);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPlaceEvent(p_40510_, armorstand).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPlaceEvent(p_40510_, armorstand).isCancelled()) {
 +                  return InteractionResult.FAIL;
 +               }
 +               // CraftBukkit end

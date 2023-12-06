@@ -12,21 +12,12 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator;
 +import org.bukkit.event.world.PortalCreateEvent;
  
  public class PortalShape {
     private static final int MIN_WIDTH = 2;
-@@ -28,7 +_,7 @@
-    private static final int MIN_HEIGHT = 3;
-    public static final int MAX_HEIGHT = 21;
-    private static final BlockBehaviour.StatePredicate FRAME = (p_77720_, p_77721_, p_77722_) -> {
--      return p_77720_.is(Blocks.OBSIDIAN);
-+      return p_77720_.isPortalFrame(p_77721_, p_77722_);
-    };
-    private static final float SAFE_TRAVEL_MAX_ENTITY_XY = 4.0F;
-    private static final double SAFE_TRAVEL_MAX_VERTICAL_DELTA = 1.0D;
 @@ -40,6 +_,7 @@
     private BlockPos bottomLeft;
     private int height;
@@ -112,7 +103,7 @@
        return this.isValid() && this.numPortalBlocks == this.width * this.height;
     }
 @@ -201,6 +_,8 @@
-       return new Vec3(d2, d4, d3);
+       return new Vec3(d2, d5, d4);
     }
  
 +   private static AtomicReference<CraftPortalEvent> mohist$portalInfo = new AtomicReference<>(null);

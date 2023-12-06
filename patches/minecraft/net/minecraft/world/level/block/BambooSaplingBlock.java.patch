@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BambooSaplingBlock.java
 +++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
-@@ -8,7 +_,6 @@
+@@ -9,7 +_,6 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.Items;
@@ -8,7 +8,7 @@
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
-@@ -34,7 +_,7 @@
+@@ -40,7 +_,7 @@
     }
  
     public void randomTick(BlockState p_220753_, ServerLevel p_220754_, BlockPos p_220755_, RandomSource p_220756_) {
@@ -17,7 +17,7 @@
           this.growBamboo(p_220754_, p_220755_);
        }
  
-@@ -73,10 +_,10 @@
+@@ -79,10 +_,10 @@
     }
  
     public float getDestroyProgress(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {
@@ -27,6 +27,6 @@
  
     protected void growBamboo(Level p_48973_, BlockPos p_48974_) {
 -      p_48973_.setBlock(p_48974_.above(), Blocks.BAMBOO.defaultBlockState().setValue(BambooStalkBlock.LEAVES, BambooLeaves.SMALL), 3);
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_48973_, p_48974_, p_48974_.above(), Blocks.BAMBOO.defaultBlockState().setValue(BambooStalkBlock.LEAVES, BambooLeaves.SMALL), 3); // CraftBukkit - BlockSpreadEvent
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_48973_, p_48974_, p_48974_.above(), Blocks.BAMBOO.defaultBlockState().setValue(BambooStalkBlock.LEAVES, BambooLeaves.SMALL), 3); // CraftBukkit - BlockSpreadEvent
     }
  }

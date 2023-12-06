@@ -12,12 +12,30 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
  public class ChestBoat extends Boat implements HasCustomInventoryScreen, ContainerEntity {
     private static final int CONTAINER_SIZE = 27;
+@@ -35,7 +_,7 @@
+    }
+ 
+    public ChestBoat(Level p_219872_, double p_219873_, double p_219874_, double p_219875_) {
+-      super(EntityType.CHEST_BOAT, p_219872_);
++      this(EntityType.CHEST_BOAT, p_219872_);
+       this.setPos(p_219873_, p_219874_, p_219875_);
+       this.xo = p_219873_;
+       this.yo = p_219874_;
+@@ -61,7 +_,7 @@
+    }
+ 
+    public void destroy(DamageSource p_219892_) {
+-      this.destroy(this.getDropItem());
++      super.destroy(p_219892_);
+       this.chestVehicleDestroyed(p_219892_, this.level(), this);
+    }
+ 
 @@ -165,6 +_,53 @@
        return this.isChestVehicleStillValid(p_219896_);
     }

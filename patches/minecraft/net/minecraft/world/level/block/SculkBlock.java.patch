@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SculkBlock.java
 +++ b/net/minecraft/world/level/block/SculkBlock.java
-@@ -6,6 +_,7 @@
+@@ -7,6 +_,7 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.util.valueproviders.ConstantInt;
  import net.minecraft.world.entity.player.Player;
@@ -8,7 +8,7 @@
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-@@ -27,8 +_,18 @@
+@@ -34,8 +_,18 @@
              if (p_222076_.nextInt(j) < i) {
                 BlockPos blockpos1 = blockpos.above();
                 BlockState blockstate = this.getRandomGrowthState(p_222074_, blockpos1, p_222076_, p_222077_.isWorldGeneration());
@@ -17,7 +17,7 @@
 +               // Mohist start - Fix LostFeatures mod mixin
 +               if (p_222074_ instanceof Level) {
 +                  // CraftBukkit start - Call BlockSpreadEvent
-+                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
++                  if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
 +                     p_222074_.playSound((Player)null, blockpos, blockstate.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 +                  }
 +                  // CraftBukkit end

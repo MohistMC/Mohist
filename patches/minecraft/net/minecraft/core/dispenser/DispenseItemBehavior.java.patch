@@ -39,8 +39,8 @@
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.util.DummyGeneratorAccess;
 +import org.bukkit.event.block.BlockDispenseArmorEvent;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +import org.bukkit.event.block.BlockFertilizeEvent;
@@ -147,7 +147,7 @@
 +               org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123529_.pos().getX(), p_123529_.pos().getY(), p_123529_.pos().getZ());
 +               CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
-+               BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
++               BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) list.get(0).getBukkitEntity());
 +               if (!DispenserBlock.eventFired) {
 +                  world.getCraftServer().getPluginManager().callEvent(event);
 +               }
@@ -173,14 +173,7 @@
                 this.setSuccess(true);
                 return p_123530_;
              } else {
-@@ -237,11 +_,39 @@
-          protected ItemStack execute(BlockSource p_123535_, ItemStack p_123536_) {
-             BlockPos blockpos = p_123535_.pos().relative(p_123535_.state().getValue(DispenserBlock.FACING));
- 
--            for(AbstractHorse abstracthorse : p_123535_.level().getEntitiesOfClass(AbstractHorse.class, new AABB(blockpos), (p_296334_) -> {
--               return p_296334_.isAlive() && p_296334_.canWearArmor();
-+            for(AbstractHorse abstracthorse : p_123535_.level().getEntitiesOfClass(AbstractHorse.class, new AABB(blockpos), (p_289248_) -> {
-+               return p_289248_.isAlive() && p_289248_.canWearArmor();
+@@ -242,6 +_,34 @@
              })) {
                 if (abstracthorse.isArmor(p_123536_) && !abstracthorse.isWearingArmor() && abstracthorse.isTamed()) {
                    abstracthorse.getSlot(401).set(p_123536_.split(1));
@@ -189,7 +182,7 @@
 +                  Level world = p_123535_.level();
 +                  org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123535_.pos().getX(), p_123535_.pos().getY(), p_123535_.pos().getZ());
 +                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
++                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) abstracthorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     world.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -215,14 +208,9 @@
                    this.setSuccess(true);
                    return p_123536_;
                 }
-@@ -274,11 +_,34 @@
-          public ItemStack execute(BlockSource p_123541_, ItemStack p_123542_) {
-             BlockPos blockpos = p_123541_.pos().relative(p_123541_.state().getValue(DispenserBlock.FACING));
- 
--            for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_296335_) -> {
--               return p_296335_.isAlive() && !p_296335_.hasChest();
-+            for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_289249_) -> {
-+               return p_289249_.isAlive() && !p_289249_.hasChest();
+@@ -277,8 +_,31 @@
+             for(AbstractChestedHorse abstractchestedhorse : p_123541_.level().getEntitiesOfClass(AbstractChestedHorse.class, new AABB(blockpos), (p_308468_) -> {
+                return p_308468_.isAlive() && !p_308468_.hasChest();
              })) {
 -               if (abstractchestedhorse.isTamed() && abstractchestedhorse.getSlot(499).set(p_123542_)) {
 -                  p_123542_.shrink(1);
@@ -232,7 +220,7 @@
 +                  org.bukkit.block.Block block = world.getWorld().getBlockAt(p_123541_.pos().getX(), p_123541_.pos().getY(), p_123541_.pos().getZ());
 +                  CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
-+                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
++                  BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) abstractchestedhorse.getBukkitEntity());
 +                  if (!DispenserBlock.eventFired) {
 +                     world.getCraftServer().getPluginManager().callEvent(event);
 +                  }
@@ -332,7 +320,7 @@
 +
 +            SmallFireball entitysmallfireball = new SmallFireball(level, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +            entitysmallfireball.setItem(itemstack1);
-+            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_20_R2.projectiles.CraftBlockProjectileSource(p_123556_.blockEntity());
++            entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.v1_20_R3.projectiles.CraftBlockProjectileSource(p_123556_.blockEntity());
 +
 +            level.addFreshEntity(entitysmallfireball);
              return p_123557_;
@@ -479,7 +467,7 @@
 -               level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(level, blockpos));
 -               level.gameEvent((Entity)null, GameEvent.BLOCK_PLACE, blockpos);
 +               // CraftBukkit start - Ignition by dispensing flint and steel
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.pos()).isCancelled()) {
++               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, p_123412_.pos()).isCancelled()) {
 +                  level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(level, blockpos));
 +                  level.gameEvent((Entity) null, GameEvent.BLOCK_PLACE, blockpos);
 +               }
@@ -490,7 +478,7 @@
 -                  level.removeBlock(blockpos, false);
 +               if (blockstate.isFlammable(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite())) {
 +                  blockstate.onCaughtFire(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite(), null);
-+                  if (blockstate.getBlock() instanceof TntBlock && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.pos())) {
++                  if (blockstate.getBlock() instanceof TntBlock && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callTNTPrimeEvent(level, blockpos, org.bukkit.event.block.TNTPrimeEvent.PrimeCause.DISPENSER, null, p_123412_.pos())) {
 +                     level.removeBlock(blockpos, false);
 +                  }
                 } else {

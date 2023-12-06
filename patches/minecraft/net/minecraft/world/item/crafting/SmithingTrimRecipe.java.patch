@@ -1,23 +1,15 @@
 --- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
-@@ -17,13 +_,16 @@
+@@ -17,6 +_,9 @@
  import net.minecraft.world.item.armortrim.TrimPattern;
  import net.minecraft.world.item.armortrim.TrimPatterns;
  import net.minecraft.world.level.Level;
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftSmithingTrimRecipe;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftSmithingTrimRecipe;
  
  public class SmithingTrimRecipe implements SmithingRecipe {
     final Ingredient template;
-    final Ingredient base;
-    final Ingredient addition;
- 
--   SmithingTrimRecipe(Ingredient p_267298_, Ingredient p_266862_, Ingredient p_267050_) {
-+   public SmithingTrimRecipe(Ingredient p_267298_, Ingredient p_266862_, Ingredient p_267050_) {
-       this.template = p_267298_;
-       this.base = p_266862_;
-       this.addition = p_267050_;
 @@ -87,8 +_,15 @@
     }
  

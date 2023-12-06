@@ -1,8 +1,8 @@
 package com.mohistmc.bukkit.entity;
 
 import net.minecraft.world.entity.TamableAnimal;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftTameableAnimal;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftTameableAnimal;
 
 /**
  * Mohist

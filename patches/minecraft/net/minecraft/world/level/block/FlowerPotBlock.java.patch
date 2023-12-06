@@ -1,13 +1,34 @@
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
-@@ -28,10 +_,33 @@
-    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
-    private final Block content;
+@@ -1,12 +_,9 @@
+ package net.minecraft.world.level.block;
+ 
+ import com.google.common.collect.Maps;
+-import com.mojang.serialization.MapCodec;
+-import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.util.Map;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+-import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+@@ -17,7 +_,6 @@
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+-import net.minecraft.world.level.LevelReader;
+ import net.minecraft.world.level.block.state.BlockBehaviour;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+@@ -41,10 +_,33 @@
+       return CODEC;
+    }
  
 +   @Deprecated // Mods should use the constructor below
     public FlowerPotBlock(Block p_53528_, BlockBehaviour.Properties p_53529_) {
 -      super(p_53529_);
--      this.content = p_53528_;
+-      this.potted = p_53528_;
 -      POTTED_BY_CONTENT.put(p_53528_, this);
 +       this(Blocks.FLOWER_POT == null ? null : () -> (FlowerPotBlock) net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_53528_).get(), p_53529_);
 +       if (Blocks.FLOWER_POT != null) {
@@ -37,7 +58,7 @@
     }
  
     public VoxelShape getShape(BlockState p_53556_, BlockGetter p_53557_, BlockPos p_53558_, CollisionContext p_53559_) {
-@@ -45,7 +_,7 @@
+@@ -58,7 +_,7 @@
     public InteractionResult use(BlockState p_53540_, Level p_53541_, BlockPos p_53542_, Player p_53543_, InteractionHand p_53544_, BlockHitResult p_53545_) {
        ItemStack itemstack = p_53543_.getItemInHand(p_53544_);
        Item item = itemstack.getItem();
@@ -46,23 +67,7 @@
        boolean flag = blockstate.is(Blocks.AIR);
        boolean flag1 = this.isEmpty();
        if (flag != flag1) {
-@@ -63,7 +_,7 @@
-                p_53543_.drop(itemstack1, false);
-             }
- 
--            p_53541_.setBlock(p_53542_, Blocks.FLOWER_POT.defaultBlockState(), 3);
-+            p_53541_.setBlock(p_53542_, getEmptyPot().defaultBlockState(), 3);
-          }
- 
-          p_53541_.gameEvent(p_53543_, GameEvent.BLOCK_CHANGE, p_53542_);
-@@ -86,10 +_,31 @@
-    }
- 
-    public Block getContent() {
--      return this.content;
-+      return flowerDelegate.get();
-    }
- 
+@@ -105,4 +_,25 @@
     public boolean isPathfindable(BlockState p_53535_, BlockGetter p_53536_, BlockPos p_53537_, PathComputationType p_53538_) {
        return false;
     }

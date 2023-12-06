@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/Container.java
 +++ b/net/minecraft/world/Container.java
-@@ -1,14 +_,22 @@
+@@ -1,14 +_,21 @@
  package net.minecraft.world;
  
 +import java.util.Collections;
@@ -16,9 +16,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.BlockEntity;
  
-+import net.minecraft.world.item.crafting.Recipe;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity;
 +
  public interface Container extends Clearable {
     int LARGE_MAX_STACK_SIZE = 64;

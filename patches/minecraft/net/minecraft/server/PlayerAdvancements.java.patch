@@ -1,6 +1,14 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -132,6 +_,7 @@
+@@ -30,6 +_,7 @@
+ import net.minecraft.advancements.AdvancementNode;
+ import net.minecraft.advancements.AdvancementProgress;
+ import net.minecraft.advancements.AdvancementTree;
++import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.advancements.Criterion;
+ import net.minecraft.advancements.CriterionProgress;
+ import net.minecraft.advancements.CriterionTrigger;
+@@ -131,6 +_,7 @@
     }
  
     public void save() {
@@ -8,7 +16,7 @@
        JsonElement jsonelement = Util.getOrThrow(this.codec.encodeStart(JsonOps.INSTANCE, this.asData()), IllegalStateException::new);
  
        try {
-@@ -150,6 +_,7 @@
+@@ -149,6 +_,7 @@
        p_300341_.forEach((p_296440_, p_296441_) -> {
           AdvancementHolder advancementholder = p_299201_.get(p_296440_);
           if (advancementholder == null) {
@@ -16,15 +24,15 @@
              LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", p_296440_, this.playerSavePath);
           } else {
              this.startProgress(advancementholder, p_296441_);
-@@ -178,6 +_,7 @@
+@@ -177,6 +_,7 @@
           this.unregisterListeners(p_298135_);
           this.progressChanged.add(p_298135_);
           flag = true;
 +         net.minecraftforge.event.ForgeEventFactory.onAdvancementGrant(this.player, p_298135_, advancementprogress, p_135990_);
           if (!flag1 && advancementprogress.isDone()) {
              p_298135_.value().rewards().grant(this.player);
-             p_298135_.value().display().ifPresent((p_296444_) -> {
-@@ -186,6 +_,7 @@
+             p_298135_.value().display().ifPresent((p_308592_) -> {
+@@ -185,6 +_,7 @@
                 }
  
              });
@@ -32,7 +40,7 @@
           }
        }
  
-@@ -204,6 +_,7 @@
+@@ -203,6 +_,7 @@
           this.registerListeners(p_297905_);
           this.progressChanged.add(p_297905_);
           flag = true;

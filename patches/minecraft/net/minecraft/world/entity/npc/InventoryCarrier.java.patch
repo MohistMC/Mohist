@@ -6,7 +6,7 @@
  
 +         // CraftBukkit start
 +         ItemStack remaining = new SimpleContainer(simplecontainer).addItem(itemstack);
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityPickupItemEvent(p_219612_, p_219614_, remaining.getCount(), false).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(p_219612_, p_219614_, remaining.getCount(), false).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

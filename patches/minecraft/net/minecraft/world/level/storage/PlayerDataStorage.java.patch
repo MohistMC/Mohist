@@ -1,40 +1,42 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -3,13 +_,17 @@
+@@ -3,6 +_,8 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
  import java.io.File;
 +import java.io.FileInputStream;
 +import java.io.InputStream;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
  import javax.annotation.Nullable;
- import net.minecraft.Util;
- import net.minecraft.nbt.CompoundTag;
+@@ -11,8 +_,10 @@
+ import net.minecraft.nbt.NbtAccounter;
  import net.minecraft.nbt.NbtIo;
  import net.minecraft.nbt.NbtUtils;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.util.datafix.DataFixTypes;
  import net.minecraft.world.entity.player.Player;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
  import org.slf4j.Logger;
  
  public class PlayerDataStorage {
-@@ -24,6 +_,7 @@
+@@ -27,6 +_,7 @@
     }
  
     public void save(Player p_78434_) {
 +      if (org.spigotmc.SpigotConfig.disablePlayerDataSaving) return; // Spigot
        try {
           CompoundTag compoundtag = p_78434_.saveWithoutId(new CompoundTag());
-          File file1 = File.createTempFile(p_78434_.getStringUUID() + "-", ".dat", this.playerDir);
-@@ -31,6 +_,7 @@
-          File file2 = new File(this.playerDir, p_78434_.getStringUUID() + ".dat");
-          File file3 = new File(this.playerDir, p_78434_.getStringUUID() + ".dat_old");
-          Util.safeReplaceFile(file2, file1, file3);
+          Path path = this.playerDir.toPath();
+@@ -35,6 +_,7 @@
+          Path path2 = path.resolve(p_78434_.getStringUUID() + ".dat");
+          Path path3 = path.resolve(p_78434_.getStringUUID() + ".dat_old");
+          Util.safeReplaceFile(path2, path1, path3);
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_78434_, playerDir, p_78434_.getStringUUID());
        } catch (Exception exception) {
           LOGGER.warn("Failed to save player data for {}", (Object)p_78434_.getName().getString());
        }
-@@ -43,17 +_,46 @@
+@@ -47,18 +_,47 @@
  
        try {
           File file1 = new File(this.playerDir, p_78436_.getStringUUID() + ".dat");
@@ -51,7 +53,7 @@
 +         }
 +         // Spigot End
           if (file1.exists() && file1.isFile()) {
-             compoundtag = NbtIo.readCompressed(file1);
+             compoundtag = NbtIo.readCompressed(file1.toPath(), NbtAccounter.unlimitedHeap());
           }
 +         // Spigot Start
 +         if ( usingWrongFile )
@@ -75,13 +77,14 @@
 +         }
 +         // CraftBukkit end
           int i = NbtUtils.getDataVersion(compoundtag, -1);
-          p_78436_.load(DataFixTypes.PLAYER.updateToCurrentVersion(this.fixerUpper, compoundtag, i));
+          compoundtag = DataFixTypes.PLAYER.updateToCurrentVersion(this.fixerUpper, compoundtag, i);
+          p_78436_.load(compoundtag);
        }
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_78436_, playerDir, p_78436_.getStringUUID());
  
        return compoundtag;
     }
-@@ -72,4 +_,26 @@
+@@ -77,4 +_,26 @@
  
        return astring;
     }
@@ -95,7 +98,7 @@
 +      try {
 +         File file1 = new File(this.playerDir, s + ".dat");
 +         if (file1.exists()) {
-+            return NbtIo.readCompressed((InputStream) (new FileInputStream(file1)));
++            return NbtIo.readCompressed(file1.toPath(), NbtAccounter.unlimitedHeap());
 +         }
 +      } catch (Exception exception) {
 +         LOGGER.warn("Failed to load player data for " + s);

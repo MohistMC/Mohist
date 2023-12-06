@@ -24,7 +24,7 @@
        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
        abstractarrow.shoot(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.level().getDifficulty().getId() * 4));
 +      // CraftBukkit start
-+      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityShootBowEvent(this, this.getMainHandItem(), null, abstractarrow, net.minecraft.world.InteractionHand.MAIN_HAND, 0.8F, true);
++      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityShootBowEvent(this, this.getMainHandItem(), null, abstractarrow, net.minecraft.world.InteractionHand.MAIN_HAND, 0.8F, true);
 +      if (event.isCancelled()) {
 +         event.getProjectile().remove();
 +         return;

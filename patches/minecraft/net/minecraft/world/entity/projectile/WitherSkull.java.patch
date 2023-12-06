@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/WitherSkull.java
 +++ b/net/minecraft/world/entity/projectile/WitherSkull.java
-@@ -19,6 +_,7 @@
+@@ -1,7 +_,6 @@
+ package net.minecraft.world.entity.projectile;
+ 
+ import net.minecraft.core.BlockPos;
+-import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.syncher.EntityDataAccessor;
+ import net.minecraft.network.syncher.EntityDataSerializers;
+ import net.minecraft.network.syncher.SynchedEntityData;
+@@ -20,6 +_,7 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
@@ -8,7 +16,7 @@
  
  public class WitherSkull extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WitherSkull.class, EntityDataSerializers.BOOLEAN);
-@@ -40,7 +_,7 @@
+@@ -41,7 +_,7 @@
     }
  
     public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
@@ -17,7 +25,7 @@
     }
  
     protected void onHitEntity(EntityHitResult p_37626_) {
-@@ -56,7 +_,7 @@
+@@ -57,7 +_,7 @@
                 if (entity.isAlive()) {
                    this.doEnchantDamageEffects(livingentity, entity);
                 } else {
@@ -26,7 +34,7 @@
                 }
              }
           } else {
-@@ -73,7 +_,7 @@
+@@ -74,7 +_,7 @@
              }
  
              if (i > 0) {
@@ -35,7 +43,7 @@
              }
           }
  
-@@ -83,7 +_,14 @@
+@@ -84,7 +_,14 @@
     protected void onHit(HitResult p_37628_) {
        super.onHit(p_37628_);
        if (!this.level().isClientSide) {
@@ -51,3 +59,19 @@
           this.discard();
        }
  
+@@ -112,15 +_,5 @@
+ 
+    protected boolean shouldBurn() {
+       return false;
+-   }
+-
+-   public void addAdditionalSaveData(CompoundTag p_311705_) {
+-      super.addAdditionalSaveData(p_311705_);
+-      p_311705_.putBoolean("dangerous", this.isDangerous());
+-   }
+-
+-   public void readAdditionalSaveData(CompoundTag p_310393_) {
+-      super.readAdditionalSaveData(p_310393_);
+-      this.setDangerous(p_310393_.getBoolean("dangerous"));
+    }
+ }

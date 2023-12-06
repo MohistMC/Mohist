@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CactusBlock.java
 +++ b/net/minecraft/world/level/block/CactusBlock.java
-@@ -3,7 +_,6 @@
+@@ -4,7 +_,6 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.server.level.ServerLevel;
@@ -8,19 +8,19 @@
  import net.minecraft.tags.FluidTags;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.entity.Entity;
-@@ -19,8 +_,10 @@
+@@ -20,8 +_,10 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
 -public class CactusBlock extends Block {
 +public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final MapCodec<CactusBlock> CODEC = simpleCodec(CactusBlock::new);
     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
     public static final int MAX_AGE = 15;
-    protected static final int AABB_OFFSET = 1;
-@@ -33,6 +_,7 @@
+@@ -39,6 +_,7 @@
     }
  
     public void tick(BlockState p_220908_, ServerLevel p_220909_, BlockPos p_220910_, RandomSource p_220911_) {
@@ -28,7 +28,7 @@
        if (!p_220908_.canSurvive(p_220909_, p_220910_)) {
           p_220909_.destroyBlock(p_220910_, true);
        }
-@@ -48,15 +_,18 @@
+@@ -54,15 +_,18 @@
  
           if (i < 3) {
              int j = p_220913_.getValue(AGE);
@@ -55,7 +55,7 @@
           }
        }
     }
-@@ -86,11 +_,13 @@
+@@ -92,11 +_,13 @@
        }
  
        BlockState blockstate1 = p_51154_.getBlockState(p_51155_.below());
@@ -70,7 +70,7 @@
     }
  
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51164_) {
-@@ -99,5 +_,15 @@
+@@ -105,5 +_,15 @@
  
     public boolean isPathfindable(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
        return false;

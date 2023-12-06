@@ -11,7 +11,7 @@
  import net.minecraft.world.level.block.FarmBlock;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class HarvestFarmland extends Behavior<Villager> {
     private static final int HARVEST_DURATION = 200;
@@ -30,7 +30,7 @@
              if (block instanceof CropBlock && ((CropBlock)block).isMaxAge(blockstate)) {
 -               p_23196_.destroyBlock(this.aboveFarmlandPos, true, p_23197_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.aboveFarmlandPos, Blocks.AIR.defaultBlockState())) {
++               if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_23197_, this.aboveFarmlandPos, Blocks.AIR.defaultBlockState())) {
 +                  p_23196_.destroyBlock(this.aboveFarmlandPos, true, p_23197_);
 +               }
 +               // CraftBukkit end

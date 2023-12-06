@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/MobSpawnType.java
++++ b/net/minecraft/world/entity/MobSpawnType.java
+@@ -16,14 +_,5 @@
+    SPAWN_EGG,
+    COMMAND,
+    DISPENSER,
+-   PATROL,
+-   TRIAL_SPAWNER;
+-
+-   public static boolean isSpawner(MobSpawnType p_311852_) {
+-      return p_311852_ == SPAWNER || p_311852_ == TRIAL_SPAWNER;
+-   }
+-
+-   public static boolean ignoresLightRequirements(MobSpawnType p_310571_) {
+-      return p_310571_ == TRIAL_SPAWNER;
+-   }
++   PATROL;
+ }

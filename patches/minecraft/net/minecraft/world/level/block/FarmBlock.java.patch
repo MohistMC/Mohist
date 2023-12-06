@@ -1,15 +1,30 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -26,6 +_,8 @@
+@@ -5,15 +_,10 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.server.level.ServerLevel;
+-import net.minecraft.tags.BlockTags;
+-import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.LivingEntity;
+-import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+ import net.minecraft.world.level.BlockGetter;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
+@@ -27,6 +_,7 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityInteractEvent;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class FarmBlock extends Block {
-    public static final IntegerProperty MOISTURE = BlockStateProperties.MOISTURE;
-@@ -73,18 +_,19 @@
+    public static final MapCodec<FarmBlock> CODEC = simpleCodec(FarmBlock::new);
+@@ -79,18 +_,19 @@
        int i = p_221139_.getValue(MOISTURE);
        if (!isNearWater(p_221140_, p_221141_) && !p_221140_.isRainingAt(p_221141_.above())) {
           if (i > 0) {
@@ -31,7 +46,7 @@
           turnToDirt(p_153230_, p_153228_, p_153227_, p_153229_);
        }
  
-@@ -92,23 +_,31 @@
+@@ -98,23 +_,31 @@
     }
  
     public static void turnToDirt(@Nullable Entity p_270981_, BlockState p_270402_, Level p_270568_, BlockPos p_270551_) {

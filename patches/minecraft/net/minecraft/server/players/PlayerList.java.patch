@@ -42,12 +42,12 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.command.ColouredConsoleSender;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
++import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
++import org.bukkit.craftbukkit.v1_20_R3.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerJoinEvent;
 +import org.bukkit.event.player.PlayerLoginEvent;
@@ -702,7 +702,7 @@
        return this.ops.contains(p_11304_) || this.server.isSingleplayerOwner(p_11304_) && this.server.getWorldData().getAllowCommands() || this.allowCheatsForAllPlayers;
     }
  
-@@ -606,6 +_,13 @@
+@@ -609,6 +_,13 @@
     public void broadcast(@Nullable Player p_11242_, double p_11243_, double p_11244_, double p_11245_, double p_11246_, ResourceKey<Level> p_11247_, Packet<?> p_11248_) {
        for(int i = 0; i < this.players.size(); ++i) {
           ServerPlayer serverplayer = this.players.get(i);
@@ -716,7 +716,7 @@
           if (serverplayer != p_11242_ && serverplayer.level().dimension() == p_11247_) {
              double d0 = p_11243_ - serverplayer.getX();
              double d1 = p_11244_ - serverplayer.getY();
-@@ -645,22 +_,31 @@
+@@ -648,14 +_,15 @@
     }
  
     public void sendLevelInfo(ServerPlayer p_11230_, ServerLevel p_11231_) {
@@ -735,6 +735,8 @@
 +          // CraftBukkit end
        }
  
+       p_11230_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0.0F));
+@@ -663,9 +_,17 @@
     }
  
     public void sendAllPlayerInfo(ServerPlayer p_11293_) {
@@ -755,7 +757,7 @@
     }
  
     public int getPlayerCount() {
-@@ -713,11 +_,21 @@
+@@ -718,11 +_,21 @@
     }
  
     public void removeAll() {
@@ -782,7 +784,7 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -764,22 +_,15 @@
+@@ -769,22 +_,15 @@
     }
  
     private boolean verifyChatTrusted(PlayerChatMessage p_251384_) {
@@ -807,7 +809,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.server, file2);
           this.stats.put(uuid, serverstatscounter);
-@@ -788,6 +_,26 @@
+@@ -793,6 +_,26 @@
        return serverstatscounter;
     }
  
@@ -834,7 +836,7 @@
     public PlayerAdvancements getPlayerAdvancements(ServerPlayer p_11297_) {
        UUID uuid = p_11297_.getUUID();
        PlayerAdvancements playeradvancements = this.advancements.get(uuid);
-@@ -826,7 +_,7 @@
+@@ -831,7 +_,7 @@
     }
  
     public List<ServerPlayer> getPlayers() {
@@ -843,7 +845,7 @@
     }
  
     @Nullable
-@@ -843,6 +_,12 @@
+@@ -848,6 +_,12 @@
           playeradvancements.reload(this.server.getAdvancements());
        }
  
@@ -856,7 +858,7 @@
        this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes());
  
-@@ -855,5 +_,13 @@
+@@ -860,5 +_,13 @@
  
     public boolean isAllowCheatsForAllPlayers() {
        return this.allowCheatsForAllPlayers;

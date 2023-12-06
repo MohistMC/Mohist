@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BambooStalkBlock.java
 +++ b/net/minecraft/world/level/block/BambooStalkBlock.java
-@@ -7,7 +_,6 @@
+@@ -8,7 +_,6 @@
  import net.minecraft.tags.BlockTags;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.entity.player.Player;
@@ -8,16 +8,16 @@
  import net.minecraft.world.item.context.BlockPlaceContext;
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.Level;
-@@ -26,7 +_,7 @@
+@@ -27,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class BambooStalkBlock extends Block implements BonemealableBlock {
 +public class BambooStalkBlock extends Block implements BonemealableBlock, net.minecraftforge.common.IPlantable {
+    public static final MapCodec<BambooStalkBlock> CODEC = simpleCodec(BambooStalkBlock::new);
     protected static final float SMALL_LEAVES_AABB_OFFSET = 3.0F;
     protected static final float LARGE_LEAVES_AABB_OFFSET = 5.0F;
-    protected static final float COLLISION_AABB_OFFSET = 1.5F;
-@@ -110,10 +_,11 @@
+@@ -116,10 +_,11 @@
  
     public void randomTick(BlockState p_261931_, ServerLevel p_261751_, BlockPos p_261616_, RandomSource p_261766_) {
        if (p_261931_.getValue(STAGE) == 0) {
@@ -31,7 +31,7 @@
              }
           }
  
-@@ -155,7 +_,7 @@
+@@ -161,7 +_,7 @@
        for(int i1 = 0; i1 < l; ++i1) {
           BlockPos blockpos = p_261955_.above(i);
           BlockState blockstate = p_261845_.getBlockState(blockpos);
@@ -40,7 +40,7 @@
              return;
           }
  
-@@ -167,7 +_,7 @@
+@@ -173,7 +_,7 @@
     }
  
     public float getDestroyProgress(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
@@ -49,7 +49,7 @@
     }
  
     protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
-@@ -175,13 +_,18 @@
+@@ -181,13 +_,18 @@
        BlockPos blockpos = p_262109_.below(2);
        BlockState blockstate1 = p_262076_.getBlockState(blockpos);
        BambooLeaves bambooleaves = BambooLeaves.NONE;
@@ -70,13 +70,13 @@
                 }
              }
           } else {
-@@ -191,7 +_,14 @@
+@@ -197,7 +_,14 @@
  
        int i = p_261855_.getValue(AGE) != 1 && !blockstate1.is(Blocks.BAMBOO) ? 0 : 1;
        int j = (p_261759_ < 11 || !(p_261633_.nextFloat() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
 -      p_262076_.setBlock(p_262109_.above(), this.defaultBlockState().setValue(AGE, Integer.valueOf(i)).setValue(LEAVES, bambooleaves).setValue(STAGE, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), this.defaultBlockState().setValue(AGE, i).setValue(LEAVES, bambooleaves).setValue(STAGE, j), 3)) {
++      if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), this.defaultBlockState().setValue(AGE, i).setValue(LEAVES, bambooleaves).setValue(STAGE, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_262076_.setBlock(p_262109_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
 +            p_262076_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
@@ -86,7 +86,7 @@
     }
  
     protected int getHeightAboveUpToMax(BlockGetter p_261541_, BlockPos p_261593_) {
-@@ -208,5 +_,12 @@
+@@ -214,5 +_,12 @@
        }
  
        return i;

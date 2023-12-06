@@ -52,6 +52,17 @@
        this.level = p_8528_;
        this.broadcast = p_8532_;
        this.entity = p_8529_;
+@@ -82,8 +_,8 @@
+       List<Entity> list = this.entity.getPassengers();
+       if (!list.equals(this.lastPassengers)) {
+          this.broadcast.accept(new ClientboundSetPassengersPacket(this.entity));
+-         removedPassengers(list, this.lastPassengers).forEach((p_308940_) -> {
+-            if (p_308940_ instanceof ServerPlayer serverplayer1) {
++         removedPassengers(list, this.lastPassengers).forEach((p_296578_) -> {
++            if (p_296578_ instanceof ServerPlayer serverplayer1) {
+                serverplayer1.connection.teleport(serverplayer1.getX(), serverplayer1.getY(), serverplayer1.getZ(), serverplayer1.getYRot(), serverplayer1.getXRot());
+             }
+ 
 @@ -95,10 +_,9 @@
        if ($$11 instanceof ItemFrame itemframe) {
           if (this.tickCount % 10 == 0) {

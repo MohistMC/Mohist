@@ -1,30 +1,16 @@
 --- a/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/TheEndGatewayBlockEntity.java
-@@ -25,10 +_,15 @@
- import net.minecraft.world.level.block.Blocks;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.chunk.LevelChunk;
-+import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.feature.Feature;
+@@ -29,6 +_,10 @@
  import net.minecraft.world.level.levelgen.feature.configurations.EndGatewayConfiguration;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
-@@ -154,7 +_,7 @@
-    public static void teleportEntity(Level p_155829_, BlockPos p_155830_, BlockState p_155831_, Entity p_155832_, TheEndGatewayBlockEntity p_155833_) {
-       if (p_155829_ instanceof ServerLevel serverlevel && !p_155833_.isCoolingDown()) {
-          p_155833_.teleportCooldown = 100;
--         if (p_155833_.exitPortal == null && p_155829_.dimension() == Level.END) {
-+         if (p_155833_.exitPortal == null && p_155829_.getTypeKey() == LevelStem.END) {
-             BlockPos blockpos = findOrCreateValidTeleportPos(serverlevel, p_155830_);
-             blockpos = blockpos.above(10);
-             LOGGER.debug("Creating portal at {}", (Object)blockpos);
 @@ -180,6 +_,27 @@
              } else {
                 entity = p_155832_.getRootVehicle();
@@ -32,7 +18,7 @@
 +
 +            // CraftBukkit start - Fire PlayerTeleportEvent
 +            if (entity instanceof ServerPlayer serverPlayer) {
-+               org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
++               org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
 +               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());

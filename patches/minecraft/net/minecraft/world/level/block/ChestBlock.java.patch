@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
-@@ -23,7 +_,6 @@
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.animal.Cat;
- import net.minecraft.world.entity.monster.piglin.PiglinAi;
--import net.minecraft.world.entity.player.Inventory;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.inventory.AbstractContainerMenu;
- import net.minecraft.world.inventory.ChestMenu;
-@@ -80,27 +_,8 @@
+@@ -86,27 +_,8 @@
     };
     private static final DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER = new DoubleBlockCombiner.Combiner<ChestBlockEntity, Optional<MenuProvider>>() {
        public Optional<MenuProvider> acceptDouble(final ChestBlockEntity p_51604_, final ChestBlockEntity p_51605_) {
@@ -38,7 +30,25 @@
        }
  
        public Optional<MenuProvider> acceptSingle(ChestBlockEntity p_51602_) {
-@@ -273,6 +_,13 @@
+@@ -226,8 +_,15 @@
+    }
+ 
+    public void onRemove(BlockState p_51538_, Level p_51539_, BlockPos p_51540_, BlockState p_51541_, boolean p_51542_) {
+-      Containers.dropContentsOnDestroy(p_51538_, p_51541_, p_51539_, p_51540_);
+-      super.onRemove(p_51538_, p_51539_, p_51540_, p_51541_, p_51542_);
++      if (!p_51538_.is(p_51541_.getBlock())) {
++         BlockEntity blockentity = p_51539_.getBlockEntity(p_51540_);
++         if (blockentity instanceof Container) {
++            Containers.dropContents(p_51539_, p_51540_, (Container)blockentity);
++            p_51539_.updateNeighbourForOutputSignal(p_51540_, this);
++         }
++
++         super.onRemove(p_51538_, p_51539_, p_51540_, p_51541_, p_51542_);
++      }
+    }
+ 
+    public InteractionResult use(BlockState p_51531_, Level p_51532_, BlockPos p_51533_, Player p_51534_, InteractionHand p_51535_, BlockHitResult p_51536_) {
+@@ -276,6 +_,13 @@
        return this.combine(p_51574_, p_51575_, p_51576_, false).apply(MENU_PROVIDER_COMBINER).orElse((MenuProvider)null);
     }
  
@@ -52,7 +62,7 @@
     public static DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction> opennessCombiner(final LidBlockEntity p_51518_) {
        return new DoubleBlockCombiner.Combiner<ChestBlockEntity, Float2FloatFunction>() {
           public Float2FloatFunction acceptDouble(ChestBlockEntity p_51633_, ChestBlockEntity p_51634_) {
-@@ -335,7 +_,8 @@
+@@ -338,7 +_,8 @@
     }
  
     public BlockState mirror(BlockState p_51549_, Mirror p_51550_) {
@@ -62,7 +72,7 @@
     }
  
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51562_) {
-@@ -353,4 +_,35 @@
+@@ -356,4 +_,35 @@
        }
  
     }

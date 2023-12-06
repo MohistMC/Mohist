@@ -5,7 +5,7 @@
           blockpos = blockpos.relative(p_41204_.getClickedFace());
           if (BaseFireBlock.canBePlacedAt(level, blockpos, p_41204_.getHorizontalDirection())) {
 +            // CraftBukkit start - fire BlockIgniteEvent
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_41204_.getPlayer()).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_41204_.getPlayer()).isCancelled()) {
 +               if (!p_41204_.getPlayer().getAbilities().instabuild) {
 +                  p_41204_.getItemInHand().shrink(1);
 +               }
@@ -19,7 +19,7 @@
           }
        } else {
 +         // CraftBukkit start - fire BlockIgniteEvent
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_41204_.getPlayer()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_41204_.getPlayer()).isCancelled()) {
 +            if (!p_41204_.getPlayer().getAbilities().instabuild) {
 +               p_41204_.getItemInHand().shrink(1);
 +            }

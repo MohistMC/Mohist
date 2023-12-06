@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/block/BeetrootBlock.java
 +++ b/net/minecraft/world/level/block/BeetrootBlock.java
-@@ -24,7 +_,7 @@
+@@ -25,12 +_,11 @@
+    public MapCodec<BeetrootBlock> codec() {
+       return CODEC;
+    }
+-
+    public BeetrootBlock(BlockBehaviour.Properties p_49661_) {
        super(p_49661_);
     }
  

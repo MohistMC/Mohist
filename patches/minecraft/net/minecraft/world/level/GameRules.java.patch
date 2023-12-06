@@ -17,7 +17,7 @@
     public static final GameRules.Key<GameRules.BooleanValue> RULE_MOBGRIEFING = register("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> RULE_KEEPINVENTORY = register("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
     public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBSPAWNING = register("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.create(true));
-@@ -177,13 +_,13 @@
+@@ -181,13 +_,13 @@
     public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
        private boolean value;
  
@@ -33,7 +33,7 @@
           return create(p_46251_, (p_46236_, p_46237_) -> {
           });
        }
-@@ -210,7 +_,7 @@
+@@ -214,7 +_,7 @@
           return Boolean.toString(this.value);
        }
  
@@ -42,7 +42,7 @@
           this.value = Boolean.parseBoolean(p_46234_);
        }
  
-@@ -266,13 +_,13 @@
+@@ -270,13 +_,13 @@
     public static class IntegerValue extends GameRules.Value<GameRules.IntegerValue> {
        private int value;
  
@@ -58,7 +58,7 @@
           return create(p_46313_, (p_46309_, p_46310_) -> {
           });
        }
-@@ -299,7 +_,7 @@
+@@ -303,7 +_,7 @@
           return Integer.toString(this.value);
        }
  
@@ -67,7 +67,7 @@
           this.value = safeParse(p_46307_);
        }
  
-@@ -420,14 +_,14 @@
+@@ -424,14 +_,14 @@
           this.onChanged(p_46371_.getSource().getServer());
        }
  

@@ -1,6 +1,33 @@
 --- a/net/minecraft/server/dedicated/DedicatedServerProperties.java
 +++ b/net/minecraft/server/dedicated/DedicatedServerProperties.java
-@@ -103,6 +_,7 @@
+@@ -7,16 +_,15 @@
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Dynamic;
+ import com.mojang.serialization.JsonOps;
+-import java.nio.charset.StandardCharsets;
+ import java.nio.file.Path;
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Properties;
+-import java.util.UUID;
+ import java.util.concurrent.TimeUnit;
+ import java.util.regex.Pattern;
++import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.Holder;
+ import net.minecraft.core.Registry;
+@@ -30,6 +_,8 @@
+ import net.minecraft.util.GsonHelper;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.Difficulty;
++import net.minecraft.world.flag.FeatureFlagSet;
++import net.minecraft.world.flag.FeatureFlags;
+ import net.minecraft.world.level.DataPackConfig;
+ import net.minecraft.world.level.GameType;
+ import net.minecraft.world.level.WorldDataConfiguration;
+@@ -102,6 +_,7 @@
     public final boolean logIPs = this.get("log-ips", true);
     private final DedicatedServerProperties.WorldDimensionData worldDimensionData;
     public final WorldOptions worldOptions;
@@ -8,7 +35,83 @@
  
     public DedicatedServerProperties(Properties p_180926_) {
        super(p_180926_);
-@@ -190,7 +_,7 @@
+@@ -114,7 +_,7 @@
+       }, new JsonObject()), this.get("level-type", (p_211541_) -> {
+          return p_211541_.toLowerCase(Locale.ROOT);
+       }, WorldPresets.NORMAL.location().toString()));
+-      this.serverResourcePackInfo = getServerPackInfo(this.get("resource-pack-id", ""), this.get("resource-pack", ""), this.get("resource-pack-sha1", ""), this.getLegacyString("resource-pack-hash"), this.get("require-resource-pack", false), this.get("resource-pack-prompt", ""));
++      this.serverResourcePackInfo = getServerPackInfo(this.get("resource-pack", ""), this.get("resource-pack-sha1", ""), this.getLegacyString("resource-pack-hash"), this.get("require-resource-pack", false), this.get("resource-pack-prompt", ""));
+       this.initialDataPackConfiguration = getDatapackConfig(this.get("initial-enabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getEnabled())), this.get("initial-disabled-packs", String.join(",", WorldDataConfiguration.DEFAULT.dataPacks().getDisabled())));
+    }
+ 
+@@ -139,19 +_,19 @@
+       return null;
+    }
+ 
+-   private static Optional<MinecraftServer.ServerResourcePackInfo> getServerPackInfo(String p_214809_, String p_214810_, String p_214811_, @Nullable String p_214813_, boolean p_214812_, String p_312092_) {
+-      if (p_214810_.isEmpty()) {
++   private static Optional<MinecraftServer.ServerResourcePackInfo> getServerPackInfo(String p_214809_, String p_214810_, @Nullable String p_214811_, boolean p_214812_, String p_214813_) {
++      if (p_214809_.isEmpty()) {
+          return Optional.empty();
+       } else {
+          String s;
+-         if (!p_214811_.isEmpty()) {
+-            s = p_214811_;
+-            if (!Strings.isNullOrEmpty(p_214813_)) {
++         if (!p_214810_.isEmpty()) {
++            s = p_214810_;
++            if (!Strings.isNullOrEmpty(p_214811_)) {
+                LOGGER.warn("resource-pack-hash is deprecated and found along side resource-pack-sha1. resource-pack-hash will be ignored.");
+             }
+-         } else if (!Strings.isNullOrEmpty(p_214813_)) {
++         } else if (!Strings.isNullOrEmpty(p_214811_)) {
+             LOGGER.warn("resource-pack-hash is deprecated. Please use resource-pack-sha1 instead.");
+-            s = p_214813_;
++            s = p_214811_;
+          } else {
+             s = "";
+          }
+@@ -162,21 +_,8 @@
+             LOGGER.warn("Invalid sha1 for resource-pack-sha1");
+          }
+ 
+-         Component component = parseResourcePackPrompt(p_312092_);
+-         UUID uuid;
+-         if (p_214809_.isEmpty()) {
+-            uuid = UUID.nameUUIDFromBytes(p_214810_.getBytes(StandardCharsets.UTF_8));
+-            LOGGER.warn("resource-pack-id missing, using default of {}", (Object)uuid);
+-         } else {
+-            try {
+-               uuid = UUID.fromString(p_214809_);
+-            } catch (IllegalArgumentException illegalargumentexception) {
+-               LOGGER.warn("Failed to parse '{}' into UUID", (Object)p_214809_);
+-               return Optional.empty();
+-            }
+-         }
+-
+-         return Optional.of(new MinecraftServer.ServerResourcePackInfo(uuid, p_214810_, s, p_214812_, component));
++         Component component = parseResourcePackPrompt(p_214813_);
++         return Optional.of(new MinecraftServer.ServerResourcePackInfo(p_214809_, s, p_214812_, component));
+       }
+    }
+ 
+@@ -186,11 +_,23 @@
+       return new DataPackConfig(list, list1);
+    }
+ 
++   private static FeatureFlagSet getFeatures(String p_251025_) {
++      return FeatureFlags.REGISTRY.fromNames(COMMA_SPLITTER.splitToStream(p_251025_).<ResourceLocation>mapMulti((p_248197_, p_248198_) -> {
++         ResourceLocation resourcelocation = ResourceLocation.tryParse(p_248197_);
++         if (resourcelocation == null) {
++            LOGGER.warn("Invalid resource location {}, ignoring", (Object)p_248197_);
++         } else {
++            p_248198_.accept(resourcelocation);
++         }
++
++      }).collect(Collectors.toList()));
++   }
++
+    public WorldDimensions createDimensions(RegistryAccess p_250466_) {
        return this.worldDimensionData.create(p_250466_);
     }
  

@@ -13,9 +13,9 @@
        LivingEntity livingentity = this.getOwner();
        if (p_36945_.isAlive() && !p_36945_.isInvulnerable() && p_36945_ != livingentity) {
           if (livingentity == null) {
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = this; // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = this; // CraftBukkit
              p_36945_.hurt(this.damageSources().magic(), 6.0F);
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null; // CraftBukkit
           } else {
              if (livingentity.isAlliedTo(p_36945_)) {
                 return;

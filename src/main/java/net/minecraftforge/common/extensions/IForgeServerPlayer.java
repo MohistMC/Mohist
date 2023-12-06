@@ -17,9 +17,9 @@ import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkInitialization;
 import net.minecraftforge.network.packets.OpenContainer;
-import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 
 public interface IForgeServerPlayer {
     private ServerPlayer self() {

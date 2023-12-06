@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/gameevent/PositionSourceType.java
++++ b/net/minecraft/world/level/gameevent/PositionSourceType.java
+@@ -4,6 +_,7 @@
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.network.FriendlyByteBuf;
++import net.minecraft.resources.ResourceLocation;
+ 
+ public interface PositionSourceType<T extends PositionSource> {
+    PositionSourceType<BlockPositionSource> BLOCK = register("block", new BlockPositionSource.Type());
+@@ -20,16 +_,14 @@
+    }
+ 
+    static PositionSource fromNetwork(FriendlyByteBuf p_157886_) {
+-      PositionSourceType<?> positionsourcetype = p_157886_.readById(BuiltInRegistries.POSITION_SOURCE_TYPE);
+-      if (positionsourcetype == null) {
+-         throw new IllegalArgumentException("Unknown position source type");
+-      } else {
+-         return positionsourcetype.read(p_157886_);
+-      }
++      ResourceLocation resourcelocation = p_157886_.readResourceLocation();
++      return BuiltInRegistries.POSITION_SOURCE_TYPE.getOptional(resourcelocation).orElseThrow(() -> {
++         return new IllegalArgumentException("Unknown position source type " + resourcelocation);
++      }).read(p_157886_);
+    }
+ 
+    static <T extends PositionSource> void toNetwork(T p_157875_, FriendlyByteBuf p_157876_) {
+-      p_157876_.writeId(BuiltInRegistries.POSITION_SOURCE_TYPE, p_157875_.getType());
+-      ((PositionSourceType)p_157875_.getType()).write(p_157876_, p_157875_);
++      p_157876_.writeResourceLocation(BuiltInRegistries.POSITION_SOURCE_TYPE.getKey(p_157875_.getType()));
++      ((PositionSourceType<T>)p_157875_.getType()).write(p_157876_, p_157875_);
+    }
+ }

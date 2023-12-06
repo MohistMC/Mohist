@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -18,6 +_,7 @@
+@@ -20,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class ChorusFlowerBlock extends Block {
-    public static final int DEAD_AGE = 5;
-@@ -50,7 +_,7 @@
+    public static final MapCodec<ChorusFlowerBlock> CODEC = RecordCodecBuilder.mapCodec((p_310422_) -> {
+@@ -61,7 +_,7 @@
        BlockPos blockpos = p_220982_.above();
        if (p_220981_.isEmptyBlock(blockpos) && blockpos.getY() < p_220981_.getMaxBuildHeight()) {
           int i = p_220980_.getValue(AGE);
@@ -17,11 +17,11 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_220981_.getBlockState(p_220982_.below());
-@@ -79,8 +_,12 @@
+@@ -90,8 +_,12 @@
              }
  
              if (flag && allNeighborsEmpty(p_220981_, blockpos, (Direction)null) && p_220981_.isEmptyBlock(p_220982_.above(2))) {
--               p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
+-               p_220981_.setBlock(p_220982_, ChorusPlantBlock.getStateWithConnections(p_220981_, p_220982_, this.plant.defaultBlockState()), 2);
 -               this.placeGrownFlower(p_220981_, blockpos, i);
 +               // CraftBukkit start - add event
 +               if (CraftEventFactory.handleBlockSpreadEvent(p_220981_, p_220982_, blockpos, this.defaultBlockState().setValue(AGE, Integer.valueOf(i)), 2)) {
@@ -32,7 +32,7 @@
              } else if (i < 4) {
                 int l = p_220983_.nextInt(4);
                 if (flag1) {
-@@ -93,20 +_,32 @@
+@@ -104,20 +_,32 @@
                    Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_220983_);
                    BlockPos blockpos1 = p_220982_.relative(direction);
                    if (p_220981_.isEmptyBlock(blockpos1) && p_220981_.isEmptyBlock(blockpos1.below()) && allNeighborsEmpty(p_220981_, blockpos1, direction.getOpposite())) {
@@ -48,7 +48,8 @@
                 }
  
                 if (flag2) {
-                   p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
+-                  p_220981_.setBlock(p_220982_, ChorusPlantBlock.getStateWithConnections(p_220981_, p_220982_, this.plant.defaultBlockState()), 2);
++                  p_220981_.setBlock(p_220982_, this.plant.getStateForPlacement(p_220981_, p_220982_), 2);
                 } else {
 -                  this.placeDeadFlower(p_220981_, p_220982_);
 +                  // CraftBukkit - add event
@@ -70,10 +71,12 @@
           }
        }
     }
-@@ -221,6 +_,11 @@
+@@ -231,7 +_,12 @@
+ 
     public void onProjectileHit(Level p_51654_, BlockState p_51655_, BlockHitResult p_51656_, Projectile p_51657_) {
        BlockPos blockpos = p_51656_.getBlockPos();
-       if (!p_51654_.isClientSide && p_51657_.mayInteract(p_51654_, blockpos) && p_51657_.getType().is(EntityTypeTags.IMPACT_PROJECTILES)) {
+-      if (!p_51654_.isClientSide && p_51657_.mayInteract(p_51654_, blockpos) && p_51657_.mayBreak(p_51654_)) {
++      if (!p_51654_.isClientSide && p_51657_.mayInteract(p_51654_, blockpos) && p_51657_.getType().is(EntityTypeTags.IMPACT_PROJECTILES)) {
 +         // CraftBukkit start
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(p_51657_, blockpos, Blocks.AIR.defaultBlockState())) {
 +            return;

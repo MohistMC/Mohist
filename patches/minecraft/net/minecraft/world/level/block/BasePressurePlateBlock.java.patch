@@ -1,15 +1,22 @@
 --- a/net/minecraft/world/level/block/BasePressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/BasePressurePlateBlock.java
-@@ -20,6 +_,8 @@
+@@ -21,12 +_,14 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public abstract class BasePressurePlateBlock extends Block {
     protected static final VoxelShape PRESSED_AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 0.5D, 15.0D);
-@@ -75,6 +_,18 @@
+    protected static final VoxelShape AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 1.0D, 15.0D);
+    protected static final AABB TOUCH_AABB = new AABB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.25D, 0.9375D);
+-   protected final BlockSetType type;
++   private final BlockSetType type;
+ 
+    protected BasePressurePlateBlock(BlockBehaviour.Properties p_273450_, BlockSetType p_273402_) {
+       super(p_273450_.sound(p_273402_.soundType()));
+@@ -78,6 +_,18 @@
        int i = this.getSignalStrength(p_152145_, p_152146_);
        boolean flag = p_152148_ > 0;
        boolean flag1 = i > 0;

@@ -9,11 +9,3 @@
                 wrapStreams();
                 bootstrapDuration.set(Duration.between(instant, Instant.now()).toMillis());
              }
-@@ -127,7 +_,6 @@
-          Commands.validate();
-       }
- 
--      DefaultAttributes.validate();
-    }
- 
-    private static void wrapStreams() {

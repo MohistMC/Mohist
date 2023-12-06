@@ -1,15 +1,14 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -15,6 +_,8 @@
+@@ -16,6 +_,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.event.block.BlockFromToEvent;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
  
  public class DragonEggBlock extends FallingBlock {
-    protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
-@@ -42,6 +_,18 @@
+    public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
+@@ -48,6 +_,18 @@
        for(int i = 0; i < 1000; ++i) {
           BlockPos blockpos = p_52938_.offset(p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16), p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8), p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16));
           if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos)) {

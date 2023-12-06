@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/AbstractCandleBlock.java
 +++ b/net/minecraft/world/level/block/AbstractCandleBlock.java
-@@ -35,6 +_,11 @@
+@@ -41,6 +_,11 @@
  
     public void onProjectileHit(Level p_151905_, BlockState p_151906_, BlockHitResult p_151907_, Projectile p_151908_) {
        if (!p_151905_.isClientSide && p_151908_.isOnFire() && this.canBeLit(p_151906_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(p_151905_, p_151907_.getBlockPos(), p_151908_).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(p_151905_, p_151907_.getBlockPos(), p_151908_).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

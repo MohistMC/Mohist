@@ -6,7 +6,7 @@
                 if (p_258371_.tryGet(p_258390_).isEmpty() && p_259490_.test(p_258381_) && itementity.closerThan(p_258381_, (double)p_259054_) && p_258381_.level().getWorldBorder().isWithinBounds(itementity.blockPosition())) {
 +                  // CraftBukkit start
 +                  if (p_258381_ instanceof net.minecraft.world.entity.animal.allay.Allay) {
-+                     org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityTargetEvent(p_258381_, itementity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
++                     org.bukkit.event.entity.EntityTargetEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTargetEvent(p_258381_, itementity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
 +
 +                     if (event.isCancelled()) {
 +                        return false;
@@ -15,7 +15,7 @@
 +                        p_258389_.erase();
 +                     }
 +
-+                     itementity = (ItemEntity) ((org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity) event.getTarget()).getHandle();
++                     itementity = (ItemEntity) ((org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity) event.getTarget()).getHandle();
 +                  }
 +                  // CraftBukkit end
                    WalkTarget walktarget = new WalkTarget(new EntityTracker(itementity, false), p_260346_, 0);

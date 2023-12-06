@@ -1,13 +1,20 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -16,7 +_,6 @@
+@@ -16,13 +_,12 @@
  import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.sounds.SoundEvents;
+-import net.minecraft.tags.EntityTypeTags;
 -import net.minecraft.tags.FluidTags;
  import net.minecraft.util.ByIdMap;
  import net.minecraft.util.Mth;
  import net.minecraft.util.StringRepresentable;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
++import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityDimensions;
+ import net.minecraft.world.entity.EntitySelector;
 @@ -30,7 +_,6 @@
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.MoverType;
@@ -16,12 +23,12 @@
  import net.minecraft.world.entity.animal.Animal;
  import net.minecraft.world.entity.animal.WaterAnimal;
  import net.minecraft.world.entity.player.Player;
-@@ -50,9 +_,16 @@
+@@ -50,9 +_,19 @@
  import net.minecraft.world.phys.shapes.BooleanOp;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 +import org.bukkit.entity.Vehicle;
 +import org.bukkit.event.vehicle.VehicleDamageEvent;
 +import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -29,12 +36,15 @@
 +import org.bukkit.event.vehicle.VehicleMoveEvent;
  import org.joml.Vector3f;
  
--public class Boat extends Entity implements VariantHolder<Boat.Type> {
+-public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
 +public class Boat extends Entity implements net.minecraftforge.common.extensions.IForgeBoat {
-    private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
-@@ -91,6 +_,14 @@
++   private static final EntityDataAccessor<Integer> DATA_ID_HURT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
++   private static final EntityDataAccessor<Integer> DATA_ID_HURTDIR = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
++   private static final EntityDataAccessor<Float> DATA_ID_DAMAGE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+@@ -88,6 +_,14 @@
     private float bubbleAngle;
     private float bubbleAngleO;
  
@@ -49,10 +59,14 @@
     public Boat(EntityType<? extends Boat> p_38290_, Level p_38291_) {
        super(p_38290_, p_38291_);
        this.blocksBuilding = true;
-@@ -164,6 +_,19 @@
-       if (this.isInvulnerableTo(p_38319_)) {
-          return false;
-       } else if (!this.level().isClientSide && !this.isRemoved()) {
+@@ -155,6 +_,56 @@
+       return new Vector3f(0.0F, this.getVariant() == Boat.Type.BAMBOO ? p_299244_.height * 0.8888889F : p_299244_.height / 3.0F, f);
+    }
+ 
++   public boolean hurt(DamageSource p_38319_, float p_38320_) {
++      if (this.isInvulnerableTo(p_38319_)) {
++         return false;
++      } else if (!this.level().isClientSide && !this.isRemoved()) {
 +         // CraftBukkit start
 +         Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +         org.bukkit.entity.Entity attacker = (p_38319_.getEntity() == null) ? null : p_38319_.getEntity().getBukkitEntity();
@@ -66,13 +80,13 @@
 +         // f = event.getDamage(); // TODO Why don't we do this?
 +         // CraftBukkit end
 +
-          this.setHurtDir(-this.getHurtDir());
-          this.setHurtTime(10);
-          this.setDamage(this.getDamage() + p_38320_ * 10.0F);
-@@ -171,6 +_,15 @@
-          this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38319_.getEntity());
-          boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
-          if (flag || this.getDamage() > 40.0F) {
++         this.setHurtDir(-this.getHurtDir());
++         this.setHurtTime(10);
++         this.setDamage(this.getDamage() + p_38320_ * 10.0F);
++         this.markHurt();
++         this.gameEvent(GameEvent.ENTITY_DAMAGE, p_38319_.getEntity());
++         boolean flag = p_38319_.getEntity() instanceof Player && ((Player)p_38319_.getEntity()).getAbilities().instabuild;
++         if (flag || this.getDamage() > 40.0F) {
 +            // CraftBukkit start
 +            VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
 +            this.level.getCraftServer().getPluginManager().callEvent(destroyEvent);
@@ -82,10 +96,27 @@
 +               return true;
 +            }
 +            // CraftBukkit end
-             if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                this.destroy(p_38319_);
-             }
-@@ -208,9 +_,29 @@
++            if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
++               this.destroy(p_38319_);
++            }
++
++            this.discard();
++         }
++
++         return true;
++      } else {
++         return true;
++      }
++   }
++
++   protected void destroy(DamageSource p_219862_) {
++      this.spawnAtLocation(this.getDropItem());
++   }
++
+    public void onAboveBubbleCol(boolean p_38381_) {
+       if (!this.level().isClientSide) {
+          this.isAboveBubbleColumn = true;
+@@ -175,9 +_,29 @@
     public void push(Entity p_38373_) {
        if (p_38373_ instanceof Boat) {
           if (p_38373_.getBoundingBox().minY < this.getBoundingBox().maxY) {
@@ -115,7 +146,7 @@
           super.push(p_38373_);
        }
  
-@@ -293,6 +_,7 @@
+@@ -260,6 +_,7 @@
        return this.getDirection().getClockWise();
     }
  
@@ -123,7 +154,7 @@
     public void tick() {
        this.oldStatus = this.status;
        this.status = this.getStatus();
-@@ -332,6 +_,23 @@
+@@ -299,6 +_,23 @@
           this.setDeltaMovement(Vec3.ZERO);
        }
  
@@ -147,7 +178,7 @@
        this.tickBubbleColumn();
  
        for(int i = 0; i <= 1; ++i) {
-@@ -483,7 +_,7 @@
+@@ -450,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(l1, k1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -156,7 +187,7 @@
                    f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
                 }
  
-@@ -524,7 +_,7 @@
+@@ -491,7 +_,7 @@
                       blockpos$mutableblockpos.set(l1, k2, i2);
                       BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
                       if (!(blockstate.getBlock() instanceof WaterlilyBlock) && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.AND)) {
@@ -165,7 +196,7 @@
                          ++k1;
                       }
                    }
-@@ -553,7 +_,7 @@
+@@ -520,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -174,7 +205,7 @@
                    float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
                    this.waterLevel = Math.max((double)f, this.waterLevel);
                    flag |= aabb.minY < (double)f;
-@@ -583,7 +_,7 @@
+@@ -550,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.set(k1, l1, i2);
                 FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -183,7 +214,33 @@
                    if (!fluidstate.isSource()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
-@@ -769,21 +_,27 @@
+@@ -644,17 +_,15 @@
+ 
+    protected void positionRider(Entity p_289552_, Entity.MoveFunction p_289571_) {
+       super.positionRider(p_289552_, p_289571_);
+-      if (!p_289552_.getType().is(EntityTypeTags.CAN_TURN_IN_BOATS)) {
+-         p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
+-         p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
+-         this.clampRotation(p_289552_);
+-         if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
+-            int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
+-            p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
+-            p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
+-         }
+-
++      p_289552_.setYRot(p_289552_.getYRot() + this.deltaRotation);
++      p_289552_.setYHeadRot(p_289552_.getYHeadRot() + this.deltaRotation);
++      this.clampRotation(p_289552_);
++      if (p_289552_ instanceof Animal && this.getPassengers().size() == this.getMaxPassengers()) {
++         int i = p_289552_.getId() % 2 == 0 ? 90 : 270;
++         p_289552_.setYBodyRot(((Animal)p_289552_).yBodyRot + (float)i);
++         p_289552_.setYHeadRot(p_289552_.getYHeadRot() + (float)i);
+       }
++
+    }
+ 
+    public Vec3 getDismountLocationForPassenger(LivingEntity p_38357_) {
+@@ -738,21 +_,27 @@
  
                 this.causeFallDamage(this.fallDistance, 1.0F, this.damageSources().fall());
                 if (!this.level().isClientSide && !this.isRemoved()) {
@@ -220,7 +277,45 @@
              this.fallDistance -= (float)p_38307_;
           }
  
-@@ -839,7 +_,7 @@
+@@ -763,6 +_,22 @@
+       return this.entityData.<Boolean>get(p_38314_ == 0 ? DATA_ID_PADDLE_LEFT : DATA_ID_PADDLE_RIGHT) && this.getControllingPassenger() != null;
+    }
+ 
++   public void setDamage(float p_38312_) {
++      this.entityData.set(DATA_ID_DAMAGE, p_38312_);
++   }
++
++   public float getDamage() {
++      return this.entityData.get(DATA_ID_DAMAGE);
++   }
++
++   public void setHurtTime(int p_38355_) {
++      this.entityData.set(DATA_ID_HURT, p_38355_);
++   }
++
++   public int getHurtTime() {
++      return this.entityData.get(DATA_ID_HURT);
++   }
++
+    private void setBubbleTime(int p_38367_) {
+       this.entityData.set(DATA_ID_BUBBLE_TIME, p_38367_);
+    }
+@@ -775,6 +_,14 @@
+       return Mth.lerp(p_38353_, this.bubbleAngleO, this.bubbleAngle);
+    }
+ 
++   public void setHurtDir(int p_38363_) {
++      this.entityData.set(DATA_ID_HURTDIR, p_38363_);
++   }
++
++   public int getHurtDir() {
++      return this.entityData.get(DATA_ID_HURTDIR);
++   }
++
+    public void setVariant(Boat.Type p_38333_) {
+       this.entityData.set(DATA_ID_TYPE, p_38333_.ordinal());
+    }
+@@ -784,7 +_,7 @@
     }
  
     protected boolean canAddPassenger(Entity p_38390_) {
@@ -229,7 +324,7 @@
     }
  
     protected int getMaxPassengers() {
-@@ -872,6 +_,16 @@
+@@ -817,6 +_,16 @@
  
     public boolean isUnderWater() {
        return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;

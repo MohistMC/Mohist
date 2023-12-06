@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
+@@ -112,7 +_,7 @@
+       jtextarea.setEditable(false);
+       jtextarea.setFont(MONOSPACED);
+       JTextField jtextfield = new JTextField();
+-      jtextfield.addActionListener((p_308937_) -> {
++      jtextfield.addActionListener((p_276357_) -> {
+          String s = jtextfield.getText().trim();
+          if (!s.isEmpty()) {
+             this.server.handleConsoleInput(s, this.server.createCommandSourceStack());
 @@ -139,8 +_,10 @@
        return jpanel;
     }

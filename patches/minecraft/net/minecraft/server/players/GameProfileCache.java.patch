@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/GameProfileCache.java
 +++ b/net/minecraft/server/players/GameProfileCache.java
-@@ -105,7 +_,7 @@
+@@ -109,7 +_,7 @@
        Date date = calendar.getTime();
        GameProfileCache.GameProfileInfo gameprofilecache$gameprofileinfo = new GameProfileCache.GameProfileInfo(p_10992_, date);
        this.safeAdd(gameprofilecache$gameprofileinfo);
@@ -9,7 +9,7 @@
     }
  
     private long getNextOperation() {
-@@ -128,14 +_,14 @@
+@@ -132,14 +_,14 @@
           gameprofilecache$gameprofileinfo.setLastAccess(this.getNextOperation());
           optional = Optional.of(gameprofilecache$gameprofileinfo.getProfile());
        } else {
@@ -26,7 +26,7 @@
           this.save();
        }
  
-@@ -207,7 +_,7 @@
+@@ -211,7 +_,7 @@
     public void save() {
        JsonArray jsonarray = new JsonArray();
        DateFormat dateformat = createDateFormat();

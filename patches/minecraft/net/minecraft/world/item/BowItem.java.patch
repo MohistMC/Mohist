@@ -31,7 +31,7 @@
                       abstractarrow.setSecondsOnFire(100);
                    }
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityShootBowEvent(player, p_40667_, itemstack, abstractarrow, player.getUsedItemHand(), f, !flag1);
++                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityShootBowEvent(player, p_40667_, itemstack, abstractarrow, player.getUsedItemHand(), f, !flag1);
 +                  if (event.isCancelled()) {
 +                     event.getProjectile().remove();
 +                     return;
@@ -39,8 +39,8 @@
 +                  flag1 = !event.shouldConsumeItem();
 +                  // CraftBukkit end
  
-                   p_40667_.hurtAndBreak(1, player, (p_296888_) -> {
-                      p_296888_.broadcastBreakEvent(player.getUsedItemHand());
+                   p_40667_.hurtAndBreak(1, player, (p_309230_) -> {
+                      p_309230_.broadcastBreakEvent(player.getUsedItemHand());
 @@ -63,7 +_,16 @@
                       abstractarrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                    }

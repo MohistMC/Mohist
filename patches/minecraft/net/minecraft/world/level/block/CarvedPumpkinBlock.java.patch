@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/level/block/CarvedPumpkinBlock.java
 +++ b/net/minecraft/world/level/block/CarvedPumpkinBlock.java
-@@ -21,6 +_,7 @@
- import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
- import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
- import net.minecraft.world.level.block.state.properties.DirectionProperty;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
- 
- public class CarvedPumpkinBlock extends HorizontalDirectionalBlock {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-@@ -72,9 +_,14 @@
+@@ -78,9 +_,14 @@
     }
  
     private static void spawnGolemInWorld(Level p_249110_, BlockPattern.BlockPatternMatch p_251293_, Entity p_251251_, BlockPos p_251189_) {

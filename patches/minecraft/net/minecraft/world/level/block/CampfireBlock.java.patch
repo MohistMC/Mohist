@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -45,6 +_,8 @@
+@@ -48,6 +_,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
-@@ -84,7 +_,9 @@
+    public static final MapCodec<CampfireBlock> CODEC = RecordCodecBuilder.mapCodec((p_309276_) -> {
+@@ -98,7 +_,9 @@
  
     public void entityInside(BlockState p_51269_, Level p_51270_, BlockPos p_51271_, Entity p_51272_) {
        if (p_51269_.getValue(LIT) && p_51272_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_51272_)) {
@@ -19,7 +19,7 @@
        }
  
        super.entityInside(p_51269_, p_51270_, p_51271_, p_51272_);
-@@ -181,6 +_,11 @@
+@@ -195,6 +_,11 @@
     public void onProjectileHit(Level p_51244_, BlockState p_51245_, BlockHitResult p_51246_, Projectile p_51247_) {
        BlockPos blockpos = p_51246_.getBlockPos();
        if (!p_51244_.isClientSide && p_51247_.isOnFire() && p_51247_.mayInteract(p_51244_, blockpos) && !p_51245_.getValue(LIT) && !p_51245_.getValue(WATERLOGGED)) {
@@ -31,7 +31,7 @@
           p_51244_.setBlock(blockpos, p_51245_.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)), 11);
        }
  
-@@ -204,7 +_,7 @@
+@@ -218,7 +_,7 @@
              return true;
           }
  

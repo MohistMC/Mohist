@@ -1,6 +1,86 @@
 --- a/net/minecraft/Util.java
 +++ b/net/minecraft/Util.java
-@@ -172,6 +_,11 @@
+@@ -6,20 +_,15 @@
+ import com.google.common.util.concurrent.MoreExecutors;
+ import com.mojang.datafixers.DSL;
+ import com.mojang.datafixers.DataFixUtils;
+-import com.mojang.datafixers.Typed;
+ import com.mojang.datafixers.types.Type;
+ import com.mojang.datafixers.util.Pair;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.DataResult;
+-import com.mojang.serialization.Dynamic;
++import it.unimi.dsi.fastutil.Hash;
+ import it.unimi.dsi.fastutil.ints.IntArrayList;
+ import it.unimi.dsi.fastutil.objects.Object2IntMap;
+ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+-import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+-import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+-import it.unimi.dsi.fastutil.objects.ReferenceImmutableList;
+-import it.unimi.dsi.fastutil.objects.ReferenceList;
+ import java.io.File;
+ import java.io.IOException;
+ import java.lang.management.ManagementFactory;
+@@ -61,10 +_,10 @@
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Consumer;
+ import java.util.function.Function;
++import java.util.function.IntFunction;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+ import java.util.function.ToIntFunction;
+-import java.util.function.UnaryOperator;
+ import java.util.stream.Collector;
+ import java.util.stream.Collectors;
+ import java.util.stream.IntStream;
+@@ -84,13 +_,11 @@
+ public class Util {
+    static final Logger LOGGER = LogUtils.getLogger();
+    private static final int DEFAULT_MAX_THREADS = 255;
+-   private static final int DEFAULT_SAFE_FILE_OPERATION_RETRIES = 10;
+    private static final String MAX_THREADS_SYSTEM_PROPERTY = "max.bg.threads";
++   private static final AtomicInteger WORKER_COUNT = new AtomicInteger(1);
+    private static final ExecutorService BACKGROUND_EXECUTOR = makeExecutor("Main");
+-   private static final ExecutorService IO_POOL = makeIoExecutor("IO-Worker-", false);
+-   private static final ExecutorService DOWNLOAD_POOL = makeIoExecutor("Download-", true);
++   private static final ExecutorService IO_POOL = makeIoExecutor();
+    private static final DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss", Locale.ROOT);
+-   private static final int LINEAR_LOOKUP_THRESHOLD = 8;
+    public static final long NANOS_PER_MILLI = 1000000L;
+    public static TimeSource.NanoTimeSource timeSource = System::nanoTime;
+    public static final Ticker TICKER = new Ticker() {
+@@ -104,7 +_,7 @@
+    }).findFirst().orElseThrow(() -> {
+       return new IllegalStateException("No jar file system provider found");
+    });
+-   private static Consumer<String> thePauser = (p_308077_) -> {
++   private static Consumer<String> thePauser = (p_201905_) -> {
+    };
+ 
+    public static <K, V> Collector<Map.Entry<? extends K, ? extends V>, ?, Map<K, V>> toMap() {
+@@ -141,9 +_,8 @@
+       if (i <= 0) {
+          executorservice = MoreExecutors.newDirectExecutorService();
+       } else {
+-         AtomicInteger atomicinteger = new AtomicInteger(1);
+-         executorservice = new ForkJoinPool(i, (p_308084_) -> {
+-            ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_308084_) {
++         executorservice = new ForkJoinPool(i, (p_201863_) -> {
++            ForkJoinWorkerThread forkjoinworkerthread = new ForkJoinWorkerThread(p_201863_) {
+                protected void onTermination(Throwable p_211561_) {
+                   if (p_211561_ != null) {
+                      Util.LOGGER.warn("{} died", this.getName(), p_211561_);
+@@ -154,7 +_,7 @@
+                   super.onTermination(p_211561_);
+                }
+             };
+-            forkjoinworkerthread.setName("Worker-" + p_137478_ + "-" + atomicinteger.getAndIncrement());
++            forkjoinworkerthread.setName("Worker-" + p_137478_ + "-" + WORKER_COUNT.getAndIncrement());
+             return forkjoinworkerthread;
+          }, Util::onThreadException, true);
+       }
+@@ -180,6 +_,11 @@
        return 255;
     }
  
@@ -12,7 +92,46 @@
     public static ExecutorService backgroundExecutor() {
        return BACKGROUND_EXECUTOR;
     }
-@@ -240,7 +_,7 @@
+@@ -188,10 +_,6 @@
+       return IO_POOL;
+    }
+ 
+-   public static ExecutorService nonCriticalIoPool() {
+-      return DOWNLOAD_POOL;
+-   }
+-
+    public static void shutdownExecutors() {
+       shutdownExecutor(BACKGROUND_EXECUTOR);
+       shutdownExecutor(IO_POOL);
+@@ -213,12 +_,10 @@
+ 
+    }
+ 
+-   private static ExecutorService makeIoExecutor(String p_309722_, boolean p_310621_) {
+-      AtomicInteger atomicinteger = new AtomicInteger(1);
+-      return Executors.newCachedThreadPool((p_308081_) -> {
+-         Thread thread = new Thread(p_308081_);
+-         thread.setName(p_309722_ + atomicinteger.getAndIncrement());
+-         thread.setDaemon(p_310621_);
++   private static ExecutorService makeIoExecutor() {
++      return Executors.newCachedThreadPool((p_201860_) -> {
++         Thread thread = new Thread(p_201860_);
++         thread.setName("IO-Worker-" + WORKER_COUNT.getAndIncrement());
+          thread.setUncaughtExceptionHandler(Util::onThreadException);
+          return thread;
+       });
+@@ -234,8 +_,8 @@
+          p_137497_ = p_137497_.getCause();
+       }
+ 
+-      if (p_137497_ instanceof ReportedException reportedexception) {
+-         Bootstrap.realStdoutPrintln(reportedexception.getReport().getFriendlyReport());
++      if (p_137497_ instanceof ReportedException) {
++         Bootstrap.realStdoutPrintln(((ReportedException)p_137497_).getReport().getFriendlyReport());
+          System.exit(-1);
+       }
+ 
+@@ -254,7 +_,7 @@
        try {
           type = DataFixers.getDataFixer().getSchema(DataFixUtils.makeKey(SharedConstants.getCurrentVersion().getDataVersion().getVersion())).getChoiceType(p_137552_, p_137553_);
        } catch (IllegalArgumentException illegalargumentexception) {
@@ -21,3 +140,185 @@
           if (SharedConstants.IS_RUNNING_IN_IDE) {
              throw illegalargumentexception;
           }
+@@ -370,6 +_,10 @@
+       return p_137470_;
+    }
+ 
++   public static <K> Hash.Strategy<K> identityStrategy() {
++      return (Hash.Strategy<K>) Util.IdentityStrategy.INSTANCE;
++   }
++
+    public static <V> CompletableFuture<List<V>> sequence(List<? extends CompletableFuture<V>> p_137568_) {
+       if (p_137568_.isEmpty()) {
+          return CompletableFuture.completedFuture(List.of());
+@@ -585,20 +_,27 @@
+       return false;
+    }
+ 
++   public static void safeReplaceFile(File p_137463_, File p_137464_, File p_137465_) {
++      safeReplaceFile(p_137463_.toPath(), p_137464_.toPath(), p_137465_.toPath());
++   }
++
+    public static void safeReplaceFile(Path p_137506_, Path p_137507_, Path p_137508_) {
+       safeReplaceOrMoveFile(p_137506_, p_137507_, p_137508_, false);
+    }
+ 
+-   public static boolean safeReplaceOrMoveFile(Path p_311739_, Path p_310810_, Path p_310842_, boolean p_212228_) {
+-      if (Files.exists(p_311739_) && !runWithRetries(10, "create backup " + p_310842_, createDeleter(p_310842_), createRenamer(p_311739_, p_310842_), createFileCreatedCheck(p_310842_))) {
+-         return false;
+-      } else if (!runWithRetries(10, "remove old " + p_311739_, createDeleter(p_311739_), createFileDeletedCheck(p_311739_))) {
+-         return false;
+-      } else if (!runWithRetries(10, "replace " + p_311739_ + " with " + p_310810_, createRenamer(p_310810_, p_311739_), createFileCreatedCheck(p_311739_)) && !p_212228_) {
+-         runWithRetries(10, "restore " + p_311739_ + " from " + p_310842_, createRenamer(p_310842_, p_311739_), createFileCreatedCheck(p_311739_));
+-         return false;
+-      } else {
+-         return true;
++   public static void safeReplaceOrMoveFile(File p_212225_, File p_212226_, File p_212227_, boolean p_212228_) {
++      safeReplaceOrMoveFile(p_212225_.toPath(), p_212226_.toPath(), p_212227_.toPath(), p_212228_);
++   }
++
++   public static void safeReplaceOrMoveFile(Path p_212230_, Path p_212231_, Path p_212232_, boolean p_212233_) {
++      int i = 10;
++      if (!Files.exists(p_212230_) || runWithRetries(10, "create backup " + p_212232_, createDeleter(p_212232_), createRenamer(p_212230_, p_212232_), createFileCreatedCheck(p_212232_))) {
++         if (runWithRetries(10, "remove old " + p_212230_, createDeleter(p_212230_), createFileDeletedCheck(p_212230_))) {
++            if (!runWithRetries(10, "replace " + p_212230_ + " with " + p_212231_, createRenamer(p_212231_, p_212230_), createFileCreatedCheck(p_212230_)) && !p_212233_) {
++               runWithRetries(10, "restore " + p_212230_ + " from " + p_212232_, createRenamer(p_212232_, p_212230_), createFileCreatedCheck(p_212230_));
++            }
++
++         }
+       }
+    }
+ 
+@@ -757,12 +_,12 @@
+       return objectarraylist;
+    }
+ 
+-   public static <T> void shuffle(List<T> p_309952_, RandomSource p_214675_) {
+-      int i = p_309952_.size();
++   public static <T> void shuffle(ObjectArrayList<T> p_214674_, RandomSource p_214675_) {
++      int i = p_214674_.size();
+ 
+       for(int j = i; j > 1; --j) {
+          int k = p_214675_.nextInt(j);
+-         p_309952_.set(j - 1, p_309952_.set(k, p_309952_.get(j - 1)));
++         p_214674_.set(j - 1, p_214674_.set(k, p_214674_.get(j - 1)));
+       }
+ 
+    }
+@@ -796,39 +_,20 @@
+    }
+ 
+    public static <T> ToIntFunction<T> createIndexLookup(List<T> p_214687_) {
+-      int i = p_214687_.size();
+-      if (i < 8) {
+-         return p_214687_::indexOf;
+-      } else {
+-         Object2IntMap<T> object2intmap = new Object2IntOpenHashMap<>(i);
+-         object2intmap.defaultReturnValue(-1);
+-
+-         for(int j = 0; j < i; ++j) {
+-            object2intmap.put(p_214687_.get(j), j);
+-         }
+-
+-         return object2intmap;
+-      }
+-   }
+-
+-   public static <T> ToIntFunction<T> createIndexIdentityLookup(List<T> p_310693_) {
+-      int i = p_310693_.size();
+-      if (i < 8) {
+-         ReferenceList<T> referencelist = new ReferenceImmutableList<>(p_310693_);
+-         return referencelist::indexOf;
+-      } else {
+-         Reference2IntMap<T> reference2intmap = new Reference2IntOpenHashMap<>(i);
+-         reference2intmap.defaultReturnValue(-1);
+-
+-         for(int j = 0; j < i; ++j) {
+-            reference2intmap.put(p_310693_.get(j), j);
+-         }
+-
+-         return reference2intmap;
+-      }
+-   }
+-
+-   public static <T, E extends Throwable> T getOrThrow(DataResult<T> p_261812_, Function<String, E> p_261468_) throws E {
++      return createIndexLookup(p_214687_, Object2IntOpenHashMap::new);
++   }
++
++   public static <T> ToIntFunction<T> createIndexLookup(List<T> p_214635_, IntFunction<Object2IntMap<T>> p_214636_) {
++      Object2IntMap<T> object2intmap = p_214636_.apply(p_214635_.size());
++
++      for(int i = 0; i < p_214635_.size(); ++i) {
++         object2intmap.put(p_214635_.get(i), i);
++      }
++
++      return object2intmap;
++   }
++
++   public static <T, E extends Exception> T getOrThrow(DataResult<T> p_261812_, Function<String, E> p_261468_) throws E {
+       Optional<DataResult.PartialResult<T>> optional = p_261812_.error();
+       if (optional.isPresent()) {
+          throw p_261468_.apply(optional.get().message());
+@@ -837,50 +_,24 @@
+       }
+    }
+ 
+-   public static <T, E extends Throwable> T getPartialOrThrow(DataResult<T> p_312881_, Function<String, E> p_309839_) throws E {
+-      Optional<DataResult.PartialResult<T>> optional = p_312881_.error();
+-      if (optional.isPresent()) {
+-         Optional<T> optional1 = p_312881_.resultOrPartial((p_201905_) -> {
+-         });
+-         if (optional1.isPresent()) {
+-            return optional1.get();
+-         } else {
+-            throw p_309839_.apply(optional.get().message());
+-         }
+-      } else {
+-         return p_312881_.result().orElseThrow();
+-      }
+-   }
+-
+-   public static <A, B> Typed<B> writeAndReadTypedOrThrow(Typed<A> p_309938_, Type<B> p_312439_, UnaryOperator<Dynamic<?>> p_312172_) {
+-      Dynamic<?> dynamic = getOrThrow(p_309938_.write(), IllegalStateException::new);
+-      return readTypedOrThrow(p_312439_, p_312172_.apply(dynamic), true);
+-   }
+-
+-   public static <T> Typed<T> readTypedOrThrow(Type<T> p_309502_, Dynamic<?> p_310749_) {
+-      return readTypedOrThrow(p_309502_, p_310749_, false);
+-   }
+-
+-   public static <T> Typed<T> readTypedOrThrow(Type<T> p_309451_, Dynamic<?> p_312737_, boolean p_310890_) {
+-      DataResult<Typed<T>> dataresult = p_309451_.readTyped(p_312737_).map(Pair::getFirst);
+-
+-      try {
+-         return p_310890_ ? getPartialOrThrow(dataresult, IllegalStateException::new) : getOrThrow(dataresult, IllegalStateException::new);
+-      } catch (IllegalStateException illegalstateexception) {
+-         CrashReport crashreport = CrashReport.forThrowable(illegalstateexception, "Reading type");
+-         CrashReportCategory crashreportcategory = crashreport.addCategory("Info");
+-         crashreportcategory.setDetail("Data", p_312737_);
+-         crashreportcategory.setDetail("Type", p_309451_);
+-         throw new ReportedException(crashreport);
+-      }
+-   }
+-
+    public static boolean isWhitespace(int p_289004_) {
+       return Character.isWhitespace(p_289004_) || Character.isSpaceChar(p_289004_);
+    }
+ 
+    public static boolean isBlank(@Nullable String p_288983_) {
+       return p_288983_ != null && p_288983_.length() != 0 ? p_288983_.chars().allMatch(Util::isWhitespace) : true;
++   }
++
++   static enum IdentityStrategy implements Hash.Strategy<Object> {
++      INSTANCE;
++
++      public int hashCode(Object p_137626_) {
++         return System.identityHashCode(p_137626_);
++      }
++
++      public boolean equals(Object p_137623_, Object p_137624_) {
++         return p_137623_ == p_137624_;
++      }
+    }
+ 
+    public static enum OS {

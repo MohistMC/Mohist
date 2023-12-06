@@ -1,14 +1,22 @@
 --- a/net/minecraft/world/level/block/SculkShriekerBlock.java
 +++ b/net/minecraft/world/level/block/SculkShriekerBlock.java
-@@ -50,6 +_,7 @@
+@@ -7,7 +_,6 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.RandomSource;
+-import net.minecraft.util.valueproviders.ConstantInt;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.context.BlockPlaceContext;
+@@ -56,6 +_,7 @@
        if (p_222177_ instanceof ServerLevel serverlevel) {
           ServerPlayer serverplayer = SculkShriekerBlockEntity.tryGetPlayer(p_222180_);
           if (serverplayer != null) {
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(serverplayer, org.bukkit.event.block.Action.PHYSICAL, p_222178_, null, null, null).isCancelled()) return; // CraftBukkit
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(serverplayer, org.bukkit.event.block.Action.PHYSICAL, p_222178_, null, null, null).isCancelled()) return; // CraftBukkit
              serverlevel.getBlockEntity(p_222178_, BlockEntityType.SCULK_SHRIEKER).ifPresent((p_222163_) -> {
                 p_222163_.tryShriek(serverlevel, serverplayer);
              });
-@@ -121,10 +_,12 @@
+@@ -127,10 +_,12 @@
  
     public void spawnAfterBreak(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
        super.spawnAfterBreak(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);

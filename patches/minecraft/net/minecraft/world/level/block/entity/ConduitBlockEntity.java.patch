@@ -4,8 +4,8 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class ConduitBlockEntity extends BlockEntity {
     private static final int BLOCK_REFRESH_RATE = 2;
@@ -46,3 +46,14 @@
        }
  
        if (livingentity != p_155413_.destroyTarget) {
+@@ -234,8 +_,8 @@
+ 
+    @Nullable
+    private static LivingEntity findDestroyTarget(Level p_155425_, BlockPos p_155426_, UUID p_155427_) {
+-      List<LivingEntity> list = p_155425_.getEntitiesOfClass(LivingEntity.class, getDestroyRangeAABB(p_155426_), (p_309301_) -> {
+-         return p_309301_.getUUID().equals(p_155427_);
++      List<LivingEntity> list = p_155425_.getEntitiesOfClass(LivingEntity.class, getDestroyRangeAABB(p_155426_), (p_296957_) -> {
++         return p_296957_.getUUID().equals(p_155427_);
+       });
+       return list.size() == 1 ? list.get(0) : null;
+    }

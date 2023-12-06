@@ -1,20 +1,40 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
+@@ -17,7 +_,7 @@
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+-import net.minecraft.world.scores.PlayerTeam;
++import net.minecraft.world.scores.Team;
+ 
+ public abstract class TamableAnimal extends Animal implements OwnableEntity {
+    protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamableAnimal.class, EntityDataSerializers.BYTE);
+@@ -159,7 +_,7 @@
+       return true;
+    }
+ 
+-   public PlayerTeam getTeam() {
++   public Team getTeam() {
+       if (this.isTame()) {
+          LivingEntity livingentity = this.getOwner();
+          if (livingentity != null) {
 @@ -186,11 +_,15 @@
     }
  
     public void die(DamageSource p_21809_) {
+-      if (!this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
+-         this.getOwner().sendSystemMessage(this.getCombatTracker().getDeathMessage());
+-      }
+-
 +      // FORGE: Super moved to top so that death message would be cancelled properly
 +      net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
-+      super.die(p_21809_);
+       super.die(p_21809_);
 +
 +      if (this.dead)
-       if (!this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
--         this.getOwner().sendSystemMessage(this.getCombatTracker().getDeathMessage());
++      if (!this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
 +         this.getOwner().sendSystemMessage(deathMessage);
-       }
- 
--      super.die(p_21809_);
++      }
++
     }
  
     public boolean isOrderedToSit() {

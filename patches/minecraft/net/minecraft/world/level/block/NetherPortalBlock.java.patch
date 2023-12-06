@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/NetherPortalBlock.java
 +++ b/net/minecraft/world/level/block/NetherPortalBlock.java
-@@ -23,6 +_,7 @@
+@@ -25,6 +_,7 @@
  import net.minecraft.world.level.portal.PortalShape;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.event.entity.EntityPortalEnterEvent;
  
  public class NetherPortalBlock extends Block {
-    public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
-@@ -46,13 +_,13 @@
+    public static final MapCodec<NetherPortalBlock> CODEC = simpleCodec(NetherPortalBlock::new);
+@@ -53,13 +_,13 @@
     }
  
     public void randomTick(BlockState p_221799_, ServerLevel p_221800_, BlockPos p_221801_, RandomSource p_221802_) {
@@ -24,7 +24,7 @@
              if (entity != null) {
                 entity.setPortalCooldown();
              }
-@@ -70,6 +_,10 @@
+@@ -77,6 +_,10 @@
  
     public void entityInside(BlockState p_54915_, Level p_54916_, BlockPos p_54917_, Entity p_54918_) {
        if (p_54918_.canChangeDimensions()) {

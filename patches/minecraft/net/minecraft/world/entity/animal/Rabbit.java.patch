@@ -1,10 +1,18 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
+@@ -53,7 +_,6 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.item.crafting.Ingredient;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.LevelReader;
 @@ -66,6 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.Path;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
     public static final double STROLL_SPEED_MOD = 0.6D;

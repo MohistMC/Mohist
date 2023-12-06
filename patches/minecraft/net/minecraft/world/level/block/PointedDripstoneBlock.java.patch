@@ -1,35 +1,42 @@
 --- a/net/minecraft/world/level/block/PointedDripstoneBlock.java
 +++ b/net/minecraft/world/level/block/PointedDripstoneBlock.java
-@@ -2,6 +_,7 @@
- 
+@@ -3,6 +_,7 @@
  import com.google.common.annotations.VisibleForTesting;
+ import com.mojang.serialization.MapCodec;
  import java.util.Optional;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BiPredicate;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
-@@ -41,6 +_,8 @@
+@@ -42,6 +_,8 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class PointedDripstoneBlock extends Block implements Fallable, SimpleWaterloggedBlock {
-    public static final DirectionProperty TIP_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
-@@ -116,6 +_,11 @@
+    public static final MapCodec<PointedDripstoneBlock> CODEC = simpleCodec(PointedDripstoneBlock::new);
+@@ -120,18 +_,23 @@
+    }
+ 
     public void onProjectileHit(Level p_154042_, BlockState p_154043_, BlockHitResult p_154044_, Projectile p_154045_) {
-       BlockPos blockpos = p_154044_.getBlockPos();
-       if (!p_154042_.isClientSide && p_154045_.mayInteract(p_154042_, blockpos) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
+-      if (!p_154042_.isClientSide) {
+-         BlockPos blockpos = p_154044_.getBlockPos();
+-         if (p_154045_.mayInteract(p_154042_, blockpos) && p_154045_.mayBreak(p_154042_) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
+-            p_154042_.destroyBlock(blockpos, true);
++      BlockPos blockpos = p_154044_.getBlockPos();
++      if (!p_154042_.isClientSide && p_154045_.mayInteract(p_154042_, blockpos) && p_154045_ instanceof ThrownTrident && p_154045_.getDeltaMovement().length() > 0.6D) {
 +         // CraftBukkit start
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(p_154045_, blockpos, Blocks.AIR.defaultBlockState())) {
 +            return;
-+         }
+          }
+-
 +         // CraftBukkit end
-          p_154042_.destroyBlock(blockpos, true);
++         p_154042_.destroyBlock(blockpos, true);
        }
- 
-@@ -123,7 +_,9 @@
++
+    }
  
     public void fallOn(Level p_154047_, BlockState p_154048_, BlockPos p_154049_, Entity p_154050_, float p_154051_) {
        if (p_154048_.getValue(TIP_DIRECTION) == Direction.UP && p_154048_.getValue(THICKNESS) == DripstoneThickness.TIP) {
@@ -39,7 +46,7 @@
        } else {
           super.fallOn(p_154047_, p_154048_, p_154049_, p_154050_, p_154051_);
        }
-@@ -333,12 +_,14 @@
+@@ -341,12 +_,14 @@
  
     }
  
@@ -54,16 +61,16 @@
           createDripstone(p_154036_, blockpos, p_154038_, DripstoneThickness.TIP);
        }
  
-@@ -346,7 +_,7 @@
+@@ -354,7 +_,7 @@
  
     private static void createDripstone(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_) {
        BlockState blockstate = Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(TIP_DIRECTION, p_154090_).setValue(THICKNESS, p_154091_).setValue(WATERLOGGED, Boolean.valueOf(p_154088_.getFluidState(p_154089_).getType() == Fluids.WATER));
 -      p_154088_.setBlock(p_154089_, blockstate, 3);
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
     }
  
     private static void createMergedTips(BlockState p_154231_, LevelAccessor p_154232_, BlockPos p_154233_) {
-@@ -359,8 +_,9 @@
+@@ -367,8 +_,9 @@
           blockpos = p_154233_;
           blockpos1 = p_154233_.below();
        }

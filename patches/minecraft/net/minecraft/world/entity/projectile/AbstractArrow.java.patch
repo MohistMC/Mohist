@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -29,6 +_,7 @@
+@@ -20,7 +_,6 @@
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+-import net.minecraft.tags.EntityTypeTags;
+ import net.minecraft.util.Mth;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.entity.Entity;
+@@ -30,6 +_,7 @@
  import net.minecraft.world.entity.MoverType;
  import net.minecraft.world.entity.Pose;
  import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -8,20 +16,28 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
-@@ -43,6 +_,9 @@
+@@ -44,6 +_,9 @@
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftItem;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftItem;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.player.PlayerPickupArrowEvent;
  
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -66,6 +_,20 @@
+@@ -66,26 +_,34 @@
+    private IntOpenHashSet piercingIgnoreEntityIds;
     @Nullable
     private List<Entity> piercedAndKilledEntities;
- 
+-   private ItemStack pickupItemStack;
+-
+-   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
+-      super(p_36717_, p_36719_);
+-      this.pickupItemStack = p_312639_.copy();
+-      if (p_312639_.hasCustomHoverName()) {
+-         this.setCustomName(p_312639_.getHoverName());
++
 +   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
 +
 +   // Spigot Start
@@ -31,15 +47,37 @@
 +      if ( this.inGround )
 +      {
 +         this.life += 1;
-+      }
+       }
+-
+-   }
+-
+-   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36711_, double p_36712_, double p_36713_, double p_36714_, Level p_36715_, ItemStack p_310436_) {
+-      this(p_36711_, p_36715_, p_310436_);
 +      super.inactiveTick();
 +   }
 +   // Spigot End
 +
-    protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
-       super(p_36721_, p_36722_);
++   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
++      super(p_36721_, p_36722_);
++   }
++
++   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36711_, double p_36712_, double p_36713_, double p_36714_, Level p_36715_) {
++      this(p_36711_, p_36715_);
+       this.setPos(p_36712_, p_36713_, p_36714_);
     }
-@@ -150,7 +_,7 @@
+ 
+-   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, LivingEntity p_312718_, Level p_36722_, ItemStack p_309639_) {
+-      this(p_36721_, p_312718_.getX(), p_312718_.getEyeY() - (double)0.1F, p_312718_.getZ(), p_36722_, p_309639_);
+-      this.setOwner(p_312718_);
+-      if (p_312718_ instanceof Player) {
++   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, LivingEntity p_36718_, Level p_36719_) {
++      this(p_36717_, p_36718_.getX(), p_36718_.getEyeY() - (double)0.1F, p_36718_.getZ(), p_36719_);
++      this.setOwner(p_36718_);
++      if (p_36718_ instanceof Player) {
+          this.pickup = AbstractArrow.Pickup.ALLOWED;
+       }
+ 
+@@ -157,7 +_,7 @@
           --this.shakeTime;
        }
  
@@ -48,7 +86,7 @@
           this.clearFire();
        }
  
-@@ -186,9 +_,28 @@
+@@ -193,9 +_,28 @@
                 }
              }
  
@@ -80,7 +118,7 @@
              }
  
              if (entityhitresult == null || this.getPierceLevel() <= 0) {
-@@ -198,6 +_,9 @@
+@@ -205,6 +_,9 @@
              hitresult = null;
           }
  
@@ -90,7 +128,7 @@
           vec3 = this.getDeltaMovement();
           double d5 = vec3.x;
           double d6 = vec3.y;
-@@ -264,7 +_,7 @@
+@@ -271,7 +_,7 @@
  
     protected void tickDespawn() {
        ++this.life;
@@ -99,11 +137,14 @@
           this.discard();
        }
  
-@@ -322,7 +_,13 @@
+@@ -328,9 +_,14 @@
+ 
        boolean flag = entity.getType() == EntityType.ENDERMAN;
        int k = entity.getRemainingFireTicks();
-       if (this.isOnFire() && !flag) {
+-      boolean flag1 = entity.getType().is(EntityTypeTags.DEFLECTS_ARROWS);
+-      if (this.isOnFire() && !flag && !flag1) {
 -         entity.setSecondsOnFire(5);
++      if (this.isOnFire() && !flag) {
 +         // CraftBukkit start
 +         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
@@ -114,7 +155,30 @@
        }
  
        if (entity.hurt(damagesource, (float)i)) {
-@@ -422,7 +_,7 @@
+@@ -380,8 +_,6 @@
+          if (this.getPierceLevel() <= 0) {
+             this.discard();
+          }
+-      } else if (flag1) {
+-         this.deflect();
+       } else {
+          entity.setRemainingFireTicks(k);
+          this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
+@@ -398,13 +_,6 @@
+ 
+    }
+ 
+-   public void deflect() {
+-      float f = this.random.nextFloat() * 360.0F;
+-      this.setDeltaMovement(this.getDeltaMovement().yRot(f * ((float)Math.PI / 180F)).scale(0.5D));
+-      this.setYRot(this.getYRot() + f);
+-      this.yRotO += f;
+-   }
+-
+    protected void onHitBlock(BlockHitResult p_36755_) {
+       this.lastState = this.level().getBlockState(p_36755_.getBlockPos());
+       super.onHitBlock(p_36755_);
+@@ -439,7 +_,7 @@
     }
  
     protected boolean canHitEntity(Entity p_36743_) {
@@ -123,7 +187,26 @@
     }
  
     public void addAdditionalSaveData(CompoundTag p_36772_) {
-@@ -474,8 +_,23 @@
+@@ -457,7 +_,6 @@
+       p_36772_.putByte("PierceLevel", this.getPierceLevel());
+       p_36772_.putString("SoundEvent", BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent).toString());
+       p_36772_.putBoolean("ShotFromCrossbow", this.shotFromCrossbow());
+-      p_36772_.put("item", this.pickupItemStack.save(new CompoundTag()));
+    }
+ 
+    public void readAdditionalSaveData(CompoundTag p_36761_) {
+@@ -481,10 +_,6 @@
+       }
+ 
+       this.setShotFromCrossbow(p_36761_.getBoolean("ShotFromCrossbow"));
+-      if (p_36761_.contains("item", 10)) {
+-         this.pickupItemStack = ItemStack.of(p_36761_.getCompound("item"));
+-      }
+-
+    }
+ 
+    public void setOwner(@Nullable Entity p_36770_) {
+@@ -496,8 +_,23 @@
     }
  
     public void playerTouch(Player p_36766_) {
@@ -149,3 +232,21 @@
              p_36766_.take(this, 1);
              this.discard();
           }
+@@ -516,16 +_,10 @@
+       }
+    }
+ 
+-   protected ItemStack getPickupItem() {
+-      return this.pickupItemStack.copy();
+-   }
++   protected abstract ItemStack getPickupItem();
+ 
+    protected Entity.MovementEmission getMovementEmission() {
+       return Entity.MovementEmission.NONE;
+-   }
+-
+-   public ItemStack getPickupItemStackOrigin() {
+-      return this.pickupItemStack;
+    }
+ 
+    public void setBaseDamage(double p_36782_) {

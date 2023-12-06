@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/WaterlilyBlock.java
 +++ b/net/minecraft/world/level/block/WaterlilyBlock.java
-@@ -22,7 +_,7 @@
+@@ -28,7 +_,7 @@
  
     public void entityInside(BlockState p_58164_, Level p_58165_, BlockPos p_58166_, Entity p_58167_) {
        super.entityInside(p_58164_, p_58165_, p_58166_, p_58167_);
 -      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat) {
-+      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat && org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_58167_, p_58166_, Blocks.AIR.defaultBlockState())) { // CraftBukkit
++      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat && org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_58167_, p_58166_, Blocks.AIR.defaultBlockState())) { // CraftBukkit
           p_58165_.destroyBlock(new BlockPos(p_58166_), true, p_58167_);
        }
  

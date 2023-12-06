@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/worldgen/Structures.java
++++ b/net/minecraft/data/worldgen/Structures.java
+@@ -44,7 +_,7 @@
+ import net.minecraft.world.level.levelgen.structure.structures.WoodlandMansionStructure;
+ 
+ public class Structures {
+-   public static Structure.StructureSettings structure(HolderSet<Biome> p_256015_, Map<MobCategory, StructureSpawnOverride> p_256297_, GenerationStep.Decoration p_255729_, TerrainAdjustment p_255865_) {
++   private static Structure.StructureSettings structure(HolderSet<Biome> p_256015_, Map<MobCategory, StructureSpawnOverride> p_256297_, GenerationStep.Decoration p_255729_, TerrainAdjustment p_255865_) {
+       return new Structure.StructureSettings(p_256015_, p_256297_, p_255729_, p_255865_);
+    }
+ 

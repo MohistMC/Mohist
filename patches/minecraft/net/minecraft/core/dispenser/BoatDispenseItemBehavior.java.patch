@@ -1,24 +1,22 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -2,7 +_,6 @@
- 
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
--import net.minecraft.tags.FluidTags;
+@@ -5,12 +_,14 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.FluidTags;
  import net.minecraft.world.entity.EntityType;
+-import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.vehicle.Boat;
  import net.minecraft.world.entity.vehicle.ChestBoat;
-@@ -10,6 +_,9 @@
- import net.minecraft.world.level.Level;
+ import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
     private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -34,22 +_,49 @@
+@@ -35,6 +_,36 @@
        double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
        double d3 = vec3.z() + (double)direction.getStepZ() * d0;
        BlockPos blockpos = p_123375_.pos().relative(direction);
@@ -53,22 +51,17 @@
 +      boat.setVariant(this.type);
 +      boat.setYRot(direction.toYRot());
        double d4;
--      if (level.getFluidState(blockpos).is(FluidTags.WATER)) {
-+      if (boat.canBoatInFluid(level.getFluidState(blockpos))) {
+       if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
           d4 = 1.0D;
-       } else {
--         if (!level.getBlockState(blockpos).isAir() || !level.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
-+         if (!level.getBlockState(blockpos).isAir() || !boat.canBoatInFluid(level.getFluidState(blockpos.below()))) {
-             return this.defaultDispenseItemBehavior.dispense(p_123375_, p_123376_);
-          }
- 
+@@ -46,12 +_,8 @@
           d4 = 0.0D;
        }
  
--      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d1, d2 + d4, d3) : new Boat(level, d1, d2 + d4, d3));
+-      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d1, d2 + d4, d3) : new Boat(serverlevel, d1, d2 + d4, d3));
+-      EntityType.<Boat>createDefaultStackConfig(serverlevel, p_123376_, (Player)null).accept(boat);
 -      boat.setVariant(this.type);
 -      boat.setYRot(direction.toYRot());
--      level.addFreshEntity(boat);
+-      serverlevel.addFreshEntity(boat);
 -      p_123376_.shrink(1);
 +      boat.setPos(d1, d2 + d4, d3);
 +      if (!level.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntityType;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntityType;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**

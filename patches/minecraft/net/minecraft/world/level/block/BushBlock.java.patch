@@ -1,22 +1,13 @@
 --- a/net/minecraft/world/level/block/BushBlock.java
 +++ b/net/minecraft/world/level/block/BushBlock.java
-@@ -10,7 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.pathfinder.PathComputationType;
- 
--public class BushBlock extends Block {
-+public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
-    public BushBlock(BlockBehaviour.Properties p_51021_) {
-       super(p_51021_);
-    }
-@@ -20,11 +_,20 @@
+@@ -23,11 +_,20 @@
     }
  
     public BlockState updateShape(BlockState p_51032_, Direction p_51033_, BlockState p_51034_, LevelAccessor p_51035_, BlockPos p_51036_, BlockPos p_51037_) {
 -      return !p_51032_.canSurvive(p_51035_, p_51036_) ? Blocks.AIR.defaultBlockState() : super.updateShape(p_51032_, p_51033_, p_51034_, p_51035_, p_51036_, p_51037_);
 +      // CraftBukkit start
 +      if (!p_51032_.canSurvive(p_51035_, p_51036_)) {
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockPhysicsEvent(p_51035_, p_51036_).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockPhysicsEvent(p_51035_, p_51036_).isCancelled()) {
 +            return Blocks.AIR.defaultBlockState();
 +         }
 +      }
@@ -31,7 +22,7 @@
        return this.mayPlaceOn(p_51029_.getBlockState(blockpos), p_51029_, blockpos);
     }
  
-@@ -34,5 +_,12 @@
+@@ -37,5 +_,12 @@
  
     public boolean isPathfindable(BlockState p_51023_, BlockGetter p_51024_, BlockPos p_51025_, PathComputationType p_51026_) {
        return p_51026_ == PathComputationType.AIR && !this.hasCollision ? true : super.isPathfindable(p_51023_, p_51024_, p_51025_, p_51026_);

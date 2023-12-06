@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/block/BaseFireBlock.java
 +++ b/net/minecraft/world/level/block/BaseFireBlock.java
-@@ -112,7 +_,14 @@
+@@ -115,7 +_,14 @@
        if (!p_49263_.fireImmune()) {
           p_49263_.setRemainingFireTicks(p_49263_.getRemainingFireTicks() + 1);
           if (p_49263_.getRemainingFireTicks() == 0) {
 -            p_49263_.setSecondsOnFire(8);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock.at(p_49261_, p_49262_), p_49263_.getBukkitEntity(), 8);
++            org.bukkit.event.entity.EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock.at(p_49261_, p_49262_), p_49263_.getBukkitEntity(), 8);
 +            p_49261_.getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (!event.isCancelled()) {
@@ -16,7 +16,7 @@
           }
        }
  
-@@ -124,6 +_,7 @@
+@@ -127,6 +_,7 @@
        if (!p_49282_.is(p_49279_.getBlock())) {
           if (inPortalDimension(p_49280_)) {
              Optional<PortalShape> optional = PortalShape.findEmptyPortalShape(p_49280_, p_49281_, Direction.Axis.X);
@@ -24,7 +24,7 @@
              if (optional.isPresent()) {
                 optional.get().createPortalBlocks();
                 return;
-@@ -131,7 +_,7 @@
+@@ -134,7 +_,7 @@
           }
  
           if (!p_49279_.canSurvive(p_49280_, p_49281_)) {
@@ -33,7 +33,7 @@
           }
  
        }
-@@ -169,7 +_,7 @@
+@@ -172,7 +_,7 @@
           boolean flag = false;
  
           for(Direction direction : Direction.values()) {
@@ -42,14 +42,14 @@
                 flag = true;
                 break;
              }
-@@ -183,4 +_,12 @@
+@@ -186,4 +_,12 @@
           }
        }
     }
 +
 +   // CraftBukkit start
 +   protected void fireExtinguished(net.minecraft.world.level.LevelAccessor world, BlockPos position) {
-+      if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.AIR.defaultBlockState()).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockFadeEvent(world, position, Blocks.AIR.defaultBlockState()).isCancelled()) {
 +         world.removeBlock(position, false);
 +      }
 +   }

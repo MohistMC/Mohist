@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -6,7 +_,6 @@
- import java.util.Optional;
- import java.util.UUID;
- import java.util.function.BiConsumer;
--import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.GlobalPos;
- import net.minecraft.core.Vec3i;
 @@ -65,7 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEventListener;
  import net.minecraft.world.level.gameevent.PositionSource;
@@ -26,16 +18,7 @@
     private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Allay.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_CAN_DUPLICATE = SynchedEntityData.defineId(Allay.class, EntityDataSerializers.BOOLEAN);
     protected static final ImmutableList<SensorType<? extends Sensor<? super Allay>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY, SensorType.NEAREST_ITEMS);
-@@ -87,14 +_,14 @@
-    private final VibrationSystem.User vibrationUser;
-    private final DynamicGameEventListener<Allay.JukeboxListener> dynamicJukeboxListener;
-    private final SimpleContainer inventory = new SimpleContainer(1);
--   @Nullable
--   public BlockPos jukeboxPos;
-+   public @Nullable BlockPos jukeboxPos;
-    public long duplicationCooldown;
-    private float holdingItemAnimationTicks;
-    private float holdingItemAnimationTicks0;
+@@ -95,6 +_,7 @@
     private float dancingAnimationTicks;
     private float spinningAnimationTicks;
     private float spinningAnimationTicks0;

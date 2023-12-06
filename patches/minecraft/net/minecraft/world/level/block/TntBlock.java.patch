@@ -1,15 +1,29 @@
 --- a/net/minecraft/world/level/block/TntBlock.java
 +++ b/net/minecraft/world/level/block/TntBlock.java
-@@ -24,6 +_,8 @@
+@@ -1,6 +_,5 @@
+ package net.minecraft.world.level.block;
+ 
+-import com.mojang.serialization.MapCodec;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.sounds.SoundEvents;
+@@ -25,24 +_,25 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.TNTPrimeEvent;
  
  public class TntBlock extends Block {
+-   public static final MapCodec<TntBlock> CODEC = simpleCodec(TntBlock::new);
     public static final BooleanProperty UNSTABLE = BlockStateProperties.UNSTABLE;
-@@ -33,10 +_,14 @@
+ 
+-   public MapCodec<TntBlock> codec() {
+-      return CODEC;
+-   }
+-
+    public TntBlock(BlockBehaviour.Properties p_57422_) {
+       super(p_57422_);
        this.registerDefaultState(this.defaultBlockState().setValue(UNSTABLE, Boolean.valueOf(false)));
     }
  
@@ -26,7 +40,7 @@
              p_57467_.removeBlock(p_57468_, false);
           }
  
-@@ -44,16 +_,16 @@
+@@ -50,19 +_,19 @@
     }
  
     public void neighborChanged(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
@@ -39,15 +53,20 @@
  
     }
  
-    public void playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
+-   public BlockState playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
 -      if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE)) {
 -         explode(p_57445_, p_57446_);
++   public void playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
 +      if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE) && CraftEventFactory.callTNTPrimeEvent(p_57445_, p_57446_, TNTPrimeEvent.PrimeCause.BLOCK_BREAK, p_57448_, null)) { // CraftBukkit - TNTPrimeEvent
 +         onCaughtFire(p_57447_, p_57445_, p_57446_, null, null);
        }
  
-       super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
-@@ -68,10 +_,12 @@
+-      return super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
++      super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
+    }
+ 
+    public void wasExploded(Level p_57441_, BlockPos p_57442_, Explosion p_57443_) {
+@@ -74,10 +_,12 @@
        }
     }
  
@@ -60,7 +79,7 @@
     private static void explode(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
        if (!p_57437_.isClientSide) {
           PrimedTnt primedtnt = new PrimedTnt(p_57437_, (double)p_57438_.getX() + 0.5D, (double)p_57438_.getY(), (double)p_57438_.getZ() + 0.5D, p_57439_);
-@@ -86,7 +_,12 @@
+@@ -92,7 +_,12 @@
        if (!itemstack.is(Items.FLINT_AND_STEEL) && !itemstack.is(Items.FIRE_CHARGE)) {
           return super.use(p_57450_, p_57451_, p_57452_, p_57453_, p_57454_, p_57455_);
        } else {
@@ -74,7 +93,7 @@
           p_57451_.setBlock(p_57452_, Blocks.AIR.defaultBlockState(), 11);
           Item item = itemstack.getItem();
           if (!p_57453_.isCreative()) {
-@@ -109,7 +_,12 @@
+@@ -115,7 +_,12 @@
           BlockPos blockpos = p_57431_.getBlockPos();
           Entity entity = p_57432_.getOwner();
           if (p_57432_.isOnFire() && p_57432_.mayInteract(p_57429_, blockpos)) {

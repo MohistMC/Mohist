@@ -1,5 +1,21 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
+@@ -66,11 +_,11 @@
+    private final LevelData levelData;
+    private final RandomSource random;
+    private final DimensionType dimensionType;
+-   private final WorldGenTickAccess<Block> blockTicks = new WorldGenTickAccess<>((p_308953_) -> {
+-      return this.getChunk(p_308953_).getBlockTicks();
++   private final WorldGenTickAccess<Block> blockTicks = new WorldGenTickAccess<>((p_277274_) -> {
++      return this.getChunk(p_277274_).getBlockTicks();
+    });
+-   private final WorldGenTickAccess<Fluid> fluidTicks = new WorldGenTickAccess<>((p_308954_) -> {
+-      return this.getChunk(p_308954_).getFluidTicks();
++   private final WorldGenTickAccess<Fluid> fluidTicks = new WorldGenTickAccess<>((p_277275_) -> {
++      return this.getChunk(p_277275_).getFluidTicks();
+    });
+    private final BiomeManager biomeManager;
+    private final ChunkPos firstPos;
 @@ -190,7 +_,7 @@
        if (blockstate.isAir()) {
           return false;

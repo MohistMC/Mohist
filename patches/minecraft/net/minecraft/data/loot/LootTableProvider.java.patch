@@ -1,6 +1,14 @@
 --- a/net/minecraft/data/loot/LootTableProvider.java
 +++ b/net/minecraft/data/loot/LootTableProvider.java
-@@ -43,7 +_,7 @@
+@@ -17,7 +_,6 @@
+ import net.minecraft.data.DataProvider;
+ import net.minecraft.data.PackOutput;
+ import net.minecraft.resources.ResourceLocation;
+-import net.minecraft.util.ProblemReporter;
+ import net.minecraft.world.RandomSequence;
+ import net.minecraft.world.level.levelgen.RandomSupport;
+ import net.minecraft.world.level.storage.loot.LootDataId;
+@@ -44,7 +_,7 @@
     public CompletableFuture<?> run(CachedOutput p_254060_) {
        final Map<ResourceLocation, LootTable> map = Maps.newHashMap();
        Map<RandomSupport.Seed128bit, ResourceLocation> map1 = new Object2ObjectOpenHashMap<>();
@@ -9,22 +17,33 @@
           p_288263_.provider().get().generate((p_288259_, p_288260_) -> {
              ResourceLocation resourcelocation1 = map1.put(RandomSequence.seedForKey(p_288259_), p_288259_);
              if (resourcelocation1 != null) {
-@@ -63,13 +_,8 @@
+@@ -57,22 +_,16 @@
+             }
+          });
+       });
+-      ProblemReporter.Collector problemreporter$collector = new ProblemReporter.Collector();
+-      ValidationContext validationcontext = new ValidationContext(problemreporter$collector, LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
++      ValidationContext validationcontext = new ValidationContext(LootContextParamSets.ALL_PARAMS, new LootDataResolver() {
+          @Nullable
+          public <T> T getElement(LootDataId<T> p_279283_) {
+             return (T)(p_279283_.type() == LootDataType.TABLE ? map.get(p_279283_.location()) : null);
           }
        });
  
 -      for(ResourceLocation resourcelocation : Sets.difference(this.requiredTables, map.keySet())) {
--         validationcontext.reportProblem("Missing built-in table: " + resourcelocation);
+-         problemreporter$collector.report("Missing built-in table: " + resourcelocation);
 -      }
 +      validate(map, validationcontext);
  
 -      map.forEach((p_278897_, p_278898_) -> {
 -         p_278898_.validate(validationcontext.setParams(p_278898_.getParamSet()).enterElement("{" + p_278897_ + "}", new LootDataId<>(LootDataType.TABLE, p_278897_)));
 -      });
-       Multimap<String, String> multimap = validationcontext.getProblems();
+-      Multimap<String, String> multimap = problemreporter$collector.get();
++      Multimap<String, String> multimap = validationcontext.getProblems();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_124446_, p_124447_) -> {
-@@ -86,6 +_,20 @@
+             LOGGER.warn("Found validation problem in {}: {}", p_124446_, p_124447_);
+@@ -88,6 +_,20 @@
              return new CompletableFuture[p_253403_];
           }));
        }

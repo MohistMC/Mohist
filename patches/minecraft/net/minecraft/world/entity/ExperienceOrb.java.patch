@@ -4,8 +4,8 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
@@ -152,12 +152,10 @@
              }
  
              --this.count;
-@@ -224,20 +_,29 @@
-       Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
+@@ -225,19 +_,28 @@
        if (entry != null) {
           ItemStack itemstack = entry.getValue();
--         int i = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
-+         int i = Math.min((int) (this.value * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
+          int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
 +         // CraftBukkit start
 +         org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(p_147093_, this, itemstack, entry.getKey(), i, this::durabilityToXp); // Paper
 +         i = event.getRepairAmount();

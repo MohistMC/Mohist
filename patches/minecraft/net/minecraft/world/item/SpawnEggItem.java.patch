@@ -1,6 +1,18 @@
 --- a/net/minecraft/world/item/SpawnEggItem.java
 +++ b/net/minecraft/world/item/SpawnEggItem.java
-@@ -40,11 +_,14 @@
+@@ -24,9 +_,10 @@
+ import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.ClipContext;
+ import net.minecraft.world.level.Level;
+-import net.minecraft.world.level.Spawner;
++import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.LiquidBlock;
+ import net.minecraft.world.level.block.entity.BlockEntity;
++import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.BlockHitResult;
+@@ -39,11 +_,14 @@
     private final int highlightColor;
     private final EntityType<?> defaultType;
  
@@ -15,7 +27,7 @@
        BY_ID.put(p_43207_, this);
     }
  
-@@ -127,6 +_,8 @@
+@@ -123,6 +_,8 @@
        return p_43212_ == 0 ? this.backgroundColor : this.highlightColor;
     }
  
@@ -24,7 +36,7 @@
     @Nullable
     public static SpawnEggItem byId(@Nullable EntityType<?> p_43214_) {
        return BY_ID.get(p_43214_);
-@@ -140,15 +_,15 @@
+@@ -136,15 +_,15 @@
        if (p_43229_ != null && p_43229_.contains("EntityTag", 10)) {
           CompoundTag compoundtag = p_43229_.getCompound("EntityTag");
           if (compoundtag.contains("id", 8)) {
@@ -43,7 +55,7 @@
     }
  
     public Optional<Mob> spawnOffspringFromSpawnEgg(Player p_43216_, Mob p_43217_, EntityType<? extends Mob> p_43218_, ServerLevel p_43219_, Vec3 p_43220_, ItemStack p_43221_) {
-@@ -170,6 +_,7 @@
+@@ -166,6 +_,7 @@
                 return Optional.empty();
              } else {
                 mob.moveTo(p_43220_.x(), p_43220_.y(), p_43220_.z(), 0.0F, 0.0F);
@@ -51,7 +63,7 @@
                 p_43219_.addFreshEntityWithPassengers(mob);
                 if (p_43221_.hasCustomHoverName()) {
                    mob.setCustomName(p_43221_.getHoverName());
-@@ -183,5 +_,9 @@
+@@ -179,5 +_,9 @@
              }
           }
        }

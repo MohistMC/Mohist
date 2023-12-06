@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/LightningRodBlock.java
 +++ b/net/minecraft/world/level/block/LightningRodBlock.java
-@@ -30,6 +_,8 @@
+@@ -31,6 +_,8 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class LightningRodBlock extends RodBlock implements SimpleWaterloggedBlock {
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-@@ -70,6 +_,18 @@
+    public static final MapCodec<LightningRodBlock> CODEC = simpleCodec(LightningRodBlock::new);
+@@ -76,6 +_,18 @@
     }
  
     public void onLightningStrike(BlockState p_153761_, Level p_153762_, BlockPos p_153763_) {
@@ -28,7 +28,7 @@
        p_153762_.setBlock(p_153763_, p_153761_.setValue(POWERED, Boolean.valueOf(true)), 3);
        this.updateNeighbours(p_153761_, p_153762_, p_153763_);
        p_153762_.scheduleTick(p_153763_, this, 8);
-@@ -119,7 +_,7 @@
+@@ -125,7 +_,7 @@
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos.above()));
                 Entity entity = p_153716_.getOwner();
                 lightningbolt.setCause(entity instanceof ServerPlayer ? (ServerPlayer)entity : null);

@@ -1,7 +1,7 @@
 package com.mohistmc.mixin.bukkit;
 
 import com.mohistmc.MohistMC;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -1,11 +1,16 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -19,20 +_,20 @@
+@@ -16,25 +_,23 @@
+ import net.minecraft.util.random.WeightedEntry;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.EntitySelector;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.MobSpawnType;
 -import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.SpawnPlacements;
+-import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -25,7 +30,7 @@
     private double spin;
     private double oSpin;
     public int minSpawnDelay = 200;
-@@ -46,6 +_,7 @@
+@@ -48,6 +_,7 @@
  
     public void setEntityId(EntityType<?> p_253682_, @Nullable Level p_254041_, RandomSource p_254221_, BlockPos p_254050_) {
        this.getOrCreateNextSpawnData(p_254041_, p_254221_, p_254050_).getEntityToSpawn().putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(p_253682_).toString());
@@ -33,7 +38,16 @@
     }
  
     private boolean isNearPlayer(Level p_151344_, BlockPos p_151345_) {
-@@ -131,16 +_,28 @@
+@@ -124,7 +_,7 @@
+                      return;
+                   }
+ 
+-                  int k = p_151312_.getEntities(EntityTypeTest.forExactClass(entity.getClass()), (new AABB((double)p_151313_.getX(), (double)p_151313_.getY(), (double)p_151313_.getZ(), (double)(p_151313_.getX() + 1), (double)(p_151313_.getY() + 1), (double)(p_151313_.getZ() + 1))).inflate((double)this.spawnRange), EntitySelector.NO_SPECTATORS).size();
++                  int k = p_151312_.getEntitiesOfClass(entity.getClass(), (new AABB((double)p_151313_.getX(), (double)p_151313_.getY(), (double)p_151313_.getZ(), (double)(p_151313_.getX() + 1), (double)(p_151313_.getY() + 1), (double)(p_151313_.getZ() + 1))).inflate((double)this.spawnRange)).size();
+                   if (k >= this.maxNearbyEntities) {
+                      this.delay(p_151312_, p_151313_);
+                      return;
+@@ -133,16 +_,28 @@
                    entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
@@ -61,7 +75,7 @@
 +                     // Spigot End
 +                  }
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
 +                     continue;
 +                  }
 +                  entity.spawnReason(CreatureSpawnEvent.SpawnReason.SPAWNER); // Mohist
@@ -69,7 +83,7 @@
                       this.delay(p_151312_, p_151313_);
                       return;
                    }
-@@ -261,7 +_,7 @@
+@@ -263,7 +_,7 @@
        }
     }
  
@@ -78,7 +92,7 @@
        this.nextSpawnData = p_151327_;
     }
  
-@@ -283,4 +_,12 @@
+@@ -285,4 +_,12 @@
     public double getoSpin() {
        return this.oSpin;
     }

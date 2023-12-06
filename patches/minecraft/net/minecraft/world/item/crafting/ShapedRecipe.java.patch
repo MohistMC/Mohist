@@ -1,23 +1,22 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -2,6 +_,7 @@
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.item.crafting;
  
- import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.Sets;
 +import com.mohistmc.bukkit.inventory.MohistSpecialRecipe;
  import com.mojang.serialization.Codec;
- import com.mojang.serialization.DataResult;
  import com.mojang.serialization.codecs.RecordCodecBuilder;
-@@ -16,8 +_,26 @@
+ import net.minecraft.core.NonNullList;
+@@ -9,8 +_,26 @@
+ import net.minecraft.world.inventory.CraftingContainer;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
- import org.apache.commons.lang3.NotImplementedException;
 -
 -public class ShapedRecipe implements CraftingRecipe {
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.RecipeChoice;
 +
 +public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
@@ -34,11 +33,11 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    final int width;
-    final int height;
-    final NonNullList<Ingredient> recipeItems;
-@@ -40,6 +_,70 @@
-       this(p_250221_, p_250716_, p_251480_, p_251980_, p_252150_, p_248581_, true);
+    final ShapedRecipePattern pattern;
+    final ItemStack result;
+    final String group;
+@@ -29,6 +_,70 @@
+       this(p_272759_, p_273506_, p_310709_, p_272852_, true);
     }
  
 +   // CraftBukkit start
@@ -108,28 +107,7 @@
     public RecipeSerializer<?> getSerializer() {
        return RecipeSerializer.SHAPED_RECIPE;
     }
-@@ -115,10 +_,20 @@
-       return this.width;
-    }
- 
-+   @Override
-+   public int getRecipeWidth() {
-+      return getWidth();
-+   }
-+
-    public int getHeight() {
-       return this.height;
-    }
- 
-+   @Override
-+   public int getRecipeHeight() {
-+      return getHeight();
-+   }
-+
-    @VisibleForTesting
-    static String[] shrink(List<String> p_299210_) {
-       int i = Integer.MAX_VALUE;
-@@ -160,7 +_,7 @@
+@@ -78,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
           return !p_151277_.isEmpty();
        }).anyMatch((p_151273_) -> {
@@ -137,28 +115,4 @@
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
        });
     }
- 
-@@ -182,9 +_,9 @@
- 
-    public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-       static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().flatXmap((p_297814_) -> {
--         if (p_297814_.size() > 3) {
-+         if (p_297814_.size() > MAX_HEIGHT) {
-             return DataResult.error(() -> {
--               return "Invalid pattern: too many rows, 3 is maximum";
-+               return "Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum";
-             });
-          } else if (p_297814_.isEmpty()) {
-             return DataResult.error(() -> {
-@@ -194,9 +_,9 @@
-             int i = p_297814_.get(0).length();
- 
-             for(String s : p_297814_) {
--               if (s.length() > 3) {
-+               if (s.length() > MAX_WIDTH) {
-                   return DataResult.error(() -> {
--                     return "Invalid pattern: too many columns, 3 is maximum";
-+                     return "Invalid pattern: too many columns, " + MAX_WIDTH  + " is maximum";
-                   });
-                }
  

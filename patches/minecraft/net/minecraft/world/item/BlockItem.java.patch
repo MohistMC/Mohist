@@ -12,10 +12,10 @@
  import net.minecraft.world.level.block.state.properties.Property;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockStates;
-+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockStates;
++import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {

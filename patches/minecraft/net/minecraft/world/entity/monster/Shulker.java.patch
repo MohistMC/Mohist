@@ -1,19 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -46,6 +_,7 @@
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.projectile.AbstractArrow;
- import net.minecraft.world.entity.projectile.ShulkerBullet;
-+import net.minecraft.world.entity.vehicle.Boat;
- import net.minecraft.world.item.DyeColor;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.ServerLevelAccessor;
 @@ -54,6 +_,9 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  import org.joml.Vector3f;
  import org.joml.Vector3fc;

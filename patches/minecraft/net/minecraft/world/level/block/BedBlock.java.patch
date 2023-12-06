@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BedBlock.java
 +++ b/net/minecraft/world/level/block/BedBlock.java
-@@ -81,7 +_,8 @@
+@@ -90,7 +_,8 @@
              }
           }
  
@@ -10,7 +10,7 @@
              p_49516_.removeBlock(p_49517_, false);
              BlockPos blockpos = p_49517_.relative(p_49515_.getValue(FACING).getOpposite());
              if (p_49516_.getBlockState(blockpos).is(this)) {
-@@ -98,7 +_,16 @@
+@@ -107,7 +_,16 @@
  
              return InteractionResult.SUCCESS;
           } else {
@@ -27,7 +27,7 @@
                 if (p_49477_.getMessage() != null) {
                    p_49518_.displayClientMessage(p_49477_.getMessage(), true);
                 }
-@@ -109,8 +_,25 @@
+@@ -118,8 +_,25 @@
        }
     }
  
@@ -54,7 +54,7 @@
     }
  
     private boolean kickVillagerOutOfBed(Level p_49491_, BlockPos p_49492_) {
-@@ -281,6 +_,11 @@
+@@ -290,6 +_,11 @@
        if (!p_49499_.isClientSide) {
           BlockPos blockpos = p_49500_.relative(p_49501_.getValue(FACING));
           p_49499_.setBlock(blockpos, p_49501_.setValue(PART, BedPart.HEAD), 3);
@@ -62,7 +62,7 @@
 +         if (p_49499_.captureBlockStates) {
 +            return;
 +         }
-+                    // CraftBukkit end
++         // CraftBukkit end
           p_49499_.blockUpdated(p_49500_, Blocks.AIR);
           p_49501_.updateNeighbourShapes(p_49499_, p_49500_, 3);
        }

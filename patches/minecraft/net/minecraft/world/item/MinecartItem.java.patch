@@ -1,30 +1,43 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -16,6 +_,10 @@
+@@ -5,10 +_,8 @@
+ import net.minecraft.core.dispenser.BlockSource;
+ import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+ import net.minecraft.core.dispenser.DispenseItemBehavior;
+-import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.InteractionResult;
+-import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.entity.vehicle.AbstractMinecart;
+ import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.Level;
+@@ -18,6 +_,10 @@
  import net.minecraft.world.level.block.state.properties.RailShape;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class MinecartItem extends Item {
     private static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
-@@ -30,7 +_,7 @@
+@@ -32,7 +_,7 @@
           double d2 = vec3.z() + (double)direction.getStepZ() * 1.125D;
           BlockPos blockpos = p_42949_.pos().relative(direction);
-          BlockState blockstate = level.getBlockState(blockpos);
+          BlockState blockstate = serverlevel.getBlockState(blockpos);
 -         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
 +         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
           double d3;
           if (blockstate.is(BlockTags.RAILS)) {
              if (railshape.isAscending()) {
-@@ -52,13 +_,41 @@
+@@ -54,9 +_,41 @@
              }
           }
  
--         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type);
+-         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, d0, d1 + d3, d2, ((MinecartItem)p_42950_.getItem()).type, p_42950_, (Player)null);
+-         serverlevel.addFreshEntity(abstractminecart);
+-         p_42950_.shrink(1);
 +         // CraftBukkit start
 +         ItemStack itemstack1 = p_42950_.split(1);
 +         org.bukkit.block.Block block2 = CraftBlock.at(level, p_42949_.pos());
@@ -55,36 +68,40 @@
 +         AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(level, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((MinecartItem) itemstack1.getItem()).type);
 +
 +
-          if (p_42950_.hasCustomHoverName()) {
-             abstractminecart.setCustomName(p_42950_.getHoverName());
-          }
- 
--         level.addFreshEntity(abstractminecart);
--         p_42950_.shrink(1);
++         if (p_42950_.hasCustomHoverName()) {
++            abstractminecart.setCustomName(p_42950_.getHoverName());
++         }
++
 +         if (!level.addFreshEntity(abstractminecart)) p_42950_.grow(1);
           return p_42950_;
        }
  
-@@ -83,7 +_,7 @@
-       } else {
+@@ -82,15 +_,24 @@
           ItemStack itemstack = p_42943_.getItemInHand();
-          if (!level.isClientSide) {
+          if (level instanceof ServerLevel) {
+             ServerLevel serverlevel = (ServerLevel)level;
 -            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
 +            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
              double d0 = 0.0D;
              if (railshape.isAscending()) {
                 d0 = 0.5D;
-@@ -94,7 +_,12 @@
-                abstractminecart.setCustomName(itemstack.getHoverName());
              }
  
--            level.addFreshEntity(abstractminecart);
+-            AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type, itemstack, p_42943_.getPlayer());
+-            serverlevel.addFreshEntity(abstractminecart);
+-            serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), serverlevel.getBlockState(blockpos.below())));
++            AbstractMinecart abstractminecart = AbstractMinecart.createMinecart(serverlevel, (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.0625D + d0, (double)blockpos.getZ() + 0.5D, this.type);
++            if (itemstack.hasCustomHoverName()) {
++               abstractminecart.setCustomName(itemstack.getHoverName());
++            }
++
 +            // CraftBukkit start
 +            if (CraftEventFactory.callEntityPlaceEvent(p_42943_, abstractminecart).isCancelled()) {
 +               return InteractionResult.FAIL;
 +            }
 +            // CraftBukkit end
 +            if (!level.addFreshEntity(abstractminecart)) return InteractionResult.PASS; // CraftBukkit
-             level.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), level.getBlockState(blockpos.below())));
++            serverlevel.gameEvent(GameEvent.ENTITY_PLACE, blockpos, GameEvent.Context.of(p_42943_.getPlayer(), level.getBlockState(blockpos.below())));
           }
  
+          itemstack.shrink(1);

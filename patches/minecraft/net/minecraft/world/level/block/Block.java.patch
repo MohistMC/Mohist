@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -61,10 +_,11 @@
+@@ -62,11 +_,12 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
  
 -public class Block extends BlockBehaviour implements ItemLike {
 +public class Block extends BlockBehaviour implements ItemLike, net.minecraftforge.common.extensions.IForgeBlock {
+    public static final MapCodec<Block> CODEC = simpleCodec(Block::new);
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Holder.Reference<Block> builtInRegistryHolder = BuiltInRegistries.BLOCK.createIntrusiveHolder(this);
 -   public static final IdMapper<BlockState> BLOCK_STATE_REGISTRY = new IdMapper<>();
@@ -14,16 +15,15 @@
     private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.joinIsNotEmpty(Shapes.block(), p_49972_, BooleanOp.NOT_SAME);
-@@ -176,7 +_,7 @@
+@@ -182,7 +_,6 @@
              LOGGER.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
        }
 -
-+      initClient();
     }
  
     public static boolean isExceptionForConnection(BlockState p_152464_) {
-@@ -191,6 +_,8 @@
+@@ -197,6 +_,8 @@
        BlockState blockstate = p_152446_.getBlockState(p_152449_);
        if (p_152445_.skipRendering(blockstate, p_152448_)) {
           return false;
@@ -32,7 +32,7 @@
        } else if (blockstate.canOcclude()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
           Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = OCCLUSION_CACHE.get();
-@@ -276,11 +_,14 @@
+@@ -282,11 +_,14 @@
     }
  
     public static void dropResources(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_) {
@@ -48,7 +48,7 @@
        }
  
     }
-@@ -313,20 +_,27 @@
+@@ -319,20 +_,27 @@
     }
  
     private static void popResource(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
@@ -79,7 +79,7 @@
     public float getExplosionResistance() {
        return this.explosionResistance;
     }
-@@ -344,8 +_,10 @@
+@@ -350,8 +_,10 @@
  
     public void playerDestroy(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
        p_49828_.awardStat(Stats.BLOCK_MINED.get(this));
@@ -91,34 +91,7 @@
     }
  
     public void setPlacedBy(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
-@@ -373,8 +_,10 @@
- 
-    public void updateEntityAfterFallOn(BlockGetter p_49821_, Entity p_49822_) {
-       p_49822_.setDeltaMovement(p_49822_.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
-+      p_49822_.setDeltaMovement(p_49822_.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
-    }
- 
-+   @Deprecated //Forge: Use more sensitive version
-    public ItemStack getCloneItemStack(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
-       return new ItemStack(this);
-    }
-@@ -407,6 +_,7 @@
-    public void handlePrecipitation(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
-    }
- 
-+   @Deprecated //Forge: Use more sensitive version
-    public boolean dropFromExplosion(Explosion p_49826_) {
-       return true;
-    }
-@@ -442,6 +_,7 @@
-       return p_152456_.setValue(p_152457_, p_152455_.getValue(p_152457_));
-    }
- 
-+   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
-    public SoundType getSoundType(BlockState p_49963_) {
-       return this.soundType;
-    }
-@@ -451,7 +_,7 @@
+@@ -458,7 +_,7 @@
           this.item = Item.byBlock(this);
        }
  
@@ -127,7 +100,7 @@
     }
  
     public boolean hasDynamicShape() {
-@@ -473,6 +_,74 @@
+@@ -480,6 +_,60 @@
        return this.stateDefinition.getPossibleStates().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
  
@@ -140,20 +113,6 @@
 +    */
 +   public Object getRenderPropertiesInternal() {
 +      return renderProperties;
-+   }
-+
-+   private void initClient() {
-+      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
-+         initializeClient(properties -> {
-+            if (properties == this)
-+               throw new IllegalStateException("Don't extend IBlockRenderProperties in your block, use an anonymous class instead.");
-+            this.renderProperties = properties;
-+         });
-+      }
-+   }
-+
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientBlockExtensions> consumer) {
 +   }
 +
 +   @Override
@@ -202,7 +161,7 @@
     /** @deprecated */
     @Deprecated
     public Holder.Reference<Block> builtInRegistryHolder() {
-@@ -486,7 +_,10 @@
+@@ -493,7 +_,10 @@
              this.popExperience(p_220823_, p_220824_, i);
           }
        }
@@ -213,7 +172,7 @@
     }
  
     public static final class BlockStatePairKey {
-@@ -517,4 +_,10 @@
+@@ -524,4 +_,10 @@
           return 31 * i + this.direction.hashCode();
        }
     }

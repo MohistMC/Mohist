@@ -1,41 +1,16 @@
 --- a/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/net/minecraft/world/level/block/PowderSnowBlock.java
-@@ -1,7 +_,6 @@
- package net.minecraft.world.level.block;
- 
- import java.util.Optional;
--import javax.annotation.Nullable;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.core.particles.ParticleTypes;
-@@ -29,6 +_,7 @@
- import net.minecraft.world.phys.shapes.EntityCollisionContext;
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.jetbrains.annotations.Nullable;
- 
- public class PowderSnowBlock extends Block implements BucketPickup {
-    private static final float HORIZONTAL_PARTICLE_MOMENTUM_FACTOR = 0.083333336F;
-@@ -65,7 +_,12 @@
+@@ -71,7 +_,12 @@
  
        p_154266_.setIsInPowderSnow(true);
        if (!p_154264_.isClientSide) {
 -         if (p_154266_.isOnFire() && (p_154264_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || p_154266_ instanceof Player) && p_154266_.mayInteract(p_154264_, p_154265_)) {
 +         // CraftBukkit start
 +         if (p_154266_.isOnFire() && p_154266_.mayInteract(p_154264_, p_154265_)) {
-+            if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityChangeBlockEvent(p_154266_, p_154265_, Blocks.AIR.defaultBlockState(), !(p_154264_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || p_154266_ instanceof Player))) {
++            if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_154266_, p_154265_, Blocks.AIR.defaultBlockState(), !(p_154264_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) || p_154266_ instanceof Player))) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_154264_.destroyBlock(p_154265_, false);
           }
- 
-@@ -108,7 +_,7 @@
-       if (p_154256_.getType().is(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS)) {
-          return true;
-       } else {
--         return p_154256_ instanceof LivingEntity ? ((LivingEntity)p_154256_).getItemBySlot(EquipmentSlot.FEET).is(Items.LEATHER_BOOTS) : false;
-+         return p_154256_ instanceof LivingEntity ? ((LivingEntity)p_154256_).getItemBySlot(EquipmentSlot.FEET).canWalkOnPowderedSnow((LivingEntity)p_154256_) : false;
-       }
-    }
  

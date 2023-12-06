@@ -8,7 +8,7 @@
  import java.util.function.Consumer;
  import java.util.function.Function;
  import java.util.stream.Stream;
-@@ -158,6 +_,7 @@
+@@ -160,6 +_,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -16,7 +16,7 @@
  import org.slf4j.Logger;
  
  public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T> {
-@@ -308,6 +_,11 @@
+@@ -312,6 +_,11 @@
     private final EntityDimensions dimensions;
     private final FeatureFlagSet requiredFeatures;
  
@@ -28,7 +28,7 @@
     private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
     }
-@@ -321,33 +_,47 @@
+@@ -325,33 +_,47 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
@@ -91,7 +91,7 @@
     }
  
     public static <T extends Entity> Consumer<T> createDefaultStackConfig(ServerLevel p_263583_, ItemStack p_263568_, @Nullable Player p_263575_) {
-@@ -372,22 +_,40 @@
+@@ -376,22 +_,40 @@
        }) : p_263579_;
     }
  
@@ -133,7 +133,7 @@
     public T create(ServerLevel p_262637_, @Nullable CompoundTag p_262687_, @Nullable Consumer<T> p_262629_, BlockPos p_262595_, MobSpawnType p_262666_, boolean p_262685_, boolean p_262588_) {
        T t = this.create(p_262637_);
        if (t == null) {
-@@ -601,14 +_,23 @@
+@@ -605,14 +_,23 @@
     }
  
     public int clientTrackingRange() {
@@ -157,7 +157,7 @@
        return this != PLAYER && this != LLAMA_SPIT && this != WITHER && this != BAT && this != ITEM_FRAME && this != GLOW_ITEM_FRAME && this != LEASH_KNOT && this != PAINTING && this != END_CRYSTAL && this != EVOKER_FANGS;
     }
  
-@@ -635,6 +_,12 @@
+@@ -639,6 +_,12 @@
        return this.builtInRegistryHolder;
     }
  
@@ -170,7 +170,7 @@
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> factory;
        private final MobCategory category;
-@@ -648,6 +_,11 @@
+@@ -652,6 +_,11 @@
        private EntityDimensions dimensions = EntityDimensions.scalable(0.6F, 1.8F);
        private FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
  
@@ -182,7 +182,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.factory = p_20696_;
           this.category = p_20697_;
-@@ -709,12 +_,36 @@
+@@ -713,12 +_,36 @@
           return this;
        }
  

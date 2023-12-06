@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/InfestedBlock.java
 +++ b/net/minecraft/world/level/block/InfestedBlock.java
-@@ -14,6 +_,7 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.Property;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class InfestedBlock extends Block {
-    private final Block hostBlock;
-@@ -39,6 +_,7 @@
+    public static final MapCodec<InfestedBlock> CODEC = RecordCodecBuilder.mapCodec((p_309286_) -> {
+@@ -49,6 +_,7 @@
        Silverfish silverfish = EntityType.SILVERFISH.create(p_54181_);
        if (silverfish != null) {
           silverfish.moveTo((double)p_54182_.getX() + 0.5D, (double)p_54182_.getY(), (double)p_54182_.getZ() + 0.5D, 0.0F, 0.0F);

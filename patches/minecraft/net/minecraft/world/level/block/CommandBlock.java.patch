@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/CommandBlock.java
 +++ b/net/minecraft/world/level/block/CommandBlock.java
-@@ -25,6 +_,8 @@
+@@ -28,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.level.block.state.properties.DirectionProperty;
  import net.minecraft.world.phys.BlockHitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  import org.slf4j.Logger;
  
  public class CommandBlock extends BaseEntityBlock implements GameMasterBlock {
-@@ -52,6 +_,16 @@
+@@ -64,6 +_,16 @@
              CommandBlockEntity commandblockentity = (CommandBlockEntity)blockentity;
              boolean flag = p_51839_.hasNeighborSignal(p_51840_);
              boolean flag1 = commandblockentity.isPowered();

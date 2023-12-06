@@ -9,10 +9,10 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryDoubleChest;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryDoubleChest;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
  
  public class ChestMenu extends AbstractContainerMenu {
     private static final int SLOTS_PER_ROW = 9;

@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.Validate;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  import org.slf4j.Logger;
  
  public class ItemFrame extends HangingEntity {
@@ -63,7 +63,7 @@
     public boolean survives() {
        if (this.fixed) {
           return true;
-@@ -157,6 +_,11 @@
+@@ -153,6 +_,11 @@
           return false;
        } else if (!p_31776_.is(DamageTypeTags.IS_EXPLOSION) && !this.getItem().isEmpty()) {
           if (!this.level().isClientSide) {
@@ -75,7 +75,7 @@
              this.dropItem(p_31776_.getEntity(), false);
              this.gameEvent(GameEvent.BLOCK_CHANGE, p_31776_.getEntity());
              this.playSound(this.getRemoveItemSound(), 1.0F, 1.0F);
-@@ -287,6 +_,24 @@
+@@ -283,6 +_,24 @@
  
        if (p_31791_ && this.pos != null) {
           this.level().updateNeighbourForOutputSignal(this.pos, Blocks.AIR);

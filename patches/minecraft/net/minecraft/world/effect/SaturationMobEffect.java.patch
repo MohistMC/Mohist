@@ -4,8 +4,8 @@
  
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.player.Player;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  class SaturationMobEffect extends InstantenousMobEffect {
     protected SaturationMobEffect(MobEffectCategory p_297998_, int p_300022_) {

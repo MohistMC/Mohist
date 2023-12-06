@@ -8,7 +8,7 @@ import com.mohistmc.tools.ListUtils;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**

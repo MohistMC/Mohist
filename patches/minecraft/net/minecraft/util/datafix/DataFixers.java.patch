@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/DataFixers.java
 +++ b/net/minecraft/util/datafix/DataFixers.java
-@@ -399,6 +_,14 @@
+@@ -406,6 +_,14 @@
        Schema schema44 = p_14514_.addSchema(1456, SAME_NAMESPACED);
        p_14514_.addFixer(new EntityItemFrameDirectionFix(schema44, false));
        Schema schema45 = p_14514_.addSchema(1458, SAME_NAMESPACED);
@@ -15,14 +15,3 @@
        p_14514_.addFixer(new EntityCustomNameToComponentFix(schema45, false));
        p_14514_.addFixer(new ItemCustomNameToComponentFix(schema45, false));
        p_14514_.addFixer(new BlockEntityCustomNameToComponentFix(schema45, false));
-@@ -441,8 +_,8 @@
-       p_14514_.addFixer(BlockRenameFix.create(schema57, "Rename kelp/kelptop", createRenamer(ImmutableMap.of("minecraft:kelp_top", "minecraft:kelp", "minecraft:kelp", "minecraft:kelp_plant"))));
-       p_14514_.addFixer(ItemRenameFix.create(schema57, "Rename kelptop", createRenamer("minecraft:kelp_top", "minecraft:kelp")));
-       p_14514_.addFixer(new NamedEntityFix(schema57, false, "Command block block entity custom name fix", References.BLOCK_ENTITY, "minecraft:command_block") {
--         protected Typed<?> fix(Typed<?> p_14541_) {
--            return p_14541_.update(DSL.remainderFinder(), EntityCustomNameToComponentFix::fixTagCustomName);
-+         protected Typed<?> fix(Typed<?> p_14549_) {
-+            return p_14549_.update(DSL.remainderFinder(), EntityCustomNameToComponentFix::fixTagCustomName);
-          }
-       });
-       p_14514_.addFixer(new NamedEntityFix(schema57, false, "Command block minecart custom name fix", References.ENTITY, "minecraft:commandblock_minecart") {

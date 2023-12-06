@@ -16,7 +16,7 @@
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.io.IoBuilder;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_20_R2.util.ForwardLogHandler;
++import org.bukkit.craftbukkit.v1_20_R3.util.ForwardLogHandler;
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  import org.slf4j.Logger;
@@ -189,17 +189,28 @@
        }
  
     }
+@@ -373,8 +_,8 @@
+ 
+    public void setPlayerIdleTimeout(int p_139676_) {
+       super.setPlayerIdleTimeout(p_139676_);
+-      this.settings.update((p_308934_) -> {
+-         return p_308934_.playerIdleTimeout.update(this.registryAccess(), p_139676_);
++      this.settings.update((p_296558_) -> {
++         return p_296558_.playerIdleTimeout.update(this.registryAccess(), p_139676_);
+       });
+    }
+ 
 @@ -395,8 +_,7 @@
     }
  
     public boolean enforceSecureProfile() {
 -      DedicatedServerProperties dedicatedserverproperties = this.getProperties();
--      return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.profileKeySignatureValidator() != null;
+-      return dedicatedserverproperties.enforceSecureProfile && dedicatedserverproperties.onlineMode && this.services.canValidateProfileKeys();
 +      return false; // Mohist chat verify
     }
  
     public boolean logIPs() {
-@@ -478,15 +_,49 @@
+@@ -478,25 +_,64 @@
     }
  
     public String getPluginNames() {
@@ -253,7 +264,11 @@
     }
  
     public void storeUsingWhiteList(boolean p_139689_) {
-@@ -496,7 +_,12 @@
+-      this.settings.update((p_308931_) -> {
+-         return p_308931_.whiteList.update(this.registryAccess(), p_139689_);
++      this.settings.update((p_296556_) -> {
++         return p_296556_.whiteList.update(this.registryAccess(), p_139689_);
+       });
     }
  
     public void stopServer() {

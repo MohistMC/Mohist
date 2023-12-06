@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class FireworkRocketEntity extends Projectile implements ItemSupplier {
     public static final EntityDataAccessor<ItemStack> DATA_ID_FIREWORKS_ITEM = SynchedEntityData.defineId(FireworkRocketEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -19,7 +19,7 @@
 +
 +      if (!this.level.isClientSide && this.life > this.lifetime) {
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -31,6 +31,17 @@
     protected void defineSynchedData() {
        this.entityData.define(DATA_ID_FIREWORKS_ITEM, ItemStack.EMPTY);
        this.entityData.define(DATA_ATTACHED_TO_TARGET, OptionalInt.empty());
+@@ -92,8 +_,8 @@
+       super.tick();
+       if (this.isAttachedToEntity()) {
+          if (this.attachedToEntity == null) {
+-            this.entityData.get(DATA_ATTACHED_TO_TARGET).ifPresent((p_309220_) -> {
+-               Entity entity = this.level().getEntity(p_309220_);
++            this.entityData.get(DATA_ATTACHED_TO_TARGET).ifPresent((p_296859_) -> {
++               Entity entity = this.level().getEntity(p_296859_);
+                if (entity instanceof LivingEntity) {
+                   this.attachedToEntity = (LivingEntity)entity;
+                }
 @@ -130,7 +_,7 @@
  
        HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -50,7 +61,7 @@
 -
 +      if (!this.level.isClientSide && this.life > this.lifetime) {
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -72,7 +83,7 @@
        if (!this.level().isClientSide) {
 -         this.explode();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end
@@ -85,7 +96,7 @@
        if (!this.level().isClientSide() && this.hasExplosion()) {
 -         this.explode();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.explode();
 +         }
 +         // CraftBukkit end

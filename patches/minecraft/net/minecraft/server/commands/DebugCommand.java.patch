@@ -1,17 +1,17 @@
 --- a/net/minecraft/server/commands/DebugCommand.java
 +++ b/net/minecraft/server/commands/DebugCommand.java
-@@ -27,6 +_,7 @@
- import net.minecraft.server.ServerFunctionManager;
+@@ -38,6 +_,7 @@
  import net.minecraft.util.TimeUtil;
  import net.minecraft.util.profiling.ProfileResults;
+ import org.apache.commons.io.IOUtils;
 +import org.bukkit.command.CommandSender;
  import org.slf4j.Logger;
  
  public class DebugCommand {
-@@ -208,6 +_,11 @@
+@@ -239,6 +_,11 @@
  
-       public boolean alwaysAccepts() {
-          return true;
+       public void close() {
+          IOUtils.closeQuietly((Writer)this.output);
 +      }
 +
 +      @Override

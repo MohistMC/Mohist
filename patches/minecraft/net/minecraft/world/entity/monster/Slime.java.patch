@@ -1,21 +1,18 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -1,7 +_,10 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.world.entity.monster;
  
  import com.google.common.annotations.VisibleForTesting;
 +
-+import java.util.ArrayList;
  import java.util.EnumSet;
-+import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
- import net.minecraft.core.particles.ParticleOptions;
 @@ -43,6 +_,9 @@
  import net.minecraft.world.level.levelgen.WorldgenRandom;
  import net.minecraft.world.phys.Vec3;
  import org.joml.Vector3f;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.SlimeSplitEvent;
  
@@ -75,7 +72,7 @@
              }
           }
        }
-@@ -329,6 +_,12 @@
+@@ -337,6 +_,12 @@
     public EntityDimensions getDimensions(Pose p_33597_) {
        return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }

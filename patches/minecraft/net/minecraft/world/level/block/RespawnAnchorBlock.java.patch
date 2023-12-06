@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/RespawnAnchorBlock.java
 +++ b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-@@ -72,6 +_,7 @@
+@@ -78,6 +_,7 @@
           if (!p_55875_.isClientSide) {
              ServerPlayer serverplayer = (ServerPlayer)p_55877_;
              if (serverplayer.getRespawnDimension() != p_55875_.dimension() || !p_55876_.equals(serverplayer.getRespawnPosition())) {

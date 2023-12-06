@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/RedstoneLampBlock.java
 +++ b/net/minecraft/world/level/block/RedstoneLampBlock.java
-@@ -10,6 +_,7 @@
+@@ -11,6 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class RedstoneLampBlock extends Block {
-    public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
-@@ -31,6 +_,11 @@
+    public static final MapCodec<RedstoneLampBlock> CODEC = simpleCodec(RedstoneLampBlock::new);
+@@ -37,6 +_,11 @@
              if (flag) {
                 p_55667_.scheduleTick(p_55668_, this, 4);
              } else {
@@ -20,7 +20,7 @@
                 p_55667_.setBlock(p_55668_, p_55666_.cycle(LIT), 2);
              }
           }
-@@ -40,6 +_,11 @@
+@@ -46,6 +_,11 @@
  
     public void tick(BlockState p_221937_, ServerLevel p_221938_, BlockPos p_221939_, RandomSource p_221940_) {
        if (p_221937_.getValue(LIT) && !p_221938_.hasNeighborSignal(p_221939_)) {

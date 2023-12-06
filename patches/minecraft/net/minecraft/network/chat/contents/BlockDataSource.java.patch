@@ -1,0 +1,12 @@
+--- a/net/minecraft/network/chat/contents/BlockDataSource.java
++++ b/net/minecraft/network/chat/contents/BlockDataSource.java
+@@ -2,9 +_,6 @@
+ 
+ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+-import com.mojang.serialization.Codec;
+-import com.mojang.serialization.MapCodec;
+-import com.mojang.serialization.codecs.RecordCodecBuilder;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import net.minecraft.commands.CommandSourceStack;

@@ -4,11 +4,11 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  import org.joml.Vector3f;
  
  public class Turtle extends Animal {
-@@ -287,7 +_,9 @@
+@@ -283,7 +_,9 @@
     protected void ageBoundaryReached() {
        super.ageBoundaryReached();
        if (!this.isBaby() && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
@@ -18,17 +18,17 @@
        }
  
     }
-@@ -311,7 +_,9 @@
+@@ -307,7 +_,9 @@
     }
  
     public void thunderHit(ServerLevel p_30140_, LightningBolt p_30141_) {
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
        this.hurt(this.damageSources().lightningBolt(), Float.MAX_VALUE);
-+      org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
     protected Vector3f getPassengerAttachmentPoint(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {
-@@ -476,11 +_,15 @@
+@@ -472,11 +_,15 @@
                 this.turtle.setLayingEgg(true);
              } else if (this.turtle.layEggCounter > this.adjustedTickDelay(200)) {
                 Level level = this.turtle.level();

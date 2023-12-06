@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/LeverBlock.java
 +++ b/net/minecraft/world/level/block/LeverBlock.java
-@@ -22,6 +_,8 @@
+@@ -26,6 +_,8 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class LeverBlock extends FaceAttachedHorizontalDirectionalBlock {
-    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-@@ -85,6 +_,20 @@
+    public static final MapCodec<LeverBlock> CODEC = simpleCodec(LeverBlock::new);
+@@ -94,6 +_,20 @@
  
           return InteractionResult.SUCCESS;
        } else {

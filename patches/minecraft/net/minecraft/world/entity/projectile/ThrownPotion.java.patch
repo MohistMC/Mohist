@@ -19,7 +19,7 @@
  import net.minecraft.world.entity.AreaEffectCloud;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-@@ -23,12 +_,15 @@
+@@ -23,18 +_,21 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AbstractCandleBlock;
@@ -30,11 +30,19 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
     public static final double SPLASH_RANGE = 4.0D;
+    private static final double SPLASH_RANGE_SQ = 16.0D;
+-   public static final Predicate<LivingEntity> WATER_SENSITIVE_OR_ON_FIRE = (p_309221_) -> {
+-      return p_309221_.isSensitiveToWater() || p_309221_.isOnFire();
++   public static final Predicate<LivingEntity> WATER_SENSITIVE_OR_ON_FIRE = (p_296860_) -> {
++      return p_296860_.isSensitiveToWater() || p_296860_.isOnFire();
+    };
+ 
+    public ThrownPotion(EntityType<? extends ThrownPotion> p_37527_, Level p_37528_) {
 @@ -88,11 +_,11 @@
           boolean flag = potion == Potions.WATER && list.isEmpty();
           if (flag) {
@@ -90,7 +98,7 @@
 +            }
 +         }
 +      }
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPotionSplashEvent(this, position, affected);
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPotionSplashEvent(this, position, affected);
 +      if (!event.isCancelled() && list != null && !list.isEmpty()) { // do not process effects if there are no effects to process
 +         Entity entity = this.getEffectSource();
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
@@ -139,7 +147,7 @@
  
 -      this.level().addFreshEntity(areaeffectcloud);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callLingeringPotionSplashEvent(this, position, areaeffectcloud);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callLingeringPotionSplashEvent(this, position, areaeffectcloud);
 +      if (!(event.isCancelled() || areaeffectcloud.isRemoved())) {
 +         this.level.addFreshEntity(areaeffectcloud);
 +      } else {

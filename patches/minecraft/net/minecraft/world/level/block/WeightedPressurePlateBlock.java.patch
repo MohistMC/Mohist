@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/WeightedPressurePlateBlock.java
 +++ b/net/minecraft/world/level/block/WeightedPressurePlateBlock.java
-@@ -3,6 +_,7 @@
+@@ -6,6 +_,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.util.Mth;
  import net.minecraft.world.entity.Entity;
@@ -8,16 +8,16 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.state.BlockBehaviour;
  import net.minecraft.world.level.block.state.BlockState;
-@@ -10,6 +_,8 @@
+@@ -13,6 +_,8 @@
  import net.minecraft.world.level.block.state.properties.BlockSetType;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
-    public static final IntegerProperty POWER = BlockStateProperties.POWER;
-@@ -22,7 +_,31 @@
+    public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec((p_312418_) -> {
+@@ -36,7 +_,31 @@
     }
  
     protected int getSignalStrength(Level p_58213_, BlockPos p_58214_) {
@@ -33,7 +33,7 @@
 +         org.bukkit.event.Cancellable cancellable;
 +
 +         if (entity instanceof Player player) {
-+            cancellable = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
++            cancellable = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
 +         } else {
 +            cancellable = new EntityInteractEvent(entity.getBukkitEntity(), CraftBlock.at(p_58213_, p_58214_));
 +            p_58213_.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);

@@ -1,21 +1,13 @@
 --- a/net/minecraft/world/inventory/SmithingMenu.java
 +++ b/net/minecraft/world/inventory/SmithingMenu.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.inventory;
- 
- import java.util.List;
-+import java.util.Optional;
- import java.util.OptionalInt;
- import javax.annotation.Nullable;
- import net.minecraft.world.entity.player.Inventory;
 @@ -12,6 +_,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventorySmithing;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventorySmithing;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
  
  public class SmithingMenu extends ItemCombinerMenu {
     public static final int TEMPLATE_SLOT = 0;

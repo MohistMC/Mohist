@@ -97,7 +97,7 @@
           return ItemDisplayContext.BY_ID.apply(this.entityData.get(DATA_ITEM_DISPLAY_ID));
        }
  
-@@ -733,8 +_,8 @@
+@@ -735,8 +_,8 @@
        private static final byte INITIAL_TEXT_OPACITY = -1;
        public static final int INITIAL_BACKGROUND = 1073741824;
        private static final EntityDataAccessor<Component> DATA_TEXT_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.COMPONENT);
@@ -108,7 +108,7 @@
        private static final EntityDataAccessor<Byte> DATA_TEXT_OPACITY_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
        private static final EntityDataAccessor<Byte> DATA_STYLE_FLAGS_ID = SynchedEntityData.defineId(Display.TextDisplay.class, EntityDataSerializers.BYTE);
        private static final IntSet TEXT_RENDER_STATE_IDS = IntSet.of(DATA_TEXT_ID.getId(), DATA_LINE_WIDTH_ID.getId(), DATA_BACKGROUND_COLOR_ID.getId(), DATA_TEXT_OPACITY_ID.getId(), DATA_STYLE_FLAGS_ID.getId());
-@@ -764,7 +_,7 @@
+@@ -766,7 +_,7 @@
  
        }
  
@@ -117,7 +117,7 @@
           return this.entityData.get(DATA_TEXT_ID);
        }
  
-@@ -772,7 +_,7 @@
+@@ -774,7 +_,7 @@
           this.entityData.set(DATA_TEXT_ID, p_270902_);
        }
  
@@ -126,7 +126,7 @@
           return this.entityData.get(DATA_LINE_WIDTH_ID);
        }
  
-@@ -796,7 +_,7 @@
+@@ -798,7 +_,7 @@
           this.entityData.set(DATA_BACKGROUND_COLOR_ID, p_270241_);
        }
  

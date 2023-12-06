@@ -1,0 +1,31 @@
+--- a/net/minecraft/server/gui/StatsComponent.java
++++ b/net/minecraft/server/gui/StatsComponent.java
+@@ -10,7 +_,6 @@
+ import javax.swing.Timer;
+ import net.minecraft.Util;
+ import net.minecraft.server.MinecraftServer;
+-import net.minecraft.util.TimeUtil;
+ 
+ public class StatsComponent extends JComponent {
+    private static final DecimalFormat DECIMAL_FORMAT = Util.make(new DecimalFormat("########0.000"), (p_139968_) -> {
+@@ -37,9 +_,19 @@
+    private void tick() {
+       long i = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+       this.msgs[0] = "Memory use: " + i / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
+-      this.msgs[1] = "Avg tick: " + DECIMAL_FORMAT.format((double)this.server.getAverageTickTimeNanos() / (double)TimeUtil.NANOSECONDS_PER_MILLISECOND) + " ms";
++      this.msgs[1] = "Avg tick: " + DECIMAL_FORMAT.format(this.getAverage(this.server.tickTimes) * 1.0E-6D) + " ms";
+       this.values[this.vp++ & 255] = (int)(i * 100L / Runtime.getRuntime().maxMemory());
+       this.repaint();
++   }
++
++   private double getAverage(long[] p_139970_) {
++      long i = 0L;
++
++      for(long j : p_139970_) {
++         i += j;
++      }
++
++      return (double)i / (double)p_139970_.length;
+    }
+ 
+    public void paint(Graphics p_139973_) {

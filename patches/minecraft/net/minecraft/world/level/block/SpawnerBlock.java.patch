@@ -1,6 +1,29 @@
 --- a/net/minecraft/world/level/block/SpawnerBlock.java
 +++ b/net/minecraft/world/level/block/SpawnerBlock.java
-@@ -39,12 +_,24 @@
+@@ -2,15 +_,21 @@
+ 
+ import com.mojang.serialization.MapCodec;
+ import java.util.List;
++import java.util.Optional;
+ import javax.annotation.Nullable;
++import net.minecraft.ChatFormatting;
+ import net.minecraft.core.BlockPos;
++import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.item.BlockItem;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.TooltipFlag;
+ import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+-import net.minecraft.world.level.Spawner;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.entity.BlockEntityTicker;
+ import net.minecraft.world.level.block.entity.BlockEntityType;
+@@ -40,12 +_,24 @@
  
     public void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
        super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
@@ -29,3 +52,34 @@
  
     public RenderShape getRenderShape(BlockState p_56794_) {
        return RenderShape.MODEL;
+@@ -53,6 +_,29 @@
+ 
+    public void appendHoverText(ItemStack p_255714_, @Nullable BlockGetter p_255801_, List<Component> p_255708_, TooltipFlag p_255667_) {
+       super.appendHoverText(p_255714_, p_255801_, p_255708_, p_255667_);
+-      Spawner.appendHoverText(p_255714_, p_255708_, "SpawnData");
++      Optional<Component> optional = this.getSpawnEntityDisplayName(p_255714_);
++      if (optional.isPresent()) {
++         p_255708_.add(optional.get());
++      } else {
++         p_255708_.add(CommonComponents.EMPTY);
++         p_255708_.add(Component.translatable("block.minecraft.spawner.desc1").withStyle(ChatFormatting.GRAY));
++         p_255708_.add(CommonComponents.space().append(Component.translatable("block.minecraft.spawner.desc2").withStyle(ChatFormatting.BLUE)));
++      }
++
++   }
++
++   private Optional<Component> getSpawnEntityDisplayName(ItemStack p_256057_) {
++      CompoundTag compoundtag = BlockItem.getBlockEntityData(p_256057_);
++      if (compoundtag != null && compoundtag.contains("SpawnData", 10)) {
++         String s = compoundtag.getCompound("SpawnData").getCompound("entity").getString("id");
++         ResourceLocation resourcelocation = ResourceLocation.tryParse(s);
++         if (resourcelocation != null) {
++            return BuiltInRegistries.ENTITY_TYPE.getOptional(resourcelocation).map((p_255782_) -> {
++               return Component.translatable(p_255782_.getDescriptionId()).withStyle(ChatFormatting.GRAY);
++            });
++         }
++      }
++
++      return Optional.empty();
+    }
+ }

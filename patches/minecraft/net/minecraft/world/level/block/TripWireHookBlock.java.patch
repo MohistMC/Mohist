@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -26,6 +_,8 @@
+@@ -28,6 +_,8 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
  public class TripWireHookBlock extends Block {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-@@ -143,6 +_,17 @@
-          this.emitState(p_57686_, blockpos1, flag2, flag3, flag, flag1);
-       }
+    public static final MapCodec<TripWireHookBlock> CODEC = simpleCodec(TripWireHookBlock::new);
+@@ -153,6 +_,17 @@
+             emitState(p_57686_, blockpos1, flag2, flag3, flag, flag1);
+          }
  
 +      // CraftBukkit start
 +      org.bukkit.block.Block block = CraftBlock.at(p_57686_, p_57687_);
@@ -24,17 +24,17 @@
 +      }
 +      // CraftBukkit end
 +
-       this.emitState(p_57686_, p_57687_, flag2, flag3, flag, flag1);
-       if (!p_57689_) {
-          p_57686_.setBlock(p_57687_, blockstate1.setValue(FACING, direction), 3);
-@@ -156,8 +_,8 @@
-             BlockPos blockpos2 = p_57687_.relative(direction, k);
-             BlockState blockstate2 = ablockstate[k];
-             if (blockstate2 != null) {
--               p_57686_.setBlock(blockpos2, blockstate2.setValue(ATTACHED, Boolean.valueOf(flag2)), 3);
--               if (!p_57686_.getBlockState(blockpos2).isAir()) {
+          emitState(p_57686_, p_57687_, flag2, flag3, flag, flag1);
+          if (!p_57689_) {
+             p_57686_.setBlock(p_57687_, blockstate1.setValue(FACING, direction), 3);
+@@ -166,8 +_,8 @@
+                BlockPos blockpos2 = p_57687_.relative(direction, k);
+                BlockState blockstate2 = ablockstate[k];
+                if (blockstate2 != null) {
+-                  p_57686_.setBlock(blockpos2, blockstate2.trySetValue(ATTACHED, Boolean.valueOf(flag2)), 3);
+-                  if (!p_57686_.getBlockState(blockpos2).isAir()) {
 +               if (!p_57686_.getBlockState(blockpos2).isAir()) { // FORGE: fix MC-129055
 +                  p_57686_.setBlock(blockpos2, blockstate2.setValue(ATTACHED, Boolean.valueOf(flag2)), 3);
+                   }
                 }
              }
-          }

@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
+@@ -3,7 +_,6 @@
+ import java.util.function.Predicate;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.entity.Mob;
+-import net.minecraft.world.level.GameRules;
+ import net.minecraft.world.level.block.Block;
+ 
+ public class BreakDoorGoal extends DoorInteractGoal {
 @@ -30,7 +_,7 @@
     public boolean canUse() {
        if (!super.canUse()) {
@@ -14,7 +22,7 @@
  
        if (this.breakTime == this.getDoorBreakTime() && this.isValidDifficulty(this.mob.level().getDifficulty())) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
 +            this.start();
 +            return;
 +         }

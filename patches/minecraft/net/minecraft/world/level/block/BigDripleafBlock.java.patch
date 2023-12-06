@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/level/block/BigDripleafBlock.java
 +++ b/net/minecraft/world/level/block/BigDripleafBlock.java
-@@ -39,6 +_,9 @@
+@@ -40,6 +_,9 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class BigDripleafBlock extends HorizontalDirectionalBlock implements BonemealableBlock, SimpleWaterloggedBlock {
-    private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-@@ -104,7 +_,7 @@
+    public static final MapCodec<BigDripleafBlock> CODEC = simpleCodec(BigDripleafBlock::new);
+@@ -110,7 +_,7 @@
     }
  
     public void onProjectileHit(Level p_152228_, BlockState p_152229_, BlockHitResult p_152230_, Projectile p_152231_) {
@@ -19,7 +19,7 @@
     }
  
     public FluidState getFluidState(BlockState p_152312_) {
-@@ -152,7 +_,20 @@
+@@ -158,7 +_,20 @@
     public void entityInside(BlockState p_152266_, Level p_152267_, BlockPos p_152268_, Entity p_152269_) {
        if (!p_152267_.isClientSide) {
           if (p_152266_.getValue(TILT) == Tilt.NONE && canEntityTilt(p_152268_, p_152269_) && !p_152267_.hasNeighborSignal(p_152268_)) {
@@ -41,7 +41,7 @@
           }
  
        }
-@@ -164,9 +_,9 @@
+@@ -170,9 +_,9 @@
        } else {
           Tilt tilt = p_220798_.getValue(TILT);
           if (tilt == Tilt.UNSTABLE) {
@@ -53,27 +53,7 @@
           } else if (tilt == Tilt.FULL) {
              resetTilt(p_220798_, p_220799_, p_220800_);
           }
-@@ -190,34 +_,41 @@
-       return p_152303_.onGround() && p_152303_.position().y > (double)((float)p_152302_.getY() + 0.6875F);
-    }
- 
--   private void setTiltAndScheduleTick(BlockState p_152283_, Level p_152284_, BlockPos p_152285_, Tilt p_152286_, @Nullable SoundEvent p_152287_) {
--      setTilt(p_152283_, p_152284_, p_152285_, p_152286_);
--      if (p_152287_ != null) {
--         playTiltSound(p_152284_, p_152285_, p_152287_);
-+   private void setTiltAndScheduleTick(BlockState pState, Level pLevel, BlockPos pPos, Tilt pTilt, @Nullable SoundEvent pSound, @Nullable Entity entity) {
-+      if (!setTilt(pState, pLevel, pPos, pTilt, entity)) return;
-+      if (pSound != null) {
-+         playTiltSound(pLevel, pPos, pSound);
-       }
- 
--      int i = DELAY_UNTIL_NEXT_TILT_STATE.getInt(p_152286_);
-+      int i = DELAY_UNTIL_NEXT_TILT_STATE.getInt(pTilt);
-       if (i != -1) {
--         p_152284_.scheduleTick(p_152285_, this, i);
-+         pLevel.scheduleTick(pPos, this, i);
-       }
- 
+@@ -210,20 +_,27 @@
     }
  
     private static void resetTilt(BlockState p_152314_, Level p_152315_, BlockPos p_152316_) {

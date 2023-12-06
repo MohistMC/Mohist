@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -16,6 +_,7 @@
+@@ -18,6 +_,7 @@
  import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
 +import org.bukkit.TreeType;
  
  public class MushroomBlock extends BushBlock implements BonemealableBlock {
-    protected static final float AABB_OFFSET = 3.0F;
-@@ -32,7 +_,7 @@
+    public static final MapCodec<MushroomBlock> CODEC = RecordCodecBuilder.mapCodec((p_309886_) -> {
+@@ -43,7 +_,7 @@
     }
  
     public void randomTick(BlockState p_221784_, ServerLevel p_221785_, BlockPos p_221786_, RandomSource p_221787_) {
@@ -17,16 +17,16 @@
           int i = 5;
           int j = 4;
  
-@@ -56,7 +_,7 @@
+@@ -67,7 +_,7 @@
           }
  
           if (p_221785_.isEmptyBlock(blockpos1) && p_221784_.canSurvive(p_221785_, blockpos1)) {
 -            p_221785_.setBlock(blockpos1, p_221784_, 2);
-+            org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_221785_, p_221786_, blockpos1, p_221784_, 2); // CraftBukkit
++            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_221785_, p_221786_, blockpos1, p_221784_, 2); // CraftBukkit
           }
        }
  
-@@ -72,7 +_,7 @@
+@@ -83,7 +_,7 @@
        if (blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
           return true;
        } else {
@@ -35,7 +35,7 @@
        }
     }
  
-@@ -81,8 +_,11 @@
+@@ -92,8 +_,11 @@
        if (optional.isEmpty()) {
           return false;
        } else {

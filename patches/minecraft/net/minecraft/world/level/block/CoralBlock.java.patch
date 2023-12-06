@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/level/block/CoralBlock.java
 +++ b/net/minecraft/world/level/block/CoralBlock.java
-@@ -4,7 +_,6 @@
- import net.minecraft.core.BlockPos;
+@@ -7,7 +_,6 @@
  import net.minecraft.core.Direction;
+ import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.server.level.ServerLevel;
 -import net.minecraft.tags.FluidTags;
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.item.context.BlockPlaceContext;
  import net.minecraft.world.level.BlockGetter;
-@@ -23,6 +_,11 @@
+@@ -36,6 +_,11 @@
  
     public void tick(BlockState p_221020_, ServerLevel p_221021_, BlockPos p_221022_, RandomSource p_221023_) {
        if (!this.scanForWater(p_221021_, p_221022_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.deadBlock.defaultBlockState()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.deadBlock.defaultBlockState()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
           p_221021_.setBlock(p_221022_, this.deadBlock.defaultBlockState(), 2);
        }
  
-@@ -37,9 +_,10 @@
+@@ -50,9 +_,10 @@
     }
  
     protected boolean scanForWater(BlockGetter p_52135_, BlockPos p_52136_) {

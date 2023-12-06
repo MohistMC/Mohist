@@ -1,6 +1,15 @@
 --- a/net/minecraft/server/ServerFunctionManager.java
 +++ b/net/minecraft/server/ServerFunctionManager.java
-@@ -41,7 +_,7 @@
+@@ -22,7 +_,7 @@
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ResourceLocation TICK_FUNCTION_TAG = new ResourceLocation("tick");
+    private static final ResourceLocation LOAD_FUNCTION_TAG = new ResourceLocation("load");
+-   private final MinecraftServer server;
++   public final MinecraftServer server;
+    private List<CommandFunction<CommandSourceStack>> ticking = ImmutableList.of();
+    private boolean postReload;
+    private ServerFunctionLibrary library;
+@@ -34,7 +_,7 @@
     }
  
     public CommandDispatcher<CommandSourceStack> getDispatcher() {

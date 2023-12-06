@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/SculkVeinBlock.java
 +++ b/net/minecraft/world/level/block/SculkVeinBlock.java
-@@ -1,6 +_,7 @@
- package net.minecraft.world.level.block;
+@@ -2,6 +_,7 @@
  
+ import com.mojang.serialization.MapCodec;
  import java.util.Collection;
 +import java.util.concurrent.atomic.AtomicReference;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
  import net.minecraft.sounds.SoundEvents;
-@@ -83,7 +_,10 @@
+@@ -89,7 +_,10 @@
        }
     }
  
@@ -19,7 +19,7 @@
        if (p_222374_ && this.attemptPlaceSculk(p_222373_, p_222370_, p_222369_.getPos(), p_222372_)) {
           return p_222369_.getCharge() - 1;
        } else {
-@@ -91,6 +_,11 @@
+@@ -97,6 +_,11 @@
        }
     }
  
@@ -31,13 +31,13 @@
     private boolean attemptPlaceSculk(SculkSpreader p_222376_, LevelAccessor p_222377_, BlockPos p_222378_, RandomSource p_222379_) {
        BlockState blockstate = p_222377_.getBlockState(p_222378_);
        TagKey<Block> tagkey = p_222376_.replaceableBlocks();
-@@ -101,7 +_,12 @@
+@@ -107,7 +_,12 @@
              BlockState blockstate1 = p_222377_.getBlockState(blockpos);
              if (blockstate1.is(tagkey)) {
                 BlockState blockstate2 = Blocks.SCULK.defaultBlockState();
 -               p_222377_.setBlock(blockpos, blockstate2, 3);
 +               // CraftBukkit start - Call BlockSpreadEvent
-+               if (!org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
++               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockSpreadEvent(p_222377_, this.sourceBlock.getAndSet(null), blockpos, blockstate2, 3)) {
 +                  return false;
 +               }
 +               // CraftBukkit end

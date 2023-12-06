@@ -5,7 +5,7 @@
           BlockPos blockpos1 = blockpos.relative(p_41297_.getClickedFace());
           if (BaseFireBlock.canBePlacedAt(level, blockpos1, p_41297_.getHorizontalDirection())) {
 +            // CraftBukkit start - Store the clicked block
-+            if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos1, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos1, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
 +               p_41297_.getItemInHand().hurtAndBreak(1, player, (entityhuman1) -> {
 +                  entityhuman1.broadcastBreakEvent(p_41297_.getHand());
 +               });
@@ -20,7 +20,7 @@
           }
        } else {
 +         // CraftBukkit start - Store the clicked block
-+         if (org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callBlockIgniteEvent(level, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
 +            p_41297_.getItemInHand().hurtAndBreak(1, player, (entityhuman1) -> {
 +               entityhuman1.broadcastBreakEvent(p_41297_.getHand());
 +            });

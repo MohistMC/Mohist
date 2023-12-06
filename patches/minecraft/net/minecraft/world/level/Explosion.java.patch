@@ -1,6 +1,25 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -20,6 +_,8 @@
+@@ -4,7 +_,6 @@
+ import com.google.common.collect.Sets;
+ import com.mojang.datafixers.util.Pair;
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+-import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Optional;
+@@ -12,9 +_,8 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.core.BlockPos;
+-import net.minecraft.core.particles.ParticleOptions;
+ import net.minecraft.core.particles.ParticleTypes;
+-import net.minecraft.sounds.SoundEvent;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.util.Mth;
+@@ -22,6 +_,8 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.LivingEntity;
@@ -9,34 +28,66 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.item.PrimedTnt;
  import net.minecraft.world.entity.player.Player;
-@@ -38,6 +_,11 @@
+@@ -30,12 +_,21 @@
+ import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+ import net.minecraft.world.level.block.BaseFireBlock;
+ import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.material.FluidState;
++import net.minecraft.world.level.storage.loot.LootParams;
++import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
  
  public class Explosion {
     private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
-@@ -56,6 +_,13 @@
+@@ -52,19 +_,18 @@
+    private final float radius;
+    private final DamageSource damageSource;
     private final ExplosionDamageCalculator damageCalculator;
+-   private final ParticleOptions smallExplosionParticles;
+-   private final ParticleOptions largeExplosionParticles;
+-   private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
     private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
+-
+-   public static DamageSource getDefaultDamageSource(Level p_309890_, @Nullable Entity p_311046_) {
+-      return p_309890_.damageSources().explosion(p_311046_, getIndirectSourceEntityInternal(p_311046_));
 +   private final Vec3 position;
 +
 +   public boolean wasCanceled = false; // CraftBukkit - add field
 +
 +   public Explosion(Level p_151471_, @Nullable Entity p_151472_, double p_151473_, double p_151474_, double p_151475_, float p_151476_) {
 +      this(p_151471_, p_151472_, p_151473_, p_151474_, p_151475_, p_151476_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY);
-+   }
+    }
  
-    public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
-       this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
-@@ -73,7 +_,7 @@
-    public Explosion(Level p_46051_, @Nullable Entity p_46052_, @Nullable DamageSource p_46053_, @Nullable ExplosionDamageCalculator p_46054_, double p_46055_, double p_46056_, double p_46057_, float p_46058_, boolean p_46059_, Explosion.BlockInteraction p_46060_) {
+-   public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_, Explosion.BlockInteraction p_312129_, ParticleOptions p_311112_, ParticleOptions p_311120_, SoundEvent p_311288_) {
+-      this(p_46024_, p_46025_, getDefaultDamageSource(p_46024_, p_46025_), (ExplosionDamageCalculator)null, p_46026_, p_46027_, p_46028_, p_46029_, false, p_312129_, p_311112_, p_311120_, p_311288_);
+-      this.toBlow.addAll(p_46030_);
++   public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
++      this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
+    }
+ 
+    public Explosion(Level p_46041_, @Nullable Entity p_46042_, double p_46043_, double p_46044_, double p_46045_, float p_46046_, boolean p_46047_, Explosion.BlockInteraction p_46048_, List<BlockPos> p_46049_) {
+@@ -73,13 +_,13 @@
+    }
+ 
+    public Explosion(Level p_46032_, @Nullable Entity p_46033_, double p_46034_, double p_46035_, double p_46036_, float p_46037_, boolean p_46038_, Explosion.BlockInteraction p_46039_) {
+-      this(p_46032_, p_46033_, getDefaultDamageSource(p_46032_, p_46033_), (ExplosionDamageCalculator)null, p_46034_, p_46035_, p_46036_, p_46037_, p_46038_, p_46039_, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
++      this(p_46032_, p_46033_, (DamageSource)null, (ExplosionDamageCalculator)null, p_46034_, p_46035_, p_46036_, p_46037_, p_46038_, p_46039_);
+    }
+ 
+-   public Explosion(Level p_46051_, @Nullable Entity p_46052_, @Nullable DamageSource p_46053_, @Nullable ExplosionDamageCalculator p_46054_, double p_46055_, double p_46056_, double p_46057_, float p_46058_, boolean p_46059_, Explosion.BlockInteraction p_46060_, ParticleOptions p_312175_, ParticleOptions p_310459_, SoundEvent p_311795_) {
++   public Explosion(Level p_46051_, @Nullable Entity p_46052_, @Nullable DamageSource p_46053_, @Nullable ExplosionDamageCalculator p_46054_, double p_46055_, double p_46056_, double p_46057_, float p_46058_, boolean p_46059_, Explosion.BlockInteraction p_46060_) {
        this.level = p_46051_;
        this.source = p_46052_;
 -      this.radius = p_46058_;
@@ -44,17 +95,29 @@
        this.x = p_46055_;
        this.y = p_46056_;
        this.z = p_46057_;
-@@ -81,6 +_,7 @@
+@@ -87,9 +_,7 @@
        this.blockInteraction = p_46060_;
        this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this) : p_46053_;
        this.damageCalculator = p_46054_ == null ? this.makeDamageCalculator(p_46052_) : p_46054_;
+-      this.smallExplosionParticles = p_312175_;
+-      this.largeExplosionParticles = p_310459_;
+-      this.explosionSound = p_311795_;
 +      this.position = new Vec3(this.x, this.y, this.z);
     }
  
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity p_46063_) {
-@@ -121,6 +_,11 @@
+@@ -129,15 +_,12 @@
+       }
     }
  
+-   public float radius() {
+-      return this.radius;
+-   }
+-
+-   public Vec3 center() {
+-      return new Vec3(this.x, this.y, this.z);
+-   }
+-
     public void explode() {
 +      // CraftBukkit start
 +      if (this.radius < 0.1F) {
@@ -64,7 +127,7 @@
        this.level.gameEvent(this.source, GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
        Set<BlockPos> set = Sets.newHashSet();
        int i = 16;
-@@ -176,6 +_,7 @@
+@@ -193,36 +_,67 @@
        int j2 = Mth.floor(this.z - (double)f2 - 1.0D);
        int j1 = Mth.floor(this.z + (double)f2 + 1.0D);
        List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -72,11 +135,33 @@
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
        for(Entity entity : list) {
-@@ -192,7 +_,39 @@
-                   d9 /= d13;
-                   double d14 = (double)getSeenPercent(vec3, entity);
-                   double d10 = (1.0D - d12) * d14;
--                  entity.hurt(this.getDamageSource(), (float)((int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f2 + 1.0D)));
+-         if (!entity.ignoreExplosion(this)) {
+-            double d11 = Math.sqrt(entity.distanceToSqr(vec3)) / (double)f2;
+-            if (d11 <= 1.0D) {
++         if (!entity.ignoreExplosion()) {
++            double d12 = Math.sqrt(entity.distanceToSqr(vec3)) / (double)f2;
++            if (d12 <= 1.0D) {
+                double d5 = entity.getX() - this.x;
+                double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - this.y;
+                double d9 = entity.getZ() - this.z;
+-               double d12 = Math.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+-               if (d12 != 0.0D) {
+-                  d5 /= d12;
+-                  d7 /= d12;
+-                  d9 /= d12;
+-                  if (this.damageCalculator.shouldDamageEntity(this, entity)) {
+-                     entity.hurt(this.damageSource, this.damageCalculator.getEntityDamageAmount(this, entity));
+-                  }
+-
+-                  double d13 = (1.0D - d11) * (double)getSeenPercent(vec3, entity);
+-                  double d10;
++               double d13 = Math.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
++               if (d13 != 0.0D) {
++                  d5 /= d13;
++                  d7 /= d13;
++                  d9 /= d13;
++                  double d14 = (double)getSeenPercent(vec3, entity);
++                  double d10 = (1.0D - d12) * d14;
 +                  // CraftBukkit start
 +
 +                  // Special case ender dragon only give knockback if no damage is cancelled
@@ -110,11 +195,52 @@
 +                     continue;
 +                  }
 +                  // CraftBukkit end
-                   double d11;
++                  double d11;
                    if (entity instanceof LivingEntity) {
                       LivingEntity livingentity = (LivingEntity)entity;
-@@ -238,31 +_,80 @@
-          boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
+-                     d10 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, d13);
++                     d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingentity, d10);
+                   } else {
+-                     d10 = d13;
++                     d11 = d10;
+                   }
+ 
+-                  d5 *= d10;
+-                  d7 *= d10;
+-                  d9 *= d10;
++                  d5 *= d11;
++                  d7 *= d11;
++                  d9 *= d11;
+                   Vec3 vec31 = new Vec3(d5, d7, d9);
+                   entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
+                   if (entity instanceof Player) {
+@@ -240,98 +_,179 @@
+ 
+    public void finalizeExplosion(boolean p_46076_) {
+       if (this.level.isClientSide) {
+-         this.level.playLocalSound(this.x, this.y, this.z, this.explosionSound, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
++         this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+       }
+ 
+       boolean flag = this.interactsWithBlocks();
+       if (p_46076_) {
+-         ParticleOptions particleoptions;
+          if (!(this.radius < 2.0F) && flag) {
+-            particleoptions = this.largeExplosionParticles;
++            this.level.addParticle(ParticleTypes.EXPLOSION_EMITTER, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
+          } else {
+-            particleoptions = this.smallExplosionParticles;
++            this.level.addParticle(ParticleTypes.EXPLOSION, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
+          }
+-
+-         this.level.addParticle(particleoptions, this.x, this.y, this.z, 1.0D, 0.0D, 0.0D);
+       }
+ 
+       if (flag) {
+-         this.level.getProfiler().push("explosion_blocks");
+-         List<Pair<ItemStack, BlockPos>> list = new ArrayList<>();
++         ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
++         boolean flag1 = this.getIndirectSourceEntity() instanceof Player;
           Util.shuffle(this.toBlow, this.level.random);
  
 +         // CraftBukkit start
@@ -162,8 +288,11 @@
 +         // CraftBukkit end
 +
           for(BlockPos blockpos : this.toBlow) {
-             BlockState blockstate = this.level.getBlockState(blockpos);
-             Block block = blockstate.getBlock();
+-            this.level.getBlockState(blockpos).onExplosionHit(this.level, blockpos, this, (p_309264_, p_309265_) -> {
+-               addOrAppendStack(list, p_309264_, p_309265_);
+-            });
++            BlockState blockstate = this.level.getBlockState(blockpos);
++            Block block = blockstate.getBlock();
 +            // CraftBukkit start - TNTPrimeEvent
 +            if (block instanceof net.minecraft.world.level.block.TntBlock) {
 +               Entity sourceEntity = source == null ? null : source;
@@ -174,69 +303,175 @@
 +               }
 +            }
 +            // CraftBukkit end
-             if (!blockstate.isAir()) {
-                BlockPos blockpos1 = blockpos.immutable();
-                this.level.getProfiler().push("explosion_blocks");
--               if (block.dropFromExplosion(this)) {
--                  Level $$9 = this.level;
--                  if ($$9 instanceof ServerLevel) {
--                     ServerLevel serverlevel = (ServerLevel)$$9;
--                     BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level.getBlockEntity(blockpos) : null;
--                     LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, this.source);
--                     if (this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
--                        lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius);
--                     }
--
--                     blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
--                     blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
--                        addBlockDrops(objectarraylist, p_46074_, blockpos1);
--                     });
++            if (!blockstate.isAir()) {
++               BlockPos blockpos1 = blockpos.immutable();
++               this.level.getProfiler().push("explosion_blocks");
 +               if (blockstate.canDropFromExplosion(this.level, blockpos, this) && this.level instanceof ServerLevel serverlevel) { // Mohist
 +                  BlockEntity blockentity = blockstate.hasBlockEntity() ? this.level.getBlockEntity(blockpos) : null;
 +                  LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, this.source);
 +                  if (yield < 1.0F) { // CraftBukkit - add yield
 +                     lootparams$builder.withParameter(LootContextParams.EXPLOSION_RADIUS, 1.0F / yield); // CraftBukkit - add yield
-                   }
++                  }
 +
 +                  blockstate.spawnAfterBreak(serverlevel, blockpos, ItemStack.EMPTY, flag1);
 +                  blockstate.getDrops(lootparams$builder).forEach((p_46074_) -> {
 +                     addBlockDrops(objectarraylist, p_46074_, blockpos1);
 +                  });
-                }
- 
--               this.level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 3);
--               block.wasExploded(this.level, blockpos, this);
++               }
++
 +               blockstate.onBlockExploded(this.level, blockpos, this);
-                this.level.getProfiler().pop();
-             }
++               this.level.getProfiler().pop();
++            }
           }
-@@ -275,7 +_,11 @@
+ 
+-         for(Pair<ItemStack, BlockPos> pair : list) {
++         for(Pair<ItemStack, BlockPos> pair : objectarraylist) {
+             Block.popResource(this.level, pair.getSecond(), pair.getFirst());
+          }
+-
+-         this.level.getProfiler().pop();
+       }
+ 
        if (this.fire) {
-          for(BlockPos blockpos2 : this.toBlow) {
-             if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
--               this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
+-         for(BlockPos blockpos1 : this.toBlow) {
+-            if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos1).isAir() && this.level.getBlockState(blockpos1.below()).isSolidRender(this.level, blockpos1.below())) {
+-               this.level.setBlockAndUpdate(blockpos1, BaseFireBlock.getState(this.level, blockpos1));
+-            }
+-         }
+-      }
+-
+-   }
+-
+-   private static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> p_311090_, ItemStack p_311817_, BlockPos p_309821_) {
+-      for(int i = 0; i < p_311090_.size(); ++i) {
+-         Pair<ItemStack, BlockPos> pair = p_311090_.get(i);
+-         ItemStack itemstack = pair.getFirst();
+-         if (ItemEntity.areMergable(itemstack, p_311817_)) {
+-            p_311090_.set(i, Pair.of(ItemEntity.merge(itemstack, p_311817_, 16), pair.getSecond()));
+-            if (p_311817_.isEmpty()) {
+-               return;
+-            }
+-         }
+-      }
+-
+-      p_311090_.add(Pair.of(p_311817_, p_309821_));
++         for(BlockPos blockpos2 : this.toBlow) {
++            if (this.random.nextInt(3) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
 +               // CraftBukkit start - Ignition by explosion
 +               if (!CraftEventFactory.callBlockIgniteEvent(this.level, blockpos2.getX(), blockpos2.getY(), blockpos2.getZ(), this).isCancelled()) {
 +                  this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
 +               }
 +               // CraftBukkit end
-             }
-          }
-       }
-@@ -287,6 +_,7 @@
++            }
++         }
++      }
++
     }
  
-    private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> p_46068_, ItemStack p_46069_, BlockPos p_46070_) {
+    public boolean interactsWithBlocks() {
+       return this.blockInteraction != Explosion.BlockInteraction.KEEP;
+    }
+ 
++   private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> p_46068_, ItemStack p_46069_, BlockPos p_46070_) {
 +      if (p_46069_.isEmpty()) return; // CraftBukkit - SPIGOT-5425
-       int i = p_46068_.size();
- 
-       for(int j = 0; j < i; ++j) {
-@@ -353,6 +_,15 @@
- 
-    public List<BlockPos> getToBlow() {
-       return this.toBlow;
++      int i = p_46068_.size();
++
++      for(int j = 0; j < i; ++j) {
++         Pair<ItemStack, BlockPos> pair = p_46068_.get(j);
++         ItemStack itemstack = pair.getFirst();
++         if (ItemEntity.areMergable(itemstack, p_46069_)) {
++            ItemStack itemstack1 = ItemEntity.merge(itemstack, p_46069_, 16);
++            p_46068_.set(j, Pair.of(itemstack1, pair.getSecond()));
++            if (p_46069_.isEmpty()) {
++               return;
++            }
++         }
++      }
++
++      p_46068_.add(Pair.of(p_46069_, p_46070_));
 +   }
 +
++   public DamageSource getDamageSource() {
++      return this.damageSource;
++   }
++
+    public Map<Player, Vec3> getHitPlayers() {
+       return this.hitPlayers;
+    }
+ 
+    @Nullable
+-   private static LivingEntity getIndirectSourceEntityInternal(@Nullable Entity p_309719_) {
+-      if (p_309719_ == null) {
+-         return null;
+-      } else if (p_309719_ instanceof PrimedTnt) {
+-         PrimedTnt primedtnt = (PrimedTnt)p_309719_;
+-         return primedtnt.getOwner();
+-      } else if (p_309719_ instanceof LivingEntity) {
+-         LivingEntity livingentity = (LivingEntity)p_309719_;
+-         return livingentity;
+-      } else {
+-         if (p_309719_ instanceof Projectile) {
+-            Projectile projectile = (Projectile)p_309719_;
+-            Entity entity = projectile.getOwner();
+-            if (entity instanceof LivingEntity) {
+-               return (LivingEntity)entity;
+-            }
+-         }
+-
+-         return null;
+-      }
+-   }
+-
+-   @Nullable
+    public LivingEntity getIndirectSourceEntity() {
+-      return getIndirectSourceEntityInternal(this.source);
++      if (this.source == null) {
++         return null;
++      } else {
++         Entity entity = this.source;
++         if (entity instanceof PrimedTnt) {
++            PrimedTnt primedtnt = (PrimedTnt)entity;
++            return primedtnt.getOwner();
++         } else {
++            entity = this.source;
++            if (entity instanceof LivingEntity) {
++               LivingEntity livingentity = (LivingEntity)entity;
++               return livingentity;
++            } else {
++               entity = this.source;
++               if (entity instanceof Projectile) {
++                  Projectile projectile = (Projectile)entity;
++                  entity = projectile.getOwner();
++                  if (entity instanceof LivingEntity) {
++                     return (LivingEntity)entity;
++                  }
++               }
++
++               return null;
++            }
++         }
++      }
+    }
+ 
+    @Nullable
+@@ -347,26 +_,18 @@
+       return this.toBlow;
+    }
+ 
+-   public Explosion.BlockInteraction getBlockInteraction() {
+-      return this.blockInteraction;
+-   }
+-
+-   public ParticleOptions getSmallExplosionParticles() {
+-      return this.smallExplosionParticles;
+-   }
+-
+-   public ParticleOptions getLargeExplosionParticles() {
+-      return this.largeExplosionParticles;
+-   }
+-
+-   public SoundEvent getExplosionSound() {
+-      return this.explosionSound;
 +   public Vec3 getPosition() {
 +      return this.position;
 +   }
@@ -247,3 +482,10 @@
     }
  
     public static enum BlockInteraction {
+       KEEP,
+       DESTROY,
+-      DESTROY_WITH_DECAY,
+-      TRIGGER_BLOCK;
++      DESTROY_WITH_DECAY;
+    }
+ }

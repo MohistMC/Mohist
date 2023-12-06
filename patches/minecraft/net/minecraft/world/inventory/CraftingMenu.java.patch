@@ -16,9 +16,9 @@
 +import net.minecraft.world.item.crafting.RepairItemRecipe;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 +import org.spigotmc.AsyncCatcher;
  
  public class CraftingMenu extends RecipeBookMenu<CraftingContainer> {

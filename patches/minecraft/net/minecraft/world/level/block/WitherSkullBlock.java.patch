@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/WitherSkullBlock.java
 +++ b/net/minecraft/world/level/block/WitherSkullBlock.java
-@@ -21,6 +_,7 @@
+@@ -22,6 +_,7 @@
  import net.minecraft.world.level.block.state.pattern.BlockPattern;
  import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
  import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class WitherSkullBlock extends SkullBlock {
-    @Nullable
-@@ -42,6 +_,7 @@
+    public static final MapCodec<WitherSkullBlock> CODEC = simpleCodec(WitherSkullBlock::new);
+@@ -48,6 +_,7 @@
     }
  
     public static void checkSpawn(Level p_58256_, BlockPos p_58257_, SkullBlockEntity p_58258_) {
@@ -16,7 +16,7 @@
        if (!p_58256_.isClientSide) {
           BlockState blockstate = p_58258_.getBlockState();
           boolean flag = blockstate.is(Blocks.WITHER_SKELETON_SKULL) || blockstate.is(Blocks.WITHER_SKELETON_WALL_SKULL);
-@@ -50,17 +_,22 @@
+@@ -56,17 +_,22 @@
              if (blockpattern$blockpatternmatch != null) {
                 WitherBoss witherboss = EntityType.WITHER.create(p_58256_);
                 if (witherboss != null) {

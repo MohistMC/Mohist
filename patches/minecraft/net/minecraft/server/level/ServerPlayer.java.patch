@@ -1,23 +1,32 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -2,6 +_,8 @@
+@@ -1,6 +_,9 @@
+ package net.minecraft.server.level;
  
- import com.google.common.collect.Lists;
++import com.google.common.collect.Lists;
  import com.google.common.net.InetAddresses;
 +import com.mohistmc.bukkit.inventory.MohistModsInventory;
 +import com.mohistmc.plugins.KeepInventory;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
-@@ -13,6 +_,7 @@
+@@ -12,7 +_,7 @@
  import java.util.Optional;
  import java.util.OptionalInt;
  import java.util.Set;
+-import java.util.stream.Collectors;
 +import java.util.concurrent.atomic.AtomicReference;
  import javax.annotation.Nullable;
  import net.minecraft.BlockUtil;
  import net.minecraft.ChatFormatting;
-@@ -91,6 +_,7 @@
+@@ -85,13 +_,13 @@
+ import net.minecraft.stats.Stat;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.DamageTypeTags;
+-import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.Unit;
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.MenuProvider;
@@ -25,15 +34,27 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.effect.MobEffects;
-@@ -109,6 +_,7 @@
+@@ -102,18 +_,15 @@
+ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.NeutralMob;
+ import net.minecraft.world.entity.RelativeMovement;
+-import net.minecraft.world.entity.animal.Pig;
+ import net.minecraft.world.entity.animal.horse.AbstractHorse;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.monster.Monster;
+-import net.minecraft.world.entity.monster.Strider;
+ import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
+ import net.minecraft.world.entity.player.ChatVisiblity;
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.projectile.AbstractArrow;
+-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+-import net.minecraft.world.entity.vehicle.Boat;
 +import net.minecraft.world.food.FoodData;
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -129,6 +_,7 @@
+@@ -134,6 +_,7 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.biome.BiomeManager;
  import net.minecraft.world.level.block.Blocks;
@@ -41,7 +62,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -136,6 +_,7 @@
+@@ -141,23 +_,46 @@
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.border.WorldBorder;
@@ -49,27 +70,29 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.portal.PortalInfo;
  import net.minecraft.world.level.storage.LevelData;
-@@ -143,11 +_,35 @@
+ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
- import net.minecraft.world.scores.Score;
+-import net.minecraft.world.scores.ScoreAccess;
+-import net.minecraft.world.scores.ScoreHolder;
++import net.minecraft.world.scores.Score;
 +import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.WeatherType;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R2.CraftWorldBorder;
-+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftPortalEvent;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
++import org.bukkit.craftbukkit.v1_20_R3.CraftWorldBorder;
++import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftPortalEvent;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -86,7 +109,11 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -243,6 +_,21 @@
+-   private static final int FLY_STAT_RECORDING_SPEED = 25;
+    public ServerGamePacketListenerImpl connection;
+    public final MinecraftServer server;
+    public final ServerPlayerGameMode gameMode;
+@@ -250,6 +_,21 @@
     public int containerCounter;
     public boolean wonGame;
  
@@ -108,7 +135,7 @@
     public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_, ClientInformation p_299301_) {
        super(p_254435_, p_254435_.getSharedSpawnPos(), p_254435_.getSharedSpawnAngle(), p_253651_);
        this.textFilter = p_254143_.createTextFilterForPlayer(this);
-@@ -252,12 +_,57 @@
+@@ -259,12 +_,57 @@
        this.advancements = p_254143_.getPlayerList().getPlayerAdvancements(this);
        this.setMaxUpStep(1.0F);
        this.fudgeSpawnLocation(p_254435_);
@@ -169,7 +196,7 @@
           int i = Math.max(0, this.server.getSpawnRadius(p_9202_));
           int j = Mth.floor(p_9202_.getWorldBorder().getDistanceToBorder((double)blockpos.getX(), (double)blockpos.getZ()));
           if (j < i) {
-@@ -317,11 +_,20 @@
+@@ -324,11 +_,20 @@
        if (p_9131_.contains("recipeBook", 10)) {
           this.recipeBook.fromNbt(p_9131_.getCompound("recipeBook"), this.server.getRecipeManager());
        }
@@ -190,7 +217,7 @@
        if (p_9131_.contains("SpawnX", 99) && p_9131_.contains("SpawnY", 99) && p_9131_.contains("SpawnZ", 99)) {
           this.respawnPosition = new BlockPos(p_9131_.getInt("SpawnX"), p_9131_.getInt("SpawnY"), p_9131_.getInt("SpawnZ"));
           this.respawnForced = p_9131_.getBoolean("SpawnForced");
-@@ -350,7 +_,20 @@
+@@ -357,7 +_,20 @@
  
        Entity entity1 = this.getRootVehicle();
        Entity entity = this.getVehicle();
@@ -212,7 +239,7 @@
           CompoundTag compoundtag1 = new CompoundTag();
           CompoundTag compoundtag2 = new CompoundTag();
           entity1.save(compoundtag2);
-@@ -371,8 +_,32 @@
+@@ -378,8 +_,32 @@
              p_9197_.put("SpawnDimension", p_248207_);
           });
        }
@@ -247,7 +274,7 @@
  
     public void setExperiencePoints(int p_8986_) {
        float f = (float)this.getXpNeededForNextLevel();
-@@ -424,6 +_,11 @@
+@@ -431,6 +_,11 @@
     }
  
     public void tick() {
@@ -259,7 +286,7 @@
        this.gameMode.tick();
        this.wardenSpawnTracker.tick();
        --this.spawnInvulnerableTime;
-@@ -477,7 +_,7 @@
+@@ -484,7 +_,7 @@
           }
  
           if (this.getHealth() != this.lastSentHealth || this.lastSentFood != this.foodData.getFoodLevel() || this.foodData.getSaturationLevel() == 0.0F != this.lastFoodSaturationZero) {
@@ -268,7 +295,7 @@
              this.lastSentHealth = this.getHealth();
              this.lastSentFood = this.foodData.getFoodLevel();
              this.lastFoodSaturationZero = this.foodData.getSaturationLevel() == 0.0F;
-@@ -508,6 +_,12 @@
+@@ -515,6 +_,12 @@
              this.updateScoreForCriteria(ObjectiveCriteria.EXPERIENCE, Mth.ceil((float)this.lastRecordedExperience));
           }
  
@@ -281,7 +308,7 @@
           if (this.experienceLevel != this.lastRecordedLevel) {
              this.lastRecordedLevel = this.experienceLevel;
              this.updateScoreForCriteria(ObjectiveCriteria.LEVEL, Mth.ceil((float)this.lastRecordedLevel));
-@@ -522,6 +_,21 @@
+@@ -529,6 +_,21 @@
              CriteriaTriggers.LOCATION.trigger(this);
           }
  
@@ -303,13 +330,14 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -562,16 +_,52 @@
+@@ -569,16 +_,52 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
--      this.getScoreboard().forAllObjectives(p_9105_, this.getScoreboardName(), (p_9178_) -> {
+-      this.getScoreboard().forAllObjectives(p_9105_, this, (p_308949_) -> {
+-         p_308949_.set(p_9106_);
 +      this.level.getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this.getScoreboardName(), (p_9178_) -> {
-          p_9178_.setScore(p_9106_);
++         p_9178_.setScore(p_9106_);
        });
     }
  
@@ -359,7 +387,7 @@
           this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), component), PacketSendListener.exceptionallySend(() -> {
              int i = 256;
              String s = component.getString(256);
-@@ -600,11 +_,16 @@
+@@ -607,11 +_,16 @@
           this.tellNeutralMobsThatIDied();
        }
  
@@ -370,7 +398,7 @@
 +         dropAllDeathLoot(p_9035_);
        }
  
--      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
+-      this.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
 +      this.setCamera(this); // Remove spectated target
 +      // CraftBukkit end
 +
@@ -379,32 +407,46 @@
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-@@ -638,10 +_,12 @@
+@@ -643,26 +_,31 @@
+       if (p_9050_ != this) {
+          super.awardKillScore(p_9050_, p_9051_, p_9052_);
           this.increaseScore(p_9051_);
-          String s = this.getScoreboardName();
-          String s1 = p_9050_.getScoreboardName();
--         this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, s, Score::increment);
+-         this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
++         String s = this.getScoreboardName();
++         String s1 = p_9050_.getScoreboardName();
 +         // CraftBukkit - Get our scores instead
 +         this.level.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_ALL, s, Score::increment);
           if (p_9050_ instanceof Player) {
              this.awardStat(Stats.PLAYER_KILLS);
--            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, s, Score::increment);
+-            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
 +            this.level.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_PLAYERS, s, Score::increment);
           } else {
              this.awardStat(Stats.MOB_KILLS);
           }
-@@ -657,7 +_,8 @@
+ 
+-         this.handleTeamKill(this, p_9050_, ObjectiveCriteria.TEAM_KILL);
+-         this.handleTeamKill(p_9050_, this, ObjectiveCriteria.KILLED_BY_TEAM);
++         this.handleTeamKill(s, s1, ObjectiveCriteria.TEAM_KILL);
++         this.handleTeamKill(s1, s, ObjectiveCriteria.KILLED_BY_TEAM);
+          CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_9050_, p_9052_);
+       }
+    }
+ 
+-   private void handleTeamKill(ScoreHolder p_312242_, ScoreHolder p_312349_, ObjectiveCriteria[] p_9127_) {
+-      PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_312349_.getScoreboardName());
++   private void handleTeamKill(String p_9125_, String p_9126_, ObjectiveCriteria[] p_9127_) {
++      PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_9126_);
        if (playerteam != null) {
           int i = playerteam.getColor().getId();
           if (i >= 0 && i < p_9127_.length) {
--            this.getScoreboard().forAllObjectives(p_9127_[i], p_9125_, Score::increment);
+-            this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
 +            this.level.getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_9125_, Score::increment);
           }
        }
  
-@@ -700,26 +_,53 @@
+@@ -705,26 +_,53 @@
     }
  
     private boolean isPvpAllowed() {
@@ -463,7 +505,7 @@
           this.unRide();
           this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.wonGame) {
-@@ -727,7 +_,6 @@
+@@ -732,7 +_,6 @@
              this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, this.seenCredits ? 0.0F : 1.0F));
              this.seenCredits = true;
           }
@@ -471,7 +513,7 @@
           return this;
        } else {
           LevelData leveldata = p_9180_.getLevelData();
-@@ -736,24 +_,27 @@
+@@ -741,24 +_,27 @@
           PlayerList playerlist = this.server.getPlayerList();
           playerlist.sendPlayerPermissionLevel(this);
           serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
@@ -503,7 +545,7 @@
              this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
              playerlist.sendLevelInfo(this, p_9180_);
              playerlist.sendAllPlayerInfo(this);
-@@ -762,27 +_,55 @@
+@@ -767,27 +_,55 @@
                 this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobeffectinstance));
              }
  
@@ -560,7 +602,7 @@
  
     }
  
-@@ -791,7 +_,7 @@
+@@ -796,7 +_,7 @@
        if (optional.isPresent()) {
           return optional;
        } else {
@@ -569,7 +611,7 @@
           Optional<BlockUtil.FoundRectangle> optional1 = p_184131_.getPortalForcer().createPortal(p_184132_, direction$axis);
           if (optional1.isEmpty()) {
              LOGGER.error("Unable to create a portal, likely target out of worldborder");
-@@ -801,7 +_,21 @@
+@@ -806,7 +_,21 @@
        }
     }
  
@@ -592,7 +634,7 @@
        ResourceKey<Level> resourcekey = p_9210_.dimension();
        ResourceKey<Level> resourcekey1 = this.level().dimension();
        CriteriaTriggers.CHANGED_DIMENSION.trigger(this, resourcekey, resourcekey1);
-@@ -829,18 +_,23 @@
+@@ -834,18 +_,23 @@
     }
  
     public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
@@ -623,7 +665,7 @@
              } else {
                 if (!this.isCreative()) {
                    double d0 = 8.0D;
-@@ -850,25 +_,43 @@
+@@ -855,25 +_,43 @@
                       return p_9062_.isPreventingPlayerRest(this);
                    });
                    if (!list.isEmpty()) {
@@ -660,7 +702,7 @@
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
-+      bedResult = org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
++      bedResult = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerBedEnterEvent(this, p_9115_, bedResult);
 +      if (bedResult.left().isPresent()) {
 +         return bedResult;
 +      }
@@ -679,7 +721,7 @@
     }
  
     public void startSleeping(BlockPos p_9190_) {
-@@ -877,6 +_,7 @@
+@@ -882,6 +_,7 @@
     }
  
     private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
@@ -687,7 +729,7 @@
        return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
     }
  
-@@ -891,13 +_,31 @@
+@@ -896,13 +_,31 @@
     }
  
     public void stopSleepInBed(boolean p_9165_, boolean p_9166_) {
@@ -720,7 +762,21 @@
        }
  
     }
-@@ -938,16 +_,53 @@
+@@ -934,13 +_,6 @@
+       }
+    }
+ 
+-   protected void pushEntities() {
+-      if (this.level().tickRateManager().runsNormally()) {
+-         super.pushEntities();
+-      }
+-
+-   }
+-
+    public void openTextEdit(SignBlockEntity p_277909_, boolean p_277495_) {
+       this.connection.send(new ClientboundBlockUpdatePacket(this.level(), p_277909_.getBlockPos()));
+       this.connection.send(new ClientboundOpenSignEditorPacket(p_277909_.getBlockPos(), p_277495_));
+@@ -950,16 +_,53 @@
        this.containerCounter = this.containerCounter % 100 + 1;
     }
  
@@ -774,7 +830,7 @@
           if (abstractcontainermenu == null) {
              if (this.isSpectator()) {
                 this.displayClientMessage(Component.translatable("container.spectatorCantOpen").withStyle(ChatFormatting.RED), true);
-@@ -955,9 +_,10 @@
+@@ -967,9 +_,10 @@
  
              return OptionalInt.empty();
           } else {
@@ -787,7 +843,7 @@
              return OptionalInt.of(this.containerCounter);
           }
        }
-@@ -968,14 +_,26 @@
+@@ -980,14 +_,26 @@
     }
  
     public void openHorseInventory(AbstractHorse p_9059_, Container p_9060_) {
@@ -819,7 +875,7 @@
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -1001,6 +_,7 @@
+@@ -1013,6 +_,7 @@
     public void doCloseContainer() {
        this.containerMenu.removed(this);
        this.inventoryMenu.transferState(this.containerMenu);
@@ -827,7 +883,7 @@
        this.containerMenu = this.inventoryMenu;
     }
  
-@@ -1015,6 +_,16 @@
+@@ -1027,111 +_,31 @@
           }
  
           this.jumping = p_8983_;
@@ -844,7 +900,129 @@
           this.setShiftKeyDown(p_8984_);
        }
  
-@@ -1050,10 +_,6 @@
+    }
+ 
+-   public void travel(Vec3 p_312746_) {
+-      double d0 = this.getX();
+-      double d1 = this.getY();
+-      double d2 = this.getZ();
+-      super.travel(p_312746_);
+-      this.checkMovementStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
+-   }
+-
+-   public void rideTick() {
+-      double d0 = this.getX();
+-      double d1 = this.getY();
+-      double d2 = this.getZ();
+-      super.rideTick();
+-      this.checkRidingStatistics(this.getX() - d0, this.getY() - d1, this.getZ() - d2);
+-   }
+-
+-   public void checkMovementStatistics(double p_310268_, double p_310728_, double p_313145_) {
+-      if (!this.isPassenger() && !didNotMove(p_310268_, p_310728_, p_313145_)) {
+-         if (this.isSwimming()) {
+-            int i = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
+-            if (i > 0) {
+-               this.awardStat(Stats.SWIM_ONE_CM, i);
+-               this.causeFoodExhaustion(0.01F * (float)i * 0.01F);
+-            }
+-         } else if (this.isEyeInFluid(FluidTags.WATER)) {
+-            int j = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
+-            if (j > 0) {
+-               this.awardStat(Stats.WALK_UNDER_WATER_ONE_CM, j);
+-               this.causeFoodExhaustion(0.01F * (float)j * 0.01F);
+-            }
+-         } else if (this.isInWater()) {
+-            int k = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
+-            if (k > 0) {
+-               this.awardStat(Stats.WALK_ON_WATER_ONE_CM, k);
+-               this.causeFoodExhaustion(0.01F * (float)k * 0.01F);
+-            }
+-         } else if (this.onClimbable()) {
+-            if (p_310728_ > 0.0D) {
+-               this.awardStat(Stats.CLIMB_ONE_CM, (int)Math.round(p_310728_ * 100.0D));
+-            }
+-         } else if (this.onGround()) {
+-            int l = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
+-            if (l > 0) {
+-               if (this.isSprinting()) {
+-                  this.awardStat(Stats.SPRINT_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.1F * (float)l * 0.01F);
+-               } else if (this.isCrouching()) {
+-                  this.awardStat(Stats.CROUCH_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
+-               } else {
+-                  this.awardStat(Stats.WALK_ONE_CM, l);
+-                  this.causeFoodExhaustion(0.0F * (float)l * 0.01F);
+-               }
+-            }
+-         } else if (this.isFallFlying()) {
+-            int i1 = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_310728_ * p_310728_ + p_313145_ * p_313145_) * 100.0F);
+-            this.awardStat(Stats.AVIATE_ONE_CM, i1);
+-         } else {
+-            int j1 = Math.round((float)Math.sqrt(p_310268_ * p_310268_ + p_313145_ * p_313145_) * 100.0F);
+-            if (j1 > 25) {
+-               this.awardStat(Stats.FLY_ONE_CM, j1);
+-            }
+-         }
+-
+-      }
+-   }
+-
+-   private void checkRidingStatistics(double p_310768_, double p_312944_, double p_309791_) {
+-      if (this.isPassenger() && !didNotMove(p_310768_, p_312944_, p_309791_)) {
+-         int i = Math.round((float)Math.sqrt(p_310768_ * p_310768_ + p_312944_ * p_312944_ + p_309791_ * p_309791_) * 100.0F);
+-         Entity entity = this.getVehicle();
+-         if (entity instanceof AbstractMinecart) {
+-            this.awardStat(Stats.MINECART_ONE_CM, i);
+-         } else if (entity instanceof Boat) {
+-            this.awardStat(Stats.BOAT_ONE_CM, i);
+-         } else if (entity instanceof Pig) {
+-            this.awardStat(Stats.PIG_ONE_CM, i);
+-         } else if (entity instanceof AbstractHorse) {
+-            this.awardStat(Stats.HORSE_ONE_CM, i);
+-         } else if (entity instanceof Strider) {
+-            this.awardStat(Stats.STRIDER_ONE_CM, i);
+-         }
+-
+-      }
+-   }
+-
+-   private static boolean didNotMove(double p_310773_, double p_310271_, double p_312126_) {
+-      return p_310773_ == 0.0D && p_310271_ == 0.0D && p_312126_ == 0.0D;
+-   }
+-
+    public void awardStat(Stat<?> p_9026_, int p_9027_) {
+       this.stats.increment(this, p_9026_, p_9027_);
+-      this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
+-         p_308946_.add(p_9027_);
++      this.getScoreboard().forAllObjectives(p_9026_, this.getScoreboardName(), (p_8996_) -> {
++         p_8996_.add(p_9027_);
+       });
+    }
+ 
+    public void resetStat(Stat<?> p_9024_) {
+       this.stats.setValue(this, p_9024_, 0);
+-      this.getScoreboard().forAllObjectives(p_9024_, this, ScoreAccess::reset);
++      this.getScoreboard().forAllObjectives(p_9024_, this.getScoreboardName(), Score::reset);
+    }
+ 
+    public int awardRecipes(Collection<RecipeHolder<?>> p_9129_) {
+@@ -1142,17 +_,16 @@
+       CriteriaTriggers.RECIPE_CRAFTED.trigger(this, p_299743_.id(), p_282336_);
+    }
+ 
+-   public void awardRecipesByKey(List<ResourceLocation> p_312871_) {
+-      List<RecipeHolder<?>> list = p_312871_.stream().flatMap((p_308947_) -> {
+-         return this.server.getRecipeManager().byKey(p_308947_).stream();
+-      }).collect(Collectors.toList());
++   public void awardRecipesByKey(ResourceLocation[] p_9168_) {
++      List<RecipeHolder<?>> list = Lists.newArrayList();
++
++      for(ResourceLocation resourcelocation : p_9168_) {
++         this.server.getRecipeManager().byKey(resourcelocation).ifPresent(list::add);
++      }
++
        this.awardRecipes(list);
     }
  
@@ -855,7 +1033,7 @@
     public void giveExperiencePoints(int p_9208_) {
        super.giveExperiencePoints(p_9208_);
        this.lastSentExp = -1;
-@@ -1074,6 +_,7 @@
+@@ -1173,6 +_,7 @@
  
     public void resetSentInfo() {
        this.lastSentHealth = -1.0E8F;
@@ -863,7 +1041,7 @@
     }
  
     public void displayClientMessage(Component p_9154_, boolean p_9155_) {
-@@ -1113,11 +_,13 @@
+@@ -1212,11 +_,13 @@
           this.experienceProgress = p_9016_.experienceProgress;
           this.setScore(p_9016_.getScore());
           this.portalEntrancePos = p_9016_.portalEntrancePos;
@@ -881,7 +1059,7 @@
           this.setScore(p_9016_.getScore());
        }
  
-@@ -1134,6 +_,15 @@
+@@ -1233,6 +_,15 @@
        this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
        this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
        this.setLastDeathLocation(p_9016_.getLastDeathLocation());
@@ -897,7 +1075,7 @@
     }
  
     protected void onEffectAdded(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1172,20 +_,25 @@
+@@ -1271,20 +_,25 @@
     }
  
     public boolean teleportTo(ServerLevel p_265564_, double p_265424_, double p_265680_, double p_265312_, Set<RelativeMovement> p_265192_, float p_265059_, float p_265266_) {
@@ -929,7 +1107,7 @@
        return true;
     }
  
-@@ -1214,6 +_,8 @@
+@@ -1313,6 +_,8 @@
     }
  
     public boolean setGameMode(GameType p_143404_) {
@@ -938,7 +1116,7 @@
        if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
           return false;
        } else {
-@@ -1275,6 +_,16 @@
+@@ -1374,6 +_,16 @@
     }
  
     public void updateOptions(ClientInformation p_297843_) {
@@ -955,7 +1133,7 @@
        this.language = p_297843_.language();
        this.requestedViewDistance = p_297843_.viewDistance();
        this.chatVisibility = p_297843_.chatVisibility();
-@@ -1348,6 +_,7 @@
+@@ -1447,6 +_,7 @@
     public void setCamera(@Nullable Entity p_9214_) {
        Entity entity = this.getCamera();
        this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
@@ -963,7 +1141,7 @@
        if (entity != this.camera) {
           Level level = this.camera.level();
           if (level instanceof ServerLevel) {
-@@ -1387,7 +_,11 @@
+@@ -1486,7 +_,11 @@
  
     @Nullable
     public Component getTabListDisplayName() {
@@ -976,7 +1154,7 @@
     }
  
     public void swing(InteractionHand p_9031_) {
-@@ -1407,26 +_,39 @@
+@@ -1506,26 +_,39 @@
        return this.advancements;
     }
  
@@ -1026,7 +1204,7 @@
        }
  
     }
-@@ -1448,7 +_,37 @@
+@@ -1547,7 +_,37 @@
        return this.respawnForced;
     }
  
@@ -1064,7 +1242,7 @@
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
           if (p_9163_ && !flag) {
-@@ -1493,6 +_,9 @@
+@@ -1592,6 +_,9 @@
        if (itementity == null) {
           return null;
        } else {
@@ -1074,7 +1252,7 @@
           this.level().addFreshEntity(itementity);
           ItemStack itemstack = itementity.getItem();
           if (p_9087_) {
-@@ -1507,6 +_,75 @@
+@@ -1606,6 +_,75 @@
        }
     }
  
@@ -1150,7 +1328,7 @@
     public TextFilter getTextFilter() {
        return this.textFilter;
     }
-@@ -1566,11 +_,14 @@
+@@ -1665,11 +_,14 @@
  
     public boolean drop(boolean p_182295_) {
        Inventory inventory = this.getInventory();
@@ -1166,7 +1344,7 @@
     }
  
     public boolean allowsListing() {
-@@ -1632,8 +_,153 @@
+@@ -1731,8 +_,153 @@
        }
  
     }

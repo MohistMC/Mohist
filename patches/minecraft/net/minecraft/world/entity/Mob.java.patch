@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -5,6 +_,7 @@
+@@ -1,11 +_,11 @@
+ package net.minecraft.world.entity;
+ 
+-import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.Maps;
+ import java.util.Arrays;
  import java.util.Map;
  import java.util.Optional;
  import java.util.UUID;
@@ -8,7 +13,7 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
-@@ -22,6 +_,7 @@
+@@ -23,6 +_,7 @@
  import net.minecraft.network.syncher.SynchedEntityData;
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
@@ -16,7 +21,7 @@
  import net.minecraft.sounds.SoundEvent;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.Mth;
-@@ -62,7 +_,6 @@
+@@ -63,7 +_,6 @@
  import net.minecraft.world.item.SpawnEggItem;
  import net.minecraft.world.item.SwordItem;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -24,13 +29,11 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -70,7 +_,15 @@
- import net.minecraft.world.level.gameevent.GameEvent;
+@@ -72,6 +_,13 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
-+import net.minecraft.world.level.storage.loot.LootContext;
  import net.minecraft.world.phys.AABB;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityTargetEvent;
@@ -40,7 +43,7 @@
  
  public abstract class Mob extends LivingEntity implements Targeting {
     private static final EntityDataAccessor<Byte> DATA_MOB_FLAGS_ID = SynchedEntityData.defineId(Mob.class, EntityDataSerializers.BYTE);
-@@ -95,8 +_,8 @@
+@@ -96,8 +_,8 @@
     protected JumpControl jumpControl;
     private final BodyRotationControl bodyRotationControl;
     protected PathNavigation navigation;
@@ -51,7 +54,7 @@
     @Nullable
     private LivingEntity target;
     private final Sensing sensing;
-@@ -105,7 +_,7 @@
+@@ -106,7 +_,7 @@
     private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
     public final float[] armorDropChances = new float[4];
     private boolean canPickUpLoot;
@@ -60,7 +63,7 @@
     private final Map<BlockPathTypes, Float> pathfindingMalus = Maps.newEnumMap(BlockPathTypes.class);
     @Nullable
     public ResourceLocation lootTable;
-@@ -117,6 +_,10 @@
+@@ -118,6 +_,10 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
     private float restrictRadius = -1.0F;
@@ -71,7 +74,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -231,8 +_,27 @@
+@@ -232,8 +_,27 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -101,7 +104,7 @@
  
     public boolean canAttackType(EntityType<?> p_21399_) {
        return p_21399_ != EntityType.GHAST;
-@@ -358,6 +_,12 @@
+@@ -359,6 +_,12 @@
        return null;
     }
  
@@ -114,7 +117,7 @@
     public void addAdditionalSaveData(CompoundTag p_21484_) {
        super.addAdditionalSaveData(p_21484_);
        p_21484_.putBoolean("CanPickUpLoot", this.canPickUpLoot());
-@@ -429,15 +_,27 @@
+@@ -430,15 +_,27 @@
           p_21484_.putBoolean("NoAI", this.isNoAi());
        }
  
@@ -144,7 +147,7 @@
        if (p_21450_.contains("ArmorItems", 9)) {
           ListTag listtag = p_21450_.getList("ArmorItems", 10);
  
-@@ -481,6 +_,20 @@
+@@ -482,6 +_,20 @@
        }
  
        this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -165,7 +168,7 @@
     }
  
     protected void dropFromLootTable(DamageSource p_21389_, boolean p_21390_) {
-@@ -520,9 +_,9 @@
+@@ -521,9 +_,9 @@
     public void aiStep() {
        super.aiStep();
        this.level().getProfiler().push("looting");
@@ -176,7 +179,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -539,6 +_,7 @@
+@@ -540,6 +_,7 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -184,7 +187,7 @@
        ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
-@@ -551,6 +_,8 @@
+@@ -552,6 +_,8 @@
  
     }
  
@@ -193,7 +196,7 @@
     public ItemStack equipItemIfPossible(ItemStack p_255842_) {
        EquipmentSlot equipmentslot = getEquipmentSlotForItem(p_255842_);
        ItemStack itemstack = this.getItemBySlot(equipmentslot);
-@@ -558,13 +_,21 @@
+@@ -559,13 +_,21 @@
        if (equipmentslot.isArmor() && !flag) {
           equipmentslot = EquipmentSlot.MAINHAND;
           itemstack = this.getItemBySlot(equipmentslot);
@@ -217,7 +220,7 @@
           }
  
           if (equipmentslot.isArmor() && p_255842_.getCount() > 1) {
-@@ -580,6 +_,11 @@
+@@ -581,6 +_,11 @@
        }
     }
  
@@ -229,7 +232,7 @@
     protected void setItemSlotAndDropWhenKilled(EquipmentSlot p_21469_, ItemStack p_21470_) {
        this.setItemSlot(p_21469_, p_21470_);
        this.setGuaranteedDrop(p_21469_);
-@@ -698,6 +_,14 @@
+@@ -699,6 +_,14 @@
           this.discard();
        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
           Entity entity = this.level().getNearestPlayer(this, -1.0D);
@@ -244,7 +247,7 @@
           if (entity != null) {
              double d0 = entity.distanceToSqr(this);
              int i = this.getType().getCategory().getDespawnDistance();
-@@ -722,6 +_,7 @@
+@@ -723,6 +_,7 @@
  
     protected final void serverAiStep() {
        ++this.noActionTime;
@@ -252,7 +255,7 @@
        this.level().getProfiler().push("sensing");
        this.sensing.tick();
        this.level().getProfiler().pop();
-@@ -1031,6 +_,16 @@
+@@ -1032,6 +_,16 @@
  
     }
  
@@ -269,7 +272,7 @@
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.getRandom();
-@@ -1041,6 +_,7 @@
+@@ -1042,6 +_,7 @@
           this.setLeftHanded(false);
        }
  
@@ -277,7 +280,7 @@
        return p_21437_;
     }
  
-@@ -1048,6 +_,12 @@
+@@ -1049,6 +_,12 @@
        this.persistenceRequired = true;
     }
  
@@ -290,7 +293,7 @@
     public void setDropChance(EquipmentSlot p_21410_, float p_21411_) {
        switch (p_21410_.getType()) {
           case HAND:
-@@ -1080,6 +_,12 @@
+@@ -1081,6 +_,12 @@
        if (!this.isAlive()) {
           return InteractionResult.PASS;
        } else if (this.getLeashHolder() == p_21420_) {
@@ -303,7 +306,7 @@
           this.dropLeash(true, !p_21420_.getAbilities().instabuild);
           this.gameEvent(GameEvent.ENTITY_INTERACT, p_21420_);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1103,6 +_,12 @@
+@@ -1104,6 +_,12 @@
     private InteractionResult checkAndHandleImportantInteractions(Player p_21500_, InteractionHand p_21501_) {
        ItemStack itemstack = p_21500_.getItemInHand(p_21501_);
        if (itemstack.is(Items.LEAD) && this.canBeLeashed(p_21500_)) {
@@ -316,7 +319,7 @@
           this.setLeashedTo(p_21500_, true);
           itemstack.shrink(1);
           return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -1205,7 +_,12 @@
+@@ -1206,7 +_,12 @@
                 }
              }
  
@@ -329,7 +332,7 @@
              if (this.isPassenger()) {
                 Entity entity = this.getVehicle();
                 this.stopRiding();
-@@ -1218,6 +_,19 @@
+@@ -1219,6 +_,19 @@
        }
     }
  
@@ -349,7 +352,7 @@
     protected void tickLeash() {
        if (this.leashInfoTag != null) {
           this.restoreLeashFromSave();
-@@ -1236,7 +_,9 @@
+@@ -1237,7 +_,9 @@
           this.leashHolder = null;
           this.leashInfoTag = null;
           if (!this.level().isClientSide && p_21457_) {
@@ -359,7 +362,7 @@
           }
  
           if (!this.level().isClientSide && p_21456_ && this.level() instanceof ServerLevel) {
-@@ -1284,6 +_,7 @@
+@@ -1285,6 +_,7 @@
     public boolean startRiding(Entity p_21396_, boolean p_21397_) {
        boolean flag = super.startRiding(p_21396_, p_21397_);
        if (flag && this.isLeashed()) {
@@ -367,7 +370,7 @@
           this.dropLeash(true, true);
        }
  
-@@ -1306,7 +_,9 @@
+@@ -1307,7 +_,9 @@
           }
  
           if (this.tickCount > 100) {
@@ -377,7 +380,7 @@
              this.leashInfoTag = null;
           }
        }
-@@ -1379,7 +_,14 @@
+@@ -1380,7 +_,14 @@
  
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
@@ -393,7 +396,7 @@
        }
  
        boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
-@@ -1425,15 +_,25 @@
+@@ -1426,16 +_,25 @@
        return false;
     }
  
@@ -412,6 +415,7 @@
  
     }
  
+-   @VisibleForTesting
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
@@ -420,7 +424,7 @@
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
           return true;
-@@ -1447,6 +_,7 @@
+@@ -1449,6 +_,7 @@
  
     protected void removeAfterChangingDimensions() {
        super.removeAfterChangingDimensions();
@@ -428,7 +432,7 @@
        this.dropLeash(true, false);
        this.getAllSlots().forEach((p_278936_) -> {
           if (!p_278936_.isEmpty()) {
-@@ -1460,5 +_,40 @@
+@@ -1462,5 +_,40 @@
     public ItemStack getPickResult() {
        SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);

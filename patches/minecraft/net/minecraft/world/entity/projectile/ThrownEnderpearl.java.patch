@@ -1,22 +1,28 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -8,12 +_,15 @@
+@@ -4,19 +_,18 @@
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.server.level.ServerPlayer;
+-import net.minecraft.sounds.SoundEvents;
+-import net.minecraft.sounds.SoundSource;
+ import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.monster.Endermite;
-+import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.Item;
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public class ThrownEnderpearl extends ThrowableItemProjectile {
     public ThrownEnderpearl(EntityType<? extends ThrownEnderpearl> p_37491_, Level p_37492_) {
-@@ -45,10 +_,13 @@
+@@ -48,10 +_,13 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -30,13 +36,14 @@
                       this.level().addFreshEntity(endermite);
                    }
                 }
-@@ -59,8 +_,12 @@
+@@ -62,9 +_,12 @@
                    entity.teleportTo(this.getX(), this.getY(), this.getZ());
                 }
  
 +               entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
+-               this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +               CraftEventFactory.entityDamage = this;
 +               entity.hurt(this.damageSources().fall(), event.getAttackDamage());
 +               CraftEventFactory.entityDamage = null;
@@ -44,7 +51,7 @@
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -83,12 +_,12 @@
+@@ -87,12 +_,12 @@
     }
  
     @Nullable

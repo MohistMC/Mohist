@@ -1,8 +1,13 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -12,9 +_,11 @@
+@@ -7,12 +_,16 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import com.google.gson.JsonSyntaxException;
+ import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Codec;
++import com.mojang.serialization.Codec;
  import com.mojang.serialization.JsonOps;
 +import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
  import java.util.Collection;
@@ -12,7 +17,15 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Optional;
-@@ -32,6 +_,7 @@
+@@ -21,6 +_,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
+ import net.minecraft.core.NonNullList;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.packs.resources.ResourceManager;
+ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+@@ -29,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -20,7 +33,7 @@
  import org.slf4j.Logger;
  
  public class RecipeManager extends SimpleJsonResourceReloadListener {
-@@ -40,35 +_,58 @@
+@@ -37,35 +_,58 @@
     public Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
     private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
     private boolean hasErrors;
@@ -88,7 +101,7 @@
     }
  
     public boolean hadErrorsLoading() {
-@@ -76,9 +_,11 @@
+@@ -73,9 +_,11 @@
     }
  
     public <C extends Container, T extends Recipe<C>> Optional<RecipeHolder<T>> getRecipeFor(RecipeType<T> p_44016_, C p_44017_, Level p_44018_) {
@@ -101,7 +114,7 @@
     }
  
     public <C extends Container, T extends Recipe<C>> Optional<Pair<ResourceLocation, RecipeHolder<T>>> getRecipeFor(RecipeType<T> p_220249_, C p_220250_, Level p_220251_, @Nullable ResourceLocation p_220252_) {
-@@ -194,4 +_,58 @@
+@@ -187,4 +_,58 @@
     public interface CachedCheck<C extends Container, T extends Recipe<C>> {
        Optional<RecipeHolder<T>> getRecipeFor(C p_220280_, Level p_220281_);
     }

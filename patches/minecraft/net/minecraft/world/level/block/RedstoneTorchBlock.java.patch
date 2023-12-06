@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/RedstoneTorchBlock.java
 +++ b/net/minecraft/world/level/block/RedstoneTorchBlock.java
-@@ -16,6 +_,8 @@
+@@ -17,6 +_,8 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.event.block.BlockRedstoneEvent;
  
- public class RedstoneTorchBlock extends TorchBlock {
-    public static final BooleanProperty LIT = BlockStateProperties.LIT;
-@@ -62,8 +_,24 @@
+ public class RedstoneTorchBlock extends BaseTorchBlock {
+    public static final MapCodec<RedstoneTorchBlock> CODEC = simpleCodec(RedstoneTorchBlock::new);
+@@ -68,8 +_,24 @@
           list.remove(0);
        }
  
@@ -34,7 +34,7 @@
              p_221950_.setBlock(p_221951_, p_221949_.setValue(LIT, Boolean.valueOf(false)), 3);
              if (isToggledTooFrequently(p_221950_, p_221951_, true)) {
                 p_221950_.levelEvent(1502, p_221951_, 0);
-@@ -71,6 +_,15 @@
+@@ -77,6 +_,15 @@
              }
           }
        } else if (!flag && !isToggledTooFrequently(p_221950_, p_221951_, false)) {

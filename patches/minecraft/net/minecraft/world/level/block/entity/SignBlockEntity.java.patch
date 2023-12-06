@@ -8,21 +8,24 @@
  import java.util.UUID;
  import java.util.function.UnaryOperator;
  import javax.annotation.Nullable;
-@@ -17,6 +_,7 @@
+@@ -17,9 +_,8 @@
  import net.minecraft.network.chat.Style;
  import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
  import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.FilteredText;
+-import net.minecraft.sounds.SoundEvent;
+-import net.minecraft.sounds.SoundEvents;
  import net.minecraft.util.Mth;
  import net.minecraft.world.entity.Entity;
-@@ -27,14 +_,18 @@
+ import net.minecraft.world.entity.player.Player;
+@@ -29,14 +_,18 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.block.sign.Side;
-+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 +import org.bukkit.event.block.SignChangeEvent;
  import org.slf4j.Logger;
  
@@ -37,7 +40,7 @@
     private SignText frontText = this.createDefaultSignText();
     private SignText backText = this.createDefaultSignText();
     private boolean isWaxed;
-@@ -142,12 +_,13 @@
+@@ -140,12 +_,13 @@
     public void updateSignText(Player p_278048_, boolean p_278103_, List<FilteredText> p_277990_) {
        if (!this.isWaxed() && p_278048_.getUUID().equals(this.getPlayerWhoMayEdit()) && this.level != null) {
           this.updateText((p_277776_) -> {
@@ -52,7 +55,7 @@
        }
     }
  
-@@ -156,18 +_,42 @@
+@@ -154,18 +_,42 @@
        return this.setText(p_277877_.apply(signtext), p_277426_);
     }
  
@@ -94,7 +97,7 @@
 +         return originalText;
 +      }
 +
-+      Component[] components = org.bukkit.craftbukkit.v1_20_R2.block.CraftSign.sanitizeLines(event.getLines());
++      Component[] components = org.bukkit.craftbukkit.v1_20_R3.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!Objects.equals(lines[i], event.getLine(i))) {
 +            pText = pText.setMessage(i, components[i]);
@@ -106,7 +109,7 @@
     }
  
     public boolean setText(SignText p_277733_, boolean p_277720_) {
-@@ -213,10 +_,33 @@
+@@ -211,10 +_,33 @@
        return flag;
     }
  
@@ -117,7 +120,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R2.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R3.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override
@@ -142,7 +145,7 @@
     }
  
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-@@ -242,7 +_,7 @@
+@@ -240,7 +_,7 @@
  
     private void markUpdated() {
        this.setChanged();
@@ -151,10 +154,10 @@
     }
  
     public boolean isWaxed() {
-@@ -277,5 +_,10 @@
-          p_277656_.setAllowedPlayerEditor((UUID)null);
-       }
+@@ -279,5 +_,10 @@
  
+    public SoundEvent getSignInteractionFailedSoundEvent() {
+       return SoundEvents.WAXED_SIGN_INTERACT_FAIL;
 +   }
 +
 +   @Override

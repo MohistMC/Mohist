@@ -4,19 +4,21 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R2.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
 +import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
  
  public class ItemEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<ItemStack> DATA_ITEM = SynchedEntityData.defineId(ItemEntity.class, EntityDataSerializers.ITEM_STACK);
-@@ -38,10 +_,14 @@
+@@ -38,12 +_,16 @@
     public int pickupDelay;
     private int health = 5;
     @Nullable
 -   private UUID thrower;
 +   public UUID thrower;
+    @Nullable
+    private Entity cachedThrower;
     @Nullable
 -   private UUID target;
 +   public UUID target;
@@ -28,7 +30,7 @@
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
-@@ -58,6 +_,7 @@
+@@ -60,6 +_,7 @@
        this.setPos(p_149664_, p_149665_, p_149666_);
        this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
        this.setItem(p_149667_);
@@ -36,7 +38,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -66,6 +_,7 @@
+@@ -68,6 +_,7 @@
        this.copyPosition(p_31994_);
        this.age = p_31994_.age;
        this.bobOffs = p_31994_.bobOffs;
@@ -44,7 +46,7 @@
     }
  
     public boolean dampensVibrations() {
-@@ -94,6 +_,7 @@
+@@ -109,6 +_,7 @@
     }
  
     public void tick() {
@@ -52,7 +54,7 @@
        if (this.getItem().isEmpty()) {
           this.discard();
        } else {
-@@ -107,6 +_,9 @@
+@@ -122,6 +_,9 @@
           this.zo = this.getZ();
           Vec3 vec3 = this.getDeltaMovement();
           float f = this.getEyeHeight() - 0.11111111F;
@@ -62,7 +64,7 @@
           if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > (double)f) {
              this.setUnderwaterMovement();
           } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > (double)f) {
-@@ -128,7 +_,8 @@
+@@ -143,7 +_,8 @@
              this.move(MoverType.SELF, this.getDeltaMovement());
              float f1 = 0.98F;
              if (this.onGround()) {
@@ -72,7 +74,7 @@
              }
  
              this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
-@@ -158,7 +_,16 @@
+@@ -173,7 +_,16 @@
              }
           }
  
@@ -90,7 +92,7 @@
              this.discard();
           }
  
-@@ -181,7 +_,9 @@
+@@ -196,7 +_,9 @@
  
     private void mergeWithNeighbours() {
        if (this.isMergable()) {
@@ -101,7 +103,7 @@
              return p_186268_ != this && p_186268_.isMergable();
           })) {
              if (itementity.isMergable()) {
-@@ -220,6 +_,8 @@
+@@ -235,6 +_,8 @@
           return false;
        } else if (p_32028_.hasTag() ^ p_32027_.hasTag()) {
           return false;
@@ -110,7 +112,7 @@
        } else {
           return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
        }
-@@ -238,6 +_,11 @@
+@@ -253,6 +_,11 @@
     }
  
     private static void merge(ItemEntity p_32018_, ItemStack p_32019_, ItemEntity p_32020_, ItemStack p_32021_) {
@@ -122,7 +124,7 @@
        merge(p_32018_, p_32019_, p_32021_);
        p_32018_.pickupDelay = Math.max(p_32018_.pickupDelay, p_32020_.pickupDelay);
        p_32018_.age = Math.min(p_32018_.age, p_32020_.age);
-@@ -261,11 +_,16 @@
+@@ -276,11 +_,16 @@
        } else if (this.level().isClientSide) {
           return true;
        } else {
@@ -140,7 +142,7 @@
              this.discard();
           }
  
-@@ -277,6 +_,7 @@
+@@ -292,6 +_,7 @@
        p_32050_.putShort("Health", (short)this.health);
        p_32050_.putShort("Age", (short)this.age);
        p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
@@ -148,7 +150,7 @@
        if (this.thrower != null) {
           p_32050_.putUUID("Thrower", this.thrower);
        }
-@@ -297,6 +_,9 @@
+@@ -312,6 +_,9 @@
        if (p_32034_.contains("PickupDelay")) {
           this.pickupDelay = p_32034_.getShort("PickupDelay");
        }
@@ -158,7 +160,7 @@
  
        if (p_32034_.hasUUID("Owner")) {
           this.target = p_32034_.getUUID("Owner");
-@@ -316,10 +_,75 @@
+@@ -332,10 +_,75 @@
  
     public void playerTouch(Player p_32040_) {
        if (!this.level().isClientSide) {
@@ -235,7 +237,7 @@
              p_32040_.take(this, i);
              if (itemstack.isEmpty()) {
                 this.discard();
-@@ -343,8 +_,8 @@
+@@ -359,8 +_,8 @@
     }
  
     @Nullable
@@ -246,7 +248,7 @@
        if (!this.level().isClientSide && entity instanceof ItemEntity) {
           ((ItemEntity)entity).mergeWithNeighbours();
        }
-@@ -410,7 +_,7 @@
+@@ -427,7 +_,7 @@
  
     public void makeFakeItem() {
        this.setNeverPickUp();
