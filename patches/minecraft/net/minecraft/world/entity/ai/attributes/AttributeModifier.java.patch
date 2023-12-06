@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/attributes/AttributeModifier.java
++++ b/net/minecraft/world/entity/ai/attributes/AttributeModifier.java
+@@ -22,7 +_,7 @@
+    });
+    private final double amount;
+    private final AttributeModifier.Operation operation;
+-   private final String name;
++   public final String name;
+    private final UUID id;
+ 
+    public AttributeModifier(String p_22196_, double p_22197_, AttributeModifier.Operation p_22198_) {

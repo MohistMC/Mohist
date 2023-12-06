@@ -75,16 +75,15 @@
  
     static class PotionSlot extends Slot {
        public PotionSlot(Container p_39123_, int p_39124_, int p_39125_, int p_39126_) {
-@@ -170,14 +_,15 @@
+@@ -170,6 +_,7 @@
        public void onTake(Player p_150499_, ItemStack p_150500_) {
           Potion potion = PotionUtils.getPotion(p_150500_);
           if (p_150499_ instanceof ServerPlayer) {
--            CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion.builtInRegistryHolder());
 +            net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_150499_, p_150500_);
-+            CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion);
+             CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion.builtInRegistryHolder());
           }
  
-          super.onTake(p_150499_, p_150500_);
+@@ -177,7 +_,7 @@
        }
  
        public static boolean mayPlaceItem(ItemStack p_39134_) {

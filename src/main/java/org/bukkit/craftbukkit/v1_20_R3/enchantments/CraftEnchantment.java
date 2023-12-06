@@ -19,7 +19,7 @@ public class CraftEnchantment extends Enchantment {
     public static Enchantment minecraftToBukkit(net.minecraft.world.item.enchantment.Enchantment minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<net.minecraft.world.item.enchantment.Enchantment> registry = CraftRegistry.getMinecraftRegistry(Registries.ENCHANTMENT);
+        net.minecraft.core.Registry<net.minecraft.world.item.enchantment.Enchantment> registry = CraftRegistry.getMinecraftRegistry(Registries.ENCHANTMENT);
         Enchantment bukkit = Registry.ENCHANTMENT.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);

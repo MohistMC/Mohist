@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/SaplingBlock.java
++++ b/net/minecraft/world/level/block/SaplingBlock.java
+@@ -16,6 +_,7 @@
+ import net.minecraft.world.level.block.state.properties.IntegerProperty;
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
++import org.bukkit.TreeType;
+ 
+ public class SaplingBlock extends BushBlock implements BonemealableBlock {
+    public static final MapCodec<SaplingBlock> CODEC = RecordCodecBuilder.mapCodec((p_312128_) -> {
+@@ -27,6 +_,7 @@
+    protected static final float AABB_OFFSET = 6.0F;
+    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+    protected final TreeGrower treeGrower;
++   public static TreeType treeType; // CraftBukkit
+ 
+    public MapCodec<? extends SaplingBlock> codec() {
+       return CODEC;

@@ -12,6 +12,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,7 +128,7 @@ public class ItemAPI {
         if (serializeNBT != null) {
             ByteArrayInputStream buf = new ByteArrayInputStream(Base64Coder.decodeLines(serializeNBT));
             try {
-                return NbtIo.readCompressed(buf);
+                return NbtIo.readCompressed(buf, NbtAccounter.unlimitedHeap());
             } catch (IOException e) {
                 MohistMC.LOGGER.error("Reading nbt ", e);
             }

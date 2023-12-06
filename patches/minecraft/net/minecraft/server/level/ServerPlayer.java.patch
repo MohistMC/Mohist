@@ -62,7 +62,7 @@
  import net.minecraft.world.level.block.HorizontalDirectionalBlock;
  import net.minecraft.world.level.block.NetherPortalBlock;
  import net.minecraft.world.level.block.entity.BlockEntity;
-@@ -141,23 +_,46 @@
+@@ -141,23 +_,48 @@
  import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.border.WorldBorder;
@@ -73,9 +73,9 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
--import net.minecraft.world.scores.ScoreAccess;
--import net.minecraft.world.scores.ScoreHolder;
 +import net.minecraft.world.scores.Score;
+ import net.minecraft.world.scores.ScoreAccess;
+ import net.minecraft.world.scores.ScoreHolder;
 +import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -335,9 +335,8 @@
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
 -      this.getScoreboard().forAllObjectives(p_9105_, this, (p_308949_) -> {
--         p_308949_.set(p_9106_);
-+      this.level.getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this.getScoreboardName(), (p_9178_) -> {
-+         p_9178_.setScore(p_9106_);
++      this.level.getCraftServer().getScoreboardManager().forAllObjectives(p_9105_, this, (p_308949_) -> {
+          p_308949_.set(p_9106_);
        });
     }
  
@@ -403,11 +402,11 @@
 +      // CraftBukkit end
 +
 +      // CraftBukkit - Get our scores instead
-+      this.level.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.DEATH_COUNT, this.getScoreboardName(), Score::increment);
++      this.level.getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, this, ScoreAccess::increment);
        LivingEntity livingentity = this.getKillCredit();
        if (livingentity != null) {
           this.awardStat(Stats.ENTITY_KILLED_BY.get(livingentity.getType()));
-@@ -643,26 +_,31 @@
+@@ -643,10 +_,14 @@
        if (p_9050_ != this) {
           super.awardKillScore(p_9050_, p_9051_, p_9052_);
           this.increaseScore(p_9051_);
@@ -415,34 +414,22 @@
 +         String s = this.getScoreboardName();
 +         String s1 = p_9050_.getScoreboardName();
 +         // CraftBukkit - Get our scores instead
-+         this.level.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_ALL, s, Score::increment);
++         this.level.getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.KILL_COUNT_ALL, this, ScoreAccess::increment);
           if (p_9050_ instanceof Player) {
              this.awardStat(Stats.PLAYER_KILLS);
 -            this.getScoreboard().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.KILL_COUNT_PLAYERS, s, Score::increment);
++            this.level.getCraftServer().getScoreboardManager().forAllObjectives(ObjectiveCriteria.KILL_COUNT_PLAYERS, this, ScoreAccess::increment);
           } else {
              this.awardStat(Stats.MOB_KILLS);
           }
- 
--         this.handleTeamKill(this, p_9050_, ObjectiveCriteria.TEAM_KILL);
--         this.handleTeamKill(p_9050_, this, ObjectiveCriteria.KILLED_BY_TEAM);
-+         this.handleTeamKill(s, s1, ObjectiveCriteria.TEAM_KILL);
-+         this.handleTeamKill(s1, s, ObjectiveCriteria.KILLED_BY_TEAM);
-          CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_9050_, p_9052_);
-       }
-    }
- 
--   private void handleTeamKill(ScoreHolder p_312242_, ScoreHolder p_312349_, ObjectiveCriteria[] p_9127_) {
--      PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_312349_.getScoreboardName());
-+   private void handleTeamKill(String p_9125_, String p_9126_, ObjectiveCriteria[] p_9127_) {
-+      PlayerTeam playerteam = this.getScoreboard().getPlayersTeam(p_9126_);
+@@ -662,7 +_,8 @@
        if (playerteam != null) {
           int i = playerteam.getColor().getId();
           if (i >= 0 && i < p_9127_.length) {
 -            this.getScoreboard().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
 +            // CraftBukkit - Get our scores instead
-+            this.level.getCraftServer().getScoreboardManager().getScoreboardScores(p_9127_[i], p_9125_, Score::increment);
++            this.level.getCraftServer().getScoreboardManager().forAllObjectives(p_9127_[i], p_312242_, ScoreAccess::increment);
           }
        }
  
@@ -883,7 +870,7 @@
        this.containerMenu = this.inventoryMenu;
     }
  
-@@ -1027,111 +_,31 @@
+@@ -1027,101 +_,21 @@
           }
  
           this.jumping = p_8983_;
@@ -994,20 +981,7 @@
 -
     public void awardStat(Stat<?> p_9026_, int p_9027_) {
        this.stats.increment(this, p_9026_, p_9027_);
--      this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
--         p_308946_.add(p_9027_);
-+      this.getScoreboard().forAllObjectives(p_9026_, this.getScoreboardName(), (p_8996_) -> {
-+         p_8996_.add(p_9027_);
-       });
-    }
- 
-    public void resetStat(Stat<?> p_9024_) {
-       this.stats.setValue(this, p_9024_, 0);
--      this.getScoreboard().forAllObjectives(p_9024_, this, ScoreAccess::reset);
-+      this.getScoreboard().forAllObjectives(p_9024_, this.getScoreboardName(), Score::reset);
-    }
- 
-    public int awardRecipes(Collection<RecipeHolder<?>> p_9129_) {
+       this.getScoreboard().forAllObjectives(p_9026_, this, (p_308946_) -> {
 @@ -1142,17 +_,16 @@
        CriteriaTriggers.RECIPE_CRAFTED.trigger(this, p_299743_.id(), p_282336_);
     }

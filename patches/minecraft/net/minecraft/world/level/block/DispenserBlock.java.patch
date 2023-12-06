@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DispenserBlock.java
 +++ b/net/minecraft/world/level/block/DispenserBlock.java
-@@ -44,7 +_,7 @@
+@@ -44,10 +_,11 @@
     public static final MapCodec<DispenserBlock> CODEC = simpleCodec(DispenserBlock::new);
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -9,6 +9,10 @@
        p_52723_.defaultReturnValue(new DefaultDispenseItemBehavior());
     });
     private static final int TRIGGER_DURATION = 4;
++   public static boolean eventFired = false; // CraftBukkit
+ 
+    public MapCodec<? extends DispenserBlock> codec() {
+       return CODEC;
 @@ -80,7 +_,7 @@
        }
     }

@@ -135,7 +135,7 @@
           this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
        }
 -
-+      this.cserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getCraftPlayer(), PlayerResourcePackStatusEvent.Status.values()[p_300656_.getAction().ordinal()])); // CraftBukkit
++      this.cserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getCraftPlayer(), PlayerResourcePackStatusEvent.Status.values()[p_300656_.action().ordinal()])); // CraftBukkit
     }
  
     protected void keepConnectionAlive() {

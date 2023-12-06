@@ -18,10 +18,11 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -66,6 +_,21 @@
+@@ -66,7 +_,22 @@
     private IntOpenHashSet piercingIgnoreEntityIds;
     @Nullable
     private List<Entity> piercedAndKilledEntities;
+-   private ItemStack pickupItemStack;
 +
 +   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
 +
@@ -37,9 +38,10 @@
 +   }
 +   // Spigot End
 +
-    private ItemStack pickupItemStack;
++   public ItemStack pickupItemStack;
  
     protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
+       super(p_36717_, p_36719_);
 @@ -157,7 +_,7 @@
           --this.shakeTime;
        }

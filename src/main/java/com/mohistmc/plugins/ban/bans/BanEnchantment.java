@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 public class BanEnchantment {
 
     public static boolean check(net.minecraft.world.item.enchantment.Enchantment enchantment) {
-        return check(new CraftEnchantment(enchantment));
+        return check(CraftEnchantment.minecraftToBukkit(enchantment));
     }
 
     public static boolean check(Enchantment enchantment) {

@@ -74,12 +74,11 @@
        return compoundtag;
     }
  
-@@ -163,6 +_,13 @@
+@@ -163,6 +_,12 @@
  
     public void setRemoved() {
        this.remove = true;
 +      this.invalidateCaps();
-+      requestModelDataUpdate();
 +   }
 +
 +   @Override

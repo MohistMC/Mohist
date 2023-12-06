@@ -8,3 +8,12 @@
        return new LevelDataAndDimensions(primaryleveldata, worlddimensions$complete);
     }
  
+@@ -407,7 +_,7 @@
+ 
+    public class LevelStorageAccess implements AutoCloseable {
+       final DirectoryLock lock;
+-      final LevelStorageSource.LevelDirectory levelDirectory;
++      public final LevelStorageSource.LevelDirectory levelDirectory;
+       private final String levelId;
+       private final Map<LevelResource, Path> resources = Maps.newHashMap();
+ 

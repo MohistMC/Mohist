@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/monster/Evoker.java
 +++ b/net/minecraft/world/entity/monster/Evoker.java
-@@ -39,7 +_,6 @@
- import net.minecraft.world.level.gameevent.GameEvent;
- import net.minecraft.world.phys.Vec3;
- import net.minecraft.world.phys.shapes.VoxelShape;
--import net.minecraft.world.scores.PlayerTeam;
- 
- public class Evoker extends SpellcasterIllager {
-    @Nullable
 @@ -256,7 +_,7 @@
                 if (playerteam != null) {
                    serverlevel.getScoreboard().addPlayerToTeam(vex.getScoreboardName(), playerteam);

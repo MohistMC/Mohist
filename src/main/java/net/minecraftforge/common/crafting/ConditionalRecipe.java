@@ -51,19 +51,6 @@ public class ConditionalRecipe {
     }
 
     public static class Builder {
-        private List<RecipePair> recipes = new ArrayList<>();
-        private RecipeOutput bouncer = new RecipeOutput() {
-            @Override
-            public void accept(FinishedRecipe value) {
-                recipe(value);
-            }
-
-            @SuppressWarnings("removal")
-            @Override
-            public Advancement.Builder advancement() {
-                return Advancement.Builder.recipeAdvancement().parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
-            }
-        };
 
         @Nullable
         private ICondition condition;
@@ -88,15 +75,6 @@ public class ConditionalRecipe {
         }
 
         public Builder recipe(Consumer<RecipeOutput> callable) {
-            callable.accept(bouncer);
-            return this;
-        }
-
-        public Builder recipe(FinishedRecipe recipe) {
-            if (condition == null)
-                throw new IllegalStateException("Can not add a recipe with no conditions.");
-            recipes.add(new RecipePair(this.condition, recipe));
-            condition = null;
             return this;
         }
 
@@ -113,77 +91,12 @@ public class ConditionalRecipe {
             if (condition != null)
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, Orphaned conditions");
 
-            if (recipes.isEmpty())
-                throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
-
             var adv = ConditionalAdvancement.builder();
-            var hasAdvancement = false;
-            for (var pair : recipes) {
-                if (pair.recipe().advancement() != null) {
-                    adv.condition(pair.condition())
-                       .advancement(pair.recipe().advancement());
-                    hasAdvancement = true;
-                }
-            }
 
             if (advancementId == null)
                 advancementId = id.withPrefix("recipes/");
-
-            out.accept(new Finished(id, mainCondition, recipes, advancementId, hasAdvancement ? adv.write() : null));
         }
     }
-
-    private record Finished(
-        ResourceLocation id,
-        @Nullable
-        ICondition mainCondition,
-        List<RecipePair> recipes,
-        ResourceLocation advId,
-        JsonObject advData
-    ) implements FinishedRecipe {
-        @Override
-        public void serializeRecipeData(JsonObject json) {
-            JsonArray array = new JsonArray();
-            var main = mainCondition;
-            if (main == null && recipes.size() == 1)
-                main = recipes.get(0).condition();
-
-            ForgeHooks.writeCondition(main, json);
-
-            json.add("recipes", array);
-            for (var pair : recipes) {
-                var holder = pair.recipe().serializeRecipe();
-                if (holder.has(ICondition.DEFAULT_FIELD))
-                    throw new IllegalStateException("Recipe already serialized conditions!");
-                ForgeHooks.writeCondition(pair.condition(), holder);
-                array.add(holder);
-            }
-        }
-
-        @Override
-        public ResourceLocation id() {
-            return id;
-        }
-
-        @Override
-        public RecipeSerializer<?> type() {
-            return ConditionalRecipe.SERIALZIER;
-        }
-
-        @Nullable
-        @Override
-        public AdvancementHolder advancement() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public AdvancementData advancementData() {
-            return advData == null ? null : new AdvancementData(advId, advData);
-        }
-    }
-
-    private record RecipePair(ICondition condition, FinishedRecipe recipe) {}
 
     private static Codec<Recipe<?>> CODEC = new Codec<Recipe<?>>() {
         @Override

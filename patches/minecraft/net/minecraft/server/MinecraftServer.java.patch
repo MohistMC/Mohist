@@ -521,13 +521,13 @@
 -                  this.lastOverloadWarningNanos = this.nextTickTimeNanos;
 -               }
 -            }
-+            long i = ((curTime = System.nanoTime()) / (1000L * 1000L)) - this.nextTickTime; // Paper
-+            if (i > 5000L && this.nextTickTime - this.lastOverloadWarning >= 30000L) { // CraftBukkit
++            long i = ((curTime = System.nanoTime()) / (1000L * 1000L)) - this.nextTickTimeNanos; // Paper
++            if (i > 5000L && this.nextTickTimeNanos - this.lastOverloadWarning >= 30000L) { // CraftBukkit
 +               long j = i / 50L;
 +               if (server.getWarnOnOverload()) // CraftBukkit
 +               LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
-+               this.nextTickTime += j * 50L;
-+               this.lastOverloadWarning = this.nextTickTime;
++               this.nextTickTimeNanos += j * 50L;
++               this.lastOverloadWarning = this.nextTickTimeNanos;
 +            }
 +
 +            if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
@@ -559,7 +559,7 @@
 -            this.nextTickTimeNanos += i;
 +            MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
 +            lastTick = curTime;
-+            this.nextTickTime += 50L;
++            this.nextTickTimeNanos += 50L;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
              this.tickServer(flag ? () -> {
