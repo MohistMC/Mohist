@@ -8,57 +8,6 @@
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-@@ -27,16 +_,17 @@
- public class ThrownTrident extends AbstractArrow {
-    private static final EntityDataAccessor<Byte> ID_LOYALTY = SynchedEntityData.defineId(ThrownTrident.class, EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Boolean> ID_FOIL = SynchedEntityData.defineId(ThrownTrident.class, EntityDataSerializers.BOOLEAN);
--   private static final ItemStack DEFAULT_ARROW_STACK = new ItemStack(Items.TRIDENT);
-+   public ItemStack tridentItem = new ItemStack(Items.TRIDENT);
-    private boolean dealtDamage;
-    public int clientSideReturnTridentTickCount;
- 
-    public ThrownTrident(EntityType<? extends ThrownTrident> p_37561_, Level p_37562_) {
--      super(p_37561_, p_37562_, DEFAULT_ARROW_STACK);
-+      super(p_37561_, p_37562_);
-    }
- 
-    public ThrownTrident(Level p_37569_, LivingEntity p_37570_, ItemStack p_37571_) {
--      super(EntityType.TRIDENT, p_37570_, p_37569_, p_37571_);
-+      super(EntityType.TRIDENT, p_37570_, p_37569_);
-+      this.tridentItem = p_37571_.copy();
-       this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(p_37571_));
-       this.entityData.set(ID_FOIL, p_37571_.hasFoil());
-    }
-@@ -91,6 +_,10 @@
-       }
-    }
- 
-+   protected ItemStack getPickupItem() {
-+      return this.tridentItem.copy();
-+   }
-+
-    public boolean isFoil() {
-       return this.entityData.get(ID_FOIL);
-    }
-@@ -104,7 +_,7 @@
-       Entity entity = p_37573_.getEntity();
-       float f = 8.0F;
-       if (entity instanceof LivingEntity livingentity) {
--         f += EnchantmentHelper.getDamageBonus(this.getPickupItemStackOrigin(), livingentity.getMobType());
-+         f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingentity.getMobType());
-       }
- 
-       Entity entity1 = this.getOwner();
-@@ -125,9 +_,6 @@
- 
-             this.doPostHurtEffects(livingentity1);
-          }
--      } else if (entity.getType().is(EntityTypeTags.DEFLECTS_TRIDENTS)) {
--         this.deflect();
--         return;
-       }
- 
-       this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
 @@ -139,7 +_,7 @@
              if (lightningbolt != null) {
                 lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
@@ -68,31 +17,3 @@
                 soundevent = SoundEvents.TRIDENT_THUNDER;
                 f1 = 5.0F;
              }
-@@ -150,7 +_,7 @@
-    }
- 
-    public boolean isChanneling() {
--      return EnchantmentHelper.hasChanneling(this.getPickupItemStackOrigin());
-+      return EnchantmentHelper.hasChanneling(this.tridentItem);
-    }
- 
-    protected boolean tryPickup(Player p_150196_) {
-@@ -170,12 +_,17 @@
- 
-    public void readAdditionalSaveData(CompoundTag p_37578_) {
-       super.readAdditionalSaveData(p_37578_);
-+      if (p_37578_.contains("Trident", 10)) {
-+         this.tridentItem = ItemStack.of(p_37578_.getCompound("Trident"));
-+      }
-+
-       this.dealtDamage = p_37578_.getBoolean("DealtDamage");
--      this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(this.getPickupItemStackOrigin()));
-+      this.entityData.set(ID_LOYALTY, (byte)EnchantmentHelper.getLoyalty(this.tridentItem));
-    }
- 
-    public void addAdditionalSaveData(CompoundTag p_37582_) {
-       super.addAdditionalSaveData(p_37582_);
-+      p_37582_.put("Trident", this.tridentItem.save(new CompoundTag()));
-       p_37582_.putBoolean("DealtDamage", this.dealtDamage);
-    }
- 

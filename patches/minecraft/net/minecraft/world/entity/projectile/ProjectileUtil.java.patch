@@ -1,48 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/ProjectileUtil.java
 +++ b/net/minecraft/world/entity/projectile/ProjectileUtil.java
-@@ -19,37 +_,28 @@
- import net.minecraft.world.phys.Vec3;
- 
- public final class ProjectileUtil {
--   private static final float DEFAULT_ENTITY_HIT_RESULT_MARGIN = 0.3F;
--
-    public static HitResult getHitResultOnMoveVector(Entity p_278228_, Predicate<Entity> p_278315_) {
-       Vec3 vec3 = p_278228_.getDeltaMovement();
-       Level level = p_278228_.level();
-       Vec3 vec31 = p_278228_.position();
--      return getHitResult(vec31, p_278228_, p_278315_, vec3, level, 0.3F, ClipContext.Block.COLLIDER);
--   }
--
--   public static HitResult getHitResultOnMoveVector(Entity p_311718_, Predicate<Entity> p_311003_, ClipContext.Block p_312093_) {
--      Vec3 vec3 = p_311718_.getDeltaMovement();
--      Level level = p_311718_.level();
--      Vec3 vec31 = p_311718_.position();
--      return getHitResult(vec31, p_311718_, p_311003_, vec3, level, 0.3F, p_312093_);
-+      return getHitResult(vec31, p_278228_, p_278315_, vec3, level);
-    }
- 
-    public static HitResult getHitResultOnViewVector(Entity p_278281_, Predicate<Entity> p_278306_, double p_278293_) {
-       Vec3 vec3 = p_278281_.getViewVector(0.0F).scale(p_278293_);
-       Level level = p_278281_.level();
-       Vec3 vec31 = p_278281_.getEyePosition();
--      return getHitResult(vec31, p_278281_, p_278306_, vec3, level, 0.0F, ClipContext.Block.COLLIDER);
-+      return getHitResult(vec31, p_278281_, p_278306_, vec3, level);
-    }
- 
--   private static HitResult getHitResult(Vec3 p_278237_, Entity p_278320_, Predicate<Entity> p_278257_, Vec3 p_278342_, Level p_278321_, float p_310295_, ClipContext.Block p_310049_) {
-+   private static HitResult getHitResult(Vec3 p_278237_, Entity p_278320_, Predicate<Entity> p_278257_, Vec3 p_278342_, Level p_278321_) {
-       Vec3 vec3 = p_278237_.add(p_278342_);
--      HitResult hitresult = p_278321_.clip(new ClipContext(p_278237_, vec3, p_310049_, ClipContext.Fluid.NONE, p_278320_));
-+      HitResult hitresult = p_278321_.clip(new ClipContext(p_278237_, vec3, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, p_278320_));
-       if (hitresult.getType() != HitResult.Type.MISS) {
-          vec3 = hitresult.getLocation();
-       }
- 
--      HitResult hitresult1 = getEntityHitResult(p_278321_, p_278320_, p_278237_, vec3, p_278320_.getBoundingBox().expandTowards(p_278342_).inflate(1.0D), p_278257_, p_310295_);
-+      HitResult hitresult1 = getEntityHitResult(p_278321_, p_278320_, p_278237_, vec3, p_278320_.getBoundingBox().expandTowards(p_278342_).inflate(1.0D), p_278257_);
-       if (hitresult1 != null) {
-          hitresult = hitresult1;
-       }
 @@ -77,7 +_,7 @@
              Vec3 vec31 = optional.get();
              double d1 = p_37289_.distanceToSqr(vec31);

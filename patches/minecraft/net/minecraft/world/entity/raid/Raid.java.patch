@@ -21,19 +21,6 @@
     public float getTotalHealth() {
        return this.totalHealth;
     }
-@@ -189,9 +_,9 @@
-    }
- 
-    private Predicate<ServerPlayer> validPlayer() {
--      return (p_309222_) -> {
--         BlockPos blockpos = p_309222_.blockPosition();
--         return p_309222_.isAlive() && this.level.getRaidAt(blockpos) == this;
-+      return (p_296861_) -> {
-+         BlockPos blockpos = p_296861_.blockPosition();
-+         return p_296861_.isAlive() && this.level.getRaidAt(blockpos) == this;
-       };
-    }
- 
 @@ -246,6 +_,7 @@
              boolean flag = this.active;
              this.active = this.level.hasChunkAt(this.center);

@@ -1,37 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/Arrow.java
 +++ b/net/minecraft/world/entity/projectile/Arrow.java
-@@ -26,21 +_,20 @@
-    private static final int NO_EFFECT_COLOR = -1;
-    private static final EntityDataAccessor<Integer> ID_EFFECT_COLOR = SynchedEntityData.defineId(Arrow.class, EntityDataSerializers.INT);
-    private static final byte EVENT_POTION_PUFF = 0;
--   private static final ItemStack DEFAULT_ARROW_STACK = new ItemStack(Items.ARROW);
--   private Potion potion = Potions.EMPTY;
-+   public Potion potion = Potions.EMPTY;
-    public final Set<MobEffectInstance> effects = Sets.newHashSet();
-    private boolean fixedColor;
- 
-    public Arrow(EntityType<? extends Arrow> p_36858_, Level p_36859_) {
--      super(p_36858_, p_36859_, DEFAULT_ARROW_STACK);
--   }
--
--   public Arrow(Level p_36866_, double p_312497_, double p_312591_, double p_311058_, ItemStack p_310811_) {
--      super(EntityType.ARROW, p_312497_, p_312591_, p_311058_, p_36866_, p_310811_);
--   }
--
--   public Arrow(Level p_36861_, LivingEntity p_310439_, ItemStack p_310691_) {
--      super(EntityType.ARROW, p_310439_, p_36861_, p_310691_);
-+      super(p_36858_, p_36859_);
-+   }
-+
-+   public Arrow(Level p_36861_, double p_36862_, double p_36863_, double p_36864_) {
-+      super(EntityType.ARROW, p_36862_, p_36863_, p_36864_, p_36861_);
-+   }
-+
-+   public Arrow(Level p_36866_, LivingEntity p_36867_) {
-+      super(EntityType.ARROW, p_36867_, p_36866_);
-    }
- 
-    public void setEffectsFromItem(ItemStack p_36879_) {
 @@ -72,7 +_,7 @@
        return compoundtag != null && compoundtag.contains("CustomPotionColor", 99) ? compoundtag.getInt("CustomPotionColor") : -1;
     }
@@ -50,7 +18,7 @@
        this.fixedColor = true;
        this.entityData.set(ID_EFFECT_COLOR, p_36883_);
     }
-@@ -181,22 +_,22 @@
+@@ -181,12 +_,12 @@
        for(MobEffectInstance mobeffectinstance : this.potion.getEffects()) {
           p_36873_.addEffect(new MobEffectInstance(mobeffectinstance.getEffect(), Math.max(mobeffectinstance.mapDuration((p_268168_) -> {
              return p_268168_ / 8;
@@ -65,15 +33,3 @@
           }
        }
  
-    }
- 
-    protected ItemStack getPickupItem() {
--      ItemStack itemstack = super.getPickupItem();
-       if (this.effects.isEmpty() && this.potion == Potions.EMPTY) {
--         return itemstack;
-+         return new ItemStack(Items.ARROW);
-       } else {
-+         ItemStack itemstack = new ItemStack(Items.TIPPED_ARROW);
-          PotionUtils.setPotion(itemstack, this.potion);
-          PotionUtils.setCustomEffects(itemstack, this.effects);
-          if (this.fixedColor) {

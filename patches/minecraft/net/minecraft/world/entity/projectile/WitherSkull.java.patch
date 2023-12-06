@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/WitherSkull.java
 +++ b/net/minecraft/world/entity/projectile/WitherSkull.java
-@@ -1,7 +_,6 @@
- package net.minecraft.world.entity.projectile;
- 
- import net.minecraft.core.BlockPos;
--import net.minecraft.nbt.CompoundTag;
- import net.minecraft.network.syncher.EntityDataAccessor;
- import net.minecraft.network.syncher.EntityDataSerializers;
- import net.minecraft.network.syncher.SynchedEntityData;
 @@ -20,6 +_,7 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.phys.EntityHitResult;
@@ -59,19 +51,3 @@
           this.discard();
        }
  
-@@ -112,15 +_,5 @@
- 
-    protected boolean shouldBurn() {
-       return false;
--   }
--
--   public void addAdditionalSaveData(CompoundTag p_311705_) {
--      super.addAdditionalSaveData(p_311705_);
--      p_311705_.putBoolean("dangerous", this.isDangerous());
--   }
--
--   public void readAdditionalSaveData(CompoundTag p_310393_) {
--      super.readAdditionalSaveData(p_310393_);
--      this.setDangerous(p_310393_.getBoolean("dangerous"));
-    }
- }

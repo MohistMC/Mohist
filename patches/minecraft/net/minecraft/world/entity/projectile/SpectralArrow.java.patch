@@ -1,42 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/SpectralArrow.java
 +++ b/net/minecraft/world/entity/projectile/SpectralArrow.java
-@@ -11,19 +_,18 @@
- import net.minecraft.world.level.Level;
- 
- public class SpectralArrow extends AbstractArrow {
--   private static final ItemStack DEFAULT_ARROW_STACK = new ItemStack(Items.SPECTRAL_ARROW);
-    public int duration = 200;
- 
-    public SpectralArrow(EntityType<? extends SpectralArrow> p_37411_, Level p_37412_) {
--      super(p_37411_, p_37412_, DEFAULT_ARROW_STACK);
--   }
--
--   public SpectralArrow(Level p_37414_, LivingEntity p_311904_, ItemStack p_309799_) {
--      super(EntityType.SPECTRAL_ARROW, p_311904_, p_37414_, p_309799_);
--   }
--
--   public SpectralArrow(Level p_37419_, double p_309976_, double p_310894_, double p_309922_, ItemStack p_311719_) {
--      super(EntityType.SPECTRAL_ARROW, p_309976_, p_310894_, p_309922_, p_37419_, p_311719_);
-+      super(p_37411_, p_37412_);
-+   }
-+
-+   public SpectralArrow(Level p_37419_, LivingEntity p_37420_) {
-+      super(EntityType.SPECTRAL_ARROW, p_37420_, p_37419_);
-+   }
-+
-+   public SpectralArrow(Level p_37414_, double p_37415_, double p_37416_, double p_37417_) {
-+      super(EntityType.SPECTRAL_ARROW, p_37415_, p_37416_, p_37417_, p_37414_);
-    }
- 
-    public void tick() {
-@@ -34,10 +_,14 @@
- 
-    }
- 
-+   protected ItemStack getPickupItem() {
-+      return new ItemStack(Items.SPECTRAL_ARROW);
-+   }
-+
+@@ -37,7 +_,7 @@
     protected void doPostHurtEffects(LivingEntity p_37422_) {
        super.doPostHurtEffects(p_37422_);
        MobEffectInstance mobeffectinstance = new MobEffectInstance(MobEffects.GLOWING, this.duration, 0);

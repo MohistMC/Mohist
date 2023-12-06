@@ -26,17 +26,10 @@
  
  public abstract class AbstractArrow extends Projectile {
     private static final double ARROW_BASE_DAMAGE = 2.0D;
-@@ -66,26 +_,34 @@
+@@ -66,6 +_,21 @@
     private IntOpenHashSet piercingIgnoreEntityIds;
     @Nullable
     private List<Entity> piercedAndKilledEntities;
--   private ItemStack pickupItemStack;
--
--   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
--      super(p_36717_, p_36719_);
--      this.pickupItemStack = p_312639_.copy();
--      if (p_312639_.hasCustomHoverName()) {
--         this.setCustomName(p_312639_.getHoverName());
 +
 +   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
 +
@@ -47,36 +40,14 @@
 +      if ( this.inGround )
 +      {
 +         this.life += 1;
-       }
--
--   }
--
--   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36711_, double p_36712_, double p_36713_, double p_36714_, Level p_36715_, ItemStack p_310436_) {
--      this(p_36711_, p_36715_, p_310436_);
++      }
 +      super.inactiveTick();
 +   }
 +   // Spigot End
 +
-+   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
-+      super(p_36721_, p_36722_);
-+   }
-+
-+   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36711_, double p_36712_, double p_36713_, double p_36714_, Level p_36715_) {
-+      this(p_36711_, p_36715_);
-       this.setPos(p_36712_, p_36713_, p_36714_);
-    }
+    private ItemStack pickupItemStack;
  
--   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, LivingEntity p_312718_, Level p_36722_, ItemStack p_309639_) {
--      this(p_36721_, p_312718_.getX(), p_312718_.getEyeY() - (double)0.1F, p_312718_.getZ(), p_36722_, p_309639_);
--      this.setOwner(p_312718_);
--      if (p_312718_ instanceof Player) {
-+   protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, LivingEntity p_36718_, Level p_36719_) {
-+      this(p_36717_, p_36718_.getX(), p_36718_.getEyeY() - (double)0.1F, p_36718_.getZ(), p_36719_);
-+      this.setOwner(p_36718_);
-+      if (p_36718_ instanceof Player) {
-          this.pickup = AbstractArrow.Pickup.ALLOWED;
-       }
- 
+    protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
 @@ -157,7 +_,7 @@
           --this.shakeTime;
        }
@@ -155,29 +126,6 @@
        }
  
        if (entity.hurt(damagesource, (float)i)) {
-@@ -380,8 +_,6 @@
-          if (this.getPierceLevel() <= 0) {
-             this.discard();
-          }
--      } else if (flag1) {
--         this.deflect();
-       } else {
-          entity.setRemainingFireTicks(k);
-          this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
-@@ -398,13 +_,6 @@
- 
-    }
- 
--   public void deflect() {
--      float f = this.random.nextFloat() * 360.0F;
--      this.setDeltaMovement(this.getDeltaMovement().yRot(f * ((float)Math.PI / 180F)).scale(0.5D));
--      this.setYRot(this.getYRot() + f);
--      this.yRotO += f;
--   }
--
-    protected void onHitBlock(BlockHitResult p_36755_) {
-       this.lastState = this.level().getBlockState(p_36755_.getBlockPos());
-       super.onHitBlock(p_36755_);
 @@ -439,7 +_,7 @@
     }
  
@@ -187,25 +135,6 @@
     }
  
     public void addAdditionalSaveData(CompoundTag p_36772_) {
-@@ -457,7 +_,6 @@
-       p_36772_.putByte("PierceLevel", this.getPierceLevel());
-       p_36772_.putString("SoundEvent", BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent).toString());
-       p_36772_.putBoolean("ShotFromCrossbow", this.shotFromCrossbow());
--      p_36772_.put("item", this.pickupItemStack.save(new CompoundTag()));
-    }
- 
-    public void readAdditionalSaveData(CompoundTag p_36761_) {
-@@ -481,10 +_,6 @@
-       }
- 
-       this.setShotFromCrossbow(p_36761_.getBoolean("ShotFromCrossbow"));
--      if (p_36761_.contains("item", 10)) {
--         this.pickupItemStack = ItemStack.of(p_36761_.getCompound("item"));
--      }
--
-    }
- 
-    public void setOwner(@Nullable Entity p_36770_) {
 @@ -496,8 +_,23 @@
     }
  
@@ -232,21 +161,3 @@
              p_36766_.take(this, 1);
              this.discard();
           }
-@@ -516,16 +_,10 @@
-       }
-    }
- 
--   protected ItemStack getPickupItem() {
--      return this.pickupItemStack.copy();
--   }
-+   protected abstract ItemStack getPickupItem();
- 
-    protected Entity.MovementEmission getMovementEmission() {
-       return Entity.MovementEmission.NONE;
--   }
--
--   public ItemStack getPickupItemStackOrigin() {
--      return this.pickupItemStack;
-    }
- 
-    public void setBaseDamage(double p_36782_) {

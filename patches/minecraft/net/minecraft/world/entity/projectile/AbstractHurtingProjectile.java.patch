@@ -1,17 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.entity.projectile;
- 
--import javax.annotation.Nullable;
- import net.minecraft.core.particles.ParticleOptions;
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.nbt.CompoundTag;
-@@ -12,25 +_,23 @@
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.EntityType;
- import net.minecraft.world.entity.LivingEntity;
--import net.minecraft.world.level.ClipContext;
+@@ -16,12 +_,16 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.HitResult;
  import net.minecraft.world.phys.Vec3;
@@ -28,15 +17,6 @@
     protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36833_, Level p_36834_) {
        super(p_36833_, p_36834_);
     }
- 
--   protected AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_310629_, double p_311590_, double p_312782_, double p_309484_, Level p_311660_) {
--      this(p_310629_, p_311660_);
--      this.setPos(p_311590_, p_312782_, p_309484_);
--   }
--
-    public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36817_, double p_36818_, double p_36819_, double p_36820_, double p_36821_, double p_36822_, double p_36823_, Level p_36824_) {
-       this(p_36817_, p_36824_);
-       this.moveTo(p_36818_, p_36819_, p_36820_, this.getYRot(), this.getXRot());
 @@ -44,6 +_,15 @@
  
     }
@@ -53,17 +33,6 @@
     public AbstractHurtingProjectile(EntityType<? extends AbstractHurtingProjectile> p_36826_, LivingEntity p_36827_, double p_36828_, double p_36829_, double p_36830_, Level p_36831_) {
        this(p_36826_, p_36827_.getX(), p_36827_.getY(), p_36827_.getZ(), p_36828_, p_36829_, p_36830_, p_36831_);
        this.setOwner(p_36827_);
-@@ -63,10 +_,6 @@
-       return p_36837_ < d0 * d0;
-    }
- 
--   protected ClipContext.Block getClipType() {
--      return ClipContext.Block.COLLIDER;
--   }
--
-    public void tick() {
-       Entity entity = this.getOwner();
-       if (this.level().isClientSide || (entity == null || !entity.isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 @@ -75,9 +_,15 @@
              this.setSecondsOnFire(1);
           }
@@ -83,53 +52,6 @@
           }
  
           this.checkInsideBlocks();
-@@ -86,24 +_,18 @@
-          double d1 = this.getY() + vec3.y;
-          double d2 = this.getZ() + vec3.z;
-          ProjectileUtil.rotateTowardsMovement(this, 0.2F);
--         float f;
-+         float f = this.getInertia();
-          if (this.isInWater()) {
-             for(int i = 0; i < 4; ++i) {
-                float f1 = 0.25F;
-                this.level().addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25D, d1 - vec3.y * 0.25D, d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
-             }
- 
--            f = this.getLiquidInertia();
--         } else {
--            f = this.getInertia();
-+            f = 0.8F;
-          }
- 
-          this.setDeltaMovement(vec3.add(this.xPower, this.yPower, this.zPower).scale((double)f));
--         ParticleOptions particleoptions = this.getTrailParticle();
--         if (particleoptions != null) {
--            this.level().addParticle(particleoptions, d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
--         }
--
-+         this.level().addParticle(this.getTrailParticle(), d0, d1 + 0.5D, d2, 0.0D, 0.0D, 0.0D);
-          this.setPos(d0, d1, d2);
-       } else {
-          this.discard();
-@@ -118,7 +_,6 @@
-       return true;
-    }
- 
--   @Nullable
-    protected ParticleOptions getTrailParticle() {
-       return ParticleTypes.SMOKE;
-    }
-@@ -127,10 +_,6 @@
-       return 0.95F;
-    }
- 
--   protected float getLiquidInertia() {
--      return 0.8F;
--   }
--
-    public void addAdditionalSaveData(CompoundTag p_36848_) {
-       super.addAdditionalSaveData(p_36848_);
-       p_36848_.put("power", this.newDoubleList(new double[]{this.xPower, this.yPower, this.zPower}));
 @@ -165,6 +_,11 @@
           Entity entity = p_36839_.getEntity();
           if (entity != null) {

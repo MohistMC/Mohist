@@ -410,7 +410,7 @@
                 BlockPos blockpos1 = this.getOnPos();
                 BlockState blockstate1 = this.level().getBlockState(blockpos1);
                 boolean flag1 = this.isStateClimbable(blockstate1);
-@@ -719,16 +_,16 @@
+@@ -719,12 +_,12 @@
                    this.setRemainingFireTicks(-this.getFireImmuneTicks());
                 }
  
@@ -425,11 +425,6 @@
                 this.setRemainingFireTicks(-this.getFireImmuneTicks());
              }
  
--            this.level().getProfiler().pop();
-+            this.level.getProfiler().pop();
-          }
-       }
-    }
 @@ -816,7 +_,7 @@
              return blockpos;
           } else {
@@ -476,33 +471,6 @@
     protected void checkInsideBlocks() {
        AABB aabb = this.getBoundingBox();
        BlockPos blockpos = BlockPos.containing(aabb.minX + 1.0E-7D, aabb.minY + 1.0E-7D, aabb.minZ + 1.0E-7D);
-@@ -1040,19 +_,20 @@
-       return !blockstate.is(BlockTags.INSIDE_STEP_SOUND_BLOCKS) && !blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS) ? p_278049_ : blockpos;
-    }
- 
--   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_) {
--      SoundType soundtype = p_277472_.getSoundType();
-+   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_, BlockPos primaryPos, BlockPos secondaryPos) {
-+      SoundType soundtype = p_277472_.getSoundType(this.level, primaryPos, this);
-+      SoundType soundtype1 = p_277630_.getSoundType(this.level, secondaryPos, this);
-       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
--      this.playMuffledStepSound(p_277630_);
-+      this.playMuffledStepSound(p_277630_, secondaryPos);
-    }
- 
--   protected void playMuffledStepSound(BlockState p_283110_) {
--      SoundType soundtype = p_283110_.getSoundType();
-+   protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
-+      SoundType soundtype = p_283110_.getSoundType(this.level, pos, this);
-       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.05F, soundtype.getPitch() * 0.8F);
-    }
- 
-    protected void playStepSound(BlockPos p_20135_, BlockState p_20136_) {
--      SoundType soundtype = p_20136_.getSoundType();
-+      SoundType soundtype = p_20136_.getSoundType(this.level, p_20135_, this);
-       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
-    }
- 
 @@ -1187,31 +_,38 @@
  
     public void updateSwimming() {
@@ -1373,15 +1341,6 @@
     }
  
     protected float getEyeHeight(Pose p_19976_, EntityDimensions p_19977_) {
-@@ -2802,7 +_,7 @@
-       return InteractionResult.PASS;
-    }
- 
--   public boolean ignoreExplosion(Explosion p_309517_) {
-+   public boolean ignoreExplosion() {
-       return false;
-    }
- 
 @@ -2974,7 +_,7 @@
        return SoundSource.NEUTRAL;
     }

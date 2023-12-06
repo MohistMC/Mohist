@@ -19,7 +19,7 @@
  import net.minecraft.world.entity.AreaEffectCloud;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EntityType;
-@@ -23,18 +_,21 @@
+@@ -23,12 +_,15 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.AbstractCandleBlock;
@@ -35,14 +35,6 @@
  
  public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplier {
     public static final double SPLASH_RANGE = 4.0D;
-    private static final double SPLASH_RANGE_SQ = 16.0D;
--   public static final Predicate<LivingEntity> WATER_SENSITIVE_OR_ON_FIRE = (p_309221_) -> {
--      return p_309221_.isSensitiveToWater() || p_309221_.isOnFire();
-+   public static final Predicate<LivingEntity> WATER_SENSITIVE_OR_ON_FIRE = (p_296860_) -> {
-+      return p_296860_.isSensitiveToWater() || p_296860_.isOnFire();
-    };
- 
-    public ThrownPotion(EntityType<? extends ThrownPotion> p_37527_, Level p_37528_) {
 @@ -88,11 +_,11 @@
           boolean flag = potion == Potions.WATER && list.isEmpty();
           if (flag) {

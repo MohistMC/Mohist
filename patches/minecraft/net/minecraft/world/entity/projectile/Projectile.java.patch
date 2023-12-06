@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -9,13 +_,11 @@
- import net.minecraft.network.protocol.game.ClientGamePacketListener;
- import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
- import net.minecraft.server.level.ServerLevel;
--import net.minecraft.tags.EntityTypeTags;
- import net.minecraft.util.Mth;
- import net.minecraft.world.entity.Entity;
+@@ -15,7 +_,6 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.TraceableEntity;
  import net.minecraft.world.entity.player.Player;
@@ -41,41 +35,6 @@
  
     }
  
-@@ -48,16 +_,10 @@
-    public Entity getOwner() {
-       if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-          return this.cachedOwner;
-+      } else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-+         this.cachedOwner = ((ServerLevel)this.level()).getEntity(this.ownerUUID);
-+         return this.cachedOwner;
-       } else {
--         if (this.ownerUUID != null) {
--            Level level = this.level();
--            if (level instanceof ServerLevel) {
--               ServerLevel serverlevel = (ServerLevel)level;
--               this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
--               return this.cachedOwner;
--            }
--         }
--
-          return null;
-       }
-    }
-@@ -92,14 +_,6 @@
-       this.hasBeenShot = p_37262_.getBoolean("HasBeenShot");
-    }
- 
--   public void restoreFrom(Entity p_310133_) {
--      super.restoreFrom(p_310133_);
--      if (p_310133_ instanceof Projectile projectile) {
--         this.cachedOwner = projectile.cachedOwner;
--      }
--
--   }
--
-    public void tick() {
-       if (!this.hasBeenShot) {
-          this.gameEvent(GameEvent.PROJECTILE_SHOOT, this.getOwner());
 @@ -147,6 +_,16 @@
        this.setDeltaMovement(this.getDeltaMovement().add(vec3.x, p_37252_.onGround() ? 0.0D : vec3.y, vec3.z));
     }
@@ -105,16 +64,12 @@
        BlockState blockstate = this.level().getBlockState(p_37258_.getBlockPos());
        blockstate.onProjectileHit(this.level(), blockstate, p_37258_, this);
     }
-@@ -229,11 +_,7 @@
+@@ -229,7 +_,7 @@
        if (entity instanceof Player) {
           return entity.mayInteract(p_150167_, p_150168_);
        } else {
 -         return entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 +         return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
        }
--   }
--
--   public boolean mayBreak(Level p_313184_) {
--      return this.getType().is(EntityTypeTags.IMPACT_PROJECTILES) && p_313184_.getGameRules().getBoolean(GameRules.RULE_PROJECTILESCANBREAKBLOCKS);
     }
- }
+ 
