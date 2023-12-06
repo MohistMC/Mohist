@@ -13,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.network.NetworkInitialization;
 import net.minecraftforge.network.packets.OpenContainer;

@@ -12,7 +12,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.conditions.ICondition;
@@ -50,10 +49,6 @@ public class ConditionalAdvancement {
 
         public Builder advancement(Advancement.Builder builder) {
             return advancement(builder.build(DOESNT_MATTER).value());
-        }
-
-        public Builder advancement(FinishedRecipe fromRecipe) {
-            return advancement(fromRecipe.advancement());
         }
 
         public Builder advancement(AdvancementHolder holder) {

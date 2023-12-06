@@ -16,7 +16,6 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -91,16 +90,6 @@ public class ForgeSpawnEggItem extends SpawnEggItem {
 
                 TYPE_MAP.put(egg.typeSupplier.get(), egg);
             });
-        }
-    }
-
-    @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "forge", bus = Mod.EventBusSubscriber.Bus.MOD)
-    private static class ColorRegisterHandler {
-        @SubscribeEvent(priority = EventPriority.HIGHEST)
-        public static void registerSpawnEggColors(RegisterColorHandlersEvent.Item event) {
-            MOD_EGGS.forEach(egg ->
-                event.register((stack, layer) -> egg.getColor(layer), egg)
-            );
         }
     }
 }

@@ -8,14 +8,6 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import com.mojang.authlib.yggdrasil.ProfileResult;
-@@ -15,7 +_,6 @@
- import javax.annotation.Nullable;
- import javax.crypto.Cipher;
- import javax.crypto.SecretKey;
--import net.minecraft.CrashReportCategory;
- import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.core.UUIDUtil;
- import net.minecraft.network.Connection;
 @@ -32,12 +_,15 @@
  import net.minecraft.network.protocol.login.ServerboundKeyPacket;
  import net.minecraft.network.protocol.login.ServerboundLoginAcknowledgedPacket;
@@ -93,7 +85,7 @@
 +            // Spigot start
 +            authenticatorPool.execute(() -> {
 +               try {
-+                  new LoginHandler().fireEvents(createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
++                  new LoginHandler().fireEvents(UUIDUtil.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
 +               } catch (Exception ex) {
 +                  disconnect("Failed to verify username!");
 +                  server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);

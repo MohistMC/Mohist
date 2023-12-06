@@ -34,7 +34,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.SoundActions;
@@ -118,8 +117,6 @@ public class FluidType
         this.temperature = properties.temperature;
         this.viscosity = properties.viscosity;
         this.rarity = properties.rarity;
-
-        this.initClient();
     }
 
     /* Default Accessors */
@@ -880,24 +877,6 @@ public class FluidType
     public Object getRenderPropertiesInternal()
     {
         return renderProperties;
-    }
-
-    private void initClient()
-    {
-        // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
-        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData())
-        {
-            initializeClient(properties ->
-            {
-                if (properties == this)
-                    throw new IllegalStateException("Don't extend IFluidTypeRenderProperties in your fluid type, use an anonymous class instead.");
-                this.renderProperties = properties;
-            });
-        }
-    }
-
-    public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
-    {
     }
 
     /**

@@ -25,6 +25,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -68,7 +69,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtException;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.ReportedNbtException;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -123,6 +126,7 @@ import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.level.storage.PrimaryLevelData;
@@ -1050,12 +1054,12 @@ public final class CraftServer implements Server {
 
         Dynamic<?> dynamic;
         if (worldSession.hasWorldData()) {
-            net.minecraft.world.level.storage.WorldInfo worldinfo;
+            net.minecraft.world.level.storage.LevelSummary worldinfo;
             try {
                 dynamic = worldSession.getDataTag();
                 worldinfo = worldSession.getSummary(dynamic);
             } catch (NbtException | ReportedNbtException | IOException ioexception) {
-                Convertable.b convertable_b = worldSession.getLevelDirectory();
+                LevelStorageSource.LevelDirectory convertable_b = worldSession.getLevelDirectory();
                 MinecraftServer.LOGGER.warn("Failed to load world data from {}", convertable_b.dataFile(), ioexception);
                 MinecraftServer.LOGGER.info("Attempting to use fallback");
                 try {
@@ -1086,8 +1090,8 @@ public final class CraftServer implements Server {
         WorldLoader.DataLoadContext worldloader_a = console.worldLoader;
         Registry<LevelStem> iregistry = worldloader_a.datapackDimensions().registryOrThrow(Registries.LEVEL_STEM);
         if (dynamic != null) {
-            LevelDataAndDimensions leveldataanddimensions = Convertable.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
-            worlddata = (WorldDataServer) leveldataanddimensions.worldData();
+            LevelDataAndDimensions leveldataanddimensions = LevelStorageSource.getLevelDataAndDimensions(dynamic, worldloader_a.dataConfiguration(), iregistry, worldloader_a.datapackWorldgen());
+            worlddata = (PrimaryLevelData) leveldataanddimensions.worldData();
             iregistry = leveldataanddimensions.dimensions().dimensions();
         } else {
             LevelSettings worldsettings;

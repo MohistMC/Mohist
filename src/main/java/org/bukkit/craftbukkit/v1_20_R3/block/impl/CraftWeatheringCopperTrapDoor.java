@@ -3,19 +3,19 @@
  */
 package org.bukkit.craftbukkit.v1_20_R3.block.impl;
 
-public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.TrapDoor, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Openable, org.bukkit.block.data.Powerable, org.bukkit.block.data.Waterlogged {
+public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData implements org.bukkit.block.data.type.TrapDoor, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Openable, org.bukkit.block.data.Powerable, org.bukkit.block.data.Waterlogged {
 
     public CraftWeatheringCopperTrapDoor() {
         super();
     }
 
-    public CraftWeatheringCopperTrapDoor(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftWeatheringCopperTrapDoor(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> HALF = getEnum(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "half");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> HALF = getEnum(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "half");
 
     @Override
     public org.bukkit.block.data.Bisected.Half getHalf() {
@@ -29,7 +29,7 @@ public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> FACING = getEnum(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "facing");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.
 
     // org.bukkit.craftbukkit.block.data.CraftOpenable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean OPEN = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "open");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty OPEN = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "open");
 
     @Override
     public boolean isOpen() {
@@ -62,7 +62,7 @@ public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean POWERED = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "powered");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty POWERED = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "powered");
 
     @Override
     public boolean isPowered() {
@@ -76,7 +76,7 @@ public final class CraftWeatheringCopperTrapDoor extends org.bukkit.craftbukkit.
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "waterlogged");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WeatheringCopperTrapDoorBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

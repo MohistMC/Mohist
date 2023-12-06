@@ -1,14 +1,13 @@
 package org.bukkit.craftbukkit.v1_20_R3.potion;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.IRegistry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.effect.MobEffectList;
+import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.craftbukkit.CraftRegistry;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -16,16 +15,16 @@ import org.jetbrains.annotations.NotNull;
 public class CraftPotionEffectType extends PotionEffectType {
 
     private final NamespacedKey key;
-    private final MobEffectList handle;
+    private final MobEffect handle;
     private final int id;
 
-    public CraftPotionEffectType(NamespacedKey key, MobEffectList handle) {
+    public CraftPotionEffectType(NamespacedKey key, MobEffect handle) {
         this.key = key;
         this.handle = handle;
         this.id = CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT).getId(handle) + 1;
     }
 
-    public MobEffectList getHandle() {
+    public MobEffect getHandle() {
         return handle;
     }
 
@@ -124,10 +123,10 @@ public class CraftPotionEffectType extends PotionEffectType {
         return "CraftPotionEffectType[" + getKey() + "]";
     }
 
-    public static PotionEffectType minecraftToBukkit(MobEffectList minecraft) {
+    public static PotionEffectType minecraftToBukkit(MobEffect minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
-        IRegistry<MobEffectList> registry = CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT);
+        net.minecraft.core.Registry<MobEffect> registry = CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT);
         PotionEffectType bukkit = Registry.EFFECT.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
 
         Preconditions.checkArgument(bukkit != null);
@@ -135,7 +134,7 @@ public class CraftPotionEffectType extends PotionEffectType {
         return bukkit;
     }
 
-    public static MobEffectList bukkitToMinecraft(PotionEffectType bukkit) {
+    public static MobEffect bukkitToMinecraft(PotionEffectType bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
         return ((CraftPotionEffectType) bukkit).getHandle();

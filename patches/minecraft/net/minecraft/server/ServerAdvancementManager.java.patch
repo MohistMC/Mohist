@@ -1,14 +1,22 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -18,6 +_,7 @@
- import net.minecraft.advancements.AdvancementNode;
- import net.minecraft.advancements.AdvancementTree;
- import net.minecraft.advancements.TreeNodePosition;
-+import net.minecraft.advancements.critereon.DeserializationContext;
+@@ -5,6 +_,7 @@
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonElement;
++import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.JsonOps;
+@@ -21,6 +_,7 @@
  import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.packs.resources.ResourceManager;
  import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-@@ -32,21 +_,38 @@
++import net.minecraft.util.GsonHelper;
+ import net.minecraft.util.ProblemReporter;
+ import net.minecraft.util.profiling.ProfilerFiller;
+ import net.minecraft.world.level.storage.loot.LootDataManager;
+@@ -32,15 +_,28 @@
     public Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
     private AdvancementTree tree = new AdvancementTree();
     private final LootDataManager lootData;
@@ -28,27 +36,12 @@
  
     protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
        ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
--      p_136034_.forEach((p_308595_, p_308596_) -> {
-+      p_136034_.forEach((p_296449_, p_296450_) -> {
+       p_136034_.forEach((p_308595_, p_308596_) -> {
 +         // Spigot start
-+         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_296449_.toString()) || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_296449_.getNamespace()))) {
++         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_308595_.toString()) || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_308595_.getNamespace()))) {
 +            return;
 +         }
 +         // Spigot end
           try {
--            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
--            this.validate(p_308595_, advancement);
--            builder.put(p_308595_, new AdvancementHolder(p_308595_, advancement));
-+            JsonObject jsonobject = GsonHelper.convertToJsonObject(p_296450_, "advancement");
-+            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.lootData), this.context);
-+            if (advancement == null) {
-+                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_296449_);
-+                return;
-+            }
-+            builder.put(p_296449_, new AdvancementHolder(p_296449_, advancement));
-          } catch (Exception exception) {
--            LOGGER.error("Parsing error loading custom advancement {}: {}", p_308595_, exception.getMessage());
-+            LOGGER.error("Parsing error loading custom advancement {}: {}", p_296449_, exception.getMessage());
-          }
- 
-       });
+             Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
+             this.validate(p_308595_, advancement);

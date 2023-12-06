@@ -30,10 +30,9 @@
 +               entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
--               this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +               CraftEventFactory.entityDamage = this;
 +               entity.hurt(this.damageSources().fall(), event.getAttackDamage());
-+			   this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
+                this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +               CraftEventFactory.entityDamage = null;
 +               } //Forge: End
              }

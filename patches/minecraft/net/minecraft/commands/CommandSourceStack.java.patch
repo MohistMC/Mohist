@@ -1,15 +1,14 @@
 --- a/net/minecraft/commands/CommandSourceStack.java
 +++ b/net/minecraft/commands/CommandSourceStack.java
-@@ -1,14 +_,13 @@
+@@ -1,6 +_,7 @@
  package net.minecraft.commands;
  
  import com.google.common.collect.Lists;
--import com.mojang.brigadier.CommandDispatcher;
--import com.mojang.brigadier.Message;
 +import com.mohistmc.api.PlayerAPI;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.Message;
  import com.mojang.brigadier.context.CommandContext;
--import com.mojang.brigadier.exceptions.CommandExceptionType;
- import com.mojang.brigadier.exceptions.CommandSyntaxException;
+@@ -9,6 +_,7 @@
  import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
  import com.mojang.brigadier.suggestion.Suggestions;
  import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -17,20 +16,6 @@
  import java.util.Collection;
  import java.util.Objects;
  import java.util.Set;
-@@ -19,13 +_,11 @@
- import javax.annotation.Nullable;
- import net.minecraft.ChatFormatting;
- import net.minecraft.commands.arguments.EntityAnchorArgument;
--import net.minecraft.commands.execution.TraceCallbacks;
- import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.network.chat.ChatType;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.ComponentUtils;
- import net.minecraft.network.chat.OutgoingChatMessage;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
 @@ -42,8 +_,9 @@
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.phys.Vec2;

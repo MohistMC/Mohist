@@ -1,15 +1,5 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -65,7 +_,9 @@
- import net.minecraft.world.level.gameevent.GameEventListener;
- import net.minecraft.world.level.gameevent.PositionSource;
- import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
-+import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import org.jetbrains.annotations.Nullable;
- import org.slf4j.Logger;
- 
- public class Allay extends PathfinderMob implements InventoryCarrier, VibrationSystem {
 @@ -77,6 +_,7 @@
     private static final Ingredient DUPLICATION_ITEM = Ingredient.of(Items.AMETHYST_SHARD);
     private static final int DUPLICATION_COOLDOWN_TICKS = 6000;

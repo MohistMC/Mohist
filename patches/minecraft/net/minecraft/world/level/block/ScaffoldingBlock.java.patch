@@ -1,12 +1,5 @@
 --- a/net/minecraft/world/level/block/ScaffoldingBlock.java
 +++ b/net/minecraft/world/level/block/ScaffoldingBlock.java
-@@ -1,6 +_,5 @@
- package net.minecraft.world.level.block;
- 
--import com.mojang.serialization.MapCodec;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.Direction;
- import net.minecraft.server.level.ServerLevel;
 @@ -93,7 +_,7 @@
     public void tick(BlockState p_222019_, ServerLevel p_222020_, BlockPos p_222021_, RandomSource p_222022_) {
        int i = getDistance(p_222020_, p_222021_);

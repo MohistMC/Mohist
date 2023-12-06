@@ -254,15 +254,6 @@
  
     @Nullable
     public ItemEntity drop(ItemStack p_36179_, boolean p_36180_, boolean p_36181_) {
-@@ -637,7 +_,7 @@
-          ItemEntity itementity = new ItemEntity(this.level(), this.getX(), d0, this.getZ(), p_36179_);
-          itementity.setPickUpDelay(40);
-          if (p_36181_) {
--            itementity.setThrower(this);
-+            itementity.setThrower(this.getUUID());
-          }
- 
-          if (p_36180_) {
 @@ -655,11 +_,52 @@
              itementity.setDeltaMovement((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.random.nextFloat() - this.random.nextFloat()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
@@ -1076,22 +1067,6 @@
     }
  
     protected void doWaterSplashEffect() {
-@@ -1445,13 +_,13 @@
-    protected void playStepSound(BlockPos p_282121_, BlockState p_282194_) {
-       if (this.isInWater()) {
-          this.waterSwimSound();
--         this.playMuffledStepSound(p_282194_);
-+         this.playMuffledStepSound(p_282194_, p_282121_);
-       } else {
-          BlockPos blockpos = this.getPrimaryStepSoundBlockPos(p_282121_);
-          if (!p_282121_.equals(blockpos)) {
-             BlockState blockstate = this.level().getBlockState(blockpos);
-             if (blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS)) {
--               this.playCombinationStepSounds(blockstate, p_282194_);
-+               this.playCombinationStepSounds(blockstate, p_282194_, blockpos, p_282121_);
-             } else {
-                super.playStepSound(blockpos, blockstate);
-             }
 @@ -1479,6 +_,10 @@
     }
  

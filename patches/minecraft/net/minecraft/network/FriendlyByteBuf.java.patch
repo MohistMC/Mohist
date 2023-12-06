@@ -1,16 +1,5 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -61,10 +_,8 @@
- import net.minecraft.nbt.EndTag;
- import net.minecraft.nbt.NbtAccounter;
- import net.minecraft.nbt.NbtIo;
--import net.minecraft.nbt.NbtOps;
- import net.minecraft.nbt.Tag;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.ComponentSerialization;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.util.Crypt;
 @@ -80,7 +_,7 @@
  import org.joml.Quaternionf;
  import org.joml.Vector3f;

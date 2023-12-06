@@ -9,16 +9,14 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;
-@@ -34,8 +_,8 @@
+@@ -34,6 +_,7 @@
  import java.util.Map;
  import java.util.Objects;
  import java.util.Optional;
 +import java.util.Random;
  import java.util.Set;
--import java.util.UUID;
+ import java.util.UUID;
  import java.util.concurrent.CompletableFuture;
- import java.util.concurrent.Executor;
- import java.util.concurrent.RejectedExecutionException;
 @@ -46,6 +_,7 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -27,14 +25,6 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -101,7 +_,6 @@
- import net.minecraft.util.ProgressListener;
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.SignatureValidator;
--import net.minecraft.util.TimeUtil;
- import net.minecraft.util.Unit;
- import net.minecraft.util.profiling.EmptyProfileResults;
- import net.minecraft.util.profiling.ProfileResults;
 @@ -157,6 +_,11 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
@@ -47,32 +37,6 @@
  import org.slf4j.Logger;
  
  public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTask> implements ServerInfo, CommandSource, AutoCloseable {
-@@ -164,20 +_,18 @@
-    public static final String VANILLA_BRAND = "vanilla";
-    private static final float AVERAGE_TICK_TIME_SMOOTHING = 0.8F;
-    private static final int TICK_STATS_SPAN = 100;
--   private static final long OVERLOADED_THRESHOLD_NANOS = 20L * TimeUtil.NANOSECONDS_PER_SECOND / 20L;
--   private static final int OVERLOADED_TICKS_THRESHOLD = 20;
--   private static final long OVERLOADED_WARNING_INTERVAL_NANOS = 10L * TimeUtil.NANOSECONDS_PER_SECOND;
--   private static final int OVERLOADED_TICKS_WARNING_INTERVAL = 100;
--   private static final long STATUS_EXPIRE_TIME_NANOS = 5L * TimeUtil.NANOSECONDS_PER_SECOND;
--   private static final long PREPARE_LEVELS_DEFAULT_DELAY_NANOS = 10L * TimeUtil.NANOSECONDS_PER_MILLISECOND;
-+   public static final int MS_PER_TICK = 50;
-+   private static final int OVERLOADED_THRESHOLD = 2000;
-+   private static final int OVERLOADED_WARNING_INTERVAL = 15000;
-+   private static final long STATUS_EXPIRE_TIME_NS = 5000000000L;
-    private static final int MAX_STATUS_PLAYER_SAMPLE = 12;
-    public static final int START_CHUNK_RADIUS = 11;
-    private static final int START_TICKING_CHUNK_COUNT = 441;
-    private static final int AUTOSAVE_INTERVAL = 6000;
--   private static final int MIMINUM_AUTOSAVE_TICKS = 100;
-    private static final int MAX_TICK_LATENCY = 3;
-    public static final int ABSOLUTE_MAX_WORLD_SIZE = 29999984;
-    public static final LevelSettings DEMO_SETTINGS = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), WorldDataConfiguration.DEFAULT);
-+   private static final long DELAYED_TASKS_TICK_EXTENSION = 50L;
-    public static final GameProfile ANONYMOUS_PLAYER_PROFILE = new GameProfile(Util.NIL_UUID, "Anonymous Player");
-    public final LevelStorageSource.LevelStorageAccess storageSource;
-    public final PlayerDataStorage playerDataStorage;
 @@ -193,8 +_,8 @@
     @Nullable
     private MinecraftServer.TimeProfiler debugCommandProfiler;
@@ -84,7 +48,7 @@
     @Nullable
     private ServerStatus status;
     @Nullable
-@@ -203,13 +_,12 @@
+@@ -203,8 +_,8 @@
     public final DataFixer fixerUpper;
     private String localIp;
     private int port = -1;
@@ -95,21 +59,7 @@
     private PlayerList playerList;
     private volatile boolean running = true;
     private boolean stopped;
-    private int tickCount;
--   private int ticksUntilAutosave = 6000;
-    protected final Proxy proxy;
-    private boolean onlineMode;
-    private boolean preventProxyConnections;
-@@ -218,20 +_,19 @@
-    @Nullable
-    private String motd;
-    private int playerIdleTimeout;
--   private final long[] tickTimesNanos = new long[100];
--   private long aggregatedTickTimesNanos = 0L;
-+   public final long[] tickTimes = new long[100];
-    @Nullable
-    private KeyPair keyPair;
-    @Nullable
+@@ -226,7 +_,7 @@
     private GameProfile singleplayerProfile;
     private boolean isDemo;
     private volatile boolean isReady;
@@ -118,28 +68,17 @@
     protected final Services services;
     private long lastServerStatus;
     public final Thread serverThread;
--   private long nextTickTimeNanos = Util.getNanos();
--   private long delayedTasksMaxNextTickTimeNanos;
-+   protected long nextTickTime = Util.getMillis();
-+   private long delayedTasksMaxNextTickTime;
-    private boolean mayHaveDelayedTasks;
-    private final PackRepository packRepository;
-    private final ServerScoreboard scoreboard = new ServerScoreboard(this);
-@@ -240,26 +_,43 @@
-    private final CustomBossEvents customBossEvents = new CustomBossEvents();
+@@ -241,7 +_,7 @@
     private final ServerFunctionManager functionManager;
     private boolean enforceWhitelist;
--   private float smoothedTickTimeMillis;
+    private float smoothedTickTimeMillis;
 -   private final Executor executor;
-+   private float averageTickTime;
 +   public final Executor executor;
     @Nullable
     private String serverId;
     public MinecraftServer.ReloadableResources resources;
-    private final StructureTemplateManager structureTemplateManager;
--   private final ServerTickRateManager tickRateManager;
--   protected final WorldData worldData;
-+   protected WorldData worldData;
+@@ -250,16 +_,34 @@
+    protected final WorldData worldData;
     private volatile boolean isSaving;
  
 +   // CraftBukkit start
@@ -184,13 +123,14 @@
           throw new IllegalStateException("Missing Overworld dimension data");
        } else {
           this.proxy = p_236727_;
-@@ -283,8 +_,7 @@
+@@ -283,8 +_,8 @@
              p_236729_.profileCache().setExecutor(this);
           }
  
 -         this.connection = new ServerConnectionListener(this);
 -         this.tickRateManager = new ServerTickRateManager(this);
 +         // this.connection = new ServerConnectionListener(this); // Spigot
++		 this.tickRateManager = new ServerTickRateManager(this);
           this.progressListenerFactory = p_236730_;
           this.storageSource = p_236724_;
           this.playerDataStorage = p_236724_.createPlayerStorage();
@@ -353,8 +293,7 @@
        BlockPos blockpos = serverlevel.getSharedSpawnPos();
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
        ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
--      this.nextTickTimeNanos = Util.getNanos();
-+      this.nextTickTime = Util.getMillis();
+       this.nextTickTimeNanos = Util.getNanos();
        serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 -
 -      while(serverchunkcache.getTickingGenerated() != 441) {
@@ -466,15 +405,6 @@
        }
  
        LOGGER.info("Saving worlds");
-@@ -568,7 +_,7 @@
-       while(this.levels.values().stream().anyMatch((p_202480_) -> {
-          return p_202480_.getChunkSource().chunkMap.hasWork();
-       })) {
--         this.nextTickTimeNanos = Util.getNanos() + TimeUtil.NANOSECONDS_PER_MILLISECOND;
-+         this.nextTickTime = Util.getMillis() + 1L;
- 
-          for(ServerLevel serverlevel1 : this.getAllLevels()) {
-             serverlevel1.getChunkSource().removeTicketsOnClosing();
 @@ -585,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.getAllLevels()) {
           if (serverlevel2 != null) {
@@ -496,7 +426,7 @@
  
     }
  
-@@ -627,60 +_,141 @@
+@@ -627,32 +_,110 @@
  
     }
  
@@ -565,9 +495,8 @@
              throw new IllegalStateException("Failed to initialize server");
           }
  
--         this.nextTickTimeNanos = Util.getNanos();
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
-+         this.nextTickTime = Util.getMillis();
+          this.nextTickTimeNanos = Util.getNanos();
           this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
@@ -592,8 +521,6 @@
 -                  this.lastOverloadWarningNanos = this.nextTickTimeNanos;
 -               }
 -            }
--
--            boolean flag = i == 0L;
 +            long i = ((curTime = System.nanoTime()) / (1000L * 1000L)) - this.nextTickTime; // Paper
 +            if (i > 5000L && this.nextTickTime - this.lastOverloadWarning >= 30000L) { // CraftBukkit
 +               long j = i / 50L;
@@ -622,9 +549,10 @@
 +               tickSection = curTime;
 +            }
 +            // Spigot end
-+
+ 
+             boolean flag = i == 0L;
              if (this.debugCommandProfilerDelayStart) {
-                this.debugCommandProfilerDelayStart = false;
+@@ -660,7 +_,9 @@
                 this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
              }
  
@@ -634,24 +562,10 @@
 +            this.nextTickTime += 50L;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
--            this.tickServer(flag ? () -> {
--               return false;
--            } : this::haveTime);
-+            this.tickServer(this::haveTime);
-             this.profiler.popPush("nextTickWait");
-             this.mayHaveDelayedTasks = true;
--            this.delayedTasksMaxNextTickTimeNanos = Math.max(Util.getNanos() + i, this.nextTickTimeNanos);
-+            this.delayedTasksMaxNextTickTime = Math.max(Util.getMillis() + 50L, this.nextTickTime);
-             this.waitUntilNextTick();
--            if (flag) {
--               this.tickRateManager.endTickWork();
--            }
--
-             this.profiler.pop();
-             this.endMetricsRecordingTick();
+             this.tickServer(flag ? () -> {
+@@ -679,8 +_,16 @@
              this.isReady = true;
--            JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
-+            JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
+             JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
           }
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStopping(this);
 +         net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
@@ -685,15 +599,10 @@
              this.onServerExit();
           }
  
-@@ -732,8 +_,17 @@
+@@ -735,6 +_,15 @@
+       return this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
     }
  
-    private boolean haveTime() {
--      return this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
--   }
-+      return this.forceTicks || this.runningTask() || Util.getMillis() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTime : this.nextTickTime);
-+   }
-+
 +   private void executeModerately() {
 +      this.runAllTasks();
 +      while (!processQueue.isEmpty()) {
@@ -702,9 +611,10 @@
 +      java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
- 
++
     protected void waitUntilNextTick() {
        this.runAllTasks();
+       this.managedBlock(() -> {
 @@ -742,7 +_,7 @@
        });
     }
@@ -714,31 +624,6 @@
        return new TickTask(this.tickCount, p_129852_);
     }
  
-@@ -760,7 +_,7 @@
-       if (super.pollTask()) {
-          return true;
-       } else {
--         if (this.tickRateManager.isSprinting() || this.haveTime()) {
-+         if (this.haveTime()) {
-             for(ServerLevel serverlevel : this.getAllLevels()) {
-                if (serverlevel.getChunkSource().pollTask()) {
-                   return true;
-@@ -778,11 +_,11 @@
-    }
- 
-    private Optional<ServerStatus.Favicon> loadStatusIcon() {
--      Optional<Path> optional = Optional.of(this.getFile("server-icon.png").toPath()).filter((p_272385_) -> {
--         return Files.isRegularFile(p_272385_);
-+      Optional<Path> optional = Optional.of(this.getFile("server-icon.png").toPath()).filter((p_272387_) -> {
-+         return Files.isRegularFile(p_272387_);
-       }).or(() -> {
--         return this.storageSource.getIconFile().filter((p_272387_) -> {
--            return Files.isRegularFile(p_272387_);
-+         return this.storageSource.getIconFile().filter((p_272385_) -> {
-+            return Files.isRegularFile(p_272385_);
-          });
-       });
-       return optional.flatMap((p_272386_) -> {
 @@ -797,6 +_,7 @@
              LOGGER.error("Couldn't load server icon", (Throwable)exception);
              return Optional.empty();
@@ -747,19 +632,13 @@
        });
     }
  
-@@ -814,23 +_,18 @@
-    public void onServerExit() {
-    }
+@@ -820,12 +_,14 @@
  
--   public boolean isPaused() {
--      return false;
--   }
--
     public void tickServer(BooleanSupplier p_129871_) {
        long i = Util.getNanos();
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
--      this.tickRateManager.tick();
+       this.tickRateManager.tick();
        this.tickChildren(p_129871_);
 -      if (i - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
 +      if (i - this.lastServerStatus >= 5000000000L) {
@@ -768,54 +647,23 @@
 +         resetStatusCache(status);
        }
  
--      --this.ticksUntilAutosave;
--      if (this.ticksUntilAutosave <= 0) {
--         this.ticksUntilAutosave = this.computeNextAutosaveInterval();
-+      if (autosavePeriod > 0 && this.tickCount % autosavePeriod == 0) { // CraftBukkit
-          LOGGER.debug("Autosave started");
-          this.profiler.push("save");
-          this.saveEverything(true, false, false);
-@@ -839,36 +_,23 @@
-       }
- 
-       this.profiler.push("tallying");
--      long j = Util.getNanos() - i;
--      int k = this.tickCount % 100;
--      this.aggregatedTickTimesNanos -= this.tickTimesNanos[k];
--      this.aggregatedTickTimesNanos += j;
--      this.tickTimesNanos[k] = j;
--      this.smoothedTickTimeMillis = this.smoothedTickTimeMillis * 0.8F + (float)j / (float)TimeUtil.NANOSECONDS_PER_MILLISECOND * 0.19999999F;
--      long l = Util.getNanos();
--      this.logTickTime(l - i);
-+      long j = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
-+      this.averageTickTime = this.averageTickTime * 0.8F + (float)j / 1000000.0F * 0.19999999F;
-+      long k = Util.getNanos();
-+      this.logTickTime(k - i);
+       --this.ticksUntilAutosave;
+@@ -848,8 +_,10 @@
+       long l = Util.getNanos();
+       this.logTickTime(l - i);
        this.profiler.pop();
--   }
--
--   private int computeNextAutosaveInterval() {
--      float f;
--      if (this.tickRateManager.isSprinting()) {
--         long i = this.getAverageTickTimeNanos() + 1L;
--         f = (float)TimeUtil.NANOSECONDS_PER_SECOND / (float)i;
--      } else {
--         f = this.tickRateManager.tickrate();
--      }
--
--      int j = 300;
--      return Math.max(100, (int)(f * 300.0F));
--   }
--
--   public void onTickRateChanged() {
--      int i = this.computeNextAutosaveInterval();
--      if (i < this.ticksUntilAutosave) {
--         this.ticksUntilAutosave = i;
--      }
--
 +      org.spigotmc.WatchdogThread.tick(); // Spigot
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
-+   }
+    }
+-
++   
+    private int computeNextAutosaveInterval() {
+       float f;
+       if (this.tickRateManager.isSprinting()) {
+@@ -871,6 +_,17 @@
+ 
+    }
+ 
 +
 +   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
 +   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
@@ -825,18 +673,11 @@
 +   }
 +   public String getStatusJson() {
 +      return cachedServerStatus;
-    }
- 
++   }
++
     protected void logTickTime(long p_298126_) {
-@@ -876,7 +_,7 @@
- 
-    private ServerStatus buildServerStatus() {
-       ServerStatus.Players serverstatus$players = this.buildPlayerStatus();
--      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile());
-+      return new ServerStatus(Component.nullToEmpty(this.motd), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.current()), Optional.ofNullable(this.statusIcon), this.enforceSecureProfile(), Optional.of(new net.minecraftforge.network.ServerStatusPing()));
     }
  
-    private ServerStatus.Players buildPlayerStatus() {
 @@ -900,24 +_,27 @@
     }
  
@@ -938,15 +779,6 @@
     }
  
     public boolean isReady() {
-@@ -1329,7 +_,7 @@
-    }
- 
-    public long getNextTickTime() {
--      return this.nextTickTimeNanos;
-+      return this.nextTickTime;
-    }
- 
-    public DataFixer getFixerUpper() {
 @@ -1365,6 +_,7 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.resources.close();
@@ -979,29 +811,6 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1512,20 +_,8 @@
-       this.enforceWhitelist = p_130005_;
-    }
- 
--   public float getCurrentSmoothedTickTime() {
--      return this.smoothedTickTimeMillis;
--   }
--
--   public ServerTickRateManager tickRateManager() {
--      return this.tickRateManager;
--   }
--
--   public long getAverageTickTimeNanos() {
--      return this.aggregatedTickTimesNanos / (long)Math.min(100, Math.max(this.tickCount, 1));
--   }
--
--   public long[] getTickTimesNanos() {
--      return this.tickTimesNanos;
-+   public float getAverageTickTime() {
-+      return this.averageTickTime;
-    }
- 
-    public int getProfilePermissions(GameProfile p_129945_) {
 @@ -1551,6 +_,31 @@
  
     public abstract boolean isSingleplayerOwner(GameProfile p_129840_);
@@ -1034,17 +843,6 @@
     public void dumpServerProperties(Path p_177911_) throws IOException {
     }
  
-@@ -1580,8 +_,8 @@
-    private void dumpMiscStats(Path p_129951_) throws IOException {
-       try (Writer writer = Files.newBufferedWriter(p_129951_)) {
-          writer.write(String.format(Locale.ROOT, "pending_tasks: %d\n", this.getPendingTasksCount()));
--         writer.write(String.format(Locale.ROOT, "average_tick_time: %f\n", this.getCurrentSmoothedTickTime()));
--         writer.write(String.format(Locale.ROOT, "tick_times: %s\n", Arrays.toString(this.tickTimesNanos)));
-+         writer.write(String.format(Locale.ROOT, "average_tick_time: %f\n", this.getAverageTickTime()));
-+         writer.write(String.format(Locale.ROOT, "tick_times: %s\n", Arrays.toString(this.tickTimes)));
-          writer.write(String.format(Locale.ROOT, "queue: %s\n", Util.backgroundExecutor()));
-       }
- 
 @@ -1716,6 +_,10 @@
        return this.worldData;
     }
@@ -1073,15 +871,6 @@
     public boolean logIPs() {
        return true;
     }
-@@ -1791,7 +_,7 @@
-       }
-    }
- 
--   public static record ServerResourcePackInfo(UUID id, String url, String hash, boolean isRequired, @Nullable Component prompt) {
-+   public static record ServerResourcePackInfo(String url, String hash, boolean isRequired, @Nullable Component prompt) {
-    }
- 
-    static class TimeProfiler {
 @@ -1835,4 +_,18 @@
           };
        }

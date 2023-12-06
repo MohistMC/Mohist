@@ -8,17 +8,14 @@
  import java.util.UUID;
  import java.util.function.UnaryOperator;
  import javax.annotation.Nullable;
-@@ -17,9 +_,8 @@
+@@ -17,6 +_,7 @@
  import net.minecraft.network.chat.Style;
  import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
  import net.minecraft.server.level.ServerLevel;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.FilteredText;
--import net.minecraft.sounds.SoundEvent;
--import net.minecraft.sounds.SoundEvents;
- import net.minecraft.util.Mth;
- import net.minecraft.world.entity.Entity;
- import net.minecraft.world.entity.player.Player;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
 @@ -29,14 +_,18 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec2;
@@ -154,14 +151,3 @@
     }
  
     public boolean isWaxed() {
-@@ -279,5 +_,10 @@
- 
-    public SoundEvent getSignInteractionFailedSoundEvent() {
-       return SoundEvents.WAXED_SIGN_INTERACT_FAIL;
-+   }
-+
-+   @Override
-+   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
-+      return new net.minecraft.world.phys.AABB(this.getBlockPos(), this.getBlockPos().offset(1, 1, 1));
-    }
- }

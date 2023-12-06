@@ -1,13 +1,12 @@
 --- a/net/minecraft/world/level/block/ComposterBlock.java
 +++ b/net/minecraft/world/level/block/ComposterBlock.java
-@@ -1,6 +_,6 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.level.block;
  
--import com.mojang.serialization.MapCodec;
 +import com.google.common.util.concurrent.AtomicDouble;
+ import com.mojang.serialization.MapCodec;
  import it.unimi.dsi.fastutil.objects.Object2FloatMap;
  import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
- import javax.annotation.Nullable;
 @@ -40,6 +_,9 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;

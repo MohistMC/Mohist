@@ -29,7 +29,6 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -340,12 +339,6 @@ public class TierSortingRegistry {
 
     private static class ClientEvents {
         public static void init() {
-            MinecraftForge.EVENT_BUS.addListener(ClientEvents::clientLogInToServer);
-        }
-
-        private static void clientLogInToServer(ClientPlayerNetworkEvent.LoggingIn event) {
-            if (event.getConnection() == null || !event.getConnection().isMemoryConnection())
-                recalculateItemTiers();
         }
     }
 }

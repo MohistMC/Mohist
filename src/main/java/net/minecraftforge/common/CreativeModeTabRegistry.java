@@ -31,7 +31,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.CreativeModeTabSearchRegistry;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
@@ -244,9 +243,6 @@ public final class CreativeModeTabRegistry
         }
 
         recalculateItemCreativeModeTabs();
-
-        if (FMLEnvironment.dist == Dist.CLIENT && !FMLLoader.getLaunchHandler().isData())
-            CreativeModeTabSearchRegistry.createSearchTrees();
     }
 
     private static void addTabOrder(CreativeModeTab tab, ResourceLocation name)

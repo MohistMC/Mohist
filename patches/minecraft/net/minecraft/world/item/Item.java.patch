@@ -12,13 +12,12 @@
     protected static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int MAX_STACK_SIZE = 64;
-@@ -99,7 +_,8 @@
+@@ -99,7 +_,7 @@
              LOGGER.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
 -
 +      this.canRepair = p_41383_.canRepair;
-+      initClient();
     }
  
     /** @deprecated */
@@ -150,39 +149,6 @@
     @Nullable
     public FoodProperties getFoodProperties() {
        return this.foodProperties;
-@@ -370,6 +_,32 @@
-       return this.requiredFeatures;
-    }
- 
-+   // FORGE START
-+   private Object renderProperties;
-+
-+   /*
-+      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
-+      Call RenderProperties.get instead
-+    */
-+   public Object getRenderPropertiesInternal() {
-+      return renderProperties;
-+   }
-+
-+   private void initClient() {
-+      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
-+         initializeClient(properties -> {
-+            if (properties == this)
-+               throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");
-+            this.renderProperties = properties;
-+         });
-+      }
-+   }
-+
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
-+   }
-+   // END FORGE
-+
-    public static class Properties {
-       int maxStackSize = 64;
-       int maxDamage;
 @@ -380,6 +_,7 @@
        FoodProperties foodProperties;
        boolean isFireResistant;

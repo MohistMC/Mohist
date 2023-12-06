@@ -1389,17 +1389,6 @@
        }
  
        boolean flag = f1 < -90.0F || f1 >= 90.0F;
-@@ -2471,10 +_,6 @@
-       return p_21261_;
-    }
- 
--   protected float getMaxHeadRotationRelativeToBody() {
--      return 50.0F;
--   }
--
-    public void aiStep() {
-       if (this.noJumpDelay > 0) {
-          --this.noJumpDelay;
 @@ -2529,6 +_,10 @@
        this.level().getProfiler().push("jump");
        if (this.jumping && this.isAffectedByFluids()) {

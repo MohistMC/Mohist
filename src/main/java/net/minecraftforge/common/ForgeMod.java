@@ -52,7 +52,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
 import net.minecraftforge.common.crafting.conditions.FalseCondition;
@@ -262,47 +261,6 @@ public class ForgeMod {
                 public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
                     return canFluidLog ? super.getBlockPathType(state, level, pos, mob, true) : null;
                 }
-
-                @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-                    consumer.accept(new IClientFluidTypeExtensions() {
-                        private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
-                                WATER_STILL = new ResourceLocation("block/water_still"),
-                                WATER_FLOW = new ResourceLocation("block/water_flow"),
-                                WATER_OVERLAY = new ResourceLocation("block/water_overlay");
-
-                        @Override
-                        public ResourceLocation getStillTexture() {
-                            return WATER_STILL;
-                        }
-
-                        @Override
-                        public ResourceLocation getFlowingTexture() {
-                            return WATER_FLOW;
-                        }
-
-                        @Nullable
-                        @Override
-                        public ResourceLocation getOverlayTexture() {
-                            return WATER_OVERLAY;
-                        }
-
-                        @Override
-                        public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
-                            return UNDERWATER_LOCATION;
-                        }
-
-                        @Override
-                        public int getTintColor() {
-                            return 0xFF3F76E4;
-                        }
-
-                        @Override
-                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                            return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
-                        }
-                    });
-                }
             });
 
     public static final RegistryObject<FluidType> LAVA_TYPE = VANILLA_FLUID_TYPES.register("lava", () ->
@@ -328,24 +286,6 @@ public class ForgeMod {
                 public void setItemMovement(ItemEntity entity) {
                     Vec3 vec3 = entity.getDeltaMovement();
                     entity.setDeltaMovement(vec3.x * (double)0.95F, vec3.y + (double)(vec3.y < (double)0.06F ? 5.0E-4F : 0.0F), vec3.z * (double)0.95F);
-                }
-
-                @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-                    consumer.accept(new IClientFluidTypeExtensions() {
-                        private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
-                                LAVA_FLOW = new ResourceLocation("block/lava_flow");
-
-                        @Override
-                        public ResourceLocation getStillTexture() {
-                            return LAVA_STILL;
-                        }
-
-                        @Override
-                        public ResourceLocation getFlowingTexture() {
-                            return LAVA_FLOW;
-                        }
-                    });
                 }
             });
 
@@ -515,23 +455,6 @@ public class ForgeMod {
                     .sound(SoundActions.BUCKET_FILL, BUCKET_FILL_MILK.get())
                     .sound(SoundActions.BUCKET_EMPTY, BUCKET_EMPTY_MILK.get())
             ) {
-                @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-                    consumer.accept(new IClientFluidTypeExtensions() {
-                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still");
-                        private static final ResourceLocation MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
-
-                        @Override
-                        public ResourceLocation getStillTexture() {
-                            return MILK_STILL;
-                        }
-
-                        @Override
-                        public ResourceLocation getFlowingTexture() {
-                            return MILK_FLOW;
-                        }
-                    });
-                }
             }));
 
             // register fluids

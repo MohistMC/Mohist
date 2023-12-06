@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/block/AbstractCauldronBlock.java
 +++ b/net/minecraft/world/level/block/AbstractCauldronBlock.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.level.block;
+ 
+ import com.mojang.serialization.MapCodec;
++import java.util.Map;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.cauldron.CauldronInteraction;
+ import net.minecraft.server.level.ServerLevel;
 @@ -9,6 +_,7 @@
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.entity.Entity;
@@ -8,16 +16,3 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.BlockGetter;
  import net.minecraft.world.level.Level;
-@@ -39,6 +_,12 @@
-       super(p_151946_);
-       this.interactions = p_312076_;
-    }
-+
-+   // Mohist - start TODO: Fix endertanks mixin ET_Cauldron_Accessor
-+   public Map<Item, CauldronInteraction> getInteractions(){
-+      return interactions;
-+   }
-+   // Mohist end
- 
-    protected double getContentHeight(BlockState p_151948_) {
-       return 0.0D;

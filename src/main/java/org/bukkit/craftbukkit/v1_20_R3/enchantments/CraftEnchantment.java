@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R3.enchantments;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
@@ -88,7 +89,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean isCursed() {
-        return handle instanceof EnchantmentBinding || handle instanceof EnchantmentVanishing;
+        return handle instanceof BindingCurseEnchantment || handle instanceof VanishingCurseEnchantment;
     }
 
     @Override
@@ -177,3 +178,4 @@ public class CraftEnchantment extends Enchantment {
     public String toString() {
         return "CraftEnchantment[" + getKey() + "]";
     }
+}

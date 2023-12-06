@@ -15,7 +15,7 @@
        this.smallExplosionParticles = p_312175_;
        this.largeExplosionParticles = p_310459_;
        this.explosionSound = p_311795_;
-+      this.yield = this.blockInteraction == Explosion.Effect.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F; // CraftBukkit
++      this.yield = this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY ? 1.0F / this.radius : 1.0F; // CraftBukkit
     }
  
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity p_46063_) {

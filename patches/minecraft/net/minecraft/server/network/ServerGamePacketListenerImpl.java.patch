@@ -56,22 +56,6 @@
  import net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket;
  import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
  import net.minecraft.network.protocol.game.ClientboundTagQueryPacket;
-@@ -84,7 +_,6 @@
- import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
- import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
- import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
--import net.minecraft.network.protocol.game.ServerboundContainerSlotStateChangedPacket;
- import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
- import net.minecraft.network.protocol.game.ServerboundEntityTagQuery;
- import net.minecraft.network.protocol.game.ServerboundInteractPacket;
-@@ -127,7 +_,6 @@
- import net.minecraft.util.Mth;
- import net.minecraft.util.SignatureValidator;
- import net.minecraft.util.StringUtil;
--import net.minecraft.world.Container;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResult;
- import net.minecraft.world.effect.MobEffects;
 @@ -135,9 +_,12 @@
  import net.minecraft.world.entity.ExperienceOrb;
  import net.minecraft.world.entity.HasCustomInventoryScreen;
@@ -85,11 +69,8 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.ChatVisiblity;
  import net.minecraft.world.entity.player.Inventory;
-@@ -148,15 +_,16 @@
- import net.minecraft.world.inventory.AbstractContainerMenu;
- import net.minecraft.world.inventory.AnvilMenu;
- import net.minecraft.world.inventory.BeaconMenu;
--import net.minecraft.world.inventory.CrafterMenu;
+@@ -151,12 +_,14 @@
+ import net.minecraft.world.inventory.CrafterMenu;
  import net.minecraft.world.inventory.MerchantMenu;
  import net.minecraft.world.inventory.RecipeBookMenu;
 +import net.minecraft.world.inventory.Slot;
@@ -103,14 +84,6 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -165,7 +_,6 @@
- import net.minecraft.world.level.block.CommandBlock;
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.entity.CommandBlockEntity;
--import net.minecraft.world.level.block.entity.CrafterBlockEntity;
- import net.minecraft.world.level.block.entity.JigsawBlockEntity;
- import net.minecraft.world.level.block.entity.SignBlockEntity;
- import net.minecraft.world.level.block.entity.StructureBlockEntity;
 @@ -173,14 +_,62 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
@@ -193,9 +166,8 @@
        this.player = p_9772_;
        p_9772_.connection = this;
        p_9772_.getTextFilter().join();
--      this.signedMessageDecoder = SignedMessageChain.Decoder.unsigned(p_9772_.getUUID(), p_9770_::enforceSecureProfile);
+       this.signedMessageDecoder = SignedMessageChain.Decoder.unsigned(p_9772_.getUUID(), p_9770_::enforceSecureProfile);
 -      this.chatMessageChain = new FutureChain(p_9770_);
-+	  this.signedMessageDecoder = p_9770_.enforceSecureProfile() ? SignedMessageChain.Decoder.REJECT_ALL : SignedMessageChain.Decoder.unsigned(p_9772_.getUUID());
 +	  this.chatMessageChain = new FutureChain(p_9770_.chatExecutor); // CraftBukkit - async chat
 +   }
 +
@@ -381,15 +353,6 @@
        });
     }
  
-@@ -643,7 +_,7 @@
-                } else if (p_9919_.getUpdateType() == StructureBlockEntity.UpdateType.LOAD_AREA) {
-                   if (!structureblockentity.isStructureLoadable()) {
-                      this.player.displayClientMessage(Component.translatable("structure_block.load_not_found", s), false);
--                  } else if (structureblockentity.placeStructureIfSameSize(this.player.serverLevel())) {
-+                  } else if (structureblockentity.loadStructure(this.player.serverLevel())) {
-                      this.player.displayClientMessage(Component.translatable("structure_block.load_success", s), false);
-                   } else {
-                      this.player.displayClientMessage(Component.translatable("structure_block.load_prepare", s), false);
 @@ -679,8 +_,6 @@
              jigsawblockentity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, p_9917_.getPool()));
              jigsawblockentity.setFinalState(p_9917_.getFinalState());
@@ -1037,8 +1000,7 @@
        if (isChatMessageIllegal(p_9841_.message())) {
           this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
        } else {
--         Optional<LastSeenMessages> optional = this.tryHandleChat(p_9841_.lastSeenMessages());
-+         Optional<LastSeenMessages> optional = this.tryHandleChat(p_9841_.message(), p_9841_.timeStamp(), p_9841_.lastSeenMessages());
+          Optional<LastSeenMessages> optional = this.tryHandleChat(p_9841_.lastSeenMessages());
           if (optional.isPresent()) {
 -            this.server.submit(() -> {
 -               PlayerChatMessage playerchatmessage;
@@ -1076,12 +1038,8 @@
        }
     }
  
-@@ -1171,11 +_,17 @@
-       if (isChatMessageIllegal(p_215225_.command())) {
-          this.disconnect(Component.translatable("multiplayer.disconnect.illegal_characters"));
-       } else {
--         Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.lastSeenMessages());
-+         Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.command(), p_215225_.timeStamp(), p_215225_.lastSeenMessages());
+@@ -1174,8 +_,14 @@
+          Optional<LastSeenMessages> optional = this.tryHandleChat(p_215225_.lastSeenMessages());
           if (optional.isPresent()) {
              this.server.submit(() -> {
 +               // CraftBukkit start - SPIGOT-7346: Prevent disconnected players from executing commands

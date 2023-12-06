@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -20,7 +_,6 @@
- import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
--import net.minecraft.tags.EntityTypeTags;
- import net.minecraft.util.Mth;
- import net.minecraft.world.damagesource.DamageSource;
- import net.minecraft.world.entity.Entity;
 @@ -30,6 +_,7 @@
  import net.minecraft.world.entity.MoverType;
  import net.minecraft.world.entity.Pose;
@@ -108,11 +100,10 @@
           this.discard();
        }
  
-@@ -328,9 +_,14 @@
- 
+@@ -329,8 +_,14 @@
        boolean flag = entity.getType() == EntityType.ENDERMAN;
        int k = entity.getRemainingFireTicks();
--      boolean flag1 = entity.getType().is(EntityTypeTags.DEFLECTS_ARROWS);
+       boolean flag1 = entity.getType().is(EntityTypeTags.DEFLECTS_ARROWS);
 -      if (this.isOnFire() && !flag && !flag1) {
 -         entity.setSecondsOnFire(5);
 +      if (this.isOnFire() && !flag) {

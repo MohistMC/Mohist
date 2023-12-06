@@ -9,15 +9,15 @@ public final class CraftCrafter extends org.bukkit.craftbukkit.v1_20_R3.block.da
         super();
     }
 
-    public CraftCrafter(net.minecraft.world.level.block.state.IBlockData state) {
+    public CraftCrafter(net.minecraft.world.level.block.state.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftCrafter
 
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean CRAFTING = getBoolean(net.minecraft.world.level.block.CrafterBlock.class, "crafting");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateBoolean TRIGGERED = getBoolean(net.minecraft.world.level.block.CrafterBlock.class, "triggered");
-    private static final net.minecraft.world.level.block.state.properties.BlockStateEnum<?> ORIENTATION = getEnum(net.minecraft.world.level.block.CrafterBlock.class, "orientation");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty CRAFTING = getBoolean(net.minecraft.world.level.block.CrafterBlock.class, "crafting");
+    private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.CrafterBlock.class, "triggered");
+    private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> ORIENTATION = getEnum(net.minecraft.world.level.block.CrafterBlock.class, "orientation");
 
     @Override
     public boolean isCrafting() {

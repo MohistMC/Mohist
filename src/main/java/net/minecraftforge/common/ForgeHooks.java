@@ -53,7 +53,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -367,7 +367,7 @@ public class ForgeHooks {
 
     @Nullable
     public static Component onServerChatSubmittedEvent(ServerPlayer player, Component message) {
-        var plain = message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
+        var plain = message.getContents() instanceof PlainTextContents.LiteralContents literalContents ? literalContents.text() : "";
         ServerChatEvent event = new ServerChatEvent(player, plain, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
