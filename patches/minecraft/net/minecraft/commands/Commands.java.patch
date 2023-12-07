@@ -180,7 +180,7 @@
 +      // Remove labels that were removed during the event
 +      for (String orig : bukkit) {
 +         if (!event.getCommands().contains(orig)) {
-+            rootcommandnode.removeCommand(orig);
++            // rootcommandnode.removeCommand(orig); // Mohist TODO
 +         }
 +      }
 +      // CraftBukkit end

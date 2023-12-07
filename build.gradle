@@ -1,5 +1,5 @@
 import net.minecraftforge.forge.tasks.*
-import net.minecraftforge.gradleutils.PomUtils
+import com.mohistmc.tasks.JenkinsNumber
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.46.0'
@@ -22,17 +22,17 @@ ext {
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.2.0:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.0'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.6'
+    MOHIST_VERSION = JenkinsNumber.info()
 }
 
 tasks.register('setup') {
-    dependsOn ':mohist:extractMapped'
+    dependsOn ':forge:extractMapped'
     if (findProject(':clean'))
         dependsOn ':clean:extractMapped'
 }
 
 tasks.register('doChecks') {
-    dependsOn ':mohist:checkJarCompatibility'
-    dependsOn ':mohist:publish'
+    dependsOn ':forge:checkJarCompatibility'
 }
 
 project(':mcp') {

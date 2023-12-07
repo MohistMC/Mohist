@@ -117,7 +117,7 @@ final class PluginClassLoader extends URLClassLoader implements RemappingClassLo
             throw new InvalidPluginException("Exception initializing main class `" + description.getMain() + "'", ex);
         }
         if (PluginHooks.hook(plugin)) {
-            ((TransformingClassLoader) MohistMC.classLoader).addChild(this);
+           // ((TransformingClassLoader) MohistMC.classLoader).addChild(this); // Mohist TODO
         }
     }
 

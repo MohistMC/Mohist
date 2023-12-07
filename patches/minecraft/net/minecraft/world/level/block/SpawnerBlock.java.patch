@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpawnerBlock.java
 +++ b/net/minecraft/world/level/block/SpawnerBlock.java
-@@ -2,15 +_,21 @@
+@@ -2,10 +_,17 @@
  
  import com.mojang.serialization.MapCodec;
  import java.util.List;
@@ -18,11 +18,6 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.TooltipFlag;
  import net.minecraft.world.level.BlockGetter;
- import net.minecraft.world.level.Level;
--import net.minecraft.world.level.Spawner;
- import net.minecraft.world.level.block.entity.BlockEntity;
- import net.minecraft.world.level.block.entity.BlockEntityTicker;
- import net.minecraft.world.level.block.entity.BlockEntityType;
 @@ -40,12 +_,24 @@
  
     public void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {

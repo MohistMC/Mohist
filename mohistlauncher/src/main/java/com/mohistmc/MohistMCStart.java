@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
-import net.minecraftforge.bootstrap.BootstrapLauncher;
 
 public class MohistMCStart {
 
@@ -103,6 +102,5 @@ public class MohistMCStart {
         }
 
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
-        BootstrapLauncher.main(args_);
     }
 }

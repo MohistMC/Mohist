@@ -41,7 +41,7 @@
        this.addOptionalTasks();
        this.configurationTasks.add(new JoinWorldTask());
        this.startNextTask();
-@@ -107,13 +_,13 @@
+@@ -107,7 +_,7 @@
              return;
           }
  
@@ -50,13 +50,6 @@
           if (component != null) {
              this.disconnect(component);
              return;
-          }
- 
--         ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
-+         ServerPlayer serverplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player);
-          playerlist.placeNewPlayer(this.connection, serverplayer, this.createCookie(this.clientInformation));
-          this.connection.resumeInboundAfterProtocolChange();
-       } catch (Exception exception) {
 @@ -135,7 +_,7 @@
           ConfigurationTask configurationtask = this.configurationTasks.poll();
           if (configurationtask != null) {

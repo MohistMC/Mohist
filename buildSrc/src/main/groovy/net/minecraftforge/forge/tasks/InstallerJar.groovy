@@ -96,12 +96,11 @@ abstract class InstallerJar extends Zip {
                 //println('')
                 def resolved = cfg.resolvedConfiguration.resolvedArtifacts
                 int found = 0
-                for (var dep : resolved) {
+                resolved.each { var dep ->
                     def name = Util.getMavenInfoFromDep(dep).name
                     def info = deps.remove(name)
                     if (info == null) {
                         //println("Skipping: $name")
-                        continue
                     }
                     //println("-$name")
                     found++

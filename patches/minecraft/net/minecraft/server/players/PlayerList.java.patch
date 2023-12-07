@@ -300,7 +300,7 @@
        this.server.getCustomBossEvents().onPlayerDisconnect(p_11287_);
        UUID uuid = p_11287_.getUUID();
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
-@@ -348,38 +_,74 @@
+@@ -348,11 +_,32 @@
           this.advancements.remove(uuid);
        }
  
@@ -325,17 +325,16 @@
 +   private AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
     @Nullable
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
--      if (this.bans.isBanned(p_11258_)) {
-+      ServerPlayer serverPlayer = getPlayerForLogin(p_11258_);
++      ServerPlayer serverPlayer = getPlayerForLogin(p_11258_, ClientInformation.createDefault());
 +      entity.set(serverPlayer);
 +      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
 +      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
-+      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
++      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress(), ((java.net.InetSocketAddress) p_11257_).getAddress()); // Mohist TODO
 +
-+      if (getBans().isBanned(p_11258_) && !getBans().get(p_11258_).hasExpired()) {
+       if (this.bans.isBanned(p_11258_)) {
           UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
           MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.banned.reason", userbanlistentry.getReason());
-          if (userbanlistentry.getExpires() != null) {
+@@ -360,20 +_,30 @@
              mutablecomponent1.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(userbanlistentry.getExpires())));
           }
  
@@ -374,17 +373,6 @@
     }
  
     public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
-       return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
-    }
- 
-+   public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_, ServerPlayer player) {
-+      player.updateOptions(p_300548_);
-+      return player;
-+   }
-+
-    public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
-       UUID uuid = p_299278_.getId();
-       Set<ServerPlayer> set = Sets.newIdentityHashSet();
 @@ -402,77 +_,174 @@
        return !set.isEmpty();
     }

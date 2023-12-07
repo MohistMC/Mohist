@@ -7,7 +7,13 @@ version = VERSION
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.minecraftforge.net/' }
     maven { url 'https://maven.mohistmc.com/' }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.warnings = false
 }
 
 dependencies {

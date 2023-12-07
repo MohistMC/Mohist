@@ -1,11 +1,11 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'com.github.ben-manes.versions'
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
     id 'java-library'
-    id 'jacoco'
+    id 'net.minecraftforge.gradleutils'
 }
 
-dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
     compileOnly(libs.nulls)
@@ -16,45 +16,28 @@ dependencies {
     implementation(libs.commons.io)
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
 }
 
-ext {
-    MANIFESTS = [
-        '': [
-            'FMLModType': 'LIBRARY',
-            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': '1.20.2',
-            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}"
-        ] as LinkedHashMap,
-        'net/minecraftforge/fml/loading/': [
-            'Specification-Title':      'FMLLoader',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML Loader',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge'
-        ] as LinkedHashMap
-    ]
-}
-
-jar.doFirst {
-    manifest.attributes['Automatic-Module-Name'] = project.name
-    MANIFESTS.each { pkg, values ->
-        if (pkg == '')
-            manifest.attributes(values)
-        else
-            manifest.attributes(values, pkg)
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.fmlcore',
+                'FMLModType': 'LIBRARY'
+        ] as LinkedHashMap)
+        attributes([
+                'Specification-Title':      'FML',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    '1',
+                'Implementation-Title':     'FML',
+                'Implementation-Version':   '1.0',
+                'Implementation-Vendor':    'Forge Development LLC'
+        ] as LinkedHashMap, 'net/minecraftforge/fml/')
     }
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:-unchecked'
-}
-artifacts {
-    archives jar
-    archives sourcesJar
 }
