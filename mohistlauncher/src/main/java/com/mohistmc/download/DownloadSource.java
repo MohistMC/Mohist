@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.network.download;
+package com.mohistmc.download;
 
-import com.mohistmc.MohistMCStart;
+import com.mohistmc.Main;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
@@ -63,6 +63,6 @@ public enum DownloadSource {
     }
 
     public static boolean isCN() {
-        return MohistMCStart.i18n.isCN() && ConnectionUtil.getUrlMillis(CHINA.getUrl()) < ConnectionUtil.getUrlMillis(MOHIST.getUrl());
+        return Main.i18n.isCN() && ConnectionUtil.getUrlMillis(CHINA.getUrl()) < ConnectionUtil.getUrlMillis(MOHIST.getUrl());
     }
 }

@@ -3,7 +3,7 @@ package com.mohistmc.bukkit.remapping;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import io.izzel.tools.func.Func4;
 import io.izzel.tools.product.Product;
 import io.izzel.tools.product.Product2;
@@ -126,7 +126,7 @@ public class RedirectAdapter implements PluginTransformer {
 
     public static void scanMethod(byte[] bytes) {
         ClassReader reader = new ClassReader(bytes);
-        MohistMC.LOGGER.debug(MARKER, "Scanning {}", reader.getClassName());
+        Mohist.LOGGER.debug(MARKER, "Scanning {}", reader.getClassName());
         ClassNode node = new ClassNode();
         reader.accept(node, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
         for (MethodNode method : node.methods) {
@@ -152,7 +152,7 @@ public class RedirectAdapter implements PluginTransformer {
                             if (target != null) {
                                 Func4<ClassLoaderRemapper, Method, Object, Object[], Object[]> bridge = METHOD_TO_HANDLER.get(methodToString(target));
                                 if (bridge != null) {
-                                    MohistMC.LOGGER.debug(MARKER, "Creating bridge handler {}/{}{} to {}", node.name, method.name, method.desc, methodToString(target));
+                                    Mohist.LOGGER.debug(MARKER, "Creating bridge handler {}/{}{} to {}", node.name, method.name, method.desc, methodToString(target));
                                     METHOD_TO_HANDLER.put(node.name + '/' + method.name + method.desc, new BridgeHandler(bridge, target));
                                 }
                             }

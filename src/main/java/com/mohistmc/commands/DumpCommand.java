@@ -18,7 +18,7 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.api.ChatComponentAPI;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.tools.HasteUtils;
@@ -305,7 +305,7 @@ public class DumpCommand extends Command {
         try {
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            MohistMC.LOGGER.error(e);
+            Mohist.LOGGER.error(e);
         }
     }
 }

@@ -609,6 +609,10 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
     archiveVersion = MC_VERSION + '-' + MOHIST_VERSION
     destinationDirectory = file('build/libs')
 
+    manifest {
+        attributes('Main-Class': 'com.mohistmc.Main')
+    }
+
     //println(CLASS_PATH)
     from(genServerBinPatches.output) {
         rename { 'data/server.lzma' }

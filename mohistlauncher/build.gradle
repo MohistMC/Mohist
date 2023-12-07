@@ -6,6 +6,7 @@ plugins {
 version = VERSION
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://maven.minecraftforge.net/' }
     maven { url 'https://maven.mohistmc.com/' }

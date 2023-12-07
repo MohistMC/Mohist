@@ -18,7 +18,7 @@
 
 package com.mohistmc.plugins.pluginmanager;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -50,7 +50,7 @@ public class Control {
             jar.close();
             return pdf;
         } catch (InvalidDescriptionException | IOException ioe) {
-            MohistMC.LOGGER.error(ioe);
+            Mohist.LOGGER.error(ioe);
         }
 
         return null;
@@ -62,7 +62,7 @@ public class Control {
             p.onLoad();
             return p;
         } catch (Exception e) {
-            MohistMC.LOGGER.error(e);
+            Mohist.LOGGER.error(e);
         }
         return null;
     }

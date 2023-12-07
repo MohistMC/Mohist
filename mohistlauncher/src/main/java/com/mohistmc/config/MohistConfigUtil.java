@@ -18,9 +18,9 @@
 
 package com.mohistmc.config;
 
-import com.mohistmc.MohistMCStart;
+import com.mohistmc.Main;
+import com.mohistmc.download.DownloadSource;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class MohistConfigUtil {
     public static boolean CHECK_LIBRARIES() {
         String key = "mohist.libraries.check";
         if (System.getProperty("libraries.check") != null) {
-            return Boolean.parseBoolean(System.getProperty("libraries.check"));
+            return Boolean.getBoolean("libraries.check");
         }
         if (yml.get(key) == null) {
             yml.set(key, true);
@@ -115,6 +115,6 @@ public class MohistConfigUtil {
     }
 
     public static void i18n() {
-        MohistMCStart.i18n = new i18n(MohistMCStart.class.getClassLoader(), MOHISTLANG());
+        Main.i18n = new i18n(Main.class.getClassLoader(), MOHISTLANG());
     }
 }

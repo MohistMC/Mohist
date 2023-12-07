@@ -1,7 +1,7 @@
 package com.mohistmc.bukkit.remapping;
 
 import com.google.common.collect.Maps;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +51,7 @@ public class InterfaceInvokerGen implements PluginTransformer {
                     if (!extend) {
                         MethodNode methodNode = generateSynthetic(name, desc, node, remapper);
                         classNode.methods.add(methodNode);
-                        MohistMC.LOGGER.debug("Generated {} redirecting to {}", classNode.name + "/" + name + " " + desc, node.owner + "/" + node.name + " " + node.desc);
+                        Mohist.LOGGER.debug("Generated {} redirecting to {}", classNode.name + "/" + name + " " + desc, node.owner + "/" + node.name + " " + node.desc);
                     }
                 }
             }

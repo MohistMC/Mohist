@@ -3,7 +3,7 @@ package com.mohistmc.forge;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class ForgeInjectBukkit {
 
                 CraftMagicNumbers.ITEM_MATERIAL.put(item, material);
                 CraftMagicNumbers.MATERIAL_ITEM.put(material, item);
-                MohistMC.LOGGER.debug("Save-ITEM: " + material.name() + " - " + material.key);
+                Mohist.LOGGER.debug("Save-ITEM: " + material.name() + " - " + material.key);
             }
         }
     }
@@ -136,7 +136,7 @@ public class ForgeInjectBukkit {
                             CraftBlockStates.register(material, CraftSign.class, CraftSign::new, SignBlockEntity::new);
                         }
                     }
-                    MohistMC.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + material.key);
+                    Mohist.LOGGER.debug("Save-BLOCK:" + material.name() + " - " + material.key);
                 }
             }
         }
@@ -153,7 +153,7 @@ public class ForgeInjectBukkit {
                 if (particle != null) {
                     particle.key = namespacedKey;
                     particleMap.put(namespacedKey, particle);
-                    MohistMC.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
+                    Mohist.LOGGER.debug("Save-ParticleType:" + name + " - " + particle.name());
                 }
             }
         }
@@ -169,7 +169,7 @@ public class ForgeInjectBukkit {
                 map.add(biomeName);
                 org.bukkit.block.Biome biomeCB = MohistDynamEnum.addEnum(org.bukkit.block.Biome.class, biomeName);
                 biomeBiomeMap.put(biome, biomeCB);
-                MohistMC.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
+                Mohist.LOGGER.debug("Save-BIOME:" + biomeCB.name() + " - " + biomeName);
             }
         }
         map.clear();
@@ -188,7 +188,7 @@ public class ForgeInjectBukkit {
                 environment1 = MohistDynamEnum.addEnum(World.Environment.class, name, List.of(Integer.TYPE), List.of(id));
                 environment.put(key, environment1);
                 environment0.put(environment1, key);
-                MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
+                Mohist.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
             }
         }
@@ -228,7 +228,7 @@ public class ForgeInjectBukkit {
                 String name = normalizeName(resourceLocation.toString());
                 Villager.Profession vp = MohistDynamEnum.addEnum(Villager.Profession.class, name);
                 profession.put(vp, resourceLocation);
-                MohistMC.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
+                Mohist.LOGGER.debug("Registered forge VillagerProfession as Profession {}", vp.name());
             }
         }
     }
@@ -241,7 +241,7 @@ public class ForgeInjectBukkit {
             if (isMods(resourceLocation)) {
                 org.bukkit.attribute.Attribute ab = MohistDynamEnum.addEnum(org.bukkit.attribute.Attribute.class, name, List.of(String.class), List.of());
                 attributemap.put(ab, resourceLocation);
-                MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
+                Mohist.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
             }
         }
     }
@@ -253,7 +253,7 @@ public class ForgeInjectBukkit {
             String name = normalizeName(resourceLocation.getPath());
             if (isMods(resourceLocation)) {
                 Fluid fluid = MohistDynamEnum.addEnum(Fluid.class, name);
-                MohistMC.LOGGER.debug("Registered forge Fluid as Fluid(Bukkit) {}", fluid.name());
+                Mohist.LOGGER.debug("Registered forge Fluid as Fluid(Bukkit) {}", fluid.name());
             }
         }
     }
@@ -266,7 +266,7 @@ public class ForgeInjectBukkit {
             if (isMods(resourceLocation)) {
                 Statistic statistic = MohistDynamEnum.addEnum(Statistic.class, name);
                 statisticMap.put(statType, statistic);
-                MohistMC.LOGGER.debug("Registered forge StatType as Statistic(Bukkit) {}", statistic.name());
+                Mohist.LOGGER.debug("Registered forge StatType as Statistic(Bukkit) {}", statistic.name());
             }
         }
     }
@@ -278,7 +278,7 @@ public class ForgeInjectBukkit {
             } catch (Exception e) {
                 String name = category.name();
                 SpawnCategory spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
-                MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
+                Mohist.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
             }
         }
     }
@@ -287,7 +287,7 @@ public class ForgeInjectBukkit {
         for (Pose pose : Pose.values()) {
             if (pose.ordinal() > 14) {
                 org.bukkit.entity.Pose bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.Pose.class, pose.name());
-                MohistMC.LOGGER.debug("Registered forge Pose as Pose(Bukkit) {}", bukkit);
+                Mohist.LOGGER.debug("Registered forge Pose as Pose(Bukkit) {}", bukkit);
             }
         }
     }
@@ -305,7 +305,7 @@ public class ForgeInjectBukkit {
                 Art art = MohistDynamEnum.addEnum(Art.class, name, List.of(Integer.TYPE, Integer.TYPE, Integer.TYPE), List.of(id, width, height));
                 Art.BY_NAME.put(lookupName, art);
                 Art.BY_ID.put(id, art);
-                MohistMC.LOGGER.debug("Registered forge PaintingType as Art {}", art);
+                Mohist.LOGGER.debug("Registered forge PaintingType as Art {}", art);
                 i++;
             }
         }

@@ -1,6 +1,6 @@
 package org.bukkit.plugin.java;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.bukkit.PluginsLibrarySource;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
 import com.mohistmc.tools.ConnectionUtil;
@@ -33,7 +33,7 @@ class LibraryLoader {
         if (desc.getLibraries().isEmpty()) {
             return null;
         }
-        MohistMC.LOGGER.info("[{}] Loading {} libraries... please wait", desc.getName(), desc.getLibraries().size());
+        Mohist.LOGGER.info("[{}] Loading {} libraries... please wait", desc.getName(), desc.getLibraries().size());
 
         List<Dependency> dependencies = new ArrayList<>();
         for (String libraries : desc.getLibraries()) {
@@ -66,7 +66,7 @@ class LibraryLoader {
             }
         }
 
-        MohistMC.LOGGER.info("[{}] Loading {} extra libraries... please wait", desc.getName(), newDependencies.size() - desc.getLibraries().size());
+        Mohist.LOGGER.info("[{}] Loading {} extra libraries... please wait", desc.getName(), newDependencies.size() - desc.getLibraries().size());
 
         for (Dependency dependency : newDependencies) {
             String group = dependency.group().replace(".", "/");
@@ -76,7 +76,7 @@ class LibraryLoader {
             File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
 
             if (file.exists()) {
-                MohistMC.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
+                Mohist.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
                 libraries.add(file);
                 continue;
             }
@@ -100,7 +100,7 @@ class LibraryLoader {
         for (File file : libraries) {
             try {
                 jarFiles.add(file.toURI().toURL());
-                MohistMC.LOGGER.info("[{}] Loaded libraries {}", desc.getName(), file);
+                Mohist.LOGGER.info("[{}] Loaded libraries {}", desc.getName(), file);
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }

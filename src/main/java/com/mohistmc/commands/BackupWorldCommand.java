@@ -18,7 +18,7 @@
 
 package com.mohistmc.commands;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.tools.ZipUtil;
 import com.mohistmc.util.I18n;
 import java.io.File;
@@ -63,7 +63,7 @@ public class BackupWorldCommand extends Command {
                     ZipUtil.zipFolder(Paths.get("./" + args[0]), zip.toPath());
                     sender.sendMessage(I18n.as("worldbackupcmd.notice.worldComplete"));
                 } catch (Exception e) {
-                    MohistMC.LOGGER.error("Failed to save world or this world doesn't exists.", e);
+                    Mohist.LOGGER.error("Failed to save world or this world doesn't exists.", e);
                 }
             }).start();
         }

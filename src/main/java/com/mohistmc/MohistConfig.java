@@ -265,7 +265,7 @@ public class MohistConfig {
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
-        serverbranding = ColorsAPI.of(getString("server_branding", MohistMC.modid));
+        serverbranding = ColorsAPI.of(getString("server_branding", Mohist.modid));
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");

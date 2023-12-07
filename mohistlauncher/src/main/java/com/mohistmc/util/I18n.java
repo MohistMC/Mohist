@@ -1,6 +1,6 @@
 package com.mohistmc.util;
 
-import com.mohistmc.MohistMCStart;
+import com.mohistmc.Main;
 
 /**
  * @author Mgazul by MohistMC
@@ -9,10 +9,10 @@ import com.mohistmc.MohistMCStart;
 public class I18n {
 
     public static String as(String key) {
-        return MohistMCStart.i18n.as(key);
+        return Main.i18n.as(key);
     }
 
     public static String as(String key, Object... objects) {
-        return MohistMCStart.i18n.as(key, objects);
+        return Main.i18n.as(key, objects);
     }
 }

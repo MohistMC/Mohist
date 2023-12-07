@@ -15,18 +15,18 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 
 @Mod("mohist")
 @OnlyIn(Dist.DEDICATED_SERVER)
-public class MohistMC {
+public class Mohist {
     public static final String NAME = "Mohist";
     public static Logger LOGGER = LogManager.getLogger();
     public static i18n i18n;
-    public static String version = "1.20.2";
+    public static String version = "1.20.3";
     public static String modid = "mohist";
     public static ClassLoader classLoader;
     public static VersionInfo versionInfo;
 
-    public MohistMC() {
-        classLoader = MohistMC.class.getClassLoader();
-        i18n = new i18n(MohistMC.class.getClassLoader(), MohistConfig.mohist_lang());
+    public Mohist() {
+        classLoader = Mohist.class.getClassLoader();
+        i18n = new i18n(Mohist.class.getClassLoader(), MohistConfig.mohist_lang());
 
         //TODO: do something when mod loading
         LOGGER.info("Mohist mod loading.....");
@@ -37,7 +37,7 @@ public class MohistMC {
     public static void initVersion() {
         Map<String, String> arguments = new HashMap<>();
         String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
-        arguments.put("mohist", (MohistMC.class.getPackage().getImplementationVersion() != null) ? MohistMC.class.getPackage().getImplementationVersion() : version);
+        arguments.put("mohist", (Mohist.class.getPackage().getImplementationVersion() != null) ? Mohist.class.getPackage().getImplementationVersion() : version);
         arguments.put("bukkit", cbs[0]);
         arguments.put("craftbukkit", cbs[1]);
         arguments.put("spigot", cbs[2]);

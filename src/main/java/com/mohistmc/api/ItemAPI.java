@@ -1,7 +1,7 @@
 package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -130,7 +130,7 @@ public class ItemAPI {
             try {
                 return NbtIo.readCompressed(buf, NbtAccounter.unlimitedHeap());
             } catch (IOException e) {
-                MohistMC.LOGGER.error("Reading nbt ", e);
+                Mohist.LOGGER.error("Reading nbt ", e);
             }
         }
         return null;

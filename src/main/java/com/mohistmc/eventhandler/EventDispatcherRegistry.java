@@ -18,7 +18,7 @@
 
 package com.mohistmc.eventhandler;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.eventhandler.dispatcher.BlockEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.BucketEventDispatcher;
 import com.mohistmc.eventhandler.dispatcher.EntityEventDispatcher;
@@ -36,6 +36,6 @@ public class EventDispatcherRegistry {
         MinecraftForge.EVENT_BUS.register(new ItemEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new EntityEventDispatcher());
         MinecraftForge.EVENT_BUS.register(new BlockEventDispatcher());
-        MohistMC.LOGGER.info("EventDispatcherRegistry initialized");
+        Mohist.LOGGER.info("EventDispatcherRegistry initialized");
     }
 }

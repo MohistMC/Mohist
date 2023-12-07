@@ -1,7 +1,7 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.api.event.MohistNetworkEvent;
 import com.mohistmc.tools.IOUtil;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class MohistProxySelector extends ProxySelector {
     @Override
     public List<Proxy> select(URI uri) {
         if (MohistConfig.networkmanager_debug) {
-            MohistMC.LOGGER.error(uri.toString());
+            Mohist.LOGGER.error(uri.toString());
         }
 
         String uriString = uri.toString();
@@ -53,7 +53,7 @@ public class MohistProxySelector extends ProxySelector {
             try {
                 IOUtil.throwException(new IOException(defaultMsg));
             } catch (Throwable throwable) {
-                MohistMC.LOGGER.error(throwable.getMessage());
+                Mohist.LOGGER.error(throwable.getMessage());
             }
         } else {
             return this.defaultSelector.select(uri);

@@ -18,25 +18,22 @@
 
 package com.mohistmc.libraries;
 
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.JarLoader;
-
 import java.io.File;
 
 public class CustomLibraries {
 
-    public static final File file = new File(MohistMCStart.jarTool.getJarDir() + "/libraries/customize_libraries");
+    public static final File file = new File("libraries/customize_libraries");
 
-    public static void loadCustomLibs() throws Exception {
+    public static void loadCustomLibs() {
         if (!file.exists()) {
             file.mkdirs();
         }
 
         for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (!DefaultLibraries.getDefaultLibs().keySet().toString().contains(lib.getName())) {
-                JarLoader.loadJar(lib.toPath());
+            Libraries libraries = Libraries.from(lib);
+            if (!DefaultLibraries.librariesSet.contains(libraries)) {
+                DefaultLibraries.librariesSet.add(libraries);
             }
-            System.out.println(lib.getName() + " custom library loaded successfully.");
         }
     }
 }

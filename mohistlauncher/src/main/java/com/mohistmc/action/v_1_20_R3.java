@@ -1,10 +1,8 @@
 package com.mohistmc.action;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
-import com.mohistmc.util.MohistModuleManager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,22 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class v_1_20_R2 {
+public class v_1_20_R3 {
 
     public static final List<String> loadedLibsPaths = new ArrayList<>();
-
-    public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
-        if (cmd.stream().anyMatch(s -> s.contains("-Xms"))) {
-            System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
-        }
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(MohistMCStart.jarTool.getJarDir());
-        pb.inheritIO().start().waitFor();
-        Thread.sleep(2000);
-        if (shutdown) {
-            System.exit(0);
-        }
-    }
 
     public static void run() {
         try {
@@ -39,8 +24,6 @@ public class v_1_20_R2 {
     }
 
     public static class Install extends Action {
-
-        public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
         public final File fmlloader;
         public final File fmlcore;
         public final File javafmllanguage;
@@ -67,15 +50,12 @@ public class v_1_20_R2 {
         }
 
         private void install() throws Exception {
-            launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
-            launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
             copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(mohistplugin, "data/mohistplugins-" + mcVer + ".jar");
 
             if (!checkDependencies()) return;
             System.out.println(I18n.as("installation.start"));
@@ -161,7 +141,7 @@ public class v_1_20_R2 {
             String storedServerMD5 = null;
             String storedMohistMD5 = null;
             String serverMD5 = MD5Util.get(serverJar);
-            String mohistMD5 = MD5Util.get(MohistMCStart.jarTool.getFile());
+            String mohistMD5 = MD5Util.get(universalJar);
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
@@ -173,11 +153,7 @@ public class v_1_20_R2 {
                 }
             }
 
-            if (!serverJar.exists()
-                    || storedServerMD5 == null
-                    || storedMohistMD5 == null
-                    || !storedServerMD5.equals(serverMD5)
-                    || !storedMohistMD5.equals(mohistMD5)) {
+            if (!serverJar.exists() || storedServerMD5 == null || storedMohistMD5 == null || !storedServerMD5.equals(serverMD5) || !storedMohistMD5.equals(mohistMD5)) {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
@@ -207,7 +183,6 @@ public class v_1_20_R2 {
             System.out.println(I18n.as("installation.finished"));
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
-            restartServer(launchArgs, true);
         }
 
         protected void libPath() throws Exception {

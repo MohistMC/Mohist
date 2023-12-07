@@ -18,38 +18,35 @@
 
 package com.mohistmc;
 
-import com.mohistmc.action.v_1_20_R2;
+import com.mohistmc.action.v_1_20_R3;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.download.UpdateUtils;
 import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
-import com.mohistmc.tools.JarTool;
+import com.mohistmc.libraries.Libraries;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
-import com.mohistmc.util.MohistModuleManager;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
-public class MohistMCStart {
-
+public class Main {
+    static final boolean DEBUG = Boolean.getBoolean("mohist.debug");
     public static String MCVERSION;
-    public static final List<String> mainArgs = new ArrayList<>();
     public static i18n i18n;
-    public static JarTool jarTool;
 
     public static String getVersion() {
-        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : MCVERSION;
+        return (Main.class.getPackage().getImplementationVersion() != null) ? Main.class.getPackage().getImplementationVersion() : MCVERSION;
     }
 
     public static void main(String[] args) throws Exception {
-        mainArgs.addAll(List.of(args));
-        jarTool = new JarTool(MohistMCStart.class);
         DataParser.parseVersions();
-        DataParser.parseLaunchArgs();
         MohistConfigUtil.copyMohistConfig();
         MohistConfigUtil.i18n();
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
@@ -72,27 +69,19 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
-
+        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) {
+            UpdateUtils.versionCheck();
+        }
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
         }
-
+        CustomLibraries.loadCustomLibs();
         if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
-            v_1_20_R2.run();
+            v_1_20_R3.run();
         }
-
         if (MohistConfigUtil.CHECK_CLIENT_MODS()) {
             AutoDeleteMods.jar();
         }
-
-        CustomLibraries.loadCustomLibs();
-        List<String> forgeArgs = new ArrayList<>();
-        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
-            forgeArgs.add(arg.split(" ")[0]);
-            forgeArgs.add(arg.split(" ")[1]);
-        }
-        new MohistModuleManager(DataParser.launchArgs);
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.as("eula"));
@@ -101,6 +90,45 @@ public class MohistMCStart {
             EulaUtil.writeInfos();
         }
 
-        String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
+        List<URL> urls = new ArrayList<>();
+        String mainClass = "net.minecraftforge.bootstrap.ForgeBootstrap";
+        String extraArgs = "--launchTarget forge_server";
+
+        String[] pts = extraArgs.split(" ");
+        String[] joined = new String[pts.length + args.length];
+        System.arraycopy(pts, 0, joined, 0, pts.length);
+        System.arraycopy(args, 0, joined, pts.length, args.length);
+        args = joined;
+
+        StringBuilder classpath = new StringBuilder(System.getProperty("java.class.path"));
+        if (DEBUG) {
+            System.out.println("Loading classpath: ");
+        }
+        for (Libraries libraries : DefaultLibraries.librariesSet) {
+            if (!libraries.path().endsWith(".jar")) {
+                continue;
+            }
+            File file = new File(libraries.path());
+            URL url = file.toURI().toURL();
+            classpath.append(File.pathSeparator).append(file.getAbsolutePath());
+            urls.add(url);
+            if (DEBUG) {
+                System.out.println(url);
+            }
+        }
+
+        System.setProperty("java.class.path", classpath.toString());
+        ClassLoader parent = Main.class.getClassLoader();
+        URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
+        ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(loader);
+            Class<?> cls = Class.forName(mainClass, false, loader);
+            Method main = cls.getDeclaredMethod("main", String[].class);
+            main.invoke(null, args);
+        }
+        finally {
+            Thread.currentThread().setContextClassLoader(oldCL);
+        }
     }
 }

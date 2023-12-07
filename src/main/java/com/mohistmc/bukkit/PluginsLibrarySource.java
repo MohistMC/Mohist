@@ -1,6 +1,6 @@
 package com.mohistmc.bukkit;
 
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.tools.ConnectionUtil;
 
 /**
@@ -21,6 +21,6 @@ public enum PluginsLibrarySource {
     }
 
     public static boolean isCN() {
-        return MohistMC.i18n.isCN() &&  ConnectionUtil.getUrlMillis(ALIBABA.url) < ConnectionUtil.getUrlMillis(MAVEN2.url);
+        return Mohist.i18n.isCN() &&  ConnectionUtil.getUrlMillis(ALIBABA.url) < ConnectionUtil.getUrlMillis(MAVEN2.url);
     }
 }

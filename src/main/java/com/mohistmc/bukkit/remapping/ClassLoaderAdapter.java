@@ -1,7 +1,7 @@
 package com.mohistmc.bukkit.remapping;
 
 import com.google.common.collect.ImmutableMap;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class ClassLoaderAdapter implements PluginTransformer {
                             next = next.getNext();
                         }
                         if (next == null) continue;
-                        MohistMC.LOGGER.debug(MARKER, "Found new {}/{} call in {} {}", typeInsnNode.desc, ((MethodInsnNode) next).name + ((MethodInsnNode) next).desc, node.name, methodNode.name + methodNode.desc);
+                        Mohist.LOGGER.debug(MARKER, "Found new {}/{} call in {} {}", typeInsnNode.desc, ((MethodInsnNode) next).name + ((MethodInsnNode) next).desc, node.name, methodNode.name + methodNode.desc);
                         ((MethodInsnNode) next).owner = replace;
                         typeInsnNode.desc = replace;
                     }
@@ -62,7 +62,7 @@ public class ClassLoaderAdapter implements PluginTransformer {
         }
         ClassInfo info = classInfo(node);
         if (info == null) return;
-        MohistMC.LOGGER.debug(MARKER, "Transforming classloader class {}", node.name);
+        Mohist.LOGGER.debug(MARKER, "Transforming classloader class {}", node.name);
         if (!info.remapping) {
             implementIntf(node);
         }
@@ -79,7 +79,7 @@ public class ClassLoaderAdapter implements PluginTransformer {
     }
 
     private void implementIntf(ClassNode node) {
-        MohistMC.LOGGER.debug(MARKER, "Implementing RemappingClassLoader for class {}", node.name);
+        Mohist.LOGGER.debug(MARKER, "Implementing RemappingClassLoader for class {}", node.name);
         FieldNode remapper = new FieldNode(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC, "remapper", Type.getDescriptor(ClassLoaderRemapper.class), null, null);
         MethodNode methodNode = new MethodNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "getRemapper", Type.getMethodDescriptor(Type.getType(ClassLoaderRemapper.class)), null, null);
         InsnList list = new InsnList();

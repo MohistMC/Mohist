@@ -8,7 +8,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistConfig;
-import com.mohistmc.MohistMC;
+import com.mohistmc.Mohist;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
 import com.mohistmc.forge.ForgeInjectBukkit;
@@ -24,9 +24,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
@@ -64,16 +62,12 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtException;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.ReportedNbtException;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ConsoleInput;
@@ -130,7 +124,6 @@ import net.minecraft.world.level.storage.LevelDataAndDimensions;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.validation.ContentValidationException;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -327,7 +320,7 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = MohistMC.versionInfo.mohist();
+        this.serverVersion = Mohist.versionInfo.mohist();
         this.structureManager = new CraftStructureManager(console.getStructureManager());
         this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
@@ -927,7 +920,7 @@ public final class CraftServer implements Server {
 
     @Override
     public void reload() {
-        MohistMC.LOGGER.warn("For your server security, Bukkit reloading is not supported by Mohist.");
+        Mohist.LOGGER.warn("For your server security, Bukkit reloading is not supported by Mohist.");
     }
 
     @Override
@@ -2495,7 +2488,7 @@ public final class CraftServer implements Server {
 
         @Override
         public void restart() {
-            MohistMC.LOGGER.error("Mohist Not supported yet, This causes unknown issues with the mod.");
+            Mohist.LOGGER.error("Mohist Not supported yet, This causes unknown issues with the mod.");
         }
 
         @Override
