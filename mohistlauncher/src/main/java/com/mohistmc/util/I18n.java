@@ -1,6 +1,6 @@
 package com.mohistmc.util;
 
-import com.mohistmc.Main;
+import net.minecraftforge.bootstrap.shim.Main;
 
 /**
  * @author Mgazul by MohistMC

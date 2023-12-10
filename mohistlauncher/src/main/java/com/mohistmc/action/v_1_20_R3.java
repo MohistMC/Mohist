@@ -45,7 +45,6 @@ public class v_1_20_R3 {
             this.mojmap = new File(otherStart + "-mappings.txt");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
-            libPath();
             install();
         }
 
@@ -82,6 +81,7 @@ public class v_1_20_R3 {
                 }
             } else {
                 System.out.println(I18n.as("installation.minecraftserver"));
+                System.exit(0);
             }
 
             if (mcpZip.exists()) {
@@ -183,21 +183,6 @@ public class v_1_20_R3 {
             System.out.println(I18n.as("installation.finished"));
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
-        }
-
-        protected void libPath() throws Exception {
-            File out = new File(libPath + "com/mohistmc/cache", "libPath.txt");
-            if (!out.exists()) {
-                out.getParentFile().mkdirs();
-                out.createNewFile();
-            }
-            fileWriterMethod(out.getPath(), libPath);
-        }
-
-        public static void fileWriterMethod(String filepath, String content) throws IOException {
-            try (FileWriter fileWriter = new FileWriter(filepath)) {
-                fileWriter.append(content);
-            }
         }
     }
 }

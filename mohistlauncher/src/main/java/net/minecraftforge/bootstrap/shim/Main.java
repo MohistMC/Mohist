@@ -16,11 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc;
+package net.minecraftforge.bootstrap.shim;
 
 import com.mohistmc.action.v_1_20_R3;
 import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.download.UpdateUtils;
 import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
@@ -33,6 +32,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -49,7 +49,7 @@ public class Main {
         DataParser.parseVersions();
         MohistConfigUtil.copyMohistConfig();
         MohistConfigUtil.i18n();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
+        if (MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             String test = """
 
                      ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
@@ -69,16 +69,12 @@ public class Main {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) {
-            UpdateUtils.versionCheck();
-        }
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
+        // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) { UpdateUtils.versionCheck(); }
+        if (MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
         }
         CustomLibraries.loadCustomLibs();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
-            v_1_20_R3.run();
-        }
+        v_1_20_R3.run();
         if (MohistConfigUtil.CHECK_CLIENT_MODS()) {
             AutoDeleteMods.jar();
         }
@@ -116,7 +112,7 @@ public class Main {
                 System.out.println(url);
             }
         }
-
+        System.out.println(Arrays.stream(args).toList());
         System.setProperty("java.class.path", classpath.toString());
         ClassLoader parent = Main.class.getClassLoader();
         URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
@@ -125,7 +121,7 @@ public class Main {
             Thread.currentThread().setContextClassLoader(loader);
             Class<?> cls = Class.forName(mainClass, false, loader);
             Method main = cls.getDeclaredMethod("main", String[].class);
-            main.invoke(null, args);
+            main.invoke(null, (Object)args);
         }
         finally {
             Thread.currentThread().setContextClassLoader(oldCL);

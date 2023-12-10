@@ -18,7 +18,7 @@
 
 package com.mohistmc.action;
 
-import com.mohistmc.Main;
+import net.minecraftforge.bootstrap.shim.Main;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.DataParser;
@@ -87,7 +87,7 @@ public abstract class Action {
         this.mcpZip = new File(mcpStart + ".zip");
         this.mcpTxt = new File(mcpStart + "-mappings.txt");
 
-        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
+        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-bundled.jar");
     }
 
     protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {

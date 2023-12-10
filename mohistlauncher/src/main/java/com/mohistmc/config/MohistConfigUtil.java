@@ -18,7 +18,7 @@
 
 package com.mohistmc.config;
 
-import com.mohistmc.Main;
+import net.minecraftforge.bootstrap.shim.Main;
 import com.mohistmc.download.DownloadSource;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.yaml.file.YamlConfiguration;
@@ -39,10 +39,6 @@ public class MohistConfigUtil {
         } catch (Exception e) {
             System.out.println("File init exception!");
         }
-    }
-
-    public static boolean INSTALLATIONFINISHED() {
-        return yml.getBoolean("mohist.installation-finished", false);
     }
 
     public static boolean CHECK_UPDATE_AUTO_DOWNLOAD() {

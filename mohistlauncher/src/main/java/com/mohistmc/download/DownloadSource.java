@@ -18,7 +18,7 @@
 
 package com.mohistmc.download;
 
-import com.mohistmc.Main;
+import net.minecraftforge.bootstrap.shim.Main;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
