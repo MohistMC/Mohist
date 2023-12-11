@@ -8,14 +8,21 @@
  import com.google.gson.JsonElement;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Either;
-@@ -40,6 +_,7 @@
+@@ -40,12 +_,9 @@
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.CompletionException;
  import java.util.concurrent.Executor;
 +import java.util.concurrent.atomic.AtomicBoolean;
  import java.util.concurrent.atomic.AtomicInteger;
- import java.util.function.BooleanSupplier;
- import java.util.function.Consumer;
+-import java.util.function.BooleanSupplier;
+-import java.util.function.Consumer;
+-import java.util.function.IntFunction;
+-import java.util.function.IntSupplier;
+-import java.util.function.Supplier;
++import java.util.function.*;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import net.minecraft.CrashReport;
 @@ -75,7 +_,6 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.Mob;
@@ -88,24 +95,27 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -685,7 +_,21 @@
+@@ -685,7 +_,24 @@
  
     private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
        if (!p_143066_.isEmpty()) {
 -         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
 +         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
-+         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter((entity) -> {
-+            boolean needsRemoval = false;
-+            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
-+            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
-+               entity.m_146870_();
-+               needsRemoval = true;
++         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter(new Predicate<Entity>() {
++            @Override
++            public boolean test(Entity entity) {
++               boolean needsRemoval = false;
++               net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++               if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++                  entity.m_146870_();
++                  needsRemoval = true;
++               }
++               if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++                  entity.m_146870_();
++                  needsRemoval = true;
++               }
++               return !needsRemoval;
 +            }
-+            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
-+               entity.m_146870_();
-+               needsRemoval = true;
-+            }
-+            return !needsRemoval;
 +         }));
 +         // CraftBukkit end
        }
@@ -160,12 +170,17 @@
           }
  
        }
-@@ -946,7 +_,7 @@
+@@ -946,7 +_,12 @@
  
     private CompletableFuture<Optional<CompoundTag>> m_214963_(ChunkPos p_214964_) {
        return this.m_223454_(p_214964_).thenApplyAsync((p_214907_) -> {
 -         return p_214907_.map(this::m_214947_);
-+         return p_214907_.map((nbttagcompound) -> m_214947_(nbttagcompound));
++         return p_214907_.map(new Function<CompoundTag, CompoundTag>() {
++            @Override
++            public CompoundTag apply(CompoundTag compoundTag) {
++               return m_214947_(compoundTag);
++            }
++         });
        }, Util.m_183991_());
     }
  

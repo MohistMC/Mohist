@@ -554,7 +554,7 @@
        this.f_19804_.m_135381_(f_20961_, Mth.m_14036_(p_21154_, 0.0F, this.m_21233_()));
     }
  
-@@ -1036,35 +_,26 @@
+@@ -1036,35 +_,28 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -565,6 +565,8 @@
           return false;
 -      } else if (this.m_21224_()) {
 +      } else if (this.m_213877_() || this.f_20890_ || this.m_21223_() <= 0.0F) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
++         return false;
++      } else if (this.m_21224_()) { // Mohist
           return false;
        } else if (p_21016_.m_269533_(DamageTypeTags.f_268745_) && this.m_21023_(MobEffects.f_19607_)) {
           return false;
@@ -937,7 +939,7 @@
           }
  
           if (p_21194_ <= 0.0F) {
-@@ -1583,26 +_,183 @@
+@@ -1583,26 +_,219 @@
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
        if (!this.m_6673_(p_21240_)) {
@@ -969,11 +971,14 @@
 +         }
 +         final float originalDamage = p_21241_;
 +
-+         Function<Double, Double> hardHat = f -> {
-+            if (p_21240_.m_269533_(DamageTypeTags.f_268627_)  && !LivingEntity.this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
-+               return -(f - (f * 0.75F));
++         Function<Double, Double> hardHat = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double input) {
++               if (p_21240_.m_269533_(DamageTypeTags.f_268627_)  && !LivingEntity.this.m_6844_(EquipmentSlot.HEAD).m_41619_()) {
++                  return -(input - (input * 0.75F));
++               }
++               return -0.0;
 +            }
-+            return -0.0;
 +         };
 +         float hardHatModifier = hardHat.apply((double) p_21241_).floatValue();
 +         p_21241_ += hardHatModifier;
@@ -985,28 +990,51 @@
 +            if (!shieldEvent.isCanceled()) {
 +               var blocked = shieldEvent.getBlockedDamage();
 +               shieldTakesDamage = shieldEvent.shieldTakesDamage();
-+               blocking = f13 -> -(double) blocked;
++               blocking = new Function<Double, Double>() {
++                  @Override
++                  public Double apply(Double input) {
++                     return -(double) blocked;
++                  }
++               };
 +            } else {
-+               blocking = f13 -> 0d;
++               blocking = new Function<Double, Double>() {
++                  @Override
++                  public Double apply(Double input) {
++                     return 0d;
++                  }
++               };
 +            }
 +         } else {
-+            blocking = f13 -> 0d;
++            blocking = new Function<Double, Double>() {
++               @Override
++               public Double apply(Double input) {
++                  return 0d;
++               }
++            };
 +         }
 +         float blockingModifier = blocking.apply((double) p_21241_).floatValue();
 +         p_21241_ += blockingModifier;
 +
-+         Function<Double, Double> armor = f -> -(f - LivingEntity.this.m_21161_(p_21240_, f.floatValue()));
++         Function<Double, Double> armor = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double input) {
++               return -(input - LivingEntity.this.m_21161_(p_21240_, input.floatValue()));
++            }
++         };
 +         float armorModifier = armor.apply((double) p_21241_).floatValue();
 +         p_21241_ += armorModifier;
 +
-+         Function<Double, Double> resistance = f -> {
-+            if (!p_21240_.m_269533_(DamageTypeTags.f_268437_) && LivingEntity.this.m_21023_(MobEffects.f_19606_) && !p_21240_.m_269533_(DamageTypeTags.f_268630_)) {
-+               int i = (LivingEntity.this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
-+               int j = 25 - i;
-+               float f1 = f.floatValue() * (float) j;
-+               return -(f - (f1 / 25.0F));
++         Function<Double, Double> resistance = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double input) {
++               if (!p_21240_.m_269533_(DamageTypeTags.f_268437_) && LivingEntity.this.m_21023_(MobEffects.f_19606_) && !p_21240_.m_269533_(DamageTypeTags.f_268630_)) {
++                  int i = (LivingEntity.this.m_21124_(MobEffects.f_19606_).m_19564_() + 1) * 5;
++                  int j = 25 - i;
++                  float f1 = input.floatValue() * (float) j;
++                  return -(input - (f1 / 25.0F));
++               }
++               return -0.0;
 +            }
-+            return -0.0;
 +         };
 +         float resistanceModifier = resistance.apply((double) p_21241_).floatValue();
 +         p_21241_ += resistanceModifier;
@@ -1014,11 +1042,21 @@
 +         // Mohist start
 +         float mohist = this.m_6515_(p_21240_, p_21241_);
 +         float magicModifier = -(p_21241_ - mohist);
-+         Function<Double, Double> magic = f -> (double) magicModifier;
++         Function<Double, Double> magic = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double input) {
++               return (double) magicModifier;
++            }
++         };
 +         p_21241_ += magicModifier;
 +         // Mohist end
 +
-+         Function<Double, Double> absorption = f -> -(Math.max(f - Math.max(f - LivingEntity.this.m_6103_(), 0.0F), 0.0F));
++         Function<Double, Double> absorption = new Function<Double, Double>() {
++            @Override
++            public Double apply(Double input) {
++               return -(Math.max(input - Math.max(input - LivingEntity.this.m_6103_(), 0.0F), 0.0F));
++            }
++         };
 +         float absorptionModifier = absorption.apply((double) p_21241_).floatValue();
 +
 +         EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, p_21240_, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);

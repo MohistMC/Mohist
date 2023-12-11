@@ -25,6 +25,50 @@
  import net.minecraft.core.SectionPos;
  import net.minecraft.core.registries.BuiltInRegistries;
  import net.minecraft.nbt.CompoundTag;
+@@ -38,42 +_,7 @@
+ import net.minecraft.network.chat.OutgoingChatMessage;
+ import net.minecraft.network.chat.RemoteChatSession;
+ import net.minecraft.network.protocol.Packet;
+-import net.minecraft.network.protocol.game.ClientGamePacketListener;
+-import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
+-import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+-import net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket;
+-import net.minecraft.network.protocol.game.ClientboundContainerClosePacket;
+-import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
+-import net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket;
+-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+-import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+-import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket;
+-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+-import net.minecraft.network.protocol.game.ClientboundHorseScreenOpenPacket;
+-import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
+-import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+-import net.minecraft.network.protocol.game.ClientboundMerchantOffersPacket;
+-import net.minecraft.network.protocol.game.ClientboundOpenBookPacket;
+-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
+-import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerCombatEndPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerCombatEnterPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
+-import net.minecraft.network.protocol.game.ClientboundPlayerLookAtPacket;
+-import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
+-import net.minecraft.network.protocol.game.ClientboundResourcePackPacket;
+-import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+-import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetCameraPacket;
+-import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+-import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
+-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
+-import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+-import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
++import net.minecraft.network.protocol.game.*;
+ import net.minecraft.network.protocol.status.ServerStatus;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
 @@ -95,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
@@ -324,7 +368,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,16 +_,52 @@
+@@ -563,16 +_,53 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -366,6 +410,7 @@
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.f_36096_ != this.f_36095_) {
++         useHandleContainerClose = true;
 +         this.m_6915_();
 +      }
 +
@@ -425,7 +470,7 @@
           }
        }
  
-@@ -701,26 +_,53 @@
+@@ -701,26 +_,58 @@
     }
  
     private boolean m_9216_() {
@@ -459,7 +504,11 @@
 +   }
 +
     @Nullable
--   public Entity m_5489_(ServerLevel p_9180_) {
+    public Entity m_5489_(ServerLevel p_9180_) {
++      return changeDimension(p_9180_, p_9180_.m_8871_());
++   }
++
++   @Nullable
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
 +      if (this.m_5803_()) return this; // CraftBukkit - SPIGOT-3154
@@ -613,15 +662,16 @@
        ResourceKey<Level> resourcekey = p_9210_.m_46472_();
        ResourceKey<Level> resourcekey1 = this.m_9236_().m_46472_();
        CriteriaTriggers.f_10588_.m_19757_(this, resourcekey, resourcekey1);
-@@ -830,18 +_,23 @@
+@@ -829,19 +_,25 @@
+       this.f_36096_.m_38946_();
     }
  
++   public Either<Player.BedSleepingProblem, Unit> bedResult; // Mohist
     public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
-+      boolean force = startSleepInBed_force.getAndSet(false);
++      bedResult = null;
 +      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_9115_);
 +      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
-+      Either<Player.BedSleepingProblem, Unit> bedResult = null;
-+      if (ret != null) return Either.left(ret);
++      if (ret != null) bedResult = Either.left(ret);
        Direction direction = this.m_9236_().m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
        if (!this.m_5803_() && this.m_6084_()) {
 -         if (!this.m_9236_().m_6042_().f_63858_()) {
@@ -635,10 +685,10 @@
 -            return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
 +            bedResult = Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
--            this.m_9158_(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true);
++            this.cause = PlayerSpawnChangeEvent.Cause.BED; // Mohist
+             this.m_9158_(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true);
 -            if (this.m_9236_().m_46461_()) {
 -               return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
-+            this.setRespawnPosition(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true, PlayerSpawnChangeEvent.Cause.BED); // CraftBukkit
 +            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
 +               bedResult = Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
@@ -677,7 +727,7 @@
 +         return bedResult; // return immediately if the result is not bypassable by plugins
 +      }
 +
-+      if (force) {
++      if (startSleepInBed_force.getAndSet(false)) {
 +         bedResult = Either.right(Unit.INSTANCE);
 +      }
 +
@@ -741,7 +791,7 @@
        }
  
     }
-@@ -939,16 +_,53 @@
+@@ -939,16 +_,60 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -780,6 +830,13 @@
 +            // Mohist end
 +
 +            boolean cancelled = false;
++            // Mohist start - Moved from CraftEventFactory#callInventoryOpenEvent(...) to fix mixin issues
++            if (this.f_36096_ != this.f_36095_) {
++               useHandleContainerClose = true;
++               this.m_6915_();
++               CraftEventFactory.alreadyProcessed = true;
++            }
++            // Mohist end
 +            abstractcontainermenu = CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
 +            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
 +               // SPIGOT-5263 - close chest if cancelled
@@ -842,7 +899,24 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -1002,6 +_,7 @@
+@@ -994,14 +_,23 @@
+       this.f_8906_.m_9829_(ClientboundBlockEntityDataPacket.m_195642_(p_9099_, BlockEntity::m_187482_));
+    }
+ 
++   public boolean useHandleContainerClose = false; // Mohist
+    public void m_6915_() {
++      if (useHandleContainerClose) {
++         this.f_8906_.m_7951_(new ServerboundContainerClosePacket(this.f_36096_.f_38840_));
++         useHandleContainerClose = false;
++      } else {
++         CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
++         this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
++         this.m_9230_();
++      }
+       this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
+-      this.m_9230_();
+    }
+ 
     public void m_9230_() {
        this.f_36096_.m_6877_(this);
        this.f_36095_.m_150414_(this.f_36096_);
