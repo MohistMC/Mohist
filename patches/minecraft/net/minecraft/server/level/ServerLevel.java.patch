@@ -70,7 +70,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,34 @@
+@@ -181,13 +_,38 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -84,6 +84,10 @@
 +   public PrimaryLevelData M;  // CraftBukkit - type
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++
++   public LevelChunk getChunkIfLoaded(int x, int z) {
++      return this.f_8547_.m_62227_(x, z, false);
++   }
 +
 +   @Override
 +   public ResourceKey<LevelStem> getTypeKey() {
