@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -92,7 +93,7 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         addEnumEnchantment();
         addEnumEffectAndPotion();
-        //addEnumPattern();
+        addEnumEnvironment();
         addEnumEntity();
         addEnumVillagerProfession();
         addEnumArt();
@@ -223,8 +224,9 @@ public class ForgeInjectBukkit {
     }
 
 
-    public static void addEnumEnvironment(net.minecraft.core.Registry<LevelStem> registry) {
+    public static void addEnumEnvironment() {
         int i = World.Environment.values().length;
+        var registry = ServerAPI.getNMSServer().registryAccess().registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
         for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
