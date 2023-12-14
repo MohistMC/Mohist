@@ -93,7 +93,6 @@ public class ForgeInjectBukkit {
         addEnumBiome();
         addEnumEnchantment();
         addEnumEffectAndPotion();
-        addEnumEnvironment();
         addEnumEntity();
         addEnumVillagerProfession();
         addEnumArt();
@@ -224,9 +223,8 @@ public class ForgeInjectBukkit {
     }
 
 
-    public static void addEnumEnvironment() {
+    public static void addEnumEnvironment(Registry<LevelStem> registry) {
         int i = World.Environment.values().length;
-        var registry = ServerAPI.getNMSServer().registryAccess().registryOrThrow(Registry.LEVEL_STEM_REGISTRY);
         for (Map.Entry<ResourceKey<LevelStem>, LevelStem> entry : registry.entrySet()) {
             ResourceKey<LevelStem> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
