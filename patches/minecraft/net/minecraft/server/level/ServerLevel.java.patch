@@ -78,16 +78,18 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -157,6 +_,15 @@
+@@ -157,6 +_,17 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
++import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_20_R3.generator.CraftWorldInfo;
 +import org.bukkit.craftbukkit.v1_20_R3.generator.CustomWorldChunkManager;
 +import org.bukkit.craftbukkit.v1_20_R3.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
 +import org.bukkit.generator.WorldInfo;
@@ -570,11 +572,26 @@
     public <T extends ParticleOptions> boolean sendParticles(ServerPlayer p_8625_, T p_8626_, boolean p_8627_, double p_8628_, double p_8629_, double p_8630_, int p_8631_, double p_8632_, double p_8633_, double p_8634_, double p_8635_) {
        Packet<?> packet = new ClientboundLevelParticlesPacket(p_8626_, p_8627_, p_8628_, p_8629_, p_8630_, (float)p_8632_, (float)p_8633_, (float)p_8634_, (float)p_8635_, p_8631_);
        return this.sendParticles(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
-@@ -1141,6 +_,7 @@
+@@ -1137,10 +_,21 @@
+ 
+    @Nullable
+    public MapItemSavedData getMapData(String p_8785_) {
+-      return this.getServer().overworld().getDataStorage().get(MapItemSavedData.factory(), p_8785_);
++      // CraftBukkit start
++      MapItemSavedData worldmap = this.getServer().overworld().getDataStorage().get(MapItemSavedData.factory(), p_8785_);
++      if (worldmap != null) {
++         worldmap.id = p_8785_;
++      }
++      return worldmap;
++      // CraftBukkit end
     }
  
     public void setMapData(String p_143305_, MapItemSavedData p_143306_) {
-+      p_143306_.id = p_143305_; // CraftBukkit
++      // CraftBukkit start
++      p_143306_.id = p_143305_;
++      MapInitializeEvent event = new MapInitializeEvent(p_143306_.mapView);
++      Bukkit.getServer().getPluginManager().callEvent(event);
++      // CraftBukkit end
        this.getServer().overworld().getDataStorage().set(p_143305_, p_143306_);
     }
  
@@ -649,15 +666,7 @@
     }
  
     public LevelEntityGetter<Entity> getEntities() {
-@@ -1475,6 +_,7 @@
- 
-    final class EntityCallbacks implements LevelCallback<Entity> {
-       public void onCreated(Entity p_143355_) {
-+         p_143355_.inWorld = true; // CraftBukkit - Mark entity as in world
-       }
- 
-       public void onDestroyed(Entity p_143359_) {
-@@ -1505,16 +_,41 @@
+@@ -1505,16 +_,42 @@
              ServerLevel.this.navigatingMobs.add(mob);
           }
  
@@ -670,6 +679,7 @@
           }
  
           p_143371_.updateDynamicGameEventListener(DynamicGameEventListener::add);
++         p_143371_.inWorld = true; // CraftBukkit - Mark entity as in world
 +         p_143371_.valid = true; // CraftBukkit
        }
  

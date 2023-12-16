@@ -11,12 +11,11 @@
  import org.slf4j.Logger;
  
  public class TheEndGatewayBlockEntity extends TheEndPortalBlockEntity {
-@@ -180,6 +_,27 @@
-             } else {
+@@ -181,8 +_,33 @@
                 entity = p_155832_.getRootVehicle();
              }
-+
-+            // CraftBukkit start - Fire PlayerTeleportEvent
+ 
++            // CraftBukkit start - Fire PlayerTeleportEvent/EntityTeleportEvent
 +            if (entity instanceof ServerPlayer serverPlayer) {
 +               org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
 +               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D);
@@ -35,7 +34,15 @@
 +               return;
 +
 +            }
++            org.bukkit.event.entity.EntityTeleportEvent teleEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTeleportEvent(entity, blockpos1.getX() + 0.5, blockpos1.getY() + 0.5, blockpos1.getZ() + 0.5);
++            if (teleEvent.isCancelled()) {
++               return;
++            }
 +            // CraftBukkit end
- 
++
              entity.setPortalCooldown();
-             entity.teleportToWithTicket((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D);
+-            entity.teleportToWithTicket((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY(), (double)blockpos1.getZ() + 0.5D);
++            entity.teleportToWithTicket(teleEvent.getTo().getX(), teleEvent.getTo().getY(), teleEvent.getTo().getZ());
+          }
+ 
+          triggerCooldown(p_155829_, p_155830_, p_155831_, p_155833_);

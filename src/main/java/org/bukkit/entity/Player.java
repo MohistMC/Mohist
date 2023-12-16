@@ -1598,6 +1598,21 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     public void setResourcePack(@NotNull UUID id, @NotNull String url, @Nullable byte[] hash, @Nullable String prompt, boolean force);
 
     /**
+     * Request that the player's client remove a resource pack sent by the
+     * server.
+     *
+     * @param id the id of the resource pack.
+     * @throws IllegalArgumentException If the ID is null.
+     */
+    public void removeResourcePack(@NotNull UUID id);
+
+    /**
+     * Request that the player's client remove all loaded resource pack sent by
+     * the server.
+     */
+    public void removeResourcePacks();
+
+    /**
      * Gets the Scoreboard displayed to this player
      *
      * @return The current scoreboard seen by this player

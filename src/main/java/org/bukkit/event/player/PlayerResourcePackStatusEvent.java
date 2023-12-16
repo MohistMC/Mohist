@@ -1,5 +1,6 @@
 package org.bukkit.event.player;
 
+import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +12,23 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerResourcePackStatusEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
+    private final UUID id;
     private final Status status;
 
-    public PlayerResourcePackStatusEvent(@NotNull final Player who, @NotNull Status resourcePackStatus) {
+    public PlayerResourcePackStatusEvent(@NotNull final Player who, @NotNull UUID id, @NotNull Status resourcePackStatus) {
         super(who);
+        this.id = id;
         this.status = resourcePackStatus;
+    }
+
+    /**
+     * Gets the unique ID of this pack.
+     *
+     * @return unique resource pack ID.
+     */
+    @NotNull
+    public UUID getID() {
+        return id;
     }
 
     /**
@@ -60,6 +73,22 @@ public class PlayerResourcePackStatusEvent extends PlayerEvent {
         /**
          * The client accepted the pack and is beginning a download of it.
          */
-        ACCEPTED;
+        ACCEPTED,
+        /**
+         * The client successfully downloaded the pack.
+         */
+        DOWNLOADED,
+        /**
+         * The pack URL was invalid.
+         */
+        INVALID_URL,
+        /**
+         * The client was unable to reload the pack.
+         */
+        FAILED_RELOAD,
+        /**
+         * The pack was discarded by the client.
+         */
+        DISCARDED;
     }
 }

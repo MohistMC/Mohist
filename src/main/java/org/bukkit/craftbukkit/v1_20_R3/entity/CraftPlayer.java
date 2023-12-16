@@ -42,6 +42,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket;
 import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
@@ -1766,8 +1767,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
+    @Override
+    public void removeResourcePack(UUID id) {
+        Preconditions.checkArgument(id != null, "Resource pack id cannot be null");
+        if (getHandle().connection == null) return;
+        getHandle().connection.send(new ClientboundResourcePackPopPacket(Optional.of(id)));
+    }
+
+    @Override
+    public void removeResourcePacks() {
+        if (getHandle().connection == null) return;
+        getHandle().connection.send(new ClientboundResourcePackPopPacket(Optional.empty()));
+    }
+
     public void addChannel(String channel) {
-        Preconditions.checkState(channels.size() < 1024, "Cannot register channel '%s'. Too many channels registered!", channel);
+        // Preconditions.checkState(channels.size() < 1024, "Cannot register channel '%s'. Too many channels registered!", channel);
         channel = StandardMessenger.validateAndCorrectChannel(channel);
         if (channels.add(channel)) {
             server.getPluginManager().callEvent(new PlayerRegisterChannelEvent(this, channel));

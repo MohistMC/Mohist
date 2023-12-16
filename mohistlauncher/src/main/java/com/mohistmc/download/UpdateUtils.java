@@ -40,7 +40,7 @@ public class UpdateUtils {
         System.out.println(I18n.as("update.stopcheck"));
 
         try {
-            Json json = Json.read(new URL("https://mohistmc.com/api/v2/sources/jenkins/Mohist-1.20.3/builds/latest"));
+            Json json = Json.read(new URL("https://mohistmc.com/api/v2/sources/jenkins/Mohist-1.20.4/builds/latest"));
 
             var jar_version = Integer.parseInt(DataParser.versionMap.get("mohist"));
             var build_number = json.asInteger("id");

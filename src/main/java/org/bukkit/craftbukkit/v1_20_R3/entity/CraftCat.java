@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.animal.CatVariant;
 import org.bukkit.DyeColor;
+import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Cat;
 
 public class CraftCat extends CraftTameableAnimal implements Cat {
@@ -53,14 +55,15 @@ public class CraftCat extends CraftTameableAnimal implements Cat {
 
             net.minecraft.core.Registry<CatVariant> registry = CraftRegistry.getMinecraftRegistry(Registries.CAT_VARIANT);
 
-            return Type.values()[registry.getId(minecraft)];
+            return Registry.CAT_VARIANT.get(CraftNamespacedKey.fromMinecraft(registry.getKey(minecraft)));
         }
 
         public static CatVariant bukkitToMinecraft(Type bukkit) {
             Preconditions.checkArgument(bukkit != null);
 
-            return CraftRegistry.getMinecraftRegistry(Registries.CAT_VARIANT)
-                    .byId(bukkit.ordinal());
+            net.minecraft.core.Registry<CatVariant> registry = CraftRegistry.getMinecraftRegistry(Registries.CAT_VARIANT);
+
+            return registry.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
         }
     }
 }
