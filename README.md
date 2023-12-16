@@ -1,11 +1,11 @@
 <div align="center">
-  <h1>Mohist 1.20.3</h1>
+  <h1>Mohist 1.20.4</h1>
 
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
-[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.2)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.2)
+[![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.3--49.0.3-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.20.4--49.0.9-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.8+7-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.4-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -20,7 +20,7 @@
 Progress
 ------
 
-- [x] Rectify Forge([**588466f5e**](https://github.com/MinecraftForge/MinecraftForge/commit/588466f5e))
+- [x] Rectify Forge([**d44d0b8ed**](https://github.com/MinecraftForge/MinecraftForge/commit/d44d0b8ed))
 - [x] Start patch
     * [x] Bukkit([**adcf6347**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/adcf6347))
     * [ ] CraftBukkit([**5a7080b58**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/5a7080b58))

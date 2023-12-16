@@ -45,6 +45,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final URL issueURL;
     private final List<LanguageSpec> languageSpecs;
     private final boolean showAsResourcePack;
+    private final boolean clientSideOnly;
+    private final boolean showAsDataPack;
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
     private final String license;
@@ -68,6 +70,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .orElse("");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack")
                 .orElse(false);
+        this.clientSideOnly = config.<Boolean>getConfigElement("clientSideOnly")
+                .orElse(false);
+        this.showAsDataPack = config.<Boolean>getConfigElement("showAsDataPack")
+            .orElse(false);
         this.usesServices = config.<List<String>>getConfigElement("services")
                 .orElse(List.of());
         this.properties = config.<Map<String, Object>>getConfigElement("properties")
@@ -124,6 +130,18 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     public boolean showAsResourcePack()
     {
         return this.showAsResourcePack;
+    }
+
+    @Override
+    public boolean isClientSideOnly()
+    {
+        return this.clientSideOnly;
+    }
+
+    @Override
+    public boolean showAsDataPack()
+    {
+        return this.showAsDataPack;
     }
 
     @Override

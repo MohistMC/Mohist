@@ -860,7 +860,7 @@
     }
  
     public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
-+      ResourcePackLoader.loadResourcePacks(p_248681_, ServerLifecycleHooks::buildPackFinder);
++      ResourcePackLoader.loadResourcePacks(p_248681_, false);
        p_248681_.reload();
 +      DataPackConfig.DEFAULT.addModPacks(ForgeHooks.getModPacks());
 +      p_248920_.addModPacks(ForgeHooks.getModPacks());
