@@ -13,6 +13,7 @@ import com.mohistmc.bukkit.entity.MohistModsEntity;
 import com.mohistmc.bukkit.entity.MohistModsGolem;
 import com.mohistmc.bukkit.entity.MohistModsMinecart;
 import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
+import com.mohistmc.bukkit.entity.MohistModsRaider;
 import com.mohistmc.bukkit.entity.MohistModsSkeleton;
 import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import com.mohistmc.bukkit.entity.MohistModsThrowableEntity;
@@ -59,6 +60,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -250,7 +252,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                     else if (entity instanceof net.minecraft.world.entity.monster.Zoglin) { return new CraftZoglin(server, (net.minecraft.world.entity.monster.Zoglin) entity); }
 
                     else if (entity instanceof Warden) { return new CraftWarden(server, (Warden) entity); }
-
+                    else if (entity instanceof Raider) { return new MohistModsRaider(server, (Raider) entity); }
                     else  { return new CraftMonster(server, (net.minecraft.world.entity.monster.Monster) entity); }
                 }
                 else if (entity instanceof AbstractGolem abstractGolem) {
