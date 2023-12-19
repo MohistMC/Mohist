@@ -53,8 +53,7 @@ public abstract class Action {
     public final File installInfo;
 
     public final String otherStart;
-    public final File extra;
-    public final File slim;
+    public final File unpacked;
     public final File srg;
 
     public final String mcpStart;
@@ -79,8 +78,7 @@ public abstract class Action {
 
         this.otherStart = libPath + "net/minecraft/server/" + mcVer + "-" + mcpVer + "/server-" + mcVer + "-" + mcpVer;
 
-        this.extra = new File(otherStart + "-extra.jar");
-        this.slim = new File(otherStart + "-slim.jar");
+        this.unpacked = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-unpacked.jar");
         this.srg = new File(otherStart + "-srg.jar");
 
         this.mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;

@@ -5,7 +5,6 @@ import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class v_1_20_R3 {
             this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
-            this.mojmap = new File(otherStart + "-mappings.txt");
+            this.mojmap = new File(otherStart + "-mappings.tsrg");
             this.mc_unpacked = new File(otherStart + "-unpacked.jar");
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
             install();
@@ -101,12 +100,10 @@ public class v_1_20_R3 {
                 System.exit(0);
             }
 
-            if (isCorrupted(extra)) {
-                extra.delete();
+            if (isCorrupted(unpacked)) {
+                unpacked.delete();
             }
-            if (isCorrupted(slim)) {
-                slim.delete();
-            }
+
             if (isCorrupted(srg)) {
                 srg.delete();
             }
@@ -119,21 +116,10 @@ public class v_1_20_R3 {
                 unmute();
             }
 
-            if (!slim.exists() || !extra.exists()) {
-                mute();
-                run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
-                        stringToUrl(loadedLibsPaths));
-                run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
-                        stringToUrl(loadedLibsPaths));
-                unmute();
-            }
-
             if (!srg.exists()) {
                 mute();
                 run("net.minecraftforge.fart.Main",
-                        new String[]{"--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
+                        new String[]{"--input", unpacked.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix", "--strip-sigs"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
