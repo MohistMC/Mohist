@@ -720,7 +720,8 @@ project(':mohist') {
                     manifest.attributes(values += [
                             'Premain-Class': 'com.mohistmc.util.JarLoader',
                             'Launcher-Agent-Class': 'com.mohistmc.util.JarLoader',
-                            'Main-Class': 'com.mohistmc.MohistMCStart'
+                            'Main-Class': 'com.mohistmc.MohistMCStart',
+                            'Class-Path': CLASS_PATH.toString().replace("[", "").replace("]", "").replace(",", "")
                     ])
                 } else {
                     manifest.attributes(values, pkg)
