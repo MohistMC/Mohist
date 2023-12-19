@@ -25,7 +25,7 @@ public interface Messenger {
     /**
      * Represents the largest size that a Plugin Channel may be.
      */
-    public static final int MAX_CHANNEL_SIZE = Integer.getInteger("paper.maxCustomChannelName", 64); // Paper
+    public static final int MAX_CHANNEL_SIZE = Integer.getInteger("paper.maxCustomChannelName", 70); // Paper
 
     /**
      * Checks if the specified channel is a reserved name.
