@@ -4,7 +4,7 @@
  package net.minecraft;
  
  import com.google.common.collect.Maps;
-+import com.mohistmc.MohistMC;
++import com.mohistmc.Mohist;
  import com.mojang.logging.LogUtils;
  import java.util.List;
  import java.util.Locale;
@@ -12,7 +12,7 @@
     private final Map<String, String> entries = Maps.newLinkedHashMap();
  
     public SystemReport() {
-+      this.setDetail("Mohist Version", MohistMC.versionInfo.mohist());
++      this.setDetail("Mohist Version", Mohist.versionInfo.mohist());
        this.setDetail("Minecraft Version", SharedConstants.getCurrentVersion().getName());
        this.setDetail("Minecraft Version ID", SharedConstants.getCurrentVersion().getId());
        this.setDetail("Operating System", OPERATING_SYSTEM);

@@ -4,7 +4,7 @@
  package net.minecraft.server;
  
 +import com.google.common.base.Charsets;
-+import com.mohistmc.MohistMC;
++import com.mohistmc.Mohist;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
 +import com.mojang.datafixers.util.Pair;
@@ -55,7 +55,7 @@
     @DontObfuscate
     public static void main(String[] p_129699_) {
        SharedConstants.tryDetectVersion();
-+      MohistMC.initVersion();
++      Mohist.initVersion();
        OptionParser optionparser = new OptionParser();
        OptionSpec<Void> optionspec = optionparser.accepts("nogui");
        OptionSpec<Void> optionspec1 = optionparser.accepts("initSettings", "Initializes 'server.properties' and 'eula.txt', then quits");

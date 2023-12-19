@@ -3,7 +3,7 @@
 @@ -1,5 +_,8 @@
  package net.minecraft.world.entity.boss.enderdragon.phases;
  
-+import com.mohistmc.MohistMC;
++import com.mohistmc.Mohist;
 +import com.mohistmc.api.ServerAPI;
 +import com.mohistmc.dynamicenum.MohistDynamEnum;
  import java.lang.reflect.Constructor;
@@ -16,7 +16,7 @@
 +      if (enderdragonphase.getId() > 10) {
 +         org.bukkit.entity.EnderDragon.Phase bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.EnderDragon.Phase.class, enderdragonphase.getName());
 +         ServerAPI.phasetypeMap.put(enderdragonphase.getId(), bukkit);
-+         MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
++         Mohist.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
 +      }
        return enderdragonphase;
     }
