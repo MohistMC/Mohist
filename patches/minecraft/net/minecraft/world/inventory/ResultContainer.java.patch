@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/inventory/ResultContainer.java
 +++ b/net/minecraft/world/inventory/ResultContainer.java
-@@ -7,11 +_,47 @@
+@@ -5,14 +_,56 @@
+ import net.minecraft.world.Container;
+ import net.minecraft.world.ContainerHelper;
  import net.minecraft.world.entity.player.Player;
++import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.crafting.Recipe;
 +import org.bukkit.Location;
@@ -12,7 +15,7 @@
     private final NonNullList<ItemStack> f_40140_ = NonNullList.m_122780_(1, ItemStack.f_41583_);
     @Nullable
     private Recipe<?> f_40141_;
-+
+ 
 +   // CraftBukkit start
 +   private int maxStack = MAX_STACK;
 +
@@ -45,6 +48,23 @@
 +      return null;
 +   }
 +   // CraftBukkit end
- 
++   // Mohist start
++   private ItemStack bukkitEventItem;
++   public ItemStack getBukkitEventItem() {
++      return bukkitEventItem;
++   }
++
     public int m_6643_() {
        return 1;
+    }
+@@ -40,6 +_,10 @@
+    }
+ 
+    public void m_6836_(int p_40152_, ItemStack p_40153_) {
++      if (p_40152_ == -521) {
++         bukkitEventItem = p_40153_;
++         return;
++      }
+       this.f_40140_.set(0, p_40153_);
+    }
+ 
