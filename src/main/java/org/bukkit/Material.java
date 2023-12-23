@@ -4605,7 +4605,23 @@ public enum Material implements Keyed {
             return Bukkit.getUnsafe().fromLegacy(match);
         }
 
-        return BY_NAME.get(name);
+        return BY_NAME.get(normalize(name));
+    }
+
+    /**
+     * Attempts to normalise the input namespace 'modid:example_material'
+     * To the MohistMC format 'MODID_EXAMPLE_MATERIAL'
+     *
+     * @param namespace 'modid:example_material'
+     * @return normalized namespace
+     */
+    public static String normalize(String namespace) {
+        String normalized = namespace;
+
+        if (namespace.indexOf(':') != -1 && !namespace.startsWith("minecraft"))
+            normalized = normalized.replace(':', '_').toUpperCase();
+
+        return normalized;
     }
 
     /**
