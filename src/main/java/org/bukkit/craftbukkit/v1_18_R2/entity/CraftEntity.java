@@ -238,7 +238,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 else { return new CraftAmbient(server, (net.minecraft.world.entity.ambient.AmbientCreature) entity); }
             }
             else if (entity instanceof net.minecraft.world.entity.decoration.ArmorStand) { return new CraftArmorStand(server, (net.minecraft.world.entity.decoration.ArmorStand) entity); }
-            else  { return new CraftLivingEntity(server, (LivingEntity) entity); }
+            else { return new MohistModsLivingEntity(server, (LivingEntity) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.boss.EnderDragonPart) {
             net.minecraft.world.entity.boss.EnderDragonPart part = (net.minecraft.world.entity.boss.EnderDragonPart) entity;
