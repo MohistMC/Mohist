@@ -84,10 +84,11 @@
 -      this.f_44007_ = map.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (p_44033_) -> {
 -         return p_44033_.getValue().build();
 -      }));
+-      this.f_199900_ = builder.build();
+-      f_44006_.info("Loaded {} recipes", (int)map.size());
 +      this.f_44007_ = (Map) map1;
 +      this.recipesCB = map1;
-       this.f_199900_ = builder.build();
--      f_44006_.info("Loaded {} recipes", (int)map.size());
++      this.f_199900_ = Maps.newHashMap(builder.build());
 +      f_44006_.info("Loaded {} recipes", (int)map1.size());
     }
  
