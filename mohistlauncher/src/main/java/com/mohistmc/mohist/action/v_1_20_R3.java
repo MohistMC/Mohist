@@ -1,18 +1,17 @@
-package com.mohistmc.action;
+package com.mohistmc.mohist.action;
 
-import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.mohist.Main;
+import com.mohistmc.mohist.libraries.DefaultLibraries;
+import com.mohistmc.mohist.libraries.Libraries;
+import com.mohistmc.mohist.util.I18n;
 import com.mohistmc.tools.MD5Util;
-import com.mohistmc.util.I18n;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URL;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class v_1_20_R3 {
-
-    public static final List<String> loadedLibsPaths = new ArrayList<>();
 
     public static void run() {
         try {
@@ -28,9 +27,7 @@ public class v_1_20_R3 {
         public final File javafmllanguage;
         public final File mclanguage;
         public final File lowcodelanguage;
-        public final File mohistplugin;
         public final File mojmap;
-        public final File mc_unpacked;
         public final File mergedMapping;
 
         protected Install() throws Exception {
@@ -40,10 +37,9 @@ public class v_1_20_R3 {
             this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
+
             this.mojmap = new File(otherStart + "-mappings.tsrg");
-            this.mc_unpacked = new File(otherStart + "-unpacked.jar");
-            this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
+            this.mergedMapping = new File(mcpStart + "-mappings-merged.tsrg");
             install();
         }
 
@@ -54,6 +50,23 @@ public class v_1_20_R3 {
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+
+            DefaultLibraries.addLibrariesSet(serverJar);
+            DefaultLibraries.addLibrariesSet(fmlloader);
+            DefaultLibraries.addLibrariesSet(fmlcore);
+            DefaultLibraries.addLibrariesSet(javafmllanguage);
+            DefaultLibraries.addLibrariesSet(mclanguage);
+            DefaultLibraries.addLibrariesSet(lowcodelanguage);
+
+            for (Libraries libraries : DefaultLibraries.forgeLibrariesSet) {
+                if (!libraries.path().endsWith(".jar")) {
+                    continue;
+                }
+                File file = new File(libraries.path());
+                URL url = file.toURI().toURL();
+                Main.classpath.append(File.pathSeparator).append(file.getAbsolutePath());
+                Main.urls.add(url);
+            }
 
             if (!checkDependencies()) return;
             System.out.println(I18n.as("installation.start"));
@@ -66,34 +79,24 @@ public class v_1_20_R3 {
             }
 
             if (minecraft_server.exists()) {
-                mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
                         new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
-                        stringToUrl(loadedLibsPaths));
-                unmute();
-                if (!mc_unpacked.exists()) {
-                    mute();
+                        Main.urls);
+                if (!unpacked.exists()) {
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only"},
-                            stringToUrl(loadedLibsPaths));
-                    unmute();
+                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", unpacked.getAbsolutePath(), "--jar-only"},
+                            Main.urls);
                 }
             } else {
-                System.out.println(I18n.as("installation.minecraftserver"));
+                System.out.println(I18n.as("installation.minecraftserver") + minecraft_server.getAbsolutePath());
                 System.exit(0);
             }
 
             if (mcpZip.exists()) {
                 if (!mcpTxt.exists()) {
-
-                    // MAKE THE MAPPINGS TXT FILE
-
-                    System.out.println(I18n.as("installation.mcp"));
-                    mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
-                            stringToUrl(loadedLibsPaths));
-                    unmute();
+                            Main.urls);
                 }
             } else {
                 System.out.println(I18n.as("installation.mcpfilemissing"));
@@ -109,66 +112,40 @@ public class v_1_20_R3 {
             }
 
             if (!mergedMapping.exists()) {
-                mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
                         new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
-                        stringToUrl(loadedLibsPaths));
-                unmute();
+                        Main.urls);
             }
 
             if (!srg.exists()) {
-                mute();
                 run("net.minecraftforge.fart.Main",
                         new String[]{"--input", unpacked.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix", "--strip-sigs"},
-                        stringToUrl(loadedLibsPaths));
-                unmute();
+                        Main.urls);
             }
 
             String storedServerMD5 = null;
-            String storedMohistMD5 = null;
             String serverMD5 = MD5Util.get(serverJar);
-            String mohistMD5 = MD5Util.get(universalJar);
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
                 if (!infoLines.isEmpty()) {
                     storedServerMD5 = infoLines.get(0);
                 }
-                if (infoLines.size() > 1) {
-                    storedMohistMD5 = infoLines.get(1);
-                }
             }
 
-            if (!serverJar.exists() || storedServerMD5 == null || storedMohistMD5 == null || !storedServerMD5.equals(serverMD5) || !storedMohistMD5.equals(mohistMD5)) {
-                mute();
+            if (!serverJar.exists() || storedServerMD5 == null || !storedServerMD5.equals(serverMD5)) {
+                System.out.println("binarypatcher");
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
-                        stringToUrl(Arrays.asList(
-                                libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
-                                libPath + "commons-io/commons-io/2.13.0/commons-io-2.13.0.jar",
-                                libPath + "com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar",
-                                libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-                                libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
-                                libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
-                                libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                                libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar",
-                                libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar",
-                                libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
-                                libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
-                                libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
-                        )));
-                unmute();
+                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched"},
+                        Main.urls);
                 serverMD5 = MD5Util.get(serverJar);
             }
 
             FileWriter fw = new FileWriter(installInfo);
-            fw.write(serverMD5 + "\n");
-            fw.write(mohistMD5);
+            fw.write(serverMD5);
             fw.close();
 
             System.out.println(I18n.as("installation.finished"));
-            MohistConfigUtil.yml.set("mohist.installation-finished", true);
-            MohistConfigUtil.save();
         }
     }
 }

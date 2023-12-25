@@ -16,11 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.config;
+package com.mohistmc.mohist.config;
 
-import net.minecraftforge.bootstrap.shim.Main;
-import com.mohistmc.download.DownloadSource;
 import com.mohistmc.i18n.i18n;
+import com.mohistmc.mohist.Main;
+import com.mohistmc.mohist.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;

@@ -16,15 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.action;
+package com.mohistmc.mohist.action;
 
-import net.minecraftforge.bootstrap.shim.Main;
+import com.mohistmc.mohist.Main;
+import com.mohistmc.mohist.util.DataParser;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
-import com.mohistmc.util.DataParser;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -32,7 +30,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -83,47 +80,16 @@ public abstract class Action {
 
         this.mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
         this.mcpZip = new File(mcpStart + ".zip");
-        this.mcpTxt = new File(mcpStart + "-mappings.txt");
+        this.mcpTxt = new File(mcpStart + "-mappings.tsrg");
 
         this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-bundled.jar");
     }
 
     protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
-        try {
-            Class.forName(mainClass);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class not found: " + e.getMessage());
-            return;
-        }
         URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
         Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
         loader.clearAssertionStatus();
         loader.close();
-    }
-
-    protected List<URL> stringToUrl(List<String> strs) throws Exception {
-        List<URL> temp = new ArrayList<>();
-        for (String t : strs) {
-            File file = new File(t);
-            temp.add(file.toURI().toURL());
-        }
-        return temp;
-    }
-
-    /*
-    THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
-     */
-    protected void mute() throws Exception {
-        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
-        if (!out.exists()) {
-            out.getParentFile().mkdirs();
-            out.createNewFile();
-        }
-        System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(out))));
-    }
-
-    protected void unmute() {
-        System.setOut(origin);
     }
 
     protected void copyFileFromJar(File file, String pathInJar) {
@@ -165,9 +131,10 @@ public abstract class Action {
 
     public boolean checkDependencies() throws IOException {
         if (installInfo.exists()) {
-            String jarmd = MD5Util.get(universalJar);
-            List<String> lines = Files.readAllLines(installInfo.toPath());
-            return lines.size() < 2 || !jarmd.equals(lines.get(1));
+            if (!serverJar.exists()) {
+                return true;
+            }
+            return !MD5Util.get(serverJar).equals(Files.readString(installInfo.toPath()));
         }
         return true;
     }

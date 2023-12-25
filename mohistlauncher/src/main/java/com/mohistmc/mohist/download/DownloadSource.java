@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.download;
+package com.mohistmc.mohist.download;
 
-import net.minecraftforge.bootstrap.shim.Main;
-import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.mohist.Main;
+import com.mohistmc.mohist.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

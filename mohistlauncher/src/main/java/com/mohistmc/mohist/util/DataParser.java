@@ -1,6 +1,6 @@
-package com.mohistmc.util;
+package com.mohistmc.mohist.util;
 
-import net.minecraftforge.bootstrap.shim.Main;
+import com.mohistmc.mohist.Main;
 import com.mohistmc.tools.FileUtils;
 import java.util.HashMap;
 

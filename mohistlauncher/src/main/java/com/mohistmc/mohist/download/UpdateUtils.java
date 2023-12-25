@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.download;
+package com.mohistmc.mohist.download;
 
+import com.mohistmc.mohist.util.DataParser;
+import com.mohistmc.mohist.util.I18n;
 import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.tools.MD5Util;
-import com.mohistmc.util.DataParser;
-import com.mohistmc.util.I18n;
 import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;

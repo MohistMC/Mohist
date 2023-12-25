@@ -610,7 +610,16 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
     destinationDirectory = file('build/libs')
 
     manifest {
-        attributes('Main-Class': 'com.mohistmc.Main')
+        attributes([
+                'Main-Class': 'com.mohistmc.mohist.Main'
+        ])
+        attributes([
+                'Specification-Title'   : 'MohistMC',
+                'Specification-Vendor'  : 'MohistMC',
+                'Implementation-Title'  : 'Mohist',
+                'Implementation-Version': archiveVersion,
+                'Implementation-Vendor' : 'MohistMC'
+        ] as LinkedHashMap, 'com/mohistmc/mohist/')
     }
 
     //println(CLASS_PATH)

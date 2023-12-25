@@ -16,13 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.libraries;
+package com.mohistmc.mohist.libraries;
 
-import com.mohistmc.config.MohistConfigUtil;
-import com.mohistmc.download.DownloadSource;
-import com.mohistmc.download.UpdateUtils;
+import com.mohistmc.mohist.config.MohistConfigUtil;
+import com.mohistmc.mohist.download.DownloadSource;
+import com.mohistmc.mohist.download.UpdateUtils;
+import com.mohistmc.mohist.util.I18n;
 import com.mohistmc.tools.MD5Util;
-import com.mohistmc.util.I18n;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -38,12 +38,14 @@ import me.tongfei.progressbar.ProgressBarStyle;
 
 public class DefaultLibraries {
     public static final Set<Libraries> fail = new HashSet<>();
-    public static final Set<Libraries> librariesSet = new HashSet<>();
+    public static Set<Libraries> librariesSet = new HashSet<>();
+    public static Set<Libraries> forgeLibrariesSet = new HashSet<>();
     public static final String MAVENURL = DownloadSource.get().getUrl();
 
     public static void run() {
-        System.out.println(I18n.as("libraries.checking.start"));
         init();
+        if (!MohistConfigUtil.CHECK_LIBRARIES()) return;
+        System.out.println(I18n.as("libraries.checking.start"));
         Set<Libraries> need_download = new LinkedHashSet<>();
         for (Libraries libraries : librariesSet) {
             File lib = new File(libraries.path());
@@ -70,11 +72,12 @@ public class DefaultLibraries {
 
                     String u = MAVENURL + "/" + lib.path();
                     try {
+                        pb.setExtraMessage(file.getName());
                         UpdateUtils.downloadFile(u, file, lib.md5(), false);
                         fail.remove(lib);
                     } catch (Exception e) {
                         if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
-                            System.out.println(I18n.as("file.download.nook", u));
+                            pb.setExtraMessage(I18n.as("file.download.nook", u));
                             file.delete();
                         }
                         fail.add(lib);
@@ -92,10 +95,15 @@ public class DefaultLibraries {
 
     @SneakyThrows
     public static void init() {
-        BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getResourceAsStream("/libraries.txt"), StandardCharsets.UTF_8));
-        for (String line = b.readLine(); line != null; line = b.readLine()) {
-            Libraries libraries = Libraries.from(line);
-            librariesSet.add(libraries);
+        try (BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getResourceAsStream("/libraries.txt"), StandardCharsets.UTF_8))) {
+            for (String line = b.readLine(); line != null; line = b.readLine()) {
+                Libraries libraries = Libraries.from(line);
+                librariesSet.add(libraries);
+            }
         }
+    }
+
+    public static void addLibrariesSet(File file) {
+        forgeLibrariesSet.add(Libraries.from(file));
     }
 }

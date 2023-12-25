@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.util;
+package com.mohistmc.mohist.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
