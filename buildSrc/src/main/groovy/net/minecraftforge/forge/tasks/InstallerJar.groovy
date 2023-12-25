@@ -1,10 +1,12 @@
 package net.minecraftforge.forge.tasks
 
-import org.gradle.api.tasks.bundling.Zip
-import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.provider.Property
-import groovy.json.JsonSlurper
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.bundling.Zip
 
 abstract class InstallerJar extends Zip {
     @Input @Optional abstract Property<Boolean> getFat()
@@ -96,7 +98,7 @@ abstract class InstallerJar extends Zip {
                 //println('')
                 def resolved = cfg.resolvedConfiguration.resolvedArtifacts
                 int found = 0
-                resolved.each { var dep ->
+                resolved.each { ResolvedArtifact dep ->
                     def name = Util.getMavenInfoFromDep(dep).name
                     def info = deps.remove(name)
                     if (info == null) {

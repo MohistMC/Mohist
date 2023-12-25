@@ -1,9 +1,13 @@
 package net.minecraftforge.forge.tasks
 
-import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 
 abstract class BundleList extends DefaultTask {
     @InputFiles abstract ConfigurableFileCollection getConfig()
@@ -23,7 +27,7 @@ abstract class BundleList extends DefaultTask {
     void run() {
         def entries = [:] as TreeMap
         def resolved = project.configurations.installer.resolvedConfiguration.resolvedArtifacts
-        for (var dep : resolved) {
+        for (ResolvedArtifact  dep : resolved) {
             def info = Util.getMavenInfoFromDep(dep)
             //println("$dep.file.sha1\t$info.name\t$info.path")
             entries.put("$info.art.group:$info.art.name", "$dep.file.sha256\t$info.name\t$info.path")

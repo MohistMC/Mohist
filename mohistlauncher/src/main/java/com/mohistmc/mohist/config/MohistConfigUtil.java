@@ -34,6 +34,7 @@ public class MohistConfigUtil {
     public static void copyMohistConfig() {
         try {
             if (!mohistyml.exists()) {
+                mohistyml.getParentFile().mkdirs();
                 mohistyml.createNewFile();
             }
         } catch (Exception e) {

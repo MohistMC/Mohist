@@ -6,7 +6,6 @@ import groovy.transform.CompileStatic
 import org.eclipse.jgit.api.Git
 
 import javax.annotation.Nullable
-import java.util.stream.Collectors
 
 @CompileStatic
 class TeamcityRequests {

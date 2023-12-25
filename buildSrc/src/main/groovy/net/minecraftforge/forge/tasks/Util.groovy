@@ -6,10 +6,8 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 
-import java.io.File
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 

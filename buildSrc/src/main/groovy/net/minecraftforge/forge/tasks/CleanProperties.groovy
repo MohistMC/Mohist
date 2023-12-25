@@ -1,23 +1,7 @@
-package net.minecraftforge.forge.tasks;
+package net.minecraftforge.forge.tasks
 
-import java.util.Properties;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.TreeSet;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.Reader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Set;
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 /**
  * Eclipse config files are literally just java properties, with the header cleaned up.
