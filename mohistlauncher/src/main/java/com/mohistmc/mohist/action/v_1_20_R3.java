@@ -1,14 +1,9 @@
 package com.mohistmc.mohist.action;
 
-import com.mohistmc.mohist.Main;
-import com.mohistmc.mohist.libraries.DefaultLibraries;
-import com.mohistmc.mohist.libraries.Libraries;
 import com.mohistmc.mohist.util.I18n;
-import com.mohistmc.mohist.util.JarLoader;
 import com.mohistmc.tools.MD5Util;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -51,22 +46,6 @@ public class v_1_20_R3 {
             copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-
-            DefaultLibraries.addLibrariesSet(serverJar);
-            DefaultLibraries.addLibrariesSet(fmlloader);
-            DefaultLibraries.addLibrariesSet(fmlcore);
-            DefaultLibraries.addLibrariesSet(javafmllanguage);
-            DefaultLibraries.addLibrariesSet(mclanguage);
-            DefaultLibraries.addLibrariesSet(lowcodelanguage);
-
-            for (Libraries libraries : DefaultLibraries.forgeLibrariesSet) {
-                if (!libraries.path().endsWith(".jar")) {
-                    continue;
-                }
-                File file = new File(libraries.path());
-                Main.classpath.append(File.pathSeparator).append(file.getAbsolutePath());
-                if (!checkDependencies()) JarLoader.loadJar(file.toPath());
-            }
 
             if (!checkDependencies()) return;
             System.out.println(I18n.as("installation.start"));

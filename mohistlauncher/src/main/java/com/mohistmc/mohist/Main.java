@@ -23,19 +23,14 @@ import com.mohistmc.mohist.action.v_1_20_R3;
 import com.mohistmc.mohist.config.MohistConfigUtil;
 import com.mohistmc.mohist.feature.AutoDeleteMods;
 import com.mohistmc.mohist.libraries.DefaultLibraries;
-import com.mohistmc.mohist.libraries.Libraries;
 import com.mohistmc.mohist.util.DataParser;
 import com.mohistmc.mohist.util.EulaUtil;
-import com.mohistmc.mohist.util.JarLoader;
-import java.io.File;
 import java.util.Scanner;
-import net.minecraftforge.bootstrap.ForgeBootstrap;
 
 public class Main {
     static final boolean DEBUG = Boolean.getBoolean("mohist.debug");
     public static String MCVERSION;
     public static i18n i18n;
-    public static StringBuilder classpath = new StringBuilder(System.getProperty("java.class.path"));
 
     public static String getVersion() {
         return (Main.class.getPackage().getImplementationVersion() != null) ? Main.class.getPackage().getImplementationVersion() : MCVERSION;
@@ -61,24 +56,10 @@ public class Main {
             System.out.printf(test + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
         }
 
-        if (System.getProperty("log4j.configurationFile") == null) {
-            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
-        }
-
         // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) { UpdateUtils.versionCheck(); }
 
         DefaultLibraries.run();
-
-        for (Libraries libraries : DefaultLibraries.librariesSet) {
-            if (!libraries.path().endsWith(".jar")) {
-                continue;
-            }
-            File file = new File(libraries.path());
-            classpath.append(File.pathSeparator).append(file.getAbsolutePath());
-            JarLoader.loadJar(file.toPath());
-        }
         v_1_20_R3.run();
-        System.setProperty("java.class.path", classpath.toString());
         if (MohistConfigUtil.CHECK_CLIENT_MODS()) {
             AutoDeleteMods.jar();
         }
@@ -89,13 +70,5 @@ public class Main {
             }
             EulaUtil.writeInfos();
         }
-
-        String extraArgs = "--launchTarget forge_server";
-
-        String[] pts = extraArgs.split(" ");
-        String[] joined = new String[pts.length + args.length];
-        System.arraycopy(pts, 0, joined, 0, pts.length);
-        System.arraycopy(args, 0, joined, pts.length, args.length);
-        ForgeBootstrap.main(joined);
     }
 }

@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.mohistmc'
+version = MOHIST_VERSION
+
+configurations {
+    mohistlauncher
+    implementation.extendsFrom(mohistlauncher)
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.mohistmc.com/' }
+}
+
+dependencies {
+    mohistlauncher(libs.yaml)
+    mohistlauncher(libs.snakeyaml)
+    mohistlauncher(libs.i18n)
+    mohistlauncher(libs.json)
+    mohistlauncher(libs.tools)
+    mohistlauncher 'me.tongfei:progressbar:0.10.0'
+    mohistlauncher 'org.jline:jline:3.23.0'
+}
+
+jar {
+    into('data') {
+        from configurations.mohistlauncher
+    }
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'com.mohistmc.mohist.bootstrap'
+        ] as LinkedHashMap)
+        attributes([
+                'Specification-Title'   : 'MohistMC',
+                'Specification-Vendor'  : 'MohistMC',
+                'Implementation-Title'  : 'Mohist',
+                'Implementation-Version': MOHIST_VERSION,
+                'Implementation-Vendor' : 'MohistMC'
+        ] as LinkedHashMap, 'com/mohistmc/mohist/')
+    }
+}

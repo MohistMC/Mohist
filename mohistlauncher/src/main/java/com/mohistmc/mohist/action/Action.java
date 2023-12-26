@@ -19,6 +19,7 @@
 package com.mohistmc.mohist.action;
 
 import com.mohistmc.mohist.Main;
+import com.mohistmc.mohist.libraries.DefaultLibraries;
 import com.mohistmc.mohist.util.DataParser;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
@@ -86,7 +87,11 @@ public abstract class Action {
     }
 
     protected void run(String mainClass, String... args) throws Exception {
-        Class.forName(mainClass).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
+        List<URL> classPath = DefaultLibraries.installer;
+        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[classPath.size()]));
+        Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
+        loader.clearAssertionStatus();
+        loader.close();
     }
 
     protected void copyFileFromJar(File file, String pathInJar) {

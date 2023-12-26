@@ -113,7 +113,7 @@ dependencies {
     runtimeOnly(libs.bootstrap)
     // craftbukkit
     installer 'org.fusesource.jansi:jansi:1.18'
-    installer 'jline:jline:2.14.6'
+    implementation 'jline:jline:2.14.6'
     installer 'com.googlecode.json-simple:json-simple:1.1.1'
     installer 'org.xerial:sqlite-jdbc:3.42.0.1'
     installer 'com.mysql:mysql-connector-j:8.2.0'
@@ -583,26 +583,43 @@ tasks.named('universalJar').configure {
 
     manifest {
         attributes([
-            'Specification-Title':   'Forge',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version':  SPEC_VERSION,
-            'Implementation-Title':   project.group,
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
+                'Specification-Title'   : 'Forge',
+                'Specification-Vendor'  : 'Forge Development LLC',
+                'Specification-Version' : SPEC_VERSION,
+                'Implementation-Title'  : project.group,
+                'Implementation-Vendor' : 'Forge Development LLC',
+                'Implementation-Version': FORGE_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/versions/forge/')
         attributes([
-            'Specification-Title':   'Minecraft',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version':  MC_VERSION,
-            'Implementation-Title':  'MCP',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': MCP_VERSION
+                'Specification-Title'   : 'Minecraft',
+                'Specification-Vendor'  : 'Forge Development LLC',
+                'Specification-Version' : MC_VERSION,
+                'Implementation-Title'  : 'MCP',
+                'Implementation-Vendor' : 'Forge Development LLC',
+                'Implementation-Version': MCP_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
+        attributes([
+                'Specification-Title'   : 'Mohist',
+                'Specification-Vendor'  : 'MohistMC',
+                'Specification-Version' : MOHIST_VERSION,
+                'Implementation-Title'  : 'Mohist',
+                'Implementation-Version': MC_VERSION + '-' + MOHIST_VERSION,
+                'Implementation-Vendor' : 'MohistMC'
+        ] as LinkedHashMap, 'com/mohistmc/mohist/')
+        attributes([
+                'Specification-Title'   : MCP_VERSION,
+                'Specification-Vendor'  : 'SpigotMC',
+                'Specification-Version' : MC_VERSION,
+                'Implementation-Title'  : 'Spigot',
+                'Implementation-Version': bukkit_version + '-' + craftbukkit_version + '-' + spigot_version + '-' + forge_version,
+                'Implementation-Vendor' : 'SpigotMC'
+        ] as LinkedHashMap, 'org/bukkit/craftbukkit/v1_20_R3/')
     }
     jarSigner.sign(it)
 }
 
-task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlauncher').tasks.jar]) {
+task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':bootstrap').tasks.jar, project(':mohistlauncher').tasks.jar]) {
+    dependsOn(createServerShimConfig)
     archiveClassifier = 'server'
     archiveExtension = 'jar'
     archiveBaseName = 'mohist'
@@ -610,19 +627,18 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
     destinationDirectory = file('build/libs')
 
     manifest {
+        attributes('Class-Path': configurations.bootstrap.resolvedConfiguration.resolvedArtifacts.collect { "libraries/${Util.getMavenInfoFromDep(it).path}" }.join(' '))
         attributes([
-                'Automatic-Module-Name': 'mohist.boot',
-                'Premain-Class': 'com.mohistmc.mohist.util.JarLoader',
-                'Launcher-Agent-Class': 'com.mohistmc.mohist.util.JarLoader',
-                'Main-Class': 'com.mohistmc.mohist.Main'
+                'Automatic-Module-Name': 'net.minecraftforge.bootstrap.shim',
+                'Main-Class': 'net.minecraftforge.bootstrap.shim.Main'
         ])
         attributes([
-                'Specification-Title'   : 'MohistMC',
-                'Specification-Vendor'  : 'MohistMC',
-                'Implementation-Title'  : 'Mohist',
-                'Implementation-Version': archiveVersion,
-                'Implementation-Vendor' : 'MohistMC'
-        ] as LinkedHashMap, 'com/mohistmc/mohist/')
+                'Specification-Title'   : 'BootStrap-Shim',
+                'Specification-Vendor'  : 'Forge Development LLC',
+                'Implementation-Title'  : 'bs-shim',
+                'Implementation-Version': '2.0.1',
+                'Implementation-Vendor' : 'Forge Development LLC'
+        ] as LinkedHashMap, 'net/minecraftforge/bootstrap/shim/')
     }
 
     //println(CLASS_PATH)
@@ -647,8 +663,15 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
     from(project(':lowcodelanguage').tasks.jar.outputs) {
         rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
     }
-    from(zipTree(project(':mohistlauncher').tasks.jar.outputs.getFiles().asPath.replace(".jar", "-all.jar"))) {
+    from(project(':mohistlauncher').tasks.jar.outputs) {
+        rename { 'data/mohistlauncher.jar' }
+    }
+    from(zipTree(project(':bootstrap').tasks.jar.outputs.getFiles().asPath)) {
         into ""
+    }
+    from (createServerShimConfig.output)
+    from (createServerShimClasspath.output) {
+        rename { 'bootstrap-shim.list' }
     }
     from(rootProject.file('server_files/version.txt')) {
         filter(ReplaceTokens, tokens: [VERSION: MOHIST_VERSION])
@@ -666,6 +689,7 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
         filter(ReplaceTokens, tokens: [VERSION: MCP_VERSION])
         rename { 'versions/mcp.txt' }
     }
+    jarSigner.sign(it)
 }
 
 tasks.register('genAllData') {

@@ -26,9 +26,12 @@ import com.mohistmc.tools.MD5Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.SneakyThrows;
@@ -38,8 +41,8 @@ import me.tongfei.progressbar.ProgressBarStyle;
 
 public class DefaultLibraries {
     public static final Set<Libraries> fail = new HashSet<>();
-    public static Set<Libraries> librariesSet = new HashSet<>();
-    public static Set<Libraries> forgeLibrariesSet = new HashSet<>();
+    private static final Set<Libraries> librariesSet = new HashSet<>();
+    public static List<URL> installer = new ArrayList<>();
     public static final String MAVENURL = DownloadSource.get().getUrl();
 
     public static void run() {
@@ -99,11 +102,12 @@ public class DefaultLibraries {
             for (String line = b.readLine(); line != null; line = b.readLine()) {
                 Libraries libraries = Libraries.from(line);
                 librariesSet.add(libraries);
+                if (libraries.installer()) {
+                    File file = new File(libraries.path());
+                    URL url = file.toURI().toURL();
+                    installer.add(url);
+                }
             }
         }
-    }
-
-    public static void addLibrariesSet(File file) {
-        forgeLibrariesSet.add(Libraries.from(file));
     }
 }
