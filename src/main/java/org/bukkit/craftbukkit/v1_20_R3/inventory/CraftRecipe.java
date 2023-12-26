@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R3.inventory;
 
-import com.mohistmc.bukkit.inventory.MohistSpecialIngredient;
+import com.mohistmc.mohist.bukkit.inventory.MohistSpecialIngredient;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.crafting.Ingredient;

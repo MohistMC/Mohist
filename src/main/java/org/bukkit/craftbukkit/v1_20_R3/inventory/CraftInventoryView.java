@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.inventory;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.bukkit.inventory.MohistModsInventory;
+import com.mohistmc.mohist.bukkit.inventory.MohistModsInventory;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;

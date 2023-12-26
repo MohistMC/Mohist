@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
-import com.mohistmc.plugins.ban.bans.BanItem;
+import com.mohistmc.mohist.plugins.ban.bans.BanItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;

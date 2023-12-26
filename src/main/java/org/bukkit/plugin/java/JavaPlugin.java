@@ -2,7 +2,7 @@ package org.bukkit.plugin.java;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import com.mohistmc.forge.MohistEventBus;
+import com.mohistmc.mohist.forge.MohistEventBus;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

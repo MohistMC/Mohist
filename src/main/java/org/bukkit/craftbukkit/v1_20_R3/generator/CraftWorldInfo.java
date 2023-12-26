@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_20_R3.generator;
 
-import com.mohistmc.util.Level2LevelStem;
+import com.mohistmc.mohist.util.Level2LevelStem;
 import java.util.UUID;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelStorageSource;

@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;

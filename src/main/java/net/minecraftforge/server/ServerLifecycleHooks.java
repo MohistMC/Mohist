@@ -5,7 +5,7 @@
 
 package net.minecraftforge.server;
 
-import com.mohistmc.util.ProxyUtils;
+import com.mohistmc.mohist.util.ProxyUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

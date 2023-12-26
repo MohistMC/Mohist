@@ -5,7 +5,7 @@
 
 package net.minecraftforge.network;
 
-import com.mohistmc.util.ProxyUtils;
+import com.mohistmc.mohist.util.ProxyUtils;
 import io.netty.util.Attribute;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package org.bukkit.command.defaults;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.mohistmc.Mohist;
+import com.mohistmc.mohist.Mohist;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

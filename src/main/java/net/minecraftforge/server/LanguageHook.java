@@ -8,7 +8,7 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mohistmc.MohistConfig;
+import com.mohistmc.mohist.MohistConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

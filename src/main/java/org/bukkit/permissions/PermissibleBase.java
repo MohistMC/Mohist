@@ -1,6 +1,6 @@
 package org.bukkit.permissions;
 
-import com.mohistmc.api.PlayerAPI;
+import com.mohistmc.mohist.api.PlayerAPI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;

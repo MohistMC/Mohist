@@ -5,8 +5,8 @@
 
 package net.minecraftforge.server.permission;
 
-import com.mohistmc.MohistConfig;
-import com.mohistmc.forge.BukkitPermissionsHandler;
+import com.mohistmc.mohist.MohistConfig;
+import com.mohistmc.mohist.forge.BukkitPermissionsHandler;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

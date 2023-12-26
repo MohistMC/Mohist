@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import com.mojang.datafixers.util.Either;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

@@ -7,7 +7,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.function.Consumer;
 
-import com.mohistmc.bukkit.inventory.MohistModsInventory;
+import com.mohistmc.mohist.bukkit.inventory.MohistModsInventory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

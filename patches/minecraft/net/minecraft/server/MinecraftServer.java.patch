@@ -6,8 +6,8 @@
  import com.google.common.collect.Sets;
 +import com.google.common.util.concurrent.ThreadFactoryBuilder;
 +import com.google.gson.Gson;
-+import com.mohistmc.MohistConfig;
-+import com.mohistmc.forge.ForgeInjectBukkit;
++import com.mohistmc.mohist.MohistConfig;
++import com.mohistmc.mohist.forge.ForgeInjectBukkit;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.GameProfileRepository;
  import com.mojang.authlib.minecraft.MinecraftSessionService;

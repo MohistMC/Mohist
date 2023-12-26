@@ -8,7 +8,7 @@ package net.minecraftforge.registries;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
+import com.mohistmc.mohist.bukkit.pluginfix.UltraCosmetics;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Lifecycle;

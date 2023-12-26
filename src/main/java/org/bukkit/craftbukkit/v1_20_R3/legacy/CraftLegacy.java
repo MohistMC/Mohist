@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.legacy;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import com.mojang.serialization.Dynamic;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package com.destroystokyo.paper.proxy;
 
 import com.google.common.net.InetAddresses;
-import com.mohistmc.MohistConfig;
+import com.mohistmc.mohist.MohistConfig;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import java.net.InetAddress;

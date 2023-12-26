@@ -1,17 +1,14 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -1,21 +_,27 @@
+@@ -1,5 +_,7 @@
  package net.minecraft.server;
  
 +import com.google.common.base.Charsets;
-+import com.mohistmc.Mohist;
++import com.mohistmc.mohist.Mohist;
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
-+import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Dynamic;
-+import com.mojang.serialization.DynamicOps;
- import com.mojang.serialization.Lifecycle;
+@@ -8,14 +_,16 @@
  import java.awt.GraphicsEnvironment;
  import java.io.File;
  import java.io.IOException;
@@ -29,19 +26,6 @@
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
  import joptsimple.OptionSpec;
-@@ -29,9 +_,12 @@
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.core.registries.Registries;
- import net.minecraft.nbt.NbtException;
-+import net.minecraft.nbt.NbtOps;
- import net.minecraft.nbt.ReportedNbtException;
-+import net.minecraft.nbt.Tag;
- import net.minecraft.network.chat.Component;
- import net.minecraft.obfuscate.DontObfuscate;
-+import net.minecraft.resources.RegistryOps;
- import net.minecraft.server.dedicated.DedicatedServer;
- import net.minecraft.server.dedicated.DedicatedServerProperties;
- import net.minecraft.server.dedicated.DedicatedServerSettings;
 @@ -56,6 +_,8 @@
  import net.minecraft.world.level.storage.LevelSummary;
  import net.minecraft.world.level.storage.PrimaryLevelData;

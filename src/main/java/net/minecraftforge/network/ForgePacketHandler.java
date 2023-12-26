@@ -5,7 +5,7 @@
 
 package net.minecraftforge.network;
 
-import com.mohistmc.plugins.PlayerModsCheck;
+import com.mohistmc.mohist.plugins.PlayerModsCheck;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayList;

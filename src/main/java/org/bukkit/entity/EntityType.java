@@ -1,13 +1,13 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
-import com.mohistmc.bukkit.entity.MohistModsAnimals;
-import com.mohistmc.bukkit.entity.MohistModsChestHorse;
-import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
-import com.mohistmc.bukkit.entity.MohistModsMonster;
-import com.mohistmc.bukkit.entity.MohistModsProjectileEntity;
-import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
+import com.mohistmc.mohist.bukkit.entity.MohistModsAbstractHorse;
+import com.mohistmc.mohist.bukkit.entity.MohistModsAnimals;
+import com.mohistmc.mohist.bukkit.entity.MohistModsChestHorse;
+import com.mohistmc.mohist.bukkit.entity.MohistModsMinecartContainer;
+import com.mohistmc.mohist.bukkit.entity.MohistModsMonster;
+import com.mohistmc.mohist.bukkit.entity.MohistModsProjectileEntity;
+import com.mohistmc.mohist.bukkit.entity.MohistModsTameableEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

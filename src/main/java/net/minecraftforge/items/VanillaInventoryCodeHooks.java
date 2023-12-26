@@ -5,7 +5,7 @@
 
 package net.minecraftforge.items;
 
-import com.mohistmc.bukkit.inventory.InventoryOwner;
+import com.mohistmc.mohist.bukkit.inventory.InventoryOwner;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;

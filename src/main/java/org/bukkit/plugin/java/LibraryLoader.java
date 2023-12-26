@@ -1,8 +1,8 @@
 package org.bukkit.plugin.java;
 
-import com.mohistmc.Mohist;
-import com.mohistmc.bukkit.PluginsLibrarySource;
-import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
+import com.mohistmc.mohist.Mohist;
+import com.mohistmc.mohist.bukkit.PluginsLibrarySource;
+import com.mohistmc.mohist.bukkit.remapping.RemappingURLClassLoader;
 import com.mohistmc.tools.ConnectionUtil;
 import java.io.BufferedReader;
 import java.io.File;
