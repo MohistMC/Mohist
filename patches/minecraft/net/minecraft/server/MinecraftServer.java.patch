@@ -282,7 +282,7 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -448,40 +_,88 @@
+@@ -448,40 +_,86 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
@@ -338,40 +338,37 @@
        p_129941_.updateSpawnPos(new ChunkPos(blockpos));
        ServerChunkCache serverchunkcache = serverlevel.getChunkSource();
        this.nextTickTimeNanos = Util.getNanos();
-       serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+-      serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 -
 -      while(serverchunkcache.getTickingGenerated() != 441) {
 -         this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -         this.waitUntilNextTick();
-+      while (serverchunkcache.getTickingGenerated() != 441) {
-+         this.executeModerately();
++      if (serverlevel.getWorld().getKeepSpawnInMemory()) {
++         serverchunkcache.addRegionTicket(TicketType.START, new ChunkPos(blockpos), 11, Unit.INSTANCE);
++         while (serverchunkcache.getTickingGenerated() != 441) {
++            this.executeModerately();
++         }
        }
  
 -      this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -      this.waitUntilNextTick();
-+
-+      this.executeModerately();
- 
-       for(ServerLevel serverlevel1 : this.levels.values()) {
+-
+-      for(ServerLevel serverlevel1 : this.levels.values()) {
 -         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
--         if (forcedchunkssaveddata != null) {
--            LongIterator longiterator = forcedchunkssaveddata.getChunks().iterator();
-+         if (serverlevel1.getWorld().getKeepSpawnInMemory()) {
-+            ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
-+            if (forcedchunkssaveddata != null) {
-+               LongIterator longiterator = forcedchunkssaveddata.getChunks().iterator();
++      this.executeModerately();
++      if (true) {
++         ForcedChunksSavedData forcedchunkssaveddata = serverlevel.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
+          if (forcedchunkssaveddata != null) {
+             LongIterator longiterator = forcedchunkssaveddata.getChunks().iterator();
  
 -            while(longiterator.hasNext()) {
--               long i = longiterator.nextLong();
--               ChunkPos chunkpos = new ChunkPos(i);
++            while (longiterator.hasNext()) {
+                long i = longiterator.nextLong();
+                ChunkPos chunkpos = new ChunkPos(i);
 -               serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
-+               while (longiterator.hasNext()) {
-+                  long i = longiterator.nextLong();
-+                  ChunkPos chunkpos = new ChunkPos(i);
-+                  serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
-+               }
-+               ForgeChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
++               serverlevel.getChunkSource().updateChunkForced(chunkpos, true);
              }
++            ForgeChunkManager.reinstatePersistentChunks(serverlevel, forcedchunkssaveddata);
           }
        }
  
