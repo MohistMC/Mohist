@@ -4,6 +4,7 @@ import com.mohistmc.mohist.Main;
 import com.mohistmc.mohist.libraries.DefaultLibraries;
 import com.mohistmc.mohist.libraries.Libraries;
 import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.mohist.util.JarLoader;
 import com.mohistmc.tools.MD5Util;
 import java.io.File;
 import java.io.FileWriter;
@@ -63,9 +64,8 @@ public class v_1_20_R3 {
                     continue;
                 }
                 File file = new File(libraries.path());
-                URL url = file.toURI().toURL();
                 Main.classpath.append(File.pathSeparator).append(file.getAbsolutePath());
-                Main.urls.add(url);
+                if (!checkDependencies()) JarLoader.loadJar(file.toPath());
             }
 
             if (!checkDependencies()) return;
@@ -78,25 +78,22 @@ public class v_1_20_R3 {
                 System.exit(0);
             }
 
-            if (minecraft_server.exists()) {
+            if (bundled.exists()) {
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
-                        Main.urls);
+                        "--task", "BUNDLER_EXTRACT", "--input", bundled.getAbsolutePath(), "--output", libPath, "--libraries");
                 if (!unpacked.exists()) {
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", unpacked.getAbsolutePath(), "--jar-only"},
-                            Main.urls);
+                            "--task", "BUNDLER_EXTRACT", "--input", bundled.getAbsolutePath(), "--output", unpacked.getAbsolutePath(), "--jar-only");
                 }
             } else {
-                System.out.println(I18n.as("installation.minecraftserver") + minecraft_server.getAbsolutePath());
+                System.out.println(I18n.as("installation.minecraftserver") + bundled.getAbsolutePath());
                 System.exit(0);
             }
 
             if (mcpZip.exists()) {
-                if (!mcpTxt.exists()) {
+                if (!mcpTsrg.exists()) {
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
-                            Main.urls);
+                            "--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTsrg.getAbsolutePath(), "--key", "mappings");
                 }
             } else {
                 System.out.println(I18n.as("installation.mcpfilemissing"));
@@ -113,14 +110,12 @@ public class v_1_20_R3 {
 
             if (!mergedMapping.exists()) {
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
-                        Main.urls);
+                        "--task", "MERGE_MAPPING", "--left", mcpTsrg.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right");
             }
 
             if (!srg.exists()) {
                 run("net.minecraftforge.fart.Main",
-                        new String[]{"--input", unpacked.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix", "--strip-sigs"},
-                        Main.urls);
+                        "--input", unpacked.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix", "--strip-sigs");
             }
 
             String storedServerMD5 = null;
@@ -134,10 +129,8 @@ public class v_1_20_R3 {
             }
 
             if (!serverJar.exists() || storedServerMD5 == null || !storedServerMD5.equals(serverMD5)) {
-                System.out.println("binarypatcher");
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched"},
-                        Main.urls);
+                        "--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched");
                 serverMD5 = MD5Util.get(serverJar);
             }
 

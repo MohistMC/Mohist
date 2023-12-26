@@ -1159,7 +1159,7 @@
     }
  
     public boolean allowsListing() {
-@@ -1735,4 +_,149 @@
+@@ -1735,4 +_,150 @@
     public CommonPlayerSpawnInfo createCommonSpawnInfo(ServerLevel p_301182_) {
        return new CommonPlayerSpawnInfo(p_301182_.dimensionTypeId(), p_301182_.dimension(), BiomeManager.obfuscateSeed(p_301182_.getSeed()), this.gameMode.getGameModeForPlayer(), this.gameMode.getPreviousGameModeForPlayer(), p_301182_.isDebug(), p_301182_.isFlat(), this.getLastDeathLocation(), this.getPortalCooldown());
     }
@@ -1302,6 +1302,7 @@
 +      }
 +      this.keepLevel = false;
 +      this.setDeltaMovement(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
++      this.skipDropExperience = false; // CraftBukkit - SPIGOT-7462: Reset experience drop skip, so that further deaths drop xp
 +   }
 +
 +   public void setTabListDisplayName(Component tabListDisplayName) {

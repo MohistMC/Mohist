@@ -138,6 +138,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
+import org.bukkit.ServerTickManager;
 import org.bukkit.StructureType;
 import org.bukkit.UnsafeValues;
 import org.bukkit.Warning.WarningState;
@@ -297,6 +298,7 @@ public final class CraftServer implements Server {
     public String minimumAPI;
     public CraftScoreboardManager scoreboardManager;
     public CraftDataPackManager dataPackManager;
+    private CraftServerTickManager serverTickManager;
     public boolean playerCommandState;
     private boolean printSaveWarning;
     private CraftIconCache icon;
@@ -324,6 +326,7 @@ public final class CraftServer implements Server {
         this.structureManager = new CraftStructureManager(console.getStructureManager());
         this.scoreboardManager = new CraftScoreboardManager(console, new ServerScoreboard(console));
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
+        this.serverTickManager = new CraftServerTickManager(console.tickRateManager());
         Bukkit.setServer(this);
 
         CraftRegistry.setMinecraftRegistry(console.registryAccess());
@@ -725,6 +728,11 @@ public final class CraftServer implements Server {
     @Override
     public DataPackManager getDataPackManager() {
         return this.dataPackManager;
+    }
+
+    @Override
+    public ServerTickManager getServerTickManager() {
+        return this.serverTickManager;
     }
 
     @Override

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/CeilingHangingSignBlock.java
++++ b/net/minecraft/world/level/block/CeilingHangingSignBlock.java
+@@ -139,6 +_,6 @@
+ 
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_279379_, BlockState p_279390_, BlockEntityType<T> p_279231_) {
+-      return createTickerHelper(p_279231_, BlockEntityType.HANGING_SIGN, SignBlockEntity::tick);
++      return null; // Craftbukkit - remove unnecessary sign ticking
+    }
+ }

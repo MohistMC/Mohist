@@ -27,7 +27,7 @@ dependencies {
     implementation(libs.i18n)
     implementation(libs.json)
     implementation(libs.tools)
-    implementation(libs.bootstrap)
+    compileOnly(libs.bootstrap)
     implementation 'me.tongfei:progressbar:0.10.0'
     implementation 'org.jline:jline:3.23.0'
 }

@@ -524,7 +524,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         net.minecraft.world.entity.projectile.AbstractArrow arrow;
         if (TippedArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.world.entity.EntityType.ARROW.create(world);
-            ((Arrow) arrow.getBukkitEntity()).setBasePotionData(new PotionData(PotionType.WATER, false, false));
+            ((Arrow) arrow.getBukkitEntity()).setBasePotionType(PotionType.WATER);
         } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.world.entity.EntityType.SPECTRAL_ARROW.create(world);
         } else if (Trident.class.isAssignableFrom(clazz)) {
@@ -1033,6 +1033,16 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public Difficulty getDifficulty() {
         return Difficulty.getByValue(this.getHandle().getDifficulty().ordinal());
+    }
+
+    @Override
+    public int getViewDistance() {
+        return world.getChunkSource().chunkMap.serverViewDistance;
+    }
+
+    @Override
+    public int getSimulationDistance() {
+        return world.getChunkSource().chunkMap.getDistanceManager().simulationDistance;
     }
 
     public BlockMetadataStore getBlockMetadata() {
@@ -1918,7 +1928,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
             return null;
         }
 
-        return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), CraftLocation.toBukkit(found.getFirst(), this));
+        return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value()), CraftLocation.toBukkit(found.getFirst(), this));
     }
 
     @Override
@@ -1944,18 +1954,6 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         return new CraftBiomeSearchResult(CraftBiome.minecraftHolderToBukkit(found.getSecond()), new Location(this, found.getFirst().getX(), found.getFirst().getY(), found.getFirst().getZ()));
     }
-
-    // Spigot start
-    @Override
-    public int getViewDistance() {
-        return world.spigotConfig.viewDistance;
-    }
-
-    @Override
-    public int getSimulationDistance() {
-        return world.spigotConfig.simulationDistance;
-    }
-    // Spigot end
 
     // Mohist start
     private boolean isbukkit = false;

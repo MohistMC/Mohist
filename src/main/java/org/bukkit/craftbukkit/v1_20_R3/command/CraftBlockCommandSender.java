@@ -7,16 +7,32 @@ import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
+import org.bukkit.permissions.PermissibleBase;
+import org.bukkit.permissions.ServerOperator;
 
 /**
  * Represents input from a command block
  */
 public class CraftBlockCommandSender extends ServerCommandSender implements BlockCommandSender {
+
+    // For performance reasons, use one PermissibleBase for all command blocks.
+    private static final PermissibleBase SHARED_PERM = new PermissibleBase(new ServerOperator() {
+
+        @Override
+        public boolean isOp() {
+            return true;
+        }
+
+        @Override
+        public void setOp(boolean value) {
+            throw new UnsupportedOperationException("Cannot change operator status of a block");
+        }
+    });
     private final CommandSourceStack block;
     private final BlockEntity tile;
 
     public CraftBlockCommandSender(CommandSourceStack commandBlockListenerAbstract, BlockEntity tile) {
-        super();
+        super(SHARED_PERM);
         this.block = commandBlockListenerAbstract;
         this.tile = tile;
     }
@@ -47,12 +63,12 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
 
     @Override
     public boolean isOp() {
-        return true;
+        return SHARED_PERM.isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        throw new UnsupportedOperationException("Cannot change operator status of a block");
+        SHARED_PERM.setOp(value);
     }
 
     public CommandSourceStack getWrapper() {

@@ -8,15 +8,17 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-@@ -54,6 +_,8 @@
+@@ -52,7 +_,9 @@
+    final LongSet ticketsToRelease = new LongOpenHashSet();
+    final Executor mainThreadExecutor;
     private long ticketTickCounter;
-    private int simulationDistance = 10;
- 
-+   private final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets = new Long2ObjectOpenHashMap<>();
+-   private int simulationDistance = 10;
++   public int simulationDistance = 10;
 +
++   private final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets = new Long2ObjectOpenHashMap<>();
+ 
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
-       ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
 @@ -159,6 +_,25 @@
           this.ticketTracker.update(p_140785_, p_140786_.getTicketLevel(), true);
        }

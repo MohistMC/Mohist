@@ -611,6 +611,9 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlaunc
 
     manifest {
         attributes([
+                'Automatic-Module-Name': 'mohist.boot',
+                'Premain-Class': 'com.mohistmc.mohist.util.JarLoader',
+                'Launcher-Agent-Class': 'com.mohistmc.mohist.util.JarLoader',
                 'Main-Class': 'com.mohistmc.mohist.Main'
         ])
         attributes([

@@ -38,6 +38,15 @@
     protected InteractionResult mobInteract(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.getItemInHand(p_32302_);
        if (itemstack.is(ItemTags.CREEPER_IGNITERS)) {
+@@ -206,7 +_,7 @@
+          this.level().playSound(p_32301_, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
+          if (!this.level().isClientSide) {
+             this.ignite();
+-            if (!itemstack.isDamageableItem()) {
++            if (itemstack.getItem().getMaxDamage() == 0) { // CraftBukkit - fix MC-264285: unbreakable flint and steels are completely consumed when igniting a creeper
+                itemstack.shrink(1);
+             } else {
+                itemstack.hurtAndBreak(1, p_32301_, (p_32290_) -> {
 @@ -221,13 +_,20 @@
        }
     }

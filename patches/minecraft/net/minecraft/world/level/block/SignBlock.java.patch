@@ -24,7 +24,7 @@
                 this.openTextEdit(p_56281_, signblockentity, flag2);
                 return this.getInteractionResult(flag1);
              } else {
-@@ -152,9 +_,18 @@
+@@ -152,11 +_,20 @@
        return woodtype;
     }
  
@@ -35,11 +35,21 @@
 +      }
        p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());
        p_277738_.openTextEdit(p_277467_, p_277771_);
-+   }
-+
+    }
+ 
 +   public void openTextEdit(Player entityhuman, SignBlockEntity tileentitysign, boolean flag, org.bukkit.event.player.PlayerSignOpenEvent.Cause cause) {
 +      openTextEditcause.set(cause);
 +      openTextEdit(entityhuman, tileentitysign, flag);
-    }
- 
++   }
++
     private boolean otherPlayerIsEditingSign(Player p_277952_, SignBlockEntity p_277599_) {
+       UUID uuid = p_277599_.getPlayerWhoMayEdit();
+       return uuid != null && !uuid.equals(p_277952_.getUUID());
+@@ -164,6 +_,6 @@
+ 
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_277367_, BlockState p_277896_, BlockEntityType<T> p_277724_) {
+-      return createTickerHelper(p_277724_, BlockEntityType.SIGN, SignBlockEntity::tick);
++      return null; // Craftbukkit - remove unnecessary sign ticking
+    }
+ }

@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.4--49.0.10-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.20.4--49.0.11-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.8+7-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.4-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -20,18 +20,18 @@
 Progress
 ------
 
-- [x] Rectify Forge([**d44d0b8ed**](https://github.com/MinecraftForge/MinecraftForge/commit/d44d0b8ed))
+- [x] Rectify Forge([**ed2ba0f52**](https://github.com/MinecraftForge/MinecraftForge/commit/ed2ba0f52))
 - [x] Start patch
-    * [x] Bukkit([**b7a2ed41**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/b7a2ed41))
-    * [ ] CraftBukkit([**e37e29ce0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/e37e29ce0))
-    * [x] Spigot ([**ce0f71e4**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/ce0f71e4))
+    * [x] Bukkit([**cc9aa21a**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/cc9aa21a))
+    * [ ] CraftBukkit([**19aec59ea**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/19aec59ea))
+    * [x] Spigot ([**3e5e22c0**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/3e5e22c0))
         * [x] Bukkit-Patches
         * [x] CraftBukkit-Patches
 
 Getting Help
 ------
 
-  [MohistWiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
+  [Wiki](https://wiki.mohistmc.com/) (Here is everything you need related to Mohist)
 
 Upstream Projects
 ------

@@ -74,8 +74,9 @@
 +            // CraftBukkit end
              if (p_9975_.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
                 Component component;
-                if (p_9975_.protocolVersion() < 754) {
+-               if (p_9975_.protocolVersion() < 754) {
 -                  component = Component.translatable("multiplayer.disconnect.outdated_client", SharedConstants.getCurrentVersion().getName());
++               if (p_9975_.protocolVersion() < SharedConstants.getCurrentVersion().getProtocolVersion()) { // Spigot - SPIGOT-7546: Handle version check correctly for outdated client message
 +                  component = Component.literal( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedClientMessage.replaceAll("'", "''"), SharedConstants.getCurrentVersion().getName())); // Spigot
                 } else {
 -                  component = Component.translatable("multiplayer.disconnect.incompatible", SharedConstants.getCurrentVersion().getName());

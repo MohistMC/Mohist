@@ -93,10 +93,12 @@
     private LivingEntity lastHurtMob;
     private int lastHurtMobTimestamp;
     private float speed;
-@@ -225,6 +_,25 @@
+@@ -224,7 +_,26 @@
+    private float swimAmount;
     private float swimAmountO;
     protected Brain<?> brain;
-    private boolean skipDropExperience;
+-   private boolean skipDropExperience;
++   protected boolean skipDropExperience;
 +   // CraftBukkit start
 +   public boolean forceDrops;
 +   public CraftAttributeMap craftAttributes;

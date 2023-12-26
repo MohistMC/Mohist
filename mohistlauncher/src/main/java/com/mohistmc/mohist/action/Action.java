@@ -55,9 +55,9 @@ public abstract class Action {
 
     public final String mcpStart;
     public final File mcpZip;
-    public final File mcpTxt;
+    public final File mcpTsrg;
 
-    public final File minecraft_server;
+    public final File bundled;
 
     protected Action() {
         this.mohistVer = DataParser.versionMap.get("mohist");
@@ -80,16 +80,13 @@ public abstract class Action {
 
         this.mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
         this.mcpZip = new File(mcpStart + ".zip");
-        this.mcpTxt = new File(mcpStart + "-mappings.tsrg");
+        this.mcpTsrg = new File(mcpStart + "-mappings.tsrg");
 
-        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-bundled.jar");
+        this.bundled = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + "-bundled.jar");
     }
 
-    protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
-        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
-        Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
-        loader.clearAssertionStatus();
-        loader.close();
+    protected void run(String mainClass, String... args) throws Exception {
+        Class.forName(mainClass).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 
     protected void copyFileFromJar(File file, String pathInJar) {

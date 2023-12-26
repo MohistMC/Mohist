@@ -12,18 +12,14 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 public abstract class ServerCommandSender implements CommandSender {
-    private static PermissibleBase blockPermInst;
     private final PermissibleBase perm;
 
-    public ServerCommandSender() {
-        if (this instanceof CraftBlockCommandSender) {
-            if (blockPermInst == null) {
-                blockPermInst = new PermissibleBase(this);
-            }
-            this.perm = blockPermInst;
-        } else {
-            this.perm = new PermissibleBase(this);
-        }
+    protected ServerCommandSender() {
+        this.perm = new PermissibleBase(this);
+    }
+
+    protected ServerCommandSender(PermissibleBase perm) {
+        this.perm = perm;
     }
 
     @Override

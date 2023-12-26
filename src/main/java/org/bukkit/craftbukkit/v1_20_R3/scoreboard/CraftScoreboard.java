@@ -187,8 +187,8 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     @Override
     public ImmutableSet<OfflinePlayer> getPlayers() {
         ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
-        for (Object playerName : board.getTrackedPlayers()) {
-            players.add(Bukkit.getOfflinePlayer(playerName.toString()));
+        for (ScoreHolder playerName : board.getTrackedPlayers()) {
+            players.add(Bukkit.getOfflinePlayer(playerName.getScoreboardName()));
         }
         return players.build();
     }
@@ -196,8 +196,8 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     @Override
     public ImmutableSet<String> getEntries() {
         ImmutableSet.Builder<String> entries = ImmutableSet.builder();
-        for (Object entry : board.getTrackedPlayers()) {
-            entries.add(entry.toString());
+        for (ScoreHolder entry : board.getTrackedPlayers()) {
+            entries.add(entry.getScoreboardName());
         }
         return entries.build();
     }

@@ -14,7 +14,7 @@
           optional = Optional.of(gameprofilecache$gameprofileinfo.getProfile());
        } else {
 -         optional = lookupGameProfile(this.profileRepository, s);
-+         optional = lookupGameProfile(this.profileRepository, p_10997_);  // Spigot - use correct case for offline players
++         optional = lookupGameProfile(this.profileRepository, p_10997_);  // CraftBukkit - use correct case for offline players
           if (optional.isPresent()) {
              this.add(optional.get());
              flag = false;
