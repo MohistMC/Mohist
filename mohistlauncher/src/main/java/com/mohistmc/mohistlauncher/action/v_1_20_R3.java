@@ -1,6 +1,7 @@
 package com.mohistmc.mohistlauncher.action;
 
 import com.mohistmc.mohistlauncher.util.I18n;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MD5Util;
 import java.io.File;
 import java.io.FileWriter;
@@ -79,11 +80,11 @@ public class v_1_20_R3 {
                 System.exit(0);
             }
 
-            if (isCorrupted(unpacked)) {
+            if (JarTool.isCorrupted(unpacked)) {
                 unpacked.delete();
             }
 
-            if (isCorrupted(srg)) {
+            if (JarTool.isCorrupted(srg)) {
                 srg.delete();
             }
 

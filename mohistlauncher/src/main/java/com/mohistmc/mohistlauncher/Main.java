@@ -23,7 +23,9 @@ import com.mohistmc.mohistlauncher.action.v_1_20_R3;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
-import com.mohistmc.mohistlauncher.util.EulaUtil;
+import com.mohistmc.tools.MojangEulaUtil;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -60,11 +62,11 @@ public class Main {
         DefaultLibraries.run();
         v_1_20_R3.run();
 
-        if (!EulaUtil.hasAcceptedEULA()) {
+        if (!MojangEulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.as("eula"));
             while (!"true".equals(new Scanner(System.in).next())) {
             }
-            EulaUtil.writeInfos();
+            MojangEulaUtil.writeInfos(i18n.as("eula.text", "https://account.mojang.com/documents/minecraft_eula") + "\n" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\neula=true");
         }
     }
 }

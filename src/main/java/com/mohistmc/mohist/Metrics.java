@@ -89,7 +89,7 @@ public class Metrics {
         outputStream.flush();
         outputStream.close();
 
-        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
+        connection.getInputStream().close(); // We don't care about the response - Just send our data ^_^
     }
 
     private static byte[] compress(final String str) throws IOException {
@@ -283,7 +283,7 @@ public class Metrics {
                                 bStats collects some data for plugin authors like how many servers are using their plugins.
                                 To honor their work, you should not disable it.
                                 This has nearly no effect on the server performance!
-                                Check out https://bStats.org/ to learn more :)"""
+                                Check out https://bStats.org/ to learn more ^_^"""
                 ).copyDefaults(true);
                 try {
                     config.save(configFile);

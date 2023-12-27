@@ -121,16 +121,6 @@ public abstract class Action {
         }
     }
 
-    protected boolean isCorrupted(File f) {
-        try {
-            JarFile j = new JarFile(f);
-            j.close();
-            return false;
-        } catch (IOException e) {
-            return true;
-        }
-    }
-
     public boolean checkDependencies() throws IOException {
         if (installInfo.exists()) {
             if (!serverJar.exists()) {

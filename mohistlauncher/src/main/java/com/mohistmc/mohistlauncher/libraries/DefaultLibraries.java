@@ -22,6 +22,7 @@ import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.download.DownloadSource;
 import com.mohistmc.mohistlauncher.download.UpdateUtils;
 import com.mohistmc.mohistlauncher.util.I18n;
+import com.mohistmc.tools.Libraries;
 import com.mohistmc.tools.MD5Util;
 import java.io.BufferedReader;
 import java.io.File;
@@ -79,7 +80,7 @@ public class DefaultLibraries {
                         fail.remove(lib);
                     } catch (Exception e) {
                         if (e.getMessage() != null && !"md5".equals(e.getMessage())) {
-                            pb.setExtraMessage(I18n.as("file.download.nook", u));
+                            pb.setExtraMessage(file.getName());
                             file.delete();
                         }
                         fail.add(lib);

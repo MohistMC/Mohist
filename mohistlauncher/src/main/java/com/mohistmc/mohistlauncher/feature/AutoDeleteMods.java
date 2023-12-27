@@ -1,6 +1,7 @@
 package com.mohistmc.mohistlauncher.feature;
 
 import com.mohistmc.mohistlauncher.util.I18n;
+import com.mohistmc.tools.FileUtils;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -35,7 +36,7 @@ public class AutoDeleteMods {
         File mods = new File("mods");
         if (!mods.exists()) mods.mkdir();
         for (File f : mods.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (fileExists(f, cl)) {
+            if (FileUtils.fileExists(f, cl)) {
                 System.out.println(I18n.as("update.deleting", f.getName()));
                 System.gc();
                 Thread.sleep(100);
@@ -50,21 +51,5 @@ public class AutoDeleteMods {
                 f.delete();
             }
         }
-    }
-
-
-    private static boolean fileExists(File f, String fName) {
-        if (!f.exists()) return false;
-        try {
-            JarFile jf = new JarFile(f);
-            if (jf.getJarEntry(fName) != null) {
-                jf.close();
-                return true;
-            }
-        } catch (Exception e) {
-            System.out.println("[Mohist | ALERT] - The jar file " + f.getName() + " (at " + f.getAbsolutePath() + ") is maybe corrupted or empty.");
-            return false;
-        }
-        return false;
     }
 }
