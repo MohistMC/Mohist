@@ -58,6 +58,7 @@ public class v_1_20_R3 {
                 System.exit(0);
             }
 
+            mute();
             if (bundled.exists()) {
                 run("net.minecraftforge.installertools.ConsoleTool",
                         "--task", "BUNDLER_EXTRACT", "--input", bundled.getAbsolutePath(), "--output", libPath, "--libraries");
@@ -123,6 +124,7 @@ public class v_1_20_R3 {
             fw.write(serverMD5 + "\n");
             fw.write(mohistMD5);
             fw.close();
+            unmute();
 
             System.out.println(I18n.as("installation.finished"));
         }

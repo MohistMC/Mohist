@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
-    static final boolean DEBUG = Boolean.getBoolean("mohist.debug");
+    public static final boolean DEBUG = Boolean.getBoolean("mohist.debug");
     public static String MCVERSION;
     public static i18n i18n;
 

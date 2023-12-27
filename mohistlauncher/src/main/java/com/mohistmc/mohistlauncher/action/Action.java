@@ -23,7 +23,9 @@ import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -91,6 +93,21 @@ public abstract class Action {
         Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
         loader.clearAssertionStatus();
         loader.close();
+    }
+
+    protected void mute() throws Exception {
+        if (Main.DEBUG) return;
+        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
+        if (!out.exists()) {
+            out.getParentFile().mkdirs();
+            out.createNewFile();
+        }
+        System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(out))));
+    }
+
+    protected void unmute() {
+        if (Main.DEBUG) return;
+        System.setOut(origin);
     }
 
     protected void copyFileFromJar(File file, String pathInJar) {
