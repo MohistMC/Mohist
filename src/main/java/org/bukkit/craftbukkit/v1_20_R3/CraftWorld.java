@@ -291,7 +291,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean regenerateChunk(int x, int z) {
-        throw new UnsupportedOperationException("Not supported in this Minecraft version! Unless you can fix it, this is not a bug ^_^");
+        throw new UnsupportedOperationException("Not supported in this Minecraft version! Unless you can fix it, this is not a bug :)");
         /*
         if (!unloadChunk0(x, z, false)) {
             return false;

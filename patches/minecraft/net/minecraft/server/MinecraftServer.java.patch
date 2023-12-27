@@ -282,7 +282,7 @@
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
              BlockPos blockpos = chunkpos.getWorldPosition();
-@@ -448,40 +_,86 @@
+@@ -448,40 +_,84 @@
        serverleveldata.setGameType(GameType.SPECTATOR);
     }
  
@@ -349,7 +349,7 @@
 +            this.executeModerately();
 +         }
        }
- 
+-
 -      this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -      this.waitUntilNextTick();
 -
@@ -371,7 +371,7 @@
 +            ForgeChunkManager.reinstatePersistentChunks(serverlevel, forcedchunkssaveddata);
           }
        }
- 
+-
 -      this.nextTickTimeNanos = Util.getNanos() + PREPARE_LEVELS_DEFAULT_DELAY_NANOS;
 -      this.waitUntilNextTick();
 +      // CraftBukkit start
@@ -467,7 +467,7 @@
  
     }
  
-@@ -627,40 +_,121 @@
+@@ -627,16 +_,80 @@
  
     }
  
@@ -528,7 +528,7 @@
 +   }
 +   private static final BigDecimal TPS_BASE = new BigDecimal(1E9).multiply(new BigDecimal(SAMPLE_INTERVAL));
 +   // Paper End
-+    // Spigot End
++   // Spigot End
 +
     protected void runServer() {
        try {
@@ -544,35 +544,25 @@
  
 +         // Spigot start
 +         Arrays.fill( recentTps, 20 );
-+         long start = System.nanoTime(), curTime = 0, tickSection = start; // Paper - Further improve server tick loop
-+         lastTick = start - TICK_TIME; // Paper
++         long tickSection = Util.getNanos(), curTime, tickCount = 1; // Paper
           while(this.running) {
--            long i;
--            if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
--               i = 0L;
--               this.nextTickTimeNanos = Util.getNanos();
-+            long i = this.tickRateManager.nanosecondsPerTick();
-+            long k = Util.getNanos() - this.nextTickTimeNanos;
-+            if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
-+               long j = k / i;
-+               if (server.getWarnOnOverload()) // CraftBukkit
-+               LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
-+               this.nextTickTimeNanos += j * i;
-                this.lastOverloadWarningNanos = this.nextTickTimeNanos;
--            } else {
--               i = this.tickRateManager.nanosecondsPerTick();
--               long k = Util.getNanos() - this.nextTickTimeNanos;
--               if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
--                  long j = k / i;
--                  LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
--                  this.nextTickTimeNanos += j * i;
--                  this.lastOverloadWarningNanos = this.nextTickTimeNanos;
--               }
--            }
-+            }
-+
+             long i;
+             if (!this.isPaused() && this.tickRateManager.isSprinting() && this.tickRateManager.checkShouldSprintThisTick()) {
+@@ -648,18 +_,43 @@
+                long k = Util.getNanos() - this.nextTickTimeNanos;
+                if (k > OVERLOADED_THRESHOLD_NANOS + 20L * i && this.nextTickTimeNanos - this.lastOverloadWarningNanos >= OVERLOADED_WARNING_INTERVAL_NANOS + 100L * i) {
+                   long j = k / i;
++                  if (server.getWarnOnOverload()) // CraftBukkit
+                   LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", k / TimeUtil.NANOSECONDS_PER_MILLISECOND, j);
+                   this.nextTickTimeNanos += j * i;
+                   this.lastOverloadWarningNanos = this.nextTickTimeNanos;
+                }
+             }
+ 
 +            if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
 +            {
++               // Paper start
++               curTime = Util.getNanos();
 +               final long diff = curTime - tickSection;
 +               BigDecimal currentTps = TPS_BASE.divide(new BigDecimal(diff), 30, RoundingMode.HALF_UP);
 +               tps5s.add(currentTps, diff); // Purpur
@@ -588,23 +578,20 @@
 +               // Purpur end
 +               // Paper end
 +               tickSection = curTime;
-+            }
++            } else curTime = Util.getNanos(); // Paper
 +            // Spigot end
- 
++
              boolean flag = i == 0L;
              if (this.debugCommandProfilerDelayStart) {
                 this.debugCommandProfilerDelayStart = false;
--               this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
-+               this.debugCommandProfiler = new TimeProfiler(Util.getNanos(), this.tickCount);
+                this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
              }
  
--            this.nextTickTimeNanos += i;
-+            MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
-+            lastTick = curTime;
-+            this.nextTickTimeNanos += 50L;
++            // MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
++            lastTick = curTime; // Paper
+             this.nextTickTimeNanos += i;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
-             this.tickServer(flag ? () -> {
 @@ -679,8 +_,16 @@
              this.isReady = true;
              JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
@@ -635,14 +622,19 @@
              }
  
 +            ServerLifecycleHooks.handleServerStopped(this);
-+			WatchdogThread.doStop(); // Spigot
++            WatchdogThread.doStop(); // Spigot
              this.onServerExit();
           }
  
-@@ -735,6 +_,15 @@
-       return this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
+@@ -732,8 +_,17 @@
     }
  
+    private boolean haveTime() {
+-      return this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
+-   }
++      return this.forceTicks || this.runningTask() || Util.getNanos() < (this.mayHaveDelayedTasks ? this.delayedTasksMaxNextTickTimeNanos : this.nextTickTimeNanos);
++   }
++
 +   private void executeModerately() {
 +      this.runAllTasks();
 +      while (!processQueue.isEmpty()) {
@@ -651,10 +643,9 @@
 +      LockSupport.parkNanos("executing tasks", 1000L);
 +   }
 +   // CraftBukkit end
-+
+ 
     protected void waitUntilNextTick() {
        this.runAllTasks();
-       this.managedBlock(() -> {
 @@ -742,7 +_,7 @@
        });
     }
