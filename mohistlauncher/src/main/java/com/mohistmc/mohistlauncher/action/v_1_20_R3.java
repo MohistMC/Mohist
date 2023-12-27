@@ -48,7 +48,7 @@ public class v_1_20_R3 {
             copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
 
-            if (!checkDependencies()) return;
+            if (!needsInstall()) return;
             System.out.println(I18n.as("installation.start"));
 
             copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
@@ -99,23 +99,29 @@ public class v_1_20_R3 {
             }
 
             String storedServerMD5 = null;
+            String storedMohistMD5 = null;
             String serverMD5 = MD5Util.get(serverJar);
+            String mohistMD5 = MD5Util.get(universalJar);
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
                 if (!infoLines.isEmpty()) {
                     storedServerMD5 = infoLines.get(0);
                 }
+                if (infoLines.size() > 1) {
+                    storedMohistMD5 = infoLines.get(1);
+                }
             }
 
-            if (!serverJar.exists() || storedServerMD5 == null || !storedServerMD5.equals(serverMD5)) {
+            if (!serverJar.exists() || storedServerMD5 == null || storedMohistMD5 == null || !storedServerMD5.equals(serverMD5) || !storedMohistMD5.equals(mohistMD5)) {
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         "--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched");
                 serverMD5 = MD5Util.get(serverJar);
             }
 
             FileWriter fw = new FileWriter(installInfo);
-            fw.write(serverMD5);
+            fw.write(serverMD5 + "\n");
+            fw.write(mohistMD5);
             fw.close();
 
             System.out.println(I18n.as("installation.finished"));

@@ -32,7 +32,6 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.jar.JarFile;
 
 public abstract class Action {
 
@@ -121,12 +120,14 @@ public abstract class Action {
         }
     }
 
-    public boolean checkDependencies() throws IOException {
+    public boolean needsInstall() throws IOException {
         if (installInfo.exists()) {
             if (!serverJar.exists()) {
                 return true;
             }
-            return !MD5Util.get(serverJar).equals(Files.readString(installInfo.toPath()));
+            String jarmd = MD5Util.get(universalJar);
+            List<String> lines = Files.readAllLines(installInfo.toPath());
+            return lines.size() < 2 || !jarmd.equals(lines.get(1));
         }
         return true;
     }
