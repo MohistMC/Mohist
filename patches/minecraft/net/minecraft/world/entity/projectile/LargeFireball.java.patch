@@ -22,13 +22,12 @@
  
     protected void onHit(HitResult p_37218_) {
        super.onHit(p_37218_);
--      if (!this.level().isClientSide) {
+       if (!this.level().isClientSide) {
 -         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 -         this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
-+      if (!this.level.isClientSide) {
 +         // CraftBukkit start - fire ExplosionPrimeEvent
 +         ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) this.getBukkitEntity());
-+         this.level.getCraftServer().getPluginManager().callEvent(event);
++         this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +         if (!event.isCancelled()) {
 +            // give 'this' instead of (Entity) null so we know what causes the damage

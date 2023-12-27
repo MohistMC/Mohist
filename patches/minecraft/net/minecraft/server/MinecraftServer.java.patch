@@ -154,7 +154,7 @@
        }
  
        S s = p_129873_.apply(thread);
-@@ -272,19 +_,19 @@
+@@ -272,7 +_,7 @@
        super("Server");
        this.registries = p_236726_.registries();
        this.worldData = p_236726_.worldData();
@@ -163,11 +163,7 @@
           throw new IllegalStateException("Missing Overworld dimension data");
        } else {
           this.proxy = p_236727_;
-          this.packRepository = p_236725_;
--         this.resources = new MinecraftServer.ReloadableResources(p_236726_.resourceManager(), p_236726_.dataPackResources());
-+         this.resources = new ReloadableResources(p_236726_.resourceManager(), p_236726_.dataPackResources());
-          this.services = p_236729_;
-          if (p_236729_.profileCache() != null) {
+@@ -283,8 +_,8 @@
              p_236729_.profileCache().setExecutor(this);
           }
  
@@ -789,21 +785,6 @@
     }
  
     public SystemReport fillSystemReport(SystemReport p_177936_) {
-@@ -1143,12 +_,12 @@
-       this.isDemo = p_129976_;
-    }
- 
--   public Optional<MinecraftServer.ServerResourcePackInfo> getServerResourcePack() {
-+   public Optional<ServerResourcePackInfo> getServerResourcePack() {
-       return Optional.empty();
-    }
- 
-    public boolean isResourcePackRequired() {
--      return this.getServerResourcePack().filter(MinecraftServer.ServerResourcePackInfo::isRequired).isPresent();
-+      return this.getServerResourcePack().filter(ServerResourcePackInfo::isRequired).isPresent();
-    }
- 
-    public abstract boolean isDedicatedServer();
 @@ -1200,7 +_,7 @@
     public abstract boolean isCommandBlockEnabled();
  
@@ -822,13 +803,7 @@
     }
  
     public boolean isReady() {
-@@ -1360,11 +_,12 @@
-             }
- 
-          }).thenApply((p_212904_) -> {
--            return new MinecraftServer.ReloadableResources(closeableresourcemanager, p_212904_);
-+            return new ReloadableResources(closeableresourcemanager, p_212904_);
-          });
+@@ -1365,6 +_,7 @@
        }).thenAcceptAsync((p_248090_) -> {
           this.resources.close();
           this.resources = p_248090_;
@@ -896,7 +871,7 @@
        return this.worldData;
     }
  
-+   public ReloadableResources getServerResources() {
++   public MinecraftServer.ReloadableResources getServerResources() {
 +       return resources;
 +   }
 +

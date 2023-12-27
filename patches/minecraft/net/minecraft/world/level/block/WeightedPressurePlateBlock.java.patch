@@ -17,15 +17,7 @@
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
     public static final MapCodec<WeightedPressurePlateBlock> CODEC = RecordCodecBuilder.mapCodec((p_312418_) -> {
-@@ -29,14 +_,38 @@
-       return CODEC;
-    }
- 
--   public WeightedPressurePlateBlock(int p_273669_, BlockSetType p_272868_, BlockBehaviour.Properties p_273512_) {
-+   protected WeightedPressurePlateBlock(int p_273669_, BlockSetType p_272868_, BlockBehaviour.Properties p_273512_) {
-       super(p_273512_, p_272868_);
-       this.registerDefaultState(this.stateDefinition.any().setValue(POWER, Integer.valueOf(0)));
-       this.maxWeight = p_273669_;
+@@ -36,7 +_,31 @@
     }
  
     protected int getSignalStrength(Level p_58213_, BlockPos p_58214_) {

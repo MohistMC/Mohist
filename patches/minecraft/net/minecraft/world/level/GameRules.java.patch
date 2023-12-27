@@ -17,22 +17,6 @@
     public static final GameRules.Key<GameRules.BooleanValue> RULE_MOBGRIEFING = register("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.create(true));
     public static final GameRules.Key<GameRules.BooleanValue> RULE_KEEPINVENTORY = register("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
     public static final GameRules.Key<GameRules.BooleanValue> RULE_DOMOBSPAWNING = register("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.create(true));
-@@ -181,13 +_,13 @@
-    public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
-       private boolean value;
- 
--      public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
-+      static GameRules.Type<GameRules.BooleanValue> create(boolean p_46253_, BiConsumer<MinecraftServer, GameRules.BooleanValue> p_46254_) {
-          return new GameRules.Type<>(BoolArgumentType::bool, (p_46242_) -> {
-             return new GameRules.BooleanValue(p_46242_, p_46253_);
-          }, p_46254_, GameRules.GameRuleTypeVisitor::visitBoolean);
-       }
- 
--      public static GameRules.Type<GameRules.BooleanValue> create(boolean p_46251_) {
-+      static GameRules.Type<GameRules.BooleanValue> create(boolean p_46251_) {
-          return create(p_46251_, (p_46236_, p_46237_) -> {
-          });
-       }
 @@ -214,7 +_,7 @@
           return Boolean.toString(this.value);
        }
@@ -42,22 +26,6 @@
           this.value = Boolean.parseBoolean(p_46234_);
        }
  
-@@ -270,13 +_,13 @@
-    public static class IntegerValue extends GameRules.Value<GameRules.IntegerValue> {
-       private int value;
- 
--      public static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
-+      private static GameRules.Type<GameRules.IntegerValue> create(int p_46295_, BiConsumer<MinecraftServer, GameRules.IntegerValue> p_46296_) {
-          return new GameRules.Type<>(IntegerArgumentType::integer, (p_46293_) -> {
-             return new GameRules.IntegerValue(p_46293_, p_46295_);
-          }, p_46296_, GameRules.GameRuleTypeVisitor::visitInteger);
-       }
- 
--      public static GameRules.Type<GameRules.IntegerValue> create(int p_46313_) {
-+      static GameRules.Type<GameRules.IntegerValue> create(int p_46313_) {
-          return create(p_46313_, (p_46309_, p_46310_) -> {
-          });
-       }
 @@ -303,7 +_,7 @@
           return Integer.toString(this.value);
        }

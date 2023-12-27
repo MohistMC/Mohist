@@ -15,11 +15,12 @@
     private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.joinIsNotEmpty(Shapes.block(), p_49972_, BooleanOp.NOT_SAME);
-@@ -182,7 +_,6 @@
+@@ -182,7 +_,7 @@
              LOGGER.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
        }
 -
++      initClient();
     }
  
     public static boolean isExceptionForConnection(BlockState p_152464_) {
@@ -127,7 +128,7 @@
     }
  
     public boolean hasDynamicShape() {
-@@ -480,6 +_,60 @@
+@@ -480,6 +_,74 @@
        return this.stateDefinition.getPossibleStates().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
  
@@ -140,6 +141,20 @@
 +    */
 +   public Object getRenderPropertiesInternal() {
 +      return renderProperties;
++   }
++
++   private void initClient() {
++      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
++         initializeClient(properties -> {
++            if (properties == this)
++               throw new IllegalStateException("Don't extend IBlockRenderProperties in your block, use an anonymous class instead.");
++            this.renderProperties = properties;
++         });
++      }
++   }
++
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientBlockExtensions> consumer) {
 +   }
 +
 +   @Override

@@ -39,7 +39,7 @@
        }
  
        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -52,17 +_,22 @@
+@@ -52,16 +_,21 @@
        if (p_55473_.isClientSide) {
           spawnParticles(p_55473_, p_55474_);
        } else {
@@ -52,21 +52,17 @@
     }
  
 -   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
--      spawnParticles(p_55494_, p_55495_);
--      if (!p_55493_.getValue(LIT)) {
--         p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
-+   private static void interact(BlockState pState, Level pLevel, BlockPos pPos, Entity entity) { // CraftBukkit - add Entity
-+      spawnParticles(pLevel, pPos);
-+      if (!pState.getValue(LIT)) {
++   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, Entity entity) { // CraftBukkit - add Entity
+       spawnParticles(p_55494_, p_55495_);
+       if (!p_55493_.getValue(LIT)) {
 +         // CraftBukkit start
-+         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, pPos, pState.setValue(LIT, true))) {
++         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.setValue(LIT, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
-+         pLevel.setBlock(pPos, pState.setValue(LIT, Boolean.valueOf(true)), 3);
+          p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
        }
  
-    }
 @@ -73,6 +_,11 @@
  
     public void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {

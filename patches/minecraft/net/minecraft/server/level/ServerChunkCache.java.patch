@@ -100,14 +100,6 @@
        this.save(true);
        this.lightEngine.close();
        this.chunkMap.close();
-@@ -307,7 +_,6 @@
-       this.level.getProfiler().popPush("chunks");
-       if (p_201914_) {
-          this.tickChunks();
--         this.chunkMap.tick();
-       }
- 
-       this.level.getProfiler().popPush("unload");
 @@ -347,7 +_,7 @@
              for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
                 LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;

@@ -141,36 +141,29 @@
     }
  
     protected void checkFallDamage(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -297,20 +_,29 @@
+@@ -297,11 +_,18 @@
              d0 = (double)p_20993_.getX() + 0.5D + d3 / d6 * 0.5D;
              d2 = (double)p_20993_.getZ() + 0.5D + d5 / d6 * 0.5D;
           }
 -
           float f = (float)Mth.ceil(this.fallDistance - 3.0F);
--         double d4 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
--         int i = (int)(150.0D * d4);
+          double d4 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
+          int i = (int)(150.0D * d4);
 -         ((ServerLevel)this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_), d0, d1, d2, i, 0.0D, 0.0D, 0.0D, (double)0.15F);
-+         if (!p_20992_.isAir()) {
-+            double d4 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
-+            int i = (int)(150.0D * d4);
-+            if (!p_20992_.addLandingEffects((ServerLevel)this.level, p_20993_, p_20992_, this, i)) {
-+               // CraftBukkit start - visiblity api
-+               if (this instanceof ServerPlayer) {
-+                  ((ServerLevel) this.level).sendParticles((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F, false);
-+               } else {
-+                  ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
-+               }
-+               // CraftBukkit end
++         if (!p_20992_.addLandingEffects((ServerLevel)this.level(), p_20993_, p_20992_, this, i)) {
++            // CraftBukkit start - visiblity api
++            if (this instanceof ServerPlayer) {
++               ((ServerLevel) this.level).sendParticles((ServerPlayer) this, new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F, false);
++            } else {
++               ((ServerLevel) this.level()).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p_20992_).setPos(p_20993_), this.getX(), this.getY(), this.getZ(), i, 0.0D, 0.0D, 0.0D, (double) 0.15F);
 +            }
++            // CraftBukkit end
 +         }
        }
  
        super.checkFallDamage(p_20990_, p_20991_, p_20992_, p_20993_);
--      if (p_20991_) {
-+	  if (p_20991_) {
-          this.lastClimbablePos = Optional.empty();
-       }
--
+@@ -311,6 +_,7 @@
+ 
     }
  
 +   @Deprecated //FORGE: Use canDrownInFluidType instead
@@ -590,26 +583,25 @@
 -            f1 = p_21017_;
 -            p_21017_ = 0.0F;
 +         if (false && p_21017_ > 0.0F && this.isDamageSourceBlocked(p_21016_)) {
-+            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = ForgeEventFactory.onShieldBlock(this, p_21016_, p_21017_);
-+            if(!ev.isCanceled()) {
++         var ev = net.minecraftforge.event.ForgeEventFactory.onShieldBlock(this, p_21016_, p_21017_);
++         if(!ev.isCanceled()) {
 +            if(ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield(p_21017_);
 +            f1 = ev.getBlockedDamage();
 +            p_21017_ -= ev.getBlockedDamage();
              if (!p_21016_.is(DamageTypeTags.IS_PROJECTILE)) {
                 Entity entity = p_21016_.getDirectEntity();
                 if (entity instanceof LivingEntity) {
-@@ -1090,32 +_,45 @@
+@@ -1090,7 +_,8 @@
                 }
              }
  
 -            flag = true;
 +            flag = p_21017_ <= 0;
++         }
           }
  
           if (p_21016_.is(DamageTypeTags.IS_FREEZING) && this.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
-             p_21017_ *= 5.0F;
-          }
-+         }
+@@ -1099,23 +_,35 @@
  
           this.walkAnimation.setSpeed(1.5F);
           boolean flag1 = true;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -107,8 +_,19 @@
+@@ -107,6 +_,17 @@
        this.dynamicShape = p_60452_.dynamicShape;
        this.requiredFeatures = p_60452_.requiredFeatures;
        this.properties = p_60452_;
@@ -16,11 +16,8 @@
 +         };
 +      }
     }
--
-+   
+ 
     public BlockBehaviour.Properties properties() {
-       return this.properties;
-    }
 @@ -171,7 +_,7 @@
     /** @deprecated */
     @Deprecated

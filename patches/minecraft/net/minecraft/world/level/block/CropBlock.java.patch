@@ -8,15 +8,6 @@
  
  public class CropBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<CropBlock> CODEC = simpleCodec(CropBlock::new);
-@@ -45,7 +_,7 @@
-       return p_52302_.is(Blocks.FARMLAND);
-    }
- 
--   protected IntegerProperty getAgeProperty() {
-+   public IntegerProperty getAgeProperty() {
-       return AGE;
-    }
- 
 @@ -70,12 +_,25 @@
     }
  

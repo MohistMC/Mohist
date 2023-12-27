@@ -14,7 +14,7 @@
  
           Vec3 vec3 = this.getPosition();
 -         if (vec3 == null) {
-+         if (vec3 == null|| !((ServerLevel) this.mob.level).isPositionEntityTicking(BlockPos.containing(vec3.x, vec3.y, vec3.z))) { // MultiPaper - don't wander into non-ticking chunks
++         if (vec3 == null || !((ServerLevel) this.mob.level).isPositionEntityTicking(BlockPos.containing(vec3.x, vec3.y, vec3.z))) { // MultiPaper - don't wander into non-ticking chunks
              return false;
           } else {
              this.wantedX = vec3.x;

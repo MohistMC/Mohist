@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/IceBlock.java
 +++ b/net/minecraft/world/level/block/IceBlock.java
-@@ -21,7 +_,6 @@
-    public MapCodec<? extends IceBlock> codec() {
-       return CODEC;
-    }
--
-    public IceBlock(BlockBehaviour.Properties p_54155_) {
-       super(p_54155_);
-    }
 @@ -54,6 +_,11 @@
     }
  

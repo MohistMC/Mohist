@@ -150,12 +150,8 @@
                 this.broadcastChanges();
              });
           } else {
-@@ -142,12 +_,29 @@
-          } else if (this.costs[p_39466_] <= 0 || itemstack.isEmpty() || (p_39465_.experienceLevel < i || p_39465_.experienceLevel < this.costs[p_39466_]) && !p_39465_.getAbilities().instabuild) {
-             return false;
-          } else {
--            this.access.execute((p_296875_, p_296876_) -> {
-+            this.access.execute((p_39481_, p_39482_) -> {
+@@ -145,9 +_,26 @@
+             this.access.execute((p_296875_, p_296876_) -> {
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentInstance> list = this.getEnchantmentList(itemstack, p_39466_, this.costs[p_39466_]);
 -               if (!list.isEmpty()) {
@@ -218,15 +214,6 @@
                    if (!p_39465_.getAbilities().instabuild) {
                       itemstack1.shrink(i);
                       if (itemstack1.isEmpty()) {
-@@ -181,7 +_,7 @@
-                   this.enchantSlots.setChanged();
-                   this.enchantmentSeed.set(p_39465_.getEnchantmentSeed());
-                   this.slotsChanged(this.enchantSlots);
--                  p_296875_.playSound((Player)null, p_296876_, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, p_296875_.random.nextFloat() * 0.1F + 0.9F);
-+                  p_39481_.playSound((Player)null, p_39482_, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, p_39481_.random.nextFloat() * 0.1F + 0.9F);
-                }
- 
-             });
 @@ -220,6 +_,7 @@
     }
  

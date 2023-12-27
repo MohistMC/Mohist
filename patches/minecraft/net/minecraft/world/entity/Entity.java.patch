@@ -966,18 +966,16 @@
     protected boolean couldAcceptPassenger() {
        return true;
     }
-@@ -2061,12 +_,18 @@
+@@ -2061,11 +_,17 @@
              MinecraftServer minecraftserver = serverlevel.getServer();
              ResourceKey<Level> resourcekey = this.level().dimension() == Level.NETHER ? Level.OVERWORLD : Level.NETHER;
              ServerLevel serverlevel1 = minecraftserver.getLevel(resourcekey);
 -            if (serverlevel1 != null && minecraftserver.isNetherEnabled() && !this.isPassenger() && this.portalTime++ >= i) {
--               this.level().getProfiler().push("portal");
 +            if (true && !this.isPassenger() && this.portalTime++ >= i) {
-+               this.level.getProfiler().push("portal");
+                this.level().getProfiler().push("portal");
                 this.portalTime = i;
                 this.setPortalCooldown();
 -               this.changeDimension(serverlevel1);
--               this.level().getProfiler().pop();
 +               // CraftBukkit start
 +               if (this instanceof ServerPlayer) {
 +                  ((ServerPlayer) this).changeDimension(serverlevel1, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
@@ -985,10 +983,9 @@
 +                  this.changeDimension(serverlevel1);
 +               }
 +               // CraftBukkit end
-+               this.level.getProfiler().pop();
+                this.level().getProfiler().pop();
              }
  
-             this.isInsidePortal = false;
 @@ -2187,10 +_,17 @@
     }
  
@@ -1117,7 +1114,7 @@
  
     @Nullable
     public Entity changeDimension(ServerLevel p_20118_) {
-+      return changeDimension(p_20118_, p_20118_.getPortalForcer());
++      return this.changeDimension(p_20118_, p_20118_.getPortalForcer());
 +   }
 +
 +   private AtomicReference<Vec3> mohist$postion = new AtomicReference<>();
@@ -1148,7 +1145,6 @@
           if (portalinfo == null) {
              return null;
           } else {
--            this.level().getProfiler().popPush("reloading");
 +            portalinfo.setWorld(p_20118_);
 +            // CraftBukkit start
 +            if (portalinfo.world == level) {
@@ -1159,7 +1155,7 @@
 +            }
 +            this.unRide();
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.level, p_20118_, this.yRot, spawnPortal -> { //Forge: Start vanilla logic
-+            this.level.getProfiler().popPush("reloading");
+             this.level().getProfiler().popPush("reloading");
              Entity entity = this.getType().create(p_20118_);
              if (entity != null) {
                 entity.restoreFrom(this);
@@ -1190,19 +1186,16 @@
 +            }); //Forge: End vanilla logic
  
              this.removeAfterChangingDimensions();
--            this.level().getProfiler().pop();
--            ((ServerLevel)this.level()).resetEmptyTime();
-+            this.level.getProfiler().pop();
-+            ((ServerLevel)this.level).resetEmptyTime();
+             this.level().getProfiler().pop();
+             ((ServerLevel)this.level()).resetEmptyTime();
              p_20118_.resetEmptyTime();
--            this.level().getProfiler().pop();
+             this.level().getProfiler().pop();
 -            return entity;
-+            this.level.getProfiler().pop();
 +            return transportedEntity;
           }
        } else {
           return null;
-@@ -2487,8 +_,14 @@
+@@ -2487,8 +_,13 @@
  
     @Nullable
     protected PortalInfo findDimensionEntryPoint(ServerLevel p_19923_) {
@@ -1213,16 +1206,14 @@
        boolean flag = this.level().dimension() == Level.END && p_19923_.dimension() == Level.OVERWORLD;
        boolean flag1 = p_19923_.dimension() == Level.END;
 +      // CraftBukkit end
-+
        if (!flag && !flag1) {
           boolean flag2 = p_19923_.dimension() == Level.NETHER;
           if (this.level().dimension() != Level.NETHER && !flag2) {
-@@ -2497,8 +_,16 @@
+@@ -2497,7 +_,15 @@
              WorldBorder worldborder = p_19923_.getWorldBorder();
              double d0 = DimensionType.getTeleportationScale(this.level().dimensionType(), p_19923_.dimensionType());
              BlockPos blockpos1 = worldborder.clampToBounds(this.getX() * d0, this.getY(), this.getZ() * d0);
 -            return this.getExitPortal(p_19923_, blockpos1, flag2, worldborder).map((p_258249_) -> {
--               BlockState blockstate = this.level().getBlockState(this.portalEntrancePos);
 +            // CraftBukkit start
 +            CraftPortalEvent event = callPortalEvent(this, p_19923_, new Vec3(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL, flag2 ? 16 : 128, 16);
 +            if (event == null) {
@@ -1232,10 +1223,9 @@
 +            worldborder = worldserverFinal.getWorldBorder();
 +            blockpos1 = worldborder.clampToBounds(event.getTo().getX(), event.getTo().getY(), event.getTo().getZ());
 +            return this.getExitPortal(p_19923_, blockpos1, flag2, worldborder, event.getSearchRadius(), event.getCanCreatePortal(), event.getCreationRadius()).map((p_258249_) -> {
-+               BlockState blockstate = this.level.getBlockState(this.portalEntrancePos);
+                BlockState blockstate = this.level().getBlockState(this.portalEntrancePos);
                 Direction.Axis direction$axis;
                 Vec3 vec3;
-                if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_AXIS)) {
 @@ -2512,7 +_,7 @@
                    vec3 = new Vec3(0.5D, 0.0D, 0.0D);
                 }
@@ -1365,7 +1355,7 @@
        return 1;
     }
  
-@@ -3015,9 +_,23 @@
+@@ -3015,9 +_,22 @@
        this.yRotO = this.getYRot();
     }
  
@@ -1376,7 +1366,6 @@
 +      else if (p_204032_ == FluidTags.LAVA) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
 +      else return false;
 +   }
-+
 +
 +   @Deprecated(forRemoval = true, since = "1.20.1")
 +   public void updateFluidHeightAndDoFluidPushing() {

@@ -20,7 +20,7 @@
  
  public class SpongeBlock extends Block {
     public static final MapCodec<SpongeBlock> CODEC = simpleCodec(SpongeBlock::new);
-@@ -47,43 +_,83 @@
+@@ -47,7 +_,9 @@
     }
  
     private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {
@@ -31,37 +31,29 @@
           for(Direction direction : ALL_DIRECTIONS) {
              p_277492_.accept(p_277519_.relative(direction));
           }
- 
--      }, (p_296944_) -> {
--         if (p_296944_.equals(p_56809_)) {
-+      }, (p_279054_) -> {
-+         if (p_279054_.equals(p_56809_)) {
+@@ -56,15 +_,17 @@
+          if (p_296944_.equals(p_56809_)) {
              return true;
           } else {
 -            BlockState blockstate = p_56808_.getBlockState(p_296944_);
 -            FluidState fluidstate = p_56808_.getFluidState(p_296944_);
 -            if (!fluidstate.is(FluidTags.WATER)) {
 +            // CraftBukkit start
-+            BlockState blockstate = blockList.getBlockState(p_279054_);
-+            FluidState fluidstate = blockList.getFluidState(p_279054_);
++            BlockState blockstate = blockList.getBlockState(p_296944_);
++            FluidState fluidstate = blockList.getFluidState(p_296944_);
 +            // CraftBukkit end
-+            if (!spongeState.canBeHydrated(p_56808_, p_56809_, fluidstate, p_279054_)) {
++            if (!spongeState.canBeHydrated(p_56808_, p_56809_, fluidstate, p_296944_)) {
                 return false;
              } else {
                 Block block = blockstate.getBlock();
                 if (block instanceof BucketPickup) {
                    BucketPickup bucketpickup = (BucketPickup)block;
 -                  if (!bucketpickup.pickupBlock((Player)null, p_56808_, p_296944_, blockstate).isEmpty()) {
-+                  if (!bucketpickup.pickupBlock(null, blockList, p_279054_, blockstate).isEmpty()) { // CraftBukkit
++                  if (!bucketpickup.pickupBlock(null, blockList, p_296944_, blockstate).isEmpty()) { // CraftBukkit
                       return true;
                    }
                 }
- 
-                if (blockstate.getBlock() instanceof LiquidBlock) {
--                  p_56808_.setBlock(p_296944_, Blocks.AIR.defaultBlockState(), 3);
-+                  p_56808_.setBlock(p_279054_, Blocks.AIR.defaultBlockState(), 3);
-                } else {
-                   if (!blockstate.is(Blocks.KELP) && !blockstate.is(Blocks.KELP_PLANT) && !blockstate.is(Blocks.SEAGRASS) && !blockstate.is(Blocks.TALL_SEAGRASS)) {
+@@ -76,14 +_,50 @@
                       return false;
                    }
  
@@ -71,7 +63,7 @@
 +                  // CraftBukkit start
 +                  // BlockEntity blockentity = blockstate.hasBlockEntity() ? pLevel.getBlockEntity(p_279054_) : null;
 +                  // dropResources(blockstate, pLevel, p_279054_, blockentity);
-+                  blockList.setBlock(p_279054_, Blocks.AIR.defaultBlockState(), 3);
++                  blockList.setBlock(p_296944_, Blocks.AIR.defaultBlockState(), 3);
                 }
  
                 return true;

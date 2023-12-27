@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -77,6 +_,7 @@
-    private static final Ingredient DUPLICATION_ITEM = Ingredient.of(Items.AMETHYST_SHARD);
-    private static final int DUPLICATION_COOLDOWN_TICKS = 6000;
-    private static final int NUM_OF_DUPLICATION_HEARTS = 3;
-+   private static final double RIDING_OFFSET = 0.4D;
-    private static final EntityDataAccessor<Boolean> DATA_DANCING = SynchedEntityData.defineId(Allay.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_CAN_DUPLICATE = SynchedEntityData.defineId(Allay.class, EntityDataSerializers.BOOLEAN);
-    protected static final ImmutableList<SensorType<? extends Sensor<? super Allay>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY, SensorType.NEAREST_ITEMS);
 @@ -95,6 +_,7 @@
     private float dancingAnimationTicks;
     private float spinningAnimationTicks;

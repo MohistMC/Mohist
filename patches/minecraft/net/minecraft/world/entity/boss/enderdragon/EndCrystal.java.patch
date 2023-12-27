@@ -16,7 +16,7 @@
 -            this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
 +            // CraftBukkit start
 +            if (!CraftEventFactory.callBlockIgniteEvent(this.level(), blockpos, this).isCancelled()) {
-+               this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level, blockpos));
++               this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));
 +            }
 +            // CraftBukkit end
           }

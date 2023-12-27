@@ -18,14 +18,12 @@
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -42,19 +_,48 @@
- 
+@@ -43,18 +_,47 @@
     protected void onHit(HitResult p_37488_) {
        super.onHit(p_37488_);
--      if (!this.level().isClientSide) {
+       if (!this.level().isClientSide) {
 -         if (this.random.nextInt(8) == 0) {
 -            int i = 1;
-+      if (!this.level.isClientSide) {
 +         boolean hatching = this.random.nextInt(8) == 0; // CraftBukkit
 +         if (true) {
 +            byte i = 1;

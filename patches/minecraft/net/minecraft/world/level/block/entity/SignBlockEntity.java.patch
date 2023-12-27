@@ -155,3 +155,15 @@
     }
  
     public boolean isWaxed() {
+@@ -275,6 +_,11 @@
+          p_277656_.setAllowedPlayerEditor((UUID)null);
+       }
+ 
++   }
++
++   @Override
++   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
++      return new net.minecraft.world.phys.AABB(this.getBlockPos());
+    }
+ 
+    public SoundEvent getSignInteractionFailedSoundEvent() {

@@ -32,17 +32,6 @@
        }
     }
  
-@@ -90,6 +_,10 @@
- 
-    }
- 
-+   public double getMyRidingOffset() {
-+      return 0.14D;
-+   }
-+
-    public void readAdditionalSaveData(CompoundTag p_27576_) {
-       super.readAdditionalSaveData(p_27576_);
-       this.inLove = p_27576_.getInt("InLove");
 @@ -159,7 +_,15 @@
     public void setInLove(@Nullable Player p_27596_) {
        this.inLove = 600;

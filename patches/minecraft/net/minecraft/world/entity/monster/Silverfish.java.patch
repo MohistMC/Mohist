@@ -15,17 +15,6 @@
  import org.joml.Vector3f;
  
  public class Silverfish extends Monster {
-@@ -53,6 +_,10 @@
-       this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-    }
- 
-+   public double getMyRidingOffset() {
-+      return 0.1D;
-+   }
-+
-    protected float getStandingEyeHeight(Pose p_33540_, EntityDimensions p_33541_) {
-       return 0.13F;
-    }
 @@ -141,7 +_,7 @@
              return false;
           } else {

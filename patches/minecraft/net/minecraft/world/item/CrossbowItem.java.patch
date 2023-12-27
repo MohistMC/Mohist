@@ -45,11 +45,3 @@
        List<ItemStack> list = getChargedProjectiles(p_40891_);
        float[] afloat = getShotPitches(p_40889_.getRandom());
  
-@@ -304,6 +_,7 @@
-             p_40910_.playSound((Player)null, p_40911_.getX(), p_40911_.getY(), p_40911_.getZ(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
-          }
-       }
-+      super.onUseTick(p_40910_, p_40911_, p_40912_, p_40913_); //TODO: Remove in 1.20, this is only here to trigger Forge's old onUseingTick method
- 
-    }
- 

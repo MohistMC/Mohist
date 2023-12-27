@@ -127,20 +127,18 @@
     }
  
     public void addAdditionalSaveData(CompoundTag p_36772_) {
-@@ -496,8 +_,23 @@
-    }
+@@ -497,7 +_,22 @@
  
     public void playerTouch(Player p_36766_) {
--      if (!this.level().isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
+       if (!this.level().isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
 -         if (this.tryPickup(p_36766_)) {
-+      if (!this.level.isClientSide && (this.inGround || this.isNoPhysics()) && this.shakeTime <= 0) {
 +         // CraftBukkit start
 +         ItemStack itemstack = this.getPickupItem();
 +         if (this.pickup == Pickup.ALLOWED && !itemstack.isEmpty() && p_36766_.getInventory().canHold(itemstack) > 0) {
 +            ItemEntity item = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), itemstack);
 +            PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) p_36766_.getBukkitEntity(), new CraftItem(this.level.getCraftServer(), item), (org.bukkit.entity.AbstractArrow) this.getBukkitEntity());
 +            // event.setCancelled(!entityhuman.canPickUpLoot); TODO
-+            this.level.getCraftServer().getPluginManager().callEvent(event);
++            this.level().getCraftServer().getPluginManager().callEvent(event);
 +
 +            if (event.isCancelled()) {
 +               return;

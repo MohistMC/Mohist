@@ -109,10 +109,9 @@
                    zombie.setPos((double)i1, (double)j1, (double)k1);
                    if (!this.level().hasNearbyAlivePlayer((double)i1, (double)j1, (double)k1, 7.0D) && this.level().isUnobstructed(zombie) && this.level().noCollision(zombie) && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
 -                     zombie.setTarget(livingentity);
--                     zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
 +                     if (livingentity != null)
 +                     zombie.setTarget(livingentity, EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
-+                     zombie.finalizeSpawn(serverlevel, this.level.getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
+                      zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
 +                     zombie.spawnReason(CreatureSpawnEvent.SpawnReason.REINFORCEMENTS);
                       serverlevel.addFreshEntityWithPassengers(zombie);
                       this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).addPermanentModifier(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
