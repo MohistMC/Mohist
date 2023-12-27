@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-version = VERSION
+version = MC_VERSION + "-" + MOHIST_VERSION
 
 repositories {
     mavenLocal()

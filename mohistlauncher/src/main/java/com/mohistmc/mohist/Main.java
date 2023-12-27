@@ -60,9 +60,6 @@ public class Main {
 
         DefaultLibraries.run();
         v_1_20_R3.run();
-        if (MohistConfigUtil.CHECK_CLIENT_MODS()) {
-            AutoDeleteMods.jar();
-        }
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.as("eula"));

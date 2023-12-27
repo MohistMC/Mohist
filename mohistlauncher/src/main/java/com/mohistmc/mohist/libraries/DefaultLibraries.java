@@ -96,9 +96,10 @@ public class DefaultLibraries {
         }
     }
 
-    @SneakyThrows
+
     public static void init() {
-        try (BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getResourceAsStream("/libraries.txt"), StandardCharsets.UTF_8))) {
+        try {
+            BufferedReader b = new BufferedReader(new InputStreamReader(DefaultLibraries.class.getResourceAsStream("/libraries.txt"), StandardCharsets.UTF_8));
             for (String line = b.readLine(); line != null; line = b.readLine()) {
                 Libraries libraries = Libraries.from(line);
                 librariesSet.add(libraries);
@@ -108,6 +109,8 @@ public class DefaultLibraries {
                     installer.add(url);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

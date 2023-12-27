@@ -17,30 +17,25 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
 
 public class Main {
     static final boolean DEBUG = Boolean.getBoolean("bss.debug");
-    static Set<String> ff = Set.of("mohistlauncher.jar",
-            "i18n-0.5.jar",
-            "jline-3.23.0.jar",
-            "json-0.2.jar",
-            "yaml-0.6.jar",
-            "snakeyaml-2.2.jar",
-            "progressbar-0.10.0.jar",
-            "tools-0.2.jar");
     public static List<URL> urls = new ArrayList<>();
     public static void main(String[] args) throws Exception {
         // Mohist start
-        for (String s : ff) {
-            var path = Paths.get(".mohist", s);
+        for (String s : getLauncher()) {
+            var path = Paths.get("libraries", s);
+            var jarS = s.split("/");
+            if (s.contains("mohistlauncher")) {
+                Files.deleteIfExists(path);
+            }
             if (!Files.exists(path)) {
                 Files.createDirectories(path.getParent());
-                Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/data/" + s)), path);
+                System.out.println(jarS[jarS.length - 1]);
+                Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/data/" + jarS[jarS.length - 1])), path);
             }
             urls.add(path.toUri().toURL());
         }
@@ -50,7 +45,6 @@ public class Main {
         cl.getDeclaredMethod("main", String[].class).invoke(null, (Object)args);
         loader0.clearAssertionStatus();
         loader0.close();
-
 
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
@@ -153,6 +147,19 @@ public class Main {
             version = version.substring(0, dot);
 
         return Integer.parseInt(version);
+    }
+
+    public static List<String> getLauncher() {
+        List<String> ff = new ArrayList<>();
+        try {
+            BufferedReader b = new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream("/mohistlauncher.txt"), StandardCharsets.UTF_8));
+            for (String line = b.readLine(); line != null; line = b.readLine()) {
+                ff.add(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ff;
     }
 
     private static class ListEntry {
