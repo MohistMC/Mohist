@@ -22,12 +22,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
 
     implementation(libs.yaml)
-    implementation(libs.snakeyaml)
     implementation(libs.i18n)
     implementation(libs.json)
     implementation(libs.tools)
-    implementation 'me.tongfei:progressbar:0.10.0'
-    implementation 'org.jline:jline:3.23.0'
+    implementation(libs.progressbar)
 }
 
 tasks.named('jar', Jar).configure {
@@ -41,6 +39,6 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Title'  : 'Mohist',
                 'Implementation-Version': MOHIST_VERSION,
                 'Implementation-Vendor' : 'MohistMC'
-        ] as LinkedHashMap, 'com/mohistmc/')
+        ] as LinkedHashMap, 'com/mohistmc/mohistlauncher/')
     }
 }

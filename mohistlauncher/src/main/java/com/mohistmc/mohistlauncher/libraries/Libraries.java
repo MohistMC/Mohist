@@ -1,4 +1,4 @@
-package com.mohistmc.mohist.libraries;
+package com.mohistmc.mohistlauncher.libraries;
 
 import com.mohistmc.tools.MD5Util;
 import java.io.File;

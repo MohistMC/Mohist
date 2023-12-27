@@ -16,11 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohist.config;
+package com.mohistmc.mohistlauncher.config;
 
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.mohist.Main;
-import com.mohistmc.mohist.download.DownloadSource;
+import com.mohistmc.mohistlauncher.Main;
+import com.mohistmc.mohistlauncher.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;

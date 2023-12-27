@@ -1,6 +1,6 @@
-package com.mohistmc.mohist.feature;
+package com.mohistmc.mohistlauncher.feature;
 
-import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.mohistlauncher.util.I18n;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;

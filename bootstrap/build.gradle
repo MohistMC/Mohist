@@ -24,8 +24,8 @@ dependencies {
     mohistlauncher(libs.i18n)
     mohistlauncher(libs.json)
     mohistlauncher(libs.tools)
-    mohistlauncher 'me.tongfei:progressbar:0.10.0'
-    mohistlauncher 'org.jline:jline:3.23.0'
+    mohistlauncher(libs.progressbar)
+    mohistlauncher(libs.orgjline)
 }
 
 jar {

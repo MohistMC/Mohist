@@ -34,14 +34,13 @@ public class Main {
             }
             if (!Files.exists(path)) {
                 Files.createDirectories(path.getParent());
-                System.out.println(jarS[jarS.length - 1]);
                 Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/data/" + jarS[jarS.length - 1])), path);
             }
             urls.add(path.toUri().toURL());
         }
         urls.add(Main.class.getProtectionDomain().getCodeSource().getLocation());
         URLClassLoader loader0 = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getPlatformClassLoader());
-        var cl = loader0.loadClass("com.mohistmc.mohist.Main");
+        var cl = loader0.loadClass("com.mohistmc.mohistlauncher.Main");
         cl.getDeclaredMethod("main", String[].class).invoke(null, (Object)args);
         loader0.clearAssertionStatus();
         loader0.close();
@@ -49,10 +48,9 @@ public class Main {
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
-
         // Mohist end
         boolean failed = false;
-        List<URL> urls = new ArrayList<URL>();
+        List<URL> urls = new ArrayList<>();
         StringBuilder classpath = new StringBuilder(System.getProperty("java.class.path"));
 
         try (

@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohist.libraries;
+package com.mohistmc.mohistlauncher.libraries;
 
-import com.mohistmc.mohist.config.MohistConfigUtil;
-import com.mohistmc.mohist.download.DownloadSource;
-import com.mohistmc.mohist.download.UpdateUtils;
-import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
+import com.mohistmc.mohistlauncher.download.DownloadSource;
+import com.mohistmc.mohistlauncher.download.UpdateUtils;
+import com.mohistmc.mohistlauncher.util.I18n;
 import com.mohistmc.tools.MD5Util;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +34,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import lombok.SneakyThrows;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
@@ -42,7 +41,7 @@ import me.tongfei.progressbar.ProgressBarStyle;
 public class DefaultLibraries {
     public static final Set<Libraries> fail = new HashSet<>();
     private static final Set<Libraries> librariesSet = new HashSet<>();
-    public static List<URL> installer = new ArrayList<>();
+    public static final List<URL> installer = new ArrayList<>();
     public static final String MAVENURL = DownloadSource.get().getUrl();
 
     public static void run() {

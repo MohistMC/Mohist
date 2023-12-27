@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohist.download;
+package com.mohistmc.mohistlauncher.download;
 
-import com.mohistmc.mohist.Main;
-import com.mohistmc.mohist.config.MohistConfigUtil;
+import com.mohistmc.mohistlauncher.Main;
+import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

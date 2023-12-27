@@ -1,6 +1,6 @@
-package com.mohistmc.mohist.util;
+package com.mohistmc.mohistlauncher.util;
 
-import com.mohistmc.mohist.Main;
+import com.mohistmc.mohistlauncher.Main;
 import com.mohistmc.tools.FileUtils;
 import java.util.HashMap;
 

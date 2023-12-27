@@ -16,15 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohist;
+package com.mohistmc.mohistlauncher;
 
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.mohist.action.v_1_20_R3;
-import com.mohistmc.mohist.config.MohistConfigUtil;
-import com.mohistmc.mohist.feature.AutoDeleteMods;
-import com.mohistmc.mohist.libraries.DefaultLibraries;
-import com.mohistmc.mohist.util.DataParser;
-import com.mohistmc.mohist.util.EulaUtil;
+import com.mohistmc.mohistlauncher.action.v_1_20_R3;
+import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
+import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
+import com.mohistmc.mohistlauncher.util.DataParser;
+import com.mohistmc.mohistlauncher.util.EulaUtil;
 import java.util.Scanner;
 
 public class Main {

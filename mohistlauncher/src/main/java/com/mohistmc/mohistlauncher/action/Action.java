@@ -16,11 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.mohist.action;
+package com.mohistmc.mohistlauncher.action;
 
-import com.mohistmc.mohist.Main;
-import com.mohistmc.mohist.libraries.DefaultLibraries;
-import com.mohistmc.mohist.util.DataParser;
+import com.mohistmc.mohistlauncher.Main;
+import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
+import com.mohistmc.mohistlauncher.util.DataParser;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
 import java.io.File;

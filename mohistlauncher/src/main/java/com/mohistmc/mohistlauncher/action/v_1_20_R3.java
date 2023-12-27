@@ -1,6 +1,6 @@
-package com.mohistmc.mohist.action;
+package com.mohistmc.mohistlauncher.action;
 
-import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.mohistlauncher.util.I18n;
 import com.mohistmc.tools.MD5Util;
 import java.io.File;
 import java.io.FileWriter;
