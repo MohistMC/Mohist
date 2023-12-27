@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/SlotFurnaceResult.java
++++ b/net/minecraft/world/inventory/SlotFurnaceResult.java
+@@ -54,7 +54,7 @@
+             if (iinventory instanceof TileEntityFurnace) {
+                 TileEntityFurnace tileentityfurnace = (TileEntityFurnace) iinventory;
+ 
+-                tileentityfurnace.awardUsedRecipesAndPopExperience(entityplayer);
++                tileentityfurnace.awardUsedRecipesAndPopExperience(entityplayer, itemstack, this.removeCount); // CraftBukkit
+             }
+         }
+ 

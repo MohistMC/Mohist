@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/item/ItemLeash.java
++++ b/net/minecraft/world/item/ItemLeash.java
+@@ -15,6 +15,11 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.AxisAlignedBB;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.CraftEquipmentSlot;
++import org.bukkit.event.hanging.HangingPlaceEvent;
++// CraftBukkit end
++
+ public class ItemLeash extends Item {
+ 
+     public ItemLeash(Item.Info item_info) {
+@@ -31,7 +36,7 @@
+             EntityHuman entityhuman = itemactioncontext.getPlayer();
+ 
+             if (!world.isClientSide && entityhuman != null) {
+-                bindPlayerMobs(entityhuman, world, blockposition);
++                bindPlayerMobs(entityhuman, world, blockposition, itemactioncontext.getHand()); // CraftBukkit - Pass hand
+             }
+ 
+             return EnumInteractionResult.sidedSuccess(world.isClientSide);
+@@ -40,7 +45,7 @@
+         }
+     }
+ 
+-    public static EnumInteractionResult bindPlayerMobs(EntityHuman entityhuman, World world, BlockPosition blockposition) {
++    public static EnumInteractionResult bindPlayerMobs(EntityHuman entityhuman, World world, BlockPosition blockposition, net.minecraft.world.EnumHand enumhand) { // CraftBukkit - Add EnumHand
+         EntityLeash entityleash = null;
+         boolean flag = false;
+         double d0 = 7.0D;
+@@ -56,9 +61,26 @@
+             if (entityinsentient.getLeashHolder() == entityhuman) {
+                 if (entityleash == null) {
+                     entityleash = EntityLeash.getOrCreateKnot(world, blockposition);
++
++                    // CraftBukkit start - fire HangingPlaceEvent
++                    org.bukkit.inventory.EquipmentSlot hand = CraftEquipmentSlot.getHand(enumhand);
++                    HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) entityleash.getBukkitEntity(), entityhuman != null ? (org.bukkit.entity.Player) entityhuman.getBukkitEntity() : null, world.getWorld().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF, hand);
++                    world.getCraftServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        entityleash.discard();
++                        return EnumInteractionResult.PASS;
++                    }
++                    // CraftBukkit end
+                     entityleash.playPlacementSound();
+                 }
+ 
++                // CraftBukkit start
++                if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(entityinsentient, entityleash, entityhuman, enumhand).isCancelled()) {
++                    continue;
++                }
++                // CraftBukkit end
++
+                 entityinsentient.setLeashedTo(entityleash, true);
+                 flag = true;
+             }
+@@ -70,4 +92,10 @@
+ 
+         return flag ? EnumInteractionResult.SUCCESS : EnumInteractionResult.PASS;
+     }
++
++    // CraftBukkit start
++    public static EnumInteractionResult bindPlayerMobs(EntityHuman entityhuman, World world, BlockPosition blockposition) {
++        return bindPlayerMobs(entityhuman, world, blockposition, net.minecraft.world.EnumHand.MAIN_HAND);
++    }
++    // CraftBukkit end
+ }

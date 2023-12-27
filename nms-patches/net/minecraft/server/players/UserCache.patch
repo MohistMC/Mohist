@@ -1,0 +1,20 @@
+--- a/net/minecraft/server/players/UserCache.java
++++ b/net/minecraft/server/players/UserCache.java
+@@ -85,7 +85,7 @@
+                 }
+ 
+                 public void onProfileLookupFailed(String s1, Exception exception) {
+-                    atomicreference.set((Object) null);
++                    atomicreference.set(null); // CraftBukkit - decompile error
+                 }
+             };
+ 
+@@ -142,7 +142,7 @@
+             usercache_usercacheentry.setLastAccess(this.getNextOperation());
+             optional = Optional.of(usercache_usercacheentry.getProfile());
+         } else {
+-            optional = lookupGameProfile(this.profileRepository, s1);
++            optional = lookupGameProfile(this.profileRepository, s); // CraftBukkit - use correct case for offline players
+             if (optional.isPresent()) {
+                 this.add((GameProfile) optional.get());
+                 flag = false;

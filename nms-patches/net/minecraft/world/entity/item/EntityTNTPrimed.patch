@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/entity/item/EntityTNTPrimed.java
++++ b/net/minecraft/world/entity/item/EntityTNTPrimed.java
+@@ -19,6 +19,11 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.state.IBlockData;
+ 
++// CraftBukkit start;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.ExplosionPrimeEvent;
++// CraftBukkit end
++
+ public class EntityTNTPrimed extends Entity implements TraceableEntity {
+ 
+     private static final DataWatcherObject<Integer> DATA_FUSE_ID = DataWatcher.defineId(EntityTNTPrimed.class, DataWatcherRegistry.INT);
+@@ -28,6 +33,8 @@
+     public static final String TAG_FUSE = "fuse";
+     @Nullable
+     public EntityLiving owner;
++    public float yield = 4; // CraftBukkit - add field
++    public boolean isIncendiary = false; // CraftBukkit - add field
+ 
+     public EntityTNTPrimed(EntityTypes<? extends EntityTNTPrimed> entitytypes, World world) {
+         super(entitytypes, world);
+@@ -79,10 +86,13 @@
+ 
+         this.setFuse(i);
+         if (i <= 0) {
+-            this.discard();
++            // CraftBukkit start - Need to reverse the order of the explosion and the entity death so we have a location for the event
++            // this.discard();
+             if (!this.level().isClientSide) {
+                 this.explode();
+             }
++            this.discard();
++            // CraftBukkit end
+         } else {
+             this.updateInWaterStateAndDoFluidPushing();
+             if (this.level().isClientSide) {
+@@ -93,9 +103,14 @@
+     }
+ 
+     private void explode() {
+-        float f = 4.0F;
++        // CraftBukkit start
++        // float f = 4.0F;
++        ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent((org.bukkit.entity.Explosive)this.getBukkitEntity());
+ 
+-        this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 4.0F, World.a.TNT);
++        if (!event.isCancelled()) {
++            this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), event.getRadius(), event.getFire(), World.a.TNT);
++        }
++        // CraftBukkit end
+     }
+ 
+     @Override

@@ -1,0 +1,175 @@
+--- a/net/minecraft/server/level/PlayerChunk.java
++++ b/net/minecraft/server/level/PlayerChunk.java
+@@ -36,6 +36,10 @@
+ import net.minecraft.world.level.chunk.ProtoChunkExtension;
+ import net.minecraft.world.level.lighting.LevelLightEngine;
+ 
++// CraftBukkit start
++import net.minecraft.server.MinecraftServer;
++// CraftBukkit end
++
+ public class PlayerChunk {
+ 
+     public static final Either<IChunkAccess, PlayerChunk.Failure> UNLOADED_CHUNK = Either.right(PlayerChunk.Failure.UNLOADED);
+@@ -72,12 +76,12 @@
+         this.fullChunkFuture = PlayerChunk.UNLOADED_LEVEL_CHUNK_FUTURE;
+         this.tickingChunkFuture = PlayerChunk.UNLOADED_LEVEL_CHUNK_FUTURE;
+         this.entityTickingChunkFuture = PlayerChunk.UNLOADED_LEVEL_CHUNK_FUTURE;
+-        this.chunkToSave = CompletableFuture.completedFuture((Object) null);
++        this.chunkToSave = CompletableFuture.completedFuture(null); // CraftBukkit - decompile error
+         this.chunkToSaveHistory = null;
+         this.blockChangedLightSectionFilter = new BitSet();
+         this.skyChangedLightSectionFilter = new BitSet();
+-        this.pendingFullStateConfirmation = CompletableFuture.completedFuture((Object) null);
+-        this.sendSync = CompletableFuture.completedFuture((Object) null);
++        this.pendingFullStateConfirmation = CompletableFuture.completedFuture(null); // CraftBukkit - decompile error
++        this.sendSync = CompletableFuture.completedFuture(null); // CraftBukkit - decompile error
+         this.pos = chunkcoordintpair;
+         this.levelHeightAccessor = levelheightaccessor;
+         this.lightEngine = levellightengine;
+@@ -90,6 +94,20 @@
+         this.changedBlocksPerSection = new ShortSet[levelheightaccessor.getSectionsCount()];
+     }
+ 
++    // CraftBukkit start
++    public Chunk getFullChunkNow() {
++        // Note: We use the oldTicketLevel for isLoaded checks.
++        if (!ChunkLevel.fullStatus(this.oldTicketLevel).isOrAfter(FullChunkStatus.FULL)) return null;
++        return this.getFullChunkNowUnchecked();
++    }
++
++    public Chunk getFullChunkNowUnchecked() {
++        CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> statusFuture = this.getFutureIfPresentUnchecked(ChunkStatus.FULL);
++        Either<IChunkAccess, PlayerChunk.Failure> either = (Either<IChunkAccess, PlayerChunk.Failure>) statusFuture.getNow(null);
++        return (either == null) ? null : (Chunk) either.left().orElse(null);
++    }
++    // CraftBukkit end
++
+     public CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> getFutureIfPresentUnchecked(ChunkStatus chunkstatus) {
+         CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> completablefuture = (CompletableFuture) this.futures.get(chunkstatus.getIndex());
+ 
+@@ -115,9 +133,9 @@
+     @Nullable
+     public Chunk getTickingChunk() {
+         CompletableFuture<Either<Chunk, PlayerChunk.Failure>> completablefuture = this.getTickingChunkFuture();
+-        Either<Chunk, PlayerChunk.Failure> either = (Either) completablefuture.getNow((Object) null);
++        Either<Chunk, PlayerChunk.Failure> either = (Either) completablefuture.getNow(null); // CraftBukkit - decompile error
+ 
+-        return either == null ? null : (Chunk) either.left().orElse((Object) null);
++        return either == null ? null : (Chunk) either.left().orElse(null); // CraftBukkit - decompile error
+     }
+ 
+     public CompletableFuture<?> getChunkSendSyncFuture() {
+@@ -132,9 +150,9 @@
+     @Nullable
+     public Chunk getFullChunk() {
+         CompletableFuture<Either<Chunk, PlayerChunk.Failure>> completablefuture = this.getFullChunkFuture();
+-        Either<Chunk, PlayerChunk.Failure> either = (Either) completablefuture.getNow((Object) null);
++        Either<Chunk, PlayerChunk.Failure> either = (Either) completablefuture.getNow(null); // CraftBukkit - decompile error
+ 
+-        return either == null ? null : (Chunk) either.left().orElse((Object) null);
++        return either == null ? null : (Chunk) either.left().orElse(null); // CraftBukkit - decompile error
+     }
+ 
+     @Nullable
+@@ -179,6 +197,7 @@
+         if (chunk != null) {
+             int i = this.levelHeightAccessor.getSectionIndex(blockposition.getY());
+ 
++            if (i < 0 || i >= this.changedBlocksPerSection.length) return; // CraftBukkit - SPIGOT-6086, SPIGOT-6296
+             if (this.changedBlocksPerSection[i] == null) {
+                 this.hasChangedSections = true;
+                 this.changedBlocksPerSection[i] = new ShortOpenHashSet();
+@@ -189,10 +208,10 @@
+     }
+ 
+     public void sectionLightChanged(EnumSkyBlock enumskyblock, int i) {
+-        Either<IChunkAccess, PlayerChunk.Failure> either = (Either) this.getFutureIfPresent(ChunkStatus.INITIALIZE_LIGHT).getNow((Object) null);
++        Either<IChunkAccess, PlayerChunk.Failure> either = (Either) this.getFutureIfPresent(ChunkStatus.INITIALIZE_LIGHT).getNow(null); // CraftBukkit - decompile error
+ 
+         if (either != null) {
+-            IChunkAccess ichunkaccess = (IChunkAccess) either.left().orElse((Object) null);
++            IChunkAccess ichunkaccess = (IChunkAccess) either.left().orElse(null); // CraftBukkit - decompile error
+ 
+             if (ichunkaccess != null) {
+                 ichunkaccess.setUnsaved(true);
+@@ -257,8 +276,11 @@
+                                 PacketPlayOutMultiBlockChange packetplayoutmultiblockchange = new PacketPlayOutMultiBlockChange(sectionposition, shortset, chunksection);
+ 
+                                 this.broadcast(list, packetplayoutmultiblockchange);
++                                // CraftBukkit start
++                                List finalList = list;
+                                 packetplayoutmultiblockchange.runUpdates((blockposition1, iblockdata1) -> {
+-                                    this.broadcastBlockEntityIfNeeded(list, world, blockposition1, iblockdata1);
++                                    this.broadcastBlockEntityIfNeeded(finalList, world, blockposition1, iblockdata1);
++                                    // CraftBukkit end
+                                 });
+                             }
+                         }
+@@ -394,7 +416,7 @@
+         this.pendingFullStateConfirmation = completablefuture1;
+         completablefuture.thenAccept((either) -> {
+             either.ifLeft((chunk) -> {
+-                completablefuture1.complete((Object) null);
++                completablefuture1.complete(null); // CraftBukkit - decompile error
+             });
+         });
+     }
+@@ -411,6 +433,30 @@
+         boolean flag1 = ChunkLevel.isLoaded(this.ticketLevel);
+         FullChunkStatus fullchunkstatus = ChunkLevel.fullStatus(this.oldTicketLevel);
+         FullChunkStatus fullchunkstatus1 = ChunkLevel.fullStatus(this.ticketLevel);
++        // CraftBukkit start
++        // ChunkUnloadEvent: Called before the chunk is unloaded: isChunkLoaded is still true and chunk can still be modified by plugins.
++        if (fullchunkstatus.isOrAfter(FullChunkStatus.FULL) && !fullchunkstatus1.isOrAfter(FullChunkStatus.FULL)) {
++            this.getFutureIfPresentUnchecked(ChunkStatus.FULL).thenAccept((either) -> {
++                Chunk chunk = (Chunk)either.left().orElse(null);
++                if (chunk != null) {
++                    playerchunkmap.callbackExecutor.execute(() -> {
++                        // Minecraft will apply the chunks tick lists to the world once the chunk got loaded, and then store the tick
++                        // lists again inside the chunk once the chunk becomes inaccessible and set the chunk's needsSaving flag.
++                        // These actions may however happen deferred, so we manually set the needsSaving flag already here.
++                        chunk.setUnsaved(true);
++                        chunk.unloadCallback();
++                    });
++                }
++            }).exceptionally((throwable) -> {
++                // ensure exceptions are printed, by default this is not the case
++                MinecraftServer.LOGGER.error("Failed to schedule unload callback for chunk " + PlayerChunk.this.pos, throwable);
++                return null;
++            });
++
++            // Run callback right away if the future was already done
++            playerchunkmap.callbackExecutor.run();
++        }
++        // CraftBukkit end
+ 
+         if (flag) {
+             Either<IChunkAccess, PlayerChunk.Failure> either = Either.right(new PlayerChunk.Failure() {
+@@ -481,6 +527,26 @@
+ 
+         this.onLevelChange.onLevelChange(this.pos, this::getQueueLevel, this.ticketLevel, this::setQueueLevel);
+         this.oldTicketLevel = this.ticketLevel;
++        // CraftBukkit start
++        // ChunkLoadEvent: Called after the chunk is loaded: isChunkLoaded returns true and chunk is ready to be modified by plugins.
++        if (!fullchunkstatus.isOrAfter(FullChunkStatus.FULL) && fullchunkstatus1.isOrAfter(FullChunkStatus.FULL)) {
++            this.getFutureIfPresentUnchecked(ChunkStatus.FULL).thenAccept((either) -> {
++                Chunk chunk = (Chunk)either.left().orElse(null);
++                if (chunk != null) {
++                    playerchunkmap.callbackExecutor.execute(() -> {
++                        chunk.loadCallback();
++                    });
++                }
++            }).exceptionally((throwable) -> {
++                // ensure exceptions are printed, by default this is not the case
++                MinecraftServer.LOGGER.error("Failed to schedule load callback for chunk " + PlayerChunk.this.pos, throwable);
++                return null;
++            });
++
++            // Run callback right away if the future was already done
++            playerchunkmap.callbackExecutor.run();
++        }
++        // CraftBukkit end
+     }
+ 
+     public boolean wasAccessibleSinceLastSave() {

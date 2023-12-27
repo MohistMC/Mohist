@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/vehicle/EntityMinecartCommandBlock.java
++++ b/net/minecraft/world/entity/vehicle/EntityMinecartCommandBlock.java
+@@ -143,5 +143,12 @@
+         public boolean isValid() {
+             return !EntityMinecartCommandBlock.this.isRemoved();
+         }
++
++        // CraftBukkit start
++        @Override
++        public org.bukkit.command.CommandSender getBukkitSender(CommandListenerWrapper wrapper) {
++            return (org.bukkit.craftbukkit.entity.CraftMinecartCommand) EntityMinecartCommandBlock.this.getBukkitEntity();
++        }
++        // CraftBukkit end
+     }
+ }

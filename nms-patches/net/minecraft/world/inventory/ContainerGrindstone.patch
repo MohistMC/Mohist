@@ -1,0 +1,106 @@
+--- a/net/minecraft/world/inventory/ContainerGrindstone.java
++++ b/net/minecraft/world/inventory/ContainerGrindstone.java
+@@ -19,8 +19,30 @@
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.phys.Vec3D;
+ 
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.inventory.CraftInventoryGrindstone;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.entity.Player;
++// CraftBukkit end
++
+ public class ContainerGrindstone extends Container {
+ 
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private Player player;
++
++    @Override
++    public CraftInventoryView getBukkitView() {
++        if (bukkitEntity != null) {
++            return bukkitEntity;
++        }
++
++        CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.repairSlots, this.resultSlots);
++        bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++        return bukkitEntity;
++    }
++    // CraftBukkit end
+     public static final int MAX_NAME_LENGTH = 35;
+     public static final int INPUT_SLOT = 0;
+     public static final int ADDITIONAL_SLOT = 1;
+@@ -46,6 +68,13 @@
+                 super.setChanged();
+                 ContainerGrindstone.this.slotsChanged(this);
+             }
++
++            // CraftBukkit start
++            @Override
++            public Location getLocation() {
++                return containeraccess.getLocation();
++            }
++            // CraftBukkit end
+         };
+         this.access = containeraccess;
+         this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
+@@ -124,6 +153,7 @@
+             this.addSlot(new Slot(playerinventory, j, 8 + j * 18, 142));
+         }
+ 
++        player = (Player) playerinventory.player.getBukkitEntity(); // CraftBukkit
+     }
+ 
+     @Override
+@@ -145,7 +175,7 @@
+             boolean flag2 = !itemstack.isEmpty() && !itemstack.is(Items.ENCHANTED_BOOK) && !itemstack.isEnchanted() || !itemstack1.isEmpty() && !itemstack1.is(Items.ENCHANTED_BOOK) && !itemstack1.isEnchanted();
+ 
+             if (itemstack.getCount() > 1 || itemstack1.getCount() > 1 || !flag1 && flag2) {
+-                this.resultSlots.setItem(0, ItemStack.EMPTY);
++                org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+                 this.broadcastChanges();
+                 return;
+             }
+@@ -156,7 +186,7 @@
+ 
+             if (flag1) {
+                 if (!itemstack.is(itemstack1.getItem())) {
+-                    this.resultSlots.setItem(0, ItemStack.EMPTY);
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+                     this.broadcastChanges();
+                     return;
+                 }
+@@ -170,7 +200,7 @@
+                 itemstack2 = this.mergeEnchants(itemstack, itemstack1);
+                 if (!itemstack2.isDamageableItem()) {
+                     if (!ItemStack.matches(itemstack, itemstack1)) {
+-                        this.resultSlots.setItem(0, ItemStack.EMPTY);
++                        org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+                         this.broadcastChanges();
+                         return;
+                     }
+@@ -183,12 +213,12 @@
+                 i = flag3 ? itemstack.getDamageValue() : itemstack1.getDamageValue();
+                 itemstack2 = flag3 ? itemstack : itemstack1;
+             }
+-
+-            this.resultSlots.setItem(0, this.removeNonCurses(itemstack2, i, b0));
++            org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.removeNonCurses(itemstack2, i, b0)); // CraftBukkit
+         } else {
+-            this.resultSlots.setItem(0, ItemStack.EMPTY);
++            org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
+         }
+ 
++        sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
+         this.broadcastChanges();
+     }
+ 
+@@ -250,6 +280,7 @@
+ 
+     @Override
+     public boolean stillValid(EntityHuman entityhuman) {
++        if (!this.checkReachable) return true; // CraftBukkit
+         return stillValid(this.access, entityhuman, Blocks.GRINDSTONE);
+     }
+ 

@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/entity/monster/EntityRavager.java
++++ b/net/minecraft/world/entity/monster/EntityRavager.java
+@@ -43,6 +43,10 @@
+ import net.minecraft.world.phys.Vec3D;
+ import org.joml.Vector3f;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++// CraftBukkit end
++
+ public class EntityRavager extends EntityRaider {
+ 
+     private static final Predicate<Entity> NO_RAVAGER_AND_ALIVE = (entity) -> {
+@@ -153,6 +157,11 @@
+                     Block block = iblockdata.getBlock();
+ 
+                     if (block instanceof BlockLeaves) {
++                        // CraftBukkit start
++                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockposition, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                            continue;
++                        }
++                        // CraftBukkit end
+                         flag = this.level().destroyBlock(blockposition, true, this) || flag;
+                     }
+                 }
