@@ -91,19 +91,21 @@
        this.server = p_203842_;
        this.registries = p_251844_;
        this.maxPlayers = p_203845_;
-@@ -147,6 +_,12 @@
+@@ -147,7 +_,13 @@
        }
  
        CompoundTag compoundtag = this.load(p_11263_);
+-      ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compoundtag.get("Dimension"))).resultOrPartial(LOGGER::error).orElse(Level.OVERWORLD) : Level.OVERWORLD;
 +      // CraftBukkit start - Better rename detection
 +      if (compoundtag != null && compoundtag.contains("bukkit")) {
 +         CompoundTag bukkit = compoundtag.getCompound("bukkit");
 +         s = bukkit.contains("lastKnownName", 8) ? bukkit.getString("lastKnownName") : s;
 +      }
 +      // CraftBukkit end
-       ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compoundtag.get("Dimension"))).resultOrPartial(LOGGER::error).orElse(Level.OVERWORLD) : Level.OVERWORLD;
++      ResourceKey<Level> resourcekey = compoundtag != null ? DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compoundtag.get("Dimension"))).resultOrPartial(LOGGER::error).orElse(p_11263_.serverLevel().dimension()) : p_11263_.serverLevel().dimension();
        ServerLevel serverlevel = this.server.getLevel(resourcekey);
        ServerLevel serverlevel1;
+       if (serverlevel == null) {
 @@ -158,8 +_,24 @@
        }
  
@@ -170,13 +172,13 @@
 +      PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(bukkitPlayer, joinMessage);
 +      cserver.getPluginManager().callEvent(playerJoinEvent);
 +
-+      if (!p_11263_.connection.connection.isConnected()) {
++      if (!p_11263_.connection.isAcceptingMessages()) {
 +         return;
 +      }
 +
 +      joinMessage = playerJoinEvent.getJoinMessage();
 +
-+      if (joinMessage != null && !joinMessage.isEmpty()) {
++      if (joinMessage != null && joinMessage.length() > 0) {
 +         for (Component line : CraftChatMessage.fromString(joinMessage)) {
 +            server.getPlayerList().broadcastSystemMessage(line, false);
 +         }
@@ -242,14 +244,38 @@
        Set<Objective> set = Sets.newHashSet();
  
        for(PlayerTeam playerteam : p_11274_.getPlayerTeams()) {
-@@ -262,6 +_,7 @@
+@@ -262,25 +_,26 @@
     }
  
     public void addWorldborderListener(ServerLevel p_184210_) {
 +      if (playerIo != null) return; // CraftBukkit
        p_184210_.getWorldBorder().addListener(new BorderChangeListener() {
           public void onBorderSizeSet(WorldBorder p_11321_, double p_11322_) {
-             PlayerList.this.broadcastAll(new ClientboundSetBorderSizePacket(p_11321_));
+-            PlayerList.this.broadcastAll(new ClientboundSetBorderSizePacket(p_11321_));
++            PlayerList.this.broadcastAll(new ClientboundSetBorderSizePacket(p_11321_), p_11321_.world); // CraftBukkit
+          }
+ 
+          public void onBorderSizeLerping(WorldBorder p_11328_, double p_11329_, double p_11330_, long p_11331_) {
+-            PlayerList.this.broadcastAll(new ClientboundSetBorderLerpSizePacket(p_11328_));
++            PlayerList.this.broadcastAll(new ClientboundSetBorderLerpSizePacket(p_11328_), p_11328_.world); // CraftBukkit
+          }
+ 
+          public void onBorderCenterSet(WorldBorder p_11324_, double p_11325_, double p_11326_) {
+-            PlayerList.this.broadcastAll(new ClientboundSetBorderCenterPacket(p_11324_));
++            PlayerList.this.broadcastAll(new ClientboundSetBorderCenterPacket(p_11324_), p_11324_.world); // CraftBukkit
+          }
+ 
+          public void onBorderSetWarningTime(WorldBorder p_11333_, int p_11334_) {
+-            PlayerList.this.broadcastAll(new ClientboundSetBorderWarningDelayPacket(p_11333_));
++            PlayerList.this.broadcastAll(new ClientboundSetBorderWarningDelayPacket(p_11333_), p_11333_.world); // CraftBukkit
+          }
+ 
+          public void onBorderSetWarningBlocks(WorldBorder p_11339_, int p_11340_) {
+-            PlayerList.this.broadcastAll(new ClientboundSetBorderWarningDistancePacket(p_11339_));
++            PlayerList.this.broadcastAll(new ClientboundSetBorderWarningDistancePacket(p_11339_), p_11339_.world); // CraftBukkit
+          }
+ 
+          public void onBorderSetDamagePerBlock(WorldBorder p_11336_, double p_11337_) {
 @@ -299,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.load(compoundtag);
@@ -300,7 +326,7 @@
        this.server.getCustomBossEvents().onPlayerDisconnect(p_11287_);
        UUID uuid = p_11287_.getUUID();
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
-@@ -348,11 +_,32 @@
+@@ -348,11 +_,52 @@
           this.advancements.remove(uuid);
        }
  
@@ -322,10 +348,30 @@
     }
  
 +   // Mohist start
-+   private AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
++   public AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
     @Nullable
     public Component canPlayerLogin(SocketAddress p_11257_, GameProfile p_11258_) {
-+      ServerPlayer serverPlayer = getPlayerForLogin(p_11258_, ClientInformation.createDefault());
++      // Moved from processLogin
++      UUID uuid = p_11258_.getId();
++      List<ServerPlayer> list = Lists.newArrayList();
++
++      ServerPlayer entityplayer;
++
++      for (int i = 0; i < this.players.size(); ++i) {
++         entityplayer = (ServerPlayer) this.players.get(i);
++         if (entityplayer.getUUID().equals(uuid)) {
++            list.add(entityplayer);
++         }
++      }
++
++      Iterator iterator = list.iterator();
++
++      while (iterator.hasNext()) {
++         entityplayer = (ServerPlayer) iterator.next();
++         save(entityplayer); // CraftBukkit - Force the player's inventory to be saved
++         entityplayer.connection.disconnect(Component.translatable("multiplayer.disconnect.duplicate_login"));
++      }
++      ServerPlayer serverPlayer = new ServerPlayer(this.server, this.server.getLevel(Level.OVERWORLD), p_11258_, ClientInformation.createDefault());
 +      entity.set(serverPlayer);
 +      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
 +      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
@@ -334,7 +380,7 @@
        if (this.bans.isBanned(p_11258_)) {
           UserBanListEntry userbanlistentry = this.bans.get(p_11258_);
           MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.banned.reason", userbanlistentry.getReason());
-@@ -360,20 +_,30 @@
+@@ -360,119 +_,205 @@
              mutablecomponent1.append(Component.translatable("multiplayer.disconnect.banned.expiration", BAN_DATE_FORMAT.format(userbanlistentry.getExpires())));
           }
  
@@ -359,24 +405,48 @@
        } else {
 -         return this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_) ? Component.translatable("multiplayer.disconnect.server_full") : null;
 -      }
+-   }
+-
+-   public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
+-      return new ServerPlayer(this.server, this.server.overworld(), p_215625_, p_300548_);
+-   }
+-
+-   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_) {
+-      UUID uuid = p_299278_.getId();
+-      Set<ServerPlayer> set = Sets.newIdentityHashSet();
+-
+-      for(ServerPlayer serverplayer : this.players) {
+-         if (serverplayer.getUUID().equals(uuid)) {
+-            set.add(serverplayer);
 +         if (this.players.size() >= this.maxPlayers && !this.canBypassPlayerLimit(p_11258_)) {
 +            event.disallow(PlayerLoginEvent.Result.KICK_FULL, org.spigotmc.SpigotConfig.serverFullMessage); // Spigot
-+         }
-+      }
-+
+          }
+       }
+ 
+-      ServerPlayer serverplayer2 = this.playersByUUID.get(p_299278_.getId());
+-      if (serverplayer2 != null) {
+-         set.add(serverplayer2);
+-      }
+-
+-      for(ServerPlayer serverplayer1 : set) {
+-         serverplayer1.connection.disconnect(DUPLICATE_LOGIN_DISCONNECT_MESSAGE);
+-      }
+-
+-      return !set.isEmpty();
+-   }
 +      cserver.getPluginManager().callEvent(event);
 +      if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
 +         entity.set(null);
 +         return Component.literal(event.getKickMessage());
 +      }
 +      return null;
-    }
- 
-    public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_) {
-@@ -402,77 +_,174 @@
-       return !set.isEmpty();
-    }
- 
++   }
++
++   public ServerPlayer getPlayerForLogin(GameProfile p_215625_, ClientInformation p_300548_, ServerPlayer player) {
++      player.updateOptions(p_300548_);
++      return player;
++   }
++
 +   public boolean disconnectAllPlayersWithProfile(GameProfile p_299278_, ServerPlayer player) { // CraftBukkit - added ServerPlayer
 +      return player == null;
 +   }
@@ -388,7 +458,7 @@
 +   public PlayerRespawnEvent.RespawnReason mohist$reason = null;
 +   public ServerLevel mohist$worldserver = null;
 +   public AtomicBoolean avoidSuffocation = new AtomicBoolean(true);
-+
+ 
     public ServerPlayer respawn(ServerPlayer p_11237_, boolean p_11238_) {
 +      p_11237_.stopRiding(); // CraftBukkit
        this.players.remove(p_11237_);
@@ -610,7 +680,7 @@
     }
  
 +   // CraftBukkit start - add a world/entity limited version
-+   public void broadcastAll(Packet<?>  packet, Player entityhuman) {
++   public void broadcastAll(Packet<?> packet, Player entityhuman) {
 +      for (int i = 0; i < this.players.size(); ++i) {
 +         ServerPlayer entityplayer =  this.players.get(i);
 +         if (entityhuman != null && !entityplayer.getBukkitEntity().canSee(entityhuman.getBukkitEntity())) {
@@ -620,7 +690,7 @@
 +      }
 +   }
 +
-+   public void broadcastAll(Packet<?>  packet, Level world) {
++   public void broadcastAll(Packet<?> packet, Level world) {
 +      for (int i = 0; i < world.players().size(); ++i) {
 +         ((ServerPlayer) world.players().get(i)).connection.send(packet);
 +      }
@@ -669,10 +739,10 @@
           ServerPlayer serverplayer = this.players.get(i);
 +
 +         // CraftBukkit start - Test if player receiving packet can see the source of the packet
-+          if (p_11242_ != null && !serverplayer.getBukkitEntity().canSee(p_11242_.getBukkitEntity())) {
-+              continue;
-+          }
-+          // CraftBukkit end
++         if (p_11242_ != null && !serverplayer.getBukkitEntity().canSee(p_11242_.getBukkitEntity())) {
++            continue;
++         }
++         // CraftBukkit end
 +
           if (serverplayer != p_11242_ && serverplayer.level().dimension() == p_11247_) {
              double d0 = p_11243_ - serverplayer.getX();
@@ -682,7 +752,7 @@
  
     public void sendLevelInfo(ServerPlayer p_11230_, ServerLevel p_11231_) {
 -      WorldBorder worldborder = this.server.overworld().getWorldBorder();
-+      WorldBorder worldborder = p_11230_.level.getWorldBorder();
++      WorldBorder worldborder = p_11230_.level().getWorldBorder(); // CraftBukkit
        p_11230_.connection.send(new ClientboundInitializeBorderPacket(worldborder));
        p_11230_.connection.send(new ClientboundSetTimePacket(p_11231_.getGameTime(), p_11231_.getDayTime(), p_11231_.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)));
        p_11230_.connection.send(new ClientboundSetDefaultSpawnPositionPacket(p_11231_.getSharedSpawnPos(), p_11231_.getSharedSpawnAngle()));
@@ -707,12 +777,12 @@
 +       p_11293_.inventoryMenu.sendAllDataToRemote();
 +       // pPlayer.resetSentInfo();
 +       p_11293_.getBukkitEntity().updateScaledHealth(); // CraftBukkit - Update scaled health on respawn and worldchange
-+       // pPlayer.getEntityData().refresh(pPlayer); // CraftBukkkit - SPIGOT-7218: sync metadata
++       p_11293_.getEntityData().refresh(p_11293_); // CraftBukkkit - SPIGOT-7218: sync metadata
 +       p_11293_.connection.send(new ClientboundSetCarriedItemPacket(p_11293_.getInventory().selected));
 +       // CraftBukkit start - from GameRules
-+       int i = p_11293_.level.getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;
++       int i = p_11293_.level().getGameRules().getBoolean(GameRules.RULE_REDUCEDDEBUGINFO) ? 22 : 23;
 +       p_11293_.connection.send(new ClientboundEntityEventPacket(p_11293_, (byte) i));
-+       float immediateRespawn = p_11293_.level.getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F : 0.0F;
++       float immediateRespawn = p_11293_.level().getGameRules().getBoolean(GameRules.RULE_DO_IMMEDIATE_RESPAWN) ? 1.0F : 0.0F;
 +       p_11293_.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.IMMEDIATE_RESPAWN, immediateRespawn));
 +       // CraftBukkit end
     }
@@ -754,7 +824,7 @@
     }
  
 -   public ServerStatsCounter getPlayerStats(Player p_11240_) {
-+   public ServerStatsCounter getPlayerStats(Player p_11240_) { // Mohist TODO
++   public ServerStatsCounter getPlayerStats(ServerPlayer p_11240_) { // Mohist TODO
        UUID uuid = p_11240_.getUUID();
        ServerStatsCounter serverstatscounter = this.stats.get(uuid);
        if (serverstatscounter == null) {
@@ -806,15 +876,18 @@
     }
  
     @Nullable
-@@ -848,6 +_,12 @@
-          playeradvancements.reload(this.server.getAdvancements());
-       }
+@@ -844,10 +_,12 @@
+    }
  
+    public void reloadResources() {
+-      for(PlayerAdvancements playeradvancements : this.advancements.values()) {
+-         playeradvancements.reload(this.server.getAdvancements());
+-      }
 +      for (ServerPlayer player : players) {
 +          player.getAdvancements().reload(this.server.getAdvancements());
 +          player.getAdvancements().flushDirty(player); // CraftBukkit - trigger immediate flush of advancements
 +       }
-+
+ 
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
        this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes());

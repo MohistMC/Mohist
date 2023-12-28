@@ -95,6 +95,23 @@
           }
  
        }
+@@ -131,6 +_,7 @@
+    private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
+       PlayerList playerlist = this.server.getPlayerList();
+       Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_299507_);
++      this.player = playerlist.entity.get(); // Mohist
+       if (component != null) {
+          this.disconnect(component);
+       } else {
+@@ -140,7 +_,7 @@
+             }));
+          }
+ 
+-         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_);
++         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_, this.player);
+          if (flag) {
+             this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
+          } else {
 @@ -175,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }

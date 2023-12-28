@@ -66,6 +66,14 @@
     }
  
     public void onDisconnect(Component p_300550_) {
+@@ -52,6 +_,7 @@
+    }
+ 
+    public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
++      PacketUtils.ensureRunningOnSameThread(p_299975_, this, this.player.serverLevel()); // CraftBukkit
+       if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
+          int i = (int)(Util.getMillis() - this.keepAliveTime);
+          this.latency = (this.latency * 3 + i) / 4;
 @@ -65,8 +_,62 @@
     public void handlePong(ServerboundPongPacket p_299461_) {
     }
@@ -160,9 +168,12 @@
        boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
  
        try {
-@@ -123,11 +_,58 @@
+@@ -122,12 +_,62 @@
+       }
     }
  
++   // CraftBukkit start
++   @Deprecated
     public void disconnect(Component p_299122_) {
 -      this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> {
 -         this.connection.disconnect(p_299122_);
@@ -218,6 +229,7 @@
 +      this.onDisconnect(ichatbasecomponent); // CraftBukkit - fire quit instantly
        this.connection.setReadOnly();
 -      this.server.executeBlocking(this.connection::handleDisconnection);
++      // CraftBukkit - Don't wait
 +      this.server.wrapRunnable(this.connection::handleDisconnection);
     }
  

@@ -33,10 +33,16 @@
                 Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, (BandwidthDebugMonitor)null);
                 int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
-@@ -209,4 +_,14 @@
-          }
-       }
-    }
+@@ -96,9 +_,19 @@
+                connection.configurePacketHandler(channelpipeline);
+                connection.setListenerForServerboundHandshake(new ServerHandshakePacketListenerImpl(ServerConnectionListener.this.server, connection));
+             }
+-         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).bind().syncUninterruptibly());
+-      }
+-   }
++         }).group(eventloopgroup).localAddress(p_9712_, p_9713_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
++      }
++   }
 +
 +   // CraftBukkit start
 +   public void acceptConnections() {
@@ -47,4 +53,6 @@
 +      }
 +   }
 +   // CraftBukkit end
- }
+ 
+    public SocketAddress startMemoryChannel() {
+       ChannelFuture channelfuture;
