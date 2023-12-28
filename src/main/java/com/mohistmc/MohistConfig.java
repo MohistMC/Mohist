@@ -220,8 +220,6 @@ public class MohistConfig {
     public static boolean velocity_enabled;
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
-    @Deprecated(forRemoval = true, since = "1.21")
-    public static boolean ignoreConnectionType;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -269,6 +267,5 @@ public class MohistConfig {
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");
-        ignoreConnectionType = getBoolean("forge.ignoreConnectionType", false);
     }
 }

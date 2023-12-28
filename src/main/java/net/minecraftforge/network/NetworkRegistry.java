@@ -5,7 +5,6 @@
 
 package net.minecraftforge.network;
 
-import com.mohistmc.util.ProxyUtils;
 import io.netty.util.Attribute;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class NetworkRegistry {
                 results.add(net.getChannelName().toString());
         }
 
-        if (!ProxyUtils.ignoreRejected() && !results.isEmpty()) {
+        if (!results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections", String.join(", ", results));
             return results;
         }
