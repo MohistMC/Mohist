@@ -1,10 +1,13 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,8 +_,12 @@
+@@ -1,8 +_,15 @@
  package net.minecraft.server.network;
  
++import com.mohistmc.MohistConfig;
++import com.mojang.authlib.properties.Property;
 +import java.net.InetAddress;
 +import java.util.HashMap;
++import java.util.Objects;
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
 +import net.minecraft.network.ConnectionProtocol;
@@ -33,7 +36,7 @@
     }
  
     public void handleIntention(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
++      if (!handleSpecialLogin(p_9975_)) return; // Mohist
 +      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
        switch (p_9975_.intention()) {
           case LOGIN:
@@ -104,7 +107,7 @@
 +                  {
 +                     connection.spoofedProfile = gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class);
 +                  }
-+               } else if ( ( split.length == 3 || split.length == 4 ) && ( HOST_PATTERN.matcher( split[1] ).matches() ) ) {
++               } else if ( ( split.length == 3 || split.length == 4 ) && ( HOST_PATTERN.matcher( split[1] ).matches())) {
 +                  Component chatmessage = Component.literal("Unknown data in login hostname, did you forget to enable BungeeCord in spigot.yml?");
 +                  this.connection.send(new ClientboundLoginDisconnectPacket(chatmessage));
 +                  this.connection.disconnect(chatmessage);
@@ -122,3 +125,31 @@
              } else {
                 this.connection.disconnect(IGNORE_STATUS_REASON);
              }
+@@ -51,6 +_,27 @@
+             throw new UnsupportedOperationException("Invalid intention " + p_9975_.intention());
+       }
+ 
++   }
++
++   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
++   private boolean handleSpecialLogin(ClientIntentionPacket packet) {
++      String ip = packet.hostName();
++      if (MohistConfig.velocity_enabled) {
++         String[] split = ip.split("\0");
++         if (split.length == 4) {
++            Property[] properties = GSON.fromJson(split[3], Property[].class);
++            for (Property property : properties) {
++               if (Objects.equals(property.name(), "extraData")) {
++                  String extraData = property.value().replace("\1", "\0");
++                  // replace the hostname field with embedded data
++                  //noinspection deprecation
++                  var forgePacket = new ClientIntentionPacket(packet.protocolVersion(), extraData, packet.port(), packet.intention());
++                  return net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(forgePacket, this.connection);
++               }
++            }
++         }
++      }
++      return net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(packet, this.connection);
+    }
+ 
+    public void onDisconnect(Component p_9973_) {
