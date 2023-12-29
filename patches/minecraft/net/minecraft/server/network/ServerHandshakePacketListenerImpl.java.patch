@@ -1,16 +1,12 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,8 +_,15 @@
+@@ -1,8 +_,11 @@
  package net.minecraft.server.network;
  
-+import com.mohistmc.MohistConfig;
-+import com.mojang.authlib.properties.Property;
 +import java.net.InetAddress;
 +import java.util.HashMap;
-+import java.util.Objects;
  import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
-+import net.minecraft.network.ConnectionProtocol;
  import net.minecraft.network.chat.Component;
 +import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.protocol.handshake.ClientIntent;
@@ -36,7 +32,7 @@
     }
  
     public void handleIntention(ClientIntentionPacket p_9975_) {
-+      if (!handleSpecialLogin(p_9975_)) return; // Mohist
++      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
 +      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
        switch (p_9975_.intention()) {
           case LOGIN:
@@ -125,31 +121,3 @@
              } else {
                 this.connection.disconnect(IGNORE_STATUS_REASON);
              }
-@@ -51,6 +_,27 @@
-             throw new UnsupportedOperationException("Invalid intention " + p_9975_.intention());
-       }
- 
-+   }
-+
-+   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
-+   private boolean handleSpecialLogin(ClientIntentionPacket packet) {
-+      String ip = packet.hostName();
-+      if (MohistConfig.velocity_enabled) {
-+         String[] split = ip.split("\0");
-+         if (split.length == 4) {
-+            Property[] properties = GSON.fromJson(split[3], Property[].class);
-+            for (Property property : properties) {
-+               if (Objects.equals(property.name(), "extraData")) {
-+                  String extraData = property.value().replace("\1", "\0");
-+                  // replace the hostname field with embedded data
-+                  //noinspection deprecation
-+                  var forgePacket = new ClientIntentionPacket(packet.protocolVersion(), extraData, packet.port(), packet.intention());
-+                  return net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(forgePacket, this.connection);
-+               }
-+            }
-+         }
-+      }
-+      return net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(packet, this.connection);
-    }
- 
-    public void onDisconnect(Component p_9973_) {
