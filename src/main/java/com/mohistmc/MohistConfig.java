@@ -94,6 +94,13 @@ public class MohistConfig {
         set("keepinventory.world.inventory", false);
         set("keepinventory.world.exp", false);
         readConfig();
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Throwable t) {
+            throw new RuntimeException("Error initializing Mohist", t);
+        }
     }
 
     public static void save() {
