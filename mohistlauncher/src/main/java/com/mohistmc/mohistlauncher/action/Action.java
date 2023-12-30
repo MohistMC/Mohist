@@ -142,7 +142,7 @@ public abstract class Action {
             if (!serverJar.exists()) {
                 return true;
             }
-            String jarmd = MD5Util.get(universalJar);
+            String jarmd = MD5Util.get(Main.jarTool.getFile());
             List<String> lines = Files.readAllLines(installInfo.toPath());
             return lines.size() < 2 || !jarmd.equals(lines.get(1));
         }

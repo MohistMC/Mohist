@@ -1,5 +1,6 @@
 package com.mohistmc.mohistlauncher.action;
 
+import com.mohistmc.mohistlauncher.Main;
 import com.mohistmc.mohistlauncher.util.I18n;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MD5Util;
@@ -102,7 +103,7 @@ public class v_1_20_R3 {
             String storedServerMD5 = null;
             String storedMohistMD5 = null;
             String serverMD5 = MD5Util.get(serverJar);
-            String mohistMD5 = MD5Util.get(universalJar);
+            String mohistMD5 = MD5Util.get(Main.jarTool.getFile());
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());

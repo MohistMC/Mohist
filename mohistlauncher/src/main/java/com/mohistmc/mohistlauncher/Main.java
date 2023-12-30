@@ -23,6 +23,7 @@ import com.mohistmc.mohistlauncher.action.v_1_20_R3;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MojangEulaUtil;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class Main {
     public static final boolean DEBUG = Boolean.getBoolean("mohist.debug");
     public static String MCVERSION;
     public static i18n i18n;
+    public static JarTool jarTool;
 
     public static String getVersion() {
         return (Main.class.getPackage().getImplementationVersion() != null) ? Main.class.getPackage().getImplementationVersion() : MCVERSION;
@@ -41,6 +43,7 @@ public class Main {
         DataParser.parseVersions();
         MohistConfigUtil.copyMohistConfig();
         MohistConfigUtil.i18n();
+        jarTool = new JarTool(Main.class);
         if (MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             String test = """
 
