@@ -94,6 +94,13 @@ public class MohistConfig {
         set("keepinventory.world.inventory", false);
         set("keepinventory.world.exp", false);
         readConfig();
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Throwable t) {
+            throw new RuntimeException("Error initializing Mohist", t);
+        }
     }
 
     public static void save() {
@@ -220,8 +227,6 @@ public class MohistConfig {
     public static boolean velocity_enabled;
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
-    @Deprecated(forRemoval = true, since = "1.21")
-    public static boolean ignoreConnectionType;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -269,6 +274,5 @@ public class MohistConfig {
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");
-        ignoreConnectionType = getBoolean("forge.ignoreConnectionType", false);
     }
 }
