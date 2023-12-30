@@ -532,8 +532,8 @@
                 this.debugCommandProfiler = new MinecraftServer.TimeProfiler(Util.getNanos(), this.tickCount);
              }
  
-+            MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
-+            lastTick = curTime;
++            // MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
++            lastTick = curTime; // Paper
              this.nextTickTime += 50L;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
