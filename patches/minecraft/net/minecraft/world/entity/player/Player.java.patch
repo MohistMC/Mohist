@@ -16,22 +16,15 @@
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.Util;
-@@ -69,23 +_,24 @@
- import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+@@ -70,7 +_,6 @@
  import net.minecraft.world.entity.ai.attributes.Attributes;
  import net.minecraft.world.entity.animal.Parrot;
-+import net.minecraft.world.entity.animal.Pig;
  import net.minecraft.world.entity.animal.horse.AbstractHorse;
 -import net.minecraft.world.entity.boss.EnderDragonPart;
  import net.minecraft.world.entity.decoration.ArmorStand;
  import net.minecraft.world.entity.item.ItemEntity;
-+import net.minecraft.world.entity.monster.Strider;
  import net.minecraft.world.entity.monster.warden.WardenSpawnTracker;
- import net.minecraft.world.entity.projectile.FishingHook;
-+import net.minecraft.world.entity.vehicle.AbstractMinecart;
-+import net.minecraft.world.entity.vehicle.Boat;
- import net.minecraft.world.food.FoodData;
- import net.minecraft.world.inventory.AbstractContainerMenu;
+@@ -80,12 +_,10 @@
  import net.minecraft.world.inventory.ClickAction;
  import net.minecraft.world.inventory.InventoryMenu;
  import net.minecraft.world.inventory.PlayerEnderChestContainer;
