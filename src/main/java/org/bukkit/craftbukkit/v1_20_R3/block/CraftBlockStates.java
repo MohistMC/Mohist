@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.ChiseledBookShelfBlockEntity;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import net.minecraft.world.level.block.entity.ComparatorBlockEntity;
 import net.minecraft.world.level.block.entity.ConduitBlockEntity;
+import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.entity.DaylightDetectorBlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.DropperBlockEntity;
@@ -51,7 +52,6 @@ import net.minecraft.world.level.block.entity.StructureBlockEntity;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.entity.TheEndPortalBlockEntity;
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
-import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.entity.TrialSpawnerBlockEntity;
 import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import org.bukkit.Material;
@@ -59,7 +59,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 
 public final class CraftBlockStates {
 
@@ -119,7 +118,7 @@ public final class CraftBlockStates {
                 // block with unhandled TileEntity:
                 return new CraftBlockEntityState<>(world, tileEntity);
             }
-            Preconditions.checkState(tileEntity == null, "Unexpected BlockState for %s", CraftMagicNumbers.getMaterial(blockData.getBlock()));
+            Preconditions.checkState(tileEntity == null, "Unexpected BlockState for %s", CraftBlockType.minecraftToBukkit(blockData.getBlock()));
             return new CraftBlockState(world, blockPosition, blockData);
         }
     };
@@ -374,7 +373,7 @@ public final class CraftBlockStates {
         BlockStateFactory<?> factory = getFactory(material);
 
         if (factory instanceof BlockEntityStateFactory) {
-            return ((BlockEntityStateFactory<?, ?>) factory).createTileEntity(BlockPos.ZERO, CraftMagicNumbers.getBlock(material).defaultBlockState());
+            return ((BlockEntityStateFactory<?, ?>) factory).createTileEntity(BlockPos.ZERO, CraftBlockType.bukkitToMinecraft(material).defaultBlockState());
         }
 
         return null;
@@ -398,7 +397,7 @@ public final class CraftBlockStates {
 
     public static BlockState getBlockState(BlockPos blockPosition, Material material, @Nullable CompoundTag blockEntityTag) {
         Preconditions.checkNotNull(material, "material is null");
-        net.minecraft.world.level.block.state.BlockState blockData = CraftMagicNumbers.getBlock(material).defaultBlockState();
+        net.minecraft.world.level.block.state.BlockState blockData = CraftBlockType.bukkitToMinecraft(material).defaultBlockState();
         return getBlockState(blockPosition, blockData, blockEntityTag);
     }
 
@@ -415,7 +414,7 @@ public final class CraftBlockStates {
 
     // See BlockStateFactory#createBlockState(World, BlockPos, IBlockData, TileEntity)
     private static CraftBlockState getBlockState(World world, BlockPos blockPosition, net.minecraft.world.level.block.state.BlockState blockData, BlockEntity tileEntity) {
-        Material material = CraftMagicNumbers.getMaterial(blockData.getBlock());
+        Material material = CraftBlockType.minecraftToBukkit(blockData.getBlock());
         BlockStateFactory<?> factory;
         // For some types of TileEntity blocks (eg. moving pistons), Minecraft may in some situations (eg. when using Block#setType or the
         // setBlock command) not create a corresponding TileEntity in the world. We return a normal BlockState in this case.

@@ -87,6 +87,7 @@ import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBiome;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockType;
 import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R3.boss.CraftDragonBattle;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
@@ -98,7 +99,6 @@ import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftBiomeSearchResult;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftRayTraceResult;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftSpawnCategory;
@@ -130,7 +130,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.BiomeSearchResult;
 import org.bukkit.util.BoundingBox;
@@ -1184,7 +1183,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(material.isBlock(), "Material.%s must be a block", material);
 
-        FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).defaultBlockState(), SpawnReason.CUSTOM);
+        FallingBlockEntity entity = FallingBlockEntity.fall(world, BlockPos.containing(location.getX(), location.getY(), location.getZ()), CraftBlockType.bukkitToMinecraft(material).defaultBlockState(), SpawnReason.CUSTOM);
         return (FallingBlock) entity.getBukkitEntity();
     }
 

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 
 public class CraftItemTag extends CraftTag<Item, Material> {
 
@@ -15,7 +15,7 @@ public class CraftItemTag extends CraftTag<Item, Material> {
 
     @Override
     public boolean isTagged(Material item) {
-        Item minecraft = CraftMagicNumbers.getItem(item);
+        Item minecraft = CraftItemType.bukkitToMinecraft(item);
 
         // SPIGOT-6952: A Material is not necessary an item, in this case return false
         if (minecraft == null) {
@@ -27,6 +27,6 @@ public class CraftItemTag extends CraftTag<Item, Material> {
 
     @Override
     public Set<Material> getValues() {
-        return getHandle().stream().map((item) -> CraftMagicNumbers.getMaterial(item.value())).collect(Collectors.toUnmodifiableSet());
+        return getHandle().stream().map((item) -> CraftItemType.minecraftToBukkit(item.value())).collect(Collectors.toUnmodifiableSet());
     }
 }

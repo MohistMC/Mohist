@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockType;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
@@ -71,7 +72,7 @@ public final class CraftLegacy {
         MaterialData mappedData;
 
         if (material.isBlock()) {
-            Block block = CraftMagicNumbers.getBlock(material);
+            Block block = CraftBlockType.bukkitToMinecraft(material);
             BlockState blockData = block.defaultBlockState();
 
             // Try exact match first

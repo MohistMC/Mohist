@@ -84,7 +84,7 @@
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
  import net.minecraft.world.level.Level;
-@@ -173,14 +_,62 @@
+@@ -173,14 +_,63 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
@@ -101,6 +101,7 @@
 +import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 +import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 +import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 +import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
@@ -155,7 +156,7 @@
     @Nullable
     private RemoteChatSession chatSession;
     private SignedMessageChain.Decoder signedMessageDecoder;
-@@ -224,14 +_,35 @@
+@@ -224,14 +_,34 @@
     private boolean waitingForSwitchToConfig;
  
     public ServerGamePacketListenerImpl(MinecraftServer p_9770_, Connection p_9771_, ServerPlayer p_9772_, CommonListenerCookie p_300908_) {
@@ -178,7 +179,7 @@
 +   private int lastBookTick  = MinecraftServer.currentTick;
 +   private int dropCount = 0;
 +
-+   // Get position of last block hit for BlockDamageLevel.STOPPED
++   private boolean hasMoved = false;
 +   private double lastPosX = Double.MAX_VALUE;
 +   private double lastPosY = Double.MAX_VALUE;
 +   private double lastPosZ = Double.MAX_VALUE;
@@ -186,7 +187,6 @@
 +   private float lastYaw = Float.MAX_VALUE;
 +   private boolean justTeleported = false;
 +   // CraftBukkit end
-+   private boolean hasMoved; // Spigot
 +
 +   public CraftPlayer getCraftPlayer() {
 +      return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
@@ -201,11 +201,26 @@
           this.disconnect(Component.translatable("multiplayer.disconnect.idling"));
        }
  
-@@ -380,7 +_,32 @@
+@@ -367,6 +_,13 @@
+          Entity entity = this.player.getRootVehicle();
+          if (entity != this.player && entity.getControllingPassenger() == this.player && entity == this.lastVehicle) {
+             ServerLevel serverlevel = this.player.serverLevel();
++            // CraftBukkit - store current player position
++            double prevX = player.getX();
++            double prevY = player.getY();
++            double prevZ = player.getZ();
++            float prevYaw = player.getYRot();
++            float prevPitch = player.getXRot();
++            // CraftBukkit end
+             double d0 = entity.getX();
+             double d1 = entity.getY();
+             double d2 = entity.getZ();
+@@ -380,7 +_,33 @@
              double d8 = d5 - this.vehicleFirstGoodZ;
              double d9 = entity.getDeltaMovement().lengthSqr();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
 -            if (d10 - d9 > 100.0D && !this.isSingleplayerOwner()) {
++
 +            // CraftBukkit start - handle custom speeds and skipped ticks
 +            this.allowedPlayerTicks += (System.currentTimeMillis() / 50) - this.lastTick;
 +            this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
@@ -235,7 +250,7 @@
                 LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName().getString(), this.player.getName().getString(), d6, d7, d8);
                 this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
-@@ -408,18 +_,88 @@
+@@ -408,18 +_,84 @@
              d8 = d5 - entity.getZ();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag2 = false;
@@ -258,15 +273,14 @@
 +
 +            // CraftBukkit start - fire PlayerMoveEvent
 +            org.bukkit.entity.Player player = this.getCraftPlayer();
-+            // Spigot Start
-+            if ( !hasMoved )
++            if (!hasMoved)
 +            {
-+               lastPosX = curPos.getX();
-+               lastPosY = curPos.getY();
-+               lastPosZ = curPos.getZ();
-+               lastYaw = curPos.getYaw();
-+               lastPitch = curPos.getPitch();
-+               hasMoved = true;
++               this.lastPosX = curPos.getX();
++               this.lastPosY = curPos.getY();
++               this.lastPosZ = curPos.getZ();
++               this.lastYaw = curPos.getYaw();
++               this.lastPitch = curPos.getPitch();
++               this.hasMoved = true;
 +            }
 +            // Spigot End
 +            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
@@ -276,7 +290,6 @@
 +            to.setX(p_9876_.getX());
 +            to.setY(p_9876_.getY());
 +            to.setZ(p_9876_.getZ());
-+
 +
 +            // If the packet contains look information then we update the To location with the correct Yaw & Pitch.
 +            to.setYaw(p_9876_.getYRot());
@@ -294,31 +307,29 @@
 +               this.lastPitch = to.getPitch();
 +
 +               // Skip the first time we do this
-+               if (from.getX() != Double.MAX_VALUE) {
-+                  Location oldTo = to.clone();
-+                  PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-+                  this.cserver.getPluginManager().callEvent(event);
++               Location oldTo = to.clone();
++               PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++               this.cserver.getPluginManager().callEvent(event);
 +
-+                  // If the event is cancelled we move the player back to their old location.
-+                  if (event.isCancelled()) {
-+                     teleport(from);
-+                     return;
-+                  }
++               // If the event is cancelled we move the player back to their old location.
++               if (event.isCancelled()) {
++                  teleport(from);
++                  return;
++               }
 +
-+                  // If a Plugin has changed the To destination then we teleport the Player
-+                  // there to avoid any 'Moved wrongly' or 'Moved too quickly' errors.
-+                  // We only do this if the Event was not cancelled.
-+                  if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
-+                     this.player.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-+                     return;
-+                  }
++               // If a Plugin has changed the To destination then we teleport the Player
++               // there to avoid any 'Moved wrongly' or 'Moved too quickly' errors.
++               // We only do this if the Event was not cancelled.
++               if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
++                  this.player.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
++                  return;
++               }
 +
-+                  // Check to see if the Players Location has some how changed during the call of the event.
-+                  // This can happen due to a plugin teleporting the player instead of using .setTo()
-+                  if (!from.equals(this.getCraftPlayer().getLocation()) && this.justTeleported) {
-+                     this.justTeleported = false;
-+                     return;
-+                  }
++               // Check to see if the Players Location has some how changed during the call of the event.
++               // This can happen due to a plugin teleporting the player instead of using .setTo()
++               if (!from.equals(this.getCraftPlayer().getLocation()) && this.justTeleported) {
++                  this.justTeleported = false;
++                  return;
 +               }
 +            }
 +            // CraftBukkit end
@@ -1555,7 +1566,7 @@
 +                        ItemStack cursor = this.player.containerMenu.getCarried();
 +                        action = InventoryAction.NOTHING;
 +                        // Quick check for if we have any of the item
-+                        if (inventoryView.getTopInventory().contains(CraftMagicNumbers.getMaterial(cursor.getItem())) || inventoryView.getBottomInventory().contains(CraftMagicNumbers.getMaterial(cursor.getItem()))) {
++                        if (inventoryView.getTopInventory().contains(CraftItemType.minecraftToBukkit(cursor.getItem())) || inventoryView.getBottomInventory().contains(CraftItemType.minecraftToBukkit(cursor.getItem()))) {
 +                           action = InventoryAction.COLLECT_TO_CURSOR;
 +                        }
 +                     }

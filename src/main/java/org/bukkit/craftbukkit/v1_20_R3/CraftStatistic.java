@@ -13,8 +13,9 @@ import net.minecraft.world.level.block.Block;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockType;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntityType;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.bukkit.entity.EntityType;
 
 public enum CraftStatistic {
@@ -145,22 +146,22 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getMaterialStatistic(org.bukkit.Statistic stat, Material material) {
         try {
             if (stat == Statistic.MINE_BLOCK) {
-                return Stats.BLOCK_MINED.get(CraftMagicNumbers.getBlock(material));
+                return Stats.BLOCK_MINED.get(CraftBlockType.bukkitToMinecraft(material));
             }
             if (stat == Statistic.CRAFT_ITEM) {
-                return Stats.ITEM_CRAFTED.get(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_CRAFTED.get(CraftItemType.bukkitToMinecraft(material));
             }
             if (stat == Statistic.USE_ITEM) {
-                return Stats.ITEM_USED.get(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_USED.get(CraftItemType.bukkitToMinecraft(material));
             }
             if (stat == Statistic.BREAK_ITEM) {
-                return Stats.ITEM_BROKEN.get(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_BROKEN.get(CraftItemType.bukkitToMinecraft(material));
             }
             if (stat == Statistic.PICKUP) {
-                return Stats.ITEM_PICKED_UP.get(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_PICKED_UP.get(CraftItemType.bukkitToMinecraft(material));
             }
             if (stat == Statistic.DROP) {
-                return Stats.ITEM_DROPPED.get(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_DROPPED.get(CraftItemType.bukkitToMinecraft(material));
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
@@ -190,10 +191,10 @@ public enum CraftStatistic {
 
     public static Material getMaterialFromStatistic(net.minecraft.stats.Stat<?> statistic) {
         if (statistic.getValue() instanceof Item statisticItemValue) {
-            return CraftMagicNumbers.getMaterial(statisticItemValue);
+            return CraftItemType.minecraftToBukkit(statisticItemValue);
         }
         if (statistic.getValue() instanceof Block statisticBlockValue) {
-            return CraftMagicNumbers.getMaterial(statisticBlockValue);
+            return CraftBlockType.minecraftToBukkit(statisticBlockValue);
         }
         return null;
     }

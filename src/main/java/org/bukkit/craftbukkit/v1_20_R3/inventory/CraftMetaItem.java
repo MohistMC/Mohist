@@ -60,6 +60,7 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.v1_20_R3.Overridden;
 import org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttribute;
 import org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttributeInstance;
+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockType;
 import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.tags.DeprecatedCustomTagContainer;
@@ -954,8 +955,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return (this.hideFlag & bitModifier) == bitModifier;
     }
 
-    private byte getBitModifier(ItemFlag hideFlag) {
-        return (byte) (1 << hideFlag.ordinal());
+    private int getBitModifier(ItemFlag hideFlag) {
+        return 1 << hideFlag.ordinal();
     }
 
     @Override
@@ -1000,7 +1001,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public BlockData getBlockData(Material material) {
-        net.minecraft.world.level.block.state.BlockState defaultData = CraftMagicNumbers.getBlock(material).defaultBlockState();
+        net.minecraft.world.level.block.state.BlockState defaultData = CraftBlockType.bukkitToMinecraft(material).defaultBlockState();
         return CraftBlockData.fromData((hasBlockData()) ? BlockItem.getBlockState(defaultData, blockData) : defaultData);
     }
 

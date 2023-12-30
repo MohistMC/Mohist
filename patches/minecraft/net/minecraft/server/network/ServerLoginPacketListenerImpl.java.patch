@@ -67,7 +67,7 @@
        this.requestedUsername = p_10047_.name();
        GameProfile gameprofile = this.server.getSingleplayerProfile();
        if (gameprofile != null && this.requestedUsername.equalsIgnoreCase(gameprofile.getName())) {
-@@ -117,7 +_,26 @@
+@@ -117,7 +_,29 @@
              this.state = ServerLoginPacketListenerImpl.State.KEY;
              this.connection.send(new ClientboundHelloPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.challenge));
           } else {
@@ -85,7 +85,10 @@
 +            // Spigot start
 +            authenticatorPool.execute(() -> {
 +               try {
-+                  new LoginHandler().fireEvents(UUIDUtil.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername));
++                  GameProfile gameprofile0 = UUIDUtil.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername);
++                  ServerLoginPacketListenerImpl.this.callPlayerPreLoginEvents(gameprofile0);
++                  LOGGER.info("UUID of player {} is {}", gameprofile0.getName(), gameprofile0.getId());
++                  ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile0);
 +               } catch (Exception ex) {
 +                  disconnect("Failed to verify username!");
 +                  server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + ServerLoginPacketListenerImpl.this.requestedUsername, ex);
@@ -121,21 +124,20 @@
           public void run() {
              String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
-@@ -183,8 +_,12 @@
+@@ -183,6 +_,13 @@
                 ProfileResult profileresult = ServerLoginPacketListenerImpl.this.server.getSessionService().hasJoinedServer(s1, s, this.getAddress());
                 if (profileresult != null) {
                    GameProfile gameprofile = profileresult.profile();
--                  ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
--                  ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
 +                  // CraftBukkit start - fire PlayerPreLoginEvent
 +                  if (!connection.isConnected()) {
 +                     return;
 +                  }
 +
-+                  new LoginHandler().fireEvents(gameprofile);
++                  ServerLoginPacketListenerImpl.this.callPlayerPreLoginEvents(gameprofile);
++                  // CraftBukkit end
+                   ServerLoginPacketListenerImpl.LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
+                   ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
                 } else if (ServerLoginPacketListenerImpl.this.server.isSingleplayer()) {
-                   ServerLoginPacketListenerImpl.LOGGER.warn("Failed to verify username but will let them in anyway!");
-                   ServerLoginPacketListenerImpl.this.startClientVerification(UUIDUtil.createOfflineProfile(s1));
 @@ -200,6 +_,11 @@
                    ServerLoginPacketListenerImpl.this.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.LOGGER.error("Couldn't verify username because servers are unavailable");
@@ -148,58 +150,52 @@
              }
  
           }
-@@ -214,18 +_,118 @@
+@@ -214,18 +_,112 @@
        thread.start();
     }
  
-+   // Spigot start
-+   public class LoginHandler {
++   // CraftBukkit start
++   public void callPlayerPreLoginEvents(GameProfile gameprofile) throws Exception {
++      // Paper start - Velocity support
++      if (ServerLoginPacketListenerImpl.this.velocityLoginMessageId == -1 && MohistConfig.velocity_enabled) {
++         disconnect("This server requires you to connect with Velocity.");
++         return;
++      }
++      // Paper end
++      String playerName = gameprofile.getName();
++      java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
++      java.util.UUID uniqueId = gameprofile.getId();
++      final org.bukkit.craftbukkit.v1_20_R3.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
 +
-+      public void fireEvents(GameProfile gameprofile) throws Exception {
-+         // Paper start - Velocity support
-+         if (ServerLoginPacketListenerImpl.this.velocityLoginMessageId == -1 && MohistConfig.velocity_enabled) {
-+            disconnect("This server requires you to connect with Velocity.");
++      AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
++      server.getPluginManager().callEvent(asyncEvent);
++
++      if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
++         final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
++         if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
++            event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
++         }
++         Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
++            @Override
++            protected PlayerPreLoginEvent.Result evaluate() {
++               server.getPluginManager().callEvent(event);
++               return event.getResult();
++            }
++         };
++
++         ServerLoginPacketListenerImpl.this.server.processQueue.add(waitable);
++         if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
++            disconnect(event.getKickMessage());
 +            return;
 +         }
-+         // Paper end
-+         String playerName = gameprofile.getName();
-+         java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
-+         java.util.UUID uniqueId = gameprofile.getId();
-+         final org.bukkit.craftbukkit.v1_20_R3.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
-+
-+         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
-+         server.getPluginManager().callEvent(asyncEvent);
-+
-+         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-+            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-+            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
-+            }
-+            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
-+               @Override
-+               protected PlayerPreLoginEvent.Result evaluate() {
-+                  server.getPluginManager().callEvent(event);
-+                  return event.getResult();
-+               }};
-+
-+            ServerLoginPacketListenerImpl.this.server.processQueue.add(waitable);
-+            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-+               disconnect(event.getKickMessage());
-+               return;
-+            }
-+         } else {
-+            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-+               disconnect(asyncEvent.getKickMessage());
-+               return;
-+            }
++      } else {
++         if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
++            disconnect(asyncEvent.getKickMessage());
++            return;
 +         }
-+         // CraftBukkit end
-+         LOGGER.info("UUID of player {} is {}", gameprofile.getName(), gameprofile.getId());
-+         ServerLoginPacketListenerImpl.this.connection.player = gameprofile;
-+         ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile);
 +      }
++      // CraftBukkit end
 +   }
-+   // Spigot end
 +
     public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
 +      // Paper start - Velocity support
@@ -236,7 +232,7 @@
 +         // Proceed with login
 +         authenticatorPool.execute(() -> {
 +            try {
-+               new LoginHandler().fireEvents(this.authenticatedProfile);
++               ServerLoginPacketListenerImpl.this.callPlayerPreLoginEvents(this.authenticatedProfile);
 +            } catch (Exception ex) {
 +               disconnect("Failed to verify username!");
 +               server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + this.authenticatedProfile.getName(), ex);

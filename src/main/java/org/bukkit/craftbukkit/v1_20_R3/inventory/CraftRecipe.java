@@ -4,7 +4,6 @@ import com.mohistmc.mohist.bukkit.inventory.MohistSpecialIngredient;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.crafting.Ingredient;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -61,7 +60,7 @@ public interface CraftRecipe extends Recipe {
 
             List<org.bukkit.Material> choices = new ArrayList<>(items.length);
             for (net.minecraft.world.item.ItemStack i : items) {
-                choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
+                choices.add(CraftItemType.minecraftToBukkit(i.getItem()));
             }
 
             return new RecipeChoice.MaterialChoice(choices);

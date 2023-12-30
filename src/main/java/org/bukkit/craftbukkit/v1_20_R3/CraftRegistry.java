@@ -15,10 +15,12 @@ import org.bukkit.Keyed;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R3.generator.structure.CraftStructure;
 import org.bukkit.craftbukkit.v1_20_R3.generator.structure.CraftStructureType;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.trim.CraftTrimMaterial;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.trim.CraftTrimPattern;
+import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.generator.structure.Structure;
@@ -27,8 +29,6 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
 
 public class CraftRegistry<B extends Keyed, M> implements Registry<B> {
 

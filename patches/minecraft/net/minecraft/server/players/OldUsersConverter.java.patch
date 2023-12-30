@@ -10,15 +10,6 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.util.StringUtil;
-@@ -53,7 +_,7 @@
-       }).toArray((p_11070_) -> {
-          return new String[p_11070_];
-       });
--      if (p_11087_.usesAuthentication()) {
-+      if (p_11087_.usesAuthentication() || org.spigotmc.SpigotConfig.bungee) { // Spigot: bungee = online mode, for now.
-          p_11087_.getProfileRepository().findProfilesByNames(astring, p_11089_);
-       } else {
-          for(String s : astring) {
 @@ -123,7 +_,7 @@
              try {
                 ipbanlist.load();

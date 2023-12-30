@@ -11,7 +11,7 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryJukebox;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.bukkit.inventory.JukeboxInventory;
 
 public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
@@ -67,7 +67,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public void setPlaying(Material record) {
-        if (record == null || CraftMagicNumbers.getItem(record) == null) {
+        if (record == null || CraftItemType.bukkitToMinecraft(record) == null) {
             record = Material.AIR;
         }
 
@@ -121,7 +121,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
         jukebox.isPlaying = true;
         jukebox.recordStartedTick = jukebox.tickCount;
-        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, CraftMagicNumbers.getMaterial(record.getItem()));
+        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, CraftItemType.minecraftToBukkit(record.getItem()));
         return true;
     }
 

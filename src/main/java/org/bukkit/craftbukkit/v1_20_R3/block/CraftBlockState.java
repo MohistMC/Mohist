@@ -163,13 +163,13 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
         Preconditions.checkArgument(type.isBlock(), "Material must be a block!");
 
         if (this.getType() != type) {
-            this.data = CraftMagicNumbers.getBlock(type).defaultBlockState();
+            this.data = CraftBlockType.bukkitToMinecraft(type).defaultBlockState();
         }
     }
 
     @Override
     public Material getType() {
-        return CraftMagicNumbers.getMaterial(data.getBlock());
+        return CraftBlockType.minecraftToBukkit(data.getBlock());
     }
 
     public void setFlag(int flag) {

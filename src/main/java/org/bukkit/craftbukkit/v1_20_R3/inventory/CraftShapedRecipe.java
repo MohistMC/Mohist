@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R3.inventory;
 
-import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.NonNullList;

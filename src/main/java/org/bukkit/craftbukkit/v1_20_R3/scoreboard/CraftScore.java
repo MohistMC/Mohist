@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R3.scoreboard;
 
-import java.util.Map;
 import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;

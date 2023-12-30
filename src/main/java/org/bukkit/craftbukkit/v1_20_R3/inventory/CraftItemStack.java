@@ -61,7 +61,7 @@ public final class CraftItemStack extends ItemStack {
         if (original.isEmpty()) {
             return new ItemStack(Material.AIR);
         }
-        ItemStack stack = new ItemStack(CraftMagicNumbers.getMaterial(original.getItem()), original.getCount());
+        ItemStack stack = new ItemStack(CraftItemType.minecraftToBukkit(original.getItem()), original.getCount());
         if (hasItemMeta(original)) {
             stack.setItemMeta(getItemMeta(original));
         }
@@ -84,7 +84,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     public static CraftItemStack asNewCraftStack(Item item, int amount) {
-        return new CraftItemStack(CraftMagicNumbers.getMaterial(item), amount, (short) 0, null);
+        return new CraftItemStack(CraftItemType.minecraftToBukkit(item), amount, (short) 0, null);
     }
 
     public net.minecraft.world.item.ItemStack handle; // Paper add public
@@ -114,7 +114,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public Material getType() {
-        return handle != null ? CraftMagicNumbers.getMaterial(handle.getItem()) : Material.AIR;
+        return handle != null ? CraftItemType.minecraftToBukkit(handle.getItem()) : Material.AIR;
     }
 
     @Override
@@ -123,12 +123,12 @@ public final class CraftItemStack extends ItemStack {
             return;
         } else if (type == Material.AIR) {
             handle = null;
-        } else if (CraftMagicNumbers.getItem(type) == null) { // :(
+        } else if (CraftItemType.bukkitToMinecraft(type) == null) { // :(
             handle = null;
         } else if (handle == null) {
-            handle = new net.minecraft.world.item.ItemStack(CraftMagicNumbers.getItem(type), 1);
+            handle = new net.minecraft.world.item.ItemStack(CraftItemType.bukkitToMinecraft(type), 1);
         } else {
-            handle.setItem(CraftMagicNumbers.getItem(type));
+            handle.setItem(CraftItemType.bukkitToMinecraft(type));
             if (hasItemMeta()) {
                 // This will create the appropriate item meta, which will contain all the data we intend to keep
                 setItemMeta(handle, getItemMeta(handle));
@@ -352,7 +352,7 @@ public final class CraftItemStack extends ItemStack {
             case ARMOR_STAND -> new CraftMetaArmorStand(item.getTag());
             case KNOWLEDGE_BOOK -> new CraftMetaKnowledgeBook(item.getTag());
             case FURNACE, CHEST, TRAPPED_CHEST, JUKEBOX, DISPENSER, DROPPER, ACACIA_HANGING_SIGN, ACACIA_SIGN, ACACIA_WALL_HANGING_SIGN, ACACIA_WALL_SIGN, BAMBOO_HANGING_SIGN, BAMBOO_SIGN, BAMBOO_WALL_HANGING_SIGN, BAMBOO_WALL_SIGN, BIRCH_HANGING_SIGN, BIRCH_SIGN, BIRCH_WALL_HANGING_SIGN, BIRCH_WALL_SIGN, CHERRY_HANGING_SIGN, CHERRY_SIGN, CHERRY_WALL_HANGING_SIGN, CHERRY_WALL_SIGN, CRIMSON_HANGING_SIGN, CRIMSON_SIGN, CRIMSON_WALL_HANGING_SIGN, CRIMSON_WALL_SIGN, DARK_OAK_HANGING_SIGN, DARK_OAK_SIGN, DARK_OAK_WALL_HANGING_SIGN, DARK_OAK_WALL_SIGN, JUNGLE_HANGING_SIGN, JUNGLE_SIGN, JUNGLE_WALL_HANGING_SIGN, JUNGLE_WALL_SIGN, MANGROVE_HANGING_SIGN, MANGROVE_SIGN, MANGROVE_WALL_HANGING_SIGN, MANGROVE_WALL_SIGN, OAK_HANGING_SIGN, OAK_SIGN, OAK_WALL_HANGING_SIGN, OAK_WALL_SIGN, SPRUCE_HANGING_SIGN, SPRUCE_SIGN, SPRUCE_WALL_HANGING_SIGN, SPRUCE_WALL_SIGN, WARPED_HANGING_SIGN, WARPED_SIGN, WARPED_WALL_HANGING_SIGN, WARPED_WALL_SIGN, SPAWNER, BREWING_STAND, ENCHANTING_TABLE, COMMAND_BLOCK, REPEATING_COMMAND_BLOCK, CHAIN_COMMAND_BLOCK, BEACON, DAYLIGHT_DETECTOR, HOPPER, COMPARATOR, SHIELD, STRUCTURE_BLOCK, SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX, ENDER_CHEST, BARREL, BELL, BLAST_FURNACE, CAMPFIRE, SOUL_CAMPFIRE, JIGSAW, LECTERN, SMOKER, BEEHIVE, BEE_NEST, SCULK_CATALYST, SCULK_SHRIEKER, SCULK_SENSOR, CALIBRATED_SCULK_SENSOR, CHISELED_BOOKSHELF, DECORATED_POT, SUSPICIOUS_SAND, SUSPICIOUS_GRAVEL, CRAFTER, TRIAL_SPAWNER ->
-                    new CraftMetaBlockState(item.getTag(), CraftMagicNumbers.getMaterial(item.getItem()));
+                    new CraftMetaBlockState(item.getTag(), CraftItemType.minecraftToBukkit(item.getItem()));
             case TROPICAL_FISH_BUCKET -> new CraftMetaTropicalFishBucket(item.getTag());
             case AXOLOTL_BUCKET -> new CraftMetaAxolotlBucket(item.getTag());
             case CROSSBOW -> new CraftMetaCrossbow(item.getTag());
@@ -372,7 +372,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Material getType(net.minecraft.world.item.ItemStack item) {
-        return item == null ? Material.AIR : CraftMagicNumbers.getMaterial(item.getItem());
+        return item == null ? Material.AIR : CraftItemType.minecraftToBukkit(item.getItem());
     }
 
     @Override
@@ -396,7 +396,7 @@ public final class CraftItemStack extends ItemStack {
         if (itemMeta == null) return true;
 
         Item oldItem = item.getItem();
-        Item newItem = CraftMagicNumbers.getItem(CraftItemFactory.instance().updateMaterial(itemMeta, CraftMagicNumbers.getMaterial(oldItem)));
+        Item newItem = CraftItemType.bukkitToMinecraft(CraftItemFactory.instance().updateMaterial(itemMeta, CraftItemType.minecraftToBukkit(oldItem)));
         if (oldItem != newItem) {
             item.setItem(newItem);
         }

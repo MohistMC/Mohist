@@ -588,7 +588,7 @@
              this.nextTickTimeNanos += i;
              this.startMetricsRecordingTick();
              this.profiler.push("tick");
-@@ -679,8 +_,16 @@
+@@ -679,6 +_,8 @@
              this.isReady = true;
              JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
           }
@@ -596,15 +596,7 @@
 +         ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
        } catch (Throwable throwable1) {
           LOGGER.error("Encountered an unexpected exception", throwable1);
-+         // Spigot Start
-+         if ( throwable1.getCause() != null )
-+         {
-+            MinecraftServer.LOGGER.error( "\tCause of unexpected exception was", throwable1.getCause() );
-+         }
-+         // Spigot End
           CrashReport crashreport = constructOrExtractCrashReport(throwable1);
-          this.fillSystemReport(crashreport.getSystemReport());
-          File file1 = new File(new File(this.getServerDirectory(), "crash-reports"), "crash-" + Util.getFilenameFormattedDateTime() + "-server.txt");
 @@ -690,6 +_,7 @@
              LOGGER.error("We were unable to save this crash report to disk.");
           }

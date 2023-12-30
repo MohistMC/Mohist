@@ -42,10 +42,10 @@ import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLectern;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMerchantCustom;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.HumanEntity;
@@ -485,7 +485,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
-        return getHandle().getCooldowns().isOnCooldown(CraftMagicNumbers.getItem(material));
+        return getHandle().getCooldowns().isOnCooldown(CraftItemType.bukkitToMinecraft(material));
     }
 
     @Override
@@ -493,7 +493,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
-        ItemCooldowns.CooldownInstance cooldown = getHandle().getCooldowns().cooldowns.get(CraftMagicNumbers.getItem(material));
+        ItemCooldowns.CooldownInstance cooldown = getHandle().getCooldowns().cooldowns.get(CraftItemType.bukkitToMinecraft(material));
         return (cooldown == null) ? 0 : Math.max(0, cooldown.endTime - getHandle().getCooldowns().tickCount);
     }
 
@@ -502,7 +502,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(material.isItem(), "Material %s is not an item", material);
 
-        getHandle().getCooldowns().addCooldown(CraftMagicNumbers.getItem(material), ticks);
+        getHandle().getCooldowns().addCooldown(CraftItemType.bukkitToMinecraft(material), ticks);
     }
 
     @Override

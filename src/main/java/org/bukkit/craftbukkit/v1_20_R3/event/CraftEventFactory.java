@@ -95,9 +95,9 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftRaider;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftSpellcaster;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaBook;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftVector;
 import org.bukkit.entity.AbstractHorse;
@@ -479,7 +479,7 @@ public class CraftEventFactory {
     private static PlayerEvent getPlayerBucketEvent(boolean isFilling, ServerLevel world, net.minecraft.world.entity.player.Player  who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemstack, net.minecraft.world.item.Item item, InteractionHand enumhand) {
         Player player = (Player) who.getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asNewCraftStack(item);
-        Material bucket = CraftMagicNumbers.getMaterial(itemstack.getItem());
+        Material bucket = CraftItemType.minecraftToBukkit(itemstack.getItem());
 
         CraftServer craftServer = (CraftServer) player.getServer();
 

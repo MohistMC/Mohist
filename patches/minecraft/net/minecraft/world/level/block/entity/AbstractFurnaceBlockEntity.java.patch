@@ -9,7 +9,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.SharedConstants;
  import net.minecraft.Util;
-@@ -44,6 +_,17 @@
+@@ -44,6 +_,18 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
@@ -17,6 +17,7 @@
 +import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.block.BlockExpEvent;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -272,7 +273,7 @@
 +      // CraftBukkit start - fire FurnaceExtractEvent / BlockExpEvent
 +      BlockExpEvent event;
 +      if (amount.getAndSet(0) != 0) {
-+         event = new FurnaceExtractEvent((org.bukkit.entity.Player) createExperience$entityhuman.getAndSet(null).getBukkitEntity(), CraftBlock.at(p_154999_, worldPosition$mohist), org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers.getMaterial(stackAtomicReference.getAndSet(null).getItem()), amount.getAndSet(0), i);
++         event = new FurnaceExtractEvent((org.bukkit.entity.Player) createExperience$entityhuman.getAndSet(null).getBukkitEntity(), CraftBlock.at(p_154999_, worldPosition$mohist), CraftItemType.minecraftToBukkit(stackAtomicReference.getAndSet(null).getItem()), amount.getAndSet(0), i);
 +      } else {
 +         event = new BlockExpEvent(CraftBlock.at(p_154999_, worldPosition$mohist), i);
 +      }
