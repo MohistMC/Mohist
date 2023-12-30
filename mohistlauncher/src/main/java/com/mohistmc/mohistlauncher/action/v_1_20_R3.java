@@ -42,17 +42,18 @@ public class v_1_20_R3 {
         }
 
         private void install() throws Exception {
-            copyFileFromJar(lzma, "data/server.lzma");
-            copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
-            copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            copyFileFromJar(lzma, "data/server.lzma", true);
+            copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar", true);
+            copyFileFromJar(fmlcore, "data/fmlcore-" + mcVer + "-" + forgeVer + ".jar", true);
+            copyFileFromJar(javafmllanguage, "data/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar", true);
+            copyFileFromJar(mclanguage, "data/mclanguage-" + mcVer + "-" + forgeVer + ".jar", true);
+            copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar", true);
+            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar", false);
 
             if (!needsInstall()) return;
             System.out.println(I18n.as("installation.start"));
 
-            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
+            copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar", true);
 
             if (mohistVer == null || mcpVer == null) {
                 System.out.println("[Mohist] There is an error with the installation, the forge / mcp version is not set.");
@@ -101,9 +102,10 @@ public class v_1_20_R3 {
             }
 
             String storedServerMD5 = null;
-            String storedMohistMD5 = null;
+            String storedLzmaMD5 = null;
+            String storeduniversalJarMD5 = MD5Util.get(universalJar);
             String serverMD5 = MD5Util.get(serverJar);
-            String mohistMD5 = MD5Util.get(Main.jarTool.getFile());
+            String lzmaMD5 = MD5Util.get(lzma);
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
@@ -111,11 +113,11 @@ public class v_1_20_R3 {
                     storedServerMD5 = infoLines.get(0);
                 }
                 if (infoLines.size() > 1) {
-                    storedMohistMD5 = infoLines.get(1);
+                    storedLzmaMD5 = infoLines.get(1);
                 }
             }
 
-            if (!serverJar.exists() || storedServerMD5 == null || storedMohistMD5 == null || !storedServerMD5.equals(serverMD5) || !storedMohistMD5.equals(mohistMD5)) {
+            if (!serverJar.exists() || storedServerMD5 == null || storedLzmaMD5 == null || !storedServerMD5.equals(serverMD5) || !storedLzmaMD5.equals(lzmaMD5)) {
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
                         "--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath(), "--data", "--unpatched");
                 serverMD5 = MD5Util.get(serverJar);
@@ -123,7 +125,8 @@ public class v_1_20_R3 {
 
             FileWriter fw = new FileWriter(installInfo);
             fw.write(serverMD5 + "\n");
-            fw.write(mohistMD5);
+            fw.write(lzmaMD5 + "\n");
+            fw.write(storeduniversalJarMD5);
             fw.close();
             unmute();
 

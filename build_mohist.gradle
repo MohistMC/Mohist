@@ -664,7 +664,7 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':bootstrap')
         rename { 'data/lowcodelanguage-' + MC_VERSION + '-' + FORGE_VERSION + '.jar' }
     }
     from(project(':mohistlauncher').tasks.jar.outputs) {
-        rename { 'data/mohistlauncher-' + MC_VERSION + '-' + MOHIST_VERSION + '.jar' }
+        rename { 'data/mohistlauncher-' + MC_VERSION + '.jar' }
     }
     from(zipTree(project(':bootstrap').tasks.jar.outputs.getFiles().asPath)) {
         into ""

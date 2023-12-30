@@ -110,23 +110,24 @@ public abstract class Action {
         System.setOut(origin);
     }
 
-    protected void copyFileFromJar(File file, String pathInJar) {
+    protected void copyFileFromJar(File file, String pathInJar, boolean clearOld) {
         InputStream is = Main.class.getClassLoader().getResourceAsStream(pathInJar);
         if (!file.exists() || !MD5Util.get(file).equals(MD5Util.get(is)) || file.length() <= 1) {
             // Clear old version
-            File parentfile = file.getParentFile();
-            if (file.getAbsolutePath().contains("minecraftforge")) {
-                int lastSlashIndex = parentfile.getAbsolutePath().replaceAll("\\\\", "/").lastIndexOf("/");
-                String result = parentfile.getAbsolutePath().substring(0, lastSlashIndex + 1);
-                File old = new File(result);
-                if (old.exists()) {
-                    FileUtils.deleteFolders(old);
+            if (clearOld) {
+                File parentfile = file.getParentFile();
+                if (file.getAbsolutePath().contains("minecraftforge")) {
+                    int lastSlashIndex = parentfile.getAbsolutePath().replaceAll("\\\\", "/").lastIndexOf("/");
+                    String result = parentfile.getAbsolutePath().substring(0, lastSlashIndex + 1);
+                    File old = new File(result);
+                    if (old.exists()) {
+                        FileUtils.deleteFolders(old);
+                    }
                 }
             }
-            file.getParentFile().mkdirs();
             if (is != null) {
                 try {
-                    file.createNewFile();
+                    Files.createDirectories(file.toPath());
                     Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException ignored) {
                 }
@@ -142,9 +143,10 @@ public abstract class Action {
             if (!serverJar.exists()) {
                 return true;
             }
-            String jarmd = MD5Util.get(Main.jarTool.getFile());
+            String lzmaMD5 = MD5Util.get(lzma);
             List<String> lines = Files.readAllLines(installInfo.toPath());
-            return lines.size() < 2 || !jarmd.equals(lines.get(1));
+
+            return lines.size() < 3 || !lzmaMD5.equals(lines.get(1))|| !MD5Util.get(universalJar).equals(lines.get(2));
         }
         return true;
     }

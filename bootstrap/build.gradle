@@ -36,7 +36,7 @@ jar {
         filter(ReplaceTokens, tokens: [LIBRARIES: configurations.mohistlauncher.resolvedConfiguration.resolvedArtifacts.collect {
             "${Util.getMavenInfoFromDep(it).path}"
         }.join('\n')])
-        filter(ReplaceTokens, tokens: [VERSION: MC_VERSION + "-" + MOHIST_VERSION])
+        filter(ReplaceTokens, tokens: [VERSION: MC_VERSION])
         rename { 'mohistlauncher.txt' }
     }
 
