@@ -232,8 +232,8 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumEntity() {
-        for (Map.Entry<RegistryKey<net.minecraft.entity.EntityType<?>>, net.minecraft.entity.EntityType<?>> entity : ForgeRegistries.ENTITIES.getEntries()) {
-            ResourceLocation resourceLocation = entity.getValue().getRegistryName();
+        for (net.minecraft.entity.EntityType<?> entity : ForgeRegistries.ENTITIES) {
+            ResourceLocation resourceLocation = ForgeRegistries.ENTITIES.getKey(entity);
             NamespacedKey key = CraftNamespacedKey.fromMinecraft(resourceLocation);
             if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
                 String entityType = normalizeName(resourceLocation.toString());
