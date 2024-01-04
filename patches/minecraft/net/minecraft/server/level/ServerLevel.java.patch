@@ -277,7 +277,7 @@
           Biome biome = this.m_204166_(blockpos1).m_203334_();
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
           if (biome.m_47477_(this, blockpos2)) {
-+            this.callEvent.set(true);
++            this.callEvent(true);
              this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
 +            CraftEventFactory.handleBlockFormEvent(this, blockpos2, this.mohist$defaultBlockState, null); // CraftBukkit
           }
@@ -287,12 +287,12 @@
                    if (k < Math.min(i1, 8)) {
                       BlockState blockstate1 = blockstate.m_61124_(SnowLayerBlock.f_56581_, Integer.valueOf(k + 1));
                       Block.m_49897_(blockstate, blockstate1, this, blockpos1);
-+                     this.callEvent.set(true);
++                     this.callEvent(true);
                       this.m_46597_(blockpos1, blockstate1);
 +                     CraftEventFactory.handleBlockFormEvent(this, blockpos1, this.mohist$defaultBlockState, null); // CraftBukkit
                    }
                 } else {
-+                  this.callEvent.set(true);
++                  this.callEvent(true);
                    this.m_46597_(blockpos1, Blocks.f_50125_.m_49966_());
 +                  CraftEventFactory.handleBlockFormEvent(this, blockpos1, this.mohist$defaultBlockState, null); // CraftBukkit
                 }

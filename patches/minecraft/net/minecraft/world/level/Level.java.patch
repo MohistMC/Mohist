@@ -288,12 +288,16 @@
           }
        }
     }
-@@ -269,9 +_,16 @@
+@@ -269,9 +_,20 @@
     public void m_142052_(BlockPos p_151531_, BlockState p_151532_) {
     }
  
 +   // Mohist start
-+   public AtomicBoolean callEvent = new AtomicBoolean(false);
++   private AtomicBoolean callEvent = new AtomicBoolean(false);
++
++   public void callEvent(boolean call) {
++      callEvent.set(call);
++   }
 +   public BlockState mohist$defaultBlockState;
 +
     public boolean m_46597_(BlockPos p_46598_, BlockState p_46599_) {
