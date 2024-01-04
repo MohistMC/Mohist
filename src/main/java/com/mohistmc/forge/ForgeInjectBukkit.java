@@ -242,7 +242,7 @@ public class ForgeInjectBukkit {
                 bukkitType.key = key;
                 EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
                 EntityType.ID_MAP.put((short) typeId, bukkitType);
-                ServerAPI.entityTypeMap.put(entity.getValue(), entityType);
+                ServerAPI.entityTypeMap.put(entity, entityType);
             }
         }
     }
