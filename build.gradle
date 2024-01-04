@@ -18,7 +18,7 @@ import net.minecraftforge.forge.tasks.checks.CheckTask
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '[2.0.13,)'
+    id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
     id 'net.neoforged.gradle.patcher' version '[6.0.12,6.2)' apply false
@@ -46,8 +46,8 @@ ext {
     JARJAR_VERSION = '0.3.19'
 
     GIT_INFO = gradleutils.gitInfo
-    VERSION = '1.18.2-40.2.14'
-    FORGE_VERSION = '40.2.14'
+    VERSION = '1.18.2-40.2.17'
+    FORGE_VERSION = '40.2.17'
     MOHIST_VERSION = JenkinsNumber.info()
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
