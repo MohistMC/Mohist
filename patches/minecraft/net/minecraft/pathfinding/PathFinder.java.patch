@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathFinder.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathFinder.java
+@@ -33,7 +33,7 @@
+     }
+ 
+     @Nullable
+-    private Path func_186334_a(IBlockAccess p_186334_1_, EntityLiving p_186334_2_, double p_186334_3_, double p_186334_5_, double p_186334_7_, float p_186334_9_)
++    public Path func_186334_a(IBlockAccess p_186334_1_, EntityLiving p_186334_2_, double p_186334_3_, double p_186334_5_, double p_186334_7_, float p_186334_9_)
+     {
+         this.field_75866_b.func_75848_a();
+         this.field_176190_c.func_186315_a(p_186334_1_, p_186334_2_);
+@@ -45,7 +45,7 @@
+     }
+ 
+     @Nullable
+-    private Path func_186335_a(PathPoint p_186335_1_, PathPoint p_186335_2_, float p_186335_3_)
++    public Path func_186335_a(PathPoint p_186335_1_, PathPoint p_186335_2_, float p_186335_3_)
+     {
+         p_186335_1_.field_75836_e = 0.0F;
+         p_186335_1_.field_75833_f = p_186335_1_.func_186281_c(p_186335_2_);

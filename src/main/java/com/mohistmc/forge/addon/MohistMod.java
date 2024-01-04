@@ -29,7 +29,7 @@ public class MohistMod extends DummyModContainer implements CustomMod {
                 "  \"logoFile\": \"/mohist_logo.png\",\n" +
                 "  \"url\": \"https://mohistmc.com/\",\n" +
                 "  \"updateUrl\": \"\",\n" +
-                "  \"authors\": [\"Mgazul\", \"CraftDream\", \"azbh111\", \"lliioollcn\", \"terrainwax\", \"lvyitian\", \"ChenHauShen\", \"Technetium\", \"Shawiiz_z\", \"Others\"],\n" +
+                "  \"authors\": [\"MohistMC\"],\n" +
                 "  \"credits\": \"Made by MohistMC\",\n" +
                 "  \"parent\": \"\",\n" +
                 "  \"screenshots\": [],\n" +
