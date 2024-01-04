@@ -258,10 +258,12 @@ public class ForgeInjectBukkit {
             if (isMods(resourceLocation)) {
                 int typeId = entityType.hashCode();
                 EntityType bukkitType = MohistDynamEnum.addEnum(EntityType.class, entityType, List.of(String.class, Class.class, Integer.TYPE, Boolean.TYPE), List.of(entityType.toLowerCase(), Entity.class, typeId, false));
-                bukkitType.key = key;
-                EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
-                EntityType.ID_MAP.put((short) typeId, bukkitType);
-                ServerAPI.entityTypeMap.put(entity, entityType);
+                if (bukkitType != null) {
+                    bukkitType.key = key;
+                    EntityType.NAME_MAP.put(entityType.toLowerCase(), bukkitType);
+                    EntityType.ID_MAP.put((short) typeId, bukkitType);
+                    ServerAPI.entityTypeMap.put(entity, entityType);
+                }
             } else {
                 ServerAPI.entityTypeMap.put(entity, normalizeName(resourceLocation.getPath().toString()));
             }
