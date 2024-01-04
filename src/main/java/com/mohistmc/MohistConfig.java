@@ -84,10 +84,12 @@ public class MohistConfig {
         commands.put("ping", new PingCommand("ping"));
         commands.put("entity", new EntityCommand("entity"));
 
-        if (getBoolean("worldmanage", true)) {
+        if (getBoolean("commands.worlds", true)) {
             commands.put("worlds", new WorldsCommands("worlds"));
         }
-        commands.put("warps", new WarpsCommands("warps"));
+        if (getBoolean("commands.warps", true)) {
+            commands.put("warps", new WarpsCommands("warps"));
+        }
 
         version = getInt("config-version", 1);
         set("config-version", 1);

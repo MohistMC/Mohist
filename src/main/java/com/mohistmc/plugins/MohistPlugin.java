@@ -33,7 +33,7 @@ public class MohistPlugin {
     public static Logger LOGGER = LogManager.getLogger("MohistPlugin");
 
     public static void init(Server server) {
-        if (MohistConfig.yml.getBoolean("worldmanage", true)){
+        if (MohistConfig.yml.getBoolean("commands.worlds", true)){
             WorldManage.onEnable();
         }
         ItemsConfig.init();
