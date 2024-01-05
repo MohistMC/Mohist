@@ -42,10 +42,6 @@ public enum DownloadSource {
     final
     String url;
 
-    DownloadSource(String url) {
-        this.url = url;
-    }
-
     public static DownloadSource get(){
         String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
