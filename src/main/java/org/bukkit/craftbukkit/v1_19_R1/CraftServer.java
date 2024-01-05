@@ -1035,7 +1035,11 @@ public final class CraftServer implements Server {
         ResourceKey<LevelStem> actualDimension = ForgeInjectBukkit.environment0.get(creator.environment());
 
         LevelStorageSource.LevelStorageAccess worldSession;
-        worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
+        try {
+            worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         boolean hardcore = creator.hardcore();
 

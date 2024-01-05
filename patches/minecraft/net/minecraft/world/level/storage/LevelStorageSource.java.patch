@@ -27,8 +27,8 @@
     }
  
 +   // Mohist TODO
-+   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> actualDimension) {
-+      return null;
++   public LevelStorageAccess createAccess(String name, ResourceKey<LevelStem> actualDimension) throws IOException {
++      return new LevelStorageSource.LevelStorageAccess(name);
 +   }
 +
     public static record LevelCandidates(List<LevelStorageSource.LevelDirectory> f_230840_) implements Iterable<LevelStorageSource.LevelDirectory> {
