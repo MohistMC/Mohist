@@ -167,7 +167,7 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -363,13 +_,45 @@
+@@ -363,13 +_,39 @@
           if (resourcekey != LevelStem.f_63971_) {
              ResourceKey<Level> resourcekey1 = ResourceKey.m_135785_(Registry.f_122819_, resourcekey.m_135782_());
              DerivedLevelData derivedleveldata = new DerivedLevelData(this.f_129749_, serverleveldata);
@@ -182,13 +182,7 @@
 +                  continue;
 +               }
 +            }
-+            org.bukkit.generator.ChunkGenerator gen = this.server.getGenerator(name);
-+            org.bukkit.generator.BiomeProvider biomeProvider = this.server.getBiomeProvider(name);
-+            org.bukkit.generator.WorldInfo worldInfo = new org.bukkit.craftbukkit.v1_19_R1.generator.CraftWorldInfo(derivedleveldata, this.f_129744_, ForgeInjectBukkit.environment.get(resourcekey), entry.getValue().m_204521_().m_203334_());
-+            if (biomeProvider == null && gen != null) {
-+               biomeProvider = gen.getDefaultBiomeProvider(worldInfo);
-+            }
-+            Level.craftWorldData(gen, ForgeInjectBukkit.environment.get(resourcekey), biomeProvider);
++            Level.craftWorldData(this.server.getGenerator(name), ForgeInjectBukkit.environment.get(resourcekey));
 +            // Mohist start - split calculate for ServerLeverl Preparing
 +            ChunkProgressListener mohist$progressListener = this.f_129756_.m_9620_(11);
 +            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), mohist$progressListener, flag, j, ImmutableList.of(), false);

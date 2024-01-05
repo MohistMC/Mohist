@@ -464,6 +464,18 @@
     public <T extends ParticleOptions> boolean m_8624_(ServerPlayer p_8625_, T p_8626_, boolean p_8627_, double p_8628_, double p_8629_, double p_8630_, int p_8631_, double p_8632_, double p_8633_, double p_8634_, double p_8635_) {
        Packet<?> packet = new ClientboundLevelParticlesPacket(p_8626_, p_8627_, p_8628_, p_8629_, p_8630_, (float)p_8632_, (float)p_8633_, (float)p_8634_, (float)p_8635_, p_8631_);
        return this.m_8636_(p_8625_, p_8627_, p_8628_, p_8629_, p_8630_, packet);
+@@ -1391,6 +_,11 @@
+ 
+    public void m_6289_(BlockPos p_8743_, Block p_8744_) {
+       if (!this.m_46659_()) {
++         // CraftBukkit start
++         if (populating) {
++            return;
++         }
++         // CraftBukkit end
+          this.m_46672_(p_8743_, p_8744_);
+       }
+ 
 @@ -1462,6 +_,12 @@
        });
     }

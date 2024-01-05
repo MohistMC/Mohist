@@ -73,7 +73,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -97,17 +_,66 @@
+@@ -97,17 +_,71 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -120,6 +120,11 @@
 +
 +   public ResourceKey<LevelStem> getTypeKey() {
 +      return WorldGenSettings.m_190052_(f_46421_);
++   }
++
++   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env) {
++      generator = gen;
++      environment = env;
 +   }
 +
 +   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
