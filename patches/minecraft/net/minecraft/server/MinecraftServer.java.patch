@@ -626,25 +626,19 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
-@@ -903,6 +_,22 @@
+@@ -903,6 +_,16 @@
        return this.f_129762_.get(p_129881_);
     }
  
 +   // CraftBukkit start
 +   public void addLevel(ServerLevel level) {
-+      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
-+      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
-+      newLevels.put(level.m_46472_(), level);
-+      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++      this.f_129762_.put(level.m_46472_(), level); // Mohist
 +   }
 +
 +   public void removeLevel(ServerLevel level) {
-+      Map<ResourceKey<Level>, ServerLevel> oldLevels = this.f_129762_;
-+      Map<ResourceKey<Level>, ServerLevel> newLevels = Maps.newLinkedHashMap(oldLevels);
-+      newLevels.remove(level.m_46472_());
-+      this.f_129762_ = Collections.unmodifiableMap(newLevels);
++      this.f_129762_.remove(level.m_46472_()); // Mohist
 +   }
-+    // CraftBukkit end
++   // CraftBukkit end
 +
     public Set<ResourceKey<Level>> m_129784_() {
        return this.f_129762_.keySet();

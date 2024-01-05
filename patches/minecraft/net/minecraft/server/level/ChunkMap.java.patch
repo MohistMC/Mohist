@@ -8,6 +8,14 @@
  import java.util.concurrent.atomic.AtomicInteger;
  import java.util.function.BooleanSupplier;
  import java.util.function.Consumer;
+@@ -96,6 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
+ import org.apache.commons.lang3.mutable.MutableObject;
++import org.bukkit.craftbukkit.v1_19_R1.generator.CustomChunkGenerator;
+ import org.slf4j.Logger;
+ 
+ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
 @@ -126,7 +_,7 @@
     private final ChunkTaskPriorityQueueSorter f_140141_;
     private final ProcessorHandle<ChunkTaskPriorityQueueSorter.Message<Runnable>> f_140142_;
@@ -17,6 +25,46 @@
     private final ChunkStatusUpdateListener f_143031_;
     public final ChunkMap.DistanceManager f_140145_;
     private final AtomicInteger f_140146_ = new AtomicInteger();
+@@ -139,6 +_,27 @@
+    private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
+    int f_140126_;
+ 
++   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
++   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++
++      private final java.util.Queue<Runnable> queue = new java.util.ArrayDeque<>();
++
++      @Override
++      public void execute(Runnable runnable) {
++         queue.add(runnable);
++      }
++
++      @Override
++      public void run() {
++         Runnable task;
++         while ((task = queue.poll()) != null) {
++            task.run();
++         }
++      }
++   };
++   // CraftBukkit end
++
+    public ChunkMap(ServerLevel p_214836_, LevelStorageSource.LevelStorageAccess p_214837_, DataFixer p_214838_, StructureTemplateManager p_214839_, Executor p_214840_, BlockableEventLoop<Runnable> p_214841_, LightChunkGetter p_214842_, ChunkGenerator p_214843_, ChunkProgressListener p_214844_, ChunkStatusUpdateListener p_214845_, Supplier<DimensionDataStorage> p_214846_, int p_214847_, boolean p_214848_) {
+       super(p_214837_.m_197394_(p_214836_.m_46472_()).resolve("region"), p_214838_, p_214848_);
+       this.f_214833_ = p_214839_;
+@@ -146,6 +_,11 @@
+       this.f_182284_ = path.getFileName().toString();
+       this.f_140133_ = p_214836_;
+       this.f_140136_ = p_214843_;
++      // CraftBukkit start - SPIGOT-7051: It's a rigged game! Use delegate for random state creation, otherwise it is not so random.
++      if (p_214843_ instanceof CustomChunkGenerator) {
++         p_214843_ = ((CustomChunkGenerator) p_214843_).getDelegate();
++      }
++      // CraftBukkit end
+       if (p_214843_ instanceof NoiseBasedChunkGenerator noisebasedchunkgenerator) {
+          this.f_214834_ = RandomState.m_224570_(noisebasedchunkgenerator.m_224341_().m_203334_(), p_214836_.m_5962_().m_175515_(Registry.f_194568_), p_214836_.m_7328_());
+       } else {
 @@ -385,6 +_,7 @@
              this.f_140140_ = true;
           }
@@ -33,6 +81,29 @@
                 }
  
                 this.m_140258_(p_203002_);
+@@ -661,7 +_,21 @@
+ 
+    private static void m_143064_(ServerLevel p_143065_, List<CompoundTag> p_143066_) {
+       if (!p_143066_.isEmpty()) {
+-         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_));
++         // CraftBukkit start - these are spawned serialized (DefinedStructure) and we don't call an add event below at the moment due to ordering complexities
++         p_143065_.m_143327_(EntityType.m_147045_(p_143066_, p_143065_).filter((entity) -> {
++            boolean needsRemoval = false;
++            net.minecraft.server.dedicated.DedicatedServer server = p_143065_.getCraftServer().getServer();
++            if (!server.m_6997_() && entity instanceof net.minecraft.world.entity.npc.Npc) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            if (!server.m_6998_() && (entity instanceof net.minecraft.world.entity.animal.Animal || entity instanceof net.minecraft.world.entity.animal.WaterAnimal)) {
++               entity.m_146870_();
++               needsRemoval = true;
++            }
++            return !needsRemoval;
++         }));
++         // CraftBukkit end
+       }
+ 
+    }
 @@ -689,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
@@ -142,3 +213,15 @@
  
        public TrackedEntity(Entity p_140478_, int p_140479_, int p_140480_, boolean p_140481_) {
           this.f_140471_ = new ServerEntity(ChunkMap.this.f_140133_, p_140478_, p_140480_, p_140481_, this::m_140489_);
+@@ -1327,6 +_,11 @@
+             double d1 = vec3.f_82479_ * vec3.f_82479_ + vec3.f_82481_ * vec3.f_82481_;
+             double d2 = d0 * d0;
+             boolean flag = d1 <= d2 && this.f_140472_.m_6459_(p_140498_);
++            // CraftBukkit start - respect vanish API
++            if (!p_140498_.getBukkitEntity().canSee(this.f_140472_.getBukkitEntity())) {
++               flag = false;
++            }
++            // CraftBukkit end
+             if (flag) {
+                if (this.f_140475_.add(p_140498_.f_8906_)) {
+                   this.f_140471_.m_8541_(p_140498_);

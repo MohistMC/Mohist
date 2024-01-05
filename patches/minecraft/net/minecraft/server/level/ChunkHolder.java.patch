@@ -8,11 +8,10 @@
     private CompletableFuture<Void> f_142981_ = CompletableFuture.completedFuture((Void)null);
  
     public ChunkHolder(ChunkPos p_142986_, int p_142987_, LevelHeightAccessor p_142988_, LevelLightEngine p_142989_, ChunkHolder.LevelChangeListener p_142990_, ChunkHolder.PlayerProvider p_142991_) {
-@@ -81,6 +_,20 @@
-       this.m_140027_(p_142987_);
+@@ -82,6 +_,20 @@
        this.f_140011_ = new ShortSet[p_142988_.m_151559_()];
     }
-+
+ 
 +   // CraftBukkit start
 +   public LevelChunk getFullChunkNow() {
 +      // Note: We use the oldTicketLevel for isLoaded checks.
@@ -26,6 +25,33 @@
 +      return (either == null) ? null : (LevelChunk) either.left().orElse(null);
 +   }
 +   // CraftBukkit end
- 
++
     public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> m_140047_(ChunkStatus p_140048_) {
        CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> completablefuture = this.f_140001_.get(p_140048_.m_62445_());
+       return completablefuture == null ? f_139996_ : completablefuture;
+@@ -418,6 +_,25 @@
+ 
+       this.f_140015_.m_6250_(this.f_140009_, this::m_140094_, this.f_140007_, this::m_140086_);
+       this.f_140006_ = this.f_140007_;
++      // CraftBukkit start
++      // ChunkLoadEvent: Called after the chunk is loaded: isChunkLoaded returns true and chunk is ready to be modified by plugins.
++      if (!chunkholder$fullchunkstatus.m_140114_(FullChunkStatus.BORDER) && chunkholder$fullchunkstatus.m_140114_(FullChunkStatus.BORDER)) {
++         this.m_140047_(ChunkStatus.f_62326_).thenAccept((either) -> {
++            LevelChunk chunk = (LevelChunk)either.left().orElse(null);
++            if (chunk != null) {
++               p_143004_.callbackExecutor.execute(() -> {
++                  chunk.loadCallback();
++               });
++            }
++         }).exceptionally((throwable) -> {
++            // ensure exceptions are printed, by default this is not the case
++            return null;
++         });
++
++         // Run callback right away if the future was already done
++         p_143004_.callbackExecutor.run();
++      }
++      // CraftBukkit end
+    }
+ 
+    public static ChunkStatus m_140074_(int p_140075_) {

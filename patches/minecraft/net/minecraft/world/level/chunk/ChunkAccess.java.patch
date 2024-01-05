@@ -40,6 +40,19 @@
     }
  
     private static void m_187634_(LevelHeightAccessor p_187635_, Registry<Biome> p_187636_, LevelChunkSection[] p_187637_) {
+@@ -244,10 +_,11 @@
+ 
+    public void m_8092_(boolean p_62094_) {
+       this.f_187603_ = p_62094_;
++      if (!p_62094_) this.persistentDataContainer.dirty(false); // CraftBukkit - SPIGOT-6814: chunk was saved, pdc is no longer dirty
+    }
+ 
+    public boolean m_6344_() {
+-      return this.f_187603_;
++      return this.f_187603_ || this.persistentDataContainer.dirty(); // CraftBukkit - SPIGOT-6814: chunk is unsaved if pdc was mutated
+    }
+ 
+    public abstract ChunkStatus m_6415_();
 @@ -407,4 +_,28 @@
  
     public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {
