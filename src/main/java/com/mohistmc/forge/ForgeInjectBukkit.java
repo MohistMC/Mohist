@@ -47,11 +47,11 @@ public class ForgeInjectBukkit {
                     .put(LevelStem.END, World.Environment.THE_END)
                     .build());
 
-    public static BiMap<ResourceKey<Level>, World.Environment> environment0 =
-            HashBiMap.create(ImmutableMap.<ResourceKey<Level>, World.Environment>builder()
-                    .put(Level.OVERWORLD, World.Environment.NORMAL)
-                    .put(Level.NETHER, World.Environment.NETHER)
-                    .put(Level.END, World.Environment.THE_END)
+    public static BiMap<World.Environment, ResourceKey<LevelStem>> environment0 =
+            HashBiMap.create(ImmutableMap.<World.Environment, ResourceKey<LevelStem>>builder()
+                    .put(World.Environment.NORMAL, LevelStem.OVERWORLD)
+                    .put(World.Environment.NETHER, LevelStem.NETHER)
+                    .put(World.Environment.THE_END, LevelStem.END)
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();

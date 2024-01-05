@@ -75,6 +75,15 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
+@@ -299,7 +_,7 @@
+    }
+ 
+    @Nullable
+-   private static Container m_155596_(Level p_155597_, Hopper p_155598_) {
++   public static Container m_155596_(Level p_155597_, Hopper p_155598_) {
+       return m_59347_(p_155597_, p_155598_.m_6343_(), p_155598_.m_6358_() + 1.0D, p_155598_.m_6446_());
+    }
+ 
 @@ -397,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {

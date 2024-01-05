@@ -10,6 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -1007,12 +1008,14 @@ public final class CraftServer implements Server {
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
         Validate.notNull(creator, "Creator may not be null");
 
+        Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-
+        Level2LevelStem.bukkit = folder;
+        Level2LevelStem.bukkit_name = name;
         if (world != null) {
             return world;
         }
@@ -1029,20 +1032,7 @@ public final class CraftServer implements Server {
             biomeProvider = getBiomeProvider(name);
         }
 
-        ResourceKey<LevelStem> actualDimension;
-        switch (creator.environment()) {
-            case NORMAL:
-                actualDimension = LevelStem.OVERWORLD;
-                break;
-            case NETHER:
-                actualDimension = LevelStem.NETHER;
-                break;
-            case THE_END:
-                actualDimension = LevelStem.END;
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal dimension");
-        }
+        ResourceKey<LevelStem> actualDimension = ForgeInjectBukkit.environment0.get(creator.environment());
 
         LevelStorageSource.LevelStorageAccess worldSession;
         worldSession = LevelStorageSource.createDefault(getWorldContainer().toPath()).createAccess(name, actualDimension);
@@ -1093,20 +1083,25 @@ public final class CraftServer implements Server {
         net.minecraft.world.level.Level.craftWorldData(generator, creator.environment(), biomeProvider);
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, worlddimension, getServer().progressListenerFactory.create(11), worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
 
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+        name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        if (!(worlds.containsKey(name))) {
+            Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
 
+        console.addLevel(internal);
         console.initWorld(internal, worlddata, worlddata, worlddata.worldGenSettings());
 
         internal.setSpawnSettings(true, true);
-        console.addLevel(internal);
 
         getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
-        return internal.getWorld();
+        World world1 = internal.getWorld();
+        world1.setBukkit(true);
+        Level2LevelStem.reloadAndInit(world1);
+        return world1;
     }
 
     @Override
