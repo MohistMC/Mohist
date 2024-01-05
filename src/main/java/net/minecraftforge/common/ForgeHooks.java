@@ -184,6 +184,10 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_19_R1.util.LazyPlayerSet;
+import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -469,9 +473,18 @@ public class ForgeHooks
             return CompletableFuture.supplyAsync(() -> {
                 if (sender == null)
                     return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+                AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, sender.getBukkitEntity(), CraftChatMessage.fromComponent(message), new LazyPlayerSet(sender.getServer()));
+                String originalFormat = event.getFormat(), originalMessage = event.getMessage();
+                Bukkit.getPluginManager().callEvent(event);
 
-                return onServerChatSubmittedEvent(sender, getRawText(message), message, true);
-            });
+                if (originalFormat.equals(event.getFormat()) && originalMessage.equals(event.getMessage()) && event.getPlayer().getName().equalsIgnoreCase(event.getPlayer().getDisplayName())) {
+                    return message;
+                }
+
+                Component bukkit = CraftChatMessage.fromStringOrNull(String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage()));
+
+                return onServerChatSubmittedEvent(sender, getRawText(bukkit), bukkit, true);
+            }, sender.getServer().chatExecutor);
         }
 
         @NotNull

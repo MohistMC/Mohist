@@ -217,7 +217,23 @@
                    InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                    if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                       Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
-@@ -1184,10 +_,12 @@
+@@ -1175,24 +_,32 @@
+    }
+ 
+    public void m_7388_(ServerboundChatPacket p_9841_) {
++      // CraftBukkit start - async chat
++      // SPIGOT-3638
++      if (this.f_9745_.m_129918_()) {
++         return;
++      }
++      // CraftBukkit end
+       if (m_215214_(p_9841_.f_133827_())) {
+          this.m_9942_(Component.m_237115_("multiplayer.disconnect.illegal_characters"));
+       } else {
+          if (this.m_241937_(p_9841_.f_133827_(), p_9841_.f_237950_(), p_9841_.f_241662_())) {
+-            this.f_9745_.m_18707_(() -> {
++            // this.server.submit(() -> { // CraftBukkit - async chat
+                PlayerChatMessage playerchatmessage = this.m_242585_(p_9841_);
                 if (this.m_242598_(playerchatmessage)) {
                    this.f_241681_.m_241849_(() -> {
                       CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_241775_().f_241656_());
@@ -230,8 +246,15 @@
 +                        if (playerchatmessage1 == null) return; // Forge: ServerChatEvent was canceled if this is null.
 +                        playerchatmessage1 = playerchatmessage1.m_243072_(filtermask);
                          this.m_243086_(playerchatmessage1);
-                      }, this.f_9745_);
+-                     }, this.f_9745_);
++                     }, this.f_9745_.chatExecutor); // CraftBukkit - async chat
                    });
+                }
+-            });
++            // }); // CraftBukkit - async chat
+          }
+ 
+       }
 @@ -1383,7 +_,7 @@
  
     private CompletableFuture<Component> m_215246_(String p_215247_) {

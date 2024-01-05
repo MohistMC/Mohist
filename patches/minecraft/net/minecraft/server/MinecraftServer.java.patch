@@ -757,7 +757,7 @@
     public RegistryAccess.Frozen m_206579_() {
        return this.f_129746_;
     }
-@@ -1767,8 +_,25 @@
+@@ -1767,8 +_,30 @@
  
     }
  
@@ -768,6 +768,11 @@
     public ChatDecorator m_236742_() {
 -      return ChatDecorator.f_236947_;
 +      return (entityplayer, ichatbasecomponent) -> {
++         // SPIGOT-7127: Console /say and similar
++         if (entityplayer == null) {
++            return CompletableFuture.completedFuture(ichatbasecomponent);
++         }
++
 +         return CompletableFuture.supplyAsync(() -> {
 +            AsyncPlayerChatPreviewEvent event = new AsyncPlayerChatPreviewEvent(true, entityplayer.getBukkitEntity(), CraftChatMessage.fromComponent(ichatbasecomponent), new LazyPlayerSet(this));
 +            String originalFormat = event.getFormat(), originalMessage = event.getMessage();
