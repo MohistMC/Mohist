@@ -60,7 +60,7 @@ public class MohistMCStart {
                     " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
                     "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
                     "                                                    \n" + "\n" +
-                    "                                      " + i18n.get("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+                    "                                      " + i18n.as("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
         }
 
 
@@ -84,7 +84,7 @@ public class MohistMCStart {
         new MohistModuleManager(DataParser.launchArgs);
 
         if (!hasAcceptedEULA()) {
-            System.out.println(i18n.get("eula"));
+            System.out.println(i18n.as("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
             writeInfos();
         }

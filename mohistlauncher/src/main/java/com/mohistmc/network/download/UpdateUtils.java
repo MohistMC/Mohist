@@ -18,8 +18,9 @@
 
 package com.mohistmc.network.download;
 
-import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.MD5Util;
+import com.mohistmc.tools.ConnectionUtil;
+import com.mohistmc.tools.MD5Util;
+import com.mohistmc.util.I18n;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -30,8 +31,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.mohistmc.network.download.NetworkUtil.getConn;
-
 public class UpdateUtils {
 
     private static int percentage = 0;
@@ -41,8 +40,8 @@ public class UpdateUtils {
     }
 
     public static void downloadFile(String URL, File f, String md5) throws Exception {
-        URLConnection conn = getConn(URL);
-        System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+        URLConnection conn = ConnectionUtil.getConn(URL);
+        System.out.println(I18n.as("download.file", f.getName(), ConnectionUtil.getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         int fS = conn.getContentLength();
@@ -52,7 +51,7 @@ public class UpdateUtils {
             public void run() {
                 if (rbc.isOpen()) {
                     if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100)
-                        System.out.println(MohistMCStart.i18n.get("file.download.percentage", f.getName(), percentage));
+                        System.out.println(I18n.as("file.download.percentage", f.getName(), percentage));
                     percentage = Math.round((float) f.length() / fS * 100);
                 } else t.cancel();
             }
@@ -61,16 +60,12 @@ public class UpdateUtils {
         fc.close();
         rbc.close();
         percentage = 0;
-        String MD5 = MD5Util.getMd5(f);
+        String MD5 = MD5Util.get(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            System.out.println(I18n.as("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             throw new Exception("md5");
         }
-        System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
-    }
-
-    public static String getSize(long size) {
-        return (size >= 1048576L) ? (float) size / 1048576.0F + "MB" : ((size >= 1024) ? (float) size / 1024.0F + " KB" : size + " B");
+        System.out.println(I18n.as("download.file.ok", f.getName()));
     }
 }

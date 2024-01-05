@@ -19,17 +19,12 @@
 package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -132,7 +127,7 @@ public abstract class Action {
 
     protected void copyFileFromJar(File file, String pathInJar) {
         InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
-        if (!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is)) || file.length() <= 1) {
+        if (!file.exists() || !MD5Util.get(file).equals(MD5Util.get(is)) || file.length() <= 1) {
             file.getParentFile().mkdirs();
             if (is != null) {
                 try {
@@ -159,7 +154,7 @@ public abstract class Action {
 
     public boolean checkDependencies() throws IOException {
         if (installInfo.exists()) {
-            String jarmd = MD5Util.getMd5(JarTool.getFile());
+            String jarmd = MD5Util.get(JarTool.getFile());
             List<String> lines = Files.readAllLines(installInfo.toPath());
             return lines.size() < 2 || !jarmd.equals(lines.get(1));
         }

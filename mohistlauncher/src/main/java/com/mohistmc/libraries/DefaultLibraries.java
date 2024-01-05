@@ -18,23 +18,19 @@
 
 package com.mohistmc.libraries;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.v_1_19.v_1_19;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.tools.MD5Util;
+import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DefaultLibraries {
@@ -47,8 +43,8 @@ public class DefaultLibraries {
     }
 
     public static void run() throws Exception {
-        System.out.println(MohistMCStart.i18n.get("libraries.checking.start"));
-        System.out.println(MohistMCStart.i18n.get("libraries.downloadsource", DownloadSource.get().name()));
+        System.out.println(I18n.as("libraries.checking.start"));
+        System.out.println(I18n.as("libraries.downloadsource", DownloadSource.get().name()));
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -57,7 +53,7 @@ public class DefaultLibraries {
             if (lib.exists() && MohistConfigUtil.yml.getStringList("libraries_black_list").contains(lib.getName())) {
                 continue;
             }
-            if (lib.exists() && MD5Util.getMd5(lib).equals(libs.get(lib))) {
+            if (lib.exists() && MD5Util.get(lib).equals(libs.get(lib))) {
                 currentSize.addAndGet(lib.length());
                 continue;
             }
@@ -67,7 +63,7 @@ public class DefaultLibraries {
             lib.getParentFile().mkdirs();
 
             String u = libUrl(lib);
-            System.out.println(MohistMCStart.i18n.get("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
+            System.out.println(I18n.as("libraries.global.percentage", Math.round((float) (currentSize.get() * 100) / allSize.get()) + "%")); //Global percentage
             try {
                 UpdateUtils.downloadFile(u, lib, libs.get(lib));
                 JarLoader.loadJar(lib.toPath());
@@ -75,7 +71,7 @@ public class DefaultLibraries {
                 fail.remove(u.replace(MAVENURL, ""));
             } catch (Exception e) {
                 if (e.getMessage() != null && !e.getMessage().equals("md5")) {
-                    System.out.println(MohistMCStart.i18n.get("file.download.nook", u));
+                    System.out.println(I18n.as("file.download.nook", u));
                     lib.delete();
                 }
                 fail.put(u.replace(MAVENURL, ""), lib.getAbsolutePath());
@@ -83,7 +79,7 @@ public class DefaultLibraries {
         }
         /*FINISHED | RECHECK IF A FILE FAILED*/
         if (!fail.isEmpty()) run();
-        else System.out.println(MohistMCStart.i18n.get("libraries.check.end"));
+        else System.out.println(I18n.as("libraries.check.end"));
     }
 
     public static LinkedHashMap<File, String> getDefaultLibs() throws Exception {
