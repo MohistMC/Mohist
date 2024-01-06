@@ -29,14 +29,6 @@ public class ItemEventDispatcher {
 
     @SubscribeEvent(receiveCanceled = true)
     public void onItemExpireEvent(ItemExpireEvent event) {
-        if (Bukkit.getServer() instanceof CraftServer) {
-            // CraftBukkit start - fire ItemDespawnEvent
-            ItemEntity entity = event.getEntity();
-            if (CraftEventFactory.callItemDespawnEvent(entity).isCancelled()) {
-                entity.age = 0;
-                return;
-            }
-            // CraftBukkit end
-        }
+        event.setCanceled(CraftEventFactory.callItemDespawnEvent(event.getEntity()).isCancelled());
     }
 }

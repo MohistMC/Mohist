@@ -7,7 +7,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.NonNullList;
  import net.minecraft.nbt.CompoundTag;
-@@ -16,6 +_,10 @@
+@@ -16,9 +_,13 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
@@ -17,7 +17,11 @@
 +import org.bukkit.inventory.InventoryHolder;
  
  public abstract class AbstractMinecartContainer extends AbstractMinecart implements ContainerEntity {
-    private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
+-   private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(36, ItemStack.f_41583_);
++   private NonNullList<ItemStack> f_38202_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+    @Nullable
+    public ResourceLocation f_38204_;
+    public long f_38205_;
 @@ -82,6 +_,8 @@
     }
  

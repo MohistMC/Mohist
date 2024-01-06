@@ -58,3 +58,27 @@
                    blockpos = blockhitresult.m_82425_();
                    flag1 = true;
                 }
+@@ -148,6 +_,13 @@
+                            this.f_31946_ = this.f_31946_.m_61124_(BlockStateProperties.f_61362_, Boolean.valueOf(true));
+                         }
+ 
++                        // CraftBukkit start
++                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.f_31946_).isCancelled()) {
++                           this.m_146870_(); // SPIGOT-6586 called before the event in previous versions
++                           return;
++                        }
++                        // CraftBukkit end
++
+                         if (this.f_19853_.m_7731_(blockpos, this.f_31946_, 3)) {
+                            ((ServerLevel)this.f_19853_).m_7726_().f_8325_.m_140201_(this, new ClientboundBlockUpdatePacket(blockpos, this.f_19853_.m_8055_(blockpos)));
+                            this.m_146870_();
+@@ -225,7 +_,9 @@
+ 
+             float f = (float)Math.min(Mth.m_14143_((float)i * this.f_149641_), this.f_31940_);
+             this.f_19853_.m_6249_(this, this.m_20191_(), predicate).forEach((p_149649_) -> {
++               CraftEventFactory.entityDamage = this; // CraftBukkit
+                p_149649_.m_6469_(damagesource, f);
++               CraftEventFactory.entityDamage = null; // CraftBukkit
+             });
+             boolean flag = this.f_31946_.m_204336_(BlockTags.f_13033_);
+             if (flag && f > 0.0F && this.f_19796_.m_188501_() < 0.05F + (float)i * 0.05F) {
