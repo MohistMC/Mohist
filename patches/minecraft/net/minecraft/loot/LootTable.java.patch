@@ -74,7 +74,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -103,22 +_,57 @@
+@@ -103,22 +_,56 @@
     public void func_216118_a(IInventory p_216118_1_, LootContext p_216118_2_) {
        List<ItemStack> list = this.func_216113_a(p_216118_2_);
        Random random = p_216118_2_.func_216032_b();
@@ -110,7 +110,6 @@
 +
 +      for(ItemStack itemstack : list) {
 +         if (list1.isEmpty()) {
-+            field_186465_b.warn(i18n.get("loottable.2"));
 +            return;
 +         }
 +
