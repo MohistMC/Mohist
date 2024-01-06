@@ -1,128 +1,176 @@
-// CHECKSTYLE:OFF
 package org.bukkit.plugin.java;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.mohistmc.MohistMC;
+import com.mohistmc.bukkit.PluginsLibrarySource;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import com.mohistmc.tools.ConnectionUtil;
+import java.net.URI;
+import mjson.Json;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.impl.DefaultServiceLocator;
-import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactResult;
-import org.eclipse.aether.resolution.DependencyRequest;
-import org.eclipse.aether.resolution.DependencyResolutionException;
-import org.eclipse.aether.resolution.DependencyResult;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.transfer.AbstractTransferListener;
-import org.eclipse.aether.transfer.TransferCancelledException;
-import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class LibraryLoader
-{
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 
-    private final Logger logger;
-    private final RepositorySystem repository;
-    private final DefaultRepositorySystemSession session;
-    private final List<RemoteRepository> repositories;
+class LibraryLoader {
 
-    public LibraryLoader(@NotNull Logger logger)
-    {
-        this.logger = logger;
-
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService( RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class );
-        locator.addService( TransporterFactory.class, HttpTransporterFactory.class );
-
-        this.repository = locator.getService( RepositorySystem.class );
-        this.session = MavenRepositorySystemUtils.newSession();
-
-        session.setChecksumPolicy( RepositoryPolicy.CHECKSUM_POLICY_FAIL );
-        session.setLocalRepositoryManager( repository.newLocalRepositoryManager( session, new LocalRepository( "libraries" ) ) );
-        session.setTransferListener( new AbstractTransferListener()
-        {
-            @Override
-            public void transferStarted(@NotNull TransferEvent event) throws TransferCancelledException
-            {
-                logger.log( Level.INFO, "Downloading {0}", event.getResource().getRepositoryUrl() + event.getResource().getResourceName() );
-            }
-        } );
-        session.setReadOnly();
-
-        this.repositories = repository.newResolutionRepositories( session, Arrays.asList( new RemoteRepository.Builder( "central", "default", "https://repo.maven.apache.org/maven2" ).build() ) );
+    public LibraryLoader() {
     }
 
     @Nullable
-    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc)
-    {
-        if ( desc.getLibraries().isEmpty() )
-        {
+    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc) throws IOException {
+        if (desc.getLibraries().isEmpty()) {
             return null;
         }
-        logger.log( Level.INFO, "[{0}] Loading {1} libraries... please wait", new Object[]
-        {
-            desc.getName(), desc.getLibraries().size()
-        } );
+        MohistMC.LOGGER.info("[{}] Loading {} libraries... please wait", desc.getName(), desc.getLibraries().size());
 
         List<Dependency> dependencies = new ArrayList<>();
-        for ( String library : desc.getLibraries() )
-        {
-            Artifact artifact = new DefaultArtifact( library );
-            Dependency dependency = new Dependency( artifact, null );
-
-            dependencies.add( dependency );
+        for (String libraries : desc.getLibraries()) {
+            String[] args = libraries.split(":");
+            if (args.length > 1) {
+                Dependency dependency = new Dependency(args[0], args[1], args[2], false);
+                dependencies.add(dependency);
+            }
         }
 
-        DependencyResult result;
-        try
-        {
-            result = repository.resolveDependencies( session, new DependencyRequest( new CollectRequest( (Dependency) null, dependencies, repositories ), null ) );
-        } catch ( DependencyResolutionException ex )
-        {
-            throw new RuntimeException( "Error resolving libraries", ex );
+        List<File> libraries = new ArrayList<>();
+        List<Dependency> newDependencies = new ArrayList<>();
+
+        for (Dependency dependency : dependencies) {
+            String group = dependency.group().replace(".", "/");
+            String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
+            if (dependency.version().toString().equalsIgnoreCase("LATEST")) {
+                URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(group, dependency.name(), "maven-metadata.xml")).toURL();
+                Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+                List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
+                Dependency dependency0 = new Dependency(group, dependency.name(), v.get(v.size() - 1), false);
+                newDependencies.add(dependency0);
+            } else {
+                newDependencies.add(dependency);
+                String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
+                newDependencies.addAll(initDependencies0(new URL(pomUrl)));
+            }
+        }
+
+        MohistMC.LOGGER.info("[{}] Loading {} extra libraries... please wait", desc.getName(), newDependencies.size() - desc.getLibraries().size());
+
+        for (Dependency dependency : newDependencies) {
+            String group = dependency.group().replace(".", "/");
+            String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
+            String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
+
+            File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
+
+            if (file.exists()) {
+                MohistMC.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
+                libraries.add(file);
+                continue;
+            }
+            try {
+                file.getParentFile().mkdirs();
+
+                InputStream inputStream = new URL(mavenUrl).openStream();
+                ReadableByteChannel rbc = Channels.newChannel(inputStream);
+                FileChannel fc = FileChannel.open(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+
+                fc.transferFrom(rbc, 0, Long.MAX_VALUE);
+                fc.close();
+                rbc.close();
+
+                libraries.add(file);
+            } catch (IOException e) {
+            }
         }
 
         List<URL> jarFiles = new ArrayList<>();
-        for ( ArtifactResult artifact : result.getArtifactResults() )
-        {
-            File file = artifact.getArtifact().getFile();
-
-            URL url;
-            try
-            {
-                url = file.toURI().toURL();
-            } catch ( MalformedURLException ex )
-            {
-                throw new AssertionError( ex );
+        for (File file : libraries) {
+            try {
+                jarFiles.add(file.toURI().toURL());
+                MohistMC.LOGGER.info("[{}] Loaded libraries {}", desc.getName(), file);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
             }
-
-            jarFiles.add( url );
-            logger.log( Level.INFO, "[{0}] Loaded library {1}", new Object[]
-            {
-                desc.getName(), file
-            } );
         }
 
-        return new RemappingURLClassLoader( jarFiles.toArray( new URL[ jarFiles.size() ] ), getClass().getClassLoader() );
+        return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
+    }
+
+    public List<Dependency> initDependencies0(URL url) throws IOException {
+        List<Dependency> list = new ArrayList<>();
+        for (Dependency dependency : initDependencies(url)) {
+            list.add(dependency);
+            if (dependency.extra()) {
+                String group = dependency.group().replace(".", "/");
+                String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
+                String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
+                if (ConnectionUtil.hasUrl(pomUrl)) list.addAll(initDependencies(new URL(pomUrl)));
+            }
+        }
+        return list;
+    }
+
+    public List<Dependency> initDependencies(URL url) {
+        List<Dependency> list = new ArrayList<>();
+        Json json2Json = Json.readXml(url).at("project");
+        String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
+        String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
+
+        if (!json2Json.has("dependencies")) return list;
+        if (!json2Json.at("dependencies").toString().startsWith("{\"dependency\"")) return list;
+        Json json3Json = json2Json.at("dependencies").at("dependency");
+        if (json3Json.isArray()) {
+            for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
+                dependency(o, list, version, groupId);
+            }
+        } else {
+            dependency(json3Json, list, version, groupId);
+        }
+        return list;
+    }
+
+    public void dependency(Json json, List<Dependency> list, String version, String parent_groupId) {
+        try {
+            if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
+                String groupId = json.asString("groupId");
+                String artifactId = json.asString("artifactId");
+                if (json.toString().contains("version")) {
+                    if (json.has("scope") && json.asString("scope").equals("test")) {
+                        return;
+                    }
+                    if (groupId.equals("${project.parent.groupId}")) {
+                        groupId = parent_groupId;
+                    }
+                    String versionAsString = json.asString("version");
+                    if (versionAsString.contains("${project.version}") || versionAsString.contains("${project.parent.version}")) {
+                        Dependency dependency = new Dependency(groupId, artifactId, version, true);
+                        list.add(dependency);
+                    } else if (!versionAsString.contains("${")) {
+                        Dependency dependency = new Dependency(groupId, artifactId, versionAsString, true);
+                        list.add(dependency);
+                    }
+                } else {
+                    if (json.has("scope") && json.asString("scope").equals("compile")) {
+                        URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
+                        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+                        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
+                        Dependency dependency = new Dependency(groupId, artifactId, v.get(v.size() - 1), true);
+                        list.add(dependency);
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public record Dependency(String group, String name, Object version, boolean extra) {
     }
 }
