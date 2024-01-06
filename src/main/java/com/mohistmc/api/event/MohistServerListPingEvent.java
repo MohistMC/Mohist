@@ -1,7 +1,5 @@
 package com.mohistmc.api.event;
 
-import java.net.InetSocketAddress;
-import java.util.Iterator;
 import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,6 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftIconCache;
 import org.bukkit.entity.Player;
+
+import java.net.InetSocketAddress;
+import java.util.Iterator;
 
 public class MohistServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 

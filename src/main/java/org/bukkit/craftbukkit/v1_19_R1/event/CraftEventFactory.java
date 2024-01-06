@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_19_R1.event;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -1411,6 +1412,9 @@ public class CraftEventFactory {
         Event event;
         if (true) {
             org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
+            if (stat == null) {
+                stat = ForgeInjectBukkit.statisticMap.get(statistic.getType());
+            }
             if (stat == null) {
                 System.err.println("Unhandled statistic: " + statistic);
                 return null;

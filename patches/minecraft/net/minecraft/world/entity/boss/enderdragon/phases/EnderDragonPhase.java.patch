@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
++++ b/net/minecraft/world/entity/boss/enderdragon/phases/EnderDragonPhase.java
+@@ -2,6 +_,10 @@
+ 
+ import java.lang.reflect.Constructor;
+ import java.util.Arrays;
++
++import com.mohistmc.MohistMC;
++import com.mohistmc.api.ServerAPI;
++import com.mohistmc.dynamicenum.MohistDynamEnum;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ 
+ public class EnderDragonPhase<T extends DragonPhaseInstance> {
+@@ -60,6 +_,21 @@
+       EnderDragonPhase<T> enderdragonphase = new EnderDragonPhase<>(f_31388_.length, p_31403_, p_31404_);
+       f_31388_ = Arrays.copyOf(f_31388_, f_31388_.length + 1);
+       f_31388_[enderdragonphase.m_31405_()] = enderdragonphase;
++      if (enderdragonphase.m_31405_() > 10) {
++         org.bukkit.entity.EnderDragon.Phase bukkit = MohistDynamEnum.addEnum(org.bukkit.entity.EnderDragon.Phase.class, enderdragonphase.getName());
++         ServerAPI.phasetypeMap.put(enderdragonphase.m_31405_(), bukkit);
++         MohistMC.LOGGER.debug("Registered forge PhaseType as EnderDragon.Phase {}", bukkit);
++      }
+       return enderdragonphase;
+    }
++
++   // Mohist start
++   public static EnderDragonPhase<?>[] getPhases() {
++      return f_31388_;
++   }
++
++   public String getName() {
++      return f_31391_;
++   }
++   // Mohist end
+ }

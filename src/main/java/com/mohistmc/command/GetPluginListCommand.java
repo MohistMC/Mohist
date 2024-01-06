@@ -18,12 +18,13 @@
 
 package com.mohistmc.command;
 
-import com.mohistmc.util.HasteUtils;
-import java.io.IOException;
+import com.mohistmc.tools.HasteUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
 
 public class GetPluginListCommand extends Command {
     private static String sendToHaste = "";

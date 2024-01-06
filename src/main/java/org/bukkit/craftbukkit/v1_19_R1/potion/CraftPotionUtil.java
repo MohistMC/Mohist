@@ -10,7 +10,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CraftPotionUtil {
+
+    public static Map<PotionType, String> mods = new HashMap<>();
 
     private static final BiMap<PotionType, String> regular = ImmutableBiMap.<PotionType, String>builder()
             .put(PotionType.UNCRAFTABLE, "empty")
@@ -63,6 +68,9 @@ public class CraftPotionUtil {
             .build();
 
     public static String fromBukkit(PotionData data) {
+        if (mods.containsKey(data.getType())) {
+            return mods.get(data.getType());
+        }
         String type;
         if (data.isUpgraded()) {
             type = upgradeable.get(data.getType());
@@ -95,6 +103,13 @@ public class CraftPotionUtil {
         potionType = regular.inverse().get(type);
         if (potionType != null) {
             return new PotionData(potionType, false, false);
+        }
+        if (mods.containsValue(type)) {
+            for (Map.Entry<PotionType, String> map : mods.entrySet()) {
+                if (map.getValue().equals(type)) {
+                    return new PotionData(map.getKey(), false, false);
+                }
+            }
         }
         return new PotionData(PotionType.UNCRAFTABLE, false, false);
     }

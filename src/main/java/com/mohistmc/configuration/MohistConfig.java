@@ -18,12 +18,13 @@
 
 package com.mohistmc.configuration;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class MohistConfig extends ConfigBase {
 
