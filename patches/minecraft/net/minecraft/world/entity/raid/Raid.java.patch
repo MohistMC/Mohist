@@ -82,15 +82,24 @@
                 this.m_37774_();
                 return;
              }
-@@ -496,7 +_,10 @@
+@@ -490,13 +_,19 @@
+ 
+    }
+ 
++   // Mohist start
++   // CraftBukkit start
++   private transient Raider leader = null;
++   private transient List<Raider> raiders = new java.util.ArrayList<>();
++   // CraftBukkit end
++   // Mohist end
++
+    private void m_37755_(BlockPos p_37756_) {
+       boolean flag = false;
+       int i = this.f_37681_ + 1;
        this.f_37678_ = 0.0F;
        DifficultyInstance difficultyinstance = this.f_37675_.m_6436_(p_37756_);
        boolean flag1 = this.m_37702_();
 -
-+      // CraftBukkit start
-+      Raider leader = null;
-+      List<Raider> raiders = new java.util.ArrayList<>();
-+      // CraftBukkit end
        for(Raid.RaiderType raid$raidertype : Raid.RaiderType.f_37813_) {
           int j = this.m_37730_(raid$raidertype, i, flag1) + this.m_219828_(raid$raidertype, this.f_37685_, i, difficultyinstance, flag1);
           int k = 0;

@@ -1608,8 +1608,8 @@ public class CraftEventFactory {
         org.bukkit.block.Block block = CraftBlock.at(world, blockposition);
         BlockPhysicsEvent event = new BlockPhysicsEvent(block, block.getBlockData());
         // Suppress during worldgen
-        if (world instanceof Level) {
-            ((Level) world).getServer().server.getPluginManager().callEvent(event);
+        if (world instanceof ServerLevel serverLevel) {
+            serverLevel.getServer().server.getPluginManager().callEvent(event);
         }
         return event;
     }
