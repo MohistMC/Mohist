@@ -367,8 +367,8 @@
 +               } else if (p_19974_.f_82481_ < vec3.f_82481_) {
 +                  bl = bl.getRelative(BlockFace.NORTH);
 +               }
-+
-+               if (!bl.getType().isAir()) {
++               var blType = bl.getType();
++               if (blType==null || !blType.isAir()) { // it maybe not air if the type is null
 +                  VehicleBlockCollisionEvent event = new VehicleBlockCollisionEvent(vehicle, bl);
 +                  f_19853_.getCraftServer().getPluginManager().callEvent(event);
 +               }
