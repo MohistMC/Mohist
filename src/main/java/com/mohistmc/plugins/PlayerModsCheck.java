@@ -28,16 +28,18 @@ public class PlayerModsCheck {
             throw new IllegalStateException(event.message());
         }
         if (MohistConfig.modlist_check_whitelist_enable) {
-            if (!ListUtils.is(modlist, server_modlist_whitelist())) {
-                canLog.set(false);
-                throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message);
+            for (String config : server_modlist_whitelist()) {
+                if (!modlist.contains(config)) {
+                    canLog.set(false);
+                    throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message.replace("%modid%", config));
+                }
             }
         }
         if (MohistConfig.modlist_check_blacklist_enable && MohistConfig.modlist_check_blacklist != null) {
             for (String config : MohistConfig.modlist_check_blacklist) {
                 if (modlist.contains(config)) {
                     canLog.set(false);
-                    throw new IllegalStateException(MohistConfig.modlist_check_blacklist_message);
+                    throw new IllegalStateException(MohistConfig.modlist_check_blacklist_message.replace("%modid%", config));
                 }
             }
         }
