@@ -43,11 +43,9 @@ final class CraftScore implements Score {
     public int getScore() {
         Scoreboard board = objective.checkState().board;
 
-        if (board.getTrackedPlayers().contains(entry)) { // Lazy
-            ReadOnlyScoreInfo score = board.getPlayerScoreInfo(entry, objective.getHandle());
-            if (score != null) { // Lazy
-                return score.value();
-            }
+        ReadOnlyScoreInfo score = board.getPlayerScoreInfo(entry, objective.getHandle());
+        if (score != null) { // Lazy
+            return score.value();
         }
 
         return 0; // Lazy
@@ -62,7 +60,7 @@ final class CraftScore implements Score {
     public boolean isScoreSet() {
         Scoreboard board = objective.checkState().board;
 
-        return board.getTrackedPlayers().contains(entry) && board.getPlayerScoreInfo(entry, objective.getHandle()) != null;
+        return board.getPlayerScoreInfo(entry, objective.getHandle()) != null;
     }
 
     @Override

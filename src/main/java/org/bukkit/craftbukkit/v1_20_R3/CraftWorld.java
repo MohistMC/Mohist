@@ -1988,21 +1988,12 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
         @Override
         public LightningStrike strikeLightning(Location loc, boolean isSilent) {
-            LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
-            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-            lightning.isSilent = isSilent;
-            world.strikeLightning(lightning, LightningStrikeEvent.Cause.CUSTOM );
-            return (LightningStrike) lightning.getBukkitEntity();
+            return CraftWorld.this.strikeLightning(loc);
         }
 
         @Override
         public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
-            LightningBolt lightning = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(world);
-            lightning.moveTo(loc.getX(), loc.getY(), loc.getZ());
-            lightning.visualOnly = true;
-            lightning.isSilent = isSilent;
-            world.strikeLightning( lightning, LightningStrikeEvent.Cause.CUSTOM );
-            return (LightningStrike) lightning.getBukkitEntity();
+            return CraftWorld.this.strikeLightningEffect(loc);
         }
 
     };

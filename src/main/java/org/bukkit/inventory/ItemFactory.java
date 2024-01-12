@@ -183,7 +183,7 @@ public interface ItemFactory {
      * @param item the item to enchant
      * @param level the level to use, which is the level in the enchantment table
      * @param allowTreasures allows treasure enchants, e.g. mending, if true.
-     * @return the modified ItemStack, or a copy if the ItemStack cannot be enchanted directly
+     * @return a new ItemStack containing the result of the Enchantment
      */
     @NotNull
     ItemStack enchantItem(@NotNull final Entity entity, @NotNull final ItemStack item, final int level, final boolean allowTreasures);
@@ -196,8 +196,7 @@ public interface ItemFactory {
      * @param item the item to enchant
      * @param level the level to use, which is the level in the enchantment table
      * @param allowTreasures allow the treasure enchants, e.g. mending, if true.
-     * @return the modified ItemStack, or a copy if the ItemStack cannot be
-     * enchanted directly
+     * @return a new ItemStack containing the result of the Enchantment
      */
     @NotNull
     ItemStack enchantItem(@NotNull final World world, @NotNull final ItemStack item, final int level, final boolean allowTreasures);
@@ -209,8 +208,7 @@ public interface ItemFactory {
      * @param item the item to enchant
      * @param level the level to use, which is the level in the enchantment table
      * @param allowTreasures allow treasure enchantments, e.g. mending, if true.
-     * @return the modified ItemStack, or a copy if the ItemStack cannot be
-     * enchanted directly
+     * @return a new ItemStack containing the result of the Enchantment
      */
     @NotNull
     ItemStack enchantItem(@NotNull final ItemStack item, final int level, final boolean allowTreasures);

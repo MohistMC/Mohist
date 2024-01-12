@@ -17,7 +17,7 @@
        p_251251_.moveTo((double)p_251189_.getX() + 0.5D, (double)p_251189_.getY() + 0.05D, (double)p_251189_.getZ() + 0.5D, 0.0F, 0.0F);
 -      p_249110_.addFreshEntity(p_251251_);
 +      // CraftBukkit start
-+      if (!p_249110_.addFreshEntity(p_251251_, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
++      if (!p_249110_.addFreshEntity(p_251251_, (p_251251_.getType() == EntityType.SNOW_GOLEM) ? CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN : CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
 +         return;
 +      }
 +      clearPatternBlocks(p_249110_, p_251293_); // CraftBukkit - from above

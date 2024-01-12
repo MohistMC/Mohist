@@ -26,7 +26,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -120,10 +_,39 @@
+@@ -120,10 +_,41 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;
  import net.minecraft.world.scores.Team;
@@ -49,7 +49,9 @@
 +import org.bukkit.event.entity.EntityAirChangeEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityCombustEvent;
++import org.bukkit.event.entity.EntityDismountEvent;
 +import org.bukkit.event.entity.EntityDropItemEvent;
++import org.bukkit.event.entity.EntityMountEvent;
 +import org.bukkit.event.entity.EntityPortalEvent;
 +import org.bukkit.event.entity.EntityPoseChangeEvent;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -857,7 +859,7 @@
        this.tick();
        if (this.isPassenger()) {
           this.getVehicle().positionRider(this);
-@@ -1896,7 +_,30 @@
+@@ -1896,7 +_,29 @@
              }
           }
  
@@ -874,9 +876,8 @@
 +                  return false;
 +               }
 +            }
-+            // CraftBukkit end
-+            // Spigot start
-+            org.spigotmc.event.entity.EntityMountEvent event = new org.spigotmc.event.entity.EntityMountEvent(this.getBukkitEntity(), p_19966_.getBukkitEntity());
++
++            EntityMountEvent event = new EntityMountEvent(this.getBukkitEntity(), p_19966_.getBukkitEntity());
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
@@ -884,7 +885,7 @@
 +            if (event.isCancelled()) {
 +               return false;
 +            }
-+            // Spigot end
++            // CraftBukkit end
              if (this.isPassenger()) {
                 this.stopRiding();
              }
@@ -899,7 +900,7 @@
        }
  
     }
-@@ -1960,28 +_,59 @@
+@@ -1960,28 +_,58 @@
           this.gameEvent(GameEvent.ENTITY_MOUNT, p_20349_);
        }
     }
@@ -929,9 +930,8 @@
 +               return false;
 +            }
 +         }
-+         // CraftBukkit end
-+         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(pPassenger.getBukkitEntity(), this.getBukkitEntity());
++
++         EntityDismountEvent event = new EntityDismountEvent(pPassenger.getBukkitEntity(), this.getBukkitEntity());
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            Bukkit.getPluginManager().callEvent(event);
@@ -939,7 +939,7 @@
 +         if (event.isCancelled()) {
 +            return false;
 +         }
-+         // Spigot end
++         // CraftBukkit end
 +         if (this.passengers.size() == 1 && this.passengers.get(0) == pPassenger) {
              this.passengers = ImmutableList.of();
           } else {

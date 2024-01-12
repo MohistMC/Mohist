@@ -56,7 +56,7 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
         @Override
         public boolean isSilent()
         {
-            return getHandle().isSilent;
+            return false;
         }
     };
 
