@@ -5,8 +5,11 @@ import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.api.event.PlayerModsCheckEvent;
 import com.mohistmc.tools.ListUtils;
 import com.mojang.authlib.GameProfile;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
@@ -27,20 +30,28 @@ public class PlayerModsCheck {
         if (event.isCancelled()) {
             throw new IllegalStateException(event.message());
         }
+        List<String> whitelist_modlist_Map = new ArrayList<>();
+        List<String> blacklist_modlist_Map = new ArrayList<>();
         if (MohistConfig.modlist_check_whitelist_enable) {
             for (String config : server_modlist_whitelist()) {
                 if (!modlist.contains(config)) {
-                    canLog.set(false);
-                    throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message.replace("%modid%", config));
+                    whitelist_modlist_Map.add(config);
                 }
+            }
+            if (!whitelist_modlist_Map.isEmpty()) {
+                canLog.set(false);
+                throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message.replace("%modlist%", whitelist_modlist_Map.toString()));
             }
         }
         if (MohistConfig.modlist_check_blacklist_enable && MohistConfig.modlist_check_blacklist != null) {
             for (String config : MohistConfig.modlist_check_blacklist) {
                 if (modlist.contains(config)) {
-                    canLog.set(false);
-                    throw new IllegalStateException(MohistConfig.modlist_check_blacklist_message.replace("%modid%", config));
+                    blacklist_modlist_Map.add(config);
                 }
+            }
+            if (!blacklist_modlist_Map.isEmpty()) {
+                canLog.set(false);
+                throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message.replace("%modlist%", blacklist_modlist_Map.toString()));
             }
         }
     }
