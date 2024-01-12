@@ -498,7 +498,7 @@ public class ForgeHooks
                         return onServerChatSubmittedEvent(sender, message.signedContent().plain(), message.signedContent().decorated(), false) == null;
 
                     return false;
-                }).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
+                }, sender.getServer().chatExecutor).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
             }
 
             return this.decorate(sender, message.serverContent()).thenApply(component -> component == null ? null : message.withUnsignedContent(component));
@@ -528,7 +528,7 @@ public class ForgeHooks
             Component preview = onServerChatPreviewEvent(player, message);
             // Send the input message back to the client if the event was cancelled
             return preview == null ? message : preview;
-        });
+        }, player.getServer().chatExecutor);
     }
 
 
