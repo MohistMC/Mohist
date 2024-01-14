@@ -33,8 +33,8 @@ public class PlayerModsCheck {
         List<String> whitelist_modlist_Map = new ArrayList<>();
         List<String> blacklist_modlist_Map = new ArrayList<>();
         if (MohistConfig.modlist_check_whitelist_enable) {
-            for (String config : server_modlist_whitelist()) {
-                if (!modlist.contains(config)) {
+            for (String config : modlist) {
+                if (!server_modlist_whitelist().contains(config)) {
                     whitelist_modlist_Map.add(config);
                 }
             }
