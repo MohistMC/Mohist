@@ -821,15 +821,18 @@
     }
  
     @Nullable
-@@ -855,6 +_,12 @@
-          playeradvancements.m_135981_(this.f_11195_.m_129889_());
-       }
+@@ -851,10 +_,12 @@
+    }
  
+    public void m_11315_() {
+-      for(PlayerAdvancements playeradvancements : this.f_11203_.values()) {
+-         playeradvancements.m_135981_(this.f_11195_.m_129889_());
+-      }
 +      for (ServerPlayer player : f_11196_) {
 +          player.m_8960_().m_135981_(this.f_11195_.m_129889_());
 +          player.m_8960_().m_135992_(player); // CraftBukkit - trigger immediate flush of advancements
 +       }
-+
+ 
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
        this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
