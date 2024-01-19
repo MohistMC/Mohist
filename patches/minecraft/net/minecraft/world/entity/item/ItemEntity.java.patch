@@ -37,7 +37,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -86,19 +_,27 @@
+@@ -86,19 +_,26 @@
     }
  
     public void m_8119_() {
@@ -52,7 +52,6 @@
 +         // CraftBukkit start - Use wall time for pickup and despawn timers
 +         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
 +         if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
-+         this.f_31986_ = Math.max(0, this.f_31986_); // Paper - don't go below 0
 +         if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
 +         this.lastTick = MinecraftServer.currentTick;
 +         // CraftBukkit end

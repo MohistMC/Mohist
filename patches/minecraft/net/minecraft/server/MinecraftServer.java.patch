@@ -125,20 +125,13 @@
           this.f_129756_ = p_236730_;
           this.f_129744_ = p_236724_;
           this.f_129745_ = p_236724_.m_78301_();
-@@ -280,8 +_,18 @@
+@@ -280,8 +_,11 @@
           this.f_236720_ = new StructureTemplateManager(p_236726_.f_206892_(), p_236724_, p_236728_);
           this.f_129725_ = p_236723_;
           this.f_129738_ = Util.m_183991_();
 +         // CraftBukkit start
 +         this.vanillaCommandDispatcher = p_236726_.f_206893_().f_206847_;
-+
-+         // Try to see if we're actually running in a terminal, disable jline if not
-+         if (System.console() == null && System.getProperty("jline.terminal") == null) {
-+            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
-+            org.bukkit.craftbukkit.Main.useJline = false;
-+         }
        }
-+      // CraftBukkit end
     }
 +
  
@@ -152,7 +145,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -327,11 +_,14 @@
+@@ -327,11 +_,15 @@
        Registry<LevelStem> registry = worldgensettings.m_204655_();
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
        ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true);
@@ -161,6 +154,7 @@
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
        this.m_129841_(dimensiondatastorage);
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_19_R1.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_());
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
@@ -220,7 +214,7 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
-+   // Mohist TODO
++   // CraftBukkit start
 +   public void initWorld(ServerLevel serverlevel, ServerLevelData serverleveldata, WorldData saveData, WorldGenSettings worldoptions) {
 +      boolean flag = worldoptions.m_64668_();
 +      // CraftBukkit start
@@ -447,7 +441,7 @@
           this.f_129726_ = Util.m_137550_();
           this.f_129757_.m_134908_(Component.m_237113_(this.f_129709_));
           this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
-@@ -626,20 +_,45 @@
+@@ -626,20 +_,46 @@
           this.f_129757_.m_242958_(this.m_214005_());
           this.m_129878_(this.f_129757_);
  
@@ -461,6 +455,7 @@
              if (i > 2000L && this.f_129726_ - this.f_129718_ >= 15000L) {
                 long j = i / 50L;
 -               f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
++               if (server.getWarnOnOverload()) // CraftBukkit
 +               //LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
                 this.f_129726_ += j * 50L;
                 this.f_129718_ = this.f_129726_;
