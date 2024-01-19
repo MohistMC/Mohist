@@ -1,5 +1,12 @@
 --- a/net/minecraft/world/level/chunk/ImposterProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ImposterProtoChunk.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.chunk;
+ 
++import ca.spottedleaf.starlight.common.light.SWMRNibbleArray;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+ import java.util.Map;
+ import java.util.function.BiConsumer;
 @@ -181,6 +_,11 @@
        this.f_62685_.m_284478_(p_285465_, p_285061_);
     }
@@ -12,3 +19,41 @@
     public TickContainerAccess<Block> m_183531_() {
        return this.f_187918_ ? this.f_62685_.m_183531_() : BlackholeTickAccess.m_193144_();
     }
+@@ -243,5 +_,37 @@
+ 
+    public ChunkSkyLightSources m_284400_() {
+       return this.f_62685_.m_284400_();
++   }
++
++   public SWMRNibbleArray[] getBlockNibbles() {
++      return this.f_62685_.getBlockNibbles();
++   }
++
++   public void setBlockNibbles(final SWMRNibbleArray[] nibbles) {
++      this.f_62685_.setBlockNibbles(nibbles);
++   }
++
++   public SWMRNibbleArray[] getSkyNibbles() {
++      return this.f_62685_.getSkyNibbles();
++   }
++
++   public void setSkyNibbles(final SWMRNibbleArray[] nibbles) {
++      this.f_62685_.setSkyNibbles(nibbles);
++   }
++
++   public boolean[] getSkyEmptinessMap() {
++      return this.f_62685_.getSkyEmptinessMap();
++   }
++
++   public void setSkyEmptinessMap(final boolean[] emptinessMap) {
++      this.f_62685_.setSkyEmptinessMap(emptinessMap);
++   }
++
++   public boolean[] getBlockEmptinessMap() {
++      return this.f_62685_.getBlockEmptinessMap();
++   }
++
++   public void setBlockEmptinessMap(final boolean[] emptinessMap) {
++      this.f_62685_.setBlockEmptinessMap(emptinessMap);
+    }
+ }

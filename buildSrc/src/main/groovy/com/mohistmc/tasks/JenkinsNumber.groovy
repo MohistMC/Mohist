@@ -6,7 +6,7 @@ class JenkinsNumber {
 
     static String info() {
         try {
-            def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1/api/json").openConnection()
+            def conn = new URL("https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1-rpg/api/json").openConnection()
             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
             conn.connect()
             def root = conn.content.text

@@ -62,7 +62,7 @@
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
-@@ -118,9 +_,10 @@
+@@ -118,9 +_,14 @@
           }
        }
  
@@ -71,6 +71,10 @@
        this.f_187603_ = true;
 +      this.needsDecoration = true; // CraftBukkit
 +      this.persistentDataContainer = p_196851_.persistentDataContainer; // SPIGOT-6814: copy PDC to account for 1.17 to 1.18 chunk upgrading.
++      this.setBlockNibbles(p_196851_.getBlockNibbles());
++      this.setSkyNibbles(p_196851_.getSkyNibbles());
++      this.setSkyEmptinessMap(p_196851_.getSkyEmptinessMap());
++      this.setBlockEmptinessMap(p_196851_.getBlockEmptinessMap());
     }
  
     public TickContainerAccess<Block> m_183531_() {
@@ -84,6 +88,15 @@
     @Nullable
     public BlockState m_6978_(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_) {
        int i = p_62865_.m_123342_();
+@@ -236,7 +_,7 @@
+             if (LightEngine.m_284387_(this, p_62865_, blockstate, p_62866_)) {
+                ProfilerFiller profilerfiller = this.f_62776_.m_46473_();
+                profilerfiller.m_6180_("updateSkyLightSources");
+-               this.f_283754_.m_284521_(this, j, i, l);
++               // this.skyLightSources.update(this, j, i, l);
+                profilerfiller.m_6182_("queueCheckLight");
+                this.f_62776_.m_7726_().m_7827_().m_7174_(p_62865_);
+                profilerfiller.m_7238_();
 @@ -245,14 +_,15 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {

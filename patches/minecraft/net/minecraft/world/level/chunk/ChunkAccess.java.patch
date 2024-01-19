@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -1,5 +_,7 @@
+ package net.minecraft.world.level.chunk;
+ 
++import ca.spottedleaf.starlight.common.light.SWMRNibbleArray;
++import ca.spottedleaf.starlight.common.light.StarLightEngine;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
+ import com.mojang.logging.LogUtils;
 @@ -16,6 +_,7 @@
  import java.util.function.Function;
  import java.util.function.Predicate;
@@ -8,15 +16,17 @@
  import javax.annotation.Nullable;
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
-@@ -51,6 +_,8 @@
+@@ -51,7 +_,10 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.ticks.SerializableTickContainer;
  import net.minecraft.world.ticks.TickContainerAccess;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.craftbukkit.v1_20_R1.persistence.DirtyCraftPersistentDataContainer;
  import org.slf4j.Logger;
++import org.spongepowered.asm.mixin.Unique;
  
  public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, LightChunk, StructureAccess {
+    public static final int f_279635_ = -1;
 @@ -71,14 +_,18 @@
     protected final UpgradeData f_187606_;
     @Nullable
@@ -38,12 +48,25 @@
  
     public ChunkAccess(ChunkPos p_187621_, UpgradeData p_187622_, LevelHeightAccessor p_187623_, Registry<Biome> p_187624_, long p_187625_, @Nullable LevelChunkSection[] p_187626_, @Nullable BlendingData p_187627_) {
        this.f_187604_ = p_187621_;
-@@ -98,7 +_,11 @@
+@@ -88,7 +_,7 @@
+       this.f_187615_ = p_187625_;
+       this.f_187602_ = new ShortList[p_187623_.m_151559_()];
+       this.f_187607_ = p_187627_;
+-      this.f_283754_ = new ChunkSkyLightSources(p_187623_);
++      this.f_283754_ = null;
+       if (p_187626_ != null) {
+          if (this.f_187612_.length == p_187626_.length) {
+             System.arraycopy(p_187626_, 0, this.f_187612_, 0, this.f_187612_.length);
+@@ -98,7 +_,15 @@
        }
  
        m_280116_(p_187624_, this.f_187612_);
 +      // CraftBukkit start
 +      this.biomeRegistry = p_187624_;
++      if (!(this instanceof ImposterProtoChunk)) {
++         this.setBlockNibbles(StarLightEngine.getFilledEmptyLight(f_187611_));
++         this.setSkyNibbles(StarLightEngine.getFilledEmptyLight(f_187611_));
++      }
     }
 +   public final Registry<Biome> biomeRegistry;
 +   // CraftBukkit end
@@ -99,10 +122,20 @@
                       }
                    }
                 }
-@@ -463,4 +_,28 @@
+@@ -454,7 +_,7 @@
+    }
+ 
+    public void m_284190_() {
+-      this.f_283754_.m_284271_(this);
++      // this.skyLightSources.fillFrom(this);
+    }
+ 
+    public ChunkSkyLightSources m_284400_() {
+@@ -462,5 +_,69 @@
+    }
  
     public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {
-    }
++   }
 +
 +   @Nullable
 +   public net.minecraft.world.level.LevelAccessor getWorldForge() { return null; }
@@ -127,4 +160,44 @@
 +      }
 +   }
 +   // CraftBukkit end
++
++   private volatile SWMRNibbleArray[] blockNibbles;
++
++   private volatile SWMRNibbleArray[] skyNibbles;
++
++   private volatile boolean[] skyEmptinessMap;
++
++   private volatile boolean[] blockEmptinessMap;
++
++   public SWMRNibbleArray[] getBlockNibbles() {
++      return this.blockNibbles;
++   }
++
++   public void setBlockNibbles(final SWMRNibbleArray[] nibbles) {
++      this.blockNibbles = nibbles;
++   }
++
++   public SWMRNibbleArray[] getSkyNibbles() {
++      return this.skyNibbles;
++   }
++
++   public void setSkyNibbles(final SWMRNibbleArray[] nibbles) {
++      this.skyNibbles = nibbles;
++   }
++
++   public boolean[] getSkyEmptinessMap() {
++      return this.skyEmptinessMap;
++   }
++
++   public void setSkyEmptinessMap(final boolean[] emptinessMap) {
++      this.skyEmptinessMap = emptinessMap;
++   }
++
++   public boolean[] getBlockEmptinessMap() {
++      return this.blockEmptinessMap;
++   }
++
++   public void setBlockEmptinessMap(final boolean[] emptinessMap) {
++      this.blockEmptinessMap = emptinessMap;
+    }
  }

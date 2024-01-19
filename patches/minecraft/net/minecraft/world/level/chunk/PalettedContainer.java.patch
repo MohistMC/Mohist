@@ -8,3 +8,12 @@
     private static final int f_188031_ = 0;
     private final PaletteResize<T> f_63070_ = (p_238275_, p_238276_) -> {
        return 0;
+@@ -140,7 +_,7 @@
+       return this.m_63085_(this.f_188033_.m_188145_(p_63088_, p_63089_, p_63090_));
+    }
+ 
+-   protected T m_63085_(int p_63086_) {
++   public T m_63085_(int p_63086_) {
+       PalettedContainer.Data<T> data = this.f_188032_;
+       return data.f_188102_.m_5795_(data.f_188101_.m_13514_(p_63086_));
+    }

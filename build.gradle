@@ -689,7 +689,7 @@ project(':mohist') {
     task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':mohistlauncher').tasks.jar]) {
         archiveClassifier = 'server'
         archiveExtension = 'jar'
-        archiveBaseName = 'mohist'
+        archiveBaseName = 'mohist-rpg'
         archiveVersion = '1.20.1-' + MOHIST_VERSION
         destinationDirectory = file('build/libs')
 

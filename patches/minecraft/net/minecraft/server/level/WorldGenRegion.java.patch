@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
+@@ -29,6 +_,7 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.LevelHeightAccessor;
++import net.minecraft.world.level.LightLayer;
+ import net.minecraft.world.level.StructureManager;
+ import net.minecraft.world.level.WorldGenLevel;
+ import net.minecraft.world.level.biome.Biome;
 @@ -190,7 +_,7 @@
        if (blockstate.m_60795_()) {
           return false;
@@ -18,7 +26,7 @@
           }
  
           return null;
-@@ -297,10 +_,16 @@
+@@ -297,12 +_,18 @@
     }
  
     public boolean m_7967_(Entity p_9580_) {
@@ -27,11 +35,49 @@
        int j = SectionPos.m_123171_(p_9580_.m_146907_());
        this.m_6325_(i, j).m_6286_(p_9580_);
        return true;
-+   }
-+
+    }
+ 
 +   @Override
 +   public boolean addFreshEntity(Entity pEntity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
 +      return m_7967_(pEntity);
-    }
- 
++   }
++
     public boolean m_7471_(BlockPos p_9547_, boolean p_9548_) {
+       return this.m_7731_(p_9547_, Blocks.f_50016_.m_49966_(), 3);
+    }
+@@ -420,5 +_,35 @@
+ 
+    public long m_183596_() {
+       return this.f_184182_.getAndIncrement();
++   }
++
++   /**
++    * @reason During feature generation, light data is not initialised and will always return 15 in Starlight. Vanilla
++    * can possibly return 0 if partially initialised, which allows some mushroom blocks to generate.
++    * In general, the brightness value from the light engine should not be used until the chunk is ready. To emulate
++    * Vanilla behavior better, we return 0 as the brightness during world gen unless the target chunk is finished
++    * lighting.
++    * @author Spottedleaf
++    */
++   @Override
++   public int m_45517_(final LightLayer lightLayer, final BlockPos blockPos) {
++      final ChunkAccess chunk = this.m_6325_(blockPos.m_123341_() >> 4, blockPos.m_123343_() >> 4);
++      if (!chunk.m_6332_()) {
++         return 0;
++      }
++      return this.m_5518_().m_75814_(lightLayer).m_7768_(blockPos);
++   }
++
++   /**
++    * @reason See above
++    * @author Spottedleaf
++    */
++   @Override
++   public int m_45524_(final BlockPos blockPos, final int subtract) {
++      final ChunkAccess chunk = this.m_6325_(blockPos.m_123341_() >> 4, blockPos.m_123343_() >> 4);
++      if (!chunk.m_6332_()) {
++         return 0;
++      }
++      return this.m_5518_().m_75831_(blockPos, subtract);
+    }
+ }

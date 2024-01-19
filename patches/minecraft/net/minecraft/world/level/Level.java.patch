@@ -532,10 +532,11 @@
  
     public long m_183596_() {
        return (long)(this.f_186455_++);
-@@ -880,4 +_,53 @@
+@@ -879,5 +_,62 @@
+       BLOCK,
        MOB,
        TNT;
-    }
++   }
 +
 +   // CraftBukkit start - Split off from above in order to directly send client and physic updates
 +   public void notifyAndUpdatePhysics(BlockPos blockposition, LevelChunk chunk, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int i, int j) {
@@ -585,4 +586,12 @@
 +      }
 +   }
 +   // CraftBukkit end
++
++   public LevelChunk getChunkAtImmediately(final int chunkX, final int chunkZ) {
++      return this.m_7726_().m_62227_(chunkX, chunkZ, false);
++   }
++
++   public ChunkAccess getAnyChunkImmediately(final int chunkX, final int chunkZ) {
++      return this.m_7726_().m_7587_(chunkX, chunkX, ChunkStatus.f_62314_, false);
+    }
  }
