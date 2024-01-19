@@ -1,6 +1,7 @@
 <div align="center">
-  <h1>Mohist 1.20.1</h1>
+  <h1>Mohist 1.20.1 RPG</h1>
 
+### A large number of changes based on own needs, without considering any compatibility, and is not a public use version
 ### Minecraft Forge Hybrid server implementing the Spigot/Bukkit API, formerly known as Thermos/Cauldron/MCPC+
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.1-rpg)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.1-rpg)
@@ -15,8 +16,6 @@
 
 [![](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 </div>
-
-<img height="400px" alt="Mohist Project Status" src="https://mohistmc.com/api/v2/projects/mohist/table?" />
 
 Progress
 ------
