@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistMC;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
@@ -817,114 +818,7 @@ public final class CraftServer implements Server {
 
     @Override
     public void reload() {
-        org.spigotmc.WatchdogThread.hasStarted = false; // Paper - Disable watchdog early timeout on reload
-        reloadCount++;
-        configuration = YamlConfiguration.loadConfiguration(getConfigFile());
-        commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
-
-        console.settings = new ServerPropertiesProvider(console.registryAccess(), Paths.get("server.properties"));
-        ServerProperties config = console.settings.getProperties();
-
-        console.setPvpAllowed(config.pvp);
-        console.setFlightAllowed(config.allowFlight);
-        console.setMotd(config.motd);
-        monsterSpawn = configuration.getInt("spawn-limits.monsters");
-        animalSpawn = configuration.getInt("spawn-limits.animals");
-        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
-        waterAmbientSpawn = configuration.getInt("spawn-limits.water-ambient");
-        ambientSpawn = configuration.getInt("spawn-limits.ambient");
-        warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        TicketType.PLUGIN.timeout = configuration.getInt("chunk-gc.period-in-ticks");
-        minimumAPI = configuration.getString("settings.minimum-api");
-        printSaveWarning = false;
-        console.autosavePeriod = configuration.getInt("ticks-per.autosave");
-        loadIcon();
-
-        try {
-            playerList.getIpBans().load();
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, i18n.get("pluginscommand.notload", "banned-ips.json, " + ex.getMessage()));
-        }
-        try {
-            playerList.getBans().load();
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, i18n.get("pluginscommand.notload", "banned-players.json, " + ex.getMessage()));
-        }
-
-        org.spigotmc.SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings")); // Spigot
-        for (ServerWorld world : console.getAllLevels()) {
-            world.worldDataServer.setDifficulty(config.difficulty);
-            world.setSpawnSettings(config.spawnMonsters, config.spawnAnimals);
-            if (this.getTicksPerAnimalSpawns() < 0) {
-                world.ticksPerAnimalSpawns = 400;
-            } else {
-                world.ticksPerAnimalSpawns = this.getTicksPerAnimalSpawns();
-            }
-
-            if (this.getTicksPerMonsterSpawns() < 0) {
-                world.ticksPerMonsterSpawns = 1;
-            } else {
-                world.ticksPerMonsterSpawns = this.getTicksPerMonsterSpawns();
-            }
-
-            if (this.getTicksPerWaterSpawns() < 0) {
-                world.ticksPerWaterSpawns = 1;
-            } else {
-                world.ticksPerWaterSpawns = this.getTicksPerWaterSpawns();
-            }
-
-            if (this.getTicksPerWaterAmbientSpawns() < 0) {
-                world.ticksPerWaterAmbientSpawns = 1;
-            } else {
-                world.ticksPerWaterAmbientSpawns = this.getTicksPerWaterAmbientSpawns();
-            }
-
-            if (this.getTicksPerAmbientSpawns() < 0) {
-                world.ticksPerAmbientSpawns = 1;
-            } else {
-                world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
-            }
-            world.spigotConfig.init(); // Spigot
-            //world.paperConfig.init(); // Paper
-        }
-
-        pluginManager.clearPlugins();
-        commandMap.clearCommands();
-        resetRecipes();
-        reloadData();
-        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
-        ignoreVanillaPermissions = commandsConfiguration.getBoolean("ignore-vanilla-permissions");
-
-        int pollCount = 0;
-
-        // Wait for at most 2.5 seconds for plugins to close their threads
-        while (pollCount < 50 && getScheduler().getActiveWorkers().size() > 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
-            pollCount++;
-        }
-
-        List<BukkitWorker> overdueWorkers = getScheduler().getActiveWorkers();
-        for (BukkitWorker worker : overdueWorkers) {
-            Plugin plugin = worker.getOwner();
-            String author = "<NoAuthorGiven>";
-            if (plugin.getDescription().getAuthors().size() > 0) {
-                author = plugin.getDescription().getAuthors().get(0);
-            }
-            getLogger().log(Level.SEVERE, i18n.get(
-                    "bukkit.plugin.nag.author",
-                    author,
-                    plugin.getDescription().getName()
-            ));
-        }
-        loadPlugins();
-        enablePlugins(PluginLoadOrder.STARTUP);
-        enablePlugins(PluginLoadOrder.POSTWORLD);
-        getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
-        org.spigotmc.WatchdogThread.hasStarted = true; // Paper - Disable watchdog early timeout on reload
+        MohistMC.LOGGER.warn("For your server security, Bukkit reloading is not supported by Mohist.");
     }
 
     @Override
