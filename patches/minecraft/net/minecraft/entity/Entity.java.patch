@@ -996,7 +996,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2363,7 +_,7 @@
+@@ -2363,24 +_,58 @@
     }
  
     protected AxisAlignedBB func_213321_d(Pose p_213321_1_) {
@@ -1005,9 +1005,15 @@
        float f = entitysize.field_220315_a / 2.0F;
        Vector3d vector3d = new Vector3d(this.func_226277_ct_() - (double)f, this.func_226278_cu_(), this.func_226281_cx_() - (double)f);
        Vector3d vector3d1 = new Vector3d(this.func_226277_ct_() + (double)f, this.func_226278_cu_() + (double)entitysize.field_220316_b, this.func_226281_cx_() + (double)f);
-@@ -2371,16 +_,44 @@
+       return new AxisAlignedBB(vector3d, vector3d1);
     }
  
++   // Mohist start
++   public void a(AxisAlignedBB p_174826_1_) {
++      func_174826_a(p_174826_1_);
++   }
++   // Mohist end
++
     public void func_174826_a(AxisAlignedBB p_174826_1_) {
 -      this.field_70121_D = p_174826_1_;
 +      // CraftBukkit start - block invalid bounding boxes
