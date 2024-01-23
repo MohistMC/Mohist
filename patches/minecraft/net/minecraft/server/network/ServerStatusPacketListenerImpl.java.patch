@@ -79,9 +79,9 @@
 +                 Optional.of(new ServerStatus.Version(server.getServerModName() + " " + server.getServerVersion(), SharedConstants.getCurrentVersion().getProtocolVersion())),
 +                 (event.icon.value != null) ? Optional.of(new ServerStatus.Favicon(event.icon.value)) : Optional.empty(),
 +                 server.enforceSecureProfile(),
-+                 Optional.of(new net.minecraftforge.network.ServerStatusPing())
++                 this.status.forgeData()
 +         );
-+         this.connection.send(new ClientboundStatusResponsePacket(ping));
++         this.connection.send(new ClientboundStatusResponsePacket(ping, this.statusCache));
 +         // CraftBukkit end
        }
     }
