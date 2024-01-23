@@ -678,6 +678,15 @@
        }
     }
  
+@@ -1127,7 +_,7 @@
+ 
+    }
+ 
+-   private boolean func_184583_d(DamageSource p_184583_1_) {
++   public boolean func_184583_d(DamageSource p_184583_1_) {
+       Entity entity = p_184583_1_.func_76364_f();
+       boolean flag = false;
+       if (entity instanceof AbstractArrowEntity) {
 @@ -1165,6 +_,7 @@
     }
  
