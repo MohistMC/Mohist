@@ -1,0 +1,49 @@
+--- a/net/minecraft/network/protocol/game/ClientboundCommandsPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundCommandsPacket.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.network.protocol.game;
+ 
+ import com.google.common.collect.Queues;
++import com.mohistmc.MohistConfig;
+ import com.mojang.brigadier.arguments.ArgumentType;
+ import com.mojang.brigadier.builder.ArgumentBuilder;
+ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+@@ -10,6 +_,7 @@
+ import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.brigadier.tree.LiteralCommandNode;
+ import com.mojang.brigadier.tree.RootCommandNode;
++import io.netty.buffer.Unpooled;
+ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+ import it.unimi.dsi.fastutil.ints.IntSet;
+ import it.unimi.dsi.fastutil.ints.IntSets;
+@@ -30,6 +_,8 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraftforge.registries.ForgeRegistries;
++import org.spigotmc.SpigotConfig;
+ 
+ public class ClientboundCommandsPacket implements Packet<ClientGamePacketListener> {
+    private static final byte f_178797_ = 3;
+@@ -233,8 +_,20 @@
+       }
+ 
+       private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> void m_237662_(FriendlyByteBuf p_237663_, ArgumentTypeInfo<A, T> p_237664_, ArgumentTypeInfo.Template<A> p_237665_) {
++         // Mohist start
++         ResourceLocation key = ForgeRegistries.COMMAND_ARGUMENT_TYPES.getKey(p_237664_);
++         if ((!MohistConfig.velocity_enabled && !SpigotConfig.bungee) || ((key != null) && (key.m_135827_().equals("minecraft") || key.m_135827_().equals("brigadier")))) {
++            p_237663_.m_130130_(BuiltInRegistries.f_256979_.m_7447_(p_237664_));
++            p_237664_.m_214155_((T) p_237665_, p_237663_);
++            return;
++         }
++         p_237663_.m_130130_(-256);
+          p_237663_.m_130130_(BuiltInRegistries.f_256979_.m_7447_(p_237664_));
+-         p_237664_.m_214155_((T)p_237665_, p_237663_);
++         FriendlyByteBuf payload = new FriendlyByteBuf(Unpooled.buffer());
++         p_237664_.m_214155_((T) p_237665_, payload);
++         p_237663_.m_130130_(payload.readableBytes());
++         p_237663_.writeBytes(payload);
++         // Mohist end
+       }
+    }
+ 
