@@ -8,6 +8,14 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
+@@ -64,6 +_,7 @@
+ import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+ import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
+ import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
++import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.MinecraftServer;
 @@ -82,6 +_,7 @@
  import net.minecraft.world.Container;
  import net.minecraft.world.InteractionHand;
@@ -292,7 +300,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -535,15 +_,59 @@
+@@ -535,15 +_,60 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -340,6 +348,7 @@
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.f_36096_ != this.f_36095_) {
++         useHandleContainerClose = true;
 +         this.m_6915_();
 +      }
 +
@@ -662,7 +671,7 @@
        if (this.m_5803_()) {
           this.m_183503_().m_7726_().m_8394_(this, new ClientboundAnimatePacket(this, 2));
        }
-@@ -935,16 +_,52 @@
+@@ -935,16 +_,59 @@
        this.f_8940_ = this.f_8940_ % 100 + 1;
     }
  
@@ -701,6 +710,13 @@
 +            // Mohist end
 +
 +            boolean cancelled = false;
++            // Mohist start - Moved from CraftEventFactory#callInventoryOpenEvent(...) to fix mixin issues
++            if (this.f_36096_ != this.f_36095_) {
++               useHandleContainerClose = true;
++               this.m_6915_();
++               CraftEventFactory.alreadyProcessed = true;
++            }
++            // Mohist end
 +            abstractcontainermenu = CraftEventFactory.callInventoryOpenEvent(this, abstractcontainermenu, cancelled);
 +            if (abstractcontainermenu == null && !cancelled) { // Let pre-cancelled events fall through
 +               // SPIGOT-5263 - close chest if cancelled
@@ -762,15 +778,24 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -991,6 +_,7 @@
+@@ -990,14 +_,22 @@
+       this.f_8906_.m_141995_(ClientboundBlockEntityDataPacket.m_195642_(p_9099_, BlockEntity::m_187482_));
     }
  
++   public boolean useHandleContainerClose = false; // Mohist
     public void m_6915_() {
-+      CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
-       this.f_8906_.m_141995_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
-       this.m_9230_();
+-      this.f_8906_.m_141995_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
+-      this.m_9230_();
++      if (useHandleContainerClose) {
++         this.f_8906_.m_7951_(new ServerboundContainerClosePacket(this.f_36096_.f_38840_));
++         useHandleContainerClose = false;
++      } else {
++         CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
++         this.f_8906_.m_141995_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
++         this.m_9230_();
++      }
     }
-@@ -998,6 +_,7 @@
+ 
     public void m_9230_() {
        this.f_36096_.m_6877_(this);
        this.f_36095_.m_150414_(this.f_36096_);

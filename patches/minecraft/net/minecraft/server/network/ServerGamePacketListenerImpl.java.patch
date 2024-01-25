@@ -1303,14 +1303,11 @@
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(new TranslatableComponent("multiplayer.disconnect.invalid_entity_attacked"));
                       ServerGamePacketListenerImpl.f_9744_.warn("Player {} tried to attack an invalid entity", (Object)ServerGamePacketListenerImpl.this.f_9743_.m_7755_().getString());
-@@ -1285,14 +_,20 @@
+@@ -1285,14 +_,17 @@
  
     public void m_7951_(ServerboundContainerClosePacket p_9858_) {
        PacketUtils.m_131359_(p_9858_, this, this.f_9743_.m_183503_());
-+
 +      if (this.f_9743_.m_6107_()) return; // CraftBukkit
-+      CraftEventFactory.handleInventoryCloseEvent(this.f_9743_); // CraftBukkit
-+
        this.f_9743_.m_9230_();
     }
  
