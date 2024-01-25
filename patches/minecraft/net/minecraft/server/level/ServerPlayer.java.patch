@@ -899,12 +899,14 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -994,14 +_,23 @@
+@@ -994,14 +_,22 @@
        this.f_8906_.m_9829_(ClientboundBlockEntityDataPacket.m_195642_(p_9099_, BlockEntity::m_187482_));
     }
  
 +   public boolean useHandleContainerClose = false; // Mohist
     public void m_6915_() {
+-      this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
+-      this.m_9230_();
 +      if (useHandleContainerClose) {
 +         this.f_8906_.m_7951_(new ServerboundContainerClosePacket(this.f_36096_.f_38840_));
 +         useHandleContainerClose = false;
@@ -913,8 +915,6 @@
 +         this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
 +         this.m_9230_();
 +      }
-       this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
--      this.m_9230_();
     }
  
     public void m_9230_() {
