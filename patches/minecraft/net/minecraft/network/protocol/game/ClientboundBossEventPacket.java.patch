@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ClientboundBossEventPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundBossEventPacket.java
+@@ -192,7 +_,7 @@
+       }
+ 
+       private UpdateNameOperation(FriendlyByteBuf p_178725_) {
+-         this.f_178723_ = p_178725_.m_130238_();
++         this.f_178723_ = (p_178725_ == null ? Component.m_237119_() : p_178725_.m_130238_());
+       }
+ 
+       public ClientboundBossEventPacket.OperationType m_142659_() {
