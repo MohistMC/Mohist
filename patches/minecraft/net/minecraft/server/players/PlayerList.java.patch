@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -10,18 +_,21 @@
+@@ -10,15 +_,19 @@
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -20,10 +20,7 @@
 +import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import net.minecraft.ChatFormatting;
--import net.minecraft.FileUtil;
- import net.minecraft.commands.CommandSourceStack;
- import net.minecraft.core.BlockPos;
- import net.minecraft.core.LayeredRegistryAccess;
+ import net.minecraft.FileUtil;
 @@ -65,11 +_,13 @@
  import net.minecraft.server.PlayerAdvancements;
  import net.minecraft.server.RegistryLayer;
@@ -58,16 +55,23 @@
  import org.slf4j.Logger;
  
  public abstract class PlayerList {
-@@ -109,7 +_,7 @@
+@@ -109,25 +_,35 @@
     private static final int SEND_PLAYER_INFO_INTERVAL = 600;
     private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
     private final MinecraftServer server;
 -   public final List<ServerPlayer> players = Lists.newArrayList();
-+   public final List<ServerPlayer> players = new CopyOnWriteArrayList<>(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
++   public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - java.util.ArrayList -> CopyOnWriteArrayList: java.util.Iterator safety
     private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
     private final UserBanList bans = new UserBanList(USERBANLIST_FILE);
     private final IpBanList ipBans = new IpBanList(IPBANLIST_FILE);
-@@ -120,14 +_,22 @@
+    private final ServerOpList ops = new ServerOpList(OPLIST_FILE);
+    private final UserWhiteList whitelist = new UserWhiteList(WHITELIST_FILE);
+-   private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
+-   private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
++   // CraftBukkit start
++   //private final Map<UUID, ServerStatsCounter> stats = Maps.newHashMap();
++   //private final Map<UUID, PlayerAdvancements> advancements = Maps.newHashMap();
++   // CraftBukkit end
     public final PlayerDataStorage playerIo;
     private boolean doWhiteList;
     private final LayeredRegistryAccess<RegistryLayer> registries;
@@ -126,7 +130,7 @@
 +      serverlevel1 = ((CraftWorld) loc.getWorld()).getHandle();
 +
 +      p_11263_.spawnIn(serverlevel1);
-+      p_11263_.gameMode.setLevel((ServerLevel) p_11263_.level);
++      p_11263_.gameMode.setLevel((ServerLevel) p_11263_.level());
 +      p_11263_.absMoveTo(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 +      // Spigot end
 +
@@ -210,7 +214,7 @@
 -      this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
 +
 +      // CraftBukkit start - Only add if the player wasn't moved in the event
-+      if (p_11263_.level == serverlevel1 && !serverlevel1.players().contains(p_11263_)) {
++      if (p_11263_.level() == serverlevel1 && !serverlevel1.players().contains(p_11263_)) {
 +         serverlevel1.addNewPlayer(p_11263_);
 +         this.server.getCustomBossEvents().onPlayerConnect(p_11263_);
 +      }
@@ -284,16 +288,24 @@
        } else {
           compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -307,6 +_,8 @@
+@@ -307,22 +_,40 @@
     }
  
     protected void save(ServerPlayer p_11277_) {
 +      if (!p_11277_.getBukkitEntity().isPersistent()) return; // CraftBukkit
 +      if (p_11277_.connection == null) return;
        this.playerIo.save(p_11277_);
-       ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
+-      ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
++      ServerStatsCounter serverstatscounter = p_11277_.getStats(); // CraftBukkit
        if (serverstatscounter != null) {
-@@ -320,9 +_,25 @@
+          serverstatscounter.save();
+       }
+ 
+-      PlayerAdvancements playeradvancements = this.advancements.get(p_11277_.getUUID());
++      PlayerAdvancements playeradvancements = p_11277_.getAdvancements(); // CraftBukkit
+       if (playeradvancements != null) {
+          playeradvancements.save();
+       }
  
     }
  
@@ -319,7 +331,7 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
-@@ -339,6 +_,7 @@
+@@ -339,20 +_,64 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
        this.players.remove(p_11287_);
@@ -327,11 +339,19 @@
        this.server.getCustomBossEvents().onPlayerDisconnect(p_11287_);
        UUID uuid = p_11287_.getUUID();
        ServerPlayer serverplayer = this.playersByUUID.get(uuid);
-@@ -348,11 +_,52 @@
-          this.advancements.remove(uuid);
-       }
- 
+       if (serverplayer == p_11287_) {
+          this.playersByUUID.remove(uuid);
+-         this.stats.remove(uuid);
+-         this.advancements.remove(uuid);
+-      }
+-
 -      this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
++         // CraftBukkit start
++         // this.stats.remove(uuid);
++         // this.advancements.remove(uuid);
++         // CraftBukkit end
++      }
++
 +      // CraftBukkit start
 +      ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID()));
 +      for (ServerPlayer player : players) {
@@ -726,7 +746,7 @@
        this.server.getCommands().sendCommands(p_11227_);
     }
  
-@@ -589,6 +_,7 @@
+@@ -589,26 +_,25 @@
     }
  
     public boolean isOp(GameProfile p_11304_) {
@@ -734,7 +754,21 @@
        return this.ops.contains(p_11304_) || this.server.isSingleplayerOwner(p_11304_) && this.server.getWorldData().getAllowCommands() || this.allowCheatsForAllPlayers;
     }
  
-@@ -609,6 +_,13 @@
+    @Nullable
+    public ServerPlayer getPlayerByName(String p_11256_) {
+-      int i = this.players.size();
+-
+-      for(int j = 0; j < i; ++j) {
+-         ServerPlayer serverplayer = this.players.get(j);
+-         if (serverplayer.getGameProfile().getName().equalsIgnoreCase(p_11256_)) {
+-            return serverplayer;
+-         }
+-      }
+-
+-      return null;
++      return this.playersByName.get(p_11256_.toLowerCase(java.util.Locale.ROOT)); // Spigot
+    }
+ 
     public void broadcast(@Nullable Player p_11242_, double p_11243_, double p_11244_, double p_11245_, double p_11246_, ResourceKey<Level> p_11247_, Packet<?> p_11248_) {
        for(int i = 0; i < this.players.size(); ++i) {
           ServerPlayer serverplayer = this.players.get(i);
@@ -816,58 +850,62 @@
  
     public void broadcastSystemMessage(Component p_240618_, boolean p_240644_) {
        this.broadcastSystemMessage(p_240618_, (p_215639_) -> {
-@@ -769,22 +_,15 @@
+@@ -769,37 +_,42 @@
     }
  
     private boolean verifyChatTrusted(PlayerChatMessage p_251384_) {
 -      return p_251384_.hasSignature() && !p_251384_.hasExpiredServer(Instant.now());
-+      return true; // Mohist chat verify
-    }
- 
+-   }
+-
 -   public ServerStatsCounter getPlayerStats(Player p_11240_) {
-+   public ServerStatsCounter getPlayerStats(ServerPlayer p_11240_) { // Mohist TODO
-       UUID uuid = p_11240_.getUUID();
-       ServerStatsCounter serverstatscounter = this.stats.get(uuid);
-       if (serverstatscounter == null) {
-          File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
-          File file2 = new File(file1, uuid + ".json");
--         if (!file2.exists()) {
--            File file3 = new File(file1, p_11240_.getName().getString() + ".json");
--            Path path = file3.toPath();
--            if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
--               file3.renameTo(file2);
--            }
--         }
- 
-          serverstatscounter = new ServerStatsCounter(this.server, file2);
-          this.stats.put(uuid, serverstatscounter);
-@@ -793,6 +_,26 @@
-       return serverstatscounter;
-    }
- 
+-      UUID uuid = p_11240_.getUUID();
+-      ServerStatsCounter serverstatscounter = this.stats.get(uuid);
+-      if (serverstatscounter == null) {
++      return true; // Mohist chat verify
++   }
++
++   public ServerStatsCounter getPlayerStats(ServerPlayer p_11240_) {
++      ServerStatsCounter stats = p_11240_.getStats();
++      return stats == null ? getPlayerStats(p_11240_.getUUID(), p_11240_.getDisplayName().getString()) : stats;
++   }
++
 +   public ServerStatsCounter getPlayerStats(UUID uuid, String displayName) {
 +      ServerPlayer player = getPlayer(uuid);
 +      ServerStatsCounter serverstatisticsmanager = player == null ? null : (ServerStatsCounter) player.getStats();
 +      if (serverstatisticsmanager == null) {
-+         File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
-+         File file2 = new File(file1, uuid + ".json");
-+         if (!file2.exists()) {
+          File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
+          File file2 = new File(file1, uuid + ".json");
+          if (!file2.exists()) {
+-            File file3 = new File(file1, p_11240_.getName().getString() + ".json");
 +            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
-+            if (file3.exists() && file3.isFile()) {
-+               file3.renameTo(file2);
-+            }
-+         }
-+
+             Path path = file3.toPath();
+             if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
+                file3.renameTo(file2);
+             }
+          }
+ 
+-         serverstatscounter = new ServerStatsCounter(this.server, file2);
+-         this.stats.put(uuid, serverstatscounter);
 +         serverstatisticsmanager = new ServerStatsCounter(this.server, file2);
-+         this.stats.put(uuid, serverstatisticsmanager);
-+      }
-+
+       }
+ 
+-      return serverstatscounter;
 +      return serverstatisticsmanager;
-+   }
-+
+    }
+ 
     public PlayerAdvancements getPlayerAdvancements(ServerPlayer p_11297_) {
        UUID uuid = p_11297_.getUUID();
-       PlayerAdvancements playeradvancements = this.advancements.get(uuid);
+-      PlayerAdvancements playeradvancements = this.advancements.get(uuid);
++      PlayerAdvancements playeradvancements = p_11297_.getAdvancements(); // CraftBukkit
++
+       if (playeradvancements == null) {
+          Path path = this.server.getWorldPath(LevelResource.PLAYER_ADVANCEMENTS_DIR).resolve(uuid + ".json");
+          playeradvancements = new PlayerAdvancements(this.server.getFixerUpper(), this, this.server.getAdvancements(), path, p_11297_);
+-         this.advancements.put(uuid, playeradvancements);
++         // this.advancements.put(uuid, playeradvancements); // CraftBukkit
+       }
+ 
+       playeradvancements.setPlayer(p_11297_);
 @@ -831,7 +_,7 @@
     }
  
@@ -884,7 +922,7 @@
 -      for(PlayerAdvancements playeradvancements : this.advancements.values()) {
 -         playeradvancements.reload(this.server.getAdvancements());
 -      }
-+      for (ServerPlayer player : players) {
++      for (ServerPlayer player : this.players) {
 +          player.getAdvancements().reload(this.server.getAdvancements());
 +          player.getAdvancements().flushDirty(player); // CraftBukkit - trigger immediate flush of advancements
 +       }

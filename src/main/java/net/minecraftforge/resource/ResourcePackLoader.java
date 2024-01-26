@@ -170,12 +170,12 @@ public class ResourcePackLoader {
         if (!hiddenPacks.isEmpty()) {
             @SuppressWarnings("resource")
             var delegating = new DelegatingPackResources("mod_resources", false,
-                    new PackMetadataSection(
-                            Component.translatable("fml.resources.modresources", hiddenPacks.size()),
-                            version,
-                            Optional.empty()
-                    ),
-                    hiddenPacks
+                new PackMetadataSection(
+                    Component.translatable("fml.resources.modresources", hiddenPacks.size()),
+                    version,
+                    Optional.empty()
+                ),
+                hiddenPacks
             );
 
             var supplier = delegating.supplier();

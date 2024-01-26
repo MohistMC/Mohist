@@ -56,6 +56,14 @@ public class OpenContainer {
         try {
             var mc = Minecraft.getInstance();
             var inv = mc.player.getInventory();
+            var factory = MenuScreens.getScreenFactory(msg.getType(), mc, msg.getWindowId(), msg.getName());
+            factory.ifPresent(f -> {
+                var c = msg.getType().create(msg.getWindowId(), inv, msg.getAdditionalData());
+
+                var s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>)f).create(c, inv, msg.getName());
+                mc.player.containerMenu = s.getMenu();
+                mc.setScreen(s);
+            });
         } finally {
             msg.getAdditionalData().release();
         }

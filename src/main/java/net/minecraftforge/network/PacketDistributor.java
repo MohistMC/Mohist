@@ -130,11 +130,7 @@ public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<
     }
 
     private Consumer<Packet<?>> playerConsumer(ServerPlayer player) {
-        return p -> {
-            if (player != null && player.connection.isAcceptingMessages()) {
-                player.connection.getConnection().send(p);
-            }
-        };
+        return p -> player.connection.getConnection().send(p);
     }
 
     private Consumer<Packet<?>> playerListDimConsumer(ResourceKey<Level> dimension) {
