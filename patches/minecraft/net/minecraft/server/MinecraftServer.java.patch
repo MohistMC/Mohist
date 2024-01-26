@@ -536,8 +536,7 @@
 +            // Spigot start
 +            org.spigotmc.WatchdogThread.hasStarted = true; // Paper
 +            Arrays.fill( recentTps, 20 );
-+            long start = System.nanoTime(), curTime, tickSection = start; // Paper - Further improve server tick loop
-+            lastTick = start - TICK_TIME; // Paper
++            long tickSection = Util.func_211178_c(), curTime, tickCount = 1; // Paper
              while(this.field_71317_u) {
 -               long i = Util.func_211177_b() - this.field_211151_aa;
 -               if (i > 2000L && this.field_211151_aa - this.field_71299_R >= 15000L) {
@@ -555,6 +554,7 @@
  
 +               if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
 +               {
++                  curTime = Util.func_211178_c();
 +                  final long diff = curTime - tickSection;
 +                  java.math.BigDecimal currentTps = TPS_BASE.divide(new java.math.BigDecimal(diff), 30, java.math.RoundingMode.HALF_UP);
 +                  tps1.add(currentTps, diff);
@@ -566,10 +566,10 @@
 +                  this.recentTps[2] = tps15.getAverage();
 +                  // Paper end
 +                  tickSection = curTime;
-+               }
++               } else curTime = Util.func_211178_c();
 +               // Spigot end
 +
-+               currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
++               // currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit // Paper - don't overwrite current tick time
 +               lastTick = curTime;
                 this.field_211151_aa += 50L;
                 LongTickDetector longtickdetector = LongTickDetector.func_233524_a_("Server");
