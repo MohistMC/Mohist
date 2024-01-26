@@ -201,6 +201,14 @@
                 }
  
              }
+@@ -307,7 +_,6 @@
+       IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
+       this.func_240787_a_(ichunkstatuslistener);
+       this.func_230543_p_();
+-      this.func_213186_a(ichunkstatuslistener);
+    }
+ 
+    protected void func_230543_p_() {
 @@ -333,9 +_,12 @@
        }
  
@@ -214,7 +222,7 @@
        this.field_229733_al_ = new CommandStorage(dimensionsaveddatamanager);
        WorldBorder worldborder = serverworld.func_175723_af();
        worldborder.func_235926_a_(iserverworldinfo.func_230398_q_());
-@@ -371,13 +_,31 @@
+@@ -371,13 +_,37 @@
              RegistryKey<World> registrykey1 = RegistryKey.func_240903_a_(Registry.field_239699_ae_, registrykey.func_240901_a_());
              DimensionType dimensiontype1 = entry.getValue().func_236063_b_();
              ChunkGenerator chunkgenerator1 = entry.getValue().func_236064_c_();
@@ -240,9 +248,16 @@
              worldborder.func_177737_a(new IBorderListener.Impl(serverworld1.func_175723_af()));
              this.field_71305_c.put(registrykey1, serverworld1);
           }
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
-       }
+-      }
 -
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(field_71305_c.get(registrykey)));
++      }
++
++      for (ServerWorld worldserver : this.func_212370_w()) {
++         this.prepareLevels(worldserver.func_72863_F().field_217237_a.field_219266_t, worldserver);
++         this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(worldserver.getWorld()));
++      }
++
 +      this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
 +      this.server.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
 +      this.field_147144_o.acceptConnections();

@@ -1003,6 +1003,7 @@ public final class CraftServer implements Server {
         console.initWorld(internal, worlddata, worlddata, worlddata.worldGenSettings());
 
         internal.setSpawnSettings(true, true);
+        getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
 
         getServer().loadSpawn(internal.getChunkSource().chunkMap.progressListener, internal);
 
