@@ -35,17 +35,16 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -73,11 +72,18 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public class ForgeInjectBukkit {
 
-    public static BiMap<RegistryKey<DimensionType>, World.Environment> environment =
-            HashBiMap.create(ImmutableMap.<RegistryKey<DimensionType>, World.Environment>builder()
-                    .put(DimensionType.OVERWORLD_LOCATION, World.Environment.NORMAL)
-                    .put(DimensionType.NETHER_LOCATION, World.Environment.NETHER)
-                    .put(DimensionType.END_LOCATION, World.Environment.THE_END)
+    public static BiMap<DimensionType, World.Environment> environment =
+            HashBiMap.create(ImmutableMap.<DimensionType, World.Environment>builder()
+                    .put(DimensionType.DEFAULT_OVERWORLD, World.Environment.NORMAL)
+                    .put(DimensionType.DEFAULT_NETHER, World.Environment.NETHER)
+                    .put(DimensionType.DEFAULT_END, World.Environment.THE_END)
+                    .build());
+
+    public static BiMap<World.Environment, RegistryKey<Dimension>> environment0 =
+            HashBiMap.create(ImmutableMap.<World.Environment, RegistryKey<Dimension>>builder()
+                    .put(World.Environment.NORMAL, Dimension.OVERWORLD)
+                    .put(World.Environment.NETHER, Dimension.NETHER)
+                    .put(World.Environment.THE_END, Dimension.END)
                     .build());
 
     public static Map<Villager.Profession, ResourceLocation> profession = new HashMap<>();
@@ -206,17 +212,17 @@ public class ForgeInjectBukkit {
         }
     }
 
-    public static void addEnumEnvironment() {
+    public static void addEnumEnvironment(Registry<Dimension> registry) {
         int i = World.Environment.values().length;
-        Registry<DimensionType> registry = MinecraftServer.getServer().registryHolder.dimensionTypes();
-        for (Map.Entry<RegistryKey<DimensionType>, DimensionType> entry : registry.entrySet()) {
-            RegistryKey<DimensionType> key = entry.getKey();
+        for (Map.Entry<RegistryKey<Dimension>, Dimension> entry : registry.entrySet()) {
+            RegistryKey<Dimension> key = entry.getKey();
             World.Environment environment1 = environment.get(key);
             if (environment1 == null) {
                 String name = normalizeName(key.location().toString());
                 int id = i - 1;
                 environment1 = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
-                environment.put(key, environment1);
+                environment.put(entry.getValue().type(), environment1);
+                environment0.put(environment1, key);
                 MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
             }

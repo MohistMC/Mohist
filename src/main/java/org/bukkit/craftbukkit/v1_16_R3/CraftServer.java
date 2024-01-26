@@ -13,6 +13,8 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.nms.utils.RemapUtils;
 import com.mohistmc.forge.ForgeEventHandler;
+import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.util.Level2LevelStem;
 import com.mohistmc.util.i18n.i18n;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
@@ -196,6 +198,7 @@ import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.help.HelpMap;
@@ -911,12 +914,13 @@ public final class CraftServer implements Server {
     public World createWorld(WorldCreator creator) {
         Preconditions.checkState(!console.levels.isEmpty(), "Cannot create additional worlds on STARTUP");
         Validate.notNull(creator, "Creator may not be null");
-
+        Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-
+        Level2LevelStem.bukkit = folder;
+        Level2LevelStem.bukkit_name = name;
         if (world != null) {
             return world;
         }
@@ -929,20 +933,7 @@ public final class CraftServer implements Server {
             generator = getGenerator(name);
         }
 
-        RegistryKey<Dimension> actualDimension;
-        switch (creator.environment()) {
-            case NORMAL:
-                actualDimension = Dimension.OVERWORLD;
-                break;
-            case NETHER:
-                actualDimension = Dimension.NETHER;
-                break;
-            case THE_END:
-                actualDimension = Dimension.END;
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal dimension");
-        }
+        RegistryKey<Dimension> actualDimension = ForgeInjectBukkit.environment0.get(creator.environment());
 
         SaveFormat.LevelSave worldSession;
         try {
@@ -998,22 +989,28 @@ public final class CraftServer implements Server {
             worldKey = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(name.toLowerCase(java.util.Locale.ENGLISH)));
         }
 
+        net.minecraft.world.World.setGeneratorAndEnv(generator, creator.environment()); // Mohist
         ServerWorld internal = new ServerWorld(console, console.executor, worldSession, worlddata, worldKey, dimensionmanager, getServer().progressListenerFactory.create(11),
-                chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true, creator.environment(), generator);
+                chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
 
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+        name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        if (!(worlds.containsKey(name))) {
+            Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
 
+        console.levels.put(internal.dimension(), internal);
         console.initWorld(internal, worlddata, worlddata, worlddata.worldGenSettings());
 
         internal.setSpawnSettings(true, true);
-        console.levels.put(internal.dimension(), internal);
 
         getServer().loadSpawn(internal.getChunkSource().chunkMap.progressListener, internal);
 
-        //MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(internal.getWorld().getHandle()));
-        return internal.getWorld();
+        pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
+        World world1 = internal.getWorld();
+        world1.setBukkit(true);
+        Level2LevelStem.reloadAndInit(world1);
+        return world1;
     }
 
     @Override

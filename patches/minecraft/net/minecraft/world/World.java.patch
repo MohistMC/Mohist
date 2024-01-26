@@ -71,7 +71,7 @@
     public final Thread field_217407_c;
     private final boolean field_234916_c_;
     private int field_73008_k;
-@@ -92,8 +_,76 @@
+@@ -92,8 +_,69 @@
     private final WorldBorder field_175728_M;
     private final BiomeManager field_226689_w_;
     private final RegistryKey<World> field_73011_w;
@@ -99,18 +99,20 @@
 +   public boolean populating;
 +   public org.spigotmc.SpigotWorldConfig spigotConfig; // Spigot
 +   public static BlockPos lastPhysicsProblem; // Spigot
-+   private org.spigotmc.TickLimiter entityLimiter;
-+   private org.spigotmc.TickLimiter tileLimiter;
 +   private int tileTickPosition;
 +   public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
 +   public boolean pehkuiExplosionFire = false; // Mohist - Fix Pehkui Startup (#1324)
-+   protected final boolean disableBukkit;
++
++   public CraftWorld getWorld() {
++      return this.craftWorld;
++   }
 +
 +   public CraftServer getCBServer() {
 +      return (CraftServer) Bukkit.getServer();
 +   }
 +
 +   public RegistryKey<DimensionType> getTypeKey() {
++      typeKey = RegistryKey.func_240903_a_(Registry.field_239698_ad_, field_73011_w.getRegistryName());
 +      return typeKey;
 +   }
 +
@@ -121,46 +123,38 @@
  
     protected World(ISpawnWorldInfo p_i241925_1_, RegistryKey<World> p_i241925_2_, final DimensionType p_i241925_3_, Supplier<IProfiler> p_i241925_4_, boolean p_i241925_5_, boolean p_i241925_6_, long p_i241925_7_) {
 +      super(World.class);
-+      disableBukkit = getCBServer() == null;
-+      if(!disableBukkit) {
-+         // Mohist start - Fix Advanced Rocketry assembler crash
-+         if (p_i241925_1_ != null) {
-+            this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().field_71310_m.func_237291_a_(p_i241925_2_).getName()); // Spigot
-+         } else {
-+            this.spigotConfig = null;
-+         }
-+         // Mohist end
-+         // CraftBukkit start
-+         this.ticksPerAnimalSpawns = this.getCBServer().getTicksPerAnimalSpawns();
-+         this.ticksPerMonsterSpawns = this.getCBServer().getTicksPerMonsterSpawns();
-+         this.ticksPerWaterSpawns = this.getCBServer().getTicksPerWaterSpawns();
-+         this.ticksPerWaterAmbientSpawns = this.getCBServer().getTicksPerWaterAmbientSpawns();
-+         this.ticksPerAmbientSpawns = this.getCBServer().getTicksPerAmbientSpawns();
-+         // CraftBukkit end
-+         MinecraftServer.getServer().func_244267_aX().func_230520_a_().func_239659_c_().stream().filter(entry -> entry.getValue() == p_i241925_3_).forEachOrdered(entry -> this.typeKey = entry.getKey());
-+         if (generator == null && p_i241925_1_ != null) { // Mohist - Fix Advanced Rocketry assembler crash
-+            generator = getCBServer().getGenerator(((IServerWorldInfo) p_i241925_1_).func_76065_j());
-+         }
++      // CraftBukkit start
++      this.ticksPerAnimalSpawns = this.getCBServer().getTicksPerAnimalSpawns();
++      this.ticksPerMonsterSpawns = this.getCBServer().getTicksPerMonsterSpawns();
++      this.ticksPerWaterSpawns = this.getCBServer().getTicksPerWaterSpawns();
++      this.ticksPerWaterAmbientSpawns = this.getCBServer().getTicksPerWaterAmbientSpawns();
++      this.ticksPerAmbientSpawns = this.getCBServer().getTicksPerAmbientSpawns();
++      // CraftBukkit end
++      if (generator == null && p_i241925_1_ != null) { // Mohist - Fix Advanced Rocketry assembler crash
++         generator = getCBServer().getGenerator(((IServerWorldInfo) p_i241925_1_).func_76065_j());
 +      }
++
 +      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment.get(getTypeKey());
++         environment = ForgeInjectBukkit.environment.getOrDefault(p_i241925_3_, org.bukkit.World.Environment.CUSTOM);
 +      }
++      func_175723_af().world = this; // Mohist move form ServerWorld
        this.field_72984_F = p_i241925_4_;
        this.field_72986_A = p_i241925_1_;
        this.field_234921_x_ = p_i241925_3_;
-@@ -116,6 +_,12 @@
-       this.field_217407_c = Thread.currentThread();
-       this.field_226689_w_ = new BiomeManager(this, p_i241925_7_, p_i241925_3_.func_227176_e_());
-       this.field_234916_c_ = p_i241925_6_;
-+      // Mohist start - Fix Advanced Rocketry assembler crash
-+      if (!disableBukkit && p_i241925_1_ != null) {
-+         this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
-+         this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
-+      }
-+      // Mohist end
-    }
+@@ -102,11 +_,11 @@
+       if (p_i241925_3_.func_242724_f() != 1.0D) {
+          this.field_175728_M = new WorldBorder() {
+             public double func_230316_a_() {
+-               return super.func_230316_a_() / p_i241925_3_.func_242724_f();
++               return super.func_230316_a_(); // CraftBukkit
+             }
  
-    public boolean func_201670_d() {
+             public double func_230317_b_() {
+-               return super.func_230317_b_() / p_i241925_3_.func_242724_f();
++               return super.func_230317_b_(); // CraftBukkit
+             }
+          };
+       } else {
 @@ -155,6 +_,11 @@
        return this.func_212866_a_(p_175726_1_.func_177958_n() >> 4, p_175726_1_.func_177952_p() >> 4);
     }
@@ -344,7 +338,7 @@
  
           try {
 +            // CraftBukkit start
-+            CraftWorld world = this.getWorld();
++            CraftWorld world = ((ServerWorld) this).getWorld();
 +            if (world != null && !AsyncCatcher.catchAsync()) {
 +               BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(p_190524_1_.func_177958_n(), p_190524_1_.func_177956_o(), p_190524_1_.func_177952_p()), CraftBlockData.fromData(blockstate), world.getBlockAt(p_190524_3_.func_177958_n(), p_190524_3_.func_177956_o(), p_190524_3_.func_177952_p()));
 +               this.getCBServer().getPluginManager().callEvent(event);
@@ -424,44 +418,22 @@
           this.field_147484_a.addAll(p_147448_1_);
        } else {
           for(TileEntity tileentity : p_147448_1_) {
-@@ -425,23 +_,40 @@
+@@ -425,13 +_,13 @@
     public void func_217391_K() {
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("blockEntities");
 +      this.field_147481_N = true;// Forge: Move above remove to prevent CMEs
        if (!this.field_147483_b.isEmpty()) {
-+         this.field_147483_b.forEach(e -> e.onChunkUnloaded());
           this.field_175730_i.removeAll(this.field_147483_b);
--         this.field_147482_g.removeAll(this.field_147483_b);
-+         // Paper start - Use alternate implementation with faster contains
-+         java.util.Set<TileEntity> toRemove = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
-+         toRemove.addAll(field_147483_b);
-+         this.field_147482_g.removeAll(toRemove);
-+         // Paper end
+          this.field_147482_g.removeAll(this.field_147483_b);
           this.field_147483_b.clear();
        }
  
 -      this.field_147481_N = true;
--      Iterator<TileEntity> iterator = this.field_175730_i.iterator();
--
--      while(iterator.hasNext()) {
--         TileEntity tileentity = iterator.next();
-+      // Spigot start
-+      int tilesThisCycle = 0;
-+      for (tileLimiter.initTick();
-+          tilesThisCycle <  field_175730_i.size() && (tilesThisCycle % 10 != 0 || tileLimiter.shouldContinue());
-+          tileTickPosition++, tilesThisCycle++) {
-+         tileTickPosition = (tileTickPosition < field_175730_i.size()) ? tileTickPosition : 0;
-+         TileEntity tileentity = (TileEntity) this.field_175730_i.get(tileTickPosition);
-+         // Spigot start
-+         if (tileentity == null) {
-+            getCBServer().getLogger().severe("Spigot has detected a null entity and has removed it, preventing a crash");
-+            tilesThisCycle--;
-+            this.field_175730_i.remove(tileTickPosition--);
-+            continue;
-+         }
-+         // Spigot end
-          if (!tileentity.func_145837_r() && tileentity.func_145830_o()) {
+       Iterator<TileEntity> iterator = this.field_175730_i.iterator();
+ 
+       while(iterator.hasNext()) {
+@@ -440,8 +_,9 @@
              BlockPos blockpos = tileentity.func_174877_v();
              if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
                 try {
@@ -472,7 +444,7 @@
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();
-@@ -454,16 +_,30 @@
+@@ -454,16 +_,29 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory);
@@ -492,7 +464,6 @@
           if (tileentity.func_145837_r()) {
 -            iterator.remove();
 +            // Spigot start
-+            tilesThisCycle--;
 +            this.field_175730_i.remove(tileTickPosition--);
 +            // Spigot end
              this.field_147482_g.remove(tileentity);
@@ -763,7 +734,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1024,7 +_,46 @@
+@@ -1024,7 +_,27 @@
        return this.field_226689_w_;
     }
  
@@ -781,7 +752,7 @@
 +
     public final boolean func_234925_Z_() {
        return this.field_234916_c_;
-+   }
+    }
 +
 +   // CraftBukkit - start
 +   public void notifyAndUpdatePhysics(BlockPos position, Chunk o, BlockState oldBlock, BlockState newBlock, BlockState actualBlock, int flag, int i) {
@@ -789,24 +760,5 @@
 +      markAndNotifyBlock(position, o, oldBlock, newBlock, flag, i);
 +      // Mohist - end
 +   }
-+    // CraftBukkit - stop
-+
-+   public CraftWorld getWorld(){
-+      if (this.craftWorld == null) {
-+         if (generator == null) {
-+            generator = getCBServer().getGenerator(((IServerWorldInfo) this.func_72912_H()).func_76065_j());
-+            if (generator != null && this instanceof ServerWorld) {
-+               ServerWorld serverWorld = (ServerWorld) this;
-+               CustomChunkGenerator gen = new CustomChunkGenerator(serverWorld, serverWorld.func_72863_F().func_201711_g(), generator);
-+               serverWorld.func_72863_F().setGenerator(gen);
-+            }
-+         }
-+         if (environment == null) {
-+            environment = ForgeInjectBukkit.environment.get(this.typeKey);
-+         }
-+         this.craftWorld = new CraftWorld((ServerWorld) this, generator, environment);
-+         getCBServer().addWorld(this.craftWorld);
-+      }
-+      return this.craftWorld;
-    }
++   // CraftBukkit - stop
  }

@@ -2640,6 +2640,30 @@ public interface World extends PluginMessageRecipient, Metadatable {
     int getViewDistance();
     // Spigot end
 
+    // Mohist start
+    /**
+     * Returns whether the current world was created by a plugin.
+     *
+     * @return whether the current world was created by a plugin
+     */
+    boolean isBukkit();
+    void setBukkit(boolean b);
+
+    /**
+     * Returns whether the current world was created by a mod.
+     *
+     * @return whether the current world was created by a mod
+     */
+    boolean isMods();
+
+    /**
+     * Returns the mod source for this world.
+     *
+     * @return the mod source for this world
+     */
+    String getModid();
+    // Mohist end
+
     // Spigot start
     public class Spigot {
 
