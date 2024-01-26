@@ -933,8 +933,20 @@ public class CraftEventFactory {
                 cause = DamageCause.DRAGON_BREATH;
             } else if (source == DamageSource.MAGIC) {
                 cause = DamageCause.MAGIC;
+            } else if (source == DamageSource.CACTUS) {
+                cause = DamageCause.CONTACT;
+            } else if (source == DamageSource.IN_FIRE) {
+                cause = DamageCause.FIRE;
+            } else if (source == DamageSource.ON_FIRE) {
+                cause = DamageCause.FIRE_TICK;
+            } else if (source == DamageSource.LAVA) {
+                cause = DamageCause.LAVA;
+            } else if (source == MELTING) {
+                cause = DamageCause.MELTING;
+            } else if (source == POISON) {
+                cause = DamageCause.POISON;
             } else {
-                throw new IllegalStateException(String.format("Unhandled damage of %s by %s from %s", entity, damager.getHandle(), source.msgId));
+                cause = DamageCause.CUSTOM;
             }
             EntityDamageEvent event = new EntityDamageByEntityEvent(damager, entity.getBukkitEntity(), cause, modifiers, modifierFunctions);
             event.setCancelled(cancelled);
