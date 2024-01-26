@@ -9,3 +9,51 @@
     protected final ContainerData containerData = new ContainerData() {
        private final int[] slotStates = new int[9];
        private int triggered = 0;
+@@ -51,6 +_,47 @@
+          return 10;
+       }
+    };
++   // CraftBukkit start - add fields and methods
++   public java.util.List<org.bukkit.entity.HumanEntity> transaction = new java.util.ArrayList<>();
++   private int maxStack = 1;
++
++   @Override
++   public java.util.List<ItemStack> getContents() {
++       return this.items;
++   }
++
++   @Override
++   public void onOpen(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++       transaction.add(who);
++   }
++
++   @Override
++   public void onClose(org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity who) {
++       transaction.remove(who);
++   }
++
++   @Override
++   public java.util.List<org.bukkit.entity.HumanEntity> getViewers() {
++       return transaction;
++   }
++
++   @Override
++   public int getMaxStackSize() {
++       return maxStack;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++       maxStack = size;
++   }
++
++   @Override
++   public org.bukkit.Location getLocation() {
++       if (level == null) return null;
++       return new org.bukkit.Location(level.getWorld(), worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
++   }
++   // CraftBukkit end
++
+ 
+    public CrafterBlockEntity(BlockPos p_309972_, BlockState p_313058_) {
+       super(BlockEntityType.CRAFTER, p_309972_, p_313058_);

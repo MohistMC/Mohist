@@ -147,7 +147,7 @@
 +
 +      // CraftBukkit start - MC-109346: Fix for nonsensical head yaw
 +      if (this.entity instanceof ServerPlayer) {
-+         p_289563_.accept(new ClientboundRotateHeadPacket(this.entity, (byte) Math.floor(this.entity.getYHeadRot() * 256.0F / 360.0F)));
++         p_289563_.accept(new ClientboundRotateHeadPacket(this.entity, (byte) Mth.floor(this.entity.getYHeadRot() * 256.0F / 360.0F)));
 +      }
 +      // CraftBukkit end
 +

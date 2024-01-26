@@ -85,7 +85,7 @@
 +            // Spigot start
 +            authenticatorPool.execute(() -> {
 +               try {
-+                  GameProfile gameprofile0 = createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername);
++                  GameProfile gameprofile0 = UUIDUtil.createOfflineProfile(ServerLoginPacketListenerImpl.this.requestedUsername);
 +                  ServerLoginPacketListenerImpl.this.callPlayerPreLoginEvents(gameprofile0);
 +                  LOGGER.info("UUID of player {} is {}", gameprofile0.getName(), gameprofile0.getId());
 +                  ServerLoginPacketListenerImpl.this.startClientVerification(gameprofile0);
@@ -102,7 +102,7 @@
     private void verifyLoginAndFinishConnectionSetup(GameProfile p_299507_) {
        PlayerList playerlist = this.server.getPlayerList();
        Component component = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), p_299507_);
-+      this.player = playerlist.entity.get(); // Mohist
++      this.player = playerlist.entity.getAndSet(null); // Mohist
        if (component != null) {
           this.disconnect(component);
        } else {
@@ -111,7 +111,7 @@
           }
  
 -         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_);
-+         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_, this.player);
++         boolean flag = playerlist.disconnectAllPlayersWithProfile(p_299507_, this.player); // CraftBukkit - add player reference
           if (flag) {
              this.state = ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT;
           } else {
@@ -261,7 +261,7 @@
        Validate.validState(this.state == ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING, "Unexpected login acknowledgement packet");
        CommonListenerCookie commonlistenercookie = CommonListenerCookie.createInitial(Objects.requireNonNull(this.authenticatedProfile));
 -      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie);
-+      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie, this.player);
++      ServerConfigurationPacketListenerImpl serverconfigurationpacketlistenerimpl = new ServerConfigurationPacketListenerImpl(this.server, this.connection, commonlistenercookie, this.player); // CraftBukkit
        this.connection.setListener(serverconfigurationpacketlistenerimpl);
        serverconfigurationpacketlistenerimpl.startConfiguration();
        this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;

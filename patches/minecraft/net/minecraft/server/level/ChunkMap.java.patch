@@ -205,14 +205,6 @@
  
     private boolean skipPlayer(ServerPlayer p_140330_) {
        return p_140330_.isSpectator() && !this.level.getGameRules().getBoolean(GameRules.RULE_SPECTATORSGENERATECHUNKS);
-@@ -1002,6 +_,7 @@
-    void updatePlayerStatus(ServerPlayer p_140193_, boolean p_140194_) {
-       boolean flag = this.skipPlayer(p_140193_);
-       boolean flag1 = this.playerMap.ignoredOrUnknown(p_140193_);
-+      int i = SectionPos.blockToSectionCoord(p_140193_.getBlockX());
-       if (p_140194_) {
-          this.playerMap.addPlayer(p_140193_, flag);
-          this.updatePlayerPos(p_140193_);
 @@ -1118,9 +_,10 @@
     }
  
@@ -225,6 +217,15 @@
           if (i != 0) {
              int j = entitytype.updateInterval();
              if (this.entityMap.containsKey(p_140200_.getId())) {
+@@ -1259,7 +_,7 @@
+       });
+    }
+ 
+-   class DistanceManager extends net.minecraft.server.level.DistanceManager {
++   public class DistanceManager extends net.minecraft.server.level.DistanceManager {
+       protected DistanceManager(Executor p_140459_, Executor p_140460_) {
+          super(p_140459_, p_140460_);
+       }
 @@ -1287,7 +_,7 @@
        public final Set<ServerPlayerConnection> seenBy = Sets.newIdentityHashSet();
  

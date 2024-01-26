@@ -90,7 +90,7 @@ public class ForgePacketHandler {
         ctx.setPacketHandled(true);
         LOGGER.debug(MARKER, "Received {} connection with modlist [{}]", ctx.isClientSide() ? "server" : "client", list.mods().keySet().stream().sorted().collect(Collectors.joining(", ")));
         // Mohist start
-        PlayerModsCheck.init(ctx.getConnection().player, "[%s]".formatted(list.mods().keySet().stream().sorted().collect(Collectors.joining(","))));
+        // PlayerModsCheck.init(ctx.getConnection().player, "[%s]".formatted(list.mods().keySet().stream().sorted().collect(Collectors.joining(","))));
         // Mohist end
         var nctx = NetworkContext.get(ctx.getConnection());
         nctx.modList.clear();

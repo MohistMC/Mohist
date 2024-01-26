@@ -951,11 +951,11 @@
        this.chatMessageChain.close();
 -      this.server.invalidateStatus();
 -      this.server.getPlayerList().broadcastSystemMessage(Component.translatable("multiplayer.player.left", this.player.getDisplayName()).withStyle(ChatFormatting.YELLOW), false);
-+	  this.server.invalidateStatus();
++	  // this.server.invalidateStatus();
        this.player.disconnect();
        this.server.getPlayerList().remove(this.player);
 +      String quitMessage = this.server.getPlayerList().quitMessage;
-+      if ((quitMessage != null) && (quitMessage.length() > 0)) {
++      if (!quitMessage.isEmpty()) {
 +         this.server.getPlayerList().broadcastMessage(CraftChatMessage.fromString(quitMessage));
 +      }
 +      // CraftBukkit end
@@ -1745,10 +1745,11 @@
        this.player.resetLastActionTime();
        ServerLevel serverlevel = this.player.serverLevel();
        BlockPos blockpos = p_9923_.getPos();
-@@ -1600,6 +_,17 @@
+@@ -1599,7 +_,17 @@
+ 
     public void handlePlayerAbilities(ServerboundPlayerAbilitiesPacket p_9887_) {
        PacketUtils.ensureRunningOnSameThread(p_9887_, this, this.player.serverLevel());
-       this.player.getAbilities().flying = p_9887_.isFlying() && this.player.getAbilities().mayfly;
+-      this.player.getAbilities().flying = p_9887_.isFlying() && this.player.getAbilities().mayfly;
 +      // CraftBukkit start
 +      if (this.player.getAbilities().mayfly && this.player.getAbilities().flying != p_9887_.isFlying()) {
 +         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(this.player.getBukkitEntity(), p_9887_.isFlying());
@@ -1763,14 +1764,6 @@
     }
  
     public void handleClientInformation(ServerboundClientInformationPacket p_298714_) {
-@@ -1622,6 +_,7 @@
-    }
- 
-    public void handleChatSessionUpdate(ServerboundChatSessionUpdatePacket p_253950_) {
-+      if (true) return;
-       PacketUtils.ensureRunningOnSameThread(p_253950_, this, this.player.serverLevel());
-       RemoteChatSession.Data remotechatsession$data = p_253950_.chatSession();
-       ProfilePublicKey.Data profilepublickey$data = this.chatSession != null ? this.chatSession.profilePublicKey().data() : null;
 @@ -1651,7 +_,7 @@
        if (!this.waitingForSwitchToConfig) {
           throw new IllegalStateException("Client acknowledged config, but none was requested");

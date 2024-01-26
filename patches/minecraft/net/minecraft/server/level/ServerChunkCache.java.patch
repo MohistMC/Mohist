@@ -84,10 +84,11 @@
     }
  
     public boolean hasChunk(int p_8429_, int p_8430_) {
-@@ -295,6 +_,15 @@
+@@ -295,7 +_,15 @@
     }
  
     public void close() throws IOException {
+-      this.save(true);
 +      // CraftBukkit start
 +      close(true);
 +   }
@@ -97,9 +98,9 @@
 +         this.save(true);
 +      }
 +      // CraftBukkit end
-       this.save(true);
        this.lightEngine.close();
        this.chunkMap.close();
+    }
 @@ -347,7 +_,7 @@
              for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
                 LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;

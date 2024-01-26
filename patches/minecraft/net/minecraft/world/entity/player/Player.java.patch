@@ -298,31 +298,22 @@
        if (this.isInvulnerableTo(p_36154_)) {
           return false;
        } else if (this.abilities.invulnerable && !p_36154_.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-@@ -800,32 +_,38 @@
-          if (this.isDeadOrDying()) {
+@@ -801,12 +_,12 @@
              return false;
           } else {
--            if (!this.level().isClientSide) {
+             if (!this.level().isClientSide) {
 -               this.removeEntitiesOnShoulder();
-+            if (!this.level.isClientSide) {
 +               // this.removeEntitiesOnShoulder(); // CraftBukkit - moved doen
              }
  
              if (p_36154_.scalesWithDifficulty()) {
--               if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
+                if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
 -                  p_36155_ = 0.0F;
-+               if (this.level.getDifficulty() == Difficulty.PEACEFUL) {
 +                  return false;
                 }
  
--               if (this.level().getDifficulty() == Difficulty.EASY) {
-+               if (this.level.getDifficulty() == Difficulty.EASY) {
-                   p_36155_ = Math.min(p_36155_ / 2.0F + 1.0F, p_36155_);
-                }
- 
--               if (this.level().getDifficulty() == Difficulty.HARD) {
-+               if (this.level.getDifficulty() == Difficulty.HARD) {
-                   p_36155_ = p_36155_ * 3.0F / 2.0F;
+                if (this.level().getDifficulty() == Difficulty.EASY) {
+@@ -818,14 +_,20 @@
                 }
              }
  
@@ -365,8 +356,8 @@
 -         return !team.isAlliedTo(team1) ? true : team.isAllowFriendlyFire();
 -      }
 +         // This should never be called, but is implemented anyway
-+         org.bukkit.OfflinePlayer thisPlayer = p_36169_.level.getCraftServer().getOfflinePlayer(p_36169_.getScoreboardName());
-+         team = p_36169_.level.getCraftServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
++         org.bukkit.OfflinePlayer thisPlayer = p_36169_.level().getCraftServer().getOfflinePlayer(p_36169_.getScoreboardName());
++         team = p_36169_.level().getCraftServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
 +         if (team == null || team.allowFriendlyFire()) {
 +            return true;
 +         }
@@ -375,7 +366,7 @@
 +      if (this instanceof ServerPlayer) {
 +         return !team.hasPlayer(((ServerPlayer) this).getBukkitEntity());
 +      }
-+      return !team.hasPlayer(this.level.getCraftServer().getOfflinePlayer(this.getScoreboardName()));
++      return !team.hasPlayer(this.level().getCraftServer().getOfflinePlayer(this.getScoreboardName()));
 +      // CraftBukkit end
     }
  

@@ -105,6 +105,15 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
        thread.start();
+@@ -115,7 +_,7 @@
+       this.setMotd(dedicatedserverproperties.motd);
+       super.setPlayerIdleTimeout(dedicatedserverproperties.playerIdleTimeout.get());
+       this.setEnforceWhitelist(dedicatedserverproperties.enforceWhitelist);
+-      this.worldData.setGameType(dedicatedserverproperties.gamemode);
++      // this.worldData.setGameType(dedicatedserverproperties.gamemode); // CraftBukkit - moved to world loading
+       LOGGER.info("Default game type: {}", (Object)dedicatedserverproperties.gamemode);
+       InetAddress inetaddress = null;
+       if (!this.getLocalIp().isEmpty()) {
 @@ -153,14 +_,29 @@
           return false;
        } else {

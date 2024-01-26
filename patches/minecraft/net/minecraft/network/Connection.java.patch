@@ -9,7 +9,7 @@
  import com.mojang.logging.LogUtils;
  import io.netty.bootstrap.Bootstrap;
  import io.netty.channel.Channel;
-@@ -102,15 +_,29 @@
+@@ -102,15 +_,28 @@
     private volatile Component delayedDisconnect;
     @Nullable
     BandwidthDebugMonitor bandwidthDebugMonitor;
@@ -21,7 +21,6 @@
 +   public com.mojang.authlib.properties.Property[] spoofedProfile;
 +   public boolean preparing = true;
 +   // Spigot End
-+   public GameProfile player;
  
     public Connection(PacketFlow p_129482_) {
        this.receiving = p_129482_;
@@ -39,6 +38,14 @@
        if (this.delayedDisconnect != null) {
           this.disconnect(this.delayedDisconnect);
        }
+@@ -159,6 +_,7 @@
+ 
+          }
+       }
++      if (net.minecraft.server.MinecraftServer.getServer().isDebugging()) p_129534_.printStackTrace(); // Spigot
+    }
+ 
+    protected void channelRead0(ChannelHandlerContext p_129487_, Packet<?> p_129488_) {
 @@ -169,6 +_,7 @@
           } else {
              if (packetlistener.shouldHandleMessage(p_129488_)) {
@@ -65,7 +72,7 @@
        if (p_243290_ != null) {
           channelfuture.addListener((p_243167_) -> {
              if (p_243167_.isSuccess()) {
-@@ -395,7 +_,7 @@
+@@ -395,11 +_,14 @@
        if (this.address == null) {
           return "local";
        } else {
@@ -74,25 +81,13 @@
        }
     }
  
-@@ -403,11 +_,16 @@
-       if (this.channel == null) {
-          this.delayedDisconnect = p_129508_;
-       }
--
+    public void disconnect(Component p_129508_) {
 +      // Spigot Start
 +      this.preparing = false;
 +      // Spigot End
-       if (this.isConnected()) {
--         this.channel.close().awaitUninterruptibly();
-+         this.channel.close(); // We can't wait as this may be called from an event loop.
-          this.disconnectedReason = p_129508_;
+       if (this.channel == null) {
+          this.delayedDisconnect = p_129508_;
        }
-+      if (player != null && PlayerAPI.modlist.containsKey(player.getId())) {
-+         PlayerAPI.modlist.remove(player.getId());
-+      }
- 
-    }
- 
 @@ -435,6 +_,8 @@
     }
  

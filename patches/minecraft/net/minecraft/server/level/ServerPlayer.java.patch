@@ -86,6 +86,15 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
+@@ -187,7 +_,7 @@
+    private int levitationStartTime;
+    private boolean disconnected;
+    private int requestedViewDistance = 2;
+-   private String language = "en_us";
++   public String language = "en_us";
+    @Nullable
+    private Vec3 startingToFallPosition;
+    @Nullable
 @@ -250,6 +_,21 @@
     public int containerCounter;
     public boolean wonGame;
@@ -409,7 +418,7 @@
  
     private boolean isPvpAllowed() {
 -      return this.server.isPvpAllowed();
-+      return this.level.pvpMode;
++      return this.level().pvpMode;
     }
  
     @Nullable
@@ -698,13 +707,13 @@
 +
 +      org.bukkit.block.Block bed;
 +      if (bedPosition != null) {
-+         bed = this.level.getWorld().getBlockAt(bedPosition.getX(), bedPosition.getY(), bedPosition.getZ());
++         bed = this.level().getWorld().getBlockAt(bedPosition.getX(), bedPosition.getY(), bedPosition.getZ());
 +      } else {
-+         bed = this.level.getWorld().getBlockAt(player.getLocation());
++         bed = this.level().getWorld().getBlockAt(player.getLocation());
 +      }
 +
 +      PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
-+      this.level.getCraftServer().getPluginManager().callEvent(event);
++      this.level().getCraftServer().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return;
 +      }
@@ -870,7 +879,15 @@
           this.setScore(p_9016_.getScore());
        }
  
-@@ -1233,6 +_,15 @@
+@@ -1226,13 +_,22 @@
+       this.lastSentExp = -1;
+       this.lastSentHealth = -1.0F;
+       this.lastSentFood = -1;
+-      this.recipeBook.copyOverData(p_9016_.recipeBook);
++      // this.recipeBook.copyOverData(p_9016_.recipeBook); // CraftBukkit
+       this.seenCredits = p_9016_.seenCredits;
+       this.enteredNetherPosition = p_9016_.enteredNetherPosition;
+       this.chunkTrackingView = p_9016_.chunkTrackingView;
        this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
        this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
        this.setLastDeathLocation(p_9016_.getLastDeathLocation());
@@ -1169,10 +1186,10 @@
 +   public long getPlayerTime() {
 +      if (this.relativeTime) {
 +         // Adds timeOffset to the current server time.
-+         return this.level.getDayTime() + this.timeOffset;
++         return this.level().getDayTime() + this.timeOffset;
 +      } else {
 +         // Adds timeOffset to the beginning of this day.
-+         return this.level.getDayTime() - (this.level.getDayTime() % 24000) + this.timeOffset;
++         return this.level().getDayTime() - (this.level().getDayTime() % 24000) + this.timeOffset;
 +      }
 +   }
 +

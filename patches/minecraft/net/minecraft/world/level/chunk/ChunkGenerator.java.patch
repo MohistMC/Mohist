@@ -10,7 +10,8 @@
  
  public abstract class ChunkGenerator {
     public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
-    protected final BiomeSource biomeSource;
+-   protected final BiomeSource biomeSource;
++   protected BiomeSource biomeSource;
     private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
 -   private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
 +   public final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;

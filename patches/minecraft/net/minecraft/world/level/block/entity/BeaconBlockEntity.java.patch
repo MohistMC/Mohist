@@ -42,6 +42,23 @@
              if (p_155111_.checkingBeamSections.size() <= 1) {
                 beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(afloat);
                 p_155111_.checkingBeamSections.add(beaconblockentity$beaconbeamsection);
+@@ -280,7 +_,7 @@
+    private static MobEffect loadEffect(CompoundTag p_298536_, String p_301201_) {
+       if (p_298536_.contains(p_301201_, 8)) {
+          ResourceLocation resourcelocation = ResourceLocation.tryParse(p_298536_.getString(p_301201_));
+-         return filterEffect(BuiltInRegistries.MOB_EFFECT.get(resourcelocation));
++         return (MobEffect) BuiltInRegistries.MOB_EFFECT.get(resourcelocation); // CraftBukkit - persist manually set non-default beacon effects (SPIGOT-3598)
+       } else {
+          return null;
+       }
+@@ -290,6 +_,7 @@
+       super.load(p_155113_);
+       this.primaryPower = loadEffect(p_155113_, "primary_effect");
+       this.secondaryPower = loadEffect(p_155113_, "secondary_effect");
++      this.levels = p_155113_.getInt("Levels"); // CraftBukkit - SPIGOT-5053, use where available
+       if (p_155113_.contains("CustomName", 8)) {
+          this.name = Component.Serializer.fromJson(p_155113_.getString("CustomName"));
+       }
 @@ -357,4 +_,66 @@
           return this.height;
        }

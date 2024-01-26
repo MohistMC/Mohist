@@ -217,14 +217,18 @@
        if (flag1) {
           this.resetEmptyTime();
        }
-@@ -326,6 +_,7 @@
+@@ -326,9 +_,10 @@
              profilerfiller.pop();
           }
  
 +         org.spigotmc.ActivationRange.activateEntities(this); // Spigot
           this.entityTickList.forEach((p_308944_) -> {
              if (!p_308944_.isRemoved()) {
-                if (this.shouldDiscardEntity(p_308944_)) {
+-               if (this.shouldDiscardEntity(p_308944_)) {
++               if (false && this.shouldDiscardEntity(p_308944_)) { // CraftBukkit - We prevent spawning in general, so this butchering is not needed
+                   p_308944_.discard();
+                } else if (!tickratemanager.isEntityFrozen(p_308944_)) {
+                   profilerfiller.push("checkDespawn");
 @@ -344,6 +_,7 @@
                          p_308944_.stopRiding();
                       }

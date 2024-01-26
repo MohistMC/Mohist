@@ -64,7 +64,7 @@ tasks.named('jar', Jar).configure {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs << '-Xlint:unchecked'
+    options.compilerArgs << '-Xlint:-unchecked'
 }
 
 tasks.register('writeForgeVersionJson') {
