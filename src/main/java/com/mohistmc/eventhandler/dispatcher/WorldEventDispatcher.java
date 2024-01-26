@@ -23,23 +23,9 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.event.world.WorldInitEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
 public class WorldEventDispatcher {
-
-    //For WorldLoadEvent
-    @SubscribeEvent(receiveCanceled = true)
-    public void onWorldLoadEvent(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerWorld) {
-            ServerWorld handle = (ServerWorld) event.getWorld();
-            CraftWorld craftWorld = handle.getWorld();
-            Bukkit.getPluginManager().callEvent(new WorldLoadEvent(craftWorld));
-            Bukkit.getPluginManager().callEvent(new WorldInitEvent(craftWorld));
-        }
-    }
 
     //For WorldSaveEvent
     @SubscribeEvent(receiveCanceled = true)
