@@ -38,11 +38,10 @@ import static com.mohistmc.util.EulaUtil.writeInfos;
 public class MohistMCStart {
 
     public static List<String> mainArgs = new ArrayList<>();
-    public static float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
     public static i18n i18n;
 
     public static String getVersion() {
-        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "unknown";
+        return (MohistMCStart.class.getPackage().getImplementationVersion() != null) ? MohistMCStart.class.getPackage().getImplementationVersion() : "1.19.2";
     }
 
     public static void main(String[] args) throws Exception {
@@ -53,14 +52,19 @@ public class MohistMCStart {
         MohistConfigUtil.i18n();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("show_logo", true)) {
-            System.out.println("\n" + "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" + "\n" +
-                    "                                      " + i18n.as("mohist.launch.welcomemessage") + " - " + getVersion() + ", Java " + javaVersion);
+            String test = """
+
+                     ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
+                     ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝
+                     ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║
+                     ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║
+                     ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
+                     ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
+                                        
+                    
+                    %s - %s, Java(%s) %s
+                    """;
+            System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"));
         }
 
 
