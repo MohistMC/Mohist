@@ -1,34 +1,35 @@
-package com.mohistmc.entity;
+package com.mohistmc.bukkit.entity;
 
 import com.mohistmc.api.EntityAPI;
 import java.util.Objects;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.entity.projectile.Projectile;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftProjectile;
 import org.bukkit.entity.EntityType;
 
-public class MohistModsThrowableEntity extends CraftProjectile {
-
+public class MohistModsProjectileEntity extends CraftProjectile {
     public String entityName;
 
-    public MohistModsThrowableEntity(CraftServer server, ThrowableProjectile entity) {
+    public MohistModsProjectileEntity(CraftServer server, Projectile entity) {
         super(server, entity);
         this.entityName = EntityAPI.entityName(entity);
     }
 
     @Override
-    public ThrowableProjectile getHandle() {
-        return (ThrowableProjectile) entity;
+    public Projectile getHandle() {
+        return (Projectile) this.entity;
     }
+
 
     @Override
     public EntityType getType() {
         EntityType type = EntityType.fromName(this.entityName);
-        return Objects.requireNonNullElse(type, EntityType.UNKNOWN);
+        return Objects.requireNonNullElse(type, EntityType.FORGE_MOD_PROJECTILE);
     }
 
     @Override
     public String toString() {
-        return "MohistModsThrowableEntity{" + entityName + '}';
+        return "MohistModsProjectileEntity{" + entityName + '}';
     }
 }
+

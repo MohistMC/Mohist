@@ -1,4 +1,4 @@
-package com.mohistmc.entity;
+package com.mohistmc.bukkit.entity;
 
 import com.mohistmc.api.EntityAPI;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package com.mohistmc.potion;
+package com.mohistmc.bukkit.potion;
 
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.craftbukkit.v1_18_R2.potion.CraftPotionEffectType;

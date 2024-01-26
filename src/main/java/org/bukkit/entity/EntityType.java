@@ -4,7 +4,13 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mohistmc.entity.*;
+import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
+import com.mohistmc.bukkit.entity.MohistModsAnimals;
+import com.mohistmc.bukkit.entity.MohistModsChestHorse;
+import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
+import com.mohistmc.bukkit.entity.MohistModsMonster;
+import com.mohistmc.bukkit.entity.MohistModsProjectileEntity;
+import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;

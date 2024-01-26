@@ -8,7 +8,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.mohistmc.entity.*;
+import com.mohistmc.bukkit.entity.MohistModsAbstractHorse;
+import com.mohistmc.bukkit.entity.MohistModsAnimals;
+import com.mohistmc.bukkit.entity.MohistModsChestHorse;
+import com.mohistmc.bukkit.entity.MohistModsEntity;
+import com.mohistmc.bukkit.entity.MohistModsMinecart;
+import com.mohistmc.bukkit.entity.MohistModsMinecartContainer;
+import com.mohistmc.bukkit.entity.MohistModsMonster;
+import com.mohistmc.bukkit.entity.MohistModsTameableEntity;
+import com.mohistmc.bukkit.entity.MohistModsThrowableEntity;
+import com.mohistmc.bukkit.entity.MohistModsThrowableProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +47,6 @@ import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
@@ -238,7 +246,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                 else { return new CraftAmbient(server, (net.minecraft.world.entity.ambient.AmbientCreature) entity); }
             }
             else if (entity instanceof net.minecraft.world.entity.decoration.ArmorStand) { return new CraftArmorStand(server, (net.minecraft.world.entity.decoration.ArmorStand) entity); }
-            else { return new MohistModsLivingEntity(server, (LivingEntity) entity); }
+            else { return new CraftLivingEntity(server, (LivingEntity) entity); }
         }
         else if (entity instanceof net.minecraft.world.entity.boss.EnderDragonPart) {
             net.minecraft.world.entity.boss.EnderDragonPart part = (net.minecraft.world.entity.boss.EnderDragonPart) entity;
@@ -301,7 +309,6 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.world.entity.projectile.EvokerFangs) { return new CraftEvokerFangs(server, (net.minecraft.world.entity.projectile.EvokerFangs) entity); }
         else if (entity instanceof net.minecraft.world.entity.projectile.LlamaSpit) { return new CraftLlamaSpit(server, (net.minecraft.world.entity.projectile.LlamaSpit) entity); }
         else if (entity instanceof Marker) { return new CraftMarker(server, (Marker) entity); }
-        else if (entity instanceof LivingEntity livingEntity) {return new MohistModsLivingEntity(server, livingEntity); }
         return new MohistModsEntity(server, entity);
     }
 
