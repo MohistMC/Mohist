@@ -216,12 +216,13 @@ public class ForgeInjectBukkit {
         int i = World.Environment.values().length;
         for (Map.Entry<RegistryKey<Dimension>, Dimension> entry : registry.entrySet()) {
             RegistryKey<Dimension> key = entry.getKey();
-            World.Environment environment1 = environment.get(key);
+            DimensionType dimensionType = entry.getValue().type();
+            World.Environment environment1 = environment.get(dimensionType);
             if (environment1 == null) {
                 String name = normalizeName(key.location().toString());
                 int id = i - 1;
                 environment1 = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
-                environment.put(entry.getValue().type(), environment1);
+                environment.put(dimensionType, environment1);
                 environment0.put(environment1, key);
                 MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
