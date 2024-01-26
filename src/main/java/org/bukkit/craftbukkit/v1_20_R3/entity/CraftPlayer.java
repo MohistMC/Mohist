@@ -1014,6 +1014,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public Location getBedSpawnLocation() {
+        return getRespawnLocation();
+    }
+
+    @Override
+    public Location getRespawnLocation() {
         ServerLevel world = getHandle().server.getLevel(getHandle().getRespawnDimension());
         BlockPos bed = getHandle().getRespawnPosition();
 
@@ -1033,7 +1038,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public void setRespawnLocation(Location location) {
+        setRespawnLocation(location, false);
+    }
+
+    @Override
     public void setBedSpawnLocation(Location location, boolean override) {
+        setRespawnLocation(location, override);
+    }
+
+    @Override
+    public void setRespawnLocation(Location location, boolean override) {
         if (location == null) {
             getHandle().setRespawnPosition(null, null, 0.0F, override, false, PlayerSpawnChangeEvent.Cause.PLUGIN);
         } else {

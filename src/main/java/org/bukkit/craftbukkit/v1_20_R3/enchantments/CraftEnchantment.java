@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_20_R3.enchantments;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
@@ -9,28 +8,19 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R3.util.Handleable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftEnchantment extends Enchantment {
+public class CraftEnchantment extends Enchantment implements Handleable<net.minecraft.world.item.enchantment.Enchantment> {
     public static Enchantment minecraftToBukkit(net.minecraft.world.item.enchantment.Enchantment minecraft) {
-        Preconditions.checkArgument(minecraft != null);
-
-        net.minecraft.core.Registry<net.minecraft.world.item.enchantment.Enchantment> registry = CraftRegistry.getMinecraftRegistry(Registries.ENCHANTMENT);
-        Enchantment bukkit = Registry.ENCHANTMENT.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
-
-        Preconditions.checkArgument(bukkit != null);
-
-        return bukkit;
+        return CraftRegistry.minecraftToBukkit(minecraft, Registries.ENCHANTMENT, Registry.ENCHANTMENT);
     }
 
     public static net.minecraft.world.item.enchantment.Enchantment bukkitToMinecraft(Enchantment bukkit) {
-        Preconditions.checkArgument(bukkit != null);
-
-        return ((CraftEnchantment) bukkit).getHandle();
+        return CraftRegistry.bukkitToMinecraft(bukkit);
     }
 
     private final NamespacedKey key;
@@ -43,6 +33,7 @@ public class CraftEnchantment extends Enchantment {
         this.id = BuiltInRegistries.ENCHANTMENT.getId(handle);
     }
 
+    @Override
     public net.minecraft.world.item.enchantment.Enchantment getHandle() {
         return handle;
     }

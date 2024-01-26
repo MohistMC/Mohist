@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.players.UserWhiteListEntry;
 import net.minecraft.stats.ServerStatsCounter;
@@ -270,7 +271,37 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     @Override
+    public Location getLocation() {
+        CompoundTag data = getData();
+        if (data == null) {
+            return null;
+        }
+
+        if (data.contains("Pos") && data.contains("Rotation")) {
+            ListTag position = (ListTag) data.get("Pos");
+            ListTag rotation = (ListTag) data.get("Rotation");
+
+            UUID uuid = new UUID(data.getLong("WorldUUIDMost"), data.getLong("WorldUUIDLeast"));
+
+            return new Location(server.getWorld(uuid),
+                    position.getDouble(0),
+                    position.getDouble(1),
+                    position.getDouble(2),
+                    rotation.getFloat(0),
+                    rotation.getFloat(1)
+            );
+        }
+
+        return null;
+    }
+
+    @Override
     public Location getBedSpawnLocation() {
+        return getRespawnLocation();
+    }
+
+    @Override
+    public Location getRespawnLocation() {
         CompoundTag data = getData();
         if (data == null) return null;
 

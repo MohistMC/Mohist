@@ -1,18 +1,25 @@
 package org.bukkit.craftbukkit.v1_20_R3.potion;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R3.util.Handleable;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-public class CraftPotionEffectType extends PotionEffectType {
+public class CraftPotionEffectType extends PotionEffectType implements Handleable<MobEffect> {
+
+    public static PotionEffectType minecraftToBukkit(MobEffect minecraft) {
+        return CraftRegistry.minecraftToBukkit(minecraft, Registries.MOB_EFFECT, Registry.EFFECT);
+    }
+
+    public static MobEffect bukkitToMinecraft(PotionEffectType bukkit) {
+        return CraftRegistry.bukkitToMinecraft(bukkit);
+    }
 
     private final NamespacedKey key;
     private final MobEffect handle;
@@ -121,22 +128,5 @@ public class CraftPotionEffectType extends PotionEffectType {
     @Override
     public String toString() {
         return "CraftPotionEffectType[" + getKey() + "]";
-    }
-
-    public static PotionEffectType minecraftToBukkit(MobEffect minecraft) {
-        Preconditions.checkArgument(minecraft != null);
-
-        net.minecraft.core.Registry<MobEffect> registry = CraftRegistry.getMinecraftRegistry(Registries.MOB_EFFECT);
-        PotionEffectType bukkit = Registry.EFFECT.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
-
-        Preconditions.checkArgument(bukkit != null);
-
-        return bukkit;
-    }
-
-    public static MobEffect bukkitToMinecraft(PotionEffectType bukkit) {
-        Preconditions.checkArgument(bukkit != null);
-
-        return ((CraftPotionEffectType) bukkit).getHandle();
     }
 }

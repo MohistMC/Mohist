@@ -284,11 +284,12 @@
        } else {
           compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -307,6 +_,7 @@
+@@ -307,6 +_,8 @@
     }
  
     protected void save(ServerPlayer p_11277_) {
 +      if (!p_11277_.getBukkitEntity().isPersistent()) return; // CraftBukkit
++      if (p_11277_.connection == null) return;
        this.playerIo.save(p_11277_);
        ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
        if (serverstatscounter != null) {

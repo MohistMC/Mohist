@@ -68,7 +68,7 @@
           }
  
 +         if (!AsyncCatcher.catchAsync()) {
-+            itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::toBukkitRecipe).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
++            itemstack = CraftEventFactory.callPreCraftEvent(p_150550_, p_150551_, itemstack, p_150547_.getBukkitView(), optional.map(RecipeHolder::value).orElse(null) instanceof RepairItemRecipe); // CraftBukkit
 +         }
           p_150551_.setItem(0, itemstack);
           p_150547_.setRemoteSlot(0, itemstack);

@@ -913,6 +913,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     @Override
+    public void removeEnchantments() {
+        if (hasEnchants()) {
+            enchantments.clear();
+        }
+    }
+
+    @Override
     public boolean hasEnchants() {
         return !(enchantments == null || enchantments.isEmpty());
     }

@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.StateHolder;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -654,6 +655,23 @@ public class CraftBlockData implements BlockData {
     @Override
     public void mirror(Mirror mirror) {
         this.state = state.mirror(net.minecraft.world.level.block.Mirror.valueOf(mirror.name()));
+    }
+
+    @Override
+    public void copyTo(BlockData blockData) {
+        CraftBlockData other = (CraftBlockData) blockData;
+        BlockState nms = other.state;
+        for (Property<?> property : state.getBlock().getStateDefinition().getProperties()) {
+            if (nms.hasProperty(property)) {
+                nms = copyProperty(state, nms, property);
+            }
+        }
+
+        other.state = nms;
+    }
+
+    private <T extends Comparable<T>> BlockState copyProperty(BlockState source, BlockState target, Property<T> property) {
+        return target.setValue(property, source.getValue(property));
     }
 
     @NotNull

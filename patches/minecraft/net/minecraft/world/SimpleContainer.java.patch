@@ -11,7 +11,7 @@
  
  public class SimpleContainer implements Container, StackedContentsCompatible {
     private final int size;
-@@ -19,9 +_,62 @@
+@@ -19,7 +_,60 @@
     @Nullable
     private List<ContainerListener> listeners;
  
@@ -61,16 +61,14 @@
 +      }
 +   }
     public SimpleContainer(int p_19150_) {
-       this.size = p_19150_;
-       this.items = NonNullList.withSize(p_19150_, ItemStack.EMPTY);
++      this.size = p_19150_;
++      this.items = NonNullList.withSize(p_19150_, ItemStack.EMPTY);
 +      this.bukkitOwner = null; // Mohist
 +   }
 +
-+   public SimpleContainer(int pSize, org.bukkit.inventory.InventoryHolder owner) {
++   public SimpleContainer(int p_19150_, org.bukkit.inventory.InventoryHolder owner) {
 +      this.bukkitOwner = owner;
 +      // CraftBukkit end
-+      this.size = pSize;
-+      this.items = NonNullList.withSize(pSize, ItemStack.EMPTY);
+       this.size = p_19150_;
+       this.items = NonNullList.withSize(p_19150_, ItemStack.EMPTY);
     }
- 
-    public SimpleContainer(ItemStack... p_19152_) {

@@ -28,12 +28,55 @@
              ItemStack itemstack = new ItemStack(Blocks.SHULKER_BOX);
              if (p_175667_.hasTag()) {
                 itemstack.setTag(p_175667_.getTag().copy());
-@@ -133,7 +_,7 @@
+@@ -60,7 +_,7 @@
+ 
+             p_175665_.setItemInHand(p_175666_, itemstack);
+             p_175665_.awardStat(Stats.CLEAN_SHULKER_BOX);
+-            LayeredCauldronBlock.lowerFillLevel(p_175662_, p_175663_, p_175664_);
++            // LayeredCauldronBlock.lowerFillLevel(p_175662_, p_175663_, p_175664_); // CraftBukkit
+          }
+ 
+          return InteractionResult.sidedSuccess(p_175663_.isClientSide);
+@@ -86,7 +_,7 @@
+             }
+ 
+             p_278893_.awardStat(Stats.CLEAN_BANNER);
+-            LayeredCauldronBlock.lowerFillLevel(p_278890_, p_278891_, p_278892_);
++            // LayeredCauldronBlock.lowerFillLevel(p_278890_, p_278891_, p_278892_); // CraftBukkit
+          }
+ 
+          return InteractionResult.sidedSuccess(p_278891_.isClientSide);
+@@ -100,9 +_,14 @@
+          return InteractionResult.PASS;
+       } else {
+          if (!p_175630_.isClientSide) {
++            // CraftBukkit start
++            if (!LayeredCauldronBlock.lowerFillLevel(p_175629_, p_175630_, p_175631_, p_175632_, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.ARMOR_WASH)) {
++               return InteractionResult.SUCCESS;
++            }
++            // CraftBukkit end
+             dyeableleatheritem.clearColor(p_175634_);
+             p_175632_.awardStat(Stats.CLEAN_ARMOR);
+-            LayeredCauldronBlock.lowerFillLevel(p_175629_, p_175630_, p_175631_);
++            // LayeredCauldronBlock.lowerFillLevel(p_175629_, p_175630_, p_175631_); // CraftBukkit
+          }
+ 
+          return InteractionResult.sidedSuccess(p_175630_.isClientSide);
+@@ -129,11 +_,16 @@
+             return InteractionResult.PASS;
+          } else {
+             if (!p_175733_.isClientSide) {
++               // CraftBukkit start
++               if (!LayeredCauldronBlock.changeLevel(p_175732_, p_175733_, p_175734_, Blocks.WATER_CAULDRON.defaultBlockState(), p_175735_, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BOTTLE_EMPTY)) {
++                  return InteractionResult.SUCCESS;
++               }
++               // CraftBukkit end
+                Item item = p_175737_.getItem();
                 p_175735_.setItemInHand(p_175736_, ItemUtils.createFilledResult(p_175737_, p_175735_, new ItemStack(Items.GLASS_BOTTLE)));
                 p_175735_.awardStat(Stats.USE_CAULDRON);
                 p_175735_.awardStat(Stats.ITEM_USED.get(item));
 -               p_175733_.setBlockAndUpdate(p_175734_, Blocks.WATER_CAULDRON.defaultBlockState());
-+               // p_175733_.setBlockAndUpdate(p_175734_, Blocks.WATER_CAULDRON.defaultBlockState());
++               // p_175733_.setBlockAndUpdate(p_175734_, Blocks.WATER_CAULDRON.defaultBlockState()); // CraftBukkit
                 p_175733_.playSound((Player)null, p_175734_, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 p_175733_.gameEvent((Entity)null, GameEvent.FLUID_PLACE, p_175734_);
              }

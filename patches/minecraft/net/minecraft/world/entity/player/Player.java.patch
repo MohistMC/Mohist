@@ -629,6 +629,15 @@
                       this.setItemInHand(p_36159_, ItemStack.EMPTY);
                    }
  
+@@ -988,7 +_,7 @@
+       this.boardingCooldown = 0;
+    }
+ 
+-   protected boolean isImmobile() {
++   public boolean isImmobile() {
+       return super.isImmobile() || this.isSleeping();
+    }
+ 
 @@ -996,6 +_,7 @@
        return !this.abilities.flying;
     }
@@ -713,7 +722,7 @@
 -                        if (livingentity != this && livingentity != p_36347_ && !this.isAlliedTo(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).isMarker()) && this.distanceToSqr(livingentity) < 9.0D) {
 -                           livingentity.knockback((double)0.4F, (double)Mth.sin(this.getYRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(this.getYRot() * ((float)Math.PI / 180F))));
 -                           livingentity.hurt(this.damageSources().playerAttack(this), f3);
-+                     for(LivingEntity livingentity : this.level.getEntitiesOfClass(LivingEntity.class, this.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
++                     for(LivingEntity livingentity : this.level().getEntitiesOfClass(LivingEntity.class, this.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
 +                        double entityReachSq = Mth.square(this.getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
 +                        if (livingentity != this && livingentity != p_36347_ && !this.isAlliedTo(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).isMarker()) && this.distanceToSqr(livingentity) < entityReachSq) {
 +                           // CraftBukkit start - Only apply knockback if the damage hits

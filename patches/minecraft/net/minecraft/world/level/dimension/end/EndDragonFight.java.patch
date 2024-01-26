@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
+@@ -79,7 +_,7 @@
+    private int ticksSinceCrystalsScanned;
+    private int ticksSinceLastPlayerScan = 21;
+    private boolean dragonKilled;
+-   private boolean previouslyKilled;
++   public boolean previouslyKilled;
+    private boolean skipArenaLoadedCheck = false;
+    @Nullable
+    public UUID dragonUUID;
 @@ -487,7 +_,8 @@
  
     }
