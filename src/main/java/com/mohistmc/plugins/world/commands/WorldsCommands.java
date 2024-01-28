@@ -69,7 +69,7 @@ public class WorldsCommands extends Command {
                 }
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("tp")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 World world = Bukkit.getWorld(worldName);
                 if (world == null) {
                     worldNotExists(player, worldName);
@@ -82,7 +82,7 @@ public class WorldsCommands extends Command {
                 ConfigByWorlds.getSpawn(player.getWorld().getName(), player);
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("delete")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 if (!args[1].equalsIgnoreCase("world")) {
                     World w = Bukkit.getWorld(worldName);
                     if (w != null) {
@@ -126,7 +126,7 @@ public class WorldsCommands extends Command {
                 }
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 if (Bukkit.getWorld(worldName) == null) {
                     return false;
                 }
@@ -192,7 +192,7 @@ public class WorldsCommands extends Command {
                     }
                     if (argsname.equals(name)) {
                         Player target1 = Bukkit.getServer().getPlayer(argsname);
-                        String worldName = args[2].toLowerCase(Locale.ENGLISH);
+                        String worldName = args[2];
                         World world = Bukkit.getWorld(worldName);
                         if (world == null) {
                             return false;
