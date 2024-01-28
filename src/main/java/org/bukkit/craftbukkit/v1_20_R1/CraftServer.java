@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
 import com.mohistmc.api.ServerAPI;
 import com.mohistmc.bukkit.pluginfix.UltraCosmetics;
@@ -14,7 +15,6 @@ import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MohistPlugin;
 import com.mohistmc.util.Level2LevelStem;
-import com.mohistmc.util.ProxyUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -183,7 +183,6 @@ import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftSpawnCategory;
 import org.bukkit.craftbukkit.v1_20_R1.util.DatFileFilter;
 import org.bukkit.craftbukkit.v1_20_R1.util.Versioning;
-import org.bukkit.craftbukkit.v1_20_R1.util.WorldUUID;
 import org.bukkit.craftbukkit.v1_20_R1.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -239,6 +238,7 @@ import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
 import com.mohistmc.org.yaml.snakeyaml.Yaml;
 import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
 import com.mohistmc.org.yaml.snakeyaml.error.MarkedYAMLException;
+import org.spigotmc.SpigotConfig;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -774,7 +774,7 @@ public final class CraftServer implements Server {
     @Override
     public long getConnectionThrottle() {
         // Spigot Start - Automatically set connection throttle for bungee configurations
-        if (ProxyUtils.is()) { // Mohist
+        if (MohistConfig.velocity_enabled || SpigotConfig.bungee) { // Mohist
             return -1;
         } else {
             return this.configuration.getInt("settings.connection-throttle");

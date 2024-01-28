@@ -1,18 +1,5 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -36,8 +_,12 @@
- import net.minecraft.CrashReport;
- import net.minecraft.ReportedException;
- import net.minecraft.network.Connection;
-+import net.minecraft.network.PacketDecoder;
-+import net.minecraft.network.PacketEncoder;
- import net.minecraft.network.PacketSendListener;
- import net.minecraft.network.RateKickingConnection;
-+import net.minecraft.network.Varint21FrameDecoder;
-+import net.minecraft.network.Varint21LengthFieldPrepender;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.PacketFlow;
- import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
 @@ -47,11 +_,12 @@
  
  public class ServerConnectionListener {

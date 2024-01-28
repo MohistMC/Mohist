@@ -5,7 +5,6 @@
 
 package net.minecraftforge.server;
 
-import com.mohistmc.util.ProxyUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,7 +66,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import org.jetbrains.annotations.ApiStatus;
-import org.spigotmc.SpigotConfig;
 
 public class ServerLifecycleHooks
 {
@@ -170,7 +168,7 @@ public class ServerLifecycleHooks
                 return false;
             }
 
-            if (!ProxyUtils.is() && connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
+            if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
                 rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
                 return false;
             }
