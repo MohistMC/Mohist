@@ -842,7 +842,7 @@
 +
 +   public boolean strikeLightning(Entity entitylightning, LightningStrikeEvent.Cause cause) {
 +      // Mohist start - Compat for Forge,ignore modded weather effect
-+      if (entitylightning.getBukkitEntity() instanceof org.bukkit.entity.LightningStrike) {
++      if (!AsyncCatcher.catchAsync() && entitylightning.getBukkitEntity() instanceof org.bukkit.entity.LightningStrike) {
 +         LightningStrikeEvent lightning = CraftEventFactory.callLightningStrikeEvent((org.bukkit.entity.LightningStrike) entitylightning.getBukkitEntity(), cause);
 +         this.getCBServer().getPluginManager().callEvent(lightning);
 +         if (lightning.isCancelled())
