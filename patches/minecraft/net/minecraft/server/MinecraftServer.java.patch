@@ -17,12 +17,11 @@
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
-@@ -45,6 +_,8 @@
+@@ -45,6 +_,7 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
 +import joptsimple.OptionSet;
-+import net.kyori.adventure.text.minimessage.MiniMessage;
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
