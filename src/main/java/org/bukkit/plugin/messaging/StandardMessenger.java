@@ -497,10 +497,10 @@ public class StandardMessenger implements Messenger {
             return "BungeeCord";
         }
         if (channel.length() > Messenger.MAX_CHANNEL_SIZE) {
-            throw new ChannelNameTooLongException(channel);
+            // throw new ChannelNameTooLongException(channel);
         }
         if (channel.indexOf(':') == -1) {
-            throw new IllegalArgumentException("Channel must contain : separator (attempted to use " + channel + ")");
+            // throw new IllegalArgumentException("Channel must contain : separator (attempted to use " + channel + ")");
         }
         if (!channel.toLowerCase(Locale.ROOT).equals(channel)) {
             // TODO: use NamespacedKey validation here
