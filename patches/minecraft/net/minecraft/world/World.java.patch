@@ -425,21 +425,16 @@
           this.field_147484_a.addAll(p_147448_1_);
        } else {
           for(TileEntity tileentity : p_147448_1_) {
-@@ -425,13 +_,13 @@
+@@ -425,7 +_,9 @@
     public void func_217391_K() {
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("blockEntities");
 +      this.field_147481_N = true;// Forge: Move above remove to prevent CMEs
        if (!this.field_147483_b.isEmpty()) {
++         this.field_147483_b.forEach(e -> e.onChunkUnloaded());
           this.field_175730_i.removeAll(this.field_147483_b);
           this.field_147482_g.removeAll(this.field_147483_b);
           this.field_147483_b.clear();
-       }
- 
--      this.field_147481_N = true;
-       Iterator<TileEntity> iterator = this.field_175730_i.iterator();
- 
-       while(iterator.hasNext()) {
 @@ -440,8 +_,9 @@
              BlockPos blockpos = tileentity.func_174877_v();
              if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
@@ -451,7 +446,7 @@
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();
-@@ -454,16 +_,29 @@
+@@ -454,8 +_,16 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory);
@@ -468,11 +463,8 @@
              }
           }
  
-          if (tileentity.func_145837_r()) {
--            iterator.remove();
-+            // Spigot start
-+            this.field_175730_i.remove(tileTickPosition--);
-+            // Spigot end
+@@ -463,7 +_,10 @@
+             iterator.remove();
              this.field_147482_g.remove(tileentity);
              if (this.func_175667_e(tileentity.func_174877_v())) {
 -               this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
