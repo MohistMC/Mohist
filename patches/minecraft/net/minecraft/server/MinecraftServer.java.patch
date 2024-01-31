@@ -17,11 +17,12 @@
  import java.util.Set;
  import java.util.concurrent.CompletableFuture;
  import java.util.concurrent.Executor;
-@@ -45,6 +_,7 @@
+@@ -45,6 +_,8 @@
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
  import javax.imageio.ImageIO;
 +import joptsimple.OptionSet;
++import net.kyori.adventure.text.minimessage.MiniMessage;
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
@@ -727,15 +728,6 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -1137,7 +_,7 @@
-    public abstract boolean m_6993_();
- 
-    public String m_129916_() {
--      return this.f_129709_;
-+      return MohistConfig.motdFirstLine + "\n" + MohistConfig.motdSecondLine;
-    }
- 
-    public void m_129989_(String p_129990_) {
 @@ -1164,7 +_,7 @@
  
     @Nullable
