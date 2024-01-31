@@ -89,15 +89,15 @@ public class WorldsCommands extends Command {
                         for (Player all : w.getPlayers()) {
                             all.teleport(Bukkit.getWorld("world").getSpawnLocation());
                         }
-                    }
-                    try {
-                        Bukkit.unloadWorld(w, true);
-                        File deleteWorld = w.getWorldFolder();
-                        WorldManage.deleteDir(deleteWorld);
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delSuccessful"));
-                        ConfigByWorlds.removeWorld(worldName);
-                    } catch (Exception e2) {
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delUnsuccessful"));
+                        try {
+                            ConfigByWorlds.removeWorld(worldName);
+                            Bukkit.unloadWorld(w, true);
+                            File deleteWorld = w.getWorldFolder();
+                            WorldManage.deleteDir(deleteWorld);
+                            player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delSuccessful"));
+                        } catch (Exception e2) {
+                            player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delUnsuccessful"));
+                        }
                     }
                 } else {
                     player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delDenied"));
