@@ -239,7 +239,7 @@
 +                  continue;
 +               }
 +            }
-+            World.setGeneratorAndEnv(this.server.getGenerator(name), ForgeInjectBukkit.environment.get(registrykey1));
++            World.setGeneratorAndEnv(this.server.getGenerator(name), ForgeInjectBukkit.environment.getOrDefault(dimensiontype1, org.bukkit.World.Environment.CUSTOM));
 +            // Mohist start - split calculate for ServerLeverl Preparing
 +            IChunkStatusListener mohist$progressListener = this.field_213220_d.create(11);
 +            ServerWorld serverworld1 = new ServerWorld(this, this.field_213217_au, this.field_71310_m, derivedworldinfo, registrykey1, dimensiontype1, mohist$progressListener, chunkgenerator1, flag, j, ImmutableList.of(), false);

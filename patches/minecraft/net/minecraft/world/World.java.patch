@@ -151,7 +151,7 @@
        }
 -
 +      if (environment == null) {
-+         environment = ForgeInjectBukkit.environment.getOrDefault(typeKey, org.bukkit.World.Environment.CUSTOM);
++         environment = ForgeInjectBukkit.environment.getOrDefault(p_i241925_3_, org.bukkit.World.Environment.CUSTOM);
 +      }
 +      func_175723_af().world = this; // Mohist move form ServerWorld
        this.field_217407_c = Thread.currentThread();

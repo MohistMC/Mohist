@@ -72,11 +72,11 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public class ForgeInjectBukkit {
 
-    public static BiMap<RegistryKey<DimensionType>, World.Environment> environment =
-            HashBiMap.create(ImmutableMap.<RegistryKey<DimensionType>, World.Environment>builder()
-                    .put(DimensionType.OVERWORLD_LOCATION, World.Environment.NORMAL)
-                    .put(DimensionType.NETHER_LOCATION, World.Environment.NETHER)
-                    .put(DimensionType.END_LOCATION, World.Environment.THE_END)
+    public static BiMap<DimensionType, World.Environment> environment =
+            HashBiMap.create(ImmutableMap.<DimensionType, World.Environment>builder()
+                    .put(DimensionType.DEFAULT_OVERWORLD, World.Environment.NORMAL)
+                    .put(DimensionType.DEFAULT_NETHER, World.Environment.NETHER)
+                    .put(DimensionType.DEFAULT_END, World.Environment.THE_END)
                     .build());
 
     public static BiMap<World.Environment, RegistryKey<Dimension>> environment0 =
@@ -222,6 +222,7 @@ public class ForgeInjectBukkit {
                 String name = normalizeName(key.location().toString());
                 int id = i - 1;
                 environment1 = MohistEnumHelper.addEnum(World.Environment.class, name, new Class[]{Integer.TYPE}, new Object[]{id});
+                environment.put(dimensionType, environment1);
                 environment0.put(environment1, key);
                 MohistMC.LOGGER.debug("Registered forge DimensionType as environment {}", environment1);
                 i++;
