@@ -161,7 +161,7 @@ public class MohistConfig {
     public static String motd() {
         net.kyori.adventure.text.Component motdFirstLine = MiniMessage.miniMessage().deserialize(MohistConfig.motdFirstLine);
         net.kyori.adventure.text.Component motdSecondLine = MiniMessage.miniMessage().deserialize(MohistConfig.motdSecondLine);
-        return motdSecondLine.insertion() + "\n" + motdSecondLine.insertion();
+        return motdFirstLine.insertion() + "\n" + motdSecondLine.insertion();
     }
 
     public static boolean show_logo;

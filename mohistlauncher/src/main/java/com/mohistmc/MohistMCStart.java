@@ -30,6 +30,7 @@ import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -64,9 +65,10 @@ public class MohistMCStart {
                      ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
                                         
                     
-                    %s - %s, Java(%s) %s
+                    %s - %s, Java(%s) %s %s
                     """;
-            System.out.println(test.formatted(i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version")));
+            String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+            System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"), "PID: " + pid);
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
