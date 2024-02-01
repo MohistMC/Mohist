@@ -130,7 +130,7 @@
     private final Set<PathNavigator> field_217495_I = Sets.newHashSet();
     protected final RaidManager field_217494_c;
     private final ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<>();
-@@ -173,9 +_,60 @@
+@@ -173,9 +_,61 @@
     private final DragonFightManager field_241105_O_;
     private final StructureManager field_241106_P_;
     private final boolean field_241107_Q_;
@@ -138,7 +138,6 @@
 +   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 +
 +   // CraftBukkit start
-+   private int tickPosition;
 +   public ServerWorldInfo worldDataServer;
 +   public final SaveFormat.LevelSave convertable;
 +   public final UUID uuid;
@@ -147,10 +146,9 @@
 +   public boolean dummyFreshEntitySpawn = false; // Mohist - Fix Pehkui Startup (#1324)
 +
 +   // Mohist start - Add option to ignore empty time
-+   private static List<String> IGNORE_EMPTY_TIME_LIST;
++   private static List<String> IGNORE_EMPTY_TIME_LIST = new ArrayList<>();
 +
 +   {
-+      IGNORE_EMPTY_TIME_LIST = new ArrayList<>();
 +      String ignoreEmptyTime = MohistConfigUtil.sMohist("ignore_empty_time", "all_worlds");
 +      if (ignoreEmptyTime.contains(";")) {
 +         for (String part : ignoreEmptyTime.split(";")) {
@@ -176,22 +174,25 @@
 +      File worldFile = DimensionType.func_236031_a_(p_i241885_5_, p_i241885_3_.field_237279_c_.toFile());
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
 +      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot
++
 +      if (p_i241885_4_ instanceof ServerWorldInfo) {
 +         this.worldDataServer = (ServerWorldInfo) p_i241885_4_;
 +      } else if (p_i241885_4_ instanceof DerivedWorldInfo) {
 +         this.worldDataServer = MohistDerivedWorldInfo.create((DerivedWorldInfo)p_i241885_4_);
 +      }
-+      this.craftWorld = new CraftWorld(this, generator, environment);
++
 +      if (generator != null) {
 +         p_i241885_8_ = new org.bukkit.craftbukkit.v1_16_R3.generator.CustomChunkGenerator(this, p_i241885_8_, generator);
++      } else {
++         generator = getCBServer().getGenerator(p_i241885_4_.func_76065_j());
 +      }
 +      worldDataServer.world = this;
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot
 +      // CraftBukkit end
        this.field_241107_Q_ = p_i241885_13_;
        this.field_73061_a = p_i241885_1_;
        this.field_241104_N_ = p_i241885_12_;
-@@ -194,14 +_,43 @@
+@@ -194,14 +_,44 @@
           p_i241885_4_.func_230392_a_(p_i241885_1_.func_71265_f());
        }
  
@@ -205,6 +206,7 @@
        }
 -
 -   }
++      this.craftWorld = new CraftWorld(this, generator, environment);
 +      this.getCBServer().addWorld(this.getWorld()); // CraftBukkit
 +      this.initCapabilities();
 +   }
