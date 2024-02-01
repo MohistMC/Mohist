@@ -2,6 +2,7 @@ package com.mohistmc;
 
 import com.google.common.base.Throwables;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.commands.BackupWorldCommand;
 import com.mohistmc.commands.BansCommand;
 import com.mohistmc.commands.DumpCommand;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -157,11 +157,8 @@ public class MohistConfig {
     public static String mohist_lang() {
         return yml.getString("mohist.lang", Locale.getDefault().toString());
     }
-
     public static String motd() {
-        net.kyori.adventure.text.Component motdFirstLine = MiniMessage.miniMessage().deserialize(MohistConfig.motdFirstLine);
-        net.kyori.adventure.text.Component motdSecondLine = MiniMessage.miniMessage().deserialize(MohistConfig.motdSecondLine);
-        return motdFirstLine.insertion() + "\n" + motdSecondLine.insertion();
+        return ColorsAPI.of(MohistConfig.motdFirstLine) + "\n" + ColorsAPI.of(MohistConfig.motdSecondLine);
     }
 
     public static boolean show_logo;
@@ -245,8 +242,8 @@ public class MohistConfig {
         ban_entity_types = getList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
-        motdFirstLine = getString("motd.firstline", "<rainbow>A Minecraft Server</rainbow>");
-        motdSecondLine = getString("motd.secondline", "");
+        motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
+        motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
 
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
