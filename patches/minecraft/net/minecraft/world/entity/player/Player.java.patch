@@ -37,7 +37,7 @@
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -107,10 +_,22 @@
+@@ -107,10 +_,23 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -52,6 +52,7 @@
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
++import org.bukkit.event.entity.EntityKnockbackEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;
  import org.slf4j.Logger;
@@ -705,7 +706,18 @@
                    }
                 }
  
-@@ -1120,10 +_,13 @@
+@@ -1107,7 +_,9 @@
+                boolean flag5 = p_36347_.hurt(this.damageSources().playerAttack(this), f);
+                if (flag5) {
+                   if (i > 0) {
+-                     if (p_36347_ instanceof LivingEntity) {
++                     if (p_36347_ instanceof LivingEntity living) {
++                        living.attacker = this;
++                        living.knockbackcause(EntityKnockbackEvent.KnockbackCause.ENTITY_ATTACK); // CraftBukkit
+                         ((LivingEntity)p_36347_).knockback((double)((float)i * 0.5F), (double)Mth.sin(this.getYRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(this.getYRot() * ((float)Math.PI / 180F))));
+                      } else {
+                         p_36347_.push((double)(-Mth.sin(this.getYRot() * ((float)Math.PI / 180F)) * (float)i * 0.5F), 0.1D, (double)(Mth.cos(this.getYRot() * ((float)Math.PI / 180F)) * (float)i * 0.5F));
+@@ -1120,10 +_,15 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.getSweepingDamageRatio(this) * f;
  
@@ -718,6 +730,8 @@
 +                        if (livingentity != this && livingentity != p_36347_ && !this.isAlliedTo(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).isMarker()) && this.distanceToSqr(livingentity) < entityReachSq) {
 +                           // CraftBukkit start - Only apply knockback if the damage hits
 +                           if (livingentity.hurt(this.damageSources().playerAttack(this).sweep(), f3)) {
++                              livingentity.attacker = this;
++                              livingentity.knockbackcause(EntityKnockbackEvent.KnockbackCause.SWEEP_ATTACK); // CraftBukkit
 +                              livingentity.knockback((double) 0.4F, (double) Mth.sin(this.getYRot() * ((float) Math.PI / 180F)), (double) (-Mth.cos(this.getYRot() * ((float) Math.PI / 180F))));
 +                           }
                          }

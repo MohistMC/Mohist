@@ -250,6 +250,7 @@ import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapView;
 import org.bukkit.packs.DataPackManager;
+import org.bukkit.packs.ResourcePack;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -733,6 +734,11 @@ public final class CraftServer implements Server {
     @Override
     public ServerTickManager getServerTickManager() {
         return this.serverTickManager;
+    }
+
+    @Override
+    public ResourcePack getServerResourcePack() {
+        return this.getServer().getServerResourcePack().map(org.bukkit.craftbukkit.v1_20_R3.packs.CraftResourcePack::new).orElse(null);
     }
 
     @Override

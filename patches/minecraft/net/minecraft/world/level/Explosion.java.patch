@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
+@@ -36,6 +_,7 @@
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
+ 
+ public class Explosion {
+    private static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
 @@ -57,6 +_,10 @@
     private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
@@ -27,3 +35,17 @@
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
        for(Entity entity : list) {
+@@ -224,6 +_,13 @@
+                   d7 *= d10;
+                   d9 *= d10;
+                   Vec3 vec31 = new Vec3(d5, d7, d9);
++                  // CraftBukkit start - Call EntityKnockbackEvent
++                  if (entity instanceof LivingEntity) {
++                     Vec3 result = entity.getDeltaMovement().add(vec31);
++                     org.bukkit.event.entity.EntityKnockbackEvent event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) entity.getBukkitEntity(), source, org.bukkit.event.entity.EntityKnockbackEvent.KnockbackCause.EXPLOSION, d10, vec31, result.x, result.y, result.z);
++                     vec31 = (event.isCancelled()) ? Vec3.ZERO : new Vec3(event.getFinalKnockback().getX(), event.getFinalKnockback().getY(), event.getFinalKnockback().getZ());
++                  }
++                  // CraftBukkit end
+                   entity.setDeltaMovement(entity.getDeltaMovement().add(vec31));
+                   if (entity instanceof Player) {
+                      Player player = (Player)entity;

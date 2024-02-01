@@ -381,7 +381,7 @@
              this.leashInfoTag = null;
           }
        }
-@@ -1380,7 +_,14 @@
+@@ -1380,12 +_,21 @@
  
        int i = EnchantmentHelper.getFireAspect(this);
        if (i > 0) {
@@ -397,6 +397,13 @@
        }
  
        boolean flag = p_21372_.hurt(this.damageSources().mobAttack(this), f);
+       if (flag) {
+          if (f1 > 0.0F && p_21372_ instanceof LivingEntity) {
++            ((LivingEntity)p_21372_).attacker = this;
++            ((LivingEntity)p_21372_).knockbackcause(org.bukkit.event.entity.EntityKnockbackEvent.KnockbackCause.ENTITY_ATTACK);
+             ((LivingEntity)p_21372_).knockback((double)(f1 * 0.5F), (double)Mth.sin(this.getYRot() * ((float)Math.PI / 180F)), (double)(-Mth.cos(this.getYRot() * ((float)Math.PI / 180F))));
+             this.setDeltaMovement(this.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+          }
 @@ -1426,15 +_,25 @@
        return false;
     }

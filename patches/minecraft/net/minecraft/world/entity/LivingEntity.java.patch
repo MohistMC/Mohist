@@ -46,7 +46,7 @@
  import net.minecraft.world.entity.boss.wither.WitherBoss;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
-@@ -114,17 +_,36 @@
+@@ -114,17 +_,37 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -63,6 +63,7 @@
 +import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 +import org.bukkit.event.entity.ArrowBodyCountChangeEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
++import org.bukkit.event.entity.EntityKnockbackEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -656,6 +657,15 @@
                    if (livingentity2 instanceof Player) {
                       Player player = (Player)livingentity2;
                       this.lastHurtByPlayer = player;
+@@ -1169,6 +_,8 @@
+ 
+                this.knockback((double)0.4F, d0, d1);
+                if (!flag) {
++                  this.attacker = entity1;
++                  this.knockbackcause(entity1 == null ? EntityKnockbackEvent.KnockbackCause.DAMAGE : EntityKnockbackEvent.KnockbackCause.ENTITY_ATTACK);
+                   this.indicateDamage(d0, d1);
+                }
+             }
 @@ -1196,7 +_,7 @@
           if (this instanceof ServerPlayer) {
              CriteriaTriggers.ENTITY_HURT_PLAYER.trigger((ServerPlayer)this, p_21016_, f, p_21017_, flag);
@@ -664,6 +674,14 @@
 +               ((ServerPlayer)this).awardStat(Stats.CUSTOM.get(Stats.DAMAGE_BLOCKED_BY_SHIELD), Math.round(f1 * 10.0F));
              }
           }
+ 
+@@ -1213,6 +_,7 @@
+    }
+ 
+    protected void blockedByShield(LivingEntity p_21246_) {
++      knockbackcause(EntityKnockbackEvent.KnockbackCause.SHIELD_BLOCK);
+       p_21246_.knockback(0.5D, p_21246_.getX() - this.getX(), p_21246_.getZ() - this.getZ());
+    }
  
 @@ -1222,32 +_,46 @@
        } else {
@@ -800,9 +818,17 @@
        }
  
     }
-@@ -1410,6 +_,11 @@
+@@ -1409,13 +_,33 @@
+       loottable.getRandomItems(lootparams, this.getLootTableSeed(), this::spawnAtLocation);
     }
  
++   // Mohist start
++   public Entity attacker;
++   public EntityKnockbackEvent.KnockbackCause knockbackcause = EntityKnockbackEvent.KnockbackCause.UNKNOWN;
++   public void knockbackcause(EntityKnockbackEvent.KnockbackCause knockbackcause) {
++      this.knockbackcause = knockbackcause;
++   }
++
     public void knockback(double p_147241_, double p_147242_, double p_147243_) {
 +      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(this, (float) p_147241_, p_147242_, p_147243_);
 +      if(event.isCanceled()) return;
@@ -810,8 +836,25 @@
 +      p_147242_ = event.getRatioX();
 +      p_147243_ = event.getRatioZ();
        p_147241_ *= 1.0D - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
-       if (!(p_147241_ <= 0.0D)) {
-          this.hasImpulse = true;
+-      if (!(p_147241_ <= 0.0D)) {
+-         this.hasImpulse = true;
++      if (true || !(p_147241_ <= 0.0D)) { // CraftBukkit - Call event even when force is 0
++         // this.hasImpulse = true; // CraftBukkit - Move down
+          Vec3 vec3 = this.getDeltaMovement();
+          Vec3 vec31 = (new Vec3(p_147242_, 0.0D, p_147243_)).normalize().scale(p_147241_);
+-         this.setDeltaMovement(vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
++         // this.setDeltaMovement(vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
++         EntityKnockbackEvent bukkit_event = CraftEventFactory.callEntityKnockbackEvent((org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity) this.getBukkitEntity(), attacker, knockbackcause, p_147241_, vec31, vec3.x / 2.0D - vec31.x, this.onGround() ? Math.min(0.4D, vec3.y / 2.0D + p_147241_) : vec3.y, vec3.z / 2.0D - vec31.z);
++         if (bukkit_event.isCancelled()) {
++            return;
++         }
++
++         this.hasImpulse = true;
++         this.setDeltaMovement(bukkit_event.getFinalKnockback().getX(), bukkit_event.getFinalKnockback().getY(), bukkit_event.getFinalKnockback().getZ());
++         // CraftBukkit end
+       }
+    }
+ 
 @@ -1471,6 +_,28 @@
        return p_21202_.getEatingSound();
     }

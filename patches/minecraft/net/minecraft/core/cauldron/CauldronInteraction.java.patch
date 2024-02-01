@@ -37,6 +37,18 @@
           }
  
           return InteractionResult.sidedSuccess(p_175663_.isClientSide);
+@@ -71,6 +_,11 @@
+          return InteractionResult.PASS;
+       } else {
+          if (!p_278891_.isClientSide) {
++            // CraftBukkit start
++            if (!LayeredCauldronBlock.lowerFillLevel(p_278890_, p_278891_, p_278892_, p_278893_, org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason.BANNER_WASH)) {
++               return InteractionResult.SUCCESS;
++            }
++            // CraftBukkit end
+             ItemStack itemstack = p_278895_.copyWithCount(1);
+             BannerBlockEntity.removeLastPattern(itemstack);
+             if (!p_278893_.getAbilities().instabuild) {
 @@ -86,7 +_,7 @@
              }
  

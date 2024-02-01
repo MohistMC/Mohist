@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.WrittenBookItem;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -32,9 +33,9 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     static final ItemMetaKey BOOK_PAGES = new ItemMetaKey("pages");
     static final ItemMetaKey RESOLVED = new ItemMetaKey("resolved");
     static final ItemMetaKey GENERATION = new ItemMetaKey("generation");
-    static final int MAX_PAGES = 100;
-    static final int MAX_PAGE_LENGTH = 320; // 256 limit + 64 characters to allow for psuedo colour codes
-    static final int MAX_TITLE_LENGTH = 32;
+    static final int MAX_PAGES = WrittenBookItem.MAX_PAGES; // SPIGOT-6911: Use Minecraft limits
+    static final int MAX_PAGE_LENGTH = WrittenBookItem.PAGE_EDIT_LENGTH; // SPIGOT-6911: Use Minecraft limits
+    static final int MAX_TITLE_LENGTH = WrittenBookItem.TITLE_MAX_LENGTH; // SPIGOT-6911: Use Minecraft limits
 
     protected String title;
     protected String author;

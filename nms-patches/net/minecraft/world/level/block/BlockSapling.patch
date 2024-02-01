@@ -48,7 +48,7 @@
 +                    }
 +                    if (event == null || !event.isCancelled()) {
 +                        for (BlockState blockstate : blocks) {
-+                            blockstate.update(true);
++                           CapturedBlockState.setBlockState(blockstate);
 +                        }
 +                    }
 +                }

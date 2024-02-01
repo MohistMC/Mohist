@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 
 public final class CapturedBlockState extends CraftBlockState {
 
@@ -29,7 +31,22 @@ public final class CapturedBlockState extends CraftBlockState {
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
+        // Probably no longer needed with the extra #updatedTree method,
+        // but leave if here for now in case a plugin for whatever reason relies on this.
+        addBees();
 
+        return result;
+    }
+
+    private void updatedTree() {
+        // SPIGOT-7248 - Manual update to avoid physics where appropriate
+        // SPIGOT-7572 - Move SPIGOT-7248 fix from nms ItemStack to here, to allow bee generation in nests
+        world.getHandle().setBlock(CraftLocation.toBlockPosition(getLocation()), getHandle(), getFlag());
+
+        addBees();
+    }
+
+    private void addBees() {
         // SPIGOT-5537: Horrible hack to manually add bees given World.captureTreeGeneration does not support tiles
         if (this.treeBlock && getType() == Material.BEE_NEST) {
             WorldGenLevel generatoraccessseed = this.world.getHandle();
@@ -51,8 +68,6 @@ public final class CapturedBlockState extends CraftBlockState {
             }
             // End copied block
         }
-
-        return result;
     }
 
     @Override
@@ -66,5 +81,13 @@ public final class CapturedBlockState extends CraftBlockState {
 
     public static CapturedBlockState getTreeBlockState(Level world, BlockPos pos, int flag) {
         return new CapturedBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, true);
+    }
+
+    public static void setBlockState(BlockState blockState) {
+        if (blockState instanceof CapturedBlockState capturedBlockState) {
+            capturedBlockState.updatedTree();
+        } else {
+            blockState.update(true);
+        }
     }
 }
