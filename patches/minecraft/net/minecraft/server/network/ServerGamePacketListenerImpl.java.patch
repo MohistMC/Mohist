@@ -1815,10 +1815,11 @@
        if (this.f_9748_ && p_9870_.m_134102_() == this.f_9749_) {
           int i = (int)(Util.m_137550_() - this.f_9747_);
           this.f_9743_.f_8943_ = (this.f_9743_.f_8943_ * 3 + i) / 4;
-@@ -1651,6 +_,17 @@
+@@ -1650,7 +_,17 @@
+ 
     public void m_6828_(ServerboundPlayerAbilitiesPacket p_9887_) {
        PacketUtils.m_131359_(p_9887_, this, this.f_9743_.m_284548_());
-       this.f_9743_.m_150110_().f_35935_ = p_9887_.m_134264_() && this.f_9743_.m_150110_().f_35936_;
+-      this.f_9743_.m_150110_().f_35935_ = p_9887_.m_134264_() && this.f_9743_.m_150110_().f_35936_;
 +      // CraftBukkit start
 +      if (this.f_9743_.m_150110_().f_35936_ && this.f_9743_.m_150110_().f_35935_ != p_9887_.m_134264_()) {
 +         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(this.f_9743_.getBukkitEntity(), p_9887_.m_134264_());
