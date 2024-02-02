@@ -331,7 +331,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static boolean isLegacy(PluginDescriptionFile pdf) {
-        return pdf.getAPIVersion() == null;
+        return /*pdf.getAPIVersion() == null*/ false;
     }
 
     @Override
