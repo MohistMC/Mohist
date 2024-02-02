@@ -367,15 +367,23 @@
           }
        }
  
-@@ -534,26 +_,49 @@
+@@ -534,6 +_,15 @@
        iserverworldinfo.func_230393_a_(serverworld1.func_175723_af().func_235927_t_());
        this.field_240768_i_.func_230414_b_(this.func_201300_aS().func_201380_c());
        this.field_71310_m.func_237288_a_(this.field_240767_f_, this.field_240768_i_, this.func_184103_al().func_72378_q());
--      return flag;
-+       return flag;
++      // Mohist start - Fixed bukkit world not saving level.dat file
++      for (ServerWorld world : this.func_212370_w()) {
++         if (world.convertable != this.field_71310_m) {
++            world.worldDataServer.func_230393_a_(world.func_175723_af().func_235927_t_());
++            world.worldDataServer.func_230414_b_(this.func_201300_aS().func_201380_c());
++            world.convertable.func_237288_a_(this.func_244267_aX(), world.worldDataServer, this.func_184103_al().func_72378_q());
++         }
++      }
++      // Mohist end
+       return flag;
     }
  
-    public void close() {
+@@ -541,19 +_,42 @@
        this.func_71260_j();
     }
  
