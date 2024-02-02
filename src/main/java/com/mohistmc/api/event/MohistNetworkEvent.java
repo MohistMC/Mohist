@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 
 public class MohistNetworkEvent extends Event implements Cancellable {
 
-    private static HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private boolean cancel;
     private URI url;
     private String msg;

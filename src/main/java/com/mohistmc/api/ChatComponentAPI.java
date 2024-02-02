@@ -43,7 +43,7 @@ public class ChatComponentAPI {
 
     private static class ChatComponent {
 
-        private TextComponent component;
+        private final TextComponent component;
 
         public ChatComponent(TextComponent component) {
             this.component = component;

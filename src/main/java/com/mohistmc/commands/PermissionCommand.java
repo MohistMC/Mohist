@@ -38,24 +38,21 @@ public class PermissionCommand extends Command {
             return false;
         }
 
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "check" -> {
-                if (args.length != 3) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /permission check <player> <permission>");
-                    return false;
-                }
-                String permission = args[2];
-                Player player = Bukkit.getPlayer(args[1]);
-                if (player != null) {
-                    sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
-                } else {
-                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep1") + args[1] + I18n.as("mohistcmd.playermods.playernotOnlinep2") );
-                }
-            }
-            default -> {
-                sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+        if (args[0].toLowerCase(Locale.ENGLISH).equals("check")) {
+            if (args.length != 3) {
+                sender.sendMessage(ChatColor.RED + "Usage: /permission check <player> <permission>");
                 return false;
             }
+            String permission = args[2];
+            Player player = Bukkit.getPlayer(args[1]);
+            if (player != null) {
+                sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
+            } else {
+                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep1") + args[1] + I18n.as("mohistcmd.playermods.playernotOnlinep2"));
+            }
+        } else {
+            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            return false;
         }
         return false;
     }

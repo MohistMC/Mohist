@@ -20,7 +20,7 @@ import org.bukkit.inventory.InventoryHolder;
 public class MohistModsInventory implements Container {
 
     private final AbstractContainerMenu container;
-    private InventoryHolder owner;
+    private final InventoryHolder owner;
     private final List<HumanEntity> viewers = new ArrayList<>();
 
     public MohistModsInventory(AbstractContainerMenu container, Player owner) {

@@ -2,14 +2,9 @@ package com.mohistmc.plugins.ban.bans;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EnchantmentAPI;
-import com.mohistmc.plugins.ban.BanType;
-import com.mohistmc.plugins.ban.utils.BanUtils;
-import com.mohistmc.tools.ListUtils;
-import java.util.List;
 import org.bukkit.craftbukkit.v1_20_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**

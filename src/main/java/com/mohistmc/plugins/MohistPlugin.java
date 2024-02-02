@@ -2,9 +2,6 @@ package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.plugins.ban.BanListener;
-import com.mohistmc.plugins.ban.bans.BanEnchantment;
-import com.mohistmc.plugins.ban.bans.BanEntity;
-import com.mohistmc.plugins.ban.bans.BanItem;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
 import com.mohistmc.plugins.warps.WarpsCommands;

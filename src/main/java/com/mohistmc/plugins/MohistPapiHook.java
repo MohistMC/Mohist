@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class MohistPapiHook extends PlaceholderExpansion {
 
-    private static String hook_name = "mohist";
+    private static final String hook_name = "mohist";
 
     public static void init() {
         new MohistPapiHook().register();

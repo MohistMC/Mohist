@@ -42,7 +42,7 @@ public class GetPluginListCommand extends Command {
             return true;
         }
         for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
-            sendToHaste = sendToHaste + "\nName : " + p.getName() + "\nVersion : " + p.getDescription().getVersion() + "\n---------";
+            sendToHaste = "%s\nName : %s\nVersion : %s\n---------".formatted(sendToHaste, p.getName(), p.getDescription().getVersion());
         }
         try {
             sender.sendMessage(I18n.as("getPluginList.pluginList") + HasteUtils.pasteMohist(sendToHaste));
