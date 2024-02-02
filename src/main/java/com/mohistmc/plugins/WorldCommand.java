@@ -63,7 +63,7 @@ public class WorldCommand extends Command {
             infoLore.add("§bDifficulty §8》 §7" + w.getDifficulty());
             infoLore.add("§bPlayers §8》 §7" + w.getPlayers().size());
 
-            inv.setItem(pos, ItemAPI.doItem(Material.MAP, 1, 0, "§7》 §6" + w.getName().toString(), infoLore));
+            inv.setItem(pos, ItemAPI.doItem(Material.MAP, 1, 0, "§7》 §6" + w.getName(), infoLore));
             ++pos;
             infoLore.clear();
         }
