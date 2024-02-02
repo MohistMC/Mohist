@@ -1,6 +1,7 @@
-package com.mohistmc.plugins.ban;
+package com.mohistmc.plugins.ban.utils;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.plugins.ban.BanType;
 import java.util.List;
 
 /**

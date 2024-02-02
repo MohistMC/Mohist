@@ -4,13 +4,13 @@ import com.mohistmc.api.ItemAPI;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
+import com.mohistmc.plugins.world.utils.WorldCreateInventory;
 import com.mohistmc.plugins.world.utils.WorldsGUI;
 import com.mohistmc.util.I18n;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -57,13 +57,14 @@ public class WorldsCommands extends Command {
                 type = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 if (Bukkit.getWorld(args[1]) == null) {
                     int i = -1;
-                    Inventory inv = Bukkit.createInventory(null, 27, MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
+                    WorldCreateInventory worldCreateInventory = new WorldCreateInventory(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
+                    Inventory inventory = worldCreateInventory.getInventory();
                     for (World.Environment environment : World.Environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
                         i++;
-                        inv.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
+                        inventory.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
                     }
-                    player.openInventory(inv);
+                    player.openInventory(inventory);
                 } else {
                     worldAllExists(player, type);
                 }

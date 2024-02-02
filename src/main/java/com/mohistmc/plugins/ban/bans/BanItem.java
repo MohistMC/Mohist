@@ -2,14 +2,9 @@ package com.mohistmc.plugins.ban.bans;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.ItemAPI;
-import com.mohistmc.plugins.ban.BanType;
-import com.mohistmc.plugins.ban.BanUtils;
-import com.mohistmc.tools.ListUtils;
-import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 
 /**
  * @author Mgazul by MohistMC
@@ -41,18 +36,5 @@ public class BanItem {
     public static boolean check(ItemStack itemStack) {
         if (!MohistConfig.ban_item_enable) return false;
         return ItemAPI.isBan(CraftItemStack.asCraftMirror(itemStack));
-    }
-
-    public static void save(InventoryCloseEvent event) {
-        if (event.getView().getTitle().equals("§4Add bans item")) {
-
-            List<String> old = MohistConfig.ban_item_materials;
-            for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
-                if (itemStack != null) {
-                    ListUtils.isDuplicate(old, itemStack.getType().name());
-                }
-            }
-            BanUtils.saveToYaml(old, BanType.ITEM);
-        }
     }
 }

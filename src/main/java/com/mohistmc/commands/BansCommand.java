@@ -6,6 +6,8 @@ import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.plugins.ban.BanType;
+import com.mohistmc.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +65,8 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans item");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
                         return true;
                     }
@@ -72,7 +75,8 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans entity");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
                         return true;
                     }
@@ -81,7 +85,8 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans enchantment");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
                         return true;
                     }
