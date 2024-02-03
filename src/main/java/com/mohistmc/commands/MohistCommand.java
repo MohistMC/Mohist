@@ -37,12 +37,12 @@ import org.bukkit.entity.Player;
 
 public class MohistCommand extends Command {
 
-    private final List<String> params = Arrays.asList("mods", "playermods", "lang", "reload", "version", "channels_incom", "channels_outgo", "speed");
+    private final List<String> params = Arrays.asList("mods", "playermods", "reload", "version", "channels_incom", "channels_outgo", "speed");
 
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|lang|reload|version|channels_incom|channels_outgo]";
+        this.usageMessage = "/mohist [mods|playermods|reload|version|channels_incom|channels_outgo]";
         this.setPermission("mohist.command.mohist");
     }
 
