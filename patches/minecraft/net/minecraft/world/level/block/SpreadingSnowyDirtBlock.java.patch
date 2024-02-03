@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
-@@ -35,15 +_,22 @@
+@@ -35,15 +_,24 @@
  
     public void m_213898_(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
        if (!m_56823_(p_222508_, p_222509_, p_222510_)) {
@@ -19,8 +19,9 @@
              for(int i = 0; i < 4; ++i) {
                 BlockPos blockpos = p_222510_.m_7918_(p_222511_.m_188503_(3) - 1, p_222511_.m_188503_(5) - 3, p_222511_.m_188503_(3) - 1);
                 if (p_222509_.m_8055_(blockpos).m_60713_(Blocks.f_50493_) && m_56827_(blockstate, p_222509_, blockpos)) {
--                  p_222509_.m_46597_(blockpos, blockstate.m_61124_(f_56637_, Boolean.valueOf(p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))));
-+                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, blockstate.m_61124_(f_56637_, p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))); // CraftBukkit
++                  p_222509_.callEvent(true); // Mohist
+                   p_222509_.m_46597_(blockpos, blockstate.m_61124_(f_56637_, Boolean.valueOf(p_222509_.m_8055_(blockpos.m_7494_()).m_60713_(Blocks.f_50125_))));
++                  org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, p_222509_.mohist$defaultBlockState); // CraftBukkit
                 }
              }
           }
