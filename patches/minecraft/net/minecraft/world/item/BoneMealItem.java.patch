@@ -17,7 +17,7 @@
 +      Level level = pContext.m_43725_();
 +      BlockPos blockpos = pContext.m_8083_();
 +      BlockPos blockpos1 = blockpos.m_121945_(pContext.m_43719_());
-+      if (m_40627_(pContext.m_43722_(), level, blockpos)) {
++      if (applyBonemeal(pContext.m_43722_(), level, blockpos, pContext.m_43723_())) {
           if (!level.f_46443_) {
              level.m_46796_(1505, blockpos, 0);
           }
