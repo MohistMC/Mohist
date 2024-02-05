@@ -19,11 +19,11 @@
 package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
+import com.mohistmc.tools.FileUtils;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.DataParser;
-import com.mohistmc.util.FileUtil;
 import com.mohistmc.util.JarLoader;
 import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -133,7 +133,7 @@ public abstract class Action {
 
     protected void copyFileFromJar(File file, String pathInJar) {
         InputStream is = MohistMCStart.class.getClassLoader().getResourceAsStream(pathInJar);
-        if (!file.exists() || !MD5Util.getMd5(file).equals(MD5Util.getMd5(is)) || file.length() <= 1) {
+        if (!file.exists() || !MD5Util.get(file).equals(MD5Util.get(is)) || file.length() <= 1) {
             // Clear old version
             File parentfile = file.getParentFile();
             if (file.getAbsolutePath().contains("minecraftforge")) {
@@ -141,7 +141,7 @@ public abstract class Action {
                 String result = parentfile.getAbsolutePath().substring(0, lastSlashIndex + 1);
                 File old = new File(result);
                 if (old.exists()) {
-                    FileUtil.deleteFolders(old);
+                    FileUtils.deleteFolders(old);
                 }
             }
             file.getParentFile().mkdirs();
@@ -170,7 +170,7 @@ public abstract class Action {
 
     public boolean checkDependencies() throws IOException {
         if (installInfo.exists()) {
-            String jarmd = MD5Util.getMd5(JarTool.getFile());
+            String jarmd = MD5Util.get(JarTool.getFile());
             List<String> lines = Files.readAllLines(installInfo.toPath());
             return lines.size() < 2 || !jarmd.equals(lines.get(1));
         }

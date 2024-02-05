@@ -37,7 +37,7 @@ public class EulaUtil {
     public static void writeInfos() throws IOException {
         eula.createNewFile();
         BufferedWriter b = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("eula.txt"), StandardCharsets.UTF_8));
-        b.write(MohistMCStart.i18n.get("eula.text", "https://account.mojang.com/documents/minecraft_eula") + "\n" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\neula=true");
+        b.write(MohistMCStart.i18n.as("eula.text", "https://account.mojang.com/documents/minecraft_eula") + "\n" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "\neula=true");
         b.close();
     }
 

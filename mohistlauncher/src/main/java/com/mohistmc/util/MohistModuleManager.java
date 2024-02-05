@@ -20,6 +20,7 @@ package com.mohistmc.util;
 
 import com.mohistmc.config.MohistConfigUtil;
 
+import com.mohistmc.tools.OSUtil;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;

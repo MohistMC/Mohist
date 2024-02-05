@@ -19,9 +19,8 @@
 package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
-import com.mohistmc.util.MD5Util;
-import mjson.Json;
 
+import com.mohistmc.tools.MD5Util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -35,14 +34,15 @@ import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import mjson.Json;
 
 public class UpdateUtils {
 
     private static int percentage = 0;
 
     public static void versionCheck() {
-        System.out.println(MohistMCStart.i18n.get("update.check"));
-        System.out.println(MohistMCStart.i18n.get("update.stopcheck"));
+        System.out.println(MohistMCStart.i18n.as("update.check"));
+        System.out.println(MohistMCStart.i18n.as("update.stopcheck"));
 
         try {
             Json json = Json.read(new URL("https://mohistmc.com/api/1.19.4/latest"));
@@ -52,12 +52,12 @@ public class UpdateUtils {
             String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(json.at("timeinmillis").asLong()));
 
             if (jar_sha.equals(build_number))
-                System.out.println(MohistMCStart.i18n.get("update.latest", jar_sha, build_number));
+                System.out.println(MohistMCStart.i18n.as("update.latest", jar_sha, build_number));
             else {
-                System.out.println(MohistMCStart.i18n.get("update.detect", build_number, jar_sha, time));
+                System.out.println(MohistMCStart.i18n.as("update.detect", build_number, jar_sha, time));
             }
         } catch (Throwable e) {
-            System.out.println(MohistMCStart.i18n.get("check.update.noci"));
+            System.out.println(MohistMCStart.i18n.as("check.update.noci"));
         }
     }
 
@@ -67,7 +67,7 @@ public class UpdateUtils {
 
     public static void downloadFile(String URL, File f, String md5) throws Exception {
         URLConnection conn = getConn(URL);
-        System.out.println(MohistMCStart.i18n.get("download.file", f.getName(), getSize(conn.getContentLength())));
+        System.out.println(MohistMCStart.i18n.as("download.file", f.getName(), getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         int fS = conn.getContentLength();
@@ -77,7 +77,7 @@ public class UpdateUtils {
                 () -> {
                     if (rbc.isOpen()) {
                         if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100) {
-                            System.out.println(MohistMCStart.i18n.get("file.download.percentage", f.getName(), percentage));
+                            System.out.println(MohistMCStart.i18n.as("file.download.percentage", f.getName(), percentage));
                         }
                         percentage = Math.round((float) f.length() / fS * 100);
                     }
@@ -86,13 +86,13 @@ public class UpdateUtils {
         fc.close();
         rbc.close();
         percentage = 0;
-        String MD5 = MD5Util.getMd5(f);
+        String MD5 = MD5Util.get(f);
         if (f.getName().endsWith(".jar") && md5 != null && MD5 != null && !MD5.equals(md5.toLowerCase())) {
             f.delete();
-            System.out.println(MohistMCStart.i18n.get("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
+            System.out.println(MohistMCStart.i18n.as("file.download.nook.md5", URL, MD5, md5.toLowerCase()));
             throw new Exception("md5");
         }
-        System.out.println(MohistMCStart.i18n.get("download.file.ok", f.getName()));
+        System.out.println(MohistMCStart.i18n.as("download.file.ok", f.getName()));
     }
 
     public static String getSize(long size) {

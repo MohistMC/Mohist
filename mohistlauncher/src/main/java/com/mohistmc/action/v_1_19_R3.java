@@ -2,8 +2,8 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.JarTool;
-import com.mohistmc.util.MD5Util;
 import com.mohistmc.util.MohistModuleManager;
 
 import java.io.File;
@@ -75,7 +75,7 @@ public class v_1_19_R3 {
             copyFileFromJar(lowcodelanguage, "data/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
 
             if (!checkDependencies()) return;
-            System.out.println(MohistMCStart.i18n.get("installation.start"));
+            System.out.println(MohistMCStart.i18n.as("installation.start"));
 
 
             copyFileFromJar(universalJar, "data/forge-" + mcVer + "-" + forgeVer + "-universal.jar");
@@ -99,7 +99,7 @@ public class v_1_19_R3 {
                     unmute();
                 }
             } else {
-                System.out.println(MohistMCStart.i18n.get("installation.minecraftserver"));
+                System.out.println(MohistMCStart.i18n.as("installation.minecraftserver"));
             }
 
             if (mcpZip.exists()) {
@@ -107,7 +107,7 @@ public class v_1_19_R3 {
 
                     // MAKE THE MAPPINGS TXT FILE
 
-                    System.out.println(MohistMCStart.i18n.get("installation.mcp"));
+                    System.out.println(MohistMCStart.i18n.as("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
                             new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
@@ -115,7 +115,7 @@ public class v_1_19_R3 {
                     unmute();
                 }
             } else {
-                System.out.println(MohistMCStart.i18n.get("installation.mcpfilemissing"));
+                System.out.println(MohistMCStart.i18n.as("installation.mcpfilemissing"));
                 System.exit(0);
             }
 
@@ -158,8 +158,8 @@ public class v_1_19_R3 {
 
             String storedServerMD5 = null;
             String storedMohistMD5 = null;
-            String serverMD5 = MD5Util.getMd5(serverJar);
-            String mohistMD5 = MD5Util.getMd5(JarTool.getFile());
+            String serverMD5 = MD5Util.get(serverJar);
+            String mohistMD5 = MD5Util.get(JarTool.getFile());
 
             if (installInfo.exists()) {
                 List<String> infoLines = Files.readAllLines(installInfo.toPath());
@@ -194,7 +194,7 @@ public class v_1_19_R3 {
                                 libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
                         )));
                 unmute();
-                serverMD5 = MD5Util.getMd5(serverJar);
+                serverMD5 = MD5Util.get(serverJar);
             }
 
             FileWriter fw = new FileWriter(installInfo);
@@ -202,7 +202,7 @@ public class v_1_19_R3 {
             fw.write(mohistMD5);
             fw.close();
 
-            System.out.println(MohistMCStart.i18n.get("installation.finished"));
+            System.out.println(MohistMCStart.i18n.as("installation.finished"));
             MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);

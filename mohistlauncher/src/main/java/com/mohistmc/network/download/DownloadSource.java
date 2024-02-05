@@ -20,6 +20,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.ConnectionUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -46,7 +47,7 @@ public enum DownloadSource {
         String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url)) return GITHUB;
+                if (ConnectionUtil.isDown(me.url)) return GITHUB;
                 return me;
             }
         }
@@ -55,17 +56,5 @@ public enum DownloadSource {
 
     public static boolean isCN() {
         return MohistMCStart.i18n.isCN();
-    }
-
-    public static boolean isDown(String s) {
-        try {
-            URL url = new URL(s);
-            URLConnection rulConnection = url.openConnection();
-            HttpURLConnection httpUrlConnection = (HttpURLConnection) rulConnection;
-            httpUrlConnection.connect();
-            return httpUrlConnection.getResponseCode() != 200;
-        } catch (Exception e) {
-            return true;
-        }
     }
 }
