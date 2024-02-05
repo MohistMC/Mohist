@@ -899,7 +899,7 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -994,14 +_,22 @@
+@@ -994,14 +_,21 @@
        this.f_8906_.m_9829_(ClientboundBlockEntityDataPacket.m_195642_(p_9099_, BlockEntity::m_187482_));
     }
  
@@ -911,7 +911,6 @@
 +         this.f_8906_.m_7951_(new ServerboundContainerClosePacket(this.f_36096_.f_38840_));
 +         useHandleContainerClose = false;
 +      } else {
-+         CraftEventFactory.handleInventoryCloseEvent(this); // CraftBukkit
 +         this.f_8906_.m_9829_(new ClientboundContainerClosePacket(this.f_36096_.f_38840_));
 +         this.m_9230_();
 +      }
