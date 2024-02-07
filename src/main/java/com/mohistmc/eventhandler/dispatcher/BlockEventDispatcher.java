@@ -139,7 +139,7 @@ public class BlockEventDispatcher {
                     bukkitStack = player.getInventory().getItemInOffHand();
                     bukkitHand = org.bukkit.inventory.EquipmentSlot.OFF_HAND;
                 }
-                BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, placedBlock.getState(), againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
+                BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, againstBlock.getState(), againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
                 placeEvent.setCancelled(event.isCanceled());
                 Bukkit.getPluginManager().callEvent(placeEvent);
                 event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
