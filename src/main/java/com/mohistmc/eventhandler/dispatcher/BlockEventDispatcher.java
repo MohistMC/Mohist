@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
@@ -80,7 +81,9 @@ public class BlockEventDispatcher {
                         bukkitStack = player.getInventory().getItemInOffHand();
                         bukkitHand = EquipmentSlot.OFF_HAND;
                     }
-                    BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, placedBlock.getState(), againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
+                    CraftBlockState replacedBlockState = CraftBlockState.getBlockState(event.getWorld(), event.getPos());
+                    replacedBlockState.setData(event.getBlockSnapshot().getReplacedBlock());
+                    BlockPlaceEvent placeEvent = new BlockPlaceEvent(placedBlock, replacedBlockState, againstBlock, bukkitStack, player, !event.isCanceled(), bukkitHand);
                     placeEvent.setCancelled(event.isCanceled());
                     Bukkit.getPluginManager().callEvent(placeEvent);
                     event.setCanceled(placeEvent.isCancelled() || !placeEvent.canBuild());
