@@ -9,6 +9,14 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
+@@ -9,6 +_,7 @@
+ import java.io.InputStreamReader;
+ import java.io.Writer;
+ import java.net.InetAddress;
++import java.net.InetSocketAddress;
+ import java.net.Proxy;
+ import java.nio.charset.StandardCharsets;
+ import java.nio.file.Files;
 @@ -51,6 +_,12 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -22,16 +30,7 @@
  import org.slf4j.Logger;
  
  public class DedicatedServer extends MinecraftServer implements ServerInterface {
-@@ -60,7 +_,7 @@
-    public final List<ConsoleInput> f_139600_ = Collections.synchronizedList(Lists.newArrayList());
-    @Nullable
-    private QueryThreadGs4 f_139601_;
--   public final RconConsoleSource f_139602_;
-+   // public final RconConsoleSource rconConsoleSource; // CraftBukkit - remove field // Mohist TODO
-    @Nullable
-    private RconThread f_139603_;
-    public DedicatedServerSettings f_139604_;
-@@ -68,23 +_,48 @@
+@@ -68,23 +_,49 @@
     private MinecraftServerGui f_139605_;
     @Nullable
     private final TextFilterClient f_139606_;
@@ -42,6 +41,7 @@
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
        this.f_139604_ = p_214793_;
 -      this.f_139602_ = new RconConsoleSource(this);
++      this.f_139602_ = new RconConsoleSource(this, new InetSocketAddress(this.f_139604_.m_139777_().f_139748_));
        this.f_139606_ = TextFilterClient.m_143736_(p_214793_.m_139777_().f_139724_);
     }
  
@@ -209,7 +209,7 @@
     }
  
     protected boolean m_139668_() {
-@@ -474,15 +_,49 @@
+@@ -474,7 +_,29 @@
     }
  
     public String m_7138_() {
@@ -240,29 +240,28 @@
     }
  
     public String m_7261_(String p_139644_) {
--      this.f_139602_.m_11512_();
-+      // CraftBukkit start - fire RemoteServerCommandEvent
-+      throw new UnsupportedOperationException("Not supported - remote source required.");
-+   }
-+
-+   public String runCommand(RconConsoleSource rconConsoleSource, String pCommand) {
-+      rconConsoleSource.m_11512_();
-       this.m_18709_(() -> {
--         this.m_129892_().m_230957_(this.f_139602_.m_11514_(), p_139644_);
-+         CommandSourceStack wrapper = rconConsoleSource.m_11514_();
-+         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource.getBukkitSender(wrapper), pCommand);
+@@ -485,6 +_,21 @@
+       return this.f_139602_.m_11513_();
+    }
+ 
++   public String runCommand(RconConsoleSource rconConsoleSource0, String pCommand) {
++      rconConsoleSource0.m_11512_();
++      this.m_18709_(() -> {
++         CommandSourceStack wrapper = rconConsoleSource0.m_11514_();
++         RemoteServerCommandEvent event = new RemoteServerCommandEvent(rconConsoleSource0.getBukkitSender(wrapper), pCommand);
 +         server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;
 +         }
 +         ConsoleInput serverCommand = new ConsoleInput(event.getCommand(), wrapper);
 +         server.dispatchServerCommand(event.getSender(), serverCommand);
-       });
--      return this.f_139602_.m_11513_();
-+      return rconConsoleSource.m_11513_();
-    }
- 
++      });
++      return rconConsoleSource0.m_11513_();
++   }
++
     public void m_139688_(boolean p_139689_) {
+       this.f_139604_.m_139778_((p_278925_) -> {
+          return p_278925_.f_139726_.m_139895_(this.m_206579_(), p_139689_);
 @@ -492,7 +_,12 @@
     }
  
