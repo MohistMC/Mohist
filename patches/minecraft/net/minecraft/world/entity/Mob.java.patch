@@ -88,7 +88,7 @@
 +            }
 +         }
 +         CraftLivingEntity ctarget = null;
-+         if (p_21544_ != null) {
++         if (p_21544_ != null && p_21544_.getBukkitEntity() instanceof CraftLivingEntity) {
 +            ctarget = (CraftLivingEntity) p_21544_.getBukkitEntity();
 +         }
 +         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
