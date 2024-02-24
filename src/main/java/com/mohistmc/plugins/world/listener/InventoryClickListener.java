@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.world.listener;
 
+import com.mohistmc.bukkit.inventory.CraftCustomInventory;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
@@ -61,7 +62,7 @@ public class InventoryClickListener {
 
     public static void init(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        if (event.getWhoClicked() instanceof Player p) {
+        if (!(inventory instanceof CraftCustomInventory) && event.getWhoClicked() instanceof Player p) {
             if (inventory.getHolder() instanceof WorldCreateInventory) {
 
                 event.setCancelled(true);
