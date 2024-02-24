@@ -148,7 +148,7 @@
 +
 +      Object2ObjectLinkedOpenHashMap<ResourceLocation, Recipe<?>> craftbukkit = this.recipesCB.get(irecipe.m_6671_()); // CraftBukkit
 +
-+      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_()) || craftbukkit.containsKey(irecipe.m_6423_())) {
++      if (this.f_199900_.containsKey(irecipe.m_6423_()) || map0.containsKey(irecipe.m_6423_()) || (craftbukkit != null && craftbukkit.containsKey(irecipe.m_6423_()))) {
 +         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.m_6423_());
 +      } else {
 +         if (this.f_199900_ instanceof ImmutableMap) {
