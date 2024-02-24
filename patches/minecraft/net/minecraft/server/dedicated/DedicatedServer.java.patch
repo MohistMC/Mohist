@@ -114,7 +114,7 @@
        f_139598_.info("Default game type: {}", (Object)dedicatedserverproperties.f_139740_);
        InetAddress inetaddress = null;
        if (!this.m_130009_().isEmpty()) {
-@@ -153,14 +_,30 @@
+@@ -153,14 +_,32 @@
           return false;
        } else {
           this.m_129823_(new DedicatedPlayerList(this, this.m_247573_(), this.f_129745_));
@@ -125,7 +125,9 @@
 +         // Mohsit start
 +         MohistConfig.init((java.io.File) options.valueOf("mohist-settings"));
 +         MohistConfig.registerCommands();
-+         this.m_129989_(MohistConfig.motd());
++         if (MohistConfig.motdEnable) {
++            this.m_129989_(MohistConfig.motd());
++         }
 +         // Mohist end
 +         // CraftBukkit start
 +         server.loadPlugins();
