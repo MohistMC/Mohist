@@ -32,8 +32,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class MohistCommand extends Command {
 
@@ -42,12 +42,12 @@ public class MohistCommand extends Command {
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|reload|version|channels_incom|channels_outgo]";
+        this.usageMessage = "/mohist [mods|playermods|reload|version|channels_incom|channels_outgo|speed]";
         this.setPermission("mohist.command.mohist");
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
@@ -61,7 +61,7 @@ public class MohistCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
         if (!testPermission(sender)) {
             return true;
         }
@@ -102,7 +102,6 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN + "mohist-config/mohist.yml directory reload complete.");
             }
             case "version" -> {
-                String[] cbs = CraftServer.class.getPackage().getImplementationVersion().split("-");
                 sender.sendMessage("Mohist: " + MohistMC.versionInfo.mohist());
                 sender.sendMessage("Forge: " + MohistMC.versionInfo.forge());
                 sender.sendMessage("NeoForge: " + MohistMC.versionInfo.neoforge());
@@ -137,7 +136,7 @@ public class MohistCommand extends Command {
                         }
                     }
                 } else {
-                    sender.sendMessage("§c" + I18n.as("控制台不能覆盖这个设置"));
+                    sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
                 }
             }
             default -> {

@@ -48,7 +48,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + I18n.as("ERROR.notPlayer"));
+                sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
                 return false;
             }
         } else if(args.length == 1) {

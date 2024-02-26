@@ -106,9 +106,8 @@ public class WarpsCommands extends Command {
 
     private final List<String> params = Arrays.asList("set", "del", "tp", "gui");
 
-
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
@@ -119,7 +118,6 @@ public class WarpsCommands extends Command {
         }
         return list;
     }
-
 
     private void sendHelp(CommandSender player) {
         String prefix = I18n.as("warpscommands.prefix");

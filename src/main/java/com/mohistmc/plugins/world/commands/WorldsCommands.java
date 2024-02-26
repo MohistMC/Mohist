@@ -1,6 +1,7 @@
 package com.mohistmc.plugins.world.commands;
 
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
@@ -21,6 +22,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldsCommands extends Command {
     public static String type;
@@ -41,7 +43,7 @@ public class WorldsCommands extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(@NotNull @NotNull CommandSender sender, @NotNull @NotNull String currentAlias, String[] args) {
         if (args.length == 0) {
             this.sendHelp(sender);
             return false;
@@ -59,7 +61,7 @@ public class WorldsCommands extends Command {
                     int i = -1;
                     WorldCreateInventory worldCreateInventory = new WorldCreateInventory(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
                     Inventory inventory = worldCreateInventory.getInventory();
-                    for (World.Environment environment : World.Environment.values()) {
+                    for (World.Environment environment : ForgeInjectBukkit.environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
                         i++;
                         inventory.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
@@ -215,7 +217,7 @@ public class WorldsCommands extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
