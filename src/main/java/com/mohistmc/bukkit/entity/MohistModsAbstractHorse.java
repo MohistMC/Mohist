@@ -19,12 +19,12 @@ public class MohistModsAbstractHorse extends CraftAbstractHorse {
     }
 
     @Override
-    public Horse.@NotNull @NotNull @NotNull @NotNull Variant getVariant() {
+    public Horse.@NotNull Variant getVariant() {
         return Horse.Variant.FORGE_MOD_HORSE;
     }
 
     @Override
-    public @NotNull @NotNull @NotNull @NotNull EntityCategory getCategory() {
+    public @NotNull EntityCategory getCategory() {
         return EntityCategory.NONE;
     }
 }

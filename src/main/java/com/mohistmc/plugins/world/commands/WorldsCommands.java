@@ -43,7 +43,7 @@ public class WorldsCommands extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull @NotNull CommandSender sender, @NotNull @NotNull String currentAlias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (args.length == 0) {
             this.sendHelp(sender);
             return false;
