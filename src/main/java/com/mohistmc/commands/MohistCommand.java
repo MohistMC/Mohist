@@ -89,7 +89,7 @@ public class MohistCommand extends Command {
                 if (player != null) {
                     sender.sendMessage(ChatColor.GREEN + String.valueOf(PlayerAPI.getModSize(player)) + " " + PlayerAPI.getModlist(player).toString());
                 } else {
-                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnlinep1") + args[1] + I18n.as("mohistcmd.playermods.playernotOnlinep2"));
+                    sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnline", args[1]));
                 }
             }
             case "reload" -> {
