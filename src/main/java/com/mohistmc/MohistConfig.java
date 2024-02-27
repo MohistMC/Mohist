@@ -251,8 +251,8 @@ public class MohistConfig {
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
         motdEnable = getBoolean("motd.enable", true);
-        motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
-        motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
+        motdFirstLine = getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>");
+        motdSecondLine = getString("motd.secondline", "");
 
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
