@@ -2,11 +2,12 @@ package com.mohistmc.api;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
-import com.mohistmc.org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -26,11 +27,11 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public class ItemAPI {
 
-    public static Logger LOGGER = LogManager.getLogger("ItemAPI");
+    public static final Logger LOGGER = LogManager.getLogger("ItemAPI");
 
-    public static ItemStack doItem(Material material, int menge, String name, ArrayList<String> lore) {
-        final ItemStack item = new ItemStack(material, menge);
-        final ItemMeta meta = item.getItemMeta();
+    public static ItemStack doItem(Material material, int menge, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material, menge);
+        ItemMeta meta = item.getItemMeta();
         meta.setLore(lore);
         meta.setDisplayName(name);
         item.setItemMeta(meta);
@@ -38,8 +39,8 @@ public class ItemAPI {
     }
 
     public static net.minecraft.world.item.ItemStack toNMSItem(Material material) {
-        ItemStack itemStackcb = new ItemStack(material);
-        return CraftItemStack.asNMSCopy(itemStackcb);
+        ItemStack itemStack = new ItemStack(material);
+        return CraftItemStack.asNMSCopy(itemStack);
     }
 
     public static net.minecraft.world.item.ItemStack toNMSItem(ItemStack itemStack) {
@@ -72,7 +73,7 @@ public class ItemAPI {
      */
     public static ItemStack getBukkitByBase64(String base64) {
         try {
-            try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new ByteArrayInputStream(Base64Coder.decodeLines(base64)))) {
+            try (BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(base64)))) {
                 return (ItemStack) dataInput.readObject();
             }
         } catch (ClassNotFoundException | IOException e) {
@@ -96,7 +97,7 @@ public class ItemAPI {
 
             // Serialize that array
             dataOutput.close();
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
             return null;
         }
@@ -117,7 +118,7 @@ public class ItemAPI {
         try {
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             NbtIo.writeCompressed(nbtTagCompound, buf);
-            return Base64Coder.encodeLines(buf.toByteArray());
+            return Base64.getEncoder().encodeToString(buf.toByteArray());
         } catch (IOException ignored) {
             return null;
         }
@@ -125,7 +126,7 @@ public class ItemAPI {
 
     public static CompoundTag deserializeNbt(String serializeNBT) {
         if (serializeNBT != null) {
-            ByteArrayInputStream buf = new ByteArrayInputStream(Base64Coder.decodeLines(serializeNBT));
+            ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(serializeNBT));
             try {
                 return NbtIo.readCompressed(buf);
             } catch (IOException e) {
@@ -133,6 +134,35 @@ public class ItemAPI {
             }
         }
         return null;
+    }
+
+    public static byte[] nbtToByte(CompoundTag nbt){
+        try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+        nbt.write(dos);
+        byte[] outputByteArray = baos.toByteArray();
+        dos.close();
+        baos.close();
+        return outputByteArray;
+        } catch (IOException e) {
+            MohistMC.LOGGER.error("nbtToByte ", e);
+            return null;
+        }
+    }
+
+    public static CompoundTag byteToNbt(byte[] nbtByte) {
+        try {
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(nbtByte, 0, nbtByte.length);
+            DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream);
+            CompoundTag reconstructedCompoundTag = NbtIo.read(dataInputStream);
+            dataInputStream.close();
+            byteArrayInputStream.close();
+            return reconstructedCompoundTag;
+        } catch (IOException e) {
+            MohistMC.LOGGER.error("byteToNbt ", e);
+            return null;
+        }
     }
 
     public static void name(ItemStack itemStack, String name) {
