@@ -70,49 +70,14 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
-@@ -442,6 +_,12 @@
+@@ -442,6 +_,7 @@
        protected BlockBehaviour.BlockStateBase.Cache f_60593_;
        private FluidState f_243896_ = Fluids.f_76191_.m_76145_();
        private boolean f_244227_;
 +      public final boolean isOpaque() { return this.f_60601_; } // Paper - OBFHELPER
-+
-+      // starlight start
-+      private boolean isConditionallyFullOpaque;
-+      private int opacityIfCached;
-+      // starlight end
  
        protected BlockStateBase(Block p_60608_, ImmutableMap<Property<?>, Comparable<?>> p_60609_, MapCodec<BlockState> p_60610_) {
           super(p_60608_, p_60609_, p_60610_);
-@@ -496,8 +_,28 @@
-             this.f_60593_ = new BlockBehaviour.BlockStateBase.Cache(this.m_7160_());
-          }
- 
-+         // starlight start
-          this.f_279551_ = this.m_280210_();
--      }
-+         this.isConditionallyFullOpaque = this.f_60601_ & this.f_60595_;
-+         this.opacityIfCached = this.f_60593_ == null || this.isConditionallyFullOpaque ? -1 : this.f_60593_.f_60848_;
-+         // Forge
-+         try {
-+            if (true) {
-+               this.opacityIfCached = -1;
-+            }
-+         } catch (final Exception ex) {
-+            this.opacityIfCached = -1;
-+         }
-+      }
-+
-+      public final boolean isConditionallyFullOpaque() {
-+         return this.isConditionallyFullOpaque;
-+      }
-+
-+      public final int getOpacityIfCached() {
-+         return this.opacityIfCached;
-+      }
-+      // starlight end
- 
-       public Block m_60734_() {
-          return this.f_61112_;
 @@ -548,12 +_,14 @@
           return this.f_60595_;
        }

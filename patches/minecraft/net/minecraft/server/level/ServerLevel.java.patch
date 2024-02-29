@@ -1,19 +1,15 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -1,8 +_,13 @@
- package net.minecraft.server.level;
+@@ -2,6 +_,9 @@
  
-+import ca.spottedleaf.starlight.common.util.CoordinateUtils;
  import com.google.common.annotations.VisibleForTesting;
  import com.google.common.collect.Lists;
 +import com.mohistmc.forge.MohistDerivedWorldInfo;
 +import com.mohistmc.plugins.ban.bans.BanEntity;
 +import com.mohistmc.util.Level2LevelStem;
  import com.mojang.datafixers.DataFixer;
-+import com.mojang.datafixers.util.Either;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
- import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 @@ -14,12 +_,16 @@
  import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
@@ -63,12 +59,7 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.SnowLayerBlock;
-@@ -121,10 +_,12 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.chunk.ChunkAccess;
- import net.minecraft.world.level.chunk.ChunkGenerator;
-+import net.minecraft.world.level.chunk.ChunkStatus;
- import net.minecraft.world.level.chunk.LevelChunk;
+@@ -125,6 +_,7 @@
  import net.minecraft.world.level.chunk.LevelChunkSection;
  import net.minecraft.world.level.chunk.storage.EntityStorage;
  import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
@@ -827,7 +818,7 @@
           ServerLevel.this.m_7726_().m_8443_(p_143375_);
           if (p_143375_ instanceof ServerPlayer serverplayer) {
              ServerLevel.this.f_8546_.remove(serverplayer);
-@@ -1500,17 +_,71 @@
+@@ -1500,17 +_,49 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -856,7 +847,7 @@
        public void m_214006_(Entity p_215086_) {
           p_215086_.m_213651_(DynamicGameEventListener::m_223641_);
        }
-+   }
+    }
 +
 +   @Override
 +   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
@@ -878,26 +869,4 @@
 +      return this.m_7967_(entitylightning);
 +   }
 +   // CraftBukkit end
-+
-+   @Override
-+   public final LevelChunk getChunkAtImmediately(final int chunkX, final int chunkZ) {
-+      final ChunkMap storage = this.f_8547_.f_8325_;
-+      final ChunkHolder holder = storage.m_140327_(CoordinateUtils.getChunkKey(chunkX, chunkZ));
-+
-+      if (holder == null) {
-+         return null;
-+      }
-+
-+      final Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = holder.m_140047_(ChunkStatus.f_62326_).getNow(null);
-+
-+      return either == null ? null : (LevelChunk)either.left().orElse(null);
-+   }
-+
-+   @Override
-+   public final ChunkAccess getAnyChunkImmediately(final int chunkX, final int chunkZ) {
-+      final ChunkMap storage = this.f_8547_.f_8325_;
-+      final ChunkHolder holder = storage.m_140327_(CoordinateUtils.getChunkKey(chunkX, chunkZ));
-+
-+      return holder == null ? null : holder.m_140089_();
-    }
  }

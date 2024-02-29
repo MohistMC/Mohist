@@ -1,12 +1,5 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -1,5 +_,6 @@
- package net.minecraft.world.level.chunk.storage;
- 
-+import ca.spottedleaf.starlight.common.util.SaveUtil;
- import com.google.common.collect.Maps;
- import com.mojang.logging.LogUtils;
- import com.mojang.serialization.Codec;
 @@ -63,7 +_,7 @@
  import org.slf4j.Logger;
  
@@ -59,22 +52,19 @@
        chunkaccess.m_8094_(flag);
        CompoundTag compoundtag2 = p_188234_.m_128469_("Heightmaps");
        EnumSet<Heightmap.Types> enumset = EnumSet.noneOf(Heightmap.Types.class);
-@@ -212,6 +_,9 @@
+@@ -212,6 +_,7 @@
        }
  
        if (chunkstatus$chunktype == ChunkStatus.ChunkType.LEVELCHUNK) {
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
-+         ProtoChunk protoChunk = new ImposterProtoChunk((LevelChunk)chunkaccess, false);
-+         SaveUtil.loadLightHook(p_188231_, p_188233_, p_188234_, protoChunk);
           return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
        } else {
           ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
-@@ -235,6 +_,8 @@
+@@ -235,6 +_,7 @@
              protochunk1.m_188186_(generationstep$carving, new CarvingMask(compoundtag4.m_128467_(s1), chunkaccess.m_141937_()));
           }
  
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
-+         SaveUtil.loadLightHook(p_188231_, p_188233_, p_188234_, protochunk1);
           return protochunk1;
        }
     }
@@ -93,7 +83,7 @@
  
        m_188235_(p_63455_, compoundtag, p_63456_.m_183568_());
        compoundtag.m_128365_("PostProcessing", m_63490_(p_63456_.m_6720_()));
-@@ -354,6 +_,12 @@
+@@ -354,6 +_,11 @@
  
        compoundtag.m_128365_("Heightmaps", compoundtag2);
        compoundtag.m_128365_("structures", m_188249_(StructurePieceSerializationContext.m_192770_(p_63455_), chunkpos, p_63456_.m_6633_(), p_63456_.m_62769_()));
@@ -102,7 +92,6 @@
 +         compoundtag.m_128365_("ChunkBukkitValues", p_63456_.persistentDataContainer.toTagCompound());
 +      }
 +      // CraftBukkit end
-+      SaveUtil.saveLightHook(p_63455_, p_63456_, compoundtag);
        return compoundtag;
     }
  

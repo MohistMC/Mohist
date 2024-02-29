@@ -39,15 +39,6 @@
  import org.slf4j.Logger;
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
-@@ -120,7 +_,7 @@
-    private final LongSet f_140132_ = new LongOpenHashSet();
-    public final ServerLevel f_140133_;
-    private final ThreadedLevelLightEngine f_140134_;
--   private final BlockableEventLoop<Runnable> f_140135_;
-+   public final BlockableEventLoop<Runnable> f_140135_;
-    public ChunkGenerator f_140136_;
-    private final RandomState f_214834_;
-    private final ChunkGeneratorStructureState f_254626_;
 @@ -144,6 +_,27 @@
     private final Queue<Runnable> f_140125_ = Queues.newConcurrentLinkedQueue();
     int f_140126_;
