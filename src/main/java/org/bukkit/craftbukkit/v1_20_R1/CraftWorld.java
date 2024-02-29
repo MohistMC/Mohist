@@ -1327,7 +1327,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return world.K.worldGenOptions().generateStructures();
+        return false;
     }
 
     @Override

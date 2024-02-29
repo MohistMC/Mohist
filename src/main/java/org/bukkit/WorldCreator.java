@@ -19,7 +19,7 @@ public class WorldCreator {
     private ChunkGenerator generator = null;
     private BiomeProvider biomeProvider = null;
     private WorldType type = WorldType.NORMAL;
-    private boolean generateStructures = true;
+    private boolean generateStructures = false;
     private String generatorSettings = "";
     private boolean hardcore = false;
 
@@ -353,8 +353,6 @@ public class WorldCreator {
      */
     @NotNull
     public WorldCreator generateStructures(boolean generate) {
-        this.generateStructures = generate;
-
         return this;
     }
 
