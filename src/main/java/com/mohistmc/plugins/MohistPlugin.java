@@ -1,9 +1,7 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.plugins.ban.bans.BanEnchantment;
-import com.mohistmc.plugins.ban.bans.BanEntity;
-import com.mohistmc.plugins.ban.bans.BanItem;
+import com.mohistmc.plugins.ban.BanListener;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
 import com.mohistmc.plugins.warps.WarpsCommands;
@@ -74,9 +72,7 @@ public class MohistPlugin {
             EnchantmentFix.anvilListener(prepareAnvilEvent);
         }
         if (event instanceof InventoryCloseEvent event1) {
-            BanItem.save(event1);
-            BanEntity.save(event1);
-            BanEnchantment.save(event1);
+            BanListener.save(event1);
         }
         if (event instanceof PluginEnableEvent event1) {
             PluginHooks.register(event1);

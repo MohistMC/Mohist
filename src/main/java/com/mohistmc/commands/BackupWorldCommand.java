@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class BackupWorldCommand extends Command {
 
@@ -39,7 +40,7 @@ public class BackupWorldCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (sender.isOp()) {
             if (args.length != 1) {
                 sender.sendMessage(I18n.as("worldbackupcmd.notice.promptWorldName"));

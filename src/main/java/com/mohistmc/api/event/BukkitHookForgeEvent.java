@@ -21,6 +21,7 @@ package com.mohistmc.api.event;
 import net.minecraftforge.eventbus.api.Event;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Using Bukkit to handle Forge's Event
@@ -47,12 +48,12 @@ public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     }
 
     @Override
-    public String getEventName() {
+    public @NotNull String getEventName() {
         return event.getClass().getSimpleName();
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

@@ -22,7 +22,8 @@ public class WorldsGUI {
         while (Bukkit.getWorlds().size() > groesse) {
             groesse += 54;
         }
-        Inventory inv = Bukkit.createInventory(null, groesse, name);
+        WorldListInventory worldListInventory = new WorldListInventory(groesse, name);
+        Inventory inv = worldListInventory.getInventory();
         for (World w : Bukkit.getWorlds()) {
             ArrayList<String> infoLore = new ArrayList<>();
             FileConfiguration config = ConfigByWorlds.config;

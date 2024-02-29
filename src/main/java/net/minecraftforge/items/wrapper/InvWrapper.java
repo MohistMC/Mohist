@@ -13,6 +13,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class InvWrapper implements IItemHandlerModifiable
@@ -66,10 +67,13 @@ public class InvWrapper implements IItemHandlerModifiable
 
         ItemStack stackInSlot = getInv().getItem(slot);
         var oitemstack = CraftItemStack.asCraftMirror(stackInSlot);
-        var event = new InvWrapperMoveItemEvent.Insert(InventoryOwner.getInventory(getInv()), oitemstack);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return stack;
+        Inventory inventory = InventoryOwner.inventoryFromForge(this);
+        if (inventory != null) {
+            var event = new InvWrapperMoveItemEvent.Insert(inventory, oitemstack);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return stack;
+            }
         }
 
         int m;
@@ -165,10 +169,13 @@ public class InvWrapper implements IItemHandlerModifiable
             return ItemStack.EMPTY;
 
         var oitemstack = CraftItemStack.asCraftMirror(stackInSlot);
-        var event = new InvWrapperMoveItemEvent.Extract(InventoryOwner.getInventory(getInv()), oitemstack);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return ItemStack.EMPTY;
+        Inventory inventory = InventoryOwner.inventoryFromForge(this);
+        if (inventory != null) {
+            var event = new InvWrapperMoveItemEvent.Extract(inventory, oitemstack);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return ItemStack.EMPTY;
+            }
         }
         if (simulate)
         {

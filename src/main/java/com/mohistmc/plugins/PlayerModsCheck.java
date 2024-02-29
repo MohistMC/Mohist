@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class PlayerModsCheck {
 
-    private static AtomicBoolean canLog = new AtomicBoolean(true);
+    private static final AtomicBoolean canLog = new AtomicBoolean(true);
 
     public static boolean init(List<String> stringList) {
         if (MohistConfig.server_modlist_whitelist_enable) {

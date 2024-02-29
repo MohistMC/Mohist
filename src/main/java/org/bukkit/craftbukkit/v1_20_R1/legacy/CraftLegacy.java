@@ -286,7 +286,7 @@ public final class CraftLegacy {
         if (ForgeInjectBukkit.isMods(material.getKey())) {
             return material.name();
         } else {
-            return material.name().substring(Material.LEGACY_PREFIX.length());
+            return material.name().startsWith(Material.LEGACY_PREFIX) ? material.name().substring(Material.LEGACY_PREFIX.length()) : material.name();
         }
     }
 

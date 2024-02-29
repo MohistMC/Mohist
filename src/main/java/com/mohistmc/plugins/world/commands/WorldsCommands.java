@@ -1,16 +1,17 @@
 package com.mohistmc.plugins.world.commands;
 
 import com.mohistmc.api.ItemAPI;
+import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
+import com.mohistmc.plugins.world.utils.WorldCreateInventory;
 import com.mohistmc.plugins.world.utils.WorldsGUI;
 import com.mohistmc.util.I18n;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Location;
@@ -21,6 +22,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldsCommands extends Command {
     public static String type;
@@ -41,7 +43,7 @@ public class WorldsCommands extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (args.length == 0) {
             this.sendHelp(sender);
             return false;
@@ -57,19 +59,20 @@ public class WorldsCommands extends Command {
                 type = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 if (Bukkit.getWorld(args[1]) == null) {
                     int i = -1;
-                    Inventory inv = Bukkit.createInventory(null, 27, MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
-                    for (World.Environment environment : World.Environment.values()) {
+                    WorldCreateInventory worldCreateInventory = new WorldCreateInventory(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
+                    Inventory inventory = worldCreateInventory.getInventory();
+                    for (World.Environment environment : ForgeInjectBukkit.environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
                         i++;
-                        inv.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
+                        inventory.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
                     }
-                    player.openInventory(inv);
+                    player.openInventory(inventory);
                 } else {
                     worldAllExists(player, type);
                 }
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("tp")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 World world = Bukkit.getWorld(worldName);
                 if (world == null) {
                     worldNotExists(player, worldName);
@@ -82,22 +85,22 @@ public class WorldsCommands extends Command {
                 ConfigByWorlds.getSpawn(player.getWorld().getName(), player);
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("delete")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 if (!args[1].equalsIgnoreCase("world")) {
                     World w = Bukkit.getWorld(worldName);
                     if (w != null) {
                         for (Player all : w.getPlayers()) {
                             all.teleport(Bukkit.getWorld("world").getSpawnLocation());
                         }
-                    }
-                    try {
-                        Bukkit.unloadWorld(w, true);
-                        File deleteWorld = w.getWorldFolder();
-                        WorldManage.deleteDir(deleteWorld);
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delSuccessful"));
-                        ConfigByWorlds.removeWorld(worldName);
-                    } catch (Exception e2) {
-                        player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delUnsuccessful"));
+                        try {
+                            ConfigByWorlds.removeWorld(worldName);
+                            Bukkit.unloadWorld(w, true);
+                            File deleteWorld = w.getWorldFolder();
+                            WorldManage.deleteDir(deleteWorld);
+                            player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delSuccessful"));
+                        } catch (Exception e2) {
+                            player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delUnsuccessful"));
+                        }
                     }
                 } else {
                     player.sendMessage(MessageI18N.WORLDMANAGE_PREFIX.getKey() + I18n.as("worldcommands.world.delDenied"));
@@ -126,7 +129,7 @@ public class WorldsCommands extends Command {
                 }
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
-                String worldName = args[1].toLowerCase(java.util.Locale.ENGLISH);
+                String worldName = args[1];
                 if (Bukkit.getWorld(worldName) == null) {
                     return false;
                 }
@@ -192,7 +195,7 @@ public class WorldsCommands extends Command {
                     }
                     if (argsname.equals(name)) {
                         Player target1 = Bukkit.getServer().getPlayer(argsname);
-                        String worldName = args[2].toLowerCase(Locale.ENGLISH);
+                        String worldName = args[2];
                         World world = Bukkit.getWorld(worldName);
                         if (world == null) {
                             return false;
@@ -214,7 +217,7 @@ public class WorldsCommands extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {

@@ -27,6 +27,7 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftCustomInventory implements InventoryHolder {
 
@@ -45,7 +46,7 @@ public class CraftCustomInventory implements InventoryHolder {
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return this.container;
     }
 

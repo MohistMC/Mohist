@@ -5,10 +5,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class MohistNetworkEvent extends Event implements Cancellable {
 
-    private static HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private boolean cancel;
     private URI url;
     private String msg;
@@ -50,7 +51,7 @@ public class MohistNetworkEvent extends Event implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

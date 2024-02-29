@@ -35,9 +35,7 @@ public class EnchantmentAPI {
 
     public static List<org.bukkit.enchantments.Enchantment> get(org.bukkit.inventory.ItemStack itemStack) {
         if (has(itemStack)) {
-            List<org.bukkit.enchantments.Enchantment> list = new ArrayList<>();
-            list.addAll(itemStack.getEnchantments().keySet());
-            return list;
+            return new ArrayList<>(itemStack.getEnchantments().keySet());
         }
         return Collections.emptyList();
     }

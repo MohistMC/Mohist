@@ -157,6 +157,7 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public void recalculatePermissions() {
+        if (Bukkit.getServer() == null) return;
         clearPermissions();
         Set<Permission> defaults = Bukkit.getServer().getPluginManager().getDefaultPermissions(isOp());
         Bukkit.getServer().getPluginManager().subscribeToDefaultPerms(isOp(), parent);

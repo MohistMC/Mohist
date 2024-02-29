@@ -10,6 +10,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mohistmc.api.ServerAPI;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.SharedConstants;
@@ -331,7 +332,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static boolean isLegacy(PluginDescriptionFile pdf) {
-        return pdf.getAPIVersion() == null;
+        return /*pdf.getAPIVersion() == null*/ false;
     }
 
     @Override
@@ -378,7 +379,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     @Override
     public String getTranslationKey(EntityType entityType) {
         Preconditions.checkArgument(entityType.getName() != null, "Invalid name of EntityType %s for translation key", entityType);
-        return net.minecraft.world.entity.EntityType.byString(entityType.getName()).map(net.minecraft.world.entity.EntityType::getDescriptionId).orElseThrow();
+        String mods = ServerAPI.entityTypeMap0.get(entityType).getDescriptionId();
+        return net.minecraft.world.entity.EntityType.byString(entityType.getName()).map(net.minecraft.world.entity.EntityType::getDescriptionId).orElse(mods);
     }
 
     @Override

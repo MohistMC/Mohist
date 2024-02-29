@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class GetPluginListCommand extends Command {
     private static String sendToHaste = "";
@@ -37,12 +38,12 @@ public class GetPluginListCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (!testPermission(sender)) {
             return true;
         }
         for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
-            sendToHaste = sendToHaste + "\nName : " + p.getName() + "\nVersion : " + p.getDescription().getVersion() + "\n---------";
+            sendToHaste = "%s\nName : %s\nVersion : %s\n---------".formatted(sendToHaste, p.getName(), p.getDescription().getVersion());
         }
         try {
             sender.sendMessage(I18n.as("getPluginList.pluginList") + HasteUtils.pasteMohist(sendToHaste));

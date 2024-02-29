@@ -16,6 +16,7 @@ import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerQueue;
+import org.jetbrains.annotations.NotNull;
 
 public class MohistDerivedWorldInfo extends PrimaryLevelData {
 
@@ -115,7 +116,7 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public String getLevelName() {
+    public @NotNull String getLevelName() {
         return derivedWorldInfo.getLevelName();
     }
 
@@ -170,17 +171,17 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public GameType getGameType() {
+    public @NotNull GameType getGameType() {
         return derivedWorldInfo.getGameType();
     }
 
     @Override
-    public void setGameType(GameType type) {
+    public void setGameType(@NotNull GameType type) {
         derivedWorldInfo.setGameType(type);
     }
 
     @Override
-    public void setSpawn(BlockPos spawnPoint, float angle) {
+    public void setSpawn(@NotNull BlockPos spawnPoint, float angle) {
         derivedWorldInfo.setSpawn(spawnPoint, angle);
     }
 
@@ -205,22 +206,22 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public GameRules getGameRules() {
+    public @NotNull GameRules getGameRules() {
         return derivedWorldInfo.getGameRules();
     }
 
     @Override
-    public WorldBorder.Settings getWorldBorder() {
+    public WorldBorder.@NotNull Settings getWorldBorder() {
         return derivedWorldInfo.getWorldBorder();
     }
 
     @Override
-    public void setWorldBorder(WorldBorder.Settings serializer) {
+    public void setWorldBorder(WorldBorder.@NotNull Settings serializer) {
         derivedWorldInfo.setWorldBorder(serializer);
     }
 
     @Override
-    public Difficulty getDifficulty() {
+    public @NotNull Difficulty getDifficulty() {
         return derivedWorldInfo.getDifficulty();
     }
 
@@ -230,7 +231,7 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public TimerQueue<MinecraftServer> getScheduledEvents() {
+    public @NotNull TimerQueue<MinecraftServer> getScheduledEvents() {
         return derivedWorldInfo.getScheduledEvents();
     }
 
@@ -255,12 +256,12 @@ public class MohistDerivedWorldInfo extends PrimaryLevelData {
     }
 
     @Override
-    public void setWanderingTraderId(UUID id) {
+    public void setWanderingTraderId(@NotNull UUID id) {
         derivedWorldInfo.setWanderingTraderId(id);
     }
 
     @Override
-    public void fillCrashReportCategory(CrashReportCategory p_164972_, LevelHeightAccessor p_164973_) {
+    public void fillCrashReportCategory(@NotNull CrashReportCategory p_164972_, @NotNull LevelHeightAccessor p_164973_) {
         derivedWorldInfo.fillCrashReportCategory(p_164972_, p_164973_);
     }
 }

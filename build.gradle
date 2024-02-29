@@ -225,7 +225,7 @@ def sharedDeps = {
 
     installer 'io.izzel:tools:1.3.0'
     installer 'com.mohistmc:dynamicenum:0.2'
-    installer 'com.mohistmc:i18n:0.4'
+    installer 'com.mohistmc:i18n:0.6'
     installer 'com.mohistmc:brigadier:1.20.1'
     installer 'com.mohistmc:librariesvault:1.20.1'
     installer 'com.mohistmc:json:0.2'
@@ -542,7 +542,7 @@ project(':mohist') {
                         'Specification-Vendor'  : 'SpigotMC',
                         'Specification-Version' : '1.20.1',
                         'Implementation-Title'  : 'Spigot',
-                        'Implementation-Version': bukkit_version + '-' +  craftbukkit_version + '-' +  spigot_version + '-' + forge_version ,
+                        'Implementation-Version': bukkit_version + '-' +  craftbukkit_version + '-' +  spigot_version + '-' + neoforge_version ,
                         'Implementation-Vendor' : 'SpigotMC'
                 ] as LinkedHashMap
         ]

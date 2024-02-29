@@ -926,13 +926,11 @@
     protected boolean m_269011_() {
        return true;
     }
-@@ -2026,12 +_,18 @@
-             MinecraftServer minecraftserver = serverlevel.m_7654_();
+@@ -2027,11 +_,17 @@
              ResourceKey<Level> resourcekey = this.m_9236_().m_46472_() == Level.f_46429_ ? Level.f_46428_ : Level.f_46429_;
              ServerLevel serverlevel1 = minecraftserver.m_129880_(resourcekey);
--            if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
+             if (serverlevel1 != null && minecraftserver.m_7079_() && !this.m_20159_() && this.f_19818_++ >= i) {
 -               this.m_9236_().m_46473_().m_6180_("portal");
-+            if (true && !this.m_20159_() && this.f_19818_++ >= i) {
 +               this.f_19853_.m_46473_().m_6180_("portal");
                 this.f_19818_ = i;
                 this.m_20091_();

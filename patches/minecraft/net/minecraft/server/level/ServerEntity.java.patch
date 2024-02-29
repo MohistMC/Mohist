@@ -8,19 +8,14 @@
  import java.util.ArrayList;
  import java.util.Collection;
  import java.util.Collections;
-@@ -24,9 +_,12 @@
- import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
- import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+@@ -26,6 +_,7 @@
  import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
-+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
  import net.minecraft.network.protocol.game.VecDeltaCodec;
  import net.minecraft.network.syncher.SynchedEntityData;
 +import net.minecraft.server.network.ServerPlayerConnection;
  import net.minecraft.util.Mth;
-+import net.minecraft.world.effect.MobEffectInstance;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.entity.EquipmentSlot;
- import net.minecraft.world.entity.LivingEntity;
 @@ -38,6 +_,8 @@
  import net.minecraft.world.item.MapItem;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -139,10 +134,11 @@
           if (!collection.isEmpty()) {
              p_289563_.accept(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), collection));
           }
-@@ -266,6 +_,21 @@
+@@ -266,7 +_,14 @@
           if (!list.isEmpty()) {
              p_289563_.accept(new ClientboundSetEquipmentPacket(this.f_8510_.m_19879_(), list));
           }
+-      }
 +         ((LivingEntity) this.f_8510_).m_21315_(); // CraftBukkit - SPIGOT-3789: sync again immediately after sending
 +      }
 +
@@ -151,23 +147,16 @@
 +         p_289563_.accept(new ClientboundRotateHeadPacket(this.f_8510_, (byte) Math.floor(this.f_8510_.m_6080_() * 256.0F / 360.0F)));
 +      }
 +      // CraftBukkit end
-+
-+      if (this.f_8510_ instanceof LivingEntity) {
-+         LivingEntity livingentity = (LivingEntity)this.f_8510_;
-+
-+         for(MobEffectInstance mobeffectinstance : livingentity.m_21220_()) {
-+            p_289563_.accept(new ClientboundUpdateMobEffectPacket(this.f_8510_.m_19879_(), mobeffectinstance));
-+         }
-       }
  
        if (!this.f_8510_.m_20197_().isEmpty()) {
+          p_289563_.accept(new ClientboundSetPassengersPacket(this.f_8510_));
 @@ -296,6 +_,11 @@
        if (this.f_8510_ instanceof LivingEntity) {
           Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();
           if (!set.isEmpty()) {
 +            // CraftBukkit start - Send scaled max health
-+            if (this.f_8510_ instanceof ServerPlayer) {
-+               ((ServerPlayer) this.f_8510_).getBukkitEntity().injectScaledMaxHealth(set, false);
++            if (this.f_8510_ instanceof ServerPlayer serverPlayer) {
++               serverPlayer.getBukkitEntity().injectScaledMaxHealth(set, false);
 +            }
 +            // CraftBukkit end
              this.m_8538_(new ClientboundUpdateAttributesPacket(this.f_8510_.m_19879_(), set));

@@ -1,8 +1,11 @@
 package com.mohistmc.plugins.world.listener;
 
+import com.mohistmc.bukkit.inventory.CraftCustomInventory;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
+import com.mohistmc.plugins.world.utils.WorldCreateInventory;
+import com.mohistmc.plugins.world.utils.WorldListInventory;
 import com.mohistmc.util.I18n;
 import java.util.Random;
 import net.md_5.bungee.api.ChatColor;
@@ -14,6 +17,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 
 /**
  * @author Mgazul by MohistMC
@@ -57,8 +61,9 @@ public class InventoryClickListener {
     }
 
     public static void init(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player p) {
-            if (event.getView().getTitle().startsWith(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey())) {
+        Inventory inventory = event.getInventory();
+        if (!(inventory instanceof CraftCustomInventory) && event.getWhoClicked() instanceof Player p) {
+            if (inventory.getHolder() instanceof WorldCreateInventory) {
 
                 event.setCancelled(true);
                 if (event.getCurrentItem() == null) {
@@ -67,7 +72,7 @@ public class InventoryClickListener {
                 if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
                     createWorld(event, p);
                 }
-            } else if (event.getView().getTitle().equals(MessageI18N.WORLDMANAGE_GUI_TITLE_1.getKey())) {
+            } else if (inventory.getHolder() instanceof WorldListInventory) {
                 event.setCancelled(true);
                 if (event.getCurrentItem() == null) {
                     return;

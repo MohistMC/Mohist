@@ -727,15 +727,6 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -1137,7 +_,7 @@
-    public abstract boolean m_6993_();
- 
-    public String m_129916_() {
--      return this.f_129709_;
-+      return MohistConfig.motdFirstLine + "\n" + MohistConfig.motdSecondLine;
-    }
- 
-    public void m_129989_(String p_129990_) {
 @@ -1164,7 +_,7 @@
  
     @Nullable

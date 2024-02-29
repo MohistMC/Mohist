@@ -41,6 +41,6 @@ public class EntityClear {
                 }
             }
         }
-        if (!MohistConfig.clear_item__msg.equals("")) Bukkit.broadcastMessage(MohistConfig.clear_item__msg.replace("&", "§").replace("%size%", String.valueOf(size.getAndSet(0))));
+        if (!MohistConfig.clear_item__msg.isEmpty()) Bukkit.broadcastMessage(MohistConfig.clear_item__msg.replace("&", "§").replace("%size%", String.valueOf(size.getAndSet(0))));
     }
 }

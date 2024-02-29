@@ -90,6 +90,13 @@ public class MohistConfig {
         set("keepinventory.world.inventory", false);
         set("keepinventory.world.exp", false);
         readConfig();
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Throwable t) {
+            throw new RuntimeException("Error initializing Mohist", t);
+        }
     }
 
     public static void save() {
@@ -157,6 +164,9 @@ public class MohistConfig {
     public static String mohist_lang() {
         return yml.getString("mohist.lang", Locale.getDefault().toString());
     }
+    public static String motd() {
+        return ColorsAPI.of(MohistConfig.motdFirstLine) + "\n" + ColorsAPI.of(MohistConfig.motdSecondLine);
+    }
 
     public static boolean show_logo;
     public static String mohist_lang;
@@ -195,6 +205,7 @@ public class MohistConfig {
     public static boolean ban_enchantment_enable;
     public static List<String> ban_enchantment_list;
 
+    public static boolean motdEnable;
     public static String motdFirstLine;
     public static String motdSecondLine;
     public static String pingCommandOutput;
@@ -239,8 +250,9 @@ public class MohistConfig {
         ban_entity_types = getList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
-        motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
-        motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
+        motdEnable = getBoolean("motd.enable", true);
+        motdFirstLine = getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>");
+        motdSecondLine = getString("motd.secondline", "");
 
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
