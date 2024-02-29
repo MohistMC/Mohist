@@ -221,11 +221,19 @@ public class ItemAPI {
         }
     }
 
-    public static Enchantment getEnchantment(String name) {
+    public static Enchantment getEnchantmentByName(String name) {
         try {
             return Enchantment.getByName(name);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static Enchantment getEnchantmentByKey(String key) {
+        try {
+            return Enchantment.getByKey(NamespacedKey.fromString(key));
+        } catch (Exception e) {
+            return getEnchantmentByName(key);
         }
     }
 }
