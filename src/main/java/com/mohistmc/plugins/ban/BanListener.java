@@ -4,6 +4,7 @@ import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EnchantmentAPI;
 import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.bukkit.inventory.CraftCustomInventory;
 import com.mohistmc.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.plugins.ban.utils.BanUtils;
 import com.mohistmc.tools.ListUtils;
@@ -20,7 +21,7 @@ public class BanListener {
 
     public static void save(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory.getHolder() instanceof BanSaveInventory banSaveInventory) {
+        if (!(inventory instanceof CraftCustomInventory) && inventory.getHolder() instanceof BanSaveInventory banSaveInventory) {
             if (banSaveInventory.getBanType() == BanType.ITEM) {
                 List<String> old = MohistConfig.ban_item_materials;
                 for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
