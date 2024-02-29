@@ -161,7 +161,7 @@
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
 -      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
 +      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, (PrimaryLevelData) serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null,
-+              this.server.getGenerator(serverleveldata.m_5462_()), World.Environment.NORMAL, this.server.getBiomeProvider(serverleveldata.m_5462_()));
++              World.Environment.NORMAL, this.server.getGenerator(serverleveldata.m_5462_()), this.server.getBiomeProvider(serverleveldata.m_5462_()));
 +      this.initWorld(serverlevel, serverleveldata, f_129749_, worldoptions); // CraftBukkit
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
@@ -191,7 +191,7 @@
 +            // Mohist start - split calculate for ServerLeverl Preparing
 +            ChunkProgressListener mohist$progressListener = this.f_129756_.m_9620_(11);
 +            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, MohistDerivedWorldInfo.create(derivedleveldata), resourcekey1, entry.getValue(), mohist$progressListener, flag, j, ImmutableList.of(), false, randomsequences,
-+                    this.server.getGenerator(name), ForgeInjectBukkit.environment.get(resourcekey), this.server.getBiomeProvider(name));
++                    ForgeInjectBukkit.environment.get(resourcekey), this.server.getGenerator(name), this.server.getBiomeProvider(name));
 +            this.initWorld(serverlevel1, derivedleveldata, f_129749_, worldoptions); // CraftBukkit
 +            // Mohist end
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
@@ -238,7 +238,7 @@
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
              BlockPos blockpos = chunkpos.m_45615_();
-@@ -442,40 +_,88 @@
+@@ -442,40 +_,86 @@
        serverleveldata.m_5458_(GameType.SPECTATOR);
     }
  
@@ -294,43 +294,44 @@
        p_129941_.m_7647_(new ChunkPos(blockpos));
        ServerChunkCache serverchunkcache = serverlevel.m_7726_();
        this.f_129726_ = Util.m_137550_();
--      serverchunkcache.m_8387_(TicketType.f_9442_, new ChunkPos(blockpos), 11, Unit.INSTANCE);
+       serverchunkcache.m_8387_(TicketType.f_9442_, new ChunkPos(blockpos), 11, Unit.INSTANCE);
 -
 -      while(serverchunkcache.m_8427_() != 441) {
 -         this.f_129726_ = Util.m_137550_() + 10L;
 -         this.m_130012_();
-+      if (serverlevel.getWorld().getKeepSpawnInMemory()) {
-+         serverchunkcache.m_8387_(TicketType.f_9442_, new ChunkPos(blockpos), 11, Unit.INSTANCE);
-+         while (serverchunkcache.m_8427_() != 441) {
-+            this.executeModerately();
-+         }
++      while (serverchunkcache.m_8427_() != 441) {
++         this.executeModerately();
        }
  
 -      this.f_129726_ = Util.m_137550_() + 10L;
 -      this.m_130012_();
- 
--      for(ServerLevel serverlevel1 : this.f_129762_.values()) {
--         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
+-
 +      this.executeModerately();
-+      if (true) {
-+         ForcedChunksSavedData forcedchunkssaveddata = serverlevel.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
-          if (forcedchunkssaveddata != null) {
-             LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
+       for(ServerLevel serverlevel1 : this.f_129762_.values()) {
+-         ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
+-         if (forcedchunkssaveddata != null) {
+-            LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
++         if (serverlevel1.getWorld().getKeepSpawnInMemory()) {
++            ForcedChunksSavedData forcedchunkssaveddata = serverlevel1.m_8895_().m_164858_(ForcedChunksSavedData::m_151483_, "chunks");
++            if (forcedchunkssaveddata != null) {
++               LongIterator longiterator = forcedchunkssaveddata.m_46116_().iterator();
  
 -            while(longiterator.hasNext()) {
-+            while (longiterator.hasNext()) {
-                long i = longiterator.nextLong();
-                ChunkPos chunkpos = new ChunkPos(i);
+-               long i = longiterator.nextLong();
+-               ChunkPos chunkpos = new ChunkPos(i);
 -               serverlevel1.m_7726_().m_6692_(chunkpos, true);
-+               serverlevel.m_7726_().m_6692_(chunkpos, true);
++               while (longiterator.hasNext()) {
++                  long i = longiterator.nextLong();
++                  ChunkPos chunkpos = new ChunkPos(i);
++                  serverlevel1.m_7726_().m_6692_(chunkpos, true);
++               }
++               net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverlevel1, forcedchunkssaveddata);
              }
-+            net.minecraftforge.common.world.ForgeChunkManager.reinstatePersistentChunks(serverlevel, forcedchunkssaveddata);
           }
        }
  
 -      this.f_129726_ = Util.m_137550_() + 10L;
 -      this.m_130012_();
-+
 +      // CraftBukkit start
 +      this.executeModerately();
 +      // CraftBukkit end
