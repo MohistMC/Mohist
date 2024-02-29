@@ -126,7 +126,7 @@ public class BansCommand extends Command {
                         for (String s : MohistConfig.ban_enchantment_list) {
                             wh.addItem(new GUIItem(new ItemStackFactory(Material.ENCHANTED_BOOK)
                                     .setDisplayName(s)
-                                    .setEnchantment(ItemAPI.getEnchantment(s))
+                                    .setEnchantment(ItemAPI.getEnchantmentByKey(s))
                                     .toItemStack()));
                         }
                         wh.openGUI(player);

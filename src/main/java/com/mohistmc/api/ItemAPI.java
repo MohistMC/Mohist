@@ -17,6 +17,7 @@ import net.minecraft.nbt.NbtIo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -220,11 +221,19 @@ public class ItemAPI {
         }
     }
 
-    public static Enchantment getEnchantment(String name) {
+    public static Enchantment getEnchantmentByName(String name) {
         try {
             return Enchantment.getByName(name);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static Enchantment getEnchantmentByKey(String key) {
+        try {
+            return Enchantment.getByKey(NamespacedKey.fromString(key));
+        } catch (Exception e) {
+            return getEnchantmentByName(key);
         }
     }
 }

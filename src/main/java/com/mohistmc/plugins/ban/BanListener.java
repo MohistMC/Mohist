@@ -47,7 +47,7 @@ public class BanListener {
                     if (itemStack != null) {
                         if (EnchantmentAPI.has(itemStack)) {
                             for (Enchantment e : EnchantmentAPI.get(itemStack)) {
-                                ListUtils.isDuplicate(old, e.getName());
+                                ListUtils.isDuplicate(old, e.getKey().toString());
                             }
                         }
                     }
