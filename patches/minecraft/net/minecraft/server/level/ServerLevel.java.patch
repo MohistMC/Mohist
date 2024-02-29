@@ -115,7 +115,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,58 +_,109 @@
+@@ -188,58 +_,107 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -153,7 +153,7 @@
 +      return super.getTypeKey();
 +   }
 +
-+   public ServerLevel(MinecraftServer pServer, Executor pDispatcher, LevelStorageSource.LevelStorageAccess pLevelStorageAccess, ServerLevelData pServerLevelData, ResourceKey<Level> pDimension, LevelStem pLevelStem, ChunkProgressListener pProgressListener, boolean pIsDebug, long pBiomeZoomSeed, List<CustomSpawner> pCustomSpawners, boolean pTickTime, @Nullable RandomSequences pRandomSequences, org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
++   public ServerLevel(MinecraftServer pServer, Executor pDispatcher, LevelStorageSource.LevelStorageAccess pLevelStorageAccess, PrimaryLevelData pServerLevelData, ResourceKey<Level> pDimension, LevelStem pLevelStem, ChunkProgressListener pProgressListener, boolean pIsDebug, long pBiomeZoomSeed, List<CustomSpawner> pCustomSpawners, boolean pTickTime, @Nullable RandomSequences pRandomSequences, org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
 +      super(pServerLevelData, pDimension, pServer.m_206579_(), pLevelStem.f_63975_(), pServer::m_129905_, false, pIsDebug, pBiomeZoomSeed, pServer.m_213994_(),gen, env, bp);
 +      this.pvpMode = pServer.m_129799_();
 +      convertable = pLevelStorageAccess;
@@ -161,9 +161,7 @@
 +      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
 +      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
 +      if (pServerLevelData instanceof PrimaryLevelData) {
-+         this.K = (PrimaryLevelData) pServerLevelData;
-+      } else if (pServerLevelData instanceof DerivedLevelData) {
-+         this.K = MohistDerivedWorldInfo.create((DerivedLevelData)pServerLevelData);
++         this.K = pServerLevelData;
 +      }
 +      this.f_8561_ = pTickTime;
 +      this.f_8548_ = pServer;
