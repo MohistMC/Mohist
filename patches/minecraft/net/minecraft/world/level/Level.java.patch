@@ -70,7 +70,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -101,19 +_,64 @@
+@@ -101,34 +_,77 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -85,6 +85,13 @@
     private final RegistryAccess f_268710_;
     private final DamageSources f_268497_;
     private long f_186455_;
+-
+-   protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
+-      this.f_46446_ = p_270692_;
+-      this.f_46442_ = p_270739_;
+-      this.f_204147_ = p_270240_;
+-      this.f_220349_ = p_270240_.m_203543_().orElseThrow(() -> {
+-         return new IllegalArgumentException("Dimension must be registered, got " + p_270240_);
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -95,9 +102,9 @@
 +   public CraftWorld world;
 +   public boolean pvpMode;
 +   public boolean keepSpawnInMemory = true;
-+   public static org.bukkit.generator.ChunkGenerator generator;
-+   public static org.bukkit.World.Environment environment;
-+   public static org.bukkit.generator.BiomeProvider biomeProvider;
++   public org.bukkit.generator.ChunkGenerator generator;
++   public org.bukkit.World.Environment environment;
++   public org.bukkit.generator.BiomeProvider biomeProvider;
 +
 +   public boolean preventPoiUpdated = false; // CraftBukkit - SPIGOT-5710
 +   public boolean captureBlockStates = false;
@@ -118,26 +125,30 @@
 +   public ResourceKey<LevelStem> getTypeKey() {
 +      return Registries.m_257452_(f_46421_);
 +   }
-+   public static void craftWorldData(org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
-+      generator = gen;
-+      environment = env;
-+      biomeProvider = bp;
-+   }
- 
-    protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
++
++   protected Level(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates, org.bukkit.generator.ChunkGenerator gen, org.bukkit.World.Environment env, org.bukkit.generator.BiomeProvider bp) {
 +      super(Level.class);
-       this.f_46446_ = p_270692_;
-       this.f_46442_ = p_270739_;
++      this.f_46446_ = pProfiler;
++      this.f_46442_ = pLevelData;
 +      // CraftBukkit Ticks things
++      this.generator = gen;
++      this.environment = env;
++      this.biomeProvider = bp;
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
 +            this.ticksPerSpawnCategory.put(spawnCategory, (long) this.getCraftServer().getTicksPerSpawns(spawnCategory));
 +         }
 +      }
-       this.f_204147_ = p_270240_;
-       this.f_220349_ = p_270240_.m_203543_().orElseThrow(() -> {
-          return new IllegalArgumentException("Dimension must be registered, got " + p_270240_);
-@@ -124,11 +_,11 @@
++      this.f_204147_ = pDimensionTypeRegistration;
++      this.f_220349_ = pDimensionTypeRegistration.m_203543_().orElseThrow(() -> {
++         return new IllegalArgumentException("Dimension must be registered, got " + pDimensionTypeRegistration);
+       });
+-      final DimensionType dimensiontype = p_270240_.m_203334_();
+-      this.f_46421_ = p_270683_;
+-      this.f_46443_ = p_270904_;
++      final DimensionType dimensiontype = pDimensionTypeRegistration.m_203334_();
++      this.f_46421_ = pDimension;
++      this.f_46443_ = pIsClientSide;
        if (dimensiontype.f_63859_() != 1.0D) {
           this.f_46447_ = new WorldBorder() {
              public double m_6347_() {
@@ -151,10 +162,20 @@
              }
           };
        } else {
-@@ -141,6 +_,46 @@
-       this.f_220350_ = new CollectingNeighborUpdater(this, p_270466_);
-       this.f_268710_ = p_270200_;
-       this.f_268497_ = new DamageSources(p_270200_);
+@@ -136,11 +_,51 @@
+       }
+ 
+       this.f_46423_ = Thread.currentThread();
+-      this.f_46420_ = new BiomeManager(this, p_270248_);
+-      this.f_46424_ = p_270470_;
+-      this.f_220350_ = new CollectingNeighborUpdater(this, p_270466_);
+-      this.f_268710_ = p_270200_;
+-      this.f_268497_ = new DamageSources(p_270200_);
++      this.f_46420_ = new BiomeManager(this, pBiomeZoomSeed);
++      this.f_46424_ = pIsDebug;
++      this.f_220350_ = new CollectingNeighborUpdater(this, pMaxChainedNeighborUpdates);
++      this.f_268710_ = pRegistryAccess;
++      this.f_268497_ = new DamageSources(pRegistryAccess);
 +      // CraftBukkit start
 +      if (environment == null) {
 +         environment = ForgeInjectBukkit.environment.getOrDefault(getTypeKey(), World.Environment.CUSTOM);

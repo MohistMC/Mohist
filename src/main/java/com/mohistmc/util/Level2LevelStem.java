@@ -11,7 +11,6 @@ import org.bukkit.World;
  * @author Mgazul by MohistMC
  * @date 2023/5/25 21:28:44
  */
-@Deprecated
 public class Level2LevelStem {
 
     public static AtomicBoolean initPluginWorld = new AtomicBoolean(false); // Mohist

@@ -25,13 +25,14 @@
  import net.minecraft.CrashReport;
  import net.minecraft.ReportedException;
  import net.minecraft.SharedConstants;
-@@ -156,6 +_,14 @@
+@@ -156,6 +_,15 @@
  import net.minecraft.world.level.storage.loot.LootDataManager;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.level.LevelEvent;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_20_R1.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R1.util.LazyPlayerSet;
@@ -147,10 +148,13 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -335,11 +_,14 @@
+@@ -334,12 +_,16 @@
+       long j = BiomeManager.m_47877_(i);
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
-       ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
+-      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null);
++      ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true, (RandomSequences)null,
++              this.server.getGenerator(serverleveldata.m_5462_()), World.Environment.NORMAL, this.server.getBiomeProvider(serverleveldata.m_5462_()));
 +      this.initWorld(serverlevel, serverleveldata, f_129749_, worldoptions); // CraftBukkit
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
@@ -177,10 +181,10 @@
 +                  continue;
 +               }
 +            }
-+            Level.craftWorldData(this.server.getGenerator(name), ForgeInjectBukkit.environment.get(resourcekey), this.server.getBiomeProvider(name));
 +            // Mohist start - split calculate for ServerLeverl Preparing
 +            ChunkProgressListener mohist$progressListener = this.f_129756_.m_9620_(11);
-+            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), mohist$progressListener, flag, j, ImmutableList.of(), false, randomsequences);
++            ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), mohist$progressListener, flag, j, ImmutableList.of(), false, randomsequences,
++                    this.server.getGenerator(name), ForgeInjectBukkit.environment.get(resourcekey), this.server.getBiomeProvider(name));
 +            this.initWorld(serverlevel1, derivedleveldata, f_129749_, worldoptions); // CraftBukkit
 +            // Mohist end
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
