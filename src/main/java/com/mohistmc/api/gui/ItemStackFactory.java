@@ -14,7 +14,7 @@ public class ItemStackFactory {
 
     ItemStack item;
 
-    private ItemStackFactory() {
+    public ItemStackFactory() {
     }
 
     public ItemStackFactory(String type) {

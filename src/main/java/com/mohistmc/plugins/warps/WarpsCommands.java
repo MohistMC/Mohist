@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.warps;
 
+import com.mohistmc.api.LocationAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -71,13 +74,18 @@ public class WarpsCommands extends Command {
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
                 for (String w : WarpsUtils.config.getKeys(false)) {
-                    wh.addItem(new GUIItem(new ItemStackFactory(Material.BAMBOO_SIGN)
+                    Location warpLoc = WarpsUtils.get(w);
+                    ItemStackFactory guiItem = new ItemStackFactory(Material.BAMBOO_SIGN)
                             .setDisplayName(w)
-                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsUtils.get(w).asString()))
-                            .toItemStack()) {
+                            .setLore(WarpsUtils.asStringList(w));
+
+                    if (Objects.equals(warpLoc.getWorld(), player.getLocation().getWorld())) {
+                        guiItem.addLore("距离: %s格".formatted(LocationAPI.distanceBetweenLocation(player.getLocation(), warpLoc)));
+                    }
+                    wh.addItem(new GUIItem(guiItem.toItemStack()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            u.teleport(WarpsUtils.get(w));
+                            u.teleport(warpLoc);
                         }
                     });
                 }
