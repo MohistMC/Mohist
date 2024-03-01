@@ -8,15 +8,6 @@
  import org.slf4j.Logger;
  
  public class LevelStorageSource {
-@@ -79,7 +_,7 @@
-    private static final String f_202311_ = "Data";
-    private static final PathAllowList f_289833_ = new PathAllowList(List.of());
-    public static final String f_289824_ = "allowed_symlinks.txt";
--   public final Path f_78194_;
-+   private final Path f_78194_;
-    private final Path f_78195_;
-    final DataFixer f_78196_;
-    private final DirectoryValidator f_289816_;
 @@ -247,6 +_,7 @@
           WorldDimensions.Complete worlddimensions$complete = worldgensettings.f_64605_().m_245300_(p_249363_);
           Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_251214_);

@@ -8,7 +8,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.NonNullList;
  import net.minecraft.core.Vec3i;
-@@ -18,10 +_,12 @@
+@@ -18,6 +_,8 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.BarrelBlock;
  import net.minecraft.world.level.block.state.BlockState;
@@ -17,11 +17,6 @@
  
  public class BarrelBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> f_58591_ = NonNullList.m_122780_(27, ItemStack.f_41583_);
--   public final ContainerOpenersCounter f_155050_ = new ContainerOpenersCounter() {
-+   public ContainerOpenersCounter f_155050_ = new ContainerOpenersCounter() {
-       protected void m_142292_(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
-          BarrelBlockEntity.this.m_58600_(p_155064_, SoundEvents.f_11725_);
-          BarrelBlockEntity.this.m_58606_(p_155064_, true);
 @@ -107,15 +_,51 @@
  
     }
