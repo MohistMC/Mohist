@@ -5,6 +5,7 @@ import com.mohistmc.util.YamlUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,6 +37,16 @@ public class WarpsUtils {
         return config.getLocation(name);
     }
 
+    public static String getName(Location location) {
+        for (String w : WarpsUtils.config.getKeys(false)) {
+            Location warpLoc = WarpsUtils.get(w);
+            if (location.equals(warpLoc)) {
+                return w;
+            }
+        }
+        return null;
+    }
+
     public static List<String> asStringList(String name) {
         String locationAsString = get(name).asString();
         List<String> linesList = new ArrayList<>();
@@ -45,6 +56,10 @@ public class WarpsUtils {
             linesList.add("§f" + part.trim());
         }
         return linesList;
+    }
+
+    public static List<Location> asList() {
+        return WarpsUtils.config.getKeys(false).stream().map(WarpsUtils::get).collect(Collectors.toList());
     }
 
 

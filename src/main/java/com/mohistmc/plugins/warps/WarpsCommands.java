@@ -1,6 +1,7 @@
 package com.mohistmc.plugins.warps;
 
 import com.mohistmc.api.LocationAPI;
+import com.mohistmc.api.LocationAPI.ClosestDistance;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
@@ -73,14 +74,15 @@ public class WarpsCommands extends Command {
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
+                Location playerLoc = player.getLocation();
                 for (String w : WarpsUtils.config.getKeys(false)) {
                     Location warpLoc = WarpsUtils.get(w);
-                    ItemStackFactory guiItem = new ItemStackFactory(Material.BAMBOO_SIGN)
+                    ItemStackFactory guiItem = new ItemStackFactory(Material.BAMBOO_HANGING_SIGN)
                             .setDisplayName(w)
                             .setLore(WarpsUtils.asStringList(w));
 
-                    if (Objects.equals(warpLoc.getWorld(), player.getLocation().getWorld())) {
-                        guiItem.addLore("距离: %s格".formatted(LocationAPI.distanceBetweenLocation(player.getLocation(), warpLoc)));
+                    if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
+                        guiItem.addLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
                     }
                     wh.addItem(new GUIItem(guiItem.toItemStack()) {
                         @Override
@@ -89,6 +91,26 @@ public class WarpsCommands extends Command {
                         }
                     });
                 }
+
+                ClosestDistance result = LocationAPI.findClosest(WarpsUtils.asList(), playerLoc);
+                String name = WarpsUtils.getName(result.location());
+                if (name != null) {
+                    ItemStackFactory guiItem = new ItemStackFactory(Material.WARPED_HANGING_SIGN)
+                            .setDisplayName(name)
+                            .setLore(WarpsUtils.asStringList(name));
+
+                    guiItem.addLore("&7========");
+                    guiItem.addLore("&6最近的传送点");
+                    guiItem.addLore("&6最近距离: &2%s格".formatted(result.distance()));
+                    guiItem.addLore("&7========");
+                    wh.getGUI().setItem(49, new GUIItem(guiItem.toItemStack()) {
+                        @Override
+                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
+                            u.teleport(result.location());
+                        }
+                    });;
+                }
+
                 wh.openGUI(player);
                 return true;
             }
