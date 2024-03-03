@@ -3,13 +3,16 @@ package com.mohistmc.api.item;
 import java.util.Random;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class MohistLeatherArmor {
 
     private LeatherArmorMeta lm;
     private ItemStack item;
+
+    public static MohistLeatherArmor create(ItemStack armor) {
+        return new MohistLeatherArmor(armor);
+    }
 
     public MohistLeatherArmor(ItemStack armor) {
         this.item = armor;
@@ -31,12 +34,14 @@ public class MohistLeatherArmor {
         return r.nextInt(max);
     }
 
-    public MohistLeatherArmor buildItemMeta() {
-        this.item.setItemMeta((ItemMeta)this.lm);
+    public MohistLeatherArmor clone(ItemStack armor) {
+        this.item = armor;
+        this.lm = (LeatherArmorMeta)armor.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        this.item.setItemMeta(this.lm);
         return this.item;
     }
 }

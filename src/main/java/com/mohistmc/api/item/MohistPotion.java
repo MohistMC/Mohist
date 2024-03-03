@@ -8,8 +8,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MohistPotion
 {
-    private final PotionMeta pm;
-    private final ItemStack item;
+    private PotionMeta pm;
+    private ItemStack item;
 
     public MohistPotion(ItemStack potion) {
         this.item = potion;
@@ -26,12 +26,14 @@ public class MohistPotion
         return this;
     }
 
-    public MohistPotion buildItemMeta() {
-        this.item.setItemMeta(this.pm);
+    public MohistPotion clone(ItemStack potion) {
+        this.item = potion;
+        this.pm = (PotionMeta)potion.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        this.item.setItemMeta(this.pm);
         return this.item;
     }
 }

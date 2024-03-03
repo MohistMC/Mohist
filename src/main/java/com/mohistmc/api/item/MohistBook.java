@@ -6,8 +6,12 @@ import org.bukkit.inventory.meta.BookMeta;
 
 public class MohistBook {
 
-    private final BookMeta bm;
-    private final ItemStack item;
+    private BookMeta bm;
+    private ItemStack item;
+
+    public static MohistBook create(ItemStack writtenbook) {
+        return new MohistBook(writtenbook);
+    }
 
     public MohistBook(ItemStack writtenbook) {
         item = writtenbook;
@@ -35,12 +39,14 @@ public class MohistBook {
         return bm.getPageCount();
     }
 
-    public MohistBook buildItemMeta() {
-        item.setItemMeta(bm);
+    public MohistBook clone(ItemStack writtenbook) {
+        this.item = writtenbook;
+        this.bm = (BookMeta)item.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        item.setItemMeta(bm);
         return item;
     }
 }

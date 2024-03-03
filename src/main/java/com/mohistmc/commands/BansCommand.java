@@ -104,7 +104,7 @@ public class BansCommand extends Command {
                     case "item" -> {
                         Warehouse wh = new Warehouse("§2Show bans item");
                         for (String s : MohistConfig.ban_item_materials) {
-                            wh.addItem(new GUIItem(new MohistItem(ItemAPI.getMaterial(s))
+                            wh.addItem(new GUIItem(MohistItem.create(ItemAPI.getMaterial(s))
                                     .setDisplayName(s)
                                     .build()));
                         }
@@ -114,7 +114,7 @@ public class BansCommand extends Command {
                     case "entity" -> {
                         Warehouse wh = new Warehouse("§2Show bans entity");
                         for (String s : MohistConfig.ban_entity_types) {
-                            wh.addItem(new GUIItem(new MohistItem(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
+                            wh.addItem(new GUIItem(MohistItem.create(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
                                     .setDisplayName(s)
                                     .build()));
                         }
@@ -124,7 +124,7 @@ public class BansCommand extends Command {
                     case "enchantment" -> {
                         Warehouse wh = new Warehouse("§2Show bans enchantment");
                         for (String s : MohistConfig.ban_enchantment_list) {
-                            wh.addItem(new GUIItem(new MohistItem(Material.ENCHANTED_BOOK)
+                            wh.addItem(new GUIItem(MohistItem.create(Material.ENCHANTED_BOOK)
                                     .setDisplayName(s)
                                     .addEnchantment(ItemAPI.getEnchantmentByKey(s), 1)
                                     .build()));

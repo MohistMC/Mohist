@@ -8,8 +8,12 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 public class MohistBanner {
 
-    private final BannerMeta bm;
-    private final ItemStack item;
+    private BannerMeta bm;
+    private ItemStack item;
+
+    public static MohistBanner create(ItemStack banner) {
+        return new MohistBanner(banner);
+    }
 
     public MohistBanner(ItemStack banner) {
         this.item = banner;
@@ -26,12 +30,14 @@ public class MohistBanner {
         return this;
     }
 
-    public MohistBanner buildItemMeta() {
-        this.item.setItemMeta(this.bm);
+    public MohistBanner clone(ItemStack banner) {
+        this.item = banner;
+        this.bm = (BannerMeta)item.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        this.item.setItemMeta(this.bm);
         return this.item;
     }
 }

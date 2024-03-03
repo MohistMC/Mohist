@@ -77,7 +77,7 @@ public class ShowsCommand extends Command {
         switch (args[0].toLowerCase(Locale.ENGLISH)) {
             case "sound" -> {
                 Warehouse wh = new Warehouse("Sounds");
-                wh.getGUI().setItem(47, new GUIItem(new MohistItem(Material.REDSTONE)
+                wh.getGUI().setItem(47, new GUIItem(MohistItem.create(Material.REDSTONE)
                         .setDisplayName("§cStop all sounds")
                         .build()) {
                     @Override
@@ -86,7 +86,7 @@ public class ShowsCommand extends Command {
                     }
                 });
                 for (Sound s : Sound.values()) {
-                    wh.addItem(new GUIItem(new MohistItem(Material.NOTE_BLOCK)
+                    wh.addItem(new GUIItem(MohistItem.create(Material.NOTE_BLOCK)
                             .setDisplayName(s.name())
                             .build()) {
                         @Override
@@ -118,7 +118,7 @@ public class ShowsCommand extends Command {
 
                 Warehouse wh = new Warehouse("Entitys: " + allSize.getAndSet(0));
                 for (Map.Entry<EntityType, Integer> s : newMap.entrySet()) {
-                    wh.addItem(new GUIItem(new MohistItem(ItemAPI.getEggMaterial(s.getKey()))
+                    wh.addItem(new GUIItem(MohistItem.create(ItemAPI.getEggMaterial(s.getKey()))
                             .setDisplayName("§6Size: §4" + s.getValue())
                             .setDisplayLore(List.of("§7EntityType: §2" + s.getKey().name()))
                             .build())
@@ -148,7 +148,7 @@ public class ShowsCommand extends Command {
                 Warehouse wh = new Warehouse("BlockEntitys: " + allSize.getAndSet(0));
                 for (Map.Entry<Material, Integer> s : newMap.entrySet()) {
                     Material material = s.getKey().name().contains("_WALL") ? Material.getMaterial(s.getKey().name().replace("_WALL", "")) : s.getKey();
-                    wh.addItem(new GUIItem(new MohistItem(material)
+                    wh.addItem(new GUIItem(MohistItem.create(material)
                             .setDisplayName("§6Size: §4" + s.getValue())
                             .setDisplayLore(List.of("§7BlockEntity: §2" + s.getKey()))
                             .build())

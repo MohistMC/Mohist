@@ -9,8 +9,12 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 public class MohistSkull
 {
-    private final SkullMeta sm;
-    private final ItemStack item;
+    private SkullMeta sm;
+    private ItemStack item;
+
+    public static MohistSkull create(ItemStack skull) {
+        return new MohistSkull(skull);
+    }
 
     public MohistSkull(ItemStack skull) {
         this.item = skull;
@@ -37,12 +41,14 @@ public class MohistSkull
         return this;
     }
 
-    public MohistSkull buildItemMeta() {
-        this.item.setItemMeta(this.sm);
+    public MohistSkull clone(ItemStack skull) {
+        this.item = skull;
+        this.sm = (SkullMeta)skull.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        this.item.setItemMeta(this.sm);
         return this.item;
     }
 }

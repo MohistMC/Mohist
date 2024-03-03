@@ -50,7 +50,7 @@ public class WorldsGUI {
                     infoLore.add("§bPluginWorld §8>> §7" + w.isBukkit());
                 }
             }
-            inv.setItem(pos, new MohistItem(Material.MAP)
+            inv.setItem(pos, MohistItem.create(Material.MAP)
                     .setAmount(1)
                     .setDisplayName("§7>> §6" + w.getName())
                     .setDisplayLore(infoLore)
@@ -58,7 +58,7 @@ public class WorldsGUI {
             ++pos;
             infoLore.clear();
         }
-        inv.setItem(53, new MohistItem(Material.MAP)
+        inv.setItem(53, MohistItem.create(Material.MAP)
                 .setAmount(1)
                 .setDisplayName(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())
                 .build());

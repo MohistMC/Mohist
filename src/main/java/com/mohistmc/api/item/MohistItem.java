@@ -14,6 +14,10 @@ public class MohistItem {
     private ItemStack item;
     private ItemMeta itemMeta;
 
+    public static MohistItem create(Material mat) {
+        return new MohistItem(mat);
+    }
+
     public MohistItem(Material mat) {
         item = new ItemStack(mat);
         itemMeta = item.getItemMeta();

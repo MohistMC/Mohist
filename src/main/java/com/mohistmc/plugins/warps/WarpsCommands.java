@@ -77,7 +77,7 @@ public class WarpsCommands extends Command {
                 Location playerLoc = player.getLocation();
                 for (String w : WarpsUtils.config.getKeys(false)) {
                     Location warpLoc = WarpsUtils.get(w);
-                    MohistItem guiItem = new MohistItem(Material.BAMBOO_HANGING_SIGN)
+                    MohistItem guiItem = MohistItem.create(Material.BAMBOO_HANGING_SIGN)
                             .setDisplayName(w)
                             .setDisplayLore(WarpsUtils.asStringList(w));
 
@@ -95,7 +95,7 @@ public class WarpsCommands extends Command {
                 ClosestDistance result = LocationAPI.findClosest(WarpsUtils.asList(), playerLoc);
                 String name = WarpsUtils.getName(result.location());
                 if (name != null) {
-                    MohistItem guiItem = new MohistItem(Material.WARPED_HANGING_SIGN)
+                    MohistItem guiItem = MohistItem.create(Material.WARPED_HANGING_SIGN)
                             .setDisplayName(name)
                             .setDisplayLore(WarpsUtils.asStringList(name));
 

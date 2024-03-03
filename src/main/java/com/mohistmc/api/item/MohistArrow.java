@@ -8,8 +8,12 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MohistArrow {
 
-    private final ItemStack item;
-    private final PotionMeta pm;
+    private ItemStack item;
+    private PotionMeta pm;
+
+    public static MohistArrow create(ItemStack arrow) {
+        return new MohistArrow(arrow);
+    }
 
     public MohistArrow(ItemStack arrow) {
         this.item = arrow;
@@ -26,12 +30,14 @@ public class MohistArrow {
         return this;
     }
 
-    public MohistArrow buildItemMeta() {
-        this.item.setItemMeta(this.pm);
+    public MohistArrow clone(ItemStack arrow) {
+        this.item = arrow;
+        this.pm = (PotionMeta)item.getItemMeta();
         return this;
     }
 
     public ItemStack build() {
+        this.item.setItemMeta(this.pm);
         return this.item;
     }
 }

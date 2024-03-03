@@ -64,7 +64,7 @@ public class WorldsCommands extends Command {
                     for (World.Environment environment : ForgeInjectBukkit.environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
                         i++;
-                        inventory.setItem(i, new MohistItem(Material.MAP)
+                        inventory.setItem(i, MohistItem.create(Material.MAP)
                                 .setAmount(1)
                                 .setDisplayName(environment.name())
                                 .buildItemMeta()

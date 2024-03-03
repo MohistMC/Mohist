@@ -25,16 +25,16 @@ public class Warehouse {
         this.gui = new GUI(GUIType.SIXBYNINE, name);
 
         for (int i = 36; i < 46; i++) {
-            this.gui.setItem(i, new GUIItem(new MohistItem(Material.GLASS_PANE)
+            this.gui.setItem(i, new GUIItem(MohistItem.create(Material.GLASS_PANE)
                     .setDisplayName(" ")
                     .build()));
         }
 
-        this.gui.setItem(new GUIItem(new MohistItem(Material.GLASS_PANE)
+        this.gui.setItem(new GUIItem(MohistItem.create(Material.GLASS_PANE)
                 .setDisplayName(" ")
                 .build()), 47, 48, 49, 50);
 
-        this.gui.setItem(46, new GUIItem(new MohistItem(Material.REDSTONE)
+        this.gui.setItem(46, new GUIItem(MohistItem.create(Material.REDSTONE)
                 .setDisplayName("§cClose")
                 .build()) {
             @Override
@@ -113,11 +113,11 @@ public class Warehouse {
         }
 
         if (this.pageChoose == 0) {
-            gui.setItem(51, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
+            gui.setItem(51, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&cThis is already the home page")
                     .build()));
         } else {
-            gui.setItem(51, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
+            gui.setItem(51, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&eprevious page")
                     .build()) {
                 @Override
@@ -128,13 +128,13 @@ public class Warehouse {
             });
         }
 
-        gui.setItem(52, new GUIItem(new MohistItem(Material.PAPER)
+        gui.setItem(52, new GUIItem(MohistItem.create(Material.PAPER)
                 .setAmount(pageChoose + 1)
                 .setDisplayName("&7No. &f&l" + (pageChoose + 1) + " &7page")
                 .build()));
 
         if (this.pageChoose < page - 1) {
-            gui.setItem(53, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
+            gui.setItem(53, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&enext page")
                     .build()) {
                 @Override
@@ -144,7 +144,7 @@ public class Warehouse {
                 }
             });
         } else {
-            gui.setItem(53, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
+            gui.setItem(53, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&cThis is already the last page")
                     .build()));
         }
