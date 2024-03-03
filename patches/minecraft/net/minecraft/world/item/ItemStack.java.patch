@@ -70,6 +70,15 @@
     private Item f_41589_;
     @Nullable
     private CompoundTag f_41590_;
+@@ -115,6 +_,8 @@
+    @Nullable
+    private AdventureModeCheck f_186361_;
+ 
++   private CraftItemStack bukkitStack;
++
+    public Optional<TooltipComponent> m_150921_() {
+       return this.m_41720_().m_142422_(this);
+    }
 @@ -136,32 +_,88 @@
        this(p_220155_.m_203334_(), p_220156_);
     }
@@ -346,8 +355,32 @@
     public CompoundTag m_41784_() {
        if (this.f_41590_ == null) {
           this.m_41751_(new CompoundTag());
-@@ -522,7 +_,7 @@
+@@ -520,9 +_,31 @@
+       return this.f_41590_ != null ? this.f_41590_.m_128437_("Enchantments", 10) : new ListTag();
+    }
  
++   // Paper start
++   public org.bukkit.inventory.ItemStack asBukkitMirror() {
++      return CraftItemStack.asCraftMirror(this);
++   }
++
++   public org.bukkit.inventory.ItemStack asBukkitCopy() {
++      return CraftItemStack.asCraftMirror(this.m_41777_());
++   }
++
++   public static ItemStack fromBukkitCopy(org.bukkit.inventory.ItemStack itemstack) {
++      return CraftItemStack.asNMSCopy(itemstack);
++   }
++
++   public org.bukkit.inventory.ItemStack getBukkitStack() {
++      if (this.bukkitStack == null || this.bukkitStack.handle != this) {
++         this.bukkitStack = CraftItemStack.asCraftMirror(this);
++      }
++
++      return this.bukkitStack;
++   }
++   // Paper end
++
     public void m_41751_(@Nullable CompoundTag p_41752_) {
        this.f_41590_ = p_41752_;
 -      if (this.m_41720_().m_41465_()) {
@@ -448,7 +481,7 @@
     public SoundEvent m_41615_() {
        return this.m_41720_().m_6023_();
     }
-@@ -950,6 +_,14 @@
+@@ -950,6 +_,15 @@
     public SoundEvent m_41616_() {
        return this.m_41720_().m_6061_();
     }
@@ -456,6 +489,7 @@
 +   // CraftBukkit start
 +   @Deprecated
 +   public void setItem(Item item) {
++      this.bukkitStack = null;
 +      this.f_41589_ = item;
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(item.m_5456_());
 +   }

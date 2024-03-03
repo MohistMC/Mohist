@@ -1,14 +1,17 @@
 package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.api.PlayerAPI;
 import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,7 +48,7 @@ public class PingCommand extends Command {
         if (args.length == 0) {
             if (sender instanceof Player player) {
                 String output = String.format(MohistConfig.pingCommandOutput, player.getName(), player.getPing());
-                sender.sendMessage(output);
+                PlayerAPI.sendToast(player, new ItemStack(Material.ACACIA_BOAT), output);
                 return true;
             } else {
                 sender.sendMessage(ChatColor.RED + I18n.as("error.notplayer"));
