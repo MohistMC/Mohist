@@ -1,4 +1,4 @@
-package com.mohistmc.plugins.warps;
+package com.mohistmc.api;
 
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.YamlUtils;
@@ -9,15 +9,24 @@ import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
-/**
- * @author Mgazul by MohistMC
- * @date 2023/9/12 16:39:15
- */
-public class WarpsUtils {
+public class WarpAPI {
 
     public static File f = new File("mohist-config", "warps.yml");
     public static FileConfiguration config = YamlConfiguration.loadConfiguration(f);
+
+    /**
+     * Teleports the given player to a specific location.
+     *
+     * @param player The Player object to be teleported.
+     * @param warpsName The name of the warp point where the player should be teleported to.
+     * This method invokes `WarpsUtils.get(warpsName)` to obtain the destination based on the provided warp point name,
+     * and then teleports the player to that location.
+     */
+    public static void teleport(Player player, String warpsName) {
+        player.teleport(get(warpsName));
+    }
 
     public static void init() {
         YamlUtils.save(f, config);
@@ -38,8 +47,8 @@ public class WarpsUtils {
     }
 
     public static String getName(Location location) {
-        for (String w : WarpsUtils.config.getKeys(false)) {
-            Location warpLoc = WarpsUtils.get(w);
+        for (String w : config.getKeys(false)) {
+            Location warpLoc = get(w);
             if (location.equals(warpLoc)) {
                 return w;
             }
@@ -59,9 +68,8 @@ public class WarpsUtils {
     }
 
     public static List<Location> asList() {
-        return WarpsUtils.config.getKeys(false).stream().map(WarpsUtils::get).collect(Collectors.toList());
+        return config.getKeys(false).stream().map(WarpAPI::get).collect(Collectors.toList());
     }
-
 
     public static boolean has(String name) {
         return config.get(name) != null;

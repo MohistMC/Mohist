@@ -1,11 +1,11 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.api.WarpAPI;
 import com.mohistmc.plugins.ban.BanListener;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
 import com.mohistmc.plugins.warps.WarpsCommands;
-import com.mohistmc.plugins.warps.WarpsUtils;
 import com.mohistmc.plugins.world.WorldManage;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.listener.InventoryClickListener;
@@ -37,7 +37,7 @@ public class MohistPlugin {
     public static void init(Server server) {
         if (MohistConfig.yml.getBoolean("worldmanage", true)) WorldManage.onEnable();
         ItemsConfig.init();
-        WarpsUtils.init();
+        WarpAPI.init();
         File out = new File("libraries/com/mohistmc/cache", "libPath.txt");
         if (out.exists()) {
             String data = null;

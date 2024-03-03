@@ -1,5 +1,6 @@
 package com.mohistmc.plugins.warps;
 
+import com.mohistmc.api.WarpAPI;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.api.item.MohistItem;
@@ -45,14 +46,14 @@ public class WarpsCommands extends Command {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "set" -> {
                         String name = args[1];
-                        WarpsUtils.add(player.getLocation(), name);
+                        WarpAPI.add(player.getLocation(), name);
                         player.sendMessage(I18n.as("warpscommands.set.success", name));
                         return true;
                     }
                     case "del" -> {
                         String name = args[1];
-                        if (WarpsUtils.has(name)) {
-                            WarpsUtils.del(name);
+                        if (WarpAPI.has(name)) {
+                            WarpAPI.del(name);
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
                             return true;
                         } else {
@@ -62,8 +63,8 @@ public class WarpsCommands extends Command {
                     }
                     case "tp" -> {
                         String name = args[1];
-                        if (WarpsUtils.has(name)) {
-                            player.teleport(WarpsUtils.get(name));
+                        if (WarpAPI.has(name)) {
+                            WarpAPI.teleport(player, name);
                             return true;
                         } else {
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
@@ -75,11 +76,11 @@ public class WarpsCommands extends Command {
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
                 Location playerLoc = player.getLocation();
-                for (String w : WarpsUtils.config.getKeys(false)) {
-                    Location warpLoc = WarpsUtils.get(w);
+                for (String w : WarpAPI.config.getKeys(false)) {
+                    Location warpLoc = WarpAPI.get(w);
                     MohistItem guiItem = MohistItem.create(Material.BAMBOO_HANGING_SIGN)
                             .setDisplayName(w)
-                            .setDisplayLore(WarpsUtils.asStringList(w));
+                            .setDisplayLore(WarpAPI.asStringList(w));
 
                     if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
                         guiItem.addDisplayLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
@@ -92,12 +93,12 @@ public class WarpsCommands extends Command {
                     });
                 }
 
-                ClosestDistance result = LocationAPI.findClosest(WarpsUtils.asList(), playerLoc);
-                String name = WarpsUtils.getName(result.location());
+                ClosestDistance result = LocationAPI.findClosest(WarpAPI.asList(), playerLoc);
+                String name = WarpAPI.getName(result.location());
                 if (name != null) {
                     MohistItem guiItem = MohistItem.create(Material.WARPED_HANGING_SIGN)
                             .setDisplayName(name)
-                            .setDisplayLore(WarpsUtils.asStringList(name));
+                            .setDisplayLore(WarpAPI.asStringList(name));
 
                     guiItem.addDisplayLore("&7========");
                     guiItem.addDisplayLore("&6最近的传送点");
@@ -118,12 +119,13 @@ public class WarpsCommands extends Command {
         if (args.length == 3 && args[0].equalsIgnoreCase("tp")) {
             String playerName = args[1];
             String warpsName = args[2];
-            if (Bukkit.getPlayer(playerName) == null) {
+            Player player = Bukkit.getPlayer(playerName);
+            if (player == null) {
                 sender.sendMessage(I18n.as("warpscommands.noplayer"));
                 return false;
             }
-            if (WarpsUtils.has(warpsName)) {
-                Bukkit.getPlayer(playerName).teleport(WarpsUtils.get(warpsName));
+            if (WarpAPI.has(warpsName)) {
+                WarpAPI.teleport(player, warpsName);
                 return true;
             } else {
                 sender.sendMessage(I18n.as("warpscommands.nowarp"));
