@@ -1,7 +1,7 @@
 package com.mohistmc.plugins.warps;
 
-import com.mohistmc.api.LocationAPI;
-import com.mohistmc.api.LocationAPI.ClosestDistance;
+import com.mohistmc.api.location.LocationAPI;
+import com.mohistmc.api.location.LocationAPI.ClosestDistance;
 import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
