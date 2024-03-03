@@ -6,6 +6,7 @@ import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.api.item.ItemAPI;
 import com.mohistmc.api.item.MohistItem;
+import com.mohistmc.plugins.ban.BanListener;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.util.I18n;
@@ -67,6 +68,7 @@ public class BansCommand extends Command {
                         BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans item");
                         Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     case "entity" -> {
@@ -77,6 +79,7 @@ public class BansCommand extends Command {
                         BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans entity");
                         Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     case "enchantment" -> {
@@ -87,6 +90,7 @@ public class BansCommand extends Command {
                         BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans enchantment");
                         Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     default -> {

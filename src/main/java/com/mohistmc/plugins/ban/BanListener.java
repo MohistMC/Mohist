@@ -18,10 +18,12 @@ import org.bukkit.inventory.Inventory;
 
 public class BanListener {
 
+    public static BanSaveInventory openInventory;
+
     public static void save(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory.getHolder() instanceof BanSaveInventory banSaveInventory) {
-            if (banSaveInventory.getBanType() == BanType.ITEM) {
+        if (openInventory != null && openInventory.getInventory() == inventory) {
+            if (openInventory.getBanType() == BanType.ITEM) {
                 List<String> old = MohistConfig.ban_item_materials;
                 for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
                     if (itemStack != null && itemStack.getType() != Material.AIR) {
@@ -29,10 +31,10 @@ public class BanListener {
                     }
                 }
                 BanUtils.saveToYaml(old, BanType.ITEM);
-            } else if (banSaveInventory.getBanType() == BanType.ENTITY) {
+            } else if (openInventory.getBanType() == BanType.ENTITY) {
                 List<String> old = MohistConfig.ban_entity_types;
                 for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
-                    if (itemStack != null) {
+                    if (itemStack != null && itemStack.getType() != Material.AIR) {
                         ItemStack nmsItem = ItemAPI.toNMSItem(itemStack);
                         if (nmsItem.getItem() instanceof SpawnEggItem spawnEggItem) {
                             EntityType<?> entitytype = spawnEggItem.getType(nmsItem.getTag());
@@ -41,10 +43,10 @@ public class BanListener {
                     }
                 }
                 BanUtils.saveToYaml(old, BanType.ENTITY);
-            }else if (banSaveInventory.getBanType() == BanType.ENCHANTMENT) {
+            }else if (openInventory.getBanType() == BanType.ENCHANTMENT) {
                 List<String> old = MohistConfig.ban_enchantment_list;
                 for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
-                    if (itemStack != null) {
+                    if (itemStack != null && itemStack.getType() != Material.AIR) {
                         if (EnchantmentAPI.has(itemStack)) {
                             for (Enchantment e : EnchantmentAPI.get(itemStack)) {
                                 ListUtils.isDuplicate(old, e.getKey().toString());
