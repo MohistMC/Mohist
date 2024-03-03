@@ -1,4 +1,4 @@
-package com.mohistmc.api;
+package com.mohistmc.api.item;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.MohistMC;
@@ -29,15 +29,6 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 public class ItemAPI {
 
     public static final Logger LOGGER = LogManager.getLogger("ItemAPI");
-
-    public static ItemStack doItem(Material material, int menge, String name, List<String> lore) {
-        ItemStack item = new ItemStack(material, menge);
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(lore);
-        meta.setDisplayName(name);
-        item.setItemMeta(meta);
-        return item;
-    }
 
     public static net.minecraft.world.item.ItemStack toNMSItem(Material material) {
         ItemStack itemStack = new ItemStack(material);

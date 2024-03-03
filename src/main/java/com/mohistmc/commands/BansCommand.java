@@ -2,10 +2,10 @@ package com.mohistmc.commands;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EntityAPI;
-import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.gui.GUIItem;
-import com.mohistmc.api.gui.ItemStackFactory;
 import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.api.item.ItemAPI;
+import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.plugins.ban.BanType;
 import com.mohistmc.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.util.I18n;
@@ -104,9 +104,9 @@ public class BansCommand extends Command {
                     case "item" -> {
                         Warehouse wh = new Warehouse("§2Show bans item");
                         for (String s : MohistConfig.ban_item_materials) {
-                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getMaterial(s))
+                            wh.addItem(new GUIItem(new MohistItem(ItemAPI.getMaterial(s))
                                     .setDisplayName(s)
-                                    .toItemStack()));
+                                    .build()));
                         }
                         wh.openGUI(player);
                         return true;
@@ -114,9 +114,9 @@ public class BansCommand extends Command {
                     case "entity" -> {
                         Warehouse wh = new Warehouse("§2Show bans entity");
                         for (String s : MohistConfig.ban_entity_types) {
-                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
+                            wh.addItem(new GUIItem(new MohistItem(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
                                     .setDisplayName(s)
-                                    .toItemStack()));
+                                    .build()));
                         }
                         wh.openGUI(player);
                         return true;
@@ -124,10 +124,10 @@ public class BansCommand extends Command {
                     case "enchantment" -> {
                         Warehouse wh = new Warehouse("§2Show bans enchantment");
                         for (String s : MohistConfig.ban_enchantment_list) {
-                            wh.addItem(new GUIItem(new ItemStackFactory(Material.ENCHANTED_BOOK)
+                            wh.addItem(new GUIItem(new MohistItem(Material.ENCHANTED_BOOK)
                                     .setDisplayName(s)
-                                    .setEnchantment(ItemAPI.getEnchantmentByKey(s))
-                                    .toItemStack()));
+                                    .addEnchantment(ItemAPI.getEnchantmentByKey(s), 1)
+                                    .build()));
                         }
                         wh.openGUI(player);
                         return true;

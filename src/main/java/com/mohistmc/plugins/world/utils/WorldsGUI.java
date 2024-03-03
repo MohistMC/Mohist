@@ -1,6 +1,6 @@
 package com.mohistmc.plugins.world.utils;
 
-import com.mohistmc.api.ItemAPI;
+import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.plugins.MessageI18N;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
@@ -50,11 +50,18 @@ public class WorldsGUI {
                     infoLore.add("§bPluginWorld §8>> §7" + w.isBukkit());
                 }
             }
-            inv.setItem(pos, ItemAPI.doItem(Material.MAP, 1, "§7>> §6" + w.getName(), infoLore));
+            inv.setItem(pos, new MohistItem(Material.MAP)
+                    .setAmount(1)
+                    .setDisplayName("§7>> §6" + w.getName())
+                    .setDisplayLore(infoLore)
+                    .build());
             ++pos;
             infoLore.clear();
         }
-        inv.setItem(53, ItemAPI.doItem(Material.REDSTONE_BLOCK, 1, MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey(), null));
+        inv.setItem(53, new MohistItem(Material.MAP)
+                .setAmount(1)
+                .setDisplayName(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())
+                .build());
         p.openInventory(inv);
     }
 }

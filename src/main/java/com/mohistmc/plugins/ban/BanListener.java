@@ -2,8 +2,8 @@ package com.mohistmc.plugins.ban;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.EnchantmentAPI;
-import com.mohistmc.api.ItemAPI;
 import com.mohistmc.api.ServerAPI;
+import com.mohistmc.api.item.ItemAPI;
 import com.mohistmc.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.plugins.ban.utils.BanUtils;
 import com.mohistmc.tools.ListUtils;

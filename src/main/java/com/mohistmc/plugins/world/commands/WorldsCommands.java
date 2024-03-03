@@ -1,6 +1,6 @@
 package com.mohistmc.plugins.world.commands;
 
-import com.mohistmc.api.ItemAPI;
+import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
@@ -64,7 +64,11 @@ public class WorldsCommands extends Command {
                     for (World.Environment environment : ForgeInjectBukkit.environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
                         i++;
-                        inventory.setItem(i, ItemAPI.doItem(Material.MAP, 1, environment.name(), null));
+                        inventory.setItem(i, new MohistItem(Material.MAP)
+                                .setAmount(1)
+                                .setDisplayName(environment.name())
+                                .buildItemMeta()
+                                .build());
                     }
                     player.openInventory(inventory);
                 } else {

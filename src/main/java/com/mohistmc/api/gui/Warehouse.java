@@ -1,5 +1,6 @@
 package com.mohistmc.api.gui;
 
+import com.mohistmc.api.item.MohistItem;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
@@ -24,18 +25,18 @@ public class Warehouse {
         this.gui = new GUI(GUIType.SIXBYNINE, name);
 
         for (int i = 36; i < 46; i++) {
-            this.gui.setItem(i, new GUIItem(new ItemStackFactory(Material.GLASS_PANE)
+            this.gui.setItem(i, new GUIItem(new MohistItem(Material.GLASS_PANE)
                     .setDisplayName(" ")
-                    .toItemStack()));
+                    .build()));
         }
 
-        this.gui.setItem(new GUIItem(new ItemStackFactory(Material.GLASS_PANE)
+        this.gui.setItem(new GUIItem(new MohistItem(Material.GLASS_PANE)
                 .setDisplayName(" ")
-                .toItemStack()), 47, 48, 49, 50);
+                .build()), 47, 48, 49, 50);
 
-        this.gui.setItem(46, new GUIItem(new ItemStackFactory(Material.REDSTONE)
+        this.gui.setItem(46, new GUIItem(new MohistItem(Material.REDSTONE)
                 .setDisplayName("§cClose")
-                .toItemStack()) {
+                .build()) {
             @Override
             public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                 u.closeInventory();
@@ -112,13 +113,13 @@ public class Warehouse {
         }
 
         if (this.pageChoose == 0) {
-            gui.setItem(51, new GUIItem(new ItemStackFactory(Material.ACACIA_FENCE)
+            gui.setItem(51, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
                     .setDisplayName("&cThis is already the home page")
-                    .toItemStack()));
+                    .build()));
         } else {
-            gui.setItem(51, new GUIItem(new ItemStackFactory(Material.ACACIA_FENCE)
+            gui.setItem(51, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
                     .setDisplayName("&eprevious page")
-                    .toItemStack()) {
+                    .build()) {
                 @Override
                 public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                     Warehouse.this.pageChoose--;
@@ -127,14 +128,15 @@ public class Warehouse {
             });
         }
 
-        gui.setItem(52, new GUIItem(new ItemStackFactory(Material.PAPER, pageChoose + 1)
+        gui.setItem(52, new GUIItem(new MohistItem(Material.PAPER)
+                .setAmount(pageChoose + 1)
                 .setDisplayName("&7No. &f&l" + (pageChoose + 1) + " &7page")
-                .toItemStack()));
+                .build()));
 
         if (this.pageChoose < page - 1) {
-            gui.setItem(53, new GUIItem(new ItemStackFactory(Material.ACACIA_FENCE)
+            gui.setItem(53, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
                     .setDisplayName("&enext page")
-                    .toItemStack()) {
+                    .build()) {
                 @Override
                 public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                     Warehouse.this.pageChoose++;
@@ -142,9 +144,9 @@ public class Warehouse {
                 }
             });
         } else {
-            gui.setItem(53, new GUIItem(new ItemStackFactory(Material.ACACIA_FENCE)
+            gui.setItem(53, new GUIItem(new MohistItem(Material.ACACIA_FENCE)
                     .setDisplayName("&cThis is already the last page")
-                    .toItemStack()));
+                    .build()));
         }
 
         return this.gui;

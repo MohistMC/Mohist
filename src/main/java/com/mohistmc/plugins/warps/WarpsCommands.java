@@ -1,10 +1,10 @@
 package com.mohistmc.plugins.warps;
 
+import com.mohistmc.api.gui.GUIItem;
+import com.mohistmc.api.gui.Warehouse;
+import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.api.location.LocationAPI;
 import com.mohistmc.api.location.LocationAPI.ClosestDistance;
-import com.mohistmc.api.gui.GUIItem;
-import com.mohistmc.api.gui.ItemStackFactory;
-import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,14 +77,14 @@ public class WarpsCommands extends Command {
                 Location playerLoc = player.getLocation();
                 for (String w : WarpsUtils.config.getKeys(false)) {
                     Location warpLoc = WarpsUtils.get(w);
-                    ItemStackFactory guiItem = new ItemStackFactory(Material.BAMBOO_HANGING_SIGN)
+                    MohistItem guiItem = new MohistItem(Material.BAMBOO_HANGING_SIGN)
                             .setDisplayName(w)
-                            .setLore(WarpsUtils.asStringList(w));
+                            .setDisplayLore(WarpsUtils.asStringList(w));
 
                     if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
-                        guiItem.addLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
+                        guiItem.addDisplayLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
                     }
-                    wh.addItem(new GUIItem(guiItem.toItemStack()) {
+                    wh.addItem(new GUIItem(guiItem.build()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                             u.teleport(warpLoc);
@@ -95,15 +95,15 @@ public class WarpsCommands extends Command {
                 ClosestDistance result = LocationAPI.findClosest(WarpsUtils.asList(), playerLoc);
                 String name = WarpsUtils.getName(result.location());
                 if (name != null) {
-                    ItemStackFactory guiItem = new ItemStackFactory(Material.WARPED_HANGING_SIGN)
+                    MohistItem guiItem = new MohistItem(Material.WARPED_HANGING_SIGN)
                             .setDisplayName(name)
-                            .setLore(WarpsUtils.asStringList(name));
+                            .setDisplayLore(WarpsUtils.asStringList(name));
 
-                    guiItem.addLore("&7========");
-                    guiItem.addLore("&6最近的传送点");
-                    guiItem.addLore("&6最近距离: &2%s格".formatted(result.distance()));
-                    guiItem.addLore("&7========");
-                    wh.getGUI().setItem(49, new GUIItem(guiItem.toItemStack()) {
+                    guiItem.addDisplayLore("&7========");
+                    guiItem.addDisplayLore("&6最近的传送点");
+                    guiItem.addDisplayLore("&6最近距离: &2%s格".formatted(result.distance()));
+                    guiItem.addDisplayLore("&7========");
+                    wh.getGUI().setItem(49, new GUIItem(guiItem.build()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
                             u.teleport(result.location());

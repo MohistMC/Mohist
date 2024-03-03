@@ -1,7 +1,7 @@
 package com.mohistmc.plugins.ban.bans;
 
 import com.mohistmc.MohistConfig;
-import com.mohistmc.api.ItemAPI;
+import com.mohistmc.api.item.ItemAPI;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
