@@ -383,7 +383,7 @@
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
     }
-@@ -908,25 +_,64 @@
+@@ -908,25 +_,69 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
  
@@ -394,6 +394,11 @@
 +
 +   // Mohist start
 +   public static AtomicReference<EntityPotionEffectEvent.Cause> addEffectCause = new AtomicReference<>(EntityPotionEffectEvent.Cause.UNKNOWN);
++
++   public void pushEffectCause(EntityPotionEffectEvent.Cause cause) {
++      addEffectCause.set(cause);
++   }
++
     public boolean m_147207_(MobEffectInstance p_147208_, @Nullable Entity p_147209_) {
 +      boolean isAsync = AsyncCatcher.catchAsync();
 +      if (isTickingEffects) {
@@ -498,11 +503,16 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.m_9236_().f_46443_) {
-@@ -1015,19 +_,54 @@
+@@ -1015,19 +_,59 @@
  
     }
  
 +   public AtomicReference<RegainReason> regainReason0 = new AtomicReference<>(RegainReason.CUSTOM);
++
++   public void pushHealReason(EntityRegainHealthEvent.RegainReason regainReason) {
++      this.regainReason0.set(regainReason);
++   }
++
     public void m_5634_(float p_21116_) {
 +      p_21116_ = net.minecraftforge.event.ForgeEventFactory.onLivingHeal(this, p_21116_);
 +      if (p_21116_ <= 0) return;

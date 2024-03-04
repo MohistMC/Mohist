@@ -130,13 +130,13 @@ public class ItemAPI {
 
     public static byte[] nbtToByte(CompoundTag nbt){
         try {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-        nbt.write(dos);
-        byte[] outputByteArray = baos.toByteArray();
-        dos.close();
-        baos.close();
-        return outputByteArray;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            nbt.write(dos);
+            byte[] outputByteArray = baos.toByteArray();
+            dos.close();
+            baos.close();
+            return outputByteArray;
         } catch (IOException e) {
             MohistMC.LOGGER.error("nbtToByte ", e);
             return null;
