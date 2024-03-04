@@ -67,7 +67,6 @@ public class WorldsCommands extends Command {
                         inventory.setItem(i, MohistItem.create(Material.MAP)
                                 .setAmount(1)
                                 .setDisplayName(environment.name())
-                                .buildItemMeta()
                                 .build());
                     }
                     player.openInventory(inventory);
