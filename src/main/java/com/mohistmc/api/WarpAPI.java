@@ -1,5 +1,6 @@
 package com.mohistmc.api;
 
+import com.mohistmc.api.location.LocationAPI;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.YamlUtils;
 import java.io.File;
@@ -26,6 +27,12 @@ public class WarpAPI {
      */
     public static void teleport(Player player, String warpsName) {
         player.teleport(get(warpsName));
+    }
+
+    public static void teleportSafe(Player player, String warpsName, int distance) {
+        if (LocationAPI.distanceBetweenLocation(player.getLocation(), get(warpsName)) > distance) {
+            player.teleport(get(warpsName));
+        }
     }
 
     public static void init() {

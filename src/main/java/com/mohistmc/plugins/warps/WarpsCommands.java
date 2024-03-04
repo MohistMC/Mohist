@@ -42,11 +42,12 @@ public class WarpsCommands extends Command {
             return false;
         }
         if (sender instanceof Player player) {
+            Location playerLoc = player.getLocation();
             if (args.length == 2) {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "set" -> {
                         String name = args[1];
-                        WarpAPI.add(player.getLocation(), name);
+                        WarpAPI.add(playerLoc, name);
                         player.sendMessage(I18n.as("warpscommands.set.success", name));
                         return true;
                     }
@@ -75,7 +76,6 @@ public class WarpsCommands extends Command {
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
-                Location playerLoc = player.getLocation();
                 for (String w : WarpAPI.config.getKeys(false)) {
                     Location warpLoc = WarpAPI.get(w);
                     MohistItem guiItem = MohistItem.create(Material.BAMBOO_HANGING_SIGN)
@@ -88,7 +88,7 @@ public class WarpsCommands extends Command {
                     wh.addItem(new GUIItem(guiItem.build()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            u.teleport(warpLoc);
+                            WarpAPI.teleportSafe(u, w, 0);
                         }
                     });
                 }
@@ -108,7 +108,7 @@ public class WarpsCommands extends Command {
                         wh.getGUI().setItem(49, new GUIItem(guiItem.build()) {
                             @Override
                             public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                                u.teleport(result.location());
+                                WarpAPI.teleportSafe(u, name, 0);
                             }
                         });
                     }
