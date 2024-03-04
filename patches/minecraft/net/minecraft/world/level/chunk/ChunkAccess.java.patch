@@ -50,6 +50,15 @@
  
     private static void m_280116_(Registry<Biome> p_281389_, LevelChunkSection[] p_282796_) {
        for(int i = 0; i < p_282796_.length; ++i) {
+@@ -153,7 +_,7 @@
+    }
+ 
+    public LevelChunkSection m_183278_(int p_187657_) {
+-      return this.m_7103_()[p_187657_];
++      return this.m_7103_()[p_187657_ == -1 ? 0 : p_187657_];
+    }
+ 
+    public Collection<Map.Entry<Heightmap.Types, Heightmap>> m_6890_() {
 @@ -253,10 +_,11 @@
  
     public void m_8092_(boolean p_62094_) {
