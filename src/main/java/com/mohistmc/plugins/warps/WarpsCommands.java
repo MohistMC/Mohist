@@ -96,20 +96,22 @@ public class WarpsCommands extends Command {
                 ClosestDistance result = LocationAPI.findClosest(WarpAPI.asList(), playerLoc);
                 String name = WarpAPI.getName(result.location());
                 if (name != null) {
-                    MohistItem guiItem = MohistItem.create(Material.WARPED_HANGING_SIGN)
-                            .setDisplayName(name)
-                            .setDisplayLore(WarpAPI.asStringList(name));
+                    if (Objects.equals(result.location().getWorld(), playerLoc.getWorld())) {
+                        MohistItem guiItem = MohistItem.create(Material.WARPED_HANGING_SIGN)
+                                .setDisplayName(name)
+                                .setDisplayLore(WarpAPI.asStringList(name));
 
-                    guiItem.addDisplayLore("&7========");
-                    guiItem.addDisplayLore("&6最近的传送点");
-                    guiItem.addDisplayLore("&6最近距离: &2%s格".formatted(result.distance()));
-                    guiItem.addDisplayLore("&7========");
-                    wh.getGUI().setItem(49, new GUIItem(guiItem.build()) {
-                        @Override
-                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            u.teleport(result.location());
-                        }
-                    });;
+                        guiItem.addDisplayLore("&7========");
+                        guiItem.addDisplayLore("&6最近的传送点");
+                        guiItem.addDisplayLore("&6最近距离: &2%s格".formatted(result.distance()));
+                        guiItem.addDisplayLore("&7========");
+                        wh.getGUI().setItem(49, new GUIItem(guiItem.build()) {
+                            @Override
+                            public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
+                                u.teleport(result.location());
+                            }
+                        });
+                    }
                 }
 
                 wh.openGUI(player);
