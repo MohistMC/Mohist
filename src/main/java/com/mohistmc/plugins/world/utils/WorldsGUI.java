@@ -2,6 +2,7 @@ package com.mohistmc.plugins.world.utils;
 
 import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.plugins.MessageI18N;
+import com.mohistmc.plugins.world.listener.InventoryClickListener;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ public class WorldsGUI {
         while (Bukkit.getWorlds().size() > groesse) {
             groesse += 54;
         }
-        WorldListInventory worldListInventory = new WorldListInventory(groesse, name);
+        WorldInventory worldListInventory = new WorldInventory(WorldInventoryType.LIST, groesse, name);
         Inventory inv = worldListInventory.getInventory();
         for (World w : Bukkit.getWorlds()) {
             ArrayList<String> infoLore = new ArrayList<>();
@@ -63,5 +64,6 @@ public class WorldsGUI {
                 .setDisplayName(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())
                 .build());
         p.openInventory(inv);
+        InventoryClickListener.worldInventory = worldListInventory;
     }
 }

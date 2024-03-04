@@ -4,8 +4,10 @@ import com.mohistmc.api.item.MohistItem;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.WorldManage;
+import com.mohistmc.plugins.world.listener.InventoryClickListener;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
-import com.mohistmc.plugins.world.utils.WorldCreateInventory;
+import com.mohistmc.plugins.world.utils.WorldInventory;
+import com.mohistmc.plugins.world.utils.WorldInventoryType;
 import com.mohistmc.plugins.world.utils.WorldsGUI;
 import com.mohistmc.util.I18n;
 import java.io.File;
@@ -59,7 +61,10 @@ public class WorldsCommands extends Command {
                 type = args[1].toLowerCase(java.util.Locale.ENGLISH);
                 if (Bukkit.getWorld(args[1]) == null) {
                     int i = -1;
-                    WorldCreateInventory worldCreateInventory = new WorldCreateInventory(MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
+                    WorldInventory worldCreateInventory = new WorldInventory(
+                            WorldInventoryType.CREATE,
+                            27,
+                            MessageI18N.WORLDMANAGE_GUI_TITLE_0.getKey() + type);
                     Inventory inventory = worldCreateInventory.getInventory();
                     for (World.Environment environment : ForgeInjectBukkit.environment.values()) {
                         if (environment == World.Environment.CUSTOM) continue;
@@ -70,6 +75,7 @@ public class WorldsCommands extends Command {
                                 .build());
                     }
                     player.openInventory(inventory);
+                    InventoryClickListener.worldInventory = worldCreateInventory;
                 } else {
                     worldAllExists(player, type);
                 }

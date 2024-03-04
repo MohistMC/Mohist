@@ -4,8 +4,8 @@ import com.mohistmc.bukkit.inventory.CraftCustomInventory;
 import com.mohistmc.plugins.MessageI18N;
 import com.mohistmc.plugins.world.commands.WorldsCommands;
 import com.mohistmc.plugins.world.utils.ConfigByWorlds;
-import com.mohistmc.plugins.world.utils.WorldCreateInventory;
-import com.mohistmc.plugins.world.utils.WorldListInventory;
+import com.mohistmc.plugins.world.utils.WorldInventory;
+import com.mohistmc.plugins.world.utils.WorldInventoryType;
 import com.mohistmc.util.I18n;
 import java.util.Random;
 import net.md_5.bungee.api.ChatColor;
@@ -24,6 +24,8 @@ import org.bukkit.inventory.Inventory;
  * @date 2023/6/14 14:39:37
  */
 public class InventoryClickListener {
+
+    public static WorldInventory worldInventory;
 
     public static void createWorld(InventoryClickEvent event, Player p) {
         p.closeInventory();
@@ -62,31 +64,32 @@ public class InventoryClickListener {
 
     public static void init(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        if (!(inventory instanceof CraftCustomInventory) && event.getWhoClicked() instanceof Player p) {
-            if (inventory.getHolder() instanceof WorldCreateInventory) {
-
-                event.setCancelled(true);
-                if (event.getCurrentItem() == null) {
-                    return;
-                }
-                if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
-                    createWorld(event, p);
-                }
-            } else if (inventory.getHolder() instanceof WorldListInventory) {
-                event.setCancelled(true);
-                if (event.getCurrentItem() == null) {
-                    return;
-                }
-                if (event.getCurrentItem().getItemMeta().getDisplayName().startsWith("§7>>")) {
-                    String toSplit = event.getCurrentItem().getItemMeta().getDisplayName();
-                    String[] splitted = toSplit.split("6");
-                    if (Bukkit.getWorld(splitted[1]) != null) {
-                        ConfigByWorlds.getSpawn(splitted[1], p);
-                    } else {
-                        WorldsCommands.worldNotExists(p, splitted[1]);
+        if (event.getWhoClicked() instanceof Player p) {
+            if (worldInventory != null && worldInventory.getInventory() == inventory) {
+                if (worldInventory.worldInventoryType() == WorldInventoryType.CREATE) {
+                    event.setCancelled(true);
+                    if (event.getCurrentItem() == null) {
+                        return;
                     }
-                } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())) {
-                    p.closeInventory();
+                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.MAP) {
+                        createWorld(event, p);
+                    }
+                } else if (worldInventory.worldInventoryType() == WorldInventoryType.LIST) {
+                    event.setCancelled(true);
+                    if (event.getCurrentItem() == null) {
+                        return;
+                    }
+                    if (event.getCurrentItem().getItemMeta().getDisplayName().startsWith("§7>>")) {
+                        String toSplit = event.getCurrentItem().getItemMeta().getDisplayName();
+                        String[] splitted = toSplit.split("6");
+                        if (Bukkit.getWorld(splitted[1]) != null) {
+                            ConfigByWorlds.getSpawn(splitted[1], p);
+                        } else {
+                            WorldsCommands.worldNotExists(p, splitted[1]);
+                        }
+                    } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(MessageI18N.WORLDMANAGE_GUI_CLOSE.getKey())) {
+                        p.closeInventory();
+                    }
                 }
             }
         }
