@@ -1,5 +1,6 @@
 package com.mohistmc.api.item;
 
+import com.mohistmc.api.color.ColorsAPI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class MohistItem {
     }
 
     public MohistItem setDisplayName(String name) {
-        itemMeta.setDisplayName(name);
+        itemMeta.setDisplayName(ColorsAPI.of(name));
         return this;
     }
 
@@ -53,9 +54,9 @@ public class MohistItem {
         return this;
     }
 
-    public MohistItem addDisplayLore(String name) {
+    public MohistItem addDisplayLore(String lore) {
         List<String> lores = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
-        lores.add(name.replaceAll("&", "§"));
+        lores.add(ColorsAPI.of(lore));
         itemMeta.setLore(lores);
         return this;
     }

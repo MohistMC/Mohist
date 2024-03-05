@@ -1,5 +1,6 @@
 package com.mohistmc.api.gui;
 
+import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.plugins.MohistPlugin;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class GUI {
 
     public GUI(GUISize type, String name) {
         this.type = type;
-        this.tempName = name;
+        this.tempName = ColorsAPI.of(name);
         this.items = new GUIItem[type.size];
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
