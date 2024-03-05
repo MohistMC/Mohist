@@ -2,6 +2,8 @@ package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.api.WarpAPI;
+import com.mohistmc.api.combat.CombatAPI;
+import com.mohistmc.api.combat.CombatListener;
 import com.mohistmc.plugins.ban.BanListener;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
@@ -18,9 +20,14 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -57,6 +64,7 @@ public class MohistPlugin {
             }
         }
         EntityClear.start();
+        CombatAPI.initialize(1L);
     }
 
     public static void registerCommands(Map<String, Command> map) {
@@ -76,6 +84,21 @@ public class MohistPlugin {
         }
         if (event instanceof PluginEnableEvent event1) {
             PluginHooks.register(event1);
+        }
+        if (event instanceof EntityDamageByEntityEvent event1) {
+            CombatListener.register(event1);
+        }
+        if (event instanceof EntityDamageEvent event1) {
+            CombatListener.register(event1);
+        }
+        if (event instanceof LingeringPotionSplashEvent event1) {
+            CombatListener.register(event1);
+        }
+        if (event instanceof PotionSplashEvent event1) {
+            CombatListener.register(event1);
+        }
+        if (event instanceof PlayerItemConsumeEvent event1) {
+            CombatListener.register(event1);
         }
     }
 
