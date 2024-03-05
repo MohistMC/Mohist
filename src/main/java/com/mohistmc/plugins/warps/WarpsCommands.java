@@ -18,8 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -85,12 +83,7 @@ public class WarpsCommands extends Command {
                     if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
                         guiItem.addDisplayLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
                     }
-                    wh.addItem(new GUIItem(guiItem.build()) {
-                        @Override
-                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            WarpAPI.teleportSafe(u, w, 0);
-                        }
-                    });
+                    wh.addItem(new GUIItem(guiItem.build(), (clickType, owner, itemStack) -> WarpAPI.teleportSafe(owner, w, 0)));
                 }
 
                 ClosestDistance result = LocationAPI.findClosest(WarpAPI.asList(), playerLoc);
@@ -105,12 +98,7 @@ public class WarpsCommands extends Command {
                         guiItem.addDisplayLore("&6最近的传送点");
                         guiItem.addDisplayLore("&6最近距离: &2%s格".formatted(result.distance()));
                         guiItem.addDisplayLore("&7========");
-                        wh.getGUI().setItem(49, new GUIItem(guiItem.build()) {
-                            @Override
-                            public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                                WarpAPI.teleportSafe(u, name, 0);
-                            }
-                        });
+                        wh.getGUI().setItem(49, new GUIItem(guiItem.build(), (clickType, owner, itemStack) -> WarpAPI.teleportSafe(owner, name, 0)));
                     }
                 }
 

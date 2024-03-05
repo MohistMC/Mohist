@@ -23,8 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -79,21 +77,11 @@ public class ShowsCommand extends Command {
                 Warehouse wh = new Warehouse("Sounds");
                 wh.getGUI().setItem(47, new GUIItem(MohistItem.create(Material.REDSTONE)
                         .setDisplayName("§cStop all sounds")
-                        .build()) {
-                    @Override
-                    public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                        u.stopAllSounds();
-                    }
-                });
+                        .build(), (clickType, owner, itemStack) -> owner.stopAllSounds()));
                 for (Sound s : Sound.values()) {
                     wh.addItem(new GUIItem(MohistItem.create(Material.NOTE_BLOCK)
                             .setDisplayName(s.name())
-                            .build()) {
-                        @Override
-                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            player.playSound(player.getLocation(), s, 1f, 1.0f);
-                        }
-                    });
+                            .build(), (clickType, owner, itemStack) -> owner.playSound(owner.getLocation(), s, 1f, 1.0f)));
                 }
                 wh.openGUI(player);
                 return true;

@@ -1,5 +1,6 @@
 package com.mohistmc.api.gui;
 
+import com.mohistmc.api.color.ColorsAPI;
 import com.mohistmc.plugins.MohistPlugin;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,43 +16,21 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LSeng
- */
 public class GUI {
 
     static Map<Player, GUI> openGUI = new HashMap<>();
     public GUIItem[] items;
     public Inventory inv;
-    GUIType type;
+    GUISize type;
     String tempName;
 
     private GUI() {
     }
 
-    public GUI(GUIType type, String name) {
+    public GUI(GUISize type, String name) {
         this.type = type;
-        this.tempName = name;
-        switch (type) {
-            case ONEBYNINE:
-                this.items = new GUIItem[9];
-                break;
-            case TWOBYNINE:
-                this.items = new GUIItem[18];
-                break;
-            case THREEBYNINE:
-                this.items = new GUIItem[27];
-                break;
-            case FIVEBYNINE:
-                this.items = new GUIItem[45];
-                break;
-            case SIXBYNINE:
-                this.items = new GUIItem[54];
-                break;
-            case FOURBYNINE:
-            default:
-                this.items = new GUIItem[36];
-        }
+        this.tempName = ColorsAPI.of(name);
+        this.items = new GUIItem[type.size];
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
 
@@ -66,8 +45,9 @@ public class GUI {
                 if (openGUI.containsKey(p) && openGUI.get(p) == GUI.this) {
                     event.setCancelled(true);
 
-                    if (items[event.getSlot()] != null) {
-                        items[event.getSlot()].ClickAction(event.getClick(), p, items[event.getSlot()].display);
+                    GUIItem guiItem = items[event.getSlot()];
+                    if (guiItem != null && guiItem.clickAction() != null) {
+                        guiItem.clickAction().run(event.getClick(), p, items[event.getSlot()].display());
                     }
                 }
             }
@@ -100,22 +80,17 @@ public class GUI {
 
 
     public void openGUI(Player p) {
-        Inventory inv;
-        if (this.type == GUIType.CANCEL) {
-            throw new NullPointerException("Canceled or non-existent GUI");
-        }
-        inv = Bukkit.createInventory(null, this.items.length, this.tempName);
+        Inventory inv = Bukkit.createInventory(null, this.items.length, this.tempName);
         for (int index = 0; index < this.items.length; index++) {
             if (items[index] == null) {
                 inv.setItem(index, new ItemStack(Material.AIR));
             } else {
-                inv.setItem(index, items[index].display);
+                inv.setItem(index, items[index].display());
             }
         }
         this.inv = inv;
-        p.getPlayer().openInventory(inv);
+        p.openInventory(inv);
         openGUI.put(p, this);
-
     }
 
 }
