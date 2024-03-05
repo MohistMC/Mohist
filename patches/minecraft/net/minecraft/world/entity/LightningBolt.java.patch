@@ -32,7 +32,7 @@
  
     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
        super(p_20865_, p_20866_);
-@@ -72,9 +_,17 @@
+@@ -72,16 +_,24 @@
  
     }
  
@@ -51,7 +51,20 @@
           if (this.m_9236_().m_5776_()) {
              this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12090_, SoundSource.WEATHER, 10000.0F, 0.8F + this.f_19796_.m_188501_() * 0.2F, false);
              this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12089_, SoundSource.WEATHER, 2.0F, 0.5F + this.f_19796_.m_188501_() * 0.2F, false);
-@@ -114,13 +_,14 @@
+          } else {
+             Difficulty difficulty = this.m_9236_().m_46791_();
+             if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
+-               this.m_20870_(4);
++               // this.spawnFire(4); // Mohist rpg
+             }
+ 
+             this.m_147161_();
+@@ -110,17 +_,18 @@
+             --this.f_20861_;
+             this.f_20860_ = 1;
+             this.f_20859_ = this.f_19796_.m_188505_();
+-            this.m_20870_(0);
++            // this.spawnFire(0); // Mohist rpg
           }
        }
  
