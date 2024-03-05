@@ -20,35 +20,16 @@ public class GUI {
     static Map<Player, GUI> openGUI = new HashMap<>();
     public GUIItem[] items;
     public Inventory inv;
-    GUIType type;
+    GUISize type;
     String tempName;
 
     private GUI() {
     }
 
-    public GUI(GUIType type, String name) {
+    public GUI(GUISize type, String name) {
         this.type = type;
         this.tempName = name;
-        switch (type) {
-            case ONEBYNINE:
-                this.items = new GUIItem[9];
-                break;
-            case TWOBYNINE:
-                this.items = new GUIItem[18];
-                break;
-            case THREEBYNINE:
-                this.items = new GUIItem[27];
-                break;
-            case FIVEBYNINE:
-                this.items = new GUIItem[45];
-                break;
-            case SIXBYNINE:
-                this.items = new GUIItem[54];
-                break;
-            case FOURBYNINE:
-            default:
-                this.items = new GUIItem[36];
-        }
+        this.items = new GUIItem[type.size];
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
 
@@ -98,11 +79,7 @@ public class GUI {
 
 
     public void openGUI(Player p) {
-        Inventory inv;
-        if (this.type == GUIType.CANCEL) {
-            throw new NullPointerException("Canceled or non-existent GUI");
-        }
-        inv = Bukkit.createInventory(null, this.items.length, this.tempName);
+        Inventory inv = Bukkit.createInventory(null, this.items.length, this.tempName);
         for (int index = 0; index < this.items.length; index++) {
             if (items[index] == null) {
                 inv.setItem(index, new ItemStack(Material.AIR));

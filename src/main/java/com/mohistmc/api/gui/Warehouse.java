@@ -18,7 +18,7 @@ public class Warehouse {
     }
 
     public Warehouse(String name) {
-        this.gui = new GUI(GUIType.SIXBYNINE, name);
+        this.gui = new GUI(GUISize.SIX, name);
 
         for (int i = 36; i < 46; i++) {
             this.gui.setItem(i, new GUIItem(MohistItem.create(Material.GLASS_PANE)
