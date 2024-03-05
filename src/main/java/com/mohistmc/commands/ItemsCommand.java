@@ -37,7 +37,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -147,20 +146,17 @@ public class ItemsCommand extends Command {
                     return false;
                 }
                 ItemsConfig.remove(args[1]);
-                sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + I18n.as("itemscmd.removedItemp2") );
+                sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + I18n.as("itemscmd.removedItemp2"));
                 return true;
             }
-            case "list" ->{
+            case "list" -> {
                 Warehouse wh = new Warehouse("Items");
                 for (ItemStack s : ItemsConfig.getItems()) {
-                    wh.addItem(new GUIItem(s) {
-                        @Override
-                        public void ClickAction(ClickType type, Player u, ItemStack itemStack1) {
-                            if (player.getInventory().firstEmpty() != -1) {
-                                player.getInventory().addItem(itemStack1);
-                            }
+                    wh.addItem(new GUIItem(s, (clickType, owner, itemStack1) -> {
+                        if (player.getInventory().firstEmpty() != -1) {
+                            player.getInventory().addItem(itemStack1);
                         }
-                    });
+                    }));
                 }
                 wh.openGUI(player);
                 return true;

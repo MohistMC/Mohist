@@ -5,12 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LSeng
- */
 public class Warehouse {
 
     GUI gui;
@@ -35,13 +31,8 @@ public class Warehouse {
                 .build()), 47, 48, 49, 50);
 
         this.gui.setItem(46, new GUIItem(MohistItem.create(Material.REDSTONE)
-                .setDisplayName("§cClose")
-                .build()) {
-            @Override
-            public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                u.closeInventory();
-            }
-        });
+                .setDisplayName("§c关闭")
+                .build(), (clickType, owner, itemStack) -> owner.closeInventory()));
     }
 
     public final GUIItem getItem(int index) {
@@ -119,13 +110,12 @@ public class Warehouse {
         } else {
             gui.setItem(51, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&eprevious page")
-                    .build()) {
-                @Override
-                public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                    Warehouse.this.pageChoose--;
-                    openGUI(u);
-                }
-            });
+                    .build(),
+                    (clickType, owner, itemStack) -> {
+                        Warehouse.this.pageChoose--;
+                        openGUI(owner);
+                    }
+            ));
         }
 
         gui.setItem(52, new GUIItem(MohistItem.create(Material.PAPER)
@@ -134,19 +124,17 @@ public class Warehouse {
                 .build()));
 
         if (this.pageChoose < page - 1) {
-            gui.setItem(53, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
-                    .setDisplayName("&enext page")
-                    .build()) {
-                @Override
-                public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                    Warehouse.this.pageChoose++;
-                    openGUI(u);
-                }
-            });
+            gui.setItem(53, new GUIItem(MohistItem.create(Material.ACACIA_FENCE).setDisplayName("&enext page").build(),
+                    (clickType, owner, itemStack) -> {
+                        Warehouse.this.pageChoose++;
+                        openGUI(owner);
+                    })
+            );
         } else {
             gui.setItem(53, new GUIItem(MohistItem.create(Material.ACACIA_FENCE)
                     .setDisplayName("&cThis is already the last page")
-                    .build()));
+                    .build())
+            );
         }
 
         return this.gui;
@@ -155,6 +143,5 @@ public class Warehouse {
     public void openGUI(Player p) {
         getGUI().openGUI(p);
     }
-
 }
 

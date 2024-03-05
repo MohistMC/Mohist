@@ -15,9 +15,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author LSeng
- */
 public class GUI {
 
     static Map<Player, GUI> openGUI = new HashMap<>();
@@ -66,8 +63,9 @@ public class GUI {
                 if (openGUI.containsKey(p) && openGUI.get(p) == GUI.this) {
                     event.setCancelled(true);
 
-                    if (items[event.getSlot()] != null) {
-                        items[event.getSlot()].ClickAction(event.getClick(), p, items[event.getSlot()].display);
+                    GUIItem guiItem = items[event.getSlot()];
+                    if (guiItem != null && guiItem.clickAction() != null) {
+                        guiItem.clickAction().run(event.getClick(), p, items[event.getSlot()].display());
                     }
                 }
             }
@@ -109,13 +107,12 @@ public class GUI {
             if (items[index] == null) {
                 inv.setItem(index, new ItemStack(Material.AIR));
             } else {
-                inv.setItem(index, items[index].display);
+                inv.setItem(index, items[index].display());
             }
         }
         this.inv = inv;
-        p.getPlayer().openInventory(inv);
+        p.openInventory(inv);
         openGUI.put(p, this);
-
     }
 
 }

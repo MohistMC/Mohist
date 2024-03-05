@@ -1,8 +1,5 @@
 package com.mohistmc.api.gui;
 
-/**
- * @author LSeng
- */
 public enum GUIType {
 
     ONEBYNINE,
@@ -12,6 +9,5 @@ public enum GUIType {
     FIVEBYNINE,
     SIXBYNINE,
     UNKNOWN,
-    CANCEL;
-
+    CANCEL
 }
