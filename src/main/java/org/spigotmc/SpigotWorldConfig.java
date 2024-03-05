@@ -200,7 +200,7 @@ public class SpigotWorldConfig
     public int monsterActivationRange = 32;
     public int raiderActivationRange = 48;
     public int miscActivationRange = 16;
-    public boolean tickInactiveVillagers = true;
+    public boolean tickInactiveVillagers = false;
     public boolean ignoreSpectatorActivation = false;
     private void activationRange()
     {
