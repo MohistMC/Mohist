@@ -43,7 +43,7 @@ public class BanListener {
                     }
                 }
                 BanUtils.saveToYaml(old, BanType.ENTITY);
-            }else if (openInventory.getBanType() == BanType.ENCHANTMENT) {
+            } else if (openInventory.getBanType() == BanType.ENCHANTMENT) {
                 List<String> old = MohistConfig.ban_enchantment_list;
                 for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
                     if (itemStack != null && itemStack.getType() != Material.AIR) {

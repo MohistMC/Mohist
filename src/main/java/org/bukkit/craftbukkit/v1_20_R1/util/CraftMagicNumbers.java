@@ -379,7 +379,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     @Override
     public String getTranslationKey(EntityType entityType) {
         Preconditions.checkArgument(entityType.getName() != null, "Invalid name of EntityType %s for translation key", entityType);
-        String mods = ServerAPI.entityTypeMap0.get(entityType).getDescriptionId();
+        String mods = ServerAPI.entityTypeMap0.containsKey(entityType) ? ServerAPI.entityTypeMap0.get(entityType).getDescriptionId() : entityType.getKey().asString();
         return net.minecraft.world.entity.EntityType.byString(entityType.getName()).map(net.minecraft.world.entity.EntityType::getDescriptionId).orElse(mods);
     }
 

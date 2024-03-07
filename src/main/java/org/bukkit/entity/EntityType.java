@@ -464,7 +464,7 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
     @Override
     public @NotNull String translationKey() {
         Preconditions.checkArgument(this != UNKNOWN, "UNKNOWN entities do not have translation keys");
-        return org.bukkit.Bukkit.getUnsafe().getTranslationKey(this);
+        return Bukkit.getUnsafe().getTranslationKey(this);
     }
     // Paper end
 
