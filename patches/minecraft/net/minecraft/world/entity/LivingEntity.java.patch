@@ -1758,6 +1758,21 @@
        }
     }
  
+@@ -3117,7 +_,14 @@
+       this.f_19804_.m_135381_(f_20942_, Optional.empty());
+    }
+ 
++   // Mohist start
++   public boolean mohist$fauxSleeping = false;
+    public boolean m_5803_() {
++      if (mohist$fauxSleeping && this instanceof ServerPlayer player) {
++         mohist$fauxSleeping = false;
++         return this.m_21257_().isPresent() || player.fauxSleeping;
++      }
++      // Mohist end
+       return this.m_21257_().isPresent();
+    }
+ 
 @@ -3127,8 +_,8 @@
        }
  

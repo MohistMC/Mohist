@@ -14,7 +14,7 @@
     }
  
     public int m_144010_(int p_144011_) {
-@@ -35,16 +_,22 @@
+@@ -35,16 +_,23 @@
        int j = this.f_143999_;
        this.f_143998_ = 0;
        this.f_143999_ = 0;
@@ -23,8 +23,8 @@
        for(ServerPlayer serverplayer : p_144008_) {
           if (!serverplayer.m_5833_()) {
              ++this.f_143998_;
--            if (serverplayer.m_5803_()) {
-+            if (serverplayer.m_5803_() || serverplayer.fauxSleeping) { // CraftBukkit
++            serverplayer.mohist$fauxSleeping = true;
+             if (serverplayer.m_5803_()) {
                 ++this.f_143999_;
              }
 +            // CraftBukkit start
