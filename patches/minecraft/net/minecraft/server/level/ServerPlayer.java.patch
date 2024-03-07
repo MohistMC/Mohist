@@ -1023,6 +1023,14 @@
        if (!this.f_8941_.m_143473_(p_143404_)) {
           return false;
        } else {
+@@ -1246,6 +_,7 @@
+ 
+    public void m_240418_(Component p_240560_, boolean p_240545_) {
+       if (this.m_240399_(p_240545_)) {
++         if (f_8906_ == null) return; // Mohist
+          this.f_8906_.m_243119_(new ClientboundSystemChatPacket(p_240560_, p_240545_), PacketSendListener.m_243073_(() -> {
+             if (this.m_240399_(false)) {
+                int i = 256;
 @@ -1274,14 +_,25 @@
           return "<unknown>";
        }
