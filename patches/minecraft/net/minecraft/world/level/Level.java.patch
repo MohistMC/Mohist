@@ -394,7 +394,7 @@
  
        Explosion.BlockInteraction explosion$blockinteraction = explosion$blockinteraction1;
        Explosion explosion = new Explosion(this, p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, explosion$blockinteraction);
-+      if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
++      if (explosion.wasCanceled || net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
        explosion.m_46061_();
        explosion.m_46075_(p_256377_);
        return explosion;
