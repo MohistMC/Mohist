@@ -221,15 +221,6 @@
     }
  
     public boolean m_5776_() {
-@@ -131,7 +_,7 @@
- 
-    @Nullable
-    public MinecraftServer m_142572_() {
--      return null;
-+      return MinecraftServer.getServer();
-    }
- 
-    public boolean m_46739_(BlockPos p_46740_) {
 @@ -173,6 +_,17 @@
     }
  

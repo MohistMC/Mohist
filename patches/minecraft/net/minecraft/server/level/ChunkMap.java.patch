@@ -195,7 +195,7 @@
 +    }
 +
 +    private boolean m_183751_(ServerPlayer p_183752_, ChunkPos p_183753_) {
-+        return this.playerIsCloseEnoughForSpawning( p_183752_, p_183753_, 0D );
++        return this.playerIsCloseEnoughForSpawning( p_183752_, p_183753_, 16384.0D);
 +    }
 +
 +    private boolean playerIsCloseEnoughForSpawning(ServerPlayer p_183752_, ChunkPos p_183753_, double range) { // Spigot

@@ -29,7 +29,7 @@
 +
 +   // CraftBukkit start
 +   default Stream<Component> stream() {
-+      return Streams.concat(new Stream[]{Stream.of(this), this.m_7360_().stream().flatMap(Component::stream)});
++      return Streams.concat(Stream.of(this), this.m_7360_().stream().flatMap(Component::stream));
 +   }
 +
 +   @Override
