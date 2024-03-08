@@ -329,7 +329,7 @@
 +      cserver.getPluginManager().callEvent(playerQuitEvent);
 +      p_11287_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +
-+      p_11287_.m_9240_(); // SPIGOT-924
++      // p_11287_.doTick(); // SPIGOT-924 // Mohist
 +      // CraftBukkit end
 +
        this.m_6765_(p_11287_);
