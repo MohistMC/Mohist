@@ -159,7 +159,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -353,11 +_,14 @@
+@@ -353,11 +_,15 @@
        }
  
        ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, holder, p_129816_, chunkgenerator, flag, j, list, true);
@@ -168,6 +168,7 @@
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
        this.m_129841_(dimensiondatastorage);
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_18_R2.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_());
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(Level.f_46428_)));
@@ -415,8 +416,7 @@
  
 +            // Spigot start
 +            Arrays.fill( recentTps, 20 );
-+            long start = System.nanoTime(), curTime, tickSection = start; // Paper - Further improve server tick loop
-+            lastTick = start - TICK_TIME; // Paper
++            long tickSection = Util.m_137569_(), curTime, tickCount = 1; // Paper
              while(this.f_129764_) {
 -               long i = Util.m_137550_() - this.f_129726_;
 -               if (i > 2000L && this.f_129726_ - this.f_129718_ >= 15000L) {
@@ -432,6 +432,7 @@
  
 +               if ( ++MinecraftServer.currentTick % MinecraftServer.SAMPLE_INTERVAL == 0 )
 +               {
++                  curTime = Util.m_137569_();
 +                  final long diff = curTime - tickSection;
 +                  java.math.BigDecimal currentTps = TPS_BASE.divide(new java.math.BigDecimal(diff), 30, java.math.RoundingMode.HALF_UP);
 +                  tps1.add(currentTps, diff);
@@ -443,7 +444,7 @@
 +                  this.recentTps[2] = tps15.getAverage();
 +                  // Paper end
 +                  tickSection = curTime;
-+               }
++               } else curTime = Util.m_137569_();
 +               // Spigot end
 +
                 if (this.f_177877_) {
@@ -451,7 +452,7 @@
                    this.f_177876_ = new MinecraftServer.TimeProfiler(Util.m_137569_(), this.f_129766_);
                 }
  
-+               MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
++               /// MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
 +               lastTick = curTime;
                 this.f_129726_ += 50L;
                 this.m_177945_();

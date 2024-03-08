@@ -483,7 +483,7 @@
 +            mohist$location = new Location(worldserver1.getWorld(), vec3d.m_7096_(), vec3d.m_7098_(), vec3d.m_7094_());
 +         } else if (blockpos != null) {
 +            p_11237_.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132153_, 0.0f));
-+            p_11237_.m_9158_(Level.f_46428_, null, 0f, false, false);
++            p_11237_.m_9158_(null, null, 0f, false, false);
 +         }
 +
 +         if (mohist$location == null) {
