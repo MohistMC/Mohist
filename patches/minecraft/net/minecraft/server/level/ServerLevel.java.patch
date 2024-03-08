@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -2,6 +_,7 @@
+@@ -2,6 +_,8 @@
  
  import com.google.common.annotations.VisibleForTesting;
  import com.google.common.collect.Lists;
 +import com.mohistmc.forge.MohistDerivedLevelData;
++import com.mohistmc.util.Level2LevelStem;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
@@ -70,7 +71,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,38 @@
+@@ -181,13 +_,39 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -84,6 +85,7 @@
 +   public PrimaryLevelData M;  // CraftBukkit - type
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++   public final String name;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.f_8547_.m_62227_(x, z, false);
@@ -98,15 +100,15 @@
        super(p_203765_, p_203766_, p_203767_, p_203762_::m_129905_, false, p_203770_, p_203771_);
 +      convertable = p_203764_;
 +      this.pvpMode = p_203762_.m_129799_();
-+
++      File worldFile = DimensionType.m_196975_(p_203766_, p_203764_.f_78271_).toFile();
++      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
++      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
 +      if (p_203765_ instanceof PrimaryLevelData) {
 +         this.M = (PrimaryLevelData) p_203765_;
 +      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {
 +         this.M = MohistDerivedLevelData.create(derivedLevelData);
 +      }
-+      File worldFile = DimensionType.m_196975_(p_203766_, p_203764_.f_78271_).toFile();
-+      uuid = WorldUUID.getUUID(worldFile);
-+      this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
++     this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
        this.f_8561_ = p_203773_;
        this.f_8548_ = p_203762_;
        this.f_8558_ = p_203772_;

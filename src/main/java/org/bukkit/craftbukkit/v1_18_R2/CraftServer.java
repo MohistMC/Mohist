@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.mohistmc.MohistMC;
 import com.mohistmc.forge.ForgeInjectBukkit;
+import com.mohistmc.util.Level2LevelStem;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -955,13 +956,14 @@ public final class CraftServer implements Server {
     public World createWorld(WorldCreator creator) {
         Preconditions.checkState(!console.levels.isEmpty(), "Cannot create additional worlds on STARTUP");
         Validate.notNull(creator, "Creator may not be null");
-
+        Level2LevelStem.initPluginWorld.set(true); // Mohist
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         BiomeProvider biomeProvider = creator.biomeProvider();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-
+        Level2LevelStem.bukkit = folder;
+        Level2LevelStem.bukkit_name = name;
         if (world != null) {
             return world;
         }
@@ -1052,7 +1054,9 @@ public final class CraftServer implements Server {
         ServerLevel internal = new ServerLevel(console, console.executor, worldSession, worlddata, worldKey, holder, getServer().progressListenerFactory.create(11),
                 chunkgenerator, worlddata.worldGenSettings().isDebug(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
         internal.setGeneratorAndEnv(generator, creator.environment());
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+        name = name.contains("DIM") ? name : name.toLowerCase(java.util.Locale.ENGLISH);
+        if (!(worlds.containsKey(name))) {
+            Level2LevelStem.initPluginWorld.set(false); // Mohist
             return null;
         }
 
@@ -1065,7 +1069,10 @@ public final class CraftServer implements Server {
         internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
-        return internal.getWorld();
+        World world1 = internal.getWorld();
+        world1.setBukkit(true);
+        Level2LevelStem.reloadAndInit(world1);
+        return world1;
     }
 
     @Override

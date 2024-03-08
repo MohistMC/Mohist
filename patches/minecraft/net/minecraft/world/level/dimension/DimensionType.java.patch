@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/dimension/DimensionType.java
++++ b/net/minecraft/world/level/dimension/DimensionType.java
+@@ -1,5 +_,6 @@
+ package net.minecraft.world.level.dimension;
+ 
++import com.mohistmc.util.Level2LevelStem;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.DataResult;
+ import com.mojang.serialization.Dynamic;
+@@ -207,7 +_,7 @@
+       } else if (p_196976_ == Level.f_46430_) {
+          return p_196977_.resolve("DIM1");
+       } else {
+-         return p_196976_ == Level.f_46429_ ? p_196977_.resolve("DIM-1") : p_196977_.resolve("dimensions").resolve(p_196976_.m_135782_().m_135827_()).resolve(p_196976_.m_135782_().m_135815_());
++         return Level2LevelStem.checkPath(p_196976_ == Level.f_46429_ ? p_196977_.resolve("DIM-1") : p_196977_.resolve("dimensions").resolve(p_196976_.m_135782_().m_135827_()).resolve(p_196976_.m_135782_().m_135815_()));
+       }
+    }
+ 
