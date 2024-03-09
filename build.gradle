@@ -1,15 +1,12 @@
 import com.mohistmc.tasks.JenkinsNumber
-import net.minecraftforge.forge.tasks.*
-import net.minecraftforge.forge.tasks.checks.*
 import net.minecraftforge.gradle.common.tasks.*
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import java.nio.file.Files
+import java.text.SimpleDateFormat
 import java.util.stream.Collectors
-
-import static net.minecraftforge.forge.tasks.Util.*
 
 plugins {
     id 'com.github.ben-manes.versions' version '0.46.0'
@@ -483,11 +480,11 @@ project(':mohist') {
     ext {
         MANIFESTS = [
                 '/': [
-                        'Timestamp'      : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                        'Timestamp'      : new SimpleDateFormat("yyyy.MM.dd.HHmm").format(new Date()),
                         'GitCommit'      : gradleutils.gitInfo.abbreviatedId,
                         'Git-Branch'     : '1.20.1',
                         'FML-System-Mods': 'forge',
-                        'MixinConfigs': 'mohist.mixins.json'
+                        'MixinConfigs'   : 'mohist.mixins.json'
                 ] as LinkedHashMap,
                 'net/minecraftforge/versions/forge/'        : [
                         'Specification-Title'   : 'Forge',
