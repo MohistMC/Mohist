@@ -14,12 +14,16 @@
     }
  
     public int m_144010_(int p_144011_) {
-@@ -35,16 +_,23 @@
-       int j = this.f_143999_;
-       this.f_143998_ = 0;
-       this.f_143999_ = 0;
-+      boolean anySleep = false; // CraftBukkit
+@@ -30,6 +_,8 @@
+       return this.f_143999_;
+    }
  
++   boolean anySleep = false; // CraftBukkit
++
+    public boolean m_144007_(List<ServerPlayer> p_144008_) {
+       int i = this.f_143998_;
+       int j = this.f_143999_;
+@@ -39,12 +_,18 @@
        for(ServerPlayer serverplayer : p_144008_) {
           if (!serverplayer.m_5833_()) {
              ++this.f_143998_;
