@@ -275,12 +275,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void damage(double amount) {
-        damage(amount, null);
+        damage(amount, getHandle().damageSources().generic());
     }
 
     @Override
     public void damage(double amount, org.bukkit.entity.Entity source) {
-        Preconditions.checkState(!getHandle().generation, "Cannot damage entity during world generation");
         DamageSource reason = getHandle().damageSources().generic();
 
         if (source instanceof HumanEntity) {
@@ -289,7 +288,21 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             reason = getHandle().damageSources().mobAttack(((CraftLivingEntity) source).getHandle());
         }
 
-        entity.hurt(reason, (float) amount);
+        damage(amount, reason);
+    }
+
+    @Override
+    public void damage(double amount, org.bukkit.damage.DamageSource damageSource) {
+        Preconditions.checkArgument(damageSource != null, "damageSource cannot be null");
+
+        damage(amount, ((CraftDamageSource) damageSource).getHandle());
+    }
+
+    private void damage(double amount, DamageSource damageSource) {
+        Preconditions.checkArgument(damageSource != null, "damageSource cannot be null");
+        Preconditions.checkState(!getHandle().generation, "Cannot damage entity during world generation");
+
+        entity.hurt(damageSource, (float) amount);
     }
 
     @Override

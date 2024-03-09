@@ -8,13 +8,12 @@
  
  public class MagmaBlock extends Block {
     public static final MapCodec<MagmaBlock> CODEC = simpleCodec(MagmaBlock::new);
-@@ -27,7 +_,9 @@
+@@ -27,7 +_,7 @@
  
     public void stepOn(Level p_153777_, BlockPos p_153778_, BlockState p_153779_, Entity p_153780_) {
        if (!p_153780_.isSteppingCarefully() && p_153780_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_153780_)) {
-+         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.blockDamage = CraftBlock.at(p_153777_, p_153778_); // CraftBukkit
-          p_153780_.hurt(p_153777_.damageSources().hotFloor(), 1.0F);
-+         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.blockDamage = null; // CraftBukkit
+-         p_153780_.hurt(p_153777_.damageSources().hotFloor(), 1.0F);
++         p_153780_.hurt(p_153777_.damageSources().hotFloor().directBlock(p_153777_, p_153778_), 1.0F); // CraftBukkit
        }
  
        super.stepOn(p_153777_, p_153778_, p_153779_, p_153780_);

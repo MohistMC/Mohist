@@ -480,7 +480,13 @@ public abstract class CraftRegionAccessor implements RegionAccessor {
         CraftEntityTypes.EntityTypeData<?, ?> entityTypeData = CraftEntityTypes.getEntityTypeData(clazz);
 
         if (entityTypeData == null || entityTypeData.spawnFunction() == null) {
-            throw new IllegalArgumentException("Cannot spawn an entity for " + clazz.getName());
+            if (CraftEntity.class.isAssignableFrom(clazz)) {
+                // SPIGOT-7565: Throw a more descriptive error message when a developer tries to spawn an entity from a CraftBukkit class
+                throw new IllegalArgumentException(String.format("Cannot spawn an entity from its CraftBukkit implementation class '%s' use the Bukkit class instead. "
+                        + "You can get the Bukkit representation via Entity#getType()#getEntityClass()", clazz.getName()));
+            } else {
+                throw new IllegalArgumentException("Cannot spawn an entity for " + clazz.getName());
+            }
         }
 
         if (!entityTypeData.entityType().isEnabledByFeature(getHandle().getMinecraftWorld().getWorld())) {

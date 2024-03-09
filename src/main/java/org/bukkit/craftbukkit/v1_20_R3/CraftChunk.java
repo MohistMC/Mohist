@@ -45,6 +45,8 @@ import org.bukkit.craftbukkit.v1_20_R3.block.CraftBiome;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.generator.structure.GeneratedStructure;
+import org.bukkit.generator.structure.Structure;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 
@@ -359,6 +361,16 @@ public class CraftChunk implements Chunk {
             return LoadLevel.UNLOADED;
         }
         return LoadLevel.values()[chunk.getFullStatus().ordinal()];
+    }
+
+    @Override
+    public Collection<GeneratedStructure> getStructures() {
+        return getCraftWorld().getStructures(getX(), getZ());
+    }
+
+    @Override
+    public Collection<GeneratedStructure> getStructures(Structure structure) {
+        return getCraftWorld().getStructures(getX(), getZ(), structure);
     }
 
     @Override

@@ -18,13 +18,12 @@
        }
  
     }
-@@ -307,7 +_,9 @@
+@@ -307,7 +_,7 @@
     }
  
     public void thunderHit(ServerLevel p_30140_, LightningBolt p_30141_) {
-+      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = p_30141_; // CraftBukkit
-       this.hurt(this.damageSources().lightningBolt(), Float.MAX_VALUE);
-+      org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null; // CraftBukkit
+-      this.hurt(this.damageSources().lightningBolt(), Float.MAX_VALUE);
++      this.hurt(this.damageSources().lightningBolt().customCausingEntity(p_30141_), Float.MAX_VALUE);
     }
  
     protected Vector3f getPassengerAttachmentPoint(Entity p_297922_, EntityDimensions p_299342_, float p_297986_) {

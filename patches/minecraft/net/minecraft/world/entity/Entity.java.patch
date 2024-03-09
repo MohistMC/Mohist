@@ -26,7 +26,7 @@
  import net.minecraft.world.level.entity.EntityAccess;
  import net.minecraft.world.level.entity.EntityInLevelCallback;
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-@@ -120,10 +_,41 @@
+@@ -120,10 +_,42 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.ScoreHolder;
  import net.minecraft.world.scores.Team;
@@ -54,6 +54,7 @@
 +import org.bukkit.event.entity.EntityMountEvent;
 +import org.bukkit.event.entity.EntityPortalEvent;
 +import org.bukkit.event.entity.EntityPoseChangeEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -219,11 +220,44 @@
     }
  
     public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
-@@ -347,12 +_,21 @@
+@@ -318,7 +_,15 @@
+       return this.tags.remove(p_20138_);
+    }
+ 
++   // Mohist start
++   private AtomicReference<EntityRemoveEvent.Cause> removeCause = new AtomicReference<>(null);
++
++   public void putRemoveCause(EntityRemoveEvent.Cause cause) {
++      removeCause.set(cause);
++   }
++
+    public void kill() {
++      putRemoveCause(EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+       this.remove(Entity.RemovalReason.KILLED);
+       this.gameEvent(GameEvent.ENTITY_DIE);
+    }
+@@ -327,6 +_,11 @@
+       this.remove(Entity.RemovalReason.DISCARDED);
+    }
+ 
++   public final void discard(EntityRemoveEvent.Cause cause) {
++      this.remove(Entity.RemovalReason.DISCARDED, cause);
++      // CraftBukkit end
++   }
++
+    protected abstract void defineSynchedData();
+ 
+    public SynchedEntityData getEntityData() {
+@@ -347,12 +_,26 @@
  
     public void remove(Entity.RemovalReason p_146834_) {
        this.setRemoved(p_146834_);
 +      this.invalidateCaps();
++   }
++
++   public void remove(Entity.RemovalReason p_146834_, EntityRemoveEvent.Cause cause) {
++      putRemoveCause(cause);
++      remove(p_146834_);
     }
  
     public void onClientRemoval() {
@@ -312,11 +346,12 @@
        }
  
        this.checkBelowWorld();
-@@ -516,15 +_,42 @@
+@@ -516,15 +_,40 @@
  
     public void lavaHurt() {
        if (!this.fireImmune()) {
 -         this.setSecondsOnFire(15);
+-         if (this.hurt(this.damageSources().lava(), 4.0F)) {
 +         // CraftBukkit start - Fallen in lava TODO: this event spams!
 +         if (this instanceof LivingEntity && remainingFireTicks <= 0) {
 +            // not on fire yet
@@ -332,12 +367,10 @@
 +            // This will be called every single tick the entity is in lava, so don't throw an event
 +            this.setSecondsOnFire(15, false);
 +         }
-+         CraftEventFactory.blockDamage = (lastLavaContact) == null ? null : CraftBlock.at(level, lastLavaContact);
-          if (this.hurt(this.damageSources().lava(), 4.0F)) {
++         if (this.hurt(this.damageSources().lava().directBlock(level, lastLavaContact), 4.0F)) {
              this.playSound(SoundEvents.GENERIC_BURN, 0.4F, 2.0F + this.random.nextFloat() * 0.4F);
           }
 -
-+         CraftEventFactory.blockDamage = null;
 +         // CraftBukkit end - we also don't throw an event unless the object in lava is living, to save on some event calls
        }
     }
@@ -372,6 +405,14 @@
     public void setRemainingFireTicks(int p_20269_) {
        this.remainingFireTicks = p_20269_;
     }
+@@ -549,6 +_,7 @@
+    }
+ 
+    protected void onBelowWorld() {
++      this.putRemoveCause(EntityRemoveEvent.Cause.OUT_OF_WORLD); // CraftBukkit - add Bukkit remove cause
+       this.discard();
+    }
+ 
 @@ -666,6 +_,28 @@
                 block.updateEntityAfterFallOn(this.level(), this);
              }
@@ -1056,7 +1097,7 @@
     }
  
     public int getTicksFrozen() {
-@@ -2293,11 +_,40 @@
+@@ -2293,11 +_,38 @@
  
     public void thunderHit(ServerLevel p_19927_, LightningBolt p_19928_) {
        this.setRemainingFireTicks(this.remainingFireTicks + 1);
@@ -1092,9 +1133,7 @@
 +      if (this.fireImmune()) {
 +         return;
 +      }
-+      CraftEventFactory.entityDamage = p_19928_;
-+      if (!this.hurt(this.damageSources().lightningBolt(), 5.0F)) {
-+         CraftEventFactory.entityDamage = null;
++      if (!this.hurt(this.damageSources().lightningBolt().customCausingEntity(p_19928_), 5.0F)) {
 +         return;
 +      }
 +      // CraftBukkit end
@@ -1491,11 +1530,27 @@
     public float maxUpStep() {
        return this.maxUpStep;
     }
-@@ -3329,7 +_,7 @@
+@@ -3317,6 +_,7 @@
+    }
+ 
+    public final void setRemoved(Entity.RemovalReason p_146876_) {
++      CraftEventFactory.callEntityRemoveEvent(this, removeCause.getAndSet(null));
+       if (this.removalReason == null) {
+          this.removalReason = p_146876_;
+       }
+@@ -3329,7 +_,15 @@
        this.levelCallback.onRemove(p_146876_);
     }
  
 -   protected void unsetRemoved() {
++   // CraftBukkit start
++   @Override
++   public final void setRemoved(Entity.RemovalReason p_146876_, EntityRemoveEvent.Cause cause) {
++      removeCause(cause);
++      setRemoved(p_146876_);
++   }
++   // CraftBukkit
++
 +   public void unsetRemoved() {
        this.removalReason = null;
     }

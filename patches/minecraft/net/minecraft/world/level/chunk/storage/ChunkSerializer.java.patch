@@ -73,3 +73,16 @@
        return compoundtag;
     }
  
+@@ -442,6 +_,12 @@
+          } else {
+             StructureStart structurestart = StructureStart.loadStaticStart(p_188255_, compoundtag.getCompound(s), p_188257_);
+             if (structurestart != null) {
++               // CraftBukkit start - load persistent data for structure start
++               net.minecraft.nbt.Tag persistentBase = compoundtag.getCompound(s).get("StructureBukkitValues");
++               if (persistentBase instanceof CompoundTag) {
++                  structurestart.persistentDataContainer.putAll((CompoundTag) persistentBase);
++               }
++               // CraftBukkit end
+                map.put(structure, structurestart);
+             }
+          }

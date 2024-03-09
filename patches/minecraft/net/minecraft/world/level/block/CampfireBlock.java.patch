@@ -1,21 +1,19 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -48,6 +_,8 @@
+@@ -48,6 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
  
  public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<CampfireBlock> CODEC = RecordCodecBuilder.mapCodec((p_309276_) -> {
-@@ -98,7 +_,9 @@
+@@ -98,7 +_,7 @@
  
     public void entityInside(BlockState p_51269_, Level p_51270_, BlockPos p_51271_, Entity p_51272_) {
        if (p_51269_.getValue(LIT) && p_51272_ instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)p_51272_)) {
-+         CraftEventFactory.blockDamage = CraftBlock.at(p_51270_, p_51271_); // CraftBukkit
-          p_51272_.hurt(p_51270_.damageSources().inFire(), (float)this.fireDamage);
-+         CraftEventFactory.blockDamage = null; // CraftBukkit
+-         p_51272_.hurt(p_51270_.damageSources().inFire(), (float)this.fireDamage);
++         p_51272_.hurt(p_51270_.damageSources().inFire().directBlock(p_51270_, p_51271_), (float)this.fireDamage); // CraftBukkit
        }
  
        super.entityInside(p_51269_, p_51270_, p_51271_, p_51272_);

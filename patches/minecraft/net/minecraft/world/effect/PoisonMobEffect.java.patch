@@ -5,7 +5,7 @@
        super.applyEffectTick(p_299064_, p_299074_);
        if (p_299064_.getHealth() > 1.0F) {
 -         p_299064_.hurt(p_299064_.damageSources().magic(), 1.0F);
-+         p_299064_.hurt(p_299064_.damageSources().poison, 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
++         p_299064_.hurt(p_299064_.damageSources().poison(), 1.0F); // CraftBukkit - DamageSource.MAGIC -> CraftEventFactory.POISON
        }
  
     }

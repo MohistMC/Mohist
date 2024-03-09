@@ -92,23 +92,3 @@
        }
  
        super.onHitBlock(p_37069_);
-@@ -192,7 +_,9 @@
- 
-       if (f > 0.0F) {
-          if (this.attachedToEntity != null) {
-+            CraftEventFactory.entityDamage = this; // CraftBukkit
-             this.attachedToEntity.hurt(this.damageSources().fireworks(this, this.getOwner()), 5.0F + (float)(listtag.size() * 2));
-+            CraftEventFactory.entityDamage = null; // CraftBukkit
-          }
- 
-          double d0 = 5.0D;
-@@ -213,7 +_,9 @@
- 
-                if (flag) {
-                   float f1 = f * (float)Math.sqrt((5.0D - (double)this.distanceTo(livingentity)) / 5.0D);
-+                  CraftEventFactory.entityDamage = this; // CraftBukkit
-                   livingentity.hurt(this.damageSources().fireworks(this, this.getOwner()), f1);
-+                  CraftEventFactory.entityDamage = null; // CraftBukkit
-                }
-             }
-          }

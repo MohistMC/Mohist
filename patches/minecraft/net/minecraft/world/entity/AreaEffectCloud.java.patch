@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/AreaEffectCloud.java
 +++ b/net/minecraft/world/entity/AreaEffectCloud.java
-@@ -26,6 +_,10 @@
+@@ -26,6 +_,11 @@
  import net.minecraft.world.item.alchemy.Potions;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.material.PushReaction;
@@ -8,6 +8,7 @@
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
  import org.slf4j.Logger;
  
  public class AreaEffectCloud extends Entity implements TraceableEntity {
@@ -48,6 +49,22 @@
     public void tick() {
        super.tick();
        boolean flag = this.isWaiting();
+@@ -198,6 +_,7 @@
+          }
+       } else {
+          if (this.tickCount >= this.waitTime + this.duration) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+             return;
+          }
+@@ -214,6 +_,7 @@
+          if (this.radiusPerTick != 0.0F) {
+             f += this.radiusPerTick;
+             if (f < 0.5F) {
++               this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                this.discard();
+                return;
+             }
 @@ -239,18 +_,31 @@
              } else {
                 List<LivingEntity> list1 = this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
@@ -80,3 +97,19 @@
                                   livingentity.addEffect(new MobEffectInstance(mobeffectinstance1), this);
                                }
                             }
+@@ -258,6 +_,7 @@
+                            if (this.radiusOnUse != 0.0F) {
+                               f += this.radiusOnUse;
+                               if (f < 0.5F) {
++                                 this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                                  this.discard();
+                                  return;
+                               }
+@@ -268,6 +_,7 @@
+                            if (this.durationOnUse != 0) {
+                               this.duration += this.durationOnUse;
+                               if (this.duration <= 0) {
++                                 this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                                  this.discard();
+                                  return;
+                               }

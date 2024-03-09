@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/entity/EntityAccess.java
++++ b/net/minecraft/world/level/entity/EntityAccess.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.phys.AABB;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public interface EntityAccess {
+    int getId();
+@@ -22,6 +_,12 @@
+    Stream<? extends EntityAccess> getPassengersAndSelf();
+ 
+    void setRemoved(Entity.RemovalReason p_156798_);
++
++   // CraftBukkit start - add Bukkit remove cause
++   default void setRemoved(Entity.RemovalReason p_156798_, EntityRemoveEvent.Cause cause) {
++      setRemoved(p_156798_);
++   }
++   // CraftBukkit end
+ 
+    boolean shouldBeSaved();
+ 

@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -19,6 +_,11 @@
+@@ -19,6 +_,13 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityRemoveEvent;
++import org.bukkit.event.entity.EntityRemoveEvent.Cause;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
@@ -129,6 +131,22 @@
        }
  
        this.setDeltaMovement(this.getDeltaMovement().multiply((double)f, 0.98D, (double)f));
+@@ -100,6 +_,7 @@
+ 
+       ++this.age;
+       if (this.age >= 6000) {
++         this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+          this.discard();
+       }
+ 
+@@ -160,6 +_,7 @@
+    private void merge(ExperienceOrb p_147101_) {
+       this.count += p_147101_.count;
+       this.age = Math.min(this.age, p_147101_.age);
++      p_147101_.putRemoveCause(Cause.MERGE); // CraftBukkit - add Bukkit remove cause
+       p_147101_.discard();
+    }
+ 
 @@ -172,6 +_,7 @@
     }
  
@@ -137,7 +155,15 @@
        if (this.isInvulnerableTo(p_20785_)) {
           return false;
        } else if (this.level().isClientSide) {
-@@ -204,11 +_,12 @@
+@@ -180,6 +_,7 @@
+          this.markHurt();
+          this.health = (int)((float)this.health - p_20786_);
+          if (this.health <= 0) {
++            this.putRemoveCause(EntityRemoveEvent.Cause.DEATH); // CraftBukkit - add Bukkit remove cause
+             this.discard();
+          }
+ 
+@@ -204,15 +_,17 @@
     public void playerTouch(Player p_20792_) {
        if (!this.level().isClientSide) {
           if (p_20792_.takeXpDelay == 0) {
@@ -152,6 +178,11 @@
              }
  
              --this.count;
+             if (this.count == 0) {
++               this.putRemoveCause(Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
+                this.discard();
+             }
+          }
 @@ -225,19 +_,28 @@
        if (entry != null) {
           ItemStack itemstack = entry.getValue();

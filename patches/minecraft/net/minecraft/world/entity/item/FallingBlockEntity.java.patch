@@ -80,27 +80,17 @@
                    blockpos = blockhitresult.getBlockPos();
                    flag1 = true;
                 }
-@@ -151,6 +_,13 @@
+@@ -150,6 +_,13 @@
+                         if (this.blockState.hasProperty(BlockStateProperties.WATERLOGGED) && this.level().getFluidState(blockpos).getType() == Fluids.WATER) {
                             this.blockState = this.blockState.setValue(BlockStateProperties.WATERLOGGED, Boolean.valueOf(true));
                          }
- 
++
 +                        // CraftBukkit start
 +                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, this.blockState)) {
 +                           this.discard(); // SPIGOT-6586 called before the event in previous versions
 +                           return;
 +                        }
 +                        // CraftBukkit end
-+
+ 
                          if (this.level().setBlock(blockpos, this.blockState, 3)) {
                             ((ServerLevel)this.level()).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos, this.level().getBlockState(blockpos)));
-                            this.discard();
-@@ -228,7 +_,9 @@
-             DamageSource damagesource = damagesource1;
-             float f = (float)Math.min(Mth.floor((float)i * this.fallDamagePerDistance), this.fallDamageMax);
-             this.level().getEntities(this, this.getBoundingBox(), predicate).forEach((p_149649_) -> {
-+               CraftEventFactory.entityDamage = this; // CraftBukkit
-                p_149649_.hurt(damagesource, f);
-+               CraftEventFactory.entityDamage = null; // CraftBukkit
-             });
-             boolean flag = this.blockState.is(BlockTags.ANVIL);
-             if (flag && f > 0.0F && this.random.nextFloat() < 0.05F + (float)i * 0.05F) {

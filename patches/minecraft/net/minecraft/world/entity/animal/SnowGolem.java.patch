@@ -16,8 +16,12 @@
     private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
     private static final byte PUMPKIN_FLAG = 16;
     private static final float EYE_HEIGHT = 1.7F;
-@@ -92,7 +_,7 @@
-             this.hurt(this.damageSources().onFire(), 1.0F);
+@@ -89,10 +_,10 @@
+       super.aiStep();
+       if (!this.level().isClientSide) {
+          if (this.level().getBiome(this.blockPosition()).is(BiomeTags.SNOW_GOLEM_MELTS)) {
+-            this.hurt(this.damageSources().onFire(), 1.0F);
++            this.hurt(this.damageSources().melting(), 1.0F); // CraftBukkit - DamageSources.ON_FIRE -> CraftEventFactory.MELTING
           }
  
 -         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {

@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/players/StoredUserList.java
++++ b/net/minecraft/server/players/StoredUserList.java
+@@ -81,6 +_,7 @@
+    }
+ 
+    protected boolean contains(K p_11397_) {
++      this.removeExpired(); // CraftBukkit - SPIGOT-7589: Consistently remove expired entries to mirror .get(...)
+       return this.map.containsKey(this.getKeyForUser(p_11397_));
+    }
+ 

@@ -9,13 +9,12 @@
     private boolean sentSpikeEvent;
     private int lifeTicks = 22;
     private boolean clientSideAttackStarted;
-@@ -113,7 +_,9 @@
+@@ -113,7 +_,7 @@
        LivingEntity livingentity = this.getOwner();
        if (p_36945_.isAlive() && !p_36945_.isInvulnerable() && p_36945_ != livingentity) {
           if (livingentity == null) {
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = this; // CraftBukkit
-             p_36945_.hurt(this.damageSources().magic(), 6.0F);
-+            org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.entityDamage = null; // CraftBukkit
+-            p_36945_.hurt(this.damageSources().magic(), 6.0F);
++            p_36945_.hurt(this.damageSources().magic().customCausingEntity(this), 6.0F);
           } else {
              if (livingentity.isAlliedTo(p_36945_)) {
                 return;

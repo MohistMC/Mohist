@@ -42,6 +42,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageRecipient;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.ApiStatus;
@@ -929,6 +931,32 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     public void sendBlockUpdate(@NotNull Location loc, @NotNull TileState tileState) throws IllegalArgumentException;
 
     /**
+     * Change a potion effect for the target entity. This will not actually
+     * change the entity's potion effects in any way.
+     * <p>
+     * <b>Note:</b> Sending an effect change to a player for themselves may
+     * cause unexpected behavior on the client. Effects sent this way will also
+     * not be removed when their timer reaches 0, they can be removed with
+     * {@link #sendPotionEffectChangeRemove(LivingEntity, PotionEffectType)}
+     *
+     * @param entity the entity whose potion effects to change
+     * @param effect the effect to change
+     */
+    public void sendPotionEffectChange(@NotNull LivingEntity entity, @NotNull PotionEffect effect);
+
+    /**
+     * Remove a potion effect for the target entity. This will not actually
+     * change the entity's potion effects in any way.
+     * <p>
+     * <b>Note:</b> Sending an effect change to a player for themselves may
+     * cause unexpected behavior on the client.
+     *
+     * @param entity the entity whose potion effects to change
+     * @param type the effect type to remove
+     */
+    public void sendPotionEffectChangeRemove(@NotNull LivingEntity entity, @NotNull PotionEffectType type);
+
+    /**
      * Render a map and send it to the player in its entirety. This may be
      * used when streaming the map in the normal manner is not desirable.
      *
@@ -1267,9 +1295,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param plugin Plugin that wants to hide the entity
      * @param entity Entity to hide
-     * @apiNote draft API
      */
-    @ApiStatus.Experimental
     public void hideEntity(@NotNull Plugin plugin, @NotNull Entity entity);
 
     /**
@@ -1279,9 +1305,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param plugin Plugin that wants to show the entity
      * @param entity Entity to show
-     * @apiNote draft API
      */
-    @ApiStatus.Experimental
     public void showEntity(@NotNull Plugin plugin, @NotNull Entity entity);
 
     /**
@@ -1290,9 +1314,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param entity Entity to check
      * @return True if the provided entity is not being hidden from this
      *     player
-     * @apiNote draft API
      */
-    @ApiStatus.Experimental
     public boolean canSee(@NotNull Entity entity);
 
     /**

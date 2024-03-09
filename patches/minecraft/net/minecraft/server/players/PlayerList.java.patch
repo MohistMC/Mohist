@@ -35,7 +35,7 @@
  import net.minecraft.sounds.SoundEvents;
  import net.minecraft.sounds.SoundSource;
  import net.minecraft.stats.ServerStatsCounter;
-@@ -96,6 +_,19 @@
+@@ -96,6 +_,20 @@
  import net.minecraft.world.scores.Objective;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
@@ -46,6 +46,7 @@
 +import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerJoinEvent;
 +import org.bukkit.event.player.PlayerLoginEvent;
@@ -331,6 +332,14 @@
        this.save(p_11287_);
        if (p_11287_.isPassenger()) {
           Entity entity = p_11287_.getRootVehicle();
+@@ -330,6 +_,7 @@
+             LOGGER.debug("Removing player mount");
+             p_11287_.stopRiding();
+             entity.getPassengersAndSelf().forEach((p_215620_) -> {
++               p_215620_.putRemoveCause(EntityRemoveEvent.Cause.PLAYER_QUIT); // CraftBukkit - add Bukkit remove cause
+                p_215620_.setRemoved(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+             });
+          }
 @@ -339,20 +_,64 @@
        serverlevel.removePlayerImmediately(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
        p_11287_.getAdvancements().stopListening();
@@ -412,7 +421,7 @@
 -      } else if (this.ipBans.isBanned(p_11257_)) {
 +         MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.not_whitelisted");
 +         event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CraftChatMessage.fromComponent(mutablecomponent1));
-+      } else if (getIpBans().isBanned(p_11257_) && !getIpBans().get(p_11257_).hasExpired()) {
++      } else if (getIpBans().isBanned(p_11257_)) {
           IpBanListEntry ipbanlistentry = this.ipBans.get(p_11257_);
 -         MutableComponent mutablecomponent = Component.translatable("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.getReason());
 +         MutableComponent mutablecomponent1 = Component.translatable("multiplayer.disconnect.banned_ip.reason", ipbanlistentry.getReason());

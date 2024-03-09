@@ -29,13 +29,15 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
-@@ -72,6 +_,14 @@
+@@ -72,6 +_,16 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
++import org.bukkit.event.entity.EntityRemoveEvent.Cause;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent;
@@ -180,7 +182,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -540,6 +_,7 @@
+@@ -540,18 +_,22 @@
  
     protected void pickUpItem(ItemEntity p_21471_) {
        ItemStack itemstack = p_21471_.getItem();
@@ -188,7 +190,13 @@
        ItemStack itemstack1 = this.equipItemIfPossible(itemstack.copy());
        if (!itemstack1.isEmpty()) {
           this.onItemPickup(p_21471_);
-@@ -552,6 +_,8 @@
+          this.take(p_21471_, itemstack1.getCount());
+          itemstack.shrink(itemstack1.getCount());
+          if (itemstack.isEmpty()) {
++            p_21471_.putRemoveCause(Cause.PICKUP); // CraftBukkit - add Bukkit remove cause
+             p_21471_.discard();
+          }
+       }
  
     }
  
@@ -233,7 +241,7 @@
     protected void setItemSlotAndDropWhenKilled(EquipmentSlot p_21469_, ItemStack p_21470_) {
        this.setItemSlot(p_21469_, p_21470_);
        this.setGuaranteedDrop(p_21469_);
-@@ -699,6 +_,14 @@
+@@ -699,17 +_,27 @@
           this.discard();
        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
           Entity entity = this.level().getNearestPlayer(this, -1.0D);
@@ -248,6 +256,19 @@
           if (entity != null) {
              double d0 = entity.distanceToSqr(this);
              int i = this.getType().getCategory().getDespawnDistance();
+             int j = i * i;
+             if (d0 > (double)j && this.removeWhenFarAway(d0)) {
++               this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                this.discard();
+             }
+ 
+             int k = this.getType().getCategory().getNoDespawnDistance();
+             int l = k * k;
+             if (this.noActionTime > 600 && this.random.nextInt(800) == 0 && d0 > (double)l && this.removeWhenFarAway(d0)) {
++               this.putRemoveCause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - add Bukkit remove cause
+                this.discard();
+             } else if (d0 < (double)l) {
+                this.noActionTime = 0;
 @@ -723,6 +_,7 @@
  
     protected final void serverAiStep() {

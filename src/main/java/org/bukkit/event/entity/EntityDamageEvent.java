@@ -8,6 +8,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import org.bukkit.Material;
+import org.bukkit.WorldBorder;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -26,12 +29,23 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     private final Map<DamageModifier, Double> originals;
     private boolean cancelled;
     private final DamageCause cause;
+    private final DamageSource damageSource;
 
+    @Deprecated(forRemoval = true)
     public EntityDamageEvent(@NotNull final Entity damagee, @NotNull final DamageCause cause, final double damage) {
-        this(damagee, cause, new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, damage)), new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, ZERO)));
+        this(damagee, cause, DamageSource.builder(DamageType.GENERIC).build(), damage);
     }
 
+    public EntityDamageEvent(@NotNull final Entity damagee, @NotNull final DamageCause cause, @NotNull final DamageSource damageSource, final double damage) {
+        this(damagee, cause, damageSource, new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, damage)), new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, ZERO)));
+    }
+
+    @Deprecated(forRemoval = true)
     public EntityDamageEvent(@NotNull final Entity damagee, @NotNull final DamageCause cause, @NotNull final Map<DamageModifier, Double> modifiers, @NotNull final Map<DamageModifier, ? extends Function<? super Double, Double>> modifierFunctions) {
+        this(damagee, cause, DamageSource.builder(DamageType.GENERIC).build(), modifiers, modifierFunctions);
+    }
+
+    public EntityDamageEvent(@NotNull final Entity damagee, @NotNull final DamageCause cause, @NotNull final DamageSource damageSource, @NotNull final Map<DamageModifier, Double> modifiers, @NotNull final Map<DamageModifier, ? extends Function<? super Double, Double>> modifierFunctions) {
         super(damagee);
         Preconditions.checkArgument(modifiers.containsKey(DamageModifier.BASE), "BASE DamageModifier missing");
         Preconditions.checkArgument(!modifiers.containsKey(null), "Cannot have null DamageModifier");
@@ -42,6 +56,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         this.cause = cause;
         this.modifiers = modifiers;
         this.modifierFunctions = modifierFunctions;
+        this.damageSource = damageSource;
     }
 
     @Override
@@ -63,14 +78,9 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
      * @throws IllegalArgumentException if type is null
      */
     public double getOriginalDamage(@NotNull DamageModifier type) throws IllegalArgumentException {
+        Preconditions.checkArgument(type != null, "Cannot have null DamageModifier");
         final Double damage = originals.get(type);
-        if (damage != null) {
-            return damage;
-        }
-        if (type == null) {
-            throw new IllegalArgumentException("Cannot have null DamageModifier");
-        }
-        return 0;
+        return (damage != null) ? damage : 0;
     }
 
     /**
@@ -85,8 +95,9 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
      * @see #getFinalDamage()
      */
     public void setDamage(@NotNull DamageModifier type, double damage) throws IllegalArgumentException, UnsupportedOperationException {
+        Preconditions.checkArgument(type != null, "Cannot have null DamageModifier");
         if (!modifiers.containsKey(type)) {
-            throw type == null ? new IllegalArgumentException("Cannot have null DamageModifier") : new UnsupportedOperationException(type + " is not applicable to " + getEntity());
+            throw new UnsupportedOperationException(type + " is not applicable to " + getEntity());
         }
         modifiers.put(type, damage);
     }
@@ -184,12 +195,30 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
     /**
      * Gets the cause of the damage.
+     * <p>
+     * While a DamageCause may indicate a specific Bukkit-assigned cause of damage,
+     * {@link #getDamageSource()} may expose additional types of damage such as custom
+     * damage types provided by data packs, as well as any direct or indirect entities,
+     * locations, or other contributing factors to the damage being inflicted. The
+     * alternative is generally preferred, but DamageCauses provided to this event
+     * should largely encompass most common use cases for developers if a simple cause
+     * is required.
      *
-     * @return A DamageCause value detailing the cause of the damage.
+     * @return a DamageCause value detailing the cause of the damage.
      */
     @NotNull
     public DamageCause getCause() {
         return cause;
+    }
+
+    /**
+     * Get the source of damage.
+     *
+     * @return a DamageSource detailing the source of the damage.
+     */
+    @NotNull
+    public DamageSource getDamageSource() {
+        return damageSource;
     }
 
     @NotNull
@@ -209,7 +238,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
      * @deprecated This API is responsible for a large number of implementation
      * problems and is in general unsustainable to maintain. It is likely to be
      * removed very soon in a subsequent release. Please see
-     * https://www.spigotmc.org/threads/194446/ for more information.
+     * <a href="https://www.spigotmc.org/threads/194446/">this thread</a> for more information.
      */
     @Deprecated
     public enum DamageModifier {

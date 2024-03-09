@@ -23,17 +23,15 @@
                       this.level().addFreshEntity(endermite);
                    }
                 }
-@@ -62,9 +_,13 @@
+@@ -62,9 +_,11 @@
                    entity.teleportTo(this.getX(), this.getY(), this.getZ());
                 }
  
 +               entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
-+               CraftEventFactory.entityDamage = this;
-+               entity.hurt(this.damageSources().fall(), event.getAttackDamage());
++               entity.hurt(this.damageSources().fall().customCausingEntity(this), event.getAttackDamage());
                 this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
-+               CraftEventFactory.entityDamage = null;
 +               } //Forge: End
              }
           } else if (entity != null) {

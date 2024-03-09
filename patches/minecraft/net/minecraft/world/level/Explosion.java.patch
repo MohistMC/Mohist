@@ -19,7 +19,13 @@
  
     public static DamageSource getDefaultDamageSource(Level p_309890_, @Nullable Entity p_311046_) {
        return p_309890_.damageSources().explosion(p_311046_, getIndirectSourceEntityInternal(p_311046_));
-@@ -90,6 +_,7 @@
+@@ -85,11 +_,12 @@
+       this.z = p_46057_;
+       this.fire = p_46059_;
+       this.blockInteraction = p_46060_;
+-      this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this) : p_46053_;
++      this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this).customCausingEntity(p_46052_) : p_46053_.customCausingEntity(p_46052_); // CraftBukkit - handle source entity
+       this.damageCalculator = p_46054_ == null ? this.makeDamageCalculator(p_46052_) : p_46054_;
        this.smallExplosionParticles = p_312175_;
        this.largeExplosionParticles = p_310459_;
        this.explosionSound = p_311795_;

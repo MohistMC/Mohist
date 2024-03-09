@@ -1,16 +1,26 @@
 --- a/net/minecraft/world/level/levelgen/structure/StructureStart.java
 +++ b/net/minecraft/world/level/levelgen/structure/StructureStart.java
-@@ -29,6 +_,7 @@
+@@ -29,6 +_,11 @@
     private int references;
     @Nullable
     private volatile BoundingBox cachedBoundingBox;
-+   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION; // CraftBukkit
++   // CraftBukkit start
++   private static final org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R3.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R3.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION;
++   // CraftBukkit end
  
     public StructureStart(Structure p_226846_, ChunkPos p_226847_, int p_226848_, PiecesContainer p_226849_) {
        this.structure = p_226846_;
-@@ -98,6 +_,9 @@
+@@ -97,7 +_,15 @@
+ 
     public CompoundTag createTag(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {
        CompoundTag compoundtag = new CompoundTag();
++      // CraftBukkit start - store persistent data in nbt
++      if (!persistentDataContainer.isEmpty()) {
++         compoundtag.put("StructureBukkitValues", persistentDataContainer.toTagCompound());
++      }
++      // CraftBukkit end
        if (this.isValid()) {
 +         if (p_192661_.registryAccess().registryOrThrow(Registries.STRUCTURE).getKey(this.getStructure()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
 +            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.getStructure() + "\" unregistered, serializing impossible.");

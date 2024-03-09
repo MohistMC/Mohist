@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
@@ -56,6 +57,7 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ImposterProtoChunk;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -92,6 +94,7 @@ import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R3.boss.CraftDragonBattle;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.generator.structure.CraftGeneratedStructure;
 import org.bukkit.craftbukkit.v1_20_R3.generator.structure.CraftStructure;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R3.metadata.BlockMetadataStore;
@@ -123,6 +126,7 @@ import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.structure.GeneratedStructure;
 import org.bukkit.generator.structure.Structure;
 import org.bukkit.generator.structure.StructureType;
 import org.bukkit.inventory.ItemStack;
@@ -2031,6 +2035,30 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     @Override
     public DragonBattle getEnderDragonBattle() {
         return (getHandle().getDragonFight() == null) ? null : new CraftDragonBattle(getHandle().getDragonFight());
+    }
+
+    @Override
+    public Collection<GeneratedStructure> getStructures(int x, int z) {
+        return getStructures(x, z, struct -> true);
+    }
+
+    @Override
+    public Collection<GeneratedStructure> getStructures(int x, int z, Structure structure) {
+        Preconditions.checkArgument(structure != null, "Structure cannot be null");
+
+        net.minecraft.core.Registry<net.minecraft.world.level.levelgen.structure.Structure> registry = CraftRegistry.getMinecraftRegistry(Registries.STRUCTURE);
+        ResourceLocation key = registry.getKey(CraftStructure.bukkitToMinecraft(structure));
+
+        return getStructures(x, z, struct -> registry.getKey(struct).equals(key));
+    }
+
+    private List<GeneratedStructure> getStructures(int x, int z, Predicate<net.minecraft.world.level.levelgen.structure.Structure> predicate) {
+        List<GeneratedStructure> structures = new ArrayList<>();
+        for (net.minecraft.world.level.levelgen.structure.StructureStart start : getHandle().structureManager().startsForStructure(new ChunkPos(x, z), predicate)) {
+            structures.add(new CraftGeneratedStructure(start));
+        }
+
+        return structures;
     }
 
     @Override

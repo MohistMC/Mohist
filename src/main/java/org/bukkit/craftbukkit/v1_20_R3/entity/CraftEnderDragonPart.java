@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.entity;
 
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EnderDragonPart;
 import org.bukkit.entity.Entity;
@@ -24,6 +25,12 @@ public class CraftEnderDragonPart extends CraftComplexPart implements EnderDrago
     public String toString() {
         return "CraftEnderDragonPart";
     }
+
+    @Override
+    public void damage(double amount, DamageSource damageSource) {
+        getParent().damage(amount, damageSource);
+    }
+
 
     @Override
     public void damage(double amount) {

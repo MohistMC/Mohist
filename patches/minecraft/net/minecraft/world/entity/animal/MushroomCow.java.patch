@@ -8,7 +8,7 @@
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
-@@ -40,8 +_,12 @@
+@@ -40,13 +_,17 @@
  import net.minecraft.world.level.block.SuspiciousEffectHolder;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -22,6 +22,12 @@
     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
     private static final int MUTATE_CHANCE = 1024;
     private static final String TAG_STEW_EFFECTS = "stew_effects";
+    @Nullable
+-   private List<SuspiciousEffectHolder.EffectEntry> stewEffects;
++   public List<SuspiciousEffectHolder.EffectEntry> stewEffects;
+    @Nullable
+    private UUID lastLightningBoltUUID;
+ 
 @@ -102,7 +_,7 @@
  
           this.playSound(soundevent, 1.0F, 1.0F);
