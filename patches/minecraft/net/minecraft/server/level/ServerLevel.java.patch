@@ -71,7 +71,7 @@
     public boolean f_8564_;
     private final SleepStatus f_143245_;
     private int f_8551_;
-@@ -181,13 +_,39 @@
+@@ -181,23 +_,50 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -108,11 +108,14 @@
 +      } else if (p_203765_ instanceof DerivedLevelData derivedLevelData) {
 +         this.M = MohistDerivedLevelData.create(derivedLevelData);
 +      }
-+     this.spigotConfig = new SpigotWorldConfig(p_203765_.m_5462_());
++      this.spigotConfig = new SpigotWorldConfig(name);
        this.f_8561_ = p_203773_;
        this.f_8548_ = p_203762_;
        this.f_8558_ = p_203772_;
-@@ -197,7 +_,7 @@
+       this.f_8549_ = p_203765_;
++      this.M.setWorld(this);
+       p_203769_.m_211700_();
+       boolean flag = p_203762_.m_6365_();
        DataFixer datafixer = p_203762_.m_129933_();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_203764_.m_197394_(p_203766_).resolve("entities"), datafixer, flag, p_203762_);
        this.f_143244_ = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
@@ -121,15 +124,14 @@
           return p_203762_.m_129783_().m_8895_();
        });
        this.f_8552_ = new PortalForcer(this);
-@@ -223,6 +_,11 @@
+@@ -223,6 +_,10 @@
        }
  
        this.f_143245_ = new SleepStatus();
-+      this.initCapabilities();
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      m_6857_().world = this;
-+      M.setWorld(this);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
++      this.initCapabilities();
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
