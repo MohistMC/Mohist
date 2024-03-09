@@ -108,7 +108,7 @@ public abstract class Action {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
-            JarLoader.loadJar(file.toPath());
+            //JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
         return temp;
