@@ -18,10 +18,6 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = project.MC_VERSION + "-" + project.forge_version
     FORGE_VERSION = project.forge_version
-
-    BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.2.0:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.0'
-    FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.6'
     MOHIST_VERSION = JenkinsNumber.info()
 }
 

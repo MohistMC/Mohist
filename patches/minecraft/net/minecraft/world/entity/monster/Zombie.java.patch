@@ -20,10 +20,12 @@
  import org.joml.Vector3f;
  
  public class Zombie extends Monster {
-@@ -85,6 +_,7 @@
+@@ -84,7 +_,8 @@
+    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
     private boolean canBreakDoors;
     private int inWaterTime;
-    public int conversionTime;
+-   public int conversionTime;
++   protected int conversionTime;
 +   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {
@@ -37,20 +39,18 @@
        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Turtle.class, 10, true, false, Turtle.BABY_ON_LAND_SELECTOR));
     }
-@@ -192,8 +_,11 @@
+@@ -192,7 +_,10 @@
     public void tick() {
        if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
           if (this.isUnderWaterConverting()) {
 -            --this.conversionTime;
--            if (this.conversionTime < 0) {
 +            // CraftBukkit start - Use wall time instead of ticks for conversion
 +            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
 +            this.conversionTime -= elapsedTicks;
 +            // CraftBukkit end
-+            if (this.conversionTime < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) {
+             if (this.conversionTime < 0) {
                 this.doUnderWaterConversion();
              }
-          } else if (this.convertsInWater()) {
 @@ -209,6 +_,7 @@
        }
  
@@ -59,7 +59,7 @@
     }
  
     public void aiStep() {
-@@ -237,7 +_,8 @@
+@@ -237,12 +_,14 @@
        super.aiStep();
     }
  
@@ -69,6 +69,12 @@
        this.conversionTime = p_34279_;
        this.getEntityData().set(DATA_DROWNED_CONVERSION_ID, true);
     }
+ 
+    protected void doUnderWaterConversion() {
++      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) return;
+       this.convertToZombieType(EntityType.DROWNED);
+       if (!this.isSilent()) {
+          this.level().levelEvent((Player)null, 1040, this.blockPosition(), 0);
 @@ -251,10 +_,15 @@
     }
  
@@ -91,10 +97,13 @@
           }
  
 -         if (livingentity != null && this.level().getDifficulty() == Difficulty.HARD && (double)this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE) && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
-             int i = Mth.floor(this.getX());
-             int j = Mth.floor(this.getY());
-             int k = Mth.floor(this.getZ());
+-            int i = Mth.floor(this.getX());
+-            int j = Mth.floor(this.getY());
+-            int k = Mth.floor(this.getZ());
 -            Zombie zombie = new Zombie(this.level());
++         int i = Mth.floor(this.getX());
++         int j = Mth.floor(this.getY());
++         int k = Mth.floor(this.getZ());
 +         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), i, j, k, livingentity, this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).getValue());
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
@@ -132,15 +141,12 @@
           }
        }
  
-@@ -376,11 +_,12 @@
- 
-    public boolean killedEntity(ServerLevel p_219160_, LivingEntity p_219161_) {
-       boolean flag = super.killedEntity(p_219160_, p_219161_);
--      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
-+      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
+@@ -380,7 +_,10 @@
           if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
              return flag;
           }
++         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {}))
++            return flag;
  
 +         villager.transformReasonAndspawnReason(EntityTransformEvent.TransformReason.INFECTION, CreatureSpawnEvent.SpawnReason.INFECTION); // Mohist
           ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);

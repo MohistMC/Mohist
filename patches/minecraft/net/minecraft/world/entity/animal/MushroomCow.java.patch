@@ -37,7 +37,7 @@
           this.shear(SoundSource.PLAYERS);
           this.gameEvent(GameEvent.SHEAR, p_28941_);
           if (!this.level().isClientSide) {
-@@ -141,13 +_,23 @@
+@@ -141,13 +_,24 @@
        }
     }
  
@@ -54,6 +54,7 @@
 +   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
        this.level().playSound((Player)null, this, SoundEvents.MOOSHROOM_SHEAR, p_28924_, 1.0F, 1.0F);
        if (!this.level().isClientSide()) {
++         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.COW, time -> {})) return java.util.Collections.emptyList();
           Cow cow = EntityType.COW.create(this.level());
           if (cow != null) {
              ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5D), this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -62,7 +63,7 @@
              cow.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
              cow.setHealth(this.getHealth());
              cow.yBodyRot = this.yBodyRot;
-@@ -161,13 +_,32 @@
+@@ -161,13 +_,33 @@
              }
  
              cow.setInvulnerable(this.isInvulnerable());
@@ -75,6 +76,7 @@
  
 +            this.discard(); // CraftBukkit - from above
 +            // CraftBukkit end
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
 +
 +            java.util.List<ItemStack> items = new java.util.ArrayList<>();
              for(int i = 0; i < 5; ++i) {

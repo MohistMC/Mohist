@@ -5,7 +5,7 @@
 
 [![](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FMohistMC%2Fjob%2FMohist-1.20.4)](https://ci.codemc.io/job/MohistMC/job/Mohist-1.20.4)
 [![](https://img.shields.io/github/stars/MohistMC/Mohist.svg?label=Stars&logo=github)](https://github.com/MohistMC/Mohist/stargazers)
-[![](https://img.shields.io/badge/Forge-1.20.4--49.0.19-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
+[![](https://img.shields.io/badge/Forge-1.20.4--49.0.31-brightgreen.svg?colorB=26303d&logo=Conda-Forge)](https://files.minecraftforge.net/net/minecraftforge/forge/index_1.20.2.html)
 [![](https://img.shields.io/badge/JDK-17.0.10-brightgreen.svg?colorB=469C00&logo=java)](https://www.azul.com/downloads/?version=java-17-lts#zulu)
 [![](https://img.shields.io/badge/Gradle-8.4-brightgreen.svg?colorB=469C00&logo=gradle)](https://docs.gradle.org/8.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
@@ -20,11 +20,11 @@
 Progress
 ------
 
-- [x] Rectify Forge([**45b00b000**](https://github.com/MinecraftForge/MinecraftForge/commit/45b00b000))
+- [x] Rectify Forge([**a6978eed6**](https://github.com/MinecraftForge/MinecraftForge/commit/a6978eed6))
 - [x] Start patch
-    * [x] Bukkit([**7ca2b46c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/a23292a7))
-    * [ ] CraftBukkit([**176c0ad39**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/0bb0f4f6a))
-    * [x] Spigot ([**e9ec5485**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/c198da22))
+    * [x] Bukkit([**7ca2b46c**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/commits/7ca2b46c))
+    * [ ] CraftBukkit([**176c0ad39**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/commits/176c0ad39))
+    * [x] Spigot ([**e9ec5485**](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/commits/e9ec5485))
         * [x] Bukkit-Patches
         * [x] CraftBukkit-Patches
 

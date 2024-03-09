@@ -1,7 +1,9 @@
 package net.minecraftforge.forge.tasks
 
 import groovy.transform.EqualsAndHashCode
+
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
 @EqualsAndHashCode
@@ -25,6 +27,6 @@ public class ObjectTarget implements Comparable<ObjectTarget> {
     
     @Override
     int compareTo(ObjectTarget o) {
-        return toString().compareTo(o.toString())
+        return toString() <=> o.toString()
     }
 }

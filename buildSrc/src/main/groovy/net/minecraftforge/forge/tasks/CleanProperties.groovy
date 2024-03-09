@@ -1,7 +1,26 @@
-package net.minecraftforge.forge.tasks
+package net.minecraftforge.forge.tasks;
 
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
+import groovy.transform.CompileDynamic;
+import groovy.transform.CompileStatic;
+
+import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.TreeSet;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Eclipse config files are literally just java properties, with the header cleaned up.
@@ -10,6 +29,7 @@ import java.nio.charset.StandardCharsets
  * This does the same thing, as well as sorting alphabetically.
  * It also ignores all comments. We can add them latter if someone cares.
  */
+@CompileStatic
 public class CleanProperties extends Properties {
     private static final long serialVersionUID = 1L;
     private static final String LINE_SEP = System.getProperty("line.separator");
@@ -42,6 +62,7 @@ public class CleanProperties extends Properties {
         return Collections.enumeration(ret);
     }
 
+    @CompileDynamic
     @Override
     public Set<Map.Entry<Object, Object>> entrySet() {
         Set<Map.Entry<Object, Object>> ret = new TreeSet<>((l, r) -> ((String)l.getKey()).compareTo((String)r.getKey()));

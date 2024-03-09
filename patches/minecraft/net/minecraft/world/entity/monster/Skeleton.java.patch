@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -77,13 +_,13 @@
+@@ -77,17 +_,18 @@
  
     }
  
@@ -12,7 +12,13 @@
  
     protected void doFreezeConversion() {
 -      this.convertTo(EntityType.STRAY, true);
-+      this.convertTo(EntityType.STRAY, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); // CraftBukkit - add spawn and transform reasons
++      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.STRAY, (timer) -> this.conversionTime = timer)) return;
++      var result = this.convertTo(EntityType.STRAY, true, org.bukkit.event.entity.EntityTransformEvent.TransformReason.FROZEN, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FROZEN); // CraftBukkit - add spawn and transform reasons
        if (!this.isSilent()) {
           this.level().levelEvent((Player)null, 1048, this.blockPosition(), 0);
        }
+-
++      net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, result);
+    }
+ 
+    public boolean canFreeze() {

@@ -1,12 +1,12 @@
 package net.minecraftforge.forge.tasks
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
+import org.gradle.api.tasks.*
+import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
+import groovy.json.JsonSlurper
 
 abstract class InstallerJar extends Zip {
     @Input @Optional abstract Property<Boolean> getFat()
@@ -29,7 +29,7 @@ abstract class InstallerJar extends Zip {
         from(project.rootProject.file('/src/main/resources/url.png'))
         project.afterEvaluate {
             from(project.zipTree(downloadInstaller.output)) {
-                duplicatesStrategy = 'exclude'
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             }
             
             if (fat.get() || offline.get()) {
@@ -44,7 +44,7 @@ abstract class InstallerJar extends Zip {
                 // I should make it allow downloads but thats a spec break, and this is just a ~14KB jar
                 [
                     project.tasks.serverShimJar // Server bootstrap executable jar
-                ].forEach { packed ->
+                ].forEach { AbstractArchiveTask packed ->
                     def path = Util.getMavenInfoFromTask(packed).path
                     from(packed) {
                         rename { "maven/$path" }
@@ -68,8 +68,8 @@ abstract class InstallerJar extends Zip {
                 project.tasks.launcherJson
             ].each { task ->
                 def json = task.output.get().asFile.json
-                json.libraries.each { lib ->
-                    if (lib.downloads?.artifact?.url != null && !lib.downloads.artifact.url.isEmpty())
+                json.libraries.each { lib -> 
+                    if (lib.downloads?.artifact?.url !== null && !lib.downloads.artifact.url.isEmpty())
                         deps.put(lib.name, lib.downloads.artifact)
                 }
             }
@@ -78,10 +78,10 @@ abstract class InstallerJar extends Zip {
             [
                 project.tasks.universalJar, // Forge runtime code
                 project.tasks.serverShimJar // Shim jar for dedicated server
-            ].forEach { packed ->
+            ].forEach { AbstractArchiveTask packed ->
                 def name = Util.getMavenInfoFromTask(packed).name
                 def info = deps.remove(name)
-                if (info != null) {
+                if (info !== null) {
                     println("Adding: $packed.path $name")
                     parent.from(packed) {
                         rename { "maven/$info.path" }
@@ -98,11 +98,12 @@ abstract class InstallerJar extends Zip {
                 //println('')
                 def resolved = cfg.resolvedConfiguration.resolvedArtifacts
                 int found = 0
-                resolved.each { ResolvedArtifact dep ->
+                for (def dep : resolved) {
                     def name = Util.getMavenInfoFromDep(dep).name
                     def info = deps.remove(name)
                     if (info == null) {
                         //println("Skipping: $name")
+                        continue
                     }
                     //println("-$name")
                     found++
@@ -133,13 +134,13 @@ abstract class InstallerJar extends Zip {
         }
         
         void addFile(file, info) {
-            def pack = parent.offline.get() || info.url.isEmpty()
+            boolean pack = parent.offline.get() || info.url.isEmpty()
             
             // If it's a offline jar just always pack
             if (!pack) {
                 try {
-                    def remote = new URL("${info.url}.sha1").getText('UTF-8')
-                    pack = !info.sha1.equals(remote)
+                    var remote = new URL("${info.url}.sha1").getText('UTF-8')
+                    pack = info.sha1 != remote
                 } catch (FileNotFoundException e) {
                     pack = !info.url.startsWith('https://libraries.minecraft.net/')
                     // Oh noes its not there!

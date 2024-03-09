@@ -4,10 +4,9 @@ import groovy.json.JsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 
 import java.nio.file.Files
 
@@ -35,7 +34,7 @@ abstract class LauncherJson extends DefaultTask {
                     "Our efforts are supported by ads from the download page.",
                     "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
                 ],
-                id: "$mc-$project.name$forge",
+                id: "$mc-$project.name-$forge",
                 time: timestamp,
                 releaseTime: timestamp,
                 inheritsFrom: mc,
@@ -51,7 +50,7 @@ abstract class LauncherJson extends DefaultTask {
                 dependsOn(packed)
                 input.from packed.archiveFile
             }
-
+            
             def patched = project.tasks.applyClientBinPatches
             dependsOn(patched)
             input.from patched.output
@@ -60,41 +59,36 @@ abstract class LauncherJson extends DefaultTask {
 
     @TaskAction
     protected void exec() {
-        [
-            project.tasks.universalJar
-        ].forEach { packed ->
-            def info = Util.getMavenInfoFromTask(packed)
-            json.libraries.add([
-                name: info.name,
-                downloads: [
-                    artifact: [
-                        path: info.path,
-                        url: "https://maven.minecraftforge.net/$info.path",
-                        sha1: packed.archiveFile.get().asFile.sha1(),
-                        size: packed.archiveFile.get().asFile.length()
-                    ]
+        var packed = (AbstractArchiveTask) project.tasks.universalJar
+        def info = Util.getMavenInfoFromTask(packed)
+        json.libraries.add([
+            name: info.name,
+            downloads: [
+                artifact: [
+                    path: info.path,
+                    url: "https://maven.minecraftforge.net/$info.path",
+                    sha1: packed.archiveFile.get().asFile.sha1(),
+                    size: packed.archiveFile.get().asFile.length()
                 ]
-            ])
-        }
-        [
-            'client': project.tasks.applyClientBinPatches
-        ].forEach { classifier, genned ->
-            def info = Util.getMavenInfoFromTask(genned, classifier)
-            json.libraries.add([
-                    name: info.name,
-                    downloads: [
-                            artifact: [
-                                    path: info.path,
-                                    url: "",
-                                    sha1: genned.output.get().asFile.sha1(),
-                                    size: genned.output.get().asFile.length()
-                            ]
-                    ]
-            ])
-        }
-        getArtifacts(project, project.configurations.installer).each { key, lib -> 
-            json.libraries.add(lib)
-        }
+            ]
+        ])
+
+        var classifier = 'client'
+        var genned = project.tasks.applyClientBinPatches
+        info = Util.getMavenInfoFromTask(genned, classifier)
+        json.libraries.add([
+            name: info.name,
+            downloads: [
+                artifact: [
+                    path: info.path,
+                    url: "",
+                    sha1: genned.output.get().asFile.sha1(),
+                    size: genned.output.get().asFile.length()
+                ]
+            ]
+        ])
+
+        json.libraries.addAll(getArtifacts(project.configurations.installer).values())
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
     }
 }
