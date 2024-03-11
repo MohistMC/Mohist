@@ -22,7 +22,6 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.DataParser;
-import com.mohistmc.util.JarLoader;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
