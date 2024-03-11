@@ -22,6 +22,7 @@ import com.mohistmc.MohistMCStart;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.DataParser;
+import com.mohistmc.util.JarLoader;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -107,6 +108,7 @@ public abstract class Action {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
             File file = new File(t);
+            JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
         return temp;

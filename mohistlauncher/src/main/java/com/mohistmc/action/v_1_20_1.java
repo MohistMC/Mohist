@@ -32,13 +32,13 @@ public class v_1_20_1 {
 
     public static void run() {
         try {
-            new Install_1_19();
+            new Install();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static class Install_1_19 extends Action {
+    public static class Install extends Action {
 
         public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
         public final File fmlloader;
@@ -51,7 +51,7 @@ public class v_1_20_1 {
         public final File mc_unpacked;
         public final File mergedMapping;
 
-        protected Install_1_19() throws Exception {
+        protected Install() throws Exception {
             super();
             this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
             this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
