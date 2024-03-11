@@ -45,9 +45,6 @@ public class JarLoader {
         if (!path.toFile().getName().endsWith(".jar")) {
             return;
         }
-        if (path.toFile().getName().contains("srgutils")) {
-            return;
-        }
         try {
             inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
         } catch (IOException e) {

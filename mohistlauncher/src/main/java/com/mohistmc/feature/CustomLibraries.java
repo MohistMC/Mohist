@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.libraries;
+package com.mohistmc.feature;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.JarLoader;

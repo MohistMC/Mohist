@@ -16,11 +16,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.mohistmc.libraries;
+package com.mohistmc.feature;
 
+import com.mohistmc.MohistMCStart;
+import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.libraries.Libraries;
+import com.mohistmc.libraries.LibrariesDownloadQueue;
 import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.util.I18n;
+import com.mohistmc.util.JarLoader;
+import java.io.File;
 
 public class DefaultLibraries {
 
@@ -41,6 +47,17 @@ public class DefaultLibraries {
             System.out.println(I18n.as("libraries.downloadsource", queue.downloadSource.name()));
             System.out.println(I18n.as("libraries.global.percentage"));
             queue.progressBar();
+            for (Libraries libraries : queue.need_download) {
+                if (!libraries.isInstaller()) {
+                    File file = new File( "%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
+                    JarLoader.loadJar(file.toPath());
+                }
+            }
+        }
+
+        for (Libraries libraries : queue.installer) {
+            File file = new File("%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
+            v_1_20_1.loadedLibsPaths.add(file.getAbsolutePath());
         }
         System.out.println(I18n.as("libraries.check.end"));
     }
