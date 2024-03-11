@@ -24,7 +24,7 @@ import com.mohistmc.feature.AutoDeleteMods;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.libraries.CustomLibraries;
 import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
+import com.mohistmc.util.UpdateUtils;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;

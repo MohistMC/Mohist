@@ -66,10 +66,10 @@ public class MohistConfigUtil {
     public static String LIBRARIES_DOWNLOADSOURCE() {
         String key = "mohist.libraries.downloadsource";
         if (yml.get(key) == null) {
-            yml.set(key, DownloadSource.defaultSource.name());
+            yml.set(key, "AUTO");
             save();
         }
-        return yml.getString(key, DownloadSource.defaultSource.name());
+        return yml.getString(key, "AUTO");
     }
 
     public static boolean CHECK_UPDATE() {

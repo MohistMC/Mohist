@@ -21,6 +21,7 @@ package com.mohistmc.libraries;
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.JarLoader;
 import java.io.File;
+import java.util.Objects;
 
 public class CustomLibraries {
 
@@ -31,10 +32,8 @@ public class CustomLibraries {
             file.mkdirs();
         }
 
-        for (File lib : file.listFiles((dir, name) -> name.endsWith(".jar"))) {
-            if (!DefaultLibraries.getDefaultLibs().keySet().toString().contains(lib.getName())) {
-                JarLoader.loadJar(lib.toPath());
-            }
+        for (File lib : Objects.requireNonNull(file.listFiles((dir, name) -> name.endsWith(".jar")))) {
+            JarLoader.loadJar(lib.toPath());
             System.out.println(lib.getName() + " custom library loaded successfully.");
         }
     }
