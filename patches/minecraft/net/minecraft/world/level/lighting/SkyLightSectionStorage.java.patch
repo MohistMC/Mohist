@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/lighting/SkyLightSectionStorage.java
++++ b/net/minecraft/world/level/lighting/SkyLightSectionStorage.java
+@@ -19,6 +_,9 @@
+    }
+ 
+    protected int m_164457_(long p_164458_, boolean p_164459_) {
++      if (true) {
++         return 15;
++      }
+       long i = SectionPos.m_123235_(p_164458_);
+       int j = SectionPos.m_123225_(i);
+       SkyLightSectionStorage.SkyDataLayerStorageMap skylightsectionstorage$skydatalayerstoragemap = p_164459_ ? this.f_75732_ : this.f_75731_;
