@@ -22,27 +22,25 @@
     public static final int f_153563_ = 7;
     public static final IntegerProperty f_54418_ = BlockStateProperties.f_61414_;
     public static final BooleanProperty f_54419_ = BlockStateProperties.f_61447_;
-@@ -45,6 +_,14 @@
+@@ -44,11 +_,7 @@
+    }
  
     public void m_213898_(BlockState p_221379_, ServerLevel p_221380_, BlockPos p_221381_, RandomSource p_221382_) {
-       if (this.m_221385_(p_221379_)) {
-+         // CraftBukkit start
-+         LeavesDecayEvent event = new LeavesDecayEvent(CraftBlock.at(p_221380_, p_221381_));
-+         p_221380_.getCraftServer().getPluginManager().callEvent(event);
-+
-+         if (event.isCancelled() || p_221380_.m_8055_(p_221381_).m_60734_() != this) {
-+            return;
-+         }
-+         // CraftBukkit end
-          m_49950_(p_221379_, p_221380_, p_221381_);
-          p_221380_.m_7471_(p_221381_, false);
-       }
+-      if (this.m_221385_(p_221379_)) {
+-         m_49950_(p_221379_, p_221380_, p_221381_);
+-         p_221380_.m_7471_(p_221381_, false);
+-      }
+-
++      // Mohist remove
+    }
+ 
+    protected boolean m_221385_(BlockState p_221386_) {
 @@ -56,7 +_,7 @@
     }
  
     public void m_213897_(BlockState p_221369_, ServerLevel p_221370_, BlockPos p_221371_, RandomSource p_221372_) {
 -      p_221370_.m_7731_(p_221371_, m_54435_(p_221369_, p_221370_, p_221371_), 3);
-+      p_221370_.m_7731_(p_221371_, p_221369_, 3); // Mohist not update distance
++      // Mohist not update distance
     }
  
     public int m_7753_(BlockState p_54460_, BlockGetter p_54461_, BlockPos p_54462_) {

@@ -74,8 +74,8 @@
 +   // Mohist start
 +   private AtomicReference<BlockPos> sourceposition = new AtomicReference(BlockPos.f_121853_);
     public void m_213897_(BlockState p_221160_, ServerLevel p_221161_, BlockPos p_221162_, RandomSource p_221163_) {
++      if (true) return;
        p_221161_.m_186460_(p_221162_, this, m_221148_(p_221161_.f_46441_));
-+      if (BanEvents.banFireTick()) return;
        if (p_221161_.m_46469_().m_46207_(GameRules.f_46131_)) {
           if (!p_221160_.m_60710_(p_221161_, p_221162_)) {
 -            p_221161_.m_7471_(p_221162_, false);
