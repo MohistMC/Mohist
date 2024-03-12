@@ -1,11 +1,10 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -2,6 +_,8 @@
+@@ -2,6 +_,7 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.net.InetAddresses;
 +import com.mohistmc.bukkit.inventory.MohistModsInventory;
-+import com.mohistmc.plugins.KeepInventory;
  import com.mojang.authlib.GameProfile;
  import com.mojang.datafixers.util.Either;
  import com.mojang.logging.LogUtils;
@@ -153,7 +152,7 @@
 +   public int newExp = 0;
 +   public int newLevel = 0;
 +   public int newTotalExp = 0;
-+   public boolean keepLevel = false;
++   public boolean keepLevel = true;
 +   public double maxHealthCache;
 +   public boolean joining = true;
 +   public boolean sentListPacket = false;
@@ -368,7 +367,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
-@@ -563,16 +_,53 @@
+@@ -563,16 +_,39 @@
     }
  
     private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -389,24 +388,10 @@
 +         return;
 +      }
 +
-+      java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(this.m_150109_().m_6643_());
-+      boolean keepInventory = this.f_19853_.m_46469_().m_46207_(GameRules.f_46133_) || this.m_5833_();
-+
-+      if (!keepInventory) {
-+         Collection<ItemEntity> drops = this.captureDrops(null);
-+         if (drops != null) {
-+            for (ItemEntity entity : drops) {
-+               CraftItemStack craftItemStack = CraftItemStack.asCraftMirror(entity.m_32055_());
-+               loot.add(craftItemStack);
-+            }
-+         }
-+      }
-+
 +      Component defaultMessage = this.m_21231_().m_19293_();
 +      String deathmessage = defaultMessage.getString();
 +
-+      keepLevel = keepInventory; // SPIGOT-2222: pre-set keepLevel
-+      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
++      org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, List.of(), deathmessage, true);
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.f_36096_ != this.f_36095_) {
@@ -425,21 +410,17 @@
           this.f_8906_.m_243119_(new ClientboundPlayerCombatKillPacket(this.m_19879_(), component), PacketSendListener.m_243073_(() -> {
              int i = 256;
              String s = component.m_130668_(256);
-@@ -601,11 +_,16 @@
+@@ -601,11 +_,11 @@
           this.m_9215_();
        }
  
 -      if (!this.m_5833_()) {
 -         this.m_6668_(p_9035_);
-+      // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-+      if (!event.getKeepInventory()) {
-+         m_6668_(p_9035_);
-       }
- 
--      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
+-      }
 +      this.m_9213_(this); // Remove spectated target
 +      // CraftBukkit end
-+
+ 
+-      this.m_36329_().m_83427_(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
 +      // CraftBukkit - Get our scores instead
 +      this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(ObjectiveCriteria.f_83590_, this.m_6302_(), Score::m_83392_);
        LivingEntity livingentity = this.m_21232_();
@@ -948,24 +929,37 @@
     }
  
     public void m_5661_(Component p_9154_, boolean p_9155_) {
-@@ -1115,11 +_,13 @@
-          this.f_36080_ = p_9016_.f_36080_;
-          this.m_36397_(p_9016_.m_36344_());
-          this.f_19819_ = p_9016_.f_19819_;
--      } else if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
-+      } else if (KeepInventory.inventory(p_9016_) || p_9016_.m_5833_()) {
-          this.m_150109_().m_36006_(p_9016_.m_150109_());
+@@ -1106,22 +_,14 @@
+       this.f_244040_ = p_9016_.f_244040_;
+       this.f_8941_.m_9273_(p_9016_.f_8941_.m_9290_(), p_9016_.f_8941_.m_9293_());
+       this.m_6885_();
+-      if (p_9017_) {
+-         this.m_150109_().m_36006_(p_9016_.m_150109_());
+-         this.m_21153_(p_9016_.m_21223_());
+-         this.f_36097_ = p_9016_.f_36097_;
 -         this.f_36078_ = p_9016_.f_36078_;
 -         this.f_36079_ = p_9016_.f_36079_;
 -         this.f_36080_ = p_9016_.f_36080_;
-+         if (KeepInventory.exp(p_9016_) || this.keepLevel) {
-+            this.f_36078_ = p_9016_.f_36078_;
-+            this.f_36079_ = p_9016_.f_36079_;
-+            this.f_36080_ = p_9016_.f_36080_;
-+         }
-          this.m_36397_(p_9016_.m_36344_());
-       }
+-         this.m_36397_(p_9016_.m_36344_());
+-         this.f_19819_ = p_9016_.f_19819_;
+-      } else if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) || p_9016_.m_5833_()) {
+-         this.m_150109_().m_36006_(p_9016_.m_150109_());
+-         this.f_36078_ = p_9016_.f_36078_;
+-         this.f_36079_ = p_9016_.f_36079_;
+-         this.f_36080_ = p_9016_.f_36080_;
+-         this.m_36397_(p_9016_.m_36344_());
+-      }
++      this.m_150109_().m_36006_(p_9016_.m_150109_());
++      this.m_21153_(p_9016_.m_21223_());
++      this.f_36097_ = p_9016_.f_36097_;
++      this.f_36078_ = p_9016_.f_36078_;
++      this.f_36079_ = p_9016_.f_36079_;
++      this.f_36080_ = p_9016_.f_36080_;
++      this.m_36397_(p_9016_.m_36344_());
++      this.f_19819_ = p_9016_.f_19819_;
  
+       this.f_36081_ = p_9016_.f_36081_;
+       this.f_36094_ = p_9016_.f_36094_;
 @@ -1135,6 +_,15 @@
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
@@ -975,7 +969,7 @@
 +      //Allows mods to specify data that persists after players respawn.
 +      CompoundTag old = p_9016_.getPersistentData();
 +      if (old.m_128441_(PERSISTED_NBT_TAG))
-+          getPersistentData().m_128365_(PERSISTED_NBT_TAG, old.m_128423_(PERSISTED_NBT_TAG));
++         getPersistentData().m_128365_(PERSISTED_NBT_TAG, old.m_128423_(PERSISTED_NBT_TAG));
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
@@ -1269,7 +1263,7 @@
     }
  
     public boolean m_184128_() {
-@@ -1632,4 +_,150 @@
+@@ -1632,4 +_,142 @@
        }
  
     }
@@ -1381,12 +1375,9 @@
 +   }
 +
 +   public void reset() {
-+      float exp = 0;
-+      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
-+         exp = this.f_36080_;
-+         this.newTotalExp = this.f_36079_;
-+         this.newLevel = this.f_36078_;
-+      }
++      float exp = this.f_36080_;
++      this.newTotalExp = this.f_36079_;
++      this.newLevel = this.f_36078_;
 +
 +      this.m_21153_(this.m_21233_());
 +      this.m_5810_(); // CraftBukkit - SPIGOT-6682: Clear active item on reset
@@ -1406,12 +1397,7 @@
 +      this.f_20949_ = null;
 +      this.f_20944_ = new CombatTracker(this);
 +      this.f_8920_ = -1;
-+      if (this.keepLevel) { // CraftBukkit - SPIGOT-6687: Only use keepLevel (was pre-set with RULE_KEEPINVENTORY value in PlayerDeathEvent)
-+         this.f_36080_ = exp;
-+      } else {
-+         this.m_6756_(this.newExp);
-+      }
-+      this.keepLevel = false;
++      this.f_36080_ = exp;
 +      this.m_20334_(0, 0, 0); // CraftBukkit - SPIGOT-6948: Reset velocity on death
 +   }
 +

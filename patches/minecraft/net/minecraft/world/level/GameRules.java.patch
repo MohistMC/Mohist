@@ -8,15 +8,18 @@
  import com.mojang.brigadier.arguments.ArgumentType;
  import com.mojang.brigadier.arguments.BoolArgumentType;
  import com.mojang.brigadier.arguments.IntegerArgumentType;
-@@ -30,7 +_,7 @@
+@@ -30,9 +_,9 @@
     private static final Map<GameRules.Key<?>, GameRules.Type<?>> f_46129_ = Maps.newTreeMap(Comparator.comparing((p_46218_) -> {
        return p_46218_.f_46323_;
     }));
 -   public static final GameRules.Key<GameRules.BooleanValue> f_46131_ = m_46189_("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.m_46250_(true));
 +   public static final GameRules.Key<GameRules.BooleanValue> f_46131_ = m_46189_("doFireTick", GameRules.Category.UPDATES, GameRules.BooleanValue.m_46250_(!BanEvents.banFireTick()));
     public static final GameRules.Key<GameRules.BooleanValue> f_46132_ = m_46189_("mobGriefing", GameRules.Category.MOBS, GameRules.BooleanValue.m_46250_(true));
-    public static final GameRules.Key<GameRules.BooleanValue> f_46133_ = m_46189_("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.m_46250_(false));
+-   public static final GameRules.Key<GameRules.BooleanValue> f_46133_ = m_46189_("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.m_46250_(false));
++   public static final GameRules.Key<GameRules.BooleanValue> f_46133_ = m_46189_("keepInventory", GameRules.Category.PLAYER, GameRules.BooleanValue.m_46250_(true));
     public static final GameRules.Key<GameRules.BooleanValue> f_46134_ = m_46189_("doMobSpawning", GameRules.Category.SPAWNING, GameRules.BooleanValue.m_46250_(true));
+    public static final GameRules.Key<GameRules.BooleanValue> f_46135_ = m_46189_("doMobLoot", GameRules.Category.DROPS, GameRules.BooleanValue.m_46250_(true));
+    public static final GameRules.Key<GameRules.BooleanValue> f_46136_ = m_46189_("doTileDrops", GameRules.Category.DROPS, GameRules.BooleanValue.m_46250_(true));
 @@ -171,13 +_,13 @@
     public static class BooleanValue extends GameRules.Value<GameRules.BooleanValue> {
        private boolean f_46219_;

@@ -205,6 +205,18 @@
        super.m_6667_(p_36152_);
        this.m_20090_();
        if (!this.m_5833_()) {
+@@ -595,11 +_,6 @@
+ 
+    protected void m_5907_() {
+       super.m_5907_();
+-      if (!this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_)) {
+-         this.m_36345_();
+-         this.f_36093_.m_36071_();
+-      }
+-
+    }
+ 
+    protected void m_36345_() {
 @@ -622,8 +_,17 @@
  
     @Nullable
@@ -1042,6 +1054,20 @@
  
     public Optional<WardenSpawnTracker> m_245217_() {
        return Optional.empty();
+@@ -1658,12 +_,7 @@
+    }
+ 
+    public int m_213860_() {
+-      if (!this.m_9236_().m_46469_().m_46207_(GameRules.f_46133_) && !this.m_5833_()) {
+-         int i = this.f_36078_ * 7;
+-         return i > 100 ? 100 : i;
+-      } else {
+-         return 0;
+-      }
++      return 0;
+    }
+ 
+    protected boolean m_6124_() {
 @@ -1715,6 +_,16 @@
  
     }
