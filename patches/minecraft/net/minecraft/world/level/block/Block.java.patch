@@ -48,6 +48,21 @@
        } else if (blockstate.m_60815_()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
           Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = f_49789_.get();
+@@ -247,12 +_,12 @@
+ 
+    public static List<ItemStack> m_49869_(BlockState p_49870_, ServerLevel p_49871_, BlockPos p_49872_, @Nullable BlockEntity p_49873_) {
+       LootParams.Builder lootparams$builder = (new LootParams.Builder(p_49871_)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(p_49872_)).m_287286_(LootContextParams.f_81463_, ItemStack.f_41583_).m_287289_(LootContextParams.f_81462_, p_49873_);
+-      return p_49870_.m_287290_(lootparams$builder);
++      return List.of();
+    }
+ 
+    public static List<ItemStack> m_49874_(BlockState p_49875_, ServerLevel p_49876_, BlockPos p_49877_, @Nullable BlockEntity p_49878_, @Nullable Entity p_49879_, ItemStack p_49880_) {
+       LootParams.Builder lootparams$builder = (new LootParams.Builder(p_49876_)).m_287286_(LootContextParams.f_81460_, Vec3.m_82512_(p_49877_)).m_287286_(LootContextParams.f_81463_, p_49880_).m_287289_(LootContextParams.f_81455_, p_49879_).m_287289_(LootContextParams.f_81462_, p_49878_);
+-      return p_49875_.m_287290_(lootparams$builder);
++      return List.of();
+    }
+ 
+    public static void m_49950_(BlockState p_49951_, Level p_49952_, BlockPos p_49953_) {
 @@ -276,11 +_,14 @@
     }
  

@@ -771,9 +771,13 @@
                 this.m_9236_().m_7967_(itementity);
              }
           }
-@@ -1335,12 +_,9 @@
+@@ -1334,13 +_,13 @@
+    }
  
     protected void m_6668_(DamageSource p_21192_) {
++      if (true) {
++         return;
++      }
        Entity entity = p_21192_.m_7639_();
 -      int i;
 -      if (entity instanceof Player) {
