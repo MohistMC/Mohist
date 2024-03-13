@@ -2,13 +2,13 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.MohistModuleManager;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,12 +65,6 @@ public class v_1_20_1 {
             this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
             libPath();
             install();
-        }
-
-        public static void fileWriterMethod(String filepath, String content) throws IOException {
-            try (FileWriter fileWriter = new FileWriter(filepath)) {
-                fileWriter.append(content);
-            }
         }
 
         private void install() throws Exception {
@@ -223,7 +217,7 @@ public class v_1_20_1 {
                 out.getParentFile().mkdirs();
                 out.createNewFile();
             }
-            fileWriterMethod(out.getPath(), libPath);
+            FileUtils.fileWriterMethod(out.getPath(), libPath);
         }
     }
 }
