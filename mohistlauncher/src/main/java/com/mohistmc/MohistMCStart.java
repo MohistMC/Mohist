@@ -38,8 +38,8 @@ import java.util.stream.Stream;
 
 public class MohistMCStart {
 
-    public static String MCVERSION;
     public static final List<String> mainArgs = new ArrayList<>();
+    public static String MCVERSION;
     public static i18n i18n;
     public static JarTool jarTool;
 
@@ -64,7 +64,7 @@ public class MohistMCStart {
                      ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
                      ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
                                         
-                    
+                                        
                     %s - %s, Java(%s) %s %s
                     """;
             String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];

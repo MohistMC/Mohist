@@ -35,7 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.JarFile;
 
 public abstract class Action {
 
@@ -154,16 +153,6 @@ public abstract class Action {
                 System.out.println("[Mohist] The file " + file.getName() + " doesn't exists in the Mohist jar !");
                 System.exit(0);
             }
-        }
-    }
-
-    protected boolean isCorrupted(File f) {
-        try {
-            JarFile j = new JarFile(f);
-            j.close();
-            return false;
-        } catch (IOException e) {
-            return true;
         }
     }
 

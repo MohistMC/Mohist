@@ -2,6 +2,7 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.MohistModuleManager;
@@ -66,6 +67,12 @@ public class v_1_20_1 {
             install();
         }
 
+        public static void fileWriterMethod(String filepath, String content) throws IOException {
+            try (FileWriter fileWriter = new FileWriter(filepath)) {
+                fileWriter.append(content);
+            }
+        }
+
         private void install() throws Exception {
             launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
             launchArgs.addAll(MohistMCStart.mainArgs);
@@ -121,13 +128,13 @@ public class v_1_20_1 {
                 System.exit(0);
             }
 
-            if (isCorrupted(extra)) {
+            if (JarTool.isCorrupted(extra)) {
                 extra.delete();
             }
-            if (isCorrupted(slim)) {
+            if (JarTool.isCorrupted(slim)) {
                 slim.delete();
             }
-            if (isCorrupted(srg)) {
+            if (JarTool.isCorrupted(srg)) {
                 srg.delete();
             }
 
@@ -217,12 +224,6 @@ public class v_1_20_1 {
                 out.createNewFile();
             }
             fileWriterMethod(out.getPath(), libPath);
-        }
-
-        public static void fileWriterMethod(String filepath, String content) throws IOException {
-            try (FileWriter fileWriter = new FileWriter(filepath)) {
-                fileWriter.append(content);
-            }
         }
     }
 }

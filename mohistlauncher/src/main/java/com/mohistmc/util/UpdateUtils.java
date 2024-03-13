@@ -63,12 +63,12 @@ public class UpdateUtils {
 
     public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
         System.out.println(I18n.as("jarfile.restart"));
-        if(cmd.stream().anyMatch(s -> s.contains("-Xms")))
+        if (cmd.stream().anyMatch(s -> s.contains("-Xms")))
             System.out.println(I18n.as("xmswarn"));
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(MohistMCStart.jarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
-        if(shutdown) System.exit(0);
+        if (shutdown) System.exit(0);
     }
 }
