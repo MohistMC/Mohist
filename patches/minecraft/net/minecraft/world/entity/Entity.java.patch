@@ -635,15 +635,16 @@
     public void m_5993_(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
        if (p_19953_ instanceof ServerPlayer) {
           CriteriaTriggers.f_10569_.m_48104_((ServerPlayer)p_19953_, this, p_19955_);
-@@ -1558,7 +_,7 @@
+@@ -1558,6 +_,9 @@
           return false;
        } else {
           String s = this.m_20078_();
--         if (s == null) {
-+         if (!this.persist || s == null) { // CraftBukkit - persist flag
++         if (!this.persist) { // CraftBukkit - persist flag
++            return false;
++         }
+          if (s == null) {
              return false;
           } else {
-             p_20087_.m_128359_("id", s);
 @@ -1582,14 +_,46 @@
  
           Vec3 vec3 = this.m_20184_();
@@ -839,14 +840,14 @@
              if (this.m_20159_()) {
                 this.m_8127_();
              }
-@@ -1915,8 +_,9 @@
+@@ -1915,8 +_,10 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {
           Entity entity = this.f_19824_;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
           this.f_19824_ = null;
--         entity.m_20351_(this);
-+         if (!entity.removePassenger(this)) this.f_19824_ = entity; // CraftBukkit
+          entity.m_20351_(this);
++         if (!removePassenger) this.f_19824_ = entity; // CraftBukkit
        }
  
     }
@@ -859,62 +860,55 @@
                 list.add(0, p_20349_);
              } else {
                 list.add(p_20349_);
-@@ -1945,28 +_,59 @@
-          this.m_146852_(GameEvent.f_268500_, p_20349_);
+@@ -1946,10 +_,43 @@
        }
     }
--
--   protected void m_20351_(Entity p_20352_) {
--      if (p_20352_.m_20202_() == this) {
-+   protected boolean removePassenger(Entity pPassenger) {
-+      if (pPassenger.m_20202_() == this) {
+ 
++   protected boolean removePassenger = true;
++
+    protected void m_20351_(Entity p_20352_) {
+       if (p_20352_.m_20202_() == this) {
           throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
        } else {
--         if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
 +         // CraftBukkit start
-+         CraftEntity craft = (CraftEntity) pPassenger.getBukkitEntity().getVehicle();
++         CraftEntity craft = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +         Entity orig = craft == null ? null : craft.getHandle();
-+         if (getBukkitEntity() instanceof Vehicle && pPassenger.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
++         if (getBukkitEntity() instanceof Vehicle && p_20352_.getBukkitEntity() instanceof org.bukkit.entity.LivingEntity) {
 +            VehicleExitEvent event = new VehicleExitEvent(
 +                    (Vehicle) getBukkitEntity(),
-+                    (org.bukkit.entity.LivingEntity) pPassenger.getBukkitEntity()
++                    (org.bukkit.entity.LivingEntity) p_20352_.getBukkitEntity()
 +            );
 +            // Suppress during worldgen
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
 +            }
-+            CraftEntity craftn = (CraftEntity) pPassenger.getBukkitEntity().getVehicle();
++            CraftEntity craftn = (CraftEntity) p_20352_.getBukkitEntity().getVehicle();
 +            Entity n = craftn == null ? null : craftn.getHandle();
 +            if (event.isCancelled() || n != orig) {
-+               return false;
++               removePassenger = false;
++               return;
 +            }
 +         }
 +         // CraftBukkit end
 +         // Spigot start
-+         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(pPassenger.getBukkitEntity(), this.getBukkitEntity());
++         org.spigotmc.event.entity.EntityDismountEvent event = new org.spigotmc.event.entity.EntityDismountEvent(p_20352_.getBukkitEntity(), this.getBukkitEntity());
 +         // Suppress during worldgen
 +         if (this.valid) {
 +            Bukkit.getPluginManager().callEvent(event);
 +         }
 +         if (event.isCancelled()) {
-+            return false;
++            removePassenger = false;
++            return;
 +         }
 +         // Spigot end
-+         if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == pPassenger) {
+          if (this.f_19823_.size() == 1 && this.f_19823_.get(0) == p_20352_) {
              this.f_19823_ = ImmutableList.of();
           } else {
-             this.f_19823_ = this.f_19823_.stream().filter((p_185980_) -> {
--               return p_185980_ != p_20352_;
-+               return p_185980_ != pPassenger;
-             }).collect(ImmutableList.toImmutableList());
-          }
- 
--         p_20352_.f_19851_ = 60;
--         this.m_146852_(GameEvent.f_268533_, p_20352_);
-+         pPassenger.f_19851_ = 60;
-+         this.m_146852_(GameEvent.f_268533_, pPassenger);
+@@ -1961,12 +_,15 @@
+          p_20352_.f_19851_ = 60;
+          this.m_146852_(GameEvent.f_268533_, p_20352_);
        }
-+      return true;
++      removePassenger = true;
     }
  
     protected boolean m_7310_(Entity p_20354_) {
@@ -993,7 +987,7 @@
  
     public int m_6062_() {
 -      return 300;
-+      return maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
++      return this.maxAirTicks; // CraftBukkit - SPIGOT-6907: re-implement LivingEntity#setMaximumAir()
     }
  
     public int m_20146_() {

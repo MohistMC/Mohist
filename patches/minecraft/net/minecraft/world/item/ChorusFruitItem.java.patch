@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/item/ChorusFruitItem.java
 +++ b/net/minecraft/world/item/ChorusFruitItem.java
-@@ -33,12 +_,22 @@
+@@ -11,6 +_,7 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.event.player.PlayerTeleportEvent;
+ 
+ public class ChorusFruitItem extends Item {
+    public ChorusFruitItem(Item.Properties p_40710_) {
+@@ -33,12 +_,17 @@
              }
  
              Vec3 vec3 = p_40714_.m_20182_();
@@ -8,13 +16,8 @@
                 p_40713_.m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(p_40714_));
 +            net.minecraftforge.event.entity.EntityTeleportEvent.ChorusFruit event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(p_40714_, d3, d4, d5);
 +            if (event.isCanceled()) return itemstack;
-+            // CraftBukkit start - handle canceled status of teleport event
-+            java.util.Optional<Boolean> status = p_40714_.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-+            if (!status.isPresent()) {
-+               // teleport event was canceled, no more tries
-+               break;
-+            }
-+            if (status.get()) {
++            p_40714_.randomTeleportCause.set(PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT); // Mohist
++            if (p_40714_.m_20984_(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
 +               // CraftBukkit end
                 SoundEvent soundevent = p_40714_ instanceof Fox ? SoundEvents.f_11953_ : SoundEvents.f_11757_;
 -               p_40713_.m_6263_((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);

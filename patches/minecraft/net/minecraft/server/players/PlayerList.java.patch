@@ -1,6 +1,11 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -11,18 +_,22 @@
+@@ -8,21 +_,27 @@
+ import com.mojang.serialization.Dynamic;
+ import io.netty.buffer.Unpooled;
+ import java.io.File;
++import java.net.InetAddress;
++import java.net.InetSocketAddress;
  import java.net.SocketAddress;
  import java.nio.file.Path;
  import java.text.SimpleDateFormat;
@@ -315,11 +320,13 @@
        this.f_11195_.m_129901_().m_136305_(p_11287_);
        UUID uuid = p_11287_.m_20148_();
        ServerPlayer serverplayer = this.f_11197_.get(uuid);
-@@ -364,35 +_,69 @@
+@@ -364,35 +_,76 @@
           this.f_11203_.remove(uuid);
        }
  
 -      this.m_11268_(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_())));
+-   }
+-
 +      // CraftBukkit start
 +      ClientboundPlayerInfoRemovePacket packet = new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.m_20148_()));
 +      for (ServerPlayer player : f_11196_) {
@@ -334,19 +341,26 @@
 +      cserver.getScoreboardManager().removePlayer(p_11287_.getBukkitEntity());
 +      // CraftBukkit end
 +      quitMessage = playerQuitEvent.getQuitMessage();
-    }
- 
++   }
++
 +   // Mohist start
-+   private AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
++   private final AtomicReference<ServerPlayer> entity = new AtomicReference<>(null);
++   private final AtomicReference<ServerLoginPacketListenerImpl> handler = new AtomicReference<>(null);
++
++   public void mohist$putHandler(ServerLoginPacketListenerImpl handler) {
++      this.handler.set(handler);
++   }
     @Nullable
     public Component m_6418_(SocketAddress p_11257_, GameProfile p_11258_) {
 -      if (this.f_11198_.m_11406_(p_11258_)) {
 +      ServerPlayer serverPlayer = m_215624_(p_11258_);
 +      entity.set(serverPlayer);
 +      org.bukkit.entity.Player player = serverPlayer.getBukkitEntity();
-+      String hostname = ((java.net.InetSocketAddress) p_11257_).getHostName() + ":" + ((java.net.InetSocketAddress) p_11257_).getPort();
-+      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) p_11257_).getAddress());
++      ServerLoginPacketListenerImpl handleR = handler.getAndSet(null);
++      String hostname = handleR == null ? "" : handleR.f_10013_.hostname;
++      InetAddress realAddress = handleR == null ? ((InetSocketAddress) p_11257_).getAddress() : ((InetSocketAddress) handleR.f_10013_.f_129468_.remoteAddress()).getAddress();
 +
++      PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((InetSocketAddress) p_11257_).getAddress(), realAddress);
 +      if (m_11295_().m_11406_(p_11258_) && !m_11295_().m_11388_(p_11258_).m_7524_()) {
           UserBanListEntry userbanlistentry = this.f_11198_.m_11388_(p_11258_);
           MutableComponent mutablecomponent1 = Component.m_237110_("multiplayer.disconnect.banned.reason", userbanlistentry.m_10962_());

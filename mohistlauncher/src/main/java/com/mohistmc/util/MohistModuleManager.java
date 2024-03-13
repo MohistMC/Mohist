@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -253,28 +252,6 @@ public class MohistModuleManager {
     }
 
     private record ParserData(String module, String packages, String target) {
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != this.getClass()) {
-                return false;
-            }
-            var that = (ParserData) obj;
-            return Objects.equals(this.module, that.module) &&
-                    Objects.equals(this.packages, that.packages) &&
-                    Objects.equals(this.target, that.target);
-        }
-
-        @Override
-        public String toString() {
-            return "ParserData[" +
-                    "module=" + module + ", " +
-                    "packages=" + packages + ", " +
-                    "target=" + target + ']';
-        }
     }
 }
 

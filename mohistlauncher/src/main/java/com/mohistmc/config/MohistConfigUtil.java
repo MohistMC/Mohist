@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package com.mohistmc.config;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.network.download.DownloadSource;
 import com.mohistmc.yaml.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class MohistConfigUtil {
     }
 
     public static boolean INSTALLATIONFINISHED() {
-        return yml.getBoolean("mohist.installation-finished", false);
+        return !yml.getBoolean("mohist.installation-finished", false);
     }
 
     public static boolean CHECK_UPDATE_AUTO_DOWNLOAD() {
@@ -66,10 +65,10 @@ public class MohistConfigUtil {
     public static String LIBRARIES_DOWNLOADSOURCE() {
         String key = "mohist.libraries.downloadsource";
         if (yml.get(key) == null) {
-            yml.set(key, DownloadSource.defaultSource.name());
+            yml.set(key, "AUTO");
             save();
         }
-        return yml.getString(key, DownloadSource.defaultSource.name());
+        return yml.getString(key, "AUTO");
     }
 
     public static boolean CHECK_UPDATE() {

@@ -47,7 +47,7 @@
  import net.minecraft.world.entity.boss.wither.WitherBoss;
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
-@@ -114,17 +_,35 @@
+@@ -114,17 +_,36 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -69,6 +69,7 @@
 +import org.bukkit.event.entity.EntityResurrectEvent;
 +import org.bukkit.event.entity.EntityTeleportEvent;
 +import org.bukkit.event.player.PlayerItemConsumeEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
 +import org.spigotmc.AsyncCatcher;
  
@@ -1689,33 +1690,22 @@
     public boolean m_5791_() {
        return this.m_6144_();
     }
-@@ -3028,12 +_,17 @@
+@@ -3027,6 +_,8 @@
+       return this.f_20937_;
     }
  
-    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
-+      // CraftBukkit end
-+      return randomTeleport(p_20985_, p_20986_, p_20987_, p_20988_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN).orElse(false);
-+   }
++   public AtomicReference<PlayerTeleportEvent.TeleportCause> randomTeleportCause = new AtomicReference<>(PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +
-+   public Optional<Boolean> randomTeleport(double pX, double pY, double pZ, boolean pBroadcastTeleport, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
+    public boolean m_20984_(double p_20985_, double p_20986_, double p_20987_, boolean p_20988_) {
        double d0 = this.m_20185_();
        double d1 = this.m_20186_();
-       double d2 = this.m_20189_();
--      double d3 = p_20986_;
-+      double d3 = pY;
-       boolean flag = false;
--      BlockPos blockpos = BlockPos.m_274561_(p_20985_, p_20986_, p_20987_);
-+      BlockPos blockpos = BlockPos.m_274561_(pX, pY, pZ);
-       Level level = this.m_9236_();
-       if (level.m_46805_(blockpos)) {
-          boolean flag1 = false;
-@@ -3050,18 +_,39 @@
+@@ -3050,16 +_,37 @@
           }
  
           if (flag1) {
 -            this.m_6021_(p_20985_, d3, p_20987_);
 +            // CraftBukkit start - Teleport event
-+            this.m_6034_(pX, d3, pZ);
++            this.m_6034_(p_20985_, d3, p_20987_);
              if (level.m_45786_(this) && !level.m_46855_(this.m_20191_())) {
                 flag = true;
              }
@@ -1724,18 +1714,18 @@
 +
 +            if (flag1) {
 +               if (!(this instanceof ServerPlayer)) {
-+                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), pX, d3, pZ));
++                  EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.f_19853_.getWorld(), d0, d1, d2), new Location(this.f_19853_.getWorld(), p_20985_, d3, p_20987_));
 +                  this.f_19853_.getCraftServer().getPluginManager().callEvent(teleport);
 +                  if (!teleport.isCancelled()) {
 +                     Location to = teleport.getTo();
 +                     this.m_6021_(to.getX(), to.getY(), to.getZ());
 +                  } else {
-+                     return Optional.empty();
++                     return false;
 +                  }
 +               } else {
 +                  // player teleport event is called in the underlining code
-+                  if (((ServerPlayer) this).f_8906_.teleport(pX, d3, pZ, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), cause)) {
-+                     return Optional.empty();
++                  if (((ServerPlayer) this).f_8906_.teleport(p_20985_, d3, p_20987_, this.m_146908_(), this.m_146909_(), java.util.Collections.emptySet(), randomTeleportCause.getAndSet(PlayerTeleportEvent.TeleportCause.UNKNOWN))) {
++                     return false;
 +                  }
 +               }
 +            }
@@ -1746,22 +1736,26 @@
        if (!flag) {
 -         this.m_6021_(d0, d1, d2);
 -         return false;
-+         return Optional.of(false); // CraftBukkit
++         return false; // CraftBukkit
        } else {
--         if (p_20988_) {
-+         if (pBroadcastTeleport) {
+          if (p_20988_) {
              level.m_7605_(this, (byte)46);
-          }
- 
-@@ -3069,7 +_,7 @@
+@@ -3069,8 +_,14 @@
              ((PathfinderMob)this).m_21573_().m_26573_();
           }
  
 -         return true;
-+         return Optional.of(true); // CraftBukkit
++         return true; // CraftBukkit
        }
++   }
++
++   public Optional<Boolean> randomTeleport(double pX, double pY, double pZ, boolean pBroadcastTeleport, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause cause) {
++      randomTeleportCause.set(cause);
++      boolean v = m_20984_(pX, pY, pZ, pBroadcastTeleport);
++      return Optional.of(v);
     }
  
+    public boolean m_5801_() {
 @@ -3117,7 +_,14 @@
        this.f_19804_.m_135381_(f_20942_, Optional.empty());
     }

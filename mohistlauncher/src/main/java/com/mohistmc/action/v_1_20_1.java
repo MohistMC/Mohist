@@ -2,12 +2,13 @@ package com.mohistmc.action;
 
 import com.mohistmc.MohistMCStart;
 import com.mohistmc.config.MohistConfigUtil;
+import com.mohistmc.tools.FileUtils;
+import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MD5Util;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.MohistModuleManager;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,13 +33,13 @@ public class v_1_20_1 {
 
     public static void run() {
         try {
-            new Install_1_19();
+            new Install();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static class Install_1_19 extends Action {
+    public static class Install extends Action {
 
         public static ArrayList<String> launchArgs = new ArrayList<>(Arrays.asList("java", "-jar"));
         public final File fmlloader;
@@ -51,7 +52,7 @@ public class v_1_20_1 {
         public final File mc_unpacked;
         public final File mergedMapping;
 
-        protected Install_1_19() throws Exception {
+        protected Install() throws Exception {
             super();
             this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
             this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
@@ -121,13 +122,13 @@ public class v_1_20_1 {
                 System.exit(0);
             }
 
-            if (isCorrupted(extra)) {
+            if (JarTool.isCorrupted(extra)) {
                 extra.delete();
             }
-            if (isCorrupted(slim)) {
+            if (JarTool.isCorrupted(slim)) {
                 slim.delete();
             }
-            if (isCorrupted(srg)) {
+            if (JarTool.isCorrupted(srg)) {
                 srg.delete();
             }
 
@@ -216,13 +217,7 @@ public class v_1_20_1 {
                 out.getParentFile().mkdirs();
                 out.createNewFile();
             }
-            fileWriterMethod(out.getPath(), libPath);
-        }
-
-        public static void fileWriterMethod(String filepath, String content) throws IOException {
-            try (FileWriter fileWriter = new FileWriter(filepath)) {
-                fileWriter.append(content);
-            }
+            FileUtils.fileWriterMethod(out.getPath(), libPath);
         }
     }
 }

@@ -618,18 +618,6 @@
        this.f_220350_.m_214152_(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -970,6 +_,11 @@
- 
-    public Explosion m_254877_(@Nullable Entity p_256039_, @Nullable DamageSource p_255778_, @Nullable ExplosionDamageCalculator p_256002_, double p_256067_, double p_256370_, double p_256153_, float p_256045_, boolean p_255686_, Level.ExplosionInteraction p_255827_) {
-       Explosion explosion = this.m_255278_(p_256039_, p_255778_, p_256002_, p_256067_, p_256370_, p_256153_, p_256045_, p_255686_, p_255827_, false);
-+      // CraftBukkit start
-+      if (explosion.wasCanceled) {
-+         return explosion;
-+      }
-+      // CraftBukkit end
-       if (!explosion.m_254884_()) {
-          explosion.m_46080_();
-       }
 @@ -1044,6 +_,21 @@
        return i;
     }
@@ -752,7 +740,7 @@
 +         blockList.m_7731_(p_184101_, Blocks.f_50080_.m_49966_(), 3);
        });
 +      org.bukkit.World bworld = p_8618_.getWorld();
-+      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entityAtomicReference.getAndSet(null) == null) ? null : entityAtomicReference.getAndSet(null).getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
++      org.bukkit.event.world.PortalCreateEvent portalEvent = new org.bukkit.event.world.PortalCreateEvent((List<org.bukkit.block.BlockState>) (List) blockList.getList(), bworld, (entityAtomicReference.get() == null) ? null : entityAtomicReference.getAndSet(null).getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.END_PLATFORM);
 +
 +      p_8618_.getCraftServer().getPluginManager().callEvent(portalEvent);
 +      if (!portalEvent.isCancelled()) {

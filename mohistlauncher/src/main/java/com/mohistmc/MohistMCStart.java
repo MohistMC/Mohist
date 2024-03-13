@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,15 @@ package com.mohistmc;
 import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.feature.AutoDeleteMods;
+import com.mohistmc.feature.CustomLibraries;
+import com.mohistmc.feature.DefaultLibraries;
 import com.mohistmc.i18n.i18n;
-import com.mohistmc.libraries.CustomLibraries;
-import com.mohistmc.libraries.DefaultLibraries;
-import com.mohistmc.network.download.UpdateUtils;
 import com.mohistmc.tools.JarTool;
+import com.mohistmc.tools.Logo;
 import com.mohistmc.util.DataParser;
 import com.mohistmc.util.EulaUtil;
 import com.mohistmc.util.MohistModuleManager;
+import com.mohistmc.util.UpdateUtils;
 import cpw.mods.bootstraplauncher.BootstrapLauncher;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ import java.util.stream.Stream;
 
 public class MohistMCStart {
 
-    public static String MCVERSION;
     public static final List<String> mainArgs = new ArrayList<>();
+    public static String MCVERSION;
     public static i18n i18n;
     public static JarTool jarTool;
 
@@ -54,34 +55,30 @@ public class MohistMCStart {
         DataParser.parseLaunchArgs();
         MohistConfigUtil.copyMohistConfig();
         MohistConfigUtil.i18n();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
-            String test = """
-
-                     ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗
-                     ████╗ ████║ ██╔═══██╗ ██║  ██║ ██║ ██╔════╝ ╚══██╔══╝
-                     ██╔████╔██║ ██║   ██║ ███████║ ██║ ███████╗    ██║
-                     ██║╚██╔╝██║ ██║   ██║ ██╔══██║ ██║ ╚════██║    ██║
-                     ██║ ╚═╝ ██║ ╚██████╔╝ ██║  ██║ ██║ ███████║    ██║
-                     ╚═╝     ╚═╝  ╚═════╝  ╚═╝  ╚═╝ ╚═╝ ╚══════╝    ╚═╝
-                                        
-                    
-                    %s - %s, Java(%s) %s %s
-                    """;
-            String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-            System.out.printf((test) + "%n", i18n.as("mohist.launch.welcomemessage"), getVersion(), System.getProperty("java.version"), System.getProperty("java.class.version"), "PID: " + pid);
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
+            System.out.printf("%n%s%n%s - %s, Java(%s) %s PID: %s%n",
+                    Logo.asMohist(),
+                    i18n.as("mohist.launch.welcomemessage"),
+                    getVersion(),
+                    System.getProperty("java.version"),
+                    System.getProperty("java.class.version"),
+                    ManagementFactory.getRuntimeMXBean().getName().split("@")[0]
+            );
         }
 
         if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        // if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_UPDATE()) UpdateUtils.versionCheck();
+
+
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED()) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_20_1.run();
         }
 
@@ -89,7 +86,13 @@ public class MohistMCStart {
 
         CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
-        for (String arg : DataParser.launchArgs.stream().filter(s -> s.startsWith("--launchTarget") || s.startsWith("--fml.forgeVersion") || s.startsWith("--fml.mcVersion") || s.startsWith("--fml.forgeGroup") || s.startsWith("--fml.mcpVersion")).toList()) {
+        for (String arg : DataParser.launchArgs.stream().filter(s ->
+                s.startsWith("--launchTarget")
+                        || s.startsWith("--fml.forgeVersion")
+                        || s.startsWith("--fml.mcVersion")
+                        || s.startsWith("--fml.forgeGroup")
+                        || s.startsWith("--fml.mcpVersion"))
+                .toList()) {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
         }
@@ -97,11 +100,11 @@ public class MohistMCStart {
 
         if (!EulaUtil.hasAcceptedEULA()) {
             System.out.println(i18n.as("eula"));
-            while (!"true".equals(new Scanner(System.in).next())) {
+            while (!"true".equals(new Scanner(System.in).nextLine().trim())) {
+                System.out.println(i18n.as("eula_notrue"));
             }
             EulaUtil.writeInfos();
         }
-
         String[] args_ = Stream.concat(forgeArgs.stream(), mainArgs.stream()).toArray(String[]::new);
         BootstrapLauncher.main(args_);
     }

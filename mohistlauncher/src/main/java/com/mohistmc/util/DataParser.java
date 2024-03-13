@@ -16,7 +16,7 @@ public class DataParser {
         versionMap.put("forge", FileUtils.readFileFromJar(DataParser.class.getClassLoader(), "versions/forge.txt").get(0));
         versionMap.put("minecraft", FileUtils.readFileFromJar(DataParser.class.getClassLoader(), "versions/minecraft.txt").get(0));
         versionMap.put("mcp", FileUtils.readFileFromJar(DataParser.class.getClassLoader(), "versions/mcp.txt").get(0));
-        versionMap.put("mohist",FileUtils.readFileFromJar(DataParser.class.getClassLoader(), "versions/mohist.txt").get(0));
+        versionMap.put("mohist", FileUtils.readFileFromJar(DataParser.class.getClassLoader(), "versions/mohist.txt").get(0));
 
         MohistMCStart.MCVERSION = versionMap.get("minecraft");
     }
