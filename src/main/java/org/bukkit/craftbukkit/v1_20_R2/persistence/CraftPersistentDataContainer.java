@@ -55,6 +55,11 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
     }
 
     @Override
+    public boolean has(NamespacedKey key) {
+        return this.customDataTags.get(key.toString()) != null;
+    }
+
+    @Override
     public <T, Z> Z get(NamespacedKey key, PersistentDataType<T, Z> type) {
         Preconditions.checkArgument(key != null, "The NamespacedKey key cannot be null");
         Preconditions.checkArgument(type != null, "The provided type cannot be null");

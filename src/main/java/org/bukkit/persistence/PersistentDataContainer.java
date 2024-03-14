@@ -35,6 +35,25 @@ public interface PersistentDataContainer {
     <T, Z> void set(@NotNull NamespacedKey key, @NotNull PersistentDataType<T, Z> type, @NotNull Z value);
 
     /**
+     * Returns if the persistent metadata provider has metadata registered matching
+     * the provided parameters.
+     * <p>
+     * This method will return true as long as a value with the given key exists,
+     * regardless of its type.
+     * <p>
+     * This method is only usable for custom object keys. Overwriting existing tags,
+     * like the display name, will not work as the values are stored using your
+     * namespace.
+     *
+     * @param key the key the value is stored under
+     *
+     * @return if a value with the provided key exists
+     *
+     * @throws IllegalArgumentException if the key to look up is null
+     */
+    boolean has(@NotNull NamespacedKey key);
+
+    /**
      * Returns if the persistent metadata provider has metadata registered
      * matching the provided parameters.
      * <p>
