@@ -135,7 +135,7 @@
  
     public AbstractContainerMenu m_7208_(int p_59562_, Inventory p_59563_, Player p_59564_) {
 -      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_);
-+      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_, p_59563_); // CraftBukkit
++      return new LecternMenu(p_59562_, this.f_59525_, this.f_59526_).player(p_59563_); // CraftBukkit
     }
  
     public Component m_5446_() {
