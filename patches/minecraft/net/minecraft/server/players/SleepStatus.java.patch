@@ -14,17 +14,21 @@
     }
  
     public int sleepersNeeded(int p_144011_) {
-@@ -35,16 +_,22 @@
-       int j = this.sleepingPlayers;
-       this.activePlayers = 0;
-       this.sleepingPlayers = 0;
-+      boolean anySleep = false; // CraftBukkit
+@@ -30,6 +_,8 @@
+       return this.sleepingPlayers;
+    }
  
++   boolean anySleep = false; // CraftBukkit
++
+    public boolean update(List<ServerPlayer> p_144008_) {
+       int i = this.activePlayers;
+       int j = this.sleepingPlayers;
+@@ -39,12 +_,18 @@
        for(ServerPlayer serverplayer : p_144008_) {
           if (!serverplayer.isSpectator()) {
              ++this.activePlayers;
--            if (serverplayer.isSleeping()) {
-+            if (serverplayer.isSleeping() || serverplayer.fauxSleeping) { // CraftBukkit
++            serverplayer.mohist$fauxSleeping = true;
+             if (serverplayer.isSleeping()) {
                 ++this.sleepingPlayers;
              }
 +            // CraftBukkit start

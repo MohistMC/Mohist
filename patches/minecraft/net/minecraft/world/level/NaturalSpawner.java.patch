@@ -18,7 +18,14 @@
  public final class NaturalSpawner {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MIN_SPAWN_DISTANCE = 24;
-@@ -74,7 +_,7 @@
+@@ -68,13 +_,14 @@
+       Object2IntOpenHashMap<MobCategory> object2intopenhashmap = new Object2IntOpenHashMap<>();
+ 
+       for(Entity entity : p_186526_) {
++         if (entity == null) continue; // Mohist why is null? TODO
+          if (entity instanceof Mob mob) {
+             if (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) {
+                continue;
              }
           }
  

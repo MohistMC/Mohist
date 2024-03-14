@@ -938,6 +938,14 @@
        if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
           return false;
        } else {
+@@ -1245,6 +_,7 @@
+ 
+    public void sendSystemMessage(Component p_240560_, boolean p_240545_) {
+       if (this.acceptsSystemMessages(p_240545_)) {
++         if (connection == null) return; // Mohist
+          this.connection.send(new ClientboundSystemChatPacket(p_240560_, p_240545_), PacketSendListener.exceptionallySend(() -> {
+             if (this.acceptsSystemMessages(false)) {
+                int i = 256;
 @@ -1275,6 +_,16 @@
     }
  

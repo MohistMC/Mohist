@@ -42,6 +42,15 @@
  
     private static void replaceMissingSections(Registry<Biome> p_281389_, LevelChunkSection[] p_282796_) {
        for(int i = 0; i < p_282796_.length; ++i) {
+@@ -153,7 +_,7 @@
+    }
+ 
+    public LevelChunkSection getSection(int p_187657_) {
+-      return this.getSections()[p_187657_];
++      return this.getSections()[p_187657_ == -1 ? 0 : p_187657_];
+    }
+ 
+    public Collection<Map.Entry<Heightmap.Types, Heightmap>> getHeightmaps() {
 @@ -253,10 +_,11 @@
  
     public void setUnsaved(boolean p_62094_) {

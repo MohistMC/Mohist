@@ -1679,6 +1679,21 @@
        }
     }
  
+@@ -3164,7 +_,14 @@
+       this.entityData.set(SLEEPING_POS_ID, Optional.empty());
+    }
+ 
++   // Mohist start
++   public boolean mohist$fauxSleeping = false;
+    public boolean isSleeping() {
++      if (mohist$fauxSleeping && this instanceof ServerPlayer player) {
++         mohist$fauxSleeping = false;
++         return this.getSleepingPos().isPresent() || player.fauxSleeping;
++      }
++      // Mohist end
+       return this.getSleepingPos().isPresent();
+    }
+ 
 @@ -3174,8 +_,8 @@
        }
  
