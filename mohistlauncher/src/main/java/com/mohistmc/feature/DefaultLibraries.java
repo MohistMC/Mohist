@@ -50,7 +50,9 @@ public class DefaultLibraries {
             for (Libraries libraries : queue.need_download) {
                 if (!libraries.isInstaller() && libraries.getPath().endsWith(".jar")) {
                     File file = new File(queue.parentDirectory, libraries.getPath());
-                    JarLoader.loadJar(file.toPath());
+                    if (file.exists()) {
+                        JarLoader.loadJar(file.toPath());
+                    }
                 }
             }
         }
