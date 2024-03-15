@@ -49,14 +49,14 @@ public class DefaultLibraries {
             queue.progressBar();
             for (Libraries libraries : queue.need_download) {
                 if (!libraries.isInstaller() && libraries.getPath().endsWith(".jar")) {
-                    File file = new File("%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
+                    File file = new File(queue.parentDirectory, libraries.getPath());
                     JarLoader.loadJar(file.toPath());
                 }
             }
         }
 
         for (Libraries libraries : queue.allLibraries) {
-            File file = new File("%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
+            File file = new File(queue.parentDirectory, libraries.getPath());
             v_1_20_1.loadedLibsPaths.add(file.getAbsolutePath());
         }
         System.out.println(I18n.as("libraries.check.end"));
