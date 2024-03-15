@@ -983,6 +983,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         // Close any foreign inventory
         if (getHandle().containerMenu != getHandle().inventoryMenu) {
+            getHandle().inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.TELEPORT; // Paper - Inventory close reason
             getHandle().closeContainer();
         }
 

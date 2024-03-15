@@ -800,7 +800,7 @@ public class ForgeEventFactory {
     }
 
     public static void onPlayerCloseContainer(ServerPlayer player, AbstractContainerMenu menu) {
-        post(new PlayerContainerEvent.Close(player, menu));
+        post(new PlayerContainerEvent.Close(player, menu).reason(player.inventoryCloseReason));
     }
 
     public static boolean onTravelToDimension(Entity entity, ResourceKey<Level> dimension) {

@@ -37,7 +37,7 @@
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
  import net.minecraft.world.item.trading.MerchantOffers;
-@@ -111,10 +_,22 @@
+@@ -111,10 +_,23 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Scoreboard;
@@ -52,6 +52,7 @@
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityExhaustionEvent;
++import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;
  import org.slf4j.Logger;
@@ -84,7 +85,7 @@
     protected final float defaultFlySpeed = 0.02F;
     private int lastLevelUpTime;
     private final GameProfile gameProfile;
-@@ -169,6 +_,19 @@
+@@ -169,6 +_,23 @@
     @Nullable
     public FishingHook fishing;
     protected float hurtDir;
@@ -101,6 +102,10 @@
 +      return (CraftHumanEntity) super.getBukkitEntity();
 +   }
 +   // CraftBukkit end
++
++   // Mohist start
++   public Reason inventoryCloseReason = Reason.PLAYER;
++   // Mohist end
  
     public Player(Level p_250508_, BlockPos p_250289_, float p_251702_, GameProfile p_252153_) {
        super(EntityType.PLAYER, p_250508_);
@@ -130,6 +135,14 @@
              this.stopSleepInBed(false, true);
           }
        } else if (this.sleepCounter > 0) {
+@@ -236,6 +_,7 @@
+       this.updateIsUnderwater();
+       super.tick();
+       if (!this.level().isClientSide && this.containerMenu != null && !this.containerMenu.stillValid(this)) {
++         this.inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.CANT_USE; // Paper - Inventory close reason
+          this.closeContainer();
+          this.containerMenu = this.inventoryMenu;
+       }
 @@ -278,6 +_,7 @@
        this.turtleHelmetTick();
        this.cooldowns.tick();

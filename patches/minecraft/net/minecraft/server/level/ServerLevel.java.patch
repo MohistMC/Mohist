@@ -496,7 +496,7 @@
 +      for (net.minecraft.world.level.block.entity.BlockEntity tileentity : p_8713_.getBlockEntities().values()) {
 +         if (tileentity instanceof net.minecraft.world.Container container) {
 +            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(container.getViewers())) {
-+               h.closeInventory();
++               h.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED); // Paper - Inventory close reason
 +            }
 +         }
 +      }

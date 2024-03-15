@@ -265,7 +265,7 @@
        this.playerIo.save(p_11277_);
        ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
        if (serverstatscounter != null) {
-@@ -320,9 +_,25 @@
+@@ -320,9 +_,26 @@
  
     }
  
@@ -278,6 +278,7 @@
 +      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 +      // See SPIGOT-5799, SPIGOT-6145
 +      if (p_11287_.containerMenu != p_11287_.inventoryMenu) {
++         p_11287_.inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.DISCONNECT; // Paper - Inventory close reason
 +         p_11287_.closeContainer();
 +      }
 +

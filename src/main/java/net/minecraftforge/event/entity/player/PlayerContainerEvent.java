@@ -5,8 +5,11 @@
 
 package net.minecraftforge.event.entity.player;
 
+import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerContainerEvent extends PlayerEvent
 {
@@ -26,6 +29,17 @@ public class PlayerContainerEvent extends PlayerEvent
     }
     public static class Close extends PlayerContainerEvent
     {
+        private final AtomicReference<Reason> reason = new AtomicReference<>(Reason.UNKNOWN);
+        @NotNull
+        public Reason getReason() {
+            return reason.getAndSet(Reason.UNKNOWN);
+        }
+
+        public Close reason(Reason reason) {
+            this.reason.set(reason);
+            return this;
+        }
+
         public Close(Player player, AbstractContainerMenu container)
         {
             super(player, container);

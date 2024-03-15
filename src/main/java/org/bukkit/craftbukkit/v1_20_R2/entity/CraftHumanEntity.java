@@ -51,6 +51,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -366,13 +367,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public void openInventory(InventoryView inventory) {
-        if (!(getHandle() instanceof ServerPlayer)) return; // TODO: NPC support?
-        if (((ServerPlayer) getHandle()).connection == null) return;
+        if (!(getHandle() instanceof ServerPlayer player)) return; // TODO: NPC support?
+        if (player.connection == null) return;
         if (getHandle().containerMenu != getHandle().inventoryMenu) {
             // fire INVENTORY_CLOSE if one already open
-            ((ServerPlayer) getHandle()).connection.handleContainerClose(new ServerboundContainerClosePacket(getHandle().containerMenu.containerId));
+            player.inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.OPEN_NEW; // Paper - Inventory close reason
+            player.connection.handleContainerClose(new ServerboundContainerClosePacket(getHandle().containerMenu.containerId));
         }
-        ServerPlayer player = (ServerPlayer) getHandle();
         AbstractContainerMenu container;
         if (inventory instanceof CraftInventoryView) {
             container = ((CraftInventoryView) inventory).getHandle();
@@ -436,6 +437,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public void closeInventory() {
+        getHandle().inventoryCloseReason = Reason.PLUGIN;
+        getHandle().closeContainer();
+    }
+
+    @Override
+    public void closeInventory(Reason reason) {
+        getHandle().inventoryCloseReason = reason;
         getHandle().closeContainer();
     }
 

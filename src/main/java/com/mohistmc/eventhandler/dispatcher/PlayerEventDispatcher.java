@@ -50,6 +50,6 @@ public class PlayerEventDispatcher {
             abstractcontainermenu.bukkitView = new CraftInventoryView(event.getEntity().getBukkitEntity(), inventory, abstractcontainermenu);
         }
         // Mohist end
-        CraftEventFactory.handleInventoryCloseEvent(event.getEntity()); // CraftBukkit
+        CraftEventFactory.handleInventoryCloseEvent(event.getEntity(), event.getReason()); // CraftBukkit
     }
 }

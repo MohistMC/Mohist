@@ -49,7 +49,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.portal.PortalInfo;
  import net.minecraft.world.level.storage.LevelData;
-@@ -143,11 +_,35 @@
+@@ -143,11 +_,36 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -70,6 +70,7 @@
 +import org.bukkit.craftbukkit.v1_20_R2.util.BlockStateListPopulator;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage;
 +import org.bukkit.craftbukkit.v1_20_R2.util.CraftLocation;
++import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerChangedMainHandEvent;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -86,7 +87,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
     private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -243,6 +_,21 @@
+@@ -243,6 +_,23 @@
     public int containerCounter;
     public boolean wonGame;
  
@@ -103,7 +104,9 @@
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
 +   // CraftBukkit end
 +
-+   public boolean initialized = false; // Mohist
++   // Mohist start
++   public boolean initialized = false;
++   // Mohist end
 +
     public ServerPlayer(MinecraftServer p_254143_, ServerLevel p_254435_, GameProfile p_253651_, ClientInformation p_299301_) {
        super(p_254435_, p_254435_.getSharedSpawnPos(), p_254435_.getSharedSpawnAngle(), p_253651_);
@@ -259,6 +262,14 @@
        this.gameMode.tick();
        this.wardenSpawnTracker.tick();
        --this.spawnInvulnerableTime;
+@@ -433,6 +_,7 @@
+ 
+       this.containerMenu.broadcastChanges();
+       if (!this.level().isClientSide && !this.containerMenu.stillValid(this)) {
++         this.inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.CANT_USE; // Paper - Inventory close reason
+          this.closeContainer();
+          this.containerMenu = this.inventoryMenu;
+       }
 @@ -477,7 +_,7 @@
           }
  
@@ -303,7 +314,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking player");
           CrashReportCategory crashreportcategory = crashreport.addCategory("Player being ticked");
-@@ -562,16 +_,52 @@
+@@ -562,16 +_,53 @@
     }
  
     private void updateScoreForCriteria(ObjectiveCriteria p_9105_, int p_9106_) {
@@ -345,6 +356,7 @@
 +
 +      // SPIGOT-943 - only call if they have an inventory open
 +      if (this.containerMenu != this.inventoryMenu) {
++         this.inventoryCloseReason = org.bukkit.event.inventory.InventoryCloseEvent.Reason.DEATH; // Paper - Inventory close reason
 +         this.closeContainer();
 +      }
 +
@@ -819,7 +831,14 @@
     }
  
     public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -1001,6 +_,7 @@
+@@ -995,12 +_,14 @@
+ 
+    public void closeContainer() {
+       this.connection.send(new ClientboundContainerClosePacket(this.containerMenu.containerId));
++      this.inventoryCloseReason = Reason.UNKNOWN; // Paper - Inventory close reason
+       this.doCloseContainer();
+    }
+ 
     public void doCloseContainer() {
        this.containerMenu.removed(this);
        this.inventoryMenu.transferState(this.containerMenu);
