@@ -54,15 +54,15 @@ public class v_1_20_1 {
 
         protected Install() throws Exception {
             super();
-            this.fmlloader = new File(libPath + "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
-            this.fmlcore = new File(libPath + "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
-            this.javafmllanguage = new File(libPath + "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.mclanguage = new File(libPath + "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.lowcodelanguage = new File(libPath + "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
-            this.mohistplugin = new File(libPath + "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
-            this.mojmap = new File(otherStart + "-mappings.txt");
-            this.mc_unpacked = new File(otherStart + "-unpacked.jar");
-            this.mergedMapping = new File(mcpStart + "-mappings-merged.txt");
+            this.fmlloader = new File(libPath, "net/minecraftforge/fmlloader/" + mcVer + "-" + forgeVer + "/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
+            this.fmlcore = new File(libPath, "net/minecraftforge/fmlcore/" + mcVer + "-" + forgeVer + "/fmlcore-" + mcVer + "-" + forgeVer + ".jar");
+            this.javafmllanguage = new File(libPath, "net/minecraftforge/javafmllanguage/" + mcVer + "-" + forgeVer + "/javafmllanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.mclanguage = new File(libPath, "net/minecraftforge/mclanguage/" + mcVer + "-" + forgeVer + "/mclanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.lowcodelanguage = new File(libPath, "net/minecraftforge/lowcodelanguage/" + mcVer + "-" + forgeVer + "/lowcodelanguage-" + mcVer + "-" + forgeVer + ".jar");
+            this.mohistplugin = new File(libPath, "com/mohistmc/mohistplugins/mohistplugins-" + mcVer + ".jar");
+            this.mojmap = new File(libPath, otherStart + "-mappings.txt");
+            this.mc_unpacked = new File(libPath, otherStart + "-unpacked.jar");
+            this.mergedMapping = new File(libPath, mcpStart + "-mappings-merged.txt");
             libPath();
             install();
         }
@@ -91,13 +91,13 @@ public class v_1_20_1 {
             if (minecraft_server.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", libPath, "--libraries"},
+                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", libPath, "--libraries"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
                 if (!mc_unpacked.exists()) {
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getAbsolutePath(), "--output", mc_unpacked.getAbsolutePath(), "--jar-only"},
+                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", mc_unpacked.getPath(), "--jar-only"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -113,7 +113,7 @@ public class v_1_20_1 {
                     System.out.println(I18n.as("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getAbsolutePath(), "--output", mcpTxt.getAbsolutePath(), "--key", "mappings"},
+                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getPath(), "--output", mcpTxt.getPath(), "--key", "mappings"},
                             stringToUrl(loadedLibsPaths));
                     unmute();
                 }
@@ -135,7 +135,7 @@ public class v_1_20_1 {
             if (!mergedMapping.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getAbsolutePath(), "--right", mojmap.getAbsolutePath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
+                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getPath(), "--right", mojmap.getPath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -143,10 +143,10 @@ public class v_1_20_1 {
             if (!slim.exists() || !extra.exists()) {
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", minecraft_server.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
+                        new String[]{"--input", minecraft_server.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", mc_unpacked.getAbsolutePath(), "--slim", slim.getAbsolutePath(), "--extra", extra.getAbsolutePath(), "--srg", mergedMapping.getAbsolutePath()},
+                        new String[]{"--input", mc_unpacked.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -154,7 +154,7 @@ public class v_1_20_1 {
             if (!srg.exists()) {
                 mute();
                 run("net.minecraftforge.fart.Main",
-                        new String[]{"--input", slim.getAbsolutePath(), "--output", srg.getAbsolutePath(), "--names", mergedMapping.getAbsolutePath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
+                        new String[]{"--input", slim.getPath(), "--output", srg.getPath(), "--names", mergedMapping.getPath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
                         stringToUrl(loadedLibsPaths));
                 unmute();
             }
@@ -181,21 +181,8 @@ public class v_1_20_1 {
                     || !storedMohistMD5.equals(mohistMD5)) {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new String[]{"--clean", srg.getAbsolutePath(), "--output", serverJar.getAbsolutePath(), "--apply", lzma.getAbsolutePath()},
-                        stringToUrl(Arrays.asList(
-                                libPath + "net/minecraftforge/binarypatcher/1.1.1/binarypatcher-1.1.1.jar",
-                                libPath + "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
-                                libPath + "com/google/guava/guava/31.1-jre/guava-31.1-jre.jar",
-                                libPath + "net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-                                libPath + "com/github/jponge/lzma-java/1.3/lzma-java-1.3.jar",
-                                libPath + "com/nothome/javaxdelta/2.0.1/javaxdelta-2.0.1.jar",
-                                libPath + "com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                                libPath + "org/checkerframework/checker-qual/2.0.0/checker-qual-2.0.0.jar",
-                                libPath + "com/google/errorprone/error_prone_annotations/2.1.3/error_prone_annotations-2.1.3.jar",
-                                libPath + "com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar",
-                                libPath + "org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar",
-                                libPath + "trove/trove/1.0.2/trove-1.0.2.jar"
-                        )));
+                        new String[]{"--clean", srg.getPath(), "--output", serverJar.getPath(), "--apply", lzma.getPath()},
+                        stringToUrl(loadedLibsPaths));
                 unmute();
                 serverMD5 = MD5Util.get(serverJar);
             }
@@ -212,7 +199,7 @@ public class v_1_20_1 {
         }
 
         protected void libPath() throws Exception {
-            File out = new File(libPath + "com/mohistmc/cache", "libPath.txt");
+            File out = new File(libPath, "com/mohistmc/cache/libPath.txt");
             if (!out.exists()) {
                 out.getParentFile().mkdirs();
                 out.createNewFile();

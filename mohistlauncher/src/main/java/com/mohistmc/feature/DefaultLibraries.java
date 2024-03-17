@@ -59,7 +59,7 @@ public class DefaultLibraries {
 
         for (Libraries libraries : queue.allLibraries) {
             File file = new File(queue.parentDirectory, libraries.getPath());
-            v_1_20_1.loadedLibsPaths.add(file.getAbsolutePath());
+            v_1_20_1.loadedLibsPaths.add(file.getPath());
         }
         System.out.println(I18n.as("libraries.check.end"));
     }
