@@ -299,6 +299,7 @@ project(':mohist') {
 
         compileOnly 'me.clip:placeholderapi:2.11.3'
         installer 'commons-lang:commons-lang:2.6-mohist'
+        installer(libs.compress)
 
         // Paper start
         installer(libs.bundles.log4j)
