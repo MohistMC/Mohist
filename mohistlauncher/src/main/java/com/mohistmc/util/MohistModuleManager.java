@@ -68,7 +68,7 @@ public class MohistModuleManager {
 
     public MohistModuleManager(List<String> args) {
         this.applyLaunchArgs(args);
-        MohistConfigUtil.yml.set("mohist.installation-finished", false);
+        MohistConfigUtil.INSTALLATIONFINISHED.setValues(false);
         MohistConfigUtil.save();
     }
 

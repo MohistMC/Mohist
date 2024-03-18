@@ -193,7 +193,7 @@ public class v_1_20_1 {
             fw.close();
 
             System.out.println(I18n.as("installation.finished"));
-            MohistConfigUtil.yml.set("mohist.installation-finished", true);
+            MohistConfigUtil.INSTALLATIONFINISHED.setValues(true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);
         }

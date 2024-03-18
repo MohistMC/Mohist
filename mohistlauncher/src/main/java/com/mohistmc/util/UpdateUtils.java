@@ -48,7 +48,7 @@ public class UpdateUtils {
                 System.out.println(I18n.as("update.latest", jar_version, build_number));
             } else {
                 System.out.println(I18n.as("update.detect", build_number, jar_version, time));
-                if (MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD()) {
+                if (MohistConfigUtil.CHECK_UPDATE_AUTO_DOWNLOAD.asBoolean()) {
                     File mohistjar = MohistMCStart.jarTool.getFile();
                     System.out.println(I18n.as("download.file", mohistjar.getName(), NumberUtil.getSize(ConnectionUtil.getConn(url).getContentLength())));
                     ConnectionUtil.downloadFile(url, mohistjar);
