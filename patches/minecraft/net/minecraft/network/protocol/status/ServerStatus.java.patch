@@ -1,14 +1,189 @@
 --- a/net/minecraft/network/protocol/status/ServerStatus.java
 +++ b/net/minecraft/network/protocol/status/ServerStatus.java
-@@ -15,9 +_,9 @@
+@@ -7,6 +_,7 @@
+ import java.nio.charset.StandardCharsets;
+ import java.util.Base64;
+ import java.util.List;
++import java.util.Objects;
+ import java.util.Optional;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.WorldVersion;
+@@ -14,52 +_,131 @@
+ import net.minecraft.network.chat.CommonComponents;
  import net.minecraft.network.chat.Component;
  import net.minecraft.util.ExtraCodecs;
- 
+-
 -public record ServerStatus(Component description, Optional<ServerStatus.Players> players, Optional<ServerStatus.Version> version, Optional<ServerStatus.Favicon> favicon, boolean enforcesSecureChat) {
-+public record ServerStatus(Component description, Optional<ServerStatus.Players> players, Optional<ServerStatus.Version> version, Optional<ServerStatus.Favicon> favicon, boolean enforcesSecureChat, Optional<net.minecraftforge.network.ServerStatusPing> forgeData) {
-    public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((p_273270_) -> {
+-   public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((p_273270_) -> {
 -      return p_273270_.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat)).apply(p_273270_, ServerStatus::new);
-+      return p_273270_.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat), net.minecraftforge.network.ServerStatusPing.CODEC.optionalFieldOf("forgeData").forGetter(ServerStatus::forgeData)).apply(p_273270_, ServerStatus::new);
-    });
- 
-    public static record Favicon(byte[] iconBytes) {
+-   });
+-
+-   public static record Favicon(byte[] iconBytes) {
+-      private static final String PREFIX = "data:image/png;base64,";
+-      public static final Codec<ServerStatus.Favicon> CODEC = Codec.STRING.comapFlatMap((p_274795_) -> {
+-         if (!p_274795_.startsWith("data:image/png;base64,")) {
+-            return DataResult.error(() -> {
+-               return "Unknown format";
+-            });
+-         } else {
+-            try {
+-               String s = p_274795_.substring("data:image/png;base64,".length()).replaceAll("\n", "");
+-               byte[] abyte = Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8));
+-               return DataResult.success(new ServerStatus.Favicon(abyte));
+-            } catch (IllegalArgumentException illegalargumentexception) {
+-               return DataResult.error(() -> {
+-                  return "Malformed base64 server icon";
+-               });
++import net.minecraftforge.network.ServerStatusPing;
++
++public final class ServerStatus {
++    public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((p_273270_) -> {
++        return p_273270_.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat), ServerStatusPing.CODEC.optionalFieldOf("forgeData").forGetter(ServerStatus::forgeData)).apply(p_273270_, ServerStatus::new);
++    });
++    private final Component description;
++    private final Optional<Players> players;
++    private final Optional<Version> version;
++    private final Optional<Favicon> favicon;
++    private final boolean enforcesSecureChat;
++    private final Optional<ServerStatusPing> forgeData;
++
++    public ServerStatus(Component description, Optional<Players> players, Optional<Version> version, Optional<Favicon> favicon, boolean enforcesSecureChat) {
++        this.description = description;
++        this.players = players;
++        this.version = version;
++        this.favicon = favicon;
++        this.enforcesSecureChat = enforcesSecureChat;
++        this.forgeData = Optional.of(new net.minecraftforge.network.ServerStatusPing());;
++    }
++
++    public ServerStatus(Component description, Optional<Players> players, Optional<Version> version, Optional<Favicon> favicon, boolean enforcesSecureChat, Optional<ServerStatusPing> forgeData) {
++        this.description = description;
++        this.players = players;
++        this.version = version;
++        this.favicon = favicon;
++        this.enforcesSecureChat = enforcesSecureChat;
++        this.forgeData = forgeData;
++    }
++
++    public Component description() {
++        return description;
++    }
++
++    public Optional<Players> players() {
++        return players;
++    }
++
++    public Optional<Version> version() {
++        return version;
++    }
++
++    public Optional<Favicon> favicon() {
++        return favicon;
++    }
++
++    public boolean enforcesSecureChat() {
++        return enforcesSecureChat;
++    }
++
++    public Optional<ServerStatusPing> forgeData() {
++        return forgeData;
++    }
++
++    @Override
++    public boolean equals(Object obj) {
++        if (obj == this) return true;
++        if (obj == null || obj.getClass() != this.getClass()) return false;
++        var that = (ServerStatus) obj;
++        return Objects.equals(this.description, that.description) &&
++                Objects.equals(this.players, that.players) &&
++                Objects.equals(this.version, that.version) &&
++                Objects.equals(this.favicon, that.favicon) &&
++                this.enforcesSecureChat == that.enforcesSecureChat &&
++                Objects.equals(this.forgeData, that.forgeData);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(description, players, version, favicon, enforcesSecureChat, forgeData);
++    }
++
++    @Override
++    public String toString() {
++        return "ServerStatus[" +
++                "description=" + description + ", " +
++                "players=" + players + ", " +
++                "version=" + version + ", " +
++                "favicon=" + favicon + ", " +
++                "enforcesSecureChat=" + enforcesSecureChat + ", " +
++                "forgeData=" + forgeData + ']';
++    }
++
++
++    public static record Favicon(byte[] iconBytes) {
++        private static final String PREFIX = "data:image/png;base64,";
++        public static final Codec<Favicon> CODEC = Codec.STRING.comapFlatMap((p_274795_) -> {
++            if (!p_274795_.startsWith("data:image/png;base64,")) {
++                return DataResult.error(() -> {
++                    return "Unknown format";
++                });
++            } else {
++                try {
++                    String s = p_274795_.substring("data:image/png;base64,".length()).replaceAll("\n", "");
++                    byte[] abyte = Base64.getDecoder().decode(s.getBytes(StandardCharsets.UTF_8));
++                    return DataResult.success(new Favicon(abyte));
++                } catch (IllegalArgumentException illegalargumentexception) {
++                    return DataResult.error(() -> {
++                        return "Malformed base64 server icon";
++                    });
++                }
+             }
+-         }
+-      }, (p_273258_) -> {
+-         return "data:image/png;base64," + new String(Base64.getEncoder().encode(p_273258_.iconBytes), StandardCharsets.UTF_8);
+-      });
+-   }
+-
+-   public static record Players(int max, int online, List<GameProfile> sample) {
+-      private static final Codec<GameProfile> PROFILE_CODEC = RecordCodecBuilder.create((p_272926_) -> {
+-         return p_272926_.group(UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(GameProfile::getId), Codec.STRING.fieldOf("name").forGetter(GameProfile::getName)).apply(p_272926_, GameProfile::new);
+-      });
+-      public static final Codec<ServerStatus.Players> CODEC = RecordCodecBuilder.create((p_273295_) -> {
+-         return p_273295_.group(Codec.INT.fieldOf("max").forGetter(ServerStatus.Players::max), Codec.INT.fieldOf("online").forGetter(ServerStatus.Players::online), PROFILE_CODEC.listOf().optionalFieldOf("sample", List.of()).forGetter(ServerStatus.Players::sample)).apply(p_273295_, ServerStatus.Players::new);
+-      });
+-   }
+-
+-   public static record Version(String name, int protocol) {
+-      public static final Codec<ServerStatus.Version> CODEC = RecordCodecBuilder.create((p_273157_) -> {
+-         return p_273157_.group(Codec.STRING.fieldOf("name").forGetter(ServerStatus.Version::name), Codec.INT.fieldOf("protocol").forGetter(ServerStatus.Version::protocol)).apply(p_273157_, ServerStatus.Version::new);
+-      });
+-
+-      public static ServerStatus.Version current() {
+-         WorldVersion worldversion = SharedConstants.getCurrentVersion();
+-         return new ServerStatus.Version(worldversion.getName(), worldversion.getProtocolVersion());
+-      }
+-   }
++        }, (p_273258_) -> {
++            return "data:image/png;base64," + new String(Base64.getEncoder().encode(p_273258_.iconBytes), StandardCharsets.UTF_8);
++        });
++    }
++
++    public static record Players(int max, int online, List<GameProfile> sample) {
++        private static final Codec<GameProfile> PROFILE_CODEC = RecordCodecBuilder.create((p_272926_) -> {
++            return p_272926_.group(UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(GameProfile::getId), Codec.STRING.fieldOf("name").forGetter(GameProfile::getName)).apply(p_272926_, GameProfile::new);
++        });
++        public static final Codec<Players> CODEC = RecordCodecBuilder.create((p_273295_) -> {
++            return p_273295_.group(Codec.INT.fieldOf("max").forGetter(Players::max), Codec.INT.fieldOf("online").forGetter(Players::online), PROFILE_CODEC.listOf().optionalFieldOf("sample", List.of()).forGetter(Players::sample)).apply(p_273295_, Players::new);
++        });
++    }
++
++    public static record Version(String name, int protocol) {
++        public static final Codec<Version> CODEC = RecordCodecBuilder.create((p_273157_) -> {
++            return p_273157_.group(Codec.STRING.fieldOf("name").forGetter(Version::name), Codec.INT.fieldOf("protocol").forGetter(Version::protocol)).apply(p_273157_, Version::new);
++        });
++
++        public static Version current() {
++            WorldVersion worldversion = SharedConstants.getCurrentVersion();
++            return new Version(worldversion.getName(), worldversion.getProtocolVersion());
++        }
++    }
+ }
