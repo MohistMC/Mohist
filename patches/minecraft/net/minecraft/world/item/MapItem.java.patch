@@ -1,15 +1,16 @@
 --- a/net/minecraft/world/item/MapItem.java
 +++ b/net/minecraft/world/item/MapItem.java
-@@ -32,6 +_,8 @@
+@@ -32,6 +_,9 @@
  import net.minecraft.world.level.material.FluidState;
  import net.minecraft.world.level.material.MapColor;
  import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 +import org.bukkit.Bukkit;
 +import org.bukkit.event.server.MapInitializeEvent;
++import org.spigotmc.AsyncCatcher;
  
  public class MapItem extends ComplexItem {
     public static final int IMAGE_WIDTH = 128;
-@@ -58,20 +_,34 @@
+@@ -58,20 +_,36 @@
  
     @Nullable
     public static MapItemSavedData getSavedData(ItemStack p_42854_, Level p_42855_) {
@@ -42,8 +43,10 @@
        int i = p_151121_.getFreeMapId();
        p_151121_.setMapData(makeKey(i), mapitemsaveddata);
 +      // CraftBukkit start
-+      MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
-+      Bukkit.getServer().getPluginManager().callEvent(event);
++      if (!AsyncCatcher.catchAsync()) {
++         MapInitializeEvent event = new MapInitializeEvent(mapitemsaveddata.mapView);
++         Bukkit.getServer().getPluginManager().callEvent(event);
++      }
 +      // CraftBukkit end
        return i;
     }
