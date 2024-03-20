@@ -44,7 +44,9 @@ public class WatchdogThread extends Thread
 
     public static void tick()
     {
-        instance.lastTick = monotonicMillis();
+        if (SpigotConfig.watchdog) {
+            instance.lastTick = monotonicMillis();
+        }
     }
 
     public static void doStop()
