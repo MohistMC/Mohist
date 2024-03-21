@@ -36,13 +36,13 @@ ext {
     SPI_VERSION = '7.0.1'
     MERGETOOL_VERSION = '1.1.5'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
+    COREMODS_VERSION = '5.1.2'
     EVENTBUS_VERSION = '6.0.5'
     MODLAUNCHER_VERSION = '10.0.9'
     SECUREJARHANDLER_VERSION = 'mohist-2.1.11'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
-    ASM_VERSION = '9.5'
-    INSTALLER_VERSION = '2.1.+'
+    ASM_VERSION = '9.6'
+    INSTALLER_VERSION = '2.2.+'
     MIXIN_VERSION = '0.8.5'
     TERMINALCONSOLEAPPENDER_VERSION = '1.4.0'
     JLINE_VERSION = '3.21.0'
@@ -67,7 +67,7 @@ ext {
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
     MIN_TAG_FOR_CHANGELOG = '41.0'
@@ -225,7 +225,7 @@ def sharedDeps = {
     installer 'commons-codec:commons-codec:1.16.0'
 
     installer 'io.izzel:tools:1.3.0'
-    installer 'com.mohistmc:dynamicenum:0.2'
+    installer 'com.mohistmc:dynamicenum:0.3'
     installer 'com.mohistmc:i18n:0.6'
     installer 'com.mohistmc:brigadier:1.20.1'
     installer 'com.mohistmc:librariesvault:1.20.1'
@@ -233,7 +233,7 @@ def sharedDeps = {
     installer 'com.mohistmc:tools:0.2'
     installer "com.mohistmc:eventbus:${EVENTBUS_VERSION}"
 
-    compileOnly 'me.clip:placeholderapi:2.11.3'
+    compileOnly 'me.clip:placeholderapi:2.11.5'
 
     installer 'com.google.guava:failureaccess:1.0.1'
     installer "com.google.guava:guava:${GUAVA_VERSION}"
@@ -323,7 +323,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:fatjar"
         changing = true
     }
 
@@ -436,8 +436,6 @@ project(':mohist') {
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
-
-        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
     dependencies sharedDeps
 
@@ -487,8 +485,7 @@ project(':mohist') {
                         'Timestamp'      : new SimpleDateFormat("yyyy.MM.dd.HHmm").format(new Date()),
                         'GitCommit'      : gradleutils.gitInfo.abbreviatedId,
                         'Git-Branch'     : '1.20.1',
-                        'FML-System-Mods': 'forge',
-                        'MixinConfigs'   : 'mohist.mixins.json'
+                        'FML-System-Mods': 'forge'
                 ] as LinkedHashMap,
                 'net/minecraftforge/versions/forge/'        : [
                         'Specification-Title'   : 'Forge',

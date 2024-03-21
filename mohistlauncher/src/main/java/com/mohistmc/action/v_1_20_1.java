@@ -19,9 +19,6 @@ public class v_1_20_1 {
     public static final List<String> loadedLibsPaths = new ArrayList<>();
 
     public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
-        if (cmd.stream().anyMatch(s -> s.contains("-Xms"))) {
-            System.out.println("[WARNING] We detected that you're using the -Xms argument and it will add the specified ram to the current Java process and the Java process which will be created by the ProcessBuilder, and this could lead to double RAM consumption.\nIf the server does not restart, please try remove the -Xms jvm argument.");
-        }
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(MohistMCStart.jarTool.getJarDir());
         pb.inheritIO().start().waitFor();
