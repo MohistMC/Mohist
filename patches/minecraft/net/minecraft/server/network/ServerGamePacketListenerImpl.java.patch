@@ -166,14 +166,12 @@
     private int f_9751_;
     private double f_9753_;
     private double f_9754_;
-@@ -239,8 +_,31 @@
-       p_9772_.f_8906_ = this;
+@@ -240,7 +_,30 @@
        this.f_9747_ = Util.m_137550_();
        p_9772_.m_8967_().m_7674_();
--      this.f_240889_ = p_9770_.m_214005_() ? SignedMessageChain.Decoder.f_252472_ : SignedMessageChain.Decoder.m_246683_(p_9772_.m_20148_());
+       this.f_240889_ = p_9770_.m_214005_() ? SignedMessageChain.Decoder.f_252472_ : SignedMessageChain.Decoder.m_246683_(p_9772_.m_20148_());
 -      this.f_241681_ = new FutureChain(p_9770_);
-+	  this.f_240889_ = p_9770_.m_214005_() ? SignedMessageChain.Decoder.f_252472_ : SignedMessageChain.Decoder.m_246683_(p_9772_.m_20148_());
-+	  this.f_241681_ = new FutureChain(p_9770_.chatExecutor); // CraftBukkit - async chat
++      this.f_241681_ = new FutureChain(p_9770_.chatExecutor); // CraftBukkit - async chat
 +      // CraftBukkit start - add fields and methods
 +      this.cserver = p_9770_.server;
 +   }
@@ -1898,14 +1896,7 @@
        PacketUtils.m_131359_(p_253950_, this, this.f_9743_.m_284548_());
        RemoteChatSession.Data remotechatsession$data = p_253950_.f_252446_();
        ProfilePublicKey.Data profilepublickey$data = this.f_252494_ != null ? this.f_252494_.f_243855_().f_219781_() : null;
-@@ -1715,8 +_,124 @@
-       return this.f_9743_;
-    }
- 
-+   public void dismount(double x, double y, double z, float yRot, float xRot) {
-+   }
-+
-    @FunctionalInterface
+@@ -1719,4 +_,117 @@
     interface EntityInteraction {
        InteractionResult m_143694_(ServerPlayer p_143695_, Entity p_143696_, InteractionHand p_143697_);
     }
