@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2,16 +_,22 @@
+@@ -2,16 +_,23 @@
  
  import com.google.common.collect.Lists;
  import com.google.common.primitives.Floats;
@@ -12,6 +12,7 @@
 +import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
 +import com.mysql.cj.util.StringUtils;
++import io.papermc.paper.adventure.PaperAdventure;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
  import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
  import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -422,27 +423,73 @@
        }
  
     }
-@@ -503,6 +_,12 @@
+@@ -501,16 +_,58 @@
  
+    }
+ 
++   // Paper start
++   private static final java.util.concurrent.ExecutorService TAB_COMPLETE_EXECUTOR = java.util.concurrent.Executors.newFixedThreadPool(4,
++           new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Tab Complete Thread - #%d").setUncaughtExceptionHandler(new net.minecraft.DefaultUncaughtExceptionHandlerWithName(net.minecraft.server.MinecraftServer.f_129750_)).build());
++   // Paper end
++
     public void m_7741_(ServerboundCommandSuggestionPacket p_9847_) {
-       PacketUtils.m_131359_(p_9847_, this, this.f_9743_.m_284548_());
+-      PacketUtils.m_131359_(p_9847_, this, this.f_9743_.m_284548_());
+-      StringReader stringreader = new StringReader(p_9847_.m_133904_());
+-      if (stringreader.canRead() && stringreader.peek() == '/') {
+-         stringreader.skip();
++      // PacketUtils.ensureRunningOnSameThread(pPacket, this, this.player.serverLevel()); // Paper - run this async
 +      // CraftBukkit start
 +      if (f_9750_.addAndGet(1) > 500 && !this.f_9745_.m_6846_().m_11303_(this.f_9743_.m_36316_())) {
 +         this.m_9942_(Component.m_237115_("disconnect.spam"));
++         f_9745_.scheduleOnMain(() -> this.m_9942_(Component.m_237110_("disconnect.spam", new Object[0]))); // Paper
 +         return;
-+      }
+       }
+-
+-      ParseResults<CommandSourceStack> parseresults = this.f_9745_.m_129892_().m_82094_().parse(stringreader, this.f_9743_.m_20203_());
+-      this.f_9745_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
+-         this.f_9742_.m_129512_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_238197_));
 +      // CraftBukkit end
-       StringReader stringreader = new StringReader(p_9847_.m_133904_());
-       if (stringreader.canRead() && stringreader.peek() == '/') {
-          stringreader.skip();
-@@ -510,6 +_,7 @@
- 
-       ParseResults<CommandSourceStack> parseresults = this.f_9745_.m_129892_().m_82094_().parse(stringreader, this.f_9743_.m_20203_());
-       this.f_9745_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
-+         if (p_238197_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
-          this.f_9742_.m_129512_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_238197_));
++      // Paper start - async tab completion
++      TAB_COMPLETE_EXECUTOR.execute(() -> {
++         StringReader stringreader = new StringReader(p_9847_.m_133904_());
++         if (stringreader.canRead() && stringreader.peek() == '/') {
++            stringreader.skip();
++         }
++
++         final String command = p_9847_.m_133904_();
++         final com.destroystokyo.paper.event.server.AsyncTabCompleteEvent event = new com.destroystokyo.paper.event.server.AsyncTabCompleteEvent(this.getCraftPlayer(), command, true, null);
++         event.callEvent();
++         final java.util.List<com.destroystokyo.paper.event.server.AsyncTabCompleteEvent.Completion> completions = event.isCancelled() ? com.google.common.collect.ImmutableList.of() : event.completions();
++         // If the event isn't handled, we can assume that we have no completions, and so we'll ask the server
++         if (!event.isHandled()) {
++            if (!event.isCancelled()) {
++
++               this.f_9745_.scheduleOnMain(() -> { // This needs to be on main
++                  ParseResults<CommandSourceStack> parseresults = this.f_9745_.m_129892_().m_82094_().parse(stringreader, this.f_9743_.m_20203_());
++
++                  this.f_9745_.m_129892_().m_82094_().getCompletionSuggestions(parseresults).thenAccept((p_238197_) -> {
++                     if (p_238197_.isEmpty())
++                        return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
++                     this.f_9742_.m_129512_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), p_238197_));
++                  });
++               });
++            }
++         } else if (!completions.isEmpty()) {
++            final com.mojang.brigadier.suggestion.SuggestionsBuilder builder0 = new com.mojang.brigadier.suggestion.SuggestionsBuilder(command, stringreader.getTotalLength());
++            final com.mojang.brigadier.suggestion.SuggestionsBuilder builder = builder0.createOffset(builder0.getInput().lastIndexOf(' ') + 1);
++            completions.forEach(completion -> {
++               final Integer intSuggestion = com.google.common.primitives.Ints.tryParse(completion.suggestion());
++               if (intSuggestion != null) {
++                  builder.suggest(intSuggestion, PaperAdventure.asVanilla(completion.tooltip()));
++               } else {
++                  builder.suggest(completion.suggestion(), PaperAdventure.asVanilla(completion.tooltip()));
++               }
++            });
++            f_9743_.f_8906_.m_9829_(new ClientboundCommandSuggestionsPacket(p_9847_.m_133901_(), builder.buildFuture().join()));
++         }
        });
     }
+ 
 @@ -726,6 +_,14 @@
        int i = p_9905_.m_134469_();
        AbstractContainerMenu abstractcontainermenu = this.f_9743_.f_36096_;

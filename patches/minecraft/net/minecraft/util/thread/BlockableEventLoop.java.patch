@@ -1,0 +1,17 @@
+--- a/net/minecraft/util/thread/BlockableEventLoop.java
++++ b/net/minecraft/util/thread/BlockableEventLoop.java
+@@ -78,6 +_,14 @@
+ 
+    }
+ 
++   // Paper start
++   public void scheduleOnMain(Runnable r0) {
++      // postToMainThread does not work the same as older versions of mc
++      // This method is actually used to create a TickTask, which can then be posted onto main
++      this.m_6937_(this.m_6681_(r0));
++   }
++   // Paper end
++
+    public void m_6937_(R p_18712_) {
+       this.f_18682_.add(p_18712_);
+       LockSupport.unpark(this.m_6304_());
