@@ -1,33 +1,11 @@
 --- a/net/minecraft/server/Eula.java
 +++ b/net/minecraft/server/Eula.java
-@@ -16,11 +_,25 @@
+@@ -16,7 +_,7 @@
  
     public Eula(Path p_135943_) {
        this.f_135939_ = p_135943_;
 -      this.f_135940_ = SharedConstants.f_136183_ || this.m_135945_();
--   }
--
--   private boolean m_135945_() {
--      try (InputStream inputstream = Files.newInputStream(this.f_135939_)) {
-+      this.f_135940_ = SharedConstants.f_136183_ || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(p_135943_); // Forge: Automatically agree to EULA for gametest servers to aid CI
-+   }
-+
-+   // Yatopia start - global eula file
-+   private boolean globalEula() {
-+      java.io.File globalEula = new java.io.File(System.getProperty("user.home"), "eula.txt");
-+
-+      if (globalEula.exists()) {
-+         System.out.println("Loaded global eula file from " + globalEula.getAbsolutePath());
-+         return readFile(globalEula.toPath());
-+      } else {
-+         System.out.println("No global eula file found at " + globalEula.getAbsolutePath());
-+      }
-+      return false;
-+   }
-+   // Yatopia end
-+
-+   private boolean readFile(java.nio.file.Path path) {
-+      try (InputStream inputstream = Files.newInputStream(path)) {
-          Properties properties = new Properties();
-          properties.load(inputstream);
-          return Boolean.parseBoolean(properties.getProperty("eula", "false"));
++      this.f_135940_ = SharedConstants.f_136183_ || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.m_135945_(); // Forge: Automatically agree to EULA for gametest servers to aid CI
+    }
+ 
+    private boolean m_135945_() {

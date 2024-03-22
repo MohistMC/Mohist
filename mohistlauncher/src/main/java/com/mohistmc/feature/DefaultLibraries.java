@@ -18,7 +18,6 @@
 
 package com.mohistmc.feature;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.action.v_1_20_1;
 import com.mohistmc.config.MohistConfigUtil;
 import com.mohistmc.libraries.Libraries;
@@ -27,13 +26,15 @@ import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.util.I18n;
 import com.mohistmc.util.JarLoader;
 import java.io.File;
+import java.util.Objects;
 
 public class DefaultLibraries {
 
     public static void run() {
-        String ds = System.getProperty("downloadsource") == null ? MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE() : System.getProperty("downloadsource");
-        String downloadSource = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
-        if (ConnectionUtil.isValid(ds)) {
+        String config = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE.asString();
+        String ds = System.getProperty("downloadsource") == null ? config : System.getProperty("downloadsource");
+        String downloadSource = config;
+        if (!Objects.equals(config, ds) && ConnectionUtil.isValid(ds)) {
             downloadSource = ds;
         }
 
@@ -49,15 +50,17 @@ public class DefaultLibraries {
             queue.progressBar();
             for (Libraries libraries : queue.need_download) {
                 if (!libraries.isInstaller() && libraries.getPath().endsWith(".jar")) {
-                    File file = new File("%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
-                    JarLoader.loadJar(file.toPath());
+                    File file = new File(queue.parentDirectory, libraries.getPath());
+                    if (file.exists()) {
+                        JarLoader.loadJar(file.toPath());
+                    }
                 }
             }
         }
 
         for (Libraries libraries : queue.allLibraries) {
-            File file = new File("%s/%s/".formatted(MohistMCStart.jarTool.getJarDir(), queue.parentDirectory) + libraries.getPath());
-            v_1_20_1.loadedLibsPaths.add(file.getAbsolutePath());
+            File file = new File(queue.parentDirectory, libraries.getPath());
+            v_1_20_1.loadedLibsPaths.add(file.getPath());
         }
         System.out.println(I18n.as("libraries.check.end"));
     }

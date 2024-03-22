@@ -43,7 +43,7 @@ public abstract class Action {
     public final String forgeVer;
     public final String mcpVer;
     public final String mcVer;
-    public final String libPath;
+    public String libPath = "libraries";
 
     public final String forgeStart;
     public final File universalJar;
@@ -68,26 +68,25 @@ public abstract class Action {
         this.forgeVer = DataParser.versionMap.get("forge");
         this.mcpVer = DataParser.versionMap.get("mcp");
         this.mcVer = DataParser.versionMap.get("minecraft");
-        this.libPath = new File(MohistMCStart.jarTool.getJarDir(), "libraries").getAbsolutePath() + "/";
 
-        this.forgeStart = libPath + "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
-        this.universalJar = new File(forgeStart + "-universal.jar");
-        this.serverJar = new File(forgeStart + "-server.jar");
+        this.forgeStart = "net/minecraftforge/forge/" + mcVer + "-" + forgeVer + "/forge-" + mcVer + "-" + forgeVer;
+        this.universalJar = new File(libPath, forgeStart + "-universal.jar");
+        this.serverJar = new File(libPath, forgeStart + "-server.jar");
 
-        this.lzma = new File(libPath + "com/mohistmc/installation/data/server.lzma");
-        this.installInfo = new File(libPath + "com/mohistmc/installation/installInfo");
+        this.lzma = new File(libPath, "com/mohistmc/installation/data/server.lzma");
+        this.installInfo = new File(libPath, "com/mohistmc/installation/installInfo");
 
-        this.otherStart = libPath + "net/minecraft/server/" + mcVer + "-" + mcpVer + "/server-" + mcVer + "-" + mcpVer;
+        this.otherStart = "net/minecraft/server/" + mcVer + "-" + mcpVer + "/server-" + mcVer + "-" + mcpVer;
 
-        this.extra = new File(otherStart + "-extra.jar");
-        this.slim = new File(otherStart + "-slim.jar");
-        this.srg = new File(otherStart + "-srg.jar");
+        this.extra = new File(libPath, otherStart + "-extra.jar");
+        this.slim = new File(libPath, otherStart + "-slim.jar");
+        this.srg = new File(libPath, otherStart + "-srg.jar");
 
-        this.mcpStart = libPath + "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
-        this.mcpZip = new File(mcpStart + ".zip");
-        this.mcpTxt = new File(mcpStart + "-mappings.txt");
+        this.mcpStart = "de/oceanlabs/mcp/mcp_config/" + mcVer + "-" + mcpVer + "/mcp_config-" + mcVer + "-" + mcpVer;
+        this.mcpZip = new File(libPath, mcpStart + ".zip");
+        this.mcpTxt = new File(libPath, mcpStart + "-mappings.txt");
 
-        this.minecraft_server = new File(libPath + "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
+        this.minecraft_server = new File(libPath, "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
     }
 
     protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
@@ -106,7 +105,7 @@ public abstract class Action {
     protected List<URL> stringToUrl(List<String> strs) throws Exception {
         List<URL> temp = new ArrayList<>();
         for (String t : strs) {
-            File file = new File(t);
+            File file = t.startsWith(libPath) ? new File(t) : new File(libPath, t);
             JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
         }
@@ -117,7 +116,7 @@ public abstract class Action {
     THIS IS TO NOT SPAM CONSOLE WHEN IT WILL PRINT A LOT OF THINGS
      */
     protected void mute() throws Exception {
-        File out = new File(libPath + "com/mohistmc/installation", "installationLogs.txt");
+        File out = new File(libPath, "com/mohistmc/installation/installationLogs.txt");
         if (!out.exists()) {
             out.getParentFile().mkdirs();
             out.createNewFile();
@@ -134,9 +133,9 @@ public abstract class Action {
         if (!file.exists() || !MD5Util.get(file).equals(MD5Util.get(is)) || file.length() <= 1) {
             // Clear old version
             File parentfile = file.getParentFile();
-            if (file.getAbsolutePath().contains("minecraftforge")) {
-                int lastSlashIndex = parentfile.getAbsolutePath().replaceAll("\\\\", "/").lastIndexOf("/");
-                String result = parentfile.getAbsolutePath().substring(0, lastSlashIndex + 1);
+            if (file.getPath().contains("minecraftforge")) {
+                int lastSlashIndex = parentfile.getPath().replaceAll("\\\\", "/").lastIndexOf("/");
+                String result = parentfile.getPath().substring(0, lastSlashIndex + 1);
                 File old = new File(result);
                 if (old.exists()) {
                     FileUtils.deleteFolders(old);

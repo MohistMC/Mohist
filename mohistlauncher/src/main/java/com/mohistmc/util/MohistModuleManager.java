@@ -56,7 +56,7 @@ public class MohistModuleManager {
             Field theUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             theUnsafe.setAccessible(true);
             sun.misc.Unsafe unsafe = (sun.misc.Unsafe) theUnsafe.get(null);
-            unsafe.ensureClassInitialized(MethodHandles.Lookup.class);
+            MethodHandles.lookup().ensureInitialized(MethodHandles.Lookup.class);
             Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             Object base = unsafe.staticFieldBase(field);
             long offset = unsafe.staticFieldOffset(field);
@@ -68,7 +68,7 @@ public class MohistModuleManager {
 
     public MohistModuleManager(List<String> args) {
         this.applyLaunchArgs(args);
-        MohistConfigUtil.yml.set("mohist.installation-finished", false);
+        MohistConfigUtil.INSTALLATIONFINISHED.setValues(false);
         MohistConfigUtil.save();
     }
 
