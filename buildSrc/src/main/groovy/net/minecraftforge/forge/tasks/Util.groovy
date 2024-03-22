@@ -22,18 +22,18 @@ public class Util {
 			def result = format.format(delegate)
 			return result[0..21] + ':' + result[22..-1]
 		}
-
-		String.metaClass.rsplit = { String del, int limit = -1 ->
-			def lst = new ArrayList()
-			def x = 0, idx
-			def tmp = delegate
-			while ((idx = tmp.lastIndexOf(del)) != -1 && (limit == -1 || x++ < limit)) {
-				lst.add(0, tmp.substring(idx + del.length(), tmp.length()))
-				tmp = tmp.substring(0, idx)
-			}
-			lst.add(0, tmp)
-			return lst
-		}
+        
+        String.metaClass.rsplit = { String del, int limit = -1 ->
+            def lst = new ArrayList()
+            def x = 0, idx
+            def tmp = delegate
+            while ((idx = tmp.lastIndexOf(del)) != -1 && (limit == -1 || x++ < limit)) {
+                lst.add(0, tmp.substring(idx + del.length(), tmp.length()))
+                tmp = tmp.substring(0, idx)
+            }
+            lst.add(0, tmp)
+            return lst
+        }
 	}
 	
 	public static String[] getClasspath(project, libs, artifact) {
@@ -67,18 +67,9 @@ public class Util {
 			def url = "https://libraries.minecraft.net/${path}"
 			if (!checkExists(url)) {
 				url = "https://maven.minecraftforge.net/${path}"
-				if (!checkExists(url)) {
-					url = "https://hub.spigotmc.org/nexus/content/groups/public/${path}"
-					if (!checkExists(url)) {
-						url = "https://repository.raincubic.com/repository/maven_public/${path}"
-						if (!checkExists(url)) {
-							url = "https://maven.mohistmc.com/${path}"
-						}
-					}
-				}
 			}
 			//TODO remove when Mojang launcher is updated
-			if (!classifiers && art.classifier != null) {
+			if (!classifiers && art.classifier != null) { 
 				//Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
 				// However, keep the path normal so that our mirror system works.
 				art.version = "${art.version}-${art.classifier}"
@@ -133,5 +124,10 @@ public class Util {
 				throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
 			throw e
 		}
+	}
+
+	public static String getLatestForgeVersion(mcVersion) {
+		def json = new JsonSlurper().parseText(new URL("https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json").getText("UTF-8"))
+		return json.promos["$mcVersion-latest"]
 	}
 }

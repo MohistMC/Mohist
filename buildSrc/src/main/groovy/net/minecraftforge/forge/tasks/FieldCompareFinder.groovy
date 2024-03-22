@@ -43,7 +43,7 @@ abstract class FieldCompareFinder extends BytecodeFinder {
             last = current
         }
     }
-
+    
     @Internal
     @Override
     protected Object getData() {

@@ -11,41 +11,41 @@ import org.gradle.api.tasks.TaskAction
 import java.nio.file.Files
 
 abstract class DownloadLibraries extends DefaultTask {
-    @InputFile abstract RegularFileProperty getInput()
-    @OutputDirectory abstract DirectoryProperty getOutput()
-    @OutputFile abstract RegularFileProperty getLibrariesOutput()
+	@InputFile abstract RegularFileProperty getInput()
+	@OutputDirectory abstract DirectoryProperty getOutput()
+	@OutputFile abstract RegularFileProperty getLibrariesOutput()
 
     DownloadLibraries() {
-        output.convention(project.layout.buildDirectory.dir(name))
+		output.convention(project.layout.buildDirectory.dir(name))
         librariesOutput.convention(project.layout.buildDirectory.dir(name).map(d -> d.file('libraries.txt')))
-    }
+	}
 
     @TaskAction
     def run() {
-        Util.init()
-        File outputDir = output.get().asFile
+		Util.init()
+		File outputDir = output.get().asFile
         def libraries = new ArrayList()
 
-        def json = input.get().asFile.json().libraries.each { lib ->
-            //TODO: Thread?
-            def artifacts = [lib.downloads.artifact] + lib.downloads.get('classifiers', [:]).values()
-            artifacts.each{ art ->
-                def target = new File(outputDir, art.path)
-                libraries.add(target.absolutePath)
-                if (!target.exists() || !art.sha1.equals(target.sha1())) {
-                    project.logger.lifecycle("Downloading ${art.url}")
-                    if (!target.parentFile.exists()) {
-                        target.parentFile.mkdirs()
-                    }
-                    new URL(art.url).withInputStream { i ->
-                        target.withOutputStream { it << i }
-                    }
-                    if (!art.sha1.equals(target.sha1())) {
-                        throw new IllegalStateException("Failed to download ${art.url} to ${target.canonicalPath} SHA Mismatch")
-                    }
-                }
-            }
-        }
+		def json = input.get().asFile.json().libraries.each { lib ->
+		    //TODO: Thread?
+			def artifacts = [lib.downloads.artifact] + lib.downloads.get('classifiers', [:]).values()
+			artifacts.each{ art -> 
+				def target = new File(outputDir, art.path)
+				libraries.add(target.absolutePath)
+				if (!target.exists() || !art.sha1.equals(target.sha1())) {
+					project.logger.lifecycle("Downloading ${art.url}")
+					if (!target.parentFile.exists()) {
+						target.parentFile.mkdirs()
+					}
+					new URL(art.url).withInputStream { i ->
+						target.withOutputStream { it << i }
+					}
+					if (!art.sha1.equals(target.sha1())) {
+						throw new IllegalStateException("Failed to download ${art.url} to ${target.canonicalPath} SHA Mismatch")
+					}
+				}
+			}
+		}
         Files.write(librariesOutput.get().asFile.toPath(), libraries)
     }
 }
