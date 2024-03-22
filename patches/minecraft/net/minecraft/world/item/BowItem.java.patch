@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/item/BowItem.java
 +++ b/net/minecraft/world/item/BowItem.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.item;
+ 
+ import java.util.function.Predicate;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
 @@ -25,18 +_,23 @@
        if (p_40669_ instanceof Player player) {
           boolean flag = player.m_150110_().f_35937_ || EnchantmentHelper.m_44843_(Enchantments.f_44952_, p_40667_) > 0;
@@ -41,18 +49,21 @@
  
                    p_40667_.m_41622_(1, player, (p_289501_) -> {
                       p_289501_.m_21190_(player.m_7655_());
-@@ -63,7 +_,16 @@
+@@ -63,7 +_,19 @@
                       abstractarrow.f_36705_ = AbstractArrow.Pickup.CREATIVE_ONLY;
                    }
  
 -                  p_40668_.m_7967_(abstractarrow);
 +                  // CraftBukkit start
 +                  if (event.getProjectile() == abstractarrow.getBukkitEntity()) {
-+                     if (!p_40668_.m_7967_(abstractarrow)) {
-+                        if (player instanceof net.minecraft.server.level.ServerPlayer) {
-+                           ((net.minecraft.server.level.ServerPlayer) player).getBukkitEntity().updateInventory();
++                     p_40668_.m_7967_(abstractarrow);
++                     if (p_40668_ instanceof ServerLevel serverLevel) {
++                        if (!serverLevel.canAddFreshEntity()) { // Mohist
++                           if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
++                              serverPlayer.getBukkitEntity().updateInventory();
++                           }
++                           return;
 +                        }
-+                        return;
 +                     }
 +                  }
 +                  // CraftBukkit end
