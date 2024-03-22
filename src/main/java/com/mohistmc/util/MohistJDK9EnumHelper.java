@@ -188,13 +188,13 @@ public class MohistJDK9EnumHelper
         {
             T[] previousValues = (T[])valuesField.get(enumType);
             T newValue = makeEnum(enumType, enumName, previousValues.length, paramTypes, paramValues);
-            Object base = io.izzel.arclight.api.Unsafe.staticFieldBase(valuesField);
-            long offset = io.izzel.arclight.api.Unsafe.staticFieldOffset(valuesField);
-            T[] arr = (T[]) io.izzel.arclight.api.Unsafe.getObject(base, offset);
+            Object base = unsafe.staticFieldBase(valuesField);
+            long offset = unsafe.staticFieldOffset(valuesField);
+            T[] arr = (T[]) unsafe.getObject(base, offset);
             T[] newArr = (T[]) Array.newInstance(enumType, arr.length + 1);
             System.arraycopy(arr, 0, newArr, 0, arr.length);
             newArr[arr.length] = newValue;
-            io.izzel.arclight.api.Unsafe.putObject(base, offset, newArr);
+            unsafe.putObject(base, offset, newArr);
             cleanEnumCache(enumType);
 
             return newValue;
