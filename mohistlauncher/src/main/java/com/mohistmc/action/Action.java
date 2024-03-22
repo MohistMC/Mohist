@@ -43,25 +43,20 @@ public abstract class Action {
     public final String forgeVer;
     public final String mcpVer;
     public final String mcVer;
-    public String libPath = "libraries";
-
     public final String forgeStart;
     public final File universalJar;
     public final File serverJar;
-
     public final File lzma;
     public final File installInfo;
-
     public final String otherStart;
     public final File extra;
     public final File slim;
     public final File srg;
-
     public final String mcpStart;
     public final File mcpZip;
     public final File mcpTxt;
-
     public final File minecraft_server;
+    public String libPath = "libraries";
 
     protected Action() {
         this.mohistVer = DataParser.versionMap.get("mohist");
