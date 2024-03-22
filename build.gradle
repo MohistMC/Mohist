@@ -827,7 +827,7 @@ project(':mohist') {
     }
 
     tasks.withType(JavaCompile) {
-        options.compilerArgs << '-Xlint:-removal'
+        options.warnings = false
     }
 }
 
