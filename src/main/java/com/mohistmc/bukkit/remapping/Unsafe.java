@@ -21,7 +21,7 @@ public class Unsafe {
             Field theUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
             theUnsafe.setAccessible(true);
             unsafe = (sun.misc.Unsafe) theUnsafe.get(null);
-            Unsafe.ensureClassInitialized(MethodHandles.Lookup.class);
+            MethodHandles.lookup().ensureInitialized(MethodHandles.Lookup.class);
             Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             Object base = unsafe.staticFieldBase(field);
             long offset = unsafe.staticFieldOffset(field);
@@ -45,7 +45,7 @@ public class Unsafe {
 
     public static <T> T getStatic(Class<?> cl, String name) {
         try {
-            Unsafe.ensureClassInitialized(cl);
+            MethodHandles.lookup().ensureInitialized(cl);
             Field field = cl.getDeclaredField(name);
             Object materialByNameBase = Unsafe.staticFieldBase(field);
             long materialByNameOffset = Unsafe.staticFieldOffset(field);
@@ -241,10 +241,6 @@ public class Unsafe {
 
     public static boolean shouldBeInitialized(Class<?> aClass) {
         return unsafe.shouldBeInitialized(aClass);
-    }
-
-    public static void ensureClassInitialized(Class<?> aClass) {
-        unsafe.ensureClassInitialized(aClass);
     }
 
     public static int arrayBaseOffset(Class<?> aClass) {

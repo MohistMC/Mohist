@@ -34,7 +34,7 @@ ext {
     MCP_VERSION = '20230921.100330'
     SNAPSHOT = false
 
-    INSTALLER_VERSION = '2.1.+'
+    INSTALLER_VERSION = '2.2.+'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = MC_VERSION + "-" + project.forge_version
@@ -44,7 +44,7 @@ ext {
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.11.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.5:all'
     
@@ -289,7 +289,7 @@ project(':mohist') {
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
 
         installer 'io.izzel:tools:1.3.0'
-        installer 'com.mohistmc:dynamicenum:0.2'
+        installer 'com.mohistmc:dynamicenum:0.3'
         installer(libs.i18n)
         installer(libs.json)
         installer(libs.tools)
@@ -655,7 +655,7 @@ project(':mohist') {
                 [
                         'libraries/' + getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
                         "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar",
-                        "libraries/net/minecraftforge/installertools/1.3.0/installertools-1.3.0.jar"
+                        "libraries/net/minecraftforge/installertools/1.4.1/installertools-1.4.1.jar"
                 ]
         def claimed = CLASS_PATH.collect { it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
         CLASS_PATH += rootProject.file('server_files/classpath-joined').text.split(';').findAll { it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
