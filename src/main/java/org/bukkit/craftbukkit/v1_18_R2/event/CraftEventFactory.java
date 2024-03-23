@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.mohistmc.MohistMC;
+import com.mohistmc.bukkit.entity.MohistModsEntity;
 import com.mojang.datafixers.util.Either;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -583,8 +584,9 @@ public class CraftEventFactory {
                     return false;
                 }
             }
-
-            event = CraftEventFactory.callCreatureSpawnEvent((LivingEntity) entity, spawnReason);
+            if (!(((LivingEntity) entity).getBukkitEntity() instanceof MohistModsEntity)) {
+                event = CraftEventFactory.callCreatureSpawnEvent((LivingEntity) entity, spawnReason);
+            }
         } else if (entity instanceof ItemEntity) {
             event = CraftEventFactory.callItemSpawnEvent((ItemEntity) entity);
         } else if (entity.getBukkitEntity() instanceof org.bukkit.entity.Projectile) {
