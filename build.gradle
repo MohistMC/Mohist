@@ -346,6 +346,7 @@ project(':mohist') {
         fmllauncherImplementation.extendsFrom(installer, implementation)
     }
     dependencies {
+        installer 'net.minecraftforge:srgutils:0.5.4'
         installer 'org.ow2.asm:asm:' + ASM_VERSION
         installer 'org.ow2.asm:asm-commons:' + ASM_VERSION
         installer 'org.ow2.asm:asm-tree:' + ASM_VERSION
