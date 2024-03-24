@@ -103,7 +103,7 @@
           profilerfiller.m_6180_("naturalSpawnCount");
           int l = this.f_8327_.m_140816_();
           NaturalSpawner.SpawnState naturalspawner$spawnstate = NaturalSpawner.m_186524_(l, this.f_8329_.m_8583_(), this::m_8370_, new LocalMobCapCalculator(this.f_8325_));
-@@ -345,15 +_,15 @@
+@@ -345,24 +_,9 @@
           }
  
           profilerfiller.m_6182_("spawnAndTick");
@@ -111,17 +111,24 @@
 +         boolean flag2 = this.f_8329_.m_46469_().m_46207_(GameRules.f_46134_) && !f_8329_.m_6907_().isEmpty(); // CraftBukkit
           Collections.shuffle(list);
  
-          for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
-             LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
-             ChunkPos chunkpos = levelchunk1.m_7697_();
+-         for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
+-            LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
+-            ChunkPos chunkpos = levelchunk1.m_7697_();
 -            if (this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) {
-+            if ((this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
-                levelchunk1.m_187632_(j);
+-               levelchunk1.m_187632_(j);
 -               if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
-+               if (false && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos) && this.f_8325_.anyPlayerCloseEnoughForSpawning(chunkpos, true)) { // Spigot
-                   NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
-                }
- 
+-                  NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
+-               }
+-
+-               if (this.f_8329_.m_183438_(chunkpos.m_45588_())) {
+-                  this.f_8329_.m_8714_(levelchunk1, k);
+-               }
+-            }
+-         }
+-
+          profilerfiller.m_6182_("customSpawners");
+          if (flag2) {
+             this.f_8329_.m_8799_(this.f_8335_, this.f_8336_);
 @@ -432,11 +_,17 @@
     }
  
