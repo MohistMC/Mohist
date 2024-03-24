@@ -34,12 +34,13 @@
           if (mobcategory != MobCategory.MISC) {
              BlockPos blockpos = entity.m_20183_();
              p_186527_.m_47103_(ChunkPos.m_151388_(blockpos), (p_275163_) -> {
-@@ -102,8 +_,21 @@
+@@ -101,9 +_,22 @@
+ 
     public static void m_47029_(ServerLevel p_47030_, LevelChunk p_47031_, NaturalSpawner.SpawnState p_47032_, boolean p_47033_, boolean p_47034_, boolean p_47035_) {
        p_47030_.m_46473_().m_6180_("spawner");
- 
++      if (true) return;
 +      LevelData worlddata = p_47030_.m_6106_(); // CraftBukkit - Other mob type spawn tick rate
-+
+ 
        for(MobCategory mobcategory : f_46979_) {
 -         if ((p_47033_ || !mobcategory.m_21609_()) && (p_47034_ || mobcategory.m_21609_()) && (p_47035_ || !mobcategory.m_21610_()) && p_47032_.m_186548_(mobcategory, p_47031_.m_7697_())) {
 +         // CraftBukkit start - Use per-world spawn limits
