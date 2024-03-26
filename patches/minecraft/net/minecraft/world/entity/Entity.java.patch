@@ -16,7 +16,7 @@
  import net.minecraft.world.level.block.HoneyBlock;
  import net.minecraft.world.level.block.Mirror;
  import net.minecraft.world.level.block.RenderShape;
-@@ -115,8 +_,27 @@
+@@ -115,8 +_,28 @@
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Team;
  import org.slf4j.Logger;
@@ -39,6 +39,7 @@
 +import org.bukkit.event.vehicle.VehicleEnterEvent;
 +import org.bukkit.event.vehicle.VehicleExitEvent;
 +import org.bukkit.plugin.PluginManager;
++import org.spigotmc.AsyncCatcher;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
@@ -172,7 +173,7 @@
  
     }
  
-@@ -350,6 +_,13 @@
+@@ -350,6 +_,15 @@
     }
  
     public void m_20124_(Pose p_20125_) {
@@ -181,7 +182,9 @@
 +      if (p_20125_ == this.m_20089_()) {
 +         return;
 +      }
-+      this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      if (!AsyncCatcher.catchAsync()) {
++         this.f_19853_.getCraftServer().getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), org.bukkit.entity.Pose.values()[p_20125_.ordinal()]));
++      }
 +      // CraftBukkit end
        this.f_19804_.m_135381_(f_19806_, p_20125_);
     }
@@ -472,15 +475,16 @@
     public void m_5993_(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
        if (p_19953_ instanceof ServerPlayer) {
           CriteriaTriggers.f_10569_.m_48104_((ServerPlayer)p_19953_, this, p_19955_);
-@@ -1406,7 +_,7 @@
+@@ -1405,6 +_,9 @@
+       if (this.f_146795_ != null && !this.f_146795_.m_146966_()) {
           return false;
        } else {
++         if (!this.persist) { // CraftBukkit - persist flag
++            return false;
++         }
           String s = this.m_20078_();
--         if (s == null) {
-+         if (!this.persist || s == null) { // CraftBukkit - persist flag
+          if (s == null) {
              return false;
-          } else {
-             p_20087_.m_128359_("id", s);
 @@ -1430,6 +_,19 @@
  
           Vec3 vec3 = this.m_20184_();
