@@ -2,6 +2,7 @@ package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
 import com.mohistmc.tools.ListUtils;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ public class PlayerModsCheck {
 
     public static boolean init(List<String> stringList) {
         if (MohistConfig.server_modlist_whitelist_enable) {
-            if (!ListUtils.is(stringList, server_modlist_whitelist())) {
+            if (!ListUtils.is(Collections.singletonList(stringList), server_modlist_whitelist())) {
                 canLog.set(false);
                 return true;
             }
@@ -33,7 +34,7 @@ public class PlayerModsCheck {
         return false;
     }
 
-    public static List<String> server_modlist_whitelist() {
+    public static List<Object> server_modlist_whitelist() {
         String s = MohistConfig.server_modlist_whitelist.replaceAll("(?:\\[|null|\\]| +)", "");
         return Pattern.compile("\\s*,\\s*").splitAsStream(s).collect(Collectors.toList());
     }
