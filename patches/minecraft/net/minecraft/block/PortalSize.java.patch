@@ -77,27 +77,28 @@
        }
  
        return 21;
-@@ -151,13 +_,38 @@
+@@ -151,6 +_,7 @@
        return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
     }
  
-+   // Mohist start
-+   private AtomicReference<BlockState> mohist$state = new AtomicReference<>();
 +
     public void func_150859_c() {
        BlockState blockstate = Blocks.field_150427_aO.func_176223_P().func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b);
-+      mohist$state.set(blockstate);
        BlockPos.func_218278_a(this.field_150861_f, this.field_150861_f.func_177967_a(Direction.UP, this.field_150862_g - 1).func_177967_a(this.field_150866_c, this.field_150868_h - 1)).forEach((p_242967_2_) -> {
-          this.field_150867_a.func_180501_a(p_242967_2_, blockstate, 18);
+@@ -158,6 +_,31 @@
        });
     }
  
++   // Mohist start
 +   // CraftBukkit start - return boolean
 +   public boolean createPortal() {
 +      org.bukkit.World bworld = this.field_150867_a.getMinecraftWorld().getWorld();
 +
 +      // Copy below for loop
-+      func_150859_c(); // Mohist
++      BlockState blockstate = Blocks.field_150427_aO.func_176223_P().func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b);
++      BlockPos.func_218278_a(this.field_150861_f, this.field_150861_f.func_177967_a(Direction.UP, this.field_150862_g - 1).func_177967_a(this.field_150866_c, this.field_150868_h - 1)).forEach((p_242967_2_) -> {
++         blocks.func_180501_a(p_242967_2_, blockstate, 18);
++      });
 +
 +      PortalCreateEvent event = new PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blocks.getList(), bworld, null, PortalCreateEvent.CreateReason.FIRE);
 +      Bukkit.getPluginManager().callEvent(event);
@@ -107,7 +108,7 @@
 +      }
 +      // CraftBukkit end
 +      BlockPos.func_218278_a(this.field_150861_f, this.field_150861_f.func_177967_a(Direction.UP, this.field_150862_g - 1).func_177967_a(this.field_150866_c, this.field_150868_h - 1)).forEach((p_242967_2_) -> {
-+         this.field_150867_a.func_180501_a(p_242967_2_, mohist$state.getAndSet(null), 18);
++         this.field_150867_a.func_180501_a(p_242967_2_, blockstate, 18);
 +      });
 +      return true; // CraftBukkit
 +      // Mohist end

@@ -61,7 +61,7 @@ public class MohistMCStart {
 					" \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
 					"  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
 					"                                                    \n" + "\n" +
-					"                                      " + i18n.get("mohist.launch.welcomemessage") +" - "+getVersion()+", Java "+ServerMain.javaVersion);
+					i18n.get("mohist.launch.welcomemessage") +" - "+getVersion()+", Java "+ServerMain.javaVersion);
 
 		//Alert the user that Java 11 is still recommended to use to have a better compatibility.
 		if(ServerMain.javaVersion <= 52.0) {
