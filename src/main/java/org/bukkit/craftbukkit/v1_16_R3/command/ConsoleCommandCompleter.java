@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.v1_16_R3.command;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;

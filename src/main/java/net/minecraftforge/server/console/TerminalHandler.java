@@ -29,7 +29,7 @@ public final class TerminalHandler
         LineReader reader = LineReaderBuilder.builder()
                 .appName("Forge")
                 .terminal(terminal)
-                .completer(new org.bukkit.craftbukkit.v1_16_R3.command.ConsoleCommandCompleter(server))
+                .completer(new ConsoleCommandCompleter(server))
                 .build();
         reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
