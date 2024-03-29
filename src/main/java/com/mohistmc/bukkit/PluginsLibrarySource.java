@@ -21,6 +21,6 @@ public enum PluginsLibrarySource {
     }
 
     public static boolean isCN() {
-        return MohistMC.i18n.isCN() &&  ConnectionUtil.getUrlMillis(ALIBABA.url) < ConnectionUtil.getUrlMillis(MAVEN2.url);
+        return MohistMC.i18n.isCN() &&  ConnectionUtil.measureLatency(ALIBABA.url) < ConnectionUtil.measureLatency(MAVEN2.url);
     }
 }
