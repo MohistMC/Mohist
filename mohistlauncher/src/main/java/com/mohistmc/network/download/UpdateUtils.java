@@ -20,6 +20,7 @@ package com.mohistmc.network.download;
 
 import com.mohistmc.tools.ConnectionUtil;
 import com.mohistmc.tools.MD5Util;
+import com.mohistmc.tools.NumberUtil;
 import com.mohistmc.util.I18n;
 
 import java.io.File;
@@ -41,7 +42,7 @@ public class UpdateUtils {
 
     public static void downloadFile(String URL, File f, String md5) throws Exception {
         URLConnection conn = ConnectionUtil.getConn(URL);
-        System.out.println(I18n.as("download.file", f.getName(), ConnectionUtil.getSize(conn.getContentLength())));
+        System.out.println(I18n.as("download.file", f.getName(), NumberUtil.getSize(conn.getContentLength())));
         ReadableByteChannel rbc = Channels.newChannel(conn.getInputStream());
         FileChannel fc = FileChannel.open(f.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         int fS = conn.getContentLength();

@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 public class MohistModuleManager {
 
-    private static final MethodHandles.Lookup IMPL_LOOKUP = Unsafe.lookup();
+    private static final MethodHandles.Lookup IMPL_LOOKUP = MethodHandles.lookup();
     private static String MODULE_PATH = null;
 
     public MohistModuleManager(List<String> args) {
