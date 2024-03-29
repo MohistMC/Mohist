@@ -37,7 +37,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -86,19 +_,26 @@
+@@ -86,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -45,19 +45,7 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-          super.m_8119_();
--         if (this.f_31986_ > 0 && this.f_31986_ != 32767) {
--            --this.f_31986_;
--         }
-+         // CraftBukkit start - Use wall time for pickup and despawn timers
-+         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+         if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
-+         if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
-+         this.lastTick = MinecraftServer.currentTick;
-+         // CraftBukkit end
- 
-          this.f_19854_ = this.m_20185_();
-          this.f_19855_ = this.m_20186_();
+@@ -99,6 +_,9 @@
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
@@ -87,7 +75,7 @@
           this.f_19812_ |= this.m_20073_();
           if (!this.f_19853_.f_46443_) {
              double d0 = this.m_20184_().m_82546_(vec3).m_82556_();
-@@ -150,12 +_,41 @@
+@@ -150,7 +_,14 @@
              }
           }
  
@@ -103,33 +91,6 @@
              this.m_146870_();
           }
  
-       }
-    }
-+
-+   // Spigot start - copied from above
-+   @Override
-+   public void inactiveTick() {
-+      // CraftBukkit start - Use wall time for pickup and despawn timers
-+      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+      if (this.f_31986_ != 32767) this.f_31986_ -= elapsedTicks;
-+      if (this.f_31985_ != -32768) this.f_31985_ += elapsedTicks;
-+      this.lastTick = MinecraftServer.currentTick;
-+      // CraftBukkit end
-+
-+      if (!this.f_19853_.f_46443_ && this.f_31985_ >= f_19853_.spigotConfig.itemDespawnRate) { // Spigot
-+         // CraftBukkit start - fire ItemDespawnEvent
-+         if (org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+            this.f_31985_ = 0;
-+            return;
-+         }
-+         // CraftBukkit end
-+         this.m_146870_();
-+      }
-+   }
-+   // Spigot end
- 
-    private void m_32067_() {
-       Vec3 vec3 = this.m_20184_();
 @@ -169,7 +_,9 @@
  
     private void m_32069_() {

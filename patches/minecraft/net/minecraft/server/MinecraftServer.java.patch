@@ -470,9 +470,8 @@
 +            long i = ((curTime = System.nanoTime()) / (1000L * 1000L)) - this.f_129726_; // Paper
              if (i > 2000L && this.f_129726_ - this.f_129718_ >= 15000L) {
                 long j = i / 50L;
--               f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
 +               if (server.getWarnOnOverload()) // CraftBukkit
-+               //LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+                f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
                 this.f_129726_ += j * 50L;
                 this.f_129718_ = this.f_129726_;
              }
