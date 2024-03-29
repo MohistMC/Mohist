@@ -169,7 +169,7 @@
     public Chunk func_212866_a_(int p_212866_1_, int p_212866_2_) {
        return (Chunk)this.func_217348_a(p_212866_1_, p_212866_2_, ChunkStatus.field_222617_m);
     }
-@@ -173,6 +_,17 @@
+@@ -173,24 +_,83 @@
     }
  
     public boolean func_241211_a_(BlockPos p_241211_1_, BlockState p_241211_2_, int p_241211_3_, int p_241211_4_) {
@@ -187,10 +187,10 @@
        if (func_189509_E(p_241211_1_)) {
           return false;
        } else if (!this.field_72995_K && this.func_234925_Z_()) {
-@@ -180,17 +_,66 @@
+          return false;
        } else {
           Chunk chunk = this.func_175726_f(p_241211_1_);
-          Block block = p_241211_2_.func_177230_c();
+-         Block block = p_241211_2_.func_177230_c();
 -         BlockState blockstate = chunk.func_177436_a(p_241211_1_, p_241211_2_, (p_241211_3_ & 64) != 0);
 +         // CraftBukkit start - capture blockstates
 +         boolean captured = false;
