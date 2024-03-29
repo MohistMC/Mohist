@@ -42,10 +42,10 @@ public enum DownloadSource {
         DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (ConnectionUtil.isDown(me.url)) {
+                if (ConnectionUtil.canAccess(me.url)) {
                     if (ds.equals(CHINA.name())) {
                         urL = MOHIST;
-                        if (ConnectionUtil.isDown(urL.url)) {
+                        if (ConnectionUtil.canAccess(urL.url)) {
                             return GITHUB;
                         }
                     }
@@ -58,6 +58,6 @@ public enum DownloadSource {
     }
 
     public static boolean isCN() {
-        return MohistMCStart.i18n.isCN() && ConnectionUtil.getUrlMillis(CHINA.getUrl()) < ConnectionUtil.getUrlMillis(MOHIST.getUrl());
+        return MohistMCStart.i18n.isCN() && ConnectionUtil.measureLatency(CHINA.getUrl()) < ConnectionUtil.measureLatency(MOHIST.getUrl());
     }
 }

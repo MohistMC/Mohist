@@ -20,6 +20,6 @@ public enum PluginsLibrarySource {
     }
 
     public static boolean isCN() {
-        return ConnectionUtil.getUrlMillis(ALIBABA.url) < ConnectionUtil.getUrlMillis(MAVEN2.url);
+        return ConnectionUtil.measureLatency(ALIBABA.url) < ConnectionUtil.measureLatency(MAVEN2.url);
     }
 }

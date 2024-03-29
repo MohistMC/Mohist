@@ -117,7 +117,7 @@ class LibraryLoader {
                 String group = dependency.group().replace(".", "/");
                 String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
                 String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
-                if (ConnectionUtil.hasUrl(pomUrl)) list.addAll(initDependencies(new URL(pomUrl)));
+                if (ConnectionUtil.isValid(pomUrl)) list.addAll(initDependencies(new URL(pomUrl)));
             }
         }
         return list;
