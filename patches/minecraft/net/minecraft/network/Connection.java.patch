@@ -65,6 +65,15 @@
        if (p_243290_ != null) {
           channelfuture.addListener((p_243167_) -> {
              if (p_243167_.isSuccess()) {
+@@ -347,7 +_,7 @@
+       if (this.channel != null && this.channel.isOpen()) {
+          synchronized(this.pendingActions) {
+             Consumer<Connection> consumer;
+-            while((consumer = this.pendingActions.poll()) != null) {
++            while(this.pendingActions.poll() != null && (consumer = this.pendingActions.poll()) != null) {
+                consumer.accept(this);
+             }
+ 
 @@ -395,7 +_,7 @@
        if (this.address == null) {
           return "local";
