@@ -151,7 +151,7 @@
  
     public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
 +      // CraftBukkit start
-+      if (p_300325_ == null) {
++      if (p_300325_ == null || this.connection == null) {
 +         return;
 +      } else if (p_300325_ instanceof ClientboundSetDefaultSpawnPositionPacket packet6) {
 +         this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
