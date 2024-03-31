@@ -146,12 +146,12 @@
           if (this.keepAlivePending) {
              this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
           } else {
-@@ -108,6 +_,13 @@
+@@ -108,26 +_,75 @@
     }
  
     public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
 +      // CraftBukkit start
-+      if (p_300325_ == null || this.connection == null) {
++      if (p_300325_ == null) {
 +         return;
 +      } else if (p_300325_ instanceof ClientboundSetDefaultSpawnPositionPacket packet6) {
 +         this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
@@ -160,7 +160,16 @@
        boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
  
        try {
-@@ -123,11 +_,58 @@
+          this.connection.send(p_300325_, p_301165_, flag);
+       } catch (Throwable throwable) {
+-         CrashReport crashreport = CrashReport.forThrowable(throwable, "Sending packet");
+-         CrashReportCategory crashreportcategory = crashreport.addCategory("Packet being sent");
+-         crashreportcategory.setDetail("Packet class", () -> {
+-            return p_300325_.getClass().getCanonicalName();
+-         });
+-         throw new ReportedException(crashreport);
++         throwable.printStackTrace();
+       }
     }
  
     public void disconnect(Component p_299122_) {
