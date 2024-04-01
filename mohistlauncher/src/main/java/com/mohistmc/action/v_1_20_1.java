@@ -88,14 +88,12 @@ public class v_1_20_1 {
             if (minecraft_server.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", libPath, "--libraries"},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", libPath, "--libraries"});
                 unmute();
                 if (!mc_unpacked.exists()) {
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", mc_unpacked.getPath(), "--jar-only"},
-                            stringToUrl(loadedLibsPaths));
+                            new String[]{"--task", "BUNDLER_EXTRACT", "--input", minecraft_server.getPath(), "--output", mc_unpacked.getPath(), "--jar-only"});
                     unmute();
                 }
             } else {
@@ -110,8 +108,7 @@ public class v_1_20_1 {
                     System.out.println(I18n.as("installation.mcp"));
                     mute();
                     run("net.minecraftforge.installertools.ConsoleTool",
-                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getPath(), "--output", mcpTxt.getPath(), "--key", "mappings"},
-                            stringToUrl(loadedLibsPaths));
+                            new String[]{"--task", "MCP_DATA", "--input", mcpZip.getPath(), "--output", mcpTxt.getPath(), "--key", "mappings"});
                     unmute();
                 }
             } else {
@@ -132,27 +129,23 @@ public class v_1_20_1 {
             if (!mergedMapping.exists()) {
                 mute();
                 run("net.minecraftforge.installertools.ConsoleTool",
-                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getPath(), "--right", mojmap.getPath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--task", "MERGE_MAPPING", "--left", mcpTxt.getPath(), "--right", mojmap.getPath(), "--output", mergedMapping.getAbsolutePath(), "--classes", "--reverse-right"});
                 unmute();
             }
 
             if (!slim.exists() || !extra.exists()) {
                 mute();
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", minecraft_server.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--input", minecraft_server.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()});
                 run("net.minecraftforge.jarsplitter.ConsoleTool",
-                        new String[]{"--input", mc_unpacked.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--input", mc_unpacked.getPath(), "--slim", slim.getPath(), "--extra", extra.getPath(), "--srg", mergedMapping.getAbsolutePath()});
                 unmute();
             }
 
             if (!srg.exists()) {
                 mute();
                 run("net.minecraftforge.fart.Main",
-                        new String[]{"--input", slim.getPath(), "--output", srg.getPath(), "--names", mergedMapping.getPath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--input", slim.getPath(), "--output", srg.getPath(), "--names", mergedMapping.getPath(), "--ann-fix", "--ids-fix", "--src-fix", "--record-fix"});
                 unmute();
             }
 
@@ -178,8 +171,7 @@ public class v_1_20_1 {
                     || !storedMohistMD5.equals(mohistMD5)) {
                 mute();
                 run("net.minecraftforge.binarypatcher.ConsoleTool",
-                        new String[]{"--clean", srg.getPath(), "--output", serverJar.getPath(), "--apply", lzma.getPath()},
-                        stringToUrl(loadedLibsPaths));
+                        new String[]{"--clean", srg.getPath(), "--output", serverJar.getPath(), "--apply", lzma.getPath()});
                 unmute();
                 serverMD5 = MD5Util.get(serverJar);
             }
