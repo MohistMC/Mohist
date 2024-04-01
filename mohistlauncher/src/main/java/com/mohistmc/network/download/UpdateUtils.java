@@ -52,7 +52,7 @@ public class UpdateUtils {
             public void run() {
                 if (rbc.isOpen()) {
                     if (percentage != Math.round((float) f.length() / fS * 100) && percentage < 100)
-                        System.out.println(I18n.as("file.download.percentage", f.getName(), percentage));
+                        System.out.println(I18n.as("file.download.percentage", f.getName(), percentage) + "%");
                     percentage = Math.round((float) f.length() / fS * 100);
                 } else t.cancel();
             }
