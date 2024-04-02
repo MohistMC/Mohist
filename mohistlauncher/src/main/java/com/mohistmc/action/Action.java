@@ -84,22 +84,22 @@ public abstract class Action {
         this.minecraft_server = new File(libPath, "net/minecraft/server/" + mcVer + "/server-" + mcVer + ".jar");
     }
 
-    protected void run(String mainClass, String[] args) throws Exception {
+    protected void run(String mainClass, String[] args, List<URL> classPath) throws Exception {
         try {
             Class.forName(mainClass);
         } catch (ClassNotFoundException e) {
             System.out.println("Class not found: " + e.getMessage());
             return;
         }
-        URLClassLoader loader = URLClassLoader.newInstance(stringToUrl().toArray(new URL[0]));
+        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
         Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
         loader.clearAssertionStatus();
         loader.close();
     }
 
-    protected List<URL> stringToUrl() throws Exception {
+    protected List<URL> stringToUrl(List<String> strs) throws Exception {
         List<URL> temp = new ArrayList<>();
-        for (String t : v_1_20_1.loadedLibsPaths) {
+        for (String t : strs) {
             File file = t.startsWith(libPath) ? new File(t) : new File(libPath, t);
             JarLoader.loadJar(file.toPath());
             temp.add(file.toURI().toURL());
