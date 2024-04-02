@@ -25,6 +25,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.module.*;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -38,8 +39,23 @@ import java.util.stream.Collectors;
  */
 public class MohistModuleManager {
 
-    private static final MethodHandles.Lookup IMPL_LOOKUP = MethodHandles.lookup();
+    private static final MethodHandles.Lookup IMPL_LOOKUP;
     private static String MODULE_PATH = null;
+
+    static {
+        try {
+            Field theUnsafe = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafe.setAccessible(true);
+            sun.misc.Unsafe unsafe = (sun.misc.Unsafe) theUnsafe.get(null);
+            MethodHandles.lookup().ensureInitialized(MethodHandles.Lookup.class);
+            Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+            Object base = unsafe.staticFieldBase(field);
+            long offset = unsafe.staticFieldOffset(field);
+            IMPL_LOOKUP = (MethodHandles.Lookup) unsafe.getObject(base, offset);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public MohistModuleManager(List<String> args) {
         this.applyLaunchArgs(args);

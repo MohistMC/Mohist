@@ -148,7 +148,7 @@
 -            if (flag1 && !GraphicsEnvironment.isHeadless()) {
 -               dedicatedserver1.m_139667_();
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
-+               dedicatedServer.m_139667_();
++               // dedicatedServer.showGui();
              }
  
              return dedicatedserver1;
