@@ -42,10 +42,10 @@ public enum DownloadSource {
         DownloadSource urL;
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (ConnectionUtil.canAccess(me.url)) {
+                if (!ConnectionUtil.canAccess(me.url)) {
                     if (ds.equals(CHINA.name())) {
                         urL = MOHIST;
-                        if (ConnectionUtil.canAccess(urL.url)) {
+                        if (!ConnectionUtil.canAccess(urL.url)) {
                             return GITHUB;
                         }
                     }
