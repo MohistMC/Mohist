@@ -271,7 +271,7 @@
           int i = p_9264_.m_41613_();
           int j = p_9264_.m_41773_();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
-@@ -294,13 +_,61 @@
+@@ -294,13 +_,63 @@
        }
     }
  
@@ -282,13 +282,15 @@
 +   public BlockPos interactPosition;
 +   public InteractionHand interactHand;
 +   public ItemStack interactItemStack;
++   public InteractionResult enuminteractionresult;
++   public boolean cancelledBlock = false;
++   public PlayerInteractEvent eventCB;
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
 +      if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
        BlockPos blockpos = p_9270_.m_82425_();
        BlockState blockstate = p_9267_.m_8055_(blockpos);
 +      if (BanItem.check(p_9266_, ItemAPI.toNMSItem(CraftBlock.at(p_9267_, blockpos).getType()))) return InteractionResult.FAIL; // Block
-+      InteractionResult enuminteractionresult = InteractionResult.PASS;
-+      boolean cancelledBlock = false;
++      enuminteractionresult = InteractionResult.PASS;
 +
        if (!blockstate.m_60734_().m_245993_(p_9267_.m_246046_())) {
           return InteractionResult.FAIL;
@@ -304,7 +306,7 @@
 +         cancelledBlock = true;
 +      }
 +
-+      PlayerInteractEvent eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock, p_9269_, p_9270_.m_82450_());
++      eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock, p_9269_, p_9270_.m_82450_());
 +      firedInteract = true;
 +      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.m_7949_();
