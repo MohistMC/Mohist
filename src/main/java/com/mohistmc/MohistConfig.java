@@ -186,7 +186,9 @@ public class MohistConfig {
     public static List<String> networkmanager_intercept;
     public static boolean keepinventory_global;
     public static boolean keepinventory_inventory;
+    public static String keepinventory_inventory_permission;
     public static boolean keepinventory_exp;
+    public static String keepinventory_exp_permission;
 
     // Thread Priority
     public static int server_thread;
@@ -241,7 +243,9 @@ public class MohistConfig {
         networkmanager_intercept = getList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
+        keepinventory_inventory_permission = getString("keepinventory.permission.inventory", "mohist.keepinventory.inventory");
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
+        keepinventory_exp_permission = getString("keepinventory.permission.exp", "mohist.keepinventory.exp");
         server_thread = getInt("threadpriority.server_thread", 8);
 
         clear_item = getBoolean("entity.clear.item.enable", false);
