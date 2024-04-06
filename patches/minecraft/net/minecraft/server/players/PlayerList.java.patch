@@ -437,6 +437,15 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
+@@ -775,7 +_,7 @@
+    }
+ 
+    private boolean m_241091_(PlayerChatMessage p_241287_, ChatSender p_241412_) {
+-      return !p_241287_.m_240431_(Instant.now()) && p_241287_.m_241006_(p_241412_);
++      return true; // Mohist chat verify
+    }
+ 
+    public ServerStatsCounter m_11239_(Player p_11240_) {
 @@ -784,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();

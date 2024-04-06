@@ -24,7 +24,7 @@
  import net.minecraft.world.inventory.AbstractContainerMenu;
  import net.minecraft.world.inventory.ContainerListener;
  import net.minecraft.world.inventory.ContainerSynchronizer;
-@@ -140,8 +_,14 @@
+@@ -140,8 +_,16 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
  import net.minecraft.world.scores.Score;
@@ -34,12 +34,14 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.WeatherType;
 +import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_19_R1.CraftWorldBorder;
 +import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_19_R1.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.v1_19_R1.util.BlockStateListPopulator;
  import org.slf4j.Logger;
  
  public class ServerPlayer extends Player {
-@@ -235,6 +_,26 @@
+@@ -235,6 +_,25 @@
     public int f_8943_;
     public boolean f_8944_;
  
@@ -55,7 +57,6 @@
 +   public boolean sentListPacket = false;
 +   public Integer clientViewDistance;
 +   public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
-+   public String locale = "en_us"; // CraftBukkit - add, lowercase
 +   // CraftBukkit end
 +
 +   @Override
@@ -66,10 +67,17 @@
     public ServerPlayer(MinecraftServer p_215088_, ServerLevel p_215089_, GameProfile p_215090_, @Nullable ProfilePublicKey p_215091_) {
        super(p_215089_, p_215089_.m_220360_(), p_215089_.m_220361_(), p_215090_, p_215091_);
        this.f_8939_ = p_215088_.m_7950_(this);
-@@ -246,6 +_,45 @@
+@@ -244,7 +_,50 @@
+       this.f_8909_ = p_215088_.m_6846_().m_11296_(this);
+       this.f_19793_ = 1.0F;
        this.m_9201_(p_215089_);
-    }
- 
+-   }
++      // CraftBukkit start
++      this.displayName = this.m_6302_();
++      this.bukkitPickUpLoot = true;
++      this.maxHealthCache = this.m_21233_();
++   }
++
 +   // Yes, this doesn't match Vanilla, but it's the best we can do for now.
 +   // If this is an issue, PRs are welcome
 +   public final BlockPos getSpawnPoint(ServerLevel worldserver) {
@@ -108,14 +116,59 @@
 +      return blockposition;
 +   }
 +   // CraftBukkit end
-+
+ 
     private void m_9201_(ServerLevel p_9202_) {
        BlockPos blockpos = p_9202_.m_220360_();
-       if (p_9202_.m_6042_().f_223549_() && p_9202_.m_7654_().m_129910_().m_5464_() != GameType.ADVENTURE) {
-@@ -356,6 +_,29 @@
+@@ -303,10 +_,20 @@
+          this.f_8929_.m_12794_(p_9131_.m_128469_("recipeBook"), this.f_8924_.m_129894_());
+       }
  
-    }
++      this.getBukkitEntity().readExtraData(p_9131_); // CraftBukkit
++
+       if (this.m_5803_()) {
+          this.m_5796_();
+       }
  
++      // CraftBukkit start
++      String spawnWorld = p_9131_.m_128461_("SpawnWorld");
++      CraftWorld oldWorld = (CraftWorld) Bukkit.getWorld(spawnWorld);
++      if (oldWorld != null) {
++         this.f_8935_ = oldWorld.getHandle().m_46472_();
++      }
++      // CraftBukkit end
++
+       if (p_9131_.m_128425_("SpawnX", 99) && p_9131_.m_128425_("SpawnY", 99) && p_9131_.m_128425_("SpawnZ", 99)) {
+          this.f_8936_ = new BlockPos(p_9131_.m_128451_("SpawnX"), p_9131_.m_128451_("SpawnY"), p_9131_.m_128451_("SpawnZ"));
+          this.f_8937_ = p_9131_.m_128471_("SpawnForced");
+@@ -332,7 +_,19 @@
+ 
+       Entity entity1 = this.m_20201_();
+       Entity entity = this.m_20202_();
+-      if (entity != null && entity1 != this && entity1.m_146898_()) {
++      // CraftBukkit start - handle non-persistent vehicles
++      boolean persistVehicle = true;
++      if (entity1 != null) {
++         Entity vehicle;
++         for (vehicle = entity1; vehicle != null; vehicle = vehicle.m_20202_()) {
++            if (!vehicle.persist) {
++               persistVehicle = false;
++               break;
++            }
++         }
++      }
++      if (persistVehicle && entity != null && entity1 != this && entity1.m_146898_()) {
++         // CraftBukkit end
+          CompoundTag compoundtag1 = new CompoundTag();
+          CompoundTag compoundtag2 = new CompoundTag();
+          entity1.m_20223_(compoundtag2);
+@@ -354,7 +_,31 @@
+          });
+       }
+ 
+-   }
++      this.getBukkitEntity().setExtraData(p_9197_); // CraftBukkit
++   }
++
 +   // CraftBukkit start - World fallback code, either respawn location or global spawn
 +   public void spawnIn(Level world) {
 +      this.f_19853_ = world;
@@ -138,11 +191,74 @@
 +      this.f_8941_.m_9260_((ServerLevel) world);
 +   }
 +   // CraftBukkit end
-+
+ 
     public void m_8985_(int p_8986_) {
        float f = (float)this.m_36323_();
-       float f1 = (f - 1.0F) / f;
-@@ -550,6 +_,7 @@
+@@ -406,6 +_,11 @@
+    }
+ 
+    public void m_8119_() {
++      // CraftBukkit start
++      if (this.joining) {
++         this.joining = false;
++      }
++      // CraftBukkit end
+       this.f_8941_.m_7712_();
+       --this.f_8921_;
+       if (this.f_19802_ > 0) {
+@@ -458,7 +_,7 @@
+          }
+ 
+          if (this.m_21223_() != this.f_8917_ || this.f_8918_ != this.f_36097_.m_38702_() || this.f_36097_.m_38722_() == 0.0F != this.f_8919_) {
+-            this.f_8906_.m_9829_(new ClientboundSetHealthPacket(this.m_21223_(), this.f_36097_.m_38702_(), this.f_36097_.m_38722_()));
++            this.f_8906_.m_9829_(new ClientboundSetHealthPacket(this.getBukkitEntity().getScaledHealth(), this.f_36097_.m_38702_(), this.f_36097_.m_38722_()));
+             this.f_8917_ = this.m_21223_();
+             this.f_8918_ = this.f_36097_.m_38702_();
+             this.f_8919_ = this.f_36097_.m_38722_() == 0.0F;
+@@ -489,6 +_,12 @@
+             this.m_9104_(ObjectiveCriteria.f_83597_, Mth.m_14167_((float)this.f_8916_));
+          }
+ 
++         // CraftBukkit start - Force max health updates
++         if (this.maxHealthCache != this.m_21233_()) {
++            this.getBukkitEntity().updateScaledHealth();
++         }
++         // CraftBukkit end
++
+          if (this.f_36078_ != this.f_8915_) {
+             this.f_8915_ = this.f_36078_;
+             this.m_9104_(ObjectiveCriteria.f_83598_, Mth.m_14167_((float)this.f_8915_));
+@@ -503,6 +_,20 @@
+             CriteriaTriggers.f_10582_.m_222618_(this);
+          }
+ 
++         // CraftBukkit start - initialize oldLevel, fire PlayerLevelChangeEvent, and tick client-sided world border
++         if (this.oldLevel == -1) {
++            this.oldLevel = this.f_36078_;
++         }
++
++         if (this.oldLevel != this.f_36078_) {
++            CraftEventFactory.callPlayerLevelChangeEvent(this.getBukkitEntity(), this.oldLevel, this.f_36078_);
++            this.oldLevel = this.f_36078_;
++         }
++
++         if (this.getBukkitEntity().hasClientWorldBorder()) {
++            ((CraftWorldBorder) this.getBukkitEntity().getWorldBorder()).getHandle().m_61969_();
++         }
++         // CraftBukkit end
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking player");
+          CrashReportCategory crashreportcategory = crashreport.m_127514_("Player being ticked");
+@@ -543,13 +_,15 @@
+    }
+ 
+    private void m_9104_(ObjectiveCriteria p_9105_, int p_9106_) {
+-      this.m_36329_().m_83427_(p_9105_, this.m_6302_(), (p_9178_) -> {
++      // CraftBukkit - Use our scores instead
++      this.f_19853_.getCraftServer().getScoreboardManager().getScoreboardScores(p_9105_, this.m_6302_(), (p_9178_) -> {
+          p_9178_.m_83402_(p_9106_);
+       });
+    }
  
     public void m_6667_(DamageSource p_9035_) {
        this.m_146850_(GameEvent.f_223707_);
@@ -150,6 +266,16 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
+@@ -677,7 +_,8 @@
+    }
+ 
+    private boolean m_9216_() {
+-      return this.f_8924_.m_129799_();
++      // CraftBukkit - this.server.isPvpAllowed() -> this.level.pvpMode
++      return this.f_19853_.pvpMode;
+    }
+ 
+    @Nullable
 @@ -692,11 +_,12 @@
     }
  

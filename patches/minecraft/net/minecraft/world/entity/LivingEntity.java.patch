@@ -225,7 +225,7 @@
        if (p_21096_.m_128425_("Health", 99)) {
           this.m_21153_(p_21096_.m_128457_("Health"));
        }
-@@ -730,9 +_,31 @@
+@@ -730,9 +_,32 @@
  
     }
  
@@ -253,7 +253,7 @@
 +
     protected void m_21217_() {
        Iterator<MobEffect> iterator = this.f_20945_.keySet().iterator();
--
+ 
 +      isTickingEffects = true; // CraftBukkit
        try {
           while(iterator.hasNext()) {
@@ -466,7 +466,7 @@
     protected void m_142540_(MobEffectInstance p_147190_, @Nullable Entity p_147191_) {
        this.f_20948_ = true;
        if (!this.f_19853_.f_46443_) {
-@@ -986,18 +_,48 @@
+@@ -986,18 +_,53 @@
     }
  
     public void m_5634_(float p_21116_) {
@@ -494,6 +494,11 @@
     }
  
     public float m_21223_() {
++      // CraftBukkit start - Use unscaled health
++      if (this instanceof ServerPlayer serverPlayer) {
++         return (float) serverPlayer.getBukkitEntity().getHealth();
++      }
++      // CraftBukkit end
        return this.f_19804_.m_135370_(f_20961_);
     }
 -
@@ -517,7 +522,7 @@
        this.f_19804_.m_135381_(f_20961_, Mth.m_14036_(p_21154_, 0.0F, this.m_21233_()));
     }
  
-@@ -1006,11 +_,12 @@
+@@ -1006,12 +_,15 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -526,11 +531,13 @@
           return false;
        } else if (this.f_19853_.f_46443_) {
           return false;
--      } else if (this.m_21224_()) {
-+      } else if (this.m_213877_() || this.f_20890_ || this.m_21223_() <= 0.0F) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
+       } else if (this.m_21224_()) {
           return false;
++      } else if (this.m_213877_() || this.f_20890_ || this.m_21223_() <= 0.0F) { // CraftBukkit - Don't allow entities that got set to dead/killed elsewhere to get damaged and die
++         return false;
        } else if (p_21016_.m_19384_() && this.m_21023_(MobEffects.f_19607_)) {
           return false;
+       } else {
 @@ -1024,9 +_,11 @@
           boolean flag = false;
           float f1 = 0.0F;
@@ -963,6 +970,20 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
+@@ -2748,11 +_,11 @@
+    }
+ 
+    public boolean m_6087_() {
+-      return !this.m_213877_();
++      return !this.m_213877_() && this.collides; // CraftBukkit
+    }
+ 
+    public boolean m_6094_() {
+-      return this.m_6084_() && !this.m_5833_() && !this.m_6147_();
++      return this.m_6084_() && !this.m_5833_() && !this.m_6147_() && this.collides; // CraftBukkit
+    }
+ 
+    public float m_6080_() {
 @@ -2809,8 +_,16 @@
  
     private void m_21329_() {

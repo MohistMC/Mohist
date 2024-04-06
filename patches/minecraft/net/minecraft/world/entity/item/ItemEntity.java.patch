@@ -17,7 +17,7 @@
  
  public class ItemEntity extends Entity {
     private static final EntityDataAccessor<ItemStack> f_31984_ = SynchedEntityData.m_135353_(ItemEntity.class, EntityDataSerializers.f_135033_);
-@@ -43,6 +_,11 @@
+@@ -43,6 +_,10 @@
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;
@@ -25,7 +25,6 @@
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
 +   public int lifespan = 6000;
-+   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
