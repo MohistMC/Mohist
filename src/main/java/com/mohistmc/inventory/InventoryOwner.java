@@ -55,7 +55,7 @@ public class InventoryOwner {
     public static InventoryHolder get(IInventory inventory) {
         try {
             return inventory.getOwner();
-        } catch (AbstractMethodError e) {
+        } catch (AbstractMethodError | NullPointerException e) {
             return (inventory instanceof TileEntity) ? get((TileEntity) inventory) : null;
         }
     }
