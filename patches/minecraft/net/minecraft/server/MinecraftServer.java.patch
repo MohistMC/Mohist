@@ -249,7 +249,7 @@
        if (profiledduration != null) {
           profiledduration.m_185413_();
        }
-@@ -336,11 +_,13 @@
+@@ -336,11 +_,14 @@
        List<CustomSpawner> list = ImmutableList.of(new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(serverleveldata));
        LevelStem levelstem = registry.m_6246_(LevelStem.f_63971_);
        ServerLevel serverlevel = new ServerLevel(this, this.f_129738_, this.f_129744_, serverleveldata, Level.f_46428_, levelstem, p_129816_, flag, j, list, true);
@@ -257,6 +257,7 @@
        this.f_129762_.put(Level.f_46428_, serverlevel);
        DimensionDataStorage dimensiondatastorage = serverlevel.m_8895_();
        this.m_129841_(dimensiondatastorage);
++      this.server.scoreboardManager = new org.bukkit.craftbukkit.v1_19_R3.scoreboard.CraftScoreboardManager(this, serverlevel.m_6188_());
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
