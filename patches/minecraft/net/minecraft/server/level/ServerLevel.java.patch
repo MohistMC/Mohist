@@ -10,7 +10,14 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
-@@ -20,6 +_,7 @@
+@@ -14,12 +_,14 @@
+ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+ import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
++import java.io.File;
+ import java.io.IOException;
+ import java.io.Writer;
+ import java.nio.file.Files;
  import java.nio.file.Path;
  import java.util.ArrayList;
  import java.util.Comparator;
@@ -42,6 +49,14 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.SnowLayerBlock;
+@@ -122,6 +_,7 @@
+ import net.minecraft.world.level.chunk.LevelChunkSection;
+ import net.minecraft.world.level.chunk.storage.EntityStorage;
+ import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
++import net.minecraft.world.level.dimension.DimensionType;
+ import net.minecraft.world.level.dimension.LevelStem;
+ import net.minecraft.world.level.dimension.end.EndDragonFight;
+ import net.minecraft.world.level.entity.EntityPersistentStorage;
 @@ -133,7 +_,9 @@
  import net.minecraft.world.level.gameevent.DynamicGameEventListener;
  import net.minecraft.world.level.gameevent.GameEvent;
@@ -63,19 +78,21 @@
  import net.minecraft.world.level.storage.ServerLevelData;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-@@ -152,7 +_,17 @@
+@@ -152,7 +_,19 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_19_R3.generator.CraftWorldInfo;
 +import org.bukkit.craftbukkit.v1_19_R3.generator.CustomWorldChunkManager;
 +import org.bukkit.craftbukkit.v1_19_R3.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.world.TimeSkipEvent;
++import org.bukkit.generator.WorldInfo;
  import org.slf4j.Logger;
 +import org.spigotmc.SpigotWorldConfig;
  
@@ -90,7 +107,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -185,13 +_,36 @@
+@@ -185,23 +_,71 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -105,6 +122,7 @@
 +   public PrimaryLevelData serverLevelDataCB;
 +   public final LevelStorageSource.LevelStorageAccess convertable;
 +   public final UUID uuid;
++   public final String name;
 +
 +   public LevelChunk getChunkIfLoaded(int x, int z) {
 +      return this.f_8547_.m_62227_(x, z, false);
@@ -119,7 +137,9 @@
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
 +      this.pvpMode = p_214999_.m_129799_();
 +      convertable = p_215001_;
-+      uuid = WorldUUID.getUUID(p_215001_.f_230867_.f_230850_().toFile());
++      File worldFile = DimensionType.m_196975_(p_215003_, p_215001_.f_230867_.f_230850_()).toFile();
++      uuid = Level2LevelStem.bukkit != null ? WorldUUID.getUUID(Level2LevelStem.bukkit) : WorldUUID.getUUID(worldFile);
++      name = Level2LevelStem.bukkit != null ? Level2LevelStem.bukkit_name : worldFile.getName();
 +      if (p_215002_ instanceof PrimaryLevelData) {
 +         this.serverLevelDataCB = (PrimaryLevelData) p_215002_;
 +      } else if (p_215002_ instanceof DerivedLevelData) {
@@ -128,7 +148,31 @@
        this.f_8561_ = p_215009_;
        this.f_8548_ = p_214999_;
        this.f_8558_ = p_215008_;
-@@ -201,7 +_,7 @@
+       this.f_8549_ = p_215002_;
+       ChunkGenerator chunkgenerator = p_215004_.f_63976_();
++      // CraftBukkit start
++      serverLevelDataCB.setWorld(this);
++      if (biomeProvider != null) {
++         WorldInfo worldInfo = new CraftWorldInfo(serverLevelDataCB, p_215001_, environment, p_215004_.f_63975_().m_203334_());
++         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
++         if (chunkgenerator instanceof NoiseBasedChunkGenerator cga) {
++            chunkgenerator = new NoiseBasedChunkGenerator(worldChunkManager, cga.f_64318_);
++         } else if (chunkgenerator instanceof FlatLevelSource cpf) {
++            chunkgenerator = new FlatLevelSource(cpf.m_64191_(), worldChunkManager);
++         }
++      } else {
++         biomeProvider = getCraftServer().getBiomeProvider(name);
++      }
++
++      if (generator != null) {
++         chunkgenerator = new org.bukkit.craftbukkit.v1_19_R3.generator.CustomChunkGenerator(this, chunkgenerator, generator);
++      } else {
++         generator = getCraftServer().getGenerator(name);
++      }
++
++      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
++      // CraftBukkit end
+       boolean flag = p_214999_.m_6365_();
        DataFixer datafixer = p_214999_.m_129933_();
        EntityPersistentStorage<Entity> entitypersistentstorage = new EntityStorage(this, p_215001_.m_197394_(p_215003_).resolve("entities"), datafixer, flag, p_214999_);
        this.f_143244_ = new PersistentEntitySectionManager<>(Entity.class, new ServerLevel.EntityCallbacks(), entitypersistentstorage);
@@ -137,16 +181,14 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -229,6 +_,12 @@
+@@ -229,6 +_,10 @@
  
        this.f_143245_ = new SleepStatus();
        this.f_243695_ = new GameEventDispatcher(this);
-+      this.initCapabilities();
-+      this.spigotConfig = new SpigotWorldConfig(p_215002_.m_5462_());
++
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
-+      m_6857_().world = this;
-+      serverLevelDataCB.setWorld(this);
++      this.initCapabilities();
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {

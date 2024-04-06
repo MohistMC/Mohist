@@ -1860,6 +1860,35 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         return new CraftStructureSearchResult(CraftStructure.minecraftToBukkit(found.getSecond().value(), getHandle().registryAccess()), CraftLocation.toBukkit(found.getFirst(), this));
     }
 
+    // Mohist start
+    private boolean isbukkit = false;
+    @Override
+    public boolean isBukkit() {
+        return isbukkit;
+    }
+
+    @Override
+    public void setBukkit(boolean b) {
+        isbukkit = b;
+    }
+
+    @Override
+    public boolean isMods() {
+        String path = getWorldFolder().getAbsolutePath().replaceAll("\\\\", "/");
+        return !isBukkit() && path.contains("/world/dimensions/");
+    }
+
+    @Override
+    public String getModid() {
+        String path = getWorldFolder().getAbsolutePath().replaceAll("\\\\", "/");
+        String modName = "";
+        if(path.contains("/world/dimensions/")) {
+            modName = path.split("/world/dimensions/")[1].split("/")[0];
+        }
+        return modName;
+    }
+    // Mohist end
+
     // Spigot start
     @Override
     public int getViewDistance() {
@@ -1870,9 +1899,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
     public int getSimulationDistance() {
         return world.spigotConfig.simulationDistance;
     }
-    // Spigot end
 
-    // Spigot start
     private final Spigot spigot = new Spigot() {
 
         @Override

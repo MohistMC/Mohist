@@ -49,11 +49,12 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.level.entity.LevelEntityGetter;
  import net.minecraft.world.level.gameevent.GameEvent;
-@@ -69,8 +_,16 @@
+@@ -69,8 +_,17 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
 +import org.bukkit.Bukkit;
++import org.bukkit.World;
 +import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 +import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 +import org.bukkit.craftbukkit.v1_19_R3.block.CapturedBlockState;
@@ -67,7 +68,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
-@@ -102,17 +_,63 @@
+@@ -102,19 +_,64 @@
     private final RandomSource f_220348_ = RandomSource.m_216337_();
     private final ResourceKey<DimensionType> f_220349_;
     private final Holder<DimensionType> f_204147_;
@@ -122,7 +123,8 @@
  
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
-+      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(MinecraftServer.getServer().f_129744_.m_197394_(p_270683_).getFileName().toFile().getName()); // Spigot // Mohist
+       this.f_46446_ = p_270692_;
+       this.f_46442_ = p_270739_;
 +      // CraftBukkit Ticks things
 +      for (SpawnCategory spawnCategory : SpawnCategory.values()) {
 +         if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
@@ -130,9 +132,9 @@
 +         }
 +      }
 +      // CraftBukkit end
-       this.f_46446_ = p_270692_;
-       this.f_46442_ = p_270739_;
        this.f_204147_ = p_270240_;
+       this.f_220349_ = p_270240_.m_203543_().orElseThrow(() -> {
+          return new IllegalArgumentException("Dimension must be registered, got " + p_270240_);
 @@ -125,11 +_,11 @@
        if (dimensiontype.f_63859_() != 1.0D) {
           this.f_46447_ = new WorldBorder() {
@@ -147,12 +149,15 @@
              }
           };
        } else {
-@@ -142,6 +_,43 @@
+@@ -142,6 +_,46 @@
        this.f_220350_ = new CollectingNeighborUpdater(this, p_270466_);
        this.f_268710_ = p_270200_;
        this.f_268497_ = new DamageSources(p_270200_);
 +      // CraftBukkit start
-+      m_6857_().world = (ServerLevel) this;
++      if (environment == null) {
++         environment = ForgeInjectBukkit.environment.getOrDefault(getTypeKey(), World.Environment.CUSTOM);
++      }
++      m_6857_().world = this;
 +      // From PlayerList.setPlayerFileData
 +      m_6857_().m_61929_(new BorderChangeListener() {
 +
