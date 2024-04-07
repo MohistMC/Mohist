@@ -23,30 +23,32 @@ public class EntityClear {
     public static final ScheduledExecutorService ENTITYCLEAR_MONSTER = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("EntityClear - Item"));
 
     public static void start() {
-        ENTITYCLEAR_ITEM.scheduleAtFixedRate(() -> {
-            if (MinecraftServer.getServer().hasStopped()) {
-                return;
-            }
-            run_item();
-        }, 1000 * 60, 1000L * MohistConfig.clear_item_time, TimeUnit.MILLISECONDS);
-        ENTITYCLEAR_MONSTER.scheduleAtFixedRate(() -> {
-            if (MinecraftServer.getServer().hasStopped()) {
-                return;
-            }
-            run_monster();
-        }, 1000 * 60, 1000L * MohistConfig.clear_monster_time, TimeUnit.MILLISECONDS);
+        if (MohistConfig.clear_item) {
+            ENTITYCLEAR_ITEM.scheduleAtFixedRate(() -> {
+                if (MinecraftServer.getServer().hasStopped()) {
+                    return;
+                }
+                run_item();
+            }, 1000 * 60, 1000L * MohistConfig.clear_item_time, TimeUnit.MILLISECONDS);
+        }
+        if (MohistConfig.clear_monster) {
+            ENTITYCLEAR_MONSTER.scheduleAtFixedRate(() -> {
+                if (MinecraftServer.getServer().hasStopped()) {
+                    return;
+                }
+                run_monster();
+            }, 1000 * 60, 1000L * MohistConfig.clear_monster_time, TimeUnit.MILLISECONDS);
+        }
     }
 
     public static void run_item() {
         AtomicInteger size_item = new AtomicInteger(0);
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                if (MohistConfig.clear_item) {
-                    if (entity instanceof Item item) {
-                        if (!MohistConfig.clear_item_whitelist.contains(item.getItemStack().getType().name())) {
-                            entity.remove();
-                            size_item.addAndGet(1);
-                        }
+                if (entity instanceof Item item) {
+                    if (!MohistConfig.clear_item_whitelist.contains(item.getItemStack().getType().name())) {
+                        entity.remove();
+                        size_item.addAndGet(1);
                     }
                 }
             }
@@ -60,12 +62,10 @@ public class EntityClear {
         AtomicInteger size_monster = new AtomicInteger(0);
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                if (MohistConfig.clear_monster) {
-                    if (entity instanceof Monster monster) {
-                        if (!MohistConfig.clear_monster_whitelist.contains(monster.getType().name()) && monster.getCustomName() == null) {
-                            entity.remove();
-                            size_monster.addAndGet(1);
-                        }
+                if (entity instanceof Monster monster) {
+                    if (!MohistConfig.clear_monster_whitelist.contains(monster.getType().name()) && monster.getCustomName() == null) {
+                        entity.remove();
+                        size_monster.addAndGet(1);
                     }
                 }
             }

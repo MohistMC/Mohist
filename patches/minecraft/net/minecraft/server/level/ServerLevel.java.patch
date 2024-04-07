@@ -162,13 +162,13 @@
 +            chunkgenerator = new FlatLevelSource(cpf.m_64191_(), worldChunkManager);
 +         }
 +      } else {
-+         biomeProvider = getCraftServer().getBiomeProvider(p_215002_.m_5462_());
++         biomeProvider = getCraftServer().getBiomeProvider(name);
 +      }
 +
 +      if (generator != null) {
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      } else {
-+         generator = getCraftServer().getGenerator(p_215002_.m_5462_());
++         generator = getCraftServer().getGenerator(name);
 +      }
 +
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist

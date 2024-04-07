@@ -1,13 +1,16 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -1,5 +_,7 @@
+@@ -1,7 +_,10 @@
  package net.minecraft.server.level;
  
 +import com.mohistmc.api.ItemAPI;
 +import com.mohistmc.plugins.ban.bans.BanItem;
  import com.mojang.logging.LogUtils;
  import java.util.Objects;
++import java.util.concurrent.atomic.AtomicBoolean;
  import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.core.BlockPos;
 @@ -9,21 +_,32 @@
  import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -283,7 +286,7 @@
 +   public InteractionHand interactHand;
 +   public ItemStack interactItemStack;
 +   public InteractionResult enuminteractionresult;
-+   public boolean cancelledBlock = false;
++   public AtomicBoolean cancelledBlock = new AtomicBoolean(false);
 +   public PlayerInteractEvent eventCB;
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
 +      if (BanItem.check(p_9266_, p_9268_)) return InteractionResult.FAIL;
@@ -299,14 +302,14 @@
 +      if (event.isCanceled()) return event.getCancellationResult();
 +      if (this.f_9247_ == GameType.SPECTATOR) {
 +         MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
-+         cancelledBlock = !(menuprovider instanceof MenuProvider);
++         cancelledBlock.set(!(menuprovider instanceof MenuProvider));
 +      }
 +
 +      if (p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
-+         cancelledBlock = true;
++         cancelledBlock.set(true);
 +      }
 +
-+      eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock, p_9269_, p_9270_.m_82450_());
++      eventCB = CraftEventFactory.callPlayerInteractEvent(p_9266_, Action.RIGHT_CLICK_BLOCK, blockpos, p_9270_.m_82434_(), p_9268_, cancelledBlock.getAndSet(false), p_9269_, p_9270_.m_82450_());
 +      firedInteract = true;
 +      interactResult = eventCB.useItemInHand() == Event.Result.DENY;
 +      interactPosition = blockpos.m_7949_();
