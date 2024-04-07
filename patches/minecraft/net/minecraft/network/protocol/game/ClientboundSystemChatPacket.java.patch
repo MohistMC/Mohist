@@ -1,40 +1,99 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -4,18 +_,35 @@
+@@ -1,24 +_,79 @@
+ package net.minecraft.network.protocol.game;
+ 
++import java.util.Objects;
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.chat.ComponentSerializer;
+ import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.protocol.Packet;
  
 -public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
-+public record ClientboundSystemChatPacket(String a, boolean overlay) implements Packet<ClientGamePacketListener> {
-+
-+   public ClientboundSystemChatPacket(Component content, boolean overlay) {
-+      this(Component.Serializer.toJson(content), overlay);
-+   }
-+
-+   public ClientboundSystemChatPacket(net.md_5.bungee.api.chat.BaseComponent[] content, boolean overlay) {
-+      this(content.length == 1 ? net.md_5.bungee.chat.ComponentSerializer.toString(content[0]) : net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
-+   }
-+   // Spigot end
-    public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
-       this(p_237852_.readComponent(), p_237852_.readBoolean());
-    }
- 
-    public void write(FriendlyByteBuf p_237860_) {
+-   public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
+-      this(p_237852_.readComponent(), p_237852_.readBoolean());
+-   }
+-
+-   public void write(FriendlyByteBuf p_237860_) {
 -      p_237860_.writeComponent(this.content);
-+      p_237860_.writeUtf(this.a, 262144); // Spigot
-       p_237860_.writeBoolean(this.overlay);
-    }
- 
-    public void handle(ClientGamePacketListener p_237864_) {
-       p_237864_.handleSystemChat(this);
+-      p_237860_.writeBoolean(this.overlay);
+-   }
+-
+-   public void handle(ClientGamePacketListener p_237864_) {
+-      p_237864_.handleSystemChat(this);
+-   }
+-
+-   public boolean isSkippable() {
+-      return true;
+-   }
++public final class ClientboundSystemChatPacket implements Packet<ClientGamePacketListener> {
++    private final Component content;
++    private final boolean overlay;
++    private final String content0;
++
++    public ClientboundSystemChatPacket(Component content, boolean overlay) {
++       this.content = content;
++       this.overlay = overlay;
++       this.content0 = Component.Serializer.toJson(content);
++    }
++
++   public ClientboundSystemChatPacket(String content, boolean overlay) {
++      this(Component.Serializer.fromJson(content), overlay);
 +   }
 +
-+   public Component content() {
-+      return Component.Serializer.fromJson(a);
-+   }
++    public ClientboundSystemChatPacket(BaseComponent[] content, boolean overlay) {
++        this(content.length == 1 ? ComponentSerializer.toString(content[0]) : ComponentSerializer.toString(content), overlay);
++    }
 +
-+   public String content0() {
-+      return a;
-    }
- 
-    public boolean isSkippable() {
++    public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
++        this(p_237852_.readComponent(), p_237852_.readBoolean());
++    }
++
++    public void write(FriendlyByteBuf p_237860_) {
++        p_237860_.writeUtf(this.content0, 262144); // Spigot
++        p_237860_.writeBoolean(this.overlay);
++    }
++
++    public void handle(ClientGamePacketListener p_237864_) {
++        p_237864_.handleSystemChat(this);
++    }
++
++    public Component content() {
++       return content;
++    }
++
++    public String content0() {
++        return content0;
++    }
++
++    public boolean isSkippable() {
++        return true;
++    }
++
++    public boolean overlay() {
++        return overlay;
++    }
++
++    @Override
++    public boolean equals(Object obj) {
++        if (obj == this) return true;
++        if (obj == null || obj.getClass() != this.getClass()) return false;
++        var that = (ClientboundSystemChatPacket) obj;
++        return Objects.equals(this.content, that.content) &&
++                this.overlay == that.overlay;
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(content, overlay);
++    }
++
++    @Override
++    public String toString() {
++        return "ClientboundSystemChatPacket[" +
++                "a=" + content + ", " +
++                "overlay=" + overlay + ']';
++    }
++
+ }
