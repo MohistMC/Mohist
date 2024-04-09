@@ -14,8 +14,8 @@ public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEnt
         super(world, te);
     }
 
-    protected CraftEndGateway(CraftEndGateway state) {
-        super(state);
+    protected CraftEndGateway(CraftEndGateway state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -66,6 +66,11 @@ public class CraftEndGateway extends CraftBlockEntityState<TheEndGatewayBlockEnt
 
     @Override
     public CraftEndGateway copy() {
-        return new CraftEndGateway(this);
+        return new CraftEndGateway(this, null);
+    }
+
+    @Override
+    public CraftEndGateway copy(Location location) {
+        return new CraftEndGateway(this, location);
     }
 }

@@ -18,7 +18,7 @@
                    if (j == 0) {
                       ThrownTrident throwntrident = new ThrownTrident(p_43395_, player, p_43394_);
                       throwntrident.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F + (float)j * 0.5F, 1.0F);
-@@ -67,16 +_,39 @@
+@@ -67,11 +_,30 @@
                          throwntrident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                       }
  
@@ -50,12 +50,11 @@
                    }
                 }
  
-                player.awardStat(Stats.ITEM_USED.get(this));
-                if (j > 0) {
-+                  // CraftBukkit start
-+                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) player.getBukkitEntity(), CraftItemStack.asCraftMirror(p_43394_));
-+                  event.getPlayer().getServer().getPluginManager().callEvent(event);
-+                  // CraftBukkit end
-                   float f7 = player.getYRot();
-                   float f = player.getXRot();
-                   float f1 = -Mth.sin(f7 * ((float)Math.PI / 180F)) * Mth.cos(f * ((float)Math.PI / 180F));
+@@ -87,6 +_,7 @@
+                   f1 *= f5 / f4;
+                   f2 *= f5 / f4;
+                   f3 *= f5 / f4;
++                  org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerRiptideEvent(player, p_43394_, f1, f2, f3); // CraftBukkit
+                   player.push((double)f1, (double)f2, (double)f3);
+                   player.startAutoSpinAttack(20);
+                   if (player.onGround()) {

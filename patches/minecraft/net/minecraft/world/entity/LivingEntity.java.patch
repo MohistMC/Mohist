@@ -85,7 +85,7 @@
     public static final int HAND_SLOTS = 2;
     public static final int ARMOR_SLOTS = 4;
     public static final int EQUIPMENT_SLOT_OFFSET = 98;
-@@ -206,7 +_,7 @@
+@@ -206,14 +_,14 @@
     public boolean effectsDirty = true;
     @Nullable
     public LivingEntity lastHurtByMob;
@@ -94,6 +94,14 @@
     private LivingEntity lastHurtMob;
     private int lastHurtMobTimestamp;
     private float speed;
+    private int noJumpDelay;
+    private float absorptionAmount;
+    protected ItemStack useItem = ItemStack.EMPTY;
+-   protected int useItemRemaining;
++   public int useItemRemaining;
+    protected int fallFlyTicks;
+    private BlockPos lastPos;
+    private Optional<BlockPos> lastClimbablePos = Optional.empty();
 @@ -224,7 +_,26 @@
     private float swimAmount;
     private float swimAmountO;

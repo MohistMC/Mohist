@@ -21,6 +21,7 @@ import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftBlockState implements org.bukkit.block.BlockState {
     protected final CraftWorld world;
@@ -48,10 +49,15 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
         data = blockData;
     }
 
-    // Creates a unplaced copy (world == null copy)
-    protected CraftBlockState(CraftBlockState state) {
-        this.world = null;
-        this.position = state.getPosition().immutable();
+    // Creates an unplaced copy of the given CraftBlockState at the given location
+    protected CraftBlockState(CraftBlockState state, @Nullable Location location) {
+        if (location == null) {
+            this.world = null;
+            this.position = state.getPosition().immutable();
+        } else {
+            this.world = (CraftWorld) location.getWorld();
+            this.position = CraftLocation.toBlockPosition(location);
+        }
         this.data = state.data;
         this.flag = state.flag;
         setWorldHandle(state.getWorldHandle());
@@ -328,6 +334,11 @@ public class CraftBlockState implements org.bukkit.block.BlockState {
 
     @Override
     public CraftBlockState copy() {
-        return new CraftBlockState(this);
+        return new CraftBlockState(this, null);
+    }
+
+    @Override
+    public org.bukkit.block.BlockState copy(Location location) {
+        return new CraftBlockState(this, location);
     }
 }

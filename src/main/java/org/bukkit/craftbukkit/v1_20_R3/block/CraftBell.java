@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Bell;
 import org.bukkit.block.BlockFace;
@@ -18,8 +19,8 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
         super(world, te);
     }
 
-    protected CraftBell(CraftBell state) {
-        super(state);
+    protected CraftBell(CraftBell state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -74,6 +75,11 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
 
     @Override
     public CraftBell copy() {
-        return new CraftBell(this);
+        return new CraftBell(this, null);
+    }
+
+    @Override
+    public CraftBell copy(Location location) {
+        return new CraftBell(this, location);
     }
 }

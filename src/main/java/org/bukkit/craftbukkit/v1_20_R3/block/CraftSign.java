@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
@@ -29,15 +30,20 @@ public class CraftSign<T extends SignBlockEntity> extends CraftBlockEntityState<
         this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
-    protected CraftSign(CraftSign<T> state) {
-        super(state);
+    protected CraftSign(CraftSign<T> state, Location location) {
+        super(state, location);
         this.front = new CraftSignSide(this.getSnapshot().getFrontText());
         this.back = new CraftSignSide(this.getSnapshot().getBackText());
     }
 
     @Override
     public CraftSign<T> copy() {
-        return new CraftSign<T>(this);
+        return new CraftSign<T>(this, null);
+    }
+
+    @Override
+    public CraftSign<T> copy(Location location) {
+        return new CraftSign<T>(this, location);
     }
 
     public static void openSign(Sign sign, Player player, Side side) {

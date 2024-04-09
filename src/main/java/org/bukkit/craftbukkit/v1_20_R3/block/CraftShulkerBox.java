@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
@@ -17,8 +18,8 @@ public class CraftShulkerBox extends CraftLootable<ShulkerBoxBlockEntity> implem
         super(world, te);
     }
 
-    protected CraftShulkerBox(CraftShulkerBox state) {
-        super(state);
+    protected CraftShulkerBox(CraftShulkerBox state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -66,6 +67,11 @@ public class CraftShulkerBox extends CraftLootable<ShulkerBoxBlockEntity> implem
 
     @Override
     public CraftShulkerBox copy() {
-        return new CraftShulkerBox(this);
+        return new CraftShulkerBox(this, null);
+    }
+
+    @Override
+    public CraftShulkerBox copy(Location location) {
+        return new CraftShulkerBox(this, location);
     }
 }

@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.EnchantingTable;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
@@ -11,8 +12,8 @@ public class CraftEnchantingTable extends CraftBlockEntityState<EnchantmentTable
         super(world, te);
     }
 
-    protected CraftEnchantingTable(CraftEnchantingTable state) {
-        super(state);
+    protected CraftEnchantingTable(CraftEnchantingTable state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -37,6 +38,11 @@ public class CraftEnchantingTable extends CraftBlockEntityState<EnchantmentTable
 
     @Override
     public CraftEnchantingTable copy() {
-        return new CraftEnchantingTable(this);
+        return new CraftEnchantingTable(this, null);
+    }
+
+    @Override
+    public CraftEnchantingTable copy(Location location) {
+        return new CraftEnchantingTable(this, location);
     }
 }

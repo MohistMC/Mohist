@@ -8,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
@@ -22,8 +23,8 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
         super(world, tileEntity);
     }
 
-    protected CraftBanner(CraftBanner state) {
-        super(state);
+    protected CraftBanner(CraftBanner state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -106,6 +107,11 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
 
     @Override
     public CraftBanner copy() {
-        return new CraftBanner(this);
+        return new CraftBanner(this, null);
+    }
+
+    @Override
+    public CraftBanner copy(Location location) {
+        return new CraftBanner(this, location);
     }
 }

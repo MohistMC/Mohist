@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
@@ -11,8 +12,8 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockEntity>
         super(world, te);
     }
 
-    protected CraftCommandBlock(CraftCommandBlock state) {
-        super(state);
+    protected CraftCommandBlock(CraftCommandBlock state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -37,6 +38,11 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockEntity>
 
     @Override
     public CraftCommandBlock copy() {
-        return new CraftCommandBlock(this);
+        return new CraftCommandBlock(this, null);
+    }
+
+    @Override
+    public CraftCommandBlock copy(Location location) {
+        return new CraftCommandBlock(this, location);
     }
 }

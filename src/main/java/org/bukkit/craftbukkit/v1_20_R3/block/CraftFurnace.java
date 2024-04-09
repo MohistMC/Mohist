@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryFurnace;
@@ -20,8 +21,8 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
         super(world, te);
     }
 
-    protected CraftFurnace(CraftFurnace<T> state) {
-        super(state);
+    protected CraftFurnace(CraftFurnace<T> state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -85,4 +86,7 @@ public abstract class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends
 
     @Override
     public abstract CraftFurnace<T> copy();
+
+    @Override
+    public abstract CraftFurnace<T> copy(Location location);
 }

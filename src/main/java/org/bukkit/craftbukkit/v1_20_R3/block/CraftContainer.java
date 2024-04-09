@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.LockCode;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Container;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
@@ -12,8 +13,8 @@ public abstract class CraftContainer<T extends BaseContainerBlockEntity> extends
         super(world, tileEntity);
     }
 
-    protected CraftContainer(CraftContainer<T> state) {
-        super(state);
+    protected CraftContainer(CraftContainer<T> state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -53,4 +54,7 @@ public abstract class CraftContainer<T extends BaseContainerBlockEntity> extends
 
     @Override
     public abstract CraftContainer<T> copy();
+
+    @Override
+    public abstract CraftContainer<T> copy(Location location);
 }

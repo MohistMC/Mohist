@@ -195,7 +195,7 @@
     }
  
     public boolean isClientSide() {
-@@ -194,6 +_,17 @@
+@@ -194,6 +_,18 @@
     }
  
     public boolean setBlock(BlockPos p_46605_, BlockState p_46606_, int p_46607_, int p_46608_) {
@@ -207,6 +207,7 @@
 +            this.capturedBlockStates.put(p_46605_.immutable(), blockstate);
 +         }
 +         blockstate.setData(p_46606_);
++         blockstate.setFlag(p_46607_);
 +         return true;
 +      }
 +      // CraftBukkit end

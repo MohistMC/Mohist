@@ -5,6 +5,7 @@ import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Jukebox;
@@ -20,8 +21,8 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         super(world, te);
     }
 
-    protected CraftJukebox(CraftJukebox state) {
-        super(state);
+    protected CraftJukebox(CraftJukebox state, Location location) {
+        super(state, location);
     }
     @Override
     public JukeboxInventory getSnapshotInventory() {
@@ -153,6 +154,11 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public CraftJukebox copy() {
-        return new CraftJukebox(this);
+        return new CraftJukebox(this, null);
+    }
+
+    @Override
+    public CraftJukebox copy(Location location) {
+        return new CraftJukebox(this, location);
     }
 }

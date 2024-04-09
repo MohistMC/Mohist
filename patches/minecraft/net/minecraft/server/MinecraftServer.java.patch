@@ -882,18 +882,14 @@
     public ChatDecorator getChatDecorator() {
        return ChatDecorator.PLAIN;
     }
-@@ -1835,4 +_,18 @@
+@@ -1835,4 +_,14 @@
           };
        }
     }
 +
++   // CraftBukkit start
 +   public static MinecraftServer getServer() {
 +      return ( Bukkit.getServer() instanceof CraftServer) ? ((CraftServer) Bukkit.getServer()).getServer() : null;
-+   }
-+
-+   @Override
-+   public boolean isSameThread() {
-+      return super.isSameThread() || this.isStopped(); // CraftBukkit - MC-142590
 +   }
 +
 +   public boolean isDebugging() {

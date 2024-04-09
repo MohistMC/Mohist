@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R3.block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.entity.DropperBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -17,8 +18,8 @@ public class CraftDropper extends CraftLootable<DropperBlockEntity> implements D
         super(world, te);
     }
 
-    protected CraftDropper(CraftDropper state) {
-        super(state);
+    protected CraftDropper(CraftDropper state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -49,6 +50,11 @@ public class CraftDropper extends CraftLootable<DropperBlockEntity> implements D
 
     @Override
     public CraftDropper copy() {
-        return new CraftDropper(this);
+        return new CraftDropper(this, null);
+    }
+
+    @Override
+    public CraftDropper copy(Location location) {
+        return new CraftDropper(this, location);
     }
 }

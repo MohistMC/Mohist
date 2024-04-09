@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.inventory.trim;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
@@ -34,5 +35,11 @@ public class CraftTrimMaterial implements TrimMaterial, Handleable<net.minecraft
     @NotNull
     public NamespacedKey getKey() {
         return key;
+    }
+
+    @NotNull
+    @Override
+    public String getTranslationKey() {
+        return ((TranslatableContents) handle.description().getContents()).getKey();
     }
 }

@@ -254,6 +254,23 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     @Override
+    public int getItemInUseTicks() {
+        return getHandle().getUseItemRemainingTicks();
+    }
+
+    @Override
+    public ItemStack getItemInUse() {
+        net.minecraft.world.item.ItemStack item = getHandle().getUseItem();
+        return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
+    }
+
+
+    @Override
+    public void setItemInUseTicks(int ticks) {
+        getHandle().useItemRemaining = ticks;
+    }
+
+    @Override
     public int getArrowCooldown() {
         return getHandle().removeArrowTime;
     }

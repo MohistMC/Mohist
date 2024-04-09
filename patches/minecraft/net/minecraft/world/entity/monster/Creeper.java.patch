@@ -8,17 +8,26 @@
  import javax.annotation.Nullable;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.syncher.EntityDataAccessor;
-@@ -40,6 +_,9 @@
+@@ -40,6 +_,10 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
 +import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> DATA_SWELL_DIR = SynchedEntityData.defineId(Creeper.class, EntityDataSerializers.INT);
-@@ -196,9 +_,19 @@
+@@ -50,6 +_,7 @@
+    public int maxSwell = 30;
+    public int explosionRadius = 3;
+    private int droppedSkulls;
++   private Player entityIgniter; // CraftBukkit
+ 
+    public Creeper(EntityType<? extends Creeper> p_32278_, Level p_32279_) {
+       super(p_32278_, p_32279_);
+@@ -196,17 +_,28 @@
  
     public void thunderHit(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.thunderHit(p_32286_, p_32287_);
@@ -38,16 +47,17 @@
     protected InteractionResult mobInteract(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.getItemInHand(p_32302_);
        if (itemstack.is(ItemTags.CREEPER_IGNITERS)) {
-@@ -206,7 +_,7 @@
+          SoundEvent soundevent = itemstack.is(Items.FIRE_CHARGE) ? SoundEvents.FIRECHARGE_USE : SoundEvents.FLINTANDSTEEL_USE;
           this.level().playSound(p_32301_, this.getX(), this.getY(), this.getZ(), soundevent, this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
           if (!this.level().isClientSide) {
++            this.entityIgniter = p_32301_; // CraftBukkit
              this.ignite();
 -            if (!itemstack.isDamageableItem()) {
 +            if (itemstack.getItem().getMaxDamage() == 0) { // CraftBukkit - fix MC-264285: unbreakable flint and steels are completely consumed when igniting a creeper
                 itemstack.shrink(1);
              } else {
                 itemstack.hurtAndBreak(1, p_32301_, (p_32290_) -> {
-@@ -221,13 +_,20 @@
+@@ -221,13 +_,21 @@
        }
     }
  
@@ -63,7 +73,8 @@
 +         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.explosionRadius * f, false);
 +         if (!event.isCancelled()) {
 +            this.dead = true;
-+            this.level().explode(this, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.level().explode(this,  net.minecraft.world.level.Explosion.getDefaultDamageSource(this.level(), this).customCausingEntity(this.entityIgniter), null, this.getX(), this.getY(), this.getZ(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.putRemoveCause(EntityRemoveEvent.Cause.EXPLODE); // CraftBukkit - add Bukkit remove cause
 +            this.discard();
 +            this.spawnLingeringCloud();
 +         } else {

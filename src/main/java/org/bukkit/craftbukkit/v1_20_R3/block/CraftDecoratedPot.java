@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.DecoratedPot;
+import org.bukkit.block.DecoratedPot.Side;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryDecoratedPot;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
@@ -23,8 +25,8 @@ public class CraftDecoratedPot extends CraftBlockEntityState<DecoratedPotBlockEn
         super(world, tileEntity);
     }
 
-    protected CraftDecoratedPot(CraftDecoratedPot state) {
-        super(state);
+    protected CraftDecoratedPot(CraftDecoratedPot state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -93,6 +95,11 @@ public class CraftDecoratedPot extends CraftBlockEntityState<DecoratedPotBlockEn
 
     @Override
     public CraftDecoratedPot copy() {
-        return new CraftDecoratedPot(this);
+        return new CraftDecoratedPot(this, null);
+    }
+
+    @Override
+    public CraftDecoratedPot copy(Location location) {
+        return new CraftDecoratedPot(this, location);
     }
 }

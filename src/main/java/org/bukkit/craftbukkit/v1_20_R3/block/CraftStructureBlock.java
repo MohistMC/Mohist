@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.StructureBlockEntity;
 import net.minecraft.world.level.block.state.properties.StructureMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Structure;
 import org.bukkit.block.structure.Mirror;
@@ -22,8 +23,8 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockEnt
         super(world, structure);
     }
 
-    protected CraftStructureBlock(CraftStructureBlock state) {
-        super(state);
+    protected CraftStructureBlock(CraftStructureBlock state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -198,7 +199,12 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockEnt
 
     @Override
     public CraftStructureBlock copy() {
-        return new CraftStructureBlock(this);
+        return new CraftStructureBlock(this, null);
+    }
+
+    @Override
+    public CraftStructureBlock copy(Location location) {
+        return new CraftStructureBlock(this, location);
     }
 
     private static boolean isBetween(int num, int min, int max) {

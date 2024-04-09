@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.Translatable;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @MinecraftExperimental
 @ApiStatus.Experimental
-public interface TrimMaterial extends Keyed {
+public interface TrimMaterial extends Keyed, Translatable {
 
     /**
      * {@link Material#QUARTZ}.

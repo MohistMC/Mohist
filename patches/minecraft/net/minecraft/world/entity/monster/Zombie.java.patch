@@ -20,12 +20,10 @@
  import org.joml.Vector3f;
  
  public class Zombie extends Monster {
-@@ -84,7 +_,8 @@
-    private final BreakDoorGoal breakDoorGoal = new BreakDoorGoal(this, DOOR_BREAKING_PREDICATE);
+@@ -85,6 +_,7 @@
     private boolean canBreakDoors;
     private int inWaterTime;
--   public int conversionTime;
-+   protected int conversionTime;
+    public int conversionTime;
 +   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public Zombie(EntityType<? extends Zombie> p_34271_, Level p_34272_) {

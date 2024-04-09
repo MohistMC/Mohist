@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.level.block.entity.SmokerBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Smoker;
 
@@ -10,12 +11,17 @@ public class CraftSmoker extends CraftFurnace<SmokerBlockEntity> implements Smok
         super(world, te);
     }
 
-    protected CraftSmoker(CraftSmoker state) {
-        super(state);
+    protected CraftSmoker(CraftSmoker state, Location location) {
+        super(state, location);
     }
 
     @Override
     public CraftSmoker copy() {
-        return new CraftSmoker(this);
+        return new CraftSmoker(this, null);
+    }
+
+    @Override
+    public CraftSmoker copy(Location location) {
+        return new CraftSmoker(this, location);
     }
 }

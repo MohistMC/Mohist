@@ -19,8 +19,8 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> impl
         super(world, te);
     }
 
-    protected CraftBeehive(CraftBeehive state) {
-        super(state);
+    protected CraftBeehive(CraftBeehive state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -87,6 +87,11 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveBlockEntity> impl
 
     @Override
     public CraftBeehive copy() {
-        return new CraftBeehive(this);
+        return new CraftBeehive(this, null);
+    }
+
+    @Override
+    public CraftBeehive copy(Location location) {
+        return new CraftBeehive(this, location);
     }
 }

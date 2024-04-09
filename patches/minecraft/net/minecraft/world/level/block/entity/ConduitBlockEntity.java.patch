@@ -1,5 +1,38 @@
 --- a/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
+@@ -3,6 +_,7 @@
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.particles.ParticleTypes;
+@@ -25,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.phys.AABB;
+ import net.minecraft.world.phys.Vec3;
++import org.bukkit.World;
+ 
+ public class ConduitBlockEntity extends BlockEntity {
+    private static final int BLOCK_REFRESH_RATE = 2;
+@@ -38,11 +_,11 @@
+    private float activeRotation;
+    private boolean isActive;
+    private boolean isHunting;
+-   private final List<BlockPos> effectBlocks = Lists.newArrayList();
+-   @Nullable
+-   private LivingEntity destroyTarget;
+-   @Nullable
+-   private UUID destroyTargetUUID;
++   public final List<BlockPos> effectBlocks = Lists.newArrayList();
++   @Nullable
++   public LivingEntity destroyTarget;
++   @Nullable
++   public UUID destroyTargetUUID;
+    private long nextAmbientSoundActivation;
+ 
+    public ConduitBlockEntity(BlockPos p_155397_, BlockState p_155398_) {
 @@ -152,10 +_,8 @@
                    BlockPos blockpos1 = p_155416_.offset(j1, k1, l1);
                    BlockState blockstate = p_155415_.getBlockState(blockpos1);
@@ -21,12 +54,38 @@
                 player.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 260, 0, true, true));
              }
           }
-@@ -203,8 +_,11 @@
+@@ -183,6 +_,23 @@
+       }
+    }
+ 
++   // Mohist start
++   public static int getRange(List<BlockPos> list) {
++      // CraftBukkit end
++      int i = list.size();
++      int j = i / 7 * 16;
++      // CraftBukkit start
++      return j;
++   }
++
++   private static final AtomicBoolean mohist$damageTarget = new AtomicBoolean(true);
++
++   public static void updateDestroyTarget(Level world, BlockPos blockposition, BlockState iblockdata, List<BlockPos> list, ConduitBlockEntity tileentityconduit, boolean damageTarget) {
++      mohist$damageTarget.set(damageTarget);
++      updateDestroyTarget(world, blockposition, iblockdata, list, tileentityconduit);
++   }
++   // Mohist end
++
+    private static void updateDestroyTarget(Level p_155409_, BlockPos p_155410_, BlockState p_155411_, List<BlockPos> p_155412_, ConduitBlockEntity p_155413_) {
+       LivingEntity livingentity = p_155413_.destroyTarget;
+       int i = p_155412_.size();
+@@ -202,9 +_,12 @@
+          p_155413_.destroyTarget = null;
        }
  
-       if (p_155413_.destroyTarget != null) {
+-      if (p_155413_.destroyTarget != null) {
 -         p_155409_.playSound((Player)null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
 -         p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic(), 4.0F);
++      if (mohist$damageTarget.getAndSet(true) && p_155413_.destroyTarget != null) {
 +         // CraftBukkit start
 +         if (p_155413_.destroyTarget.hurt(p_155409_.damageSources().magic().directBlock(p_155409_, p_155410_), 4.0F)) {  // CraftBukkit
 +            p_155409_.playSound(null, p_155413_.destroyTarget.getX(), p_155413_.destroyTarget.getY(), p_155413_.destroyTarget.getZ(), SoundEvents.CONDUIT_ATTACK_TARGET, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -35,3 +94,12 @@
        }
  
        if (livingentity != p_155413_.destroyTarget) {
+@@ -225,7 +_,7 @@
+ 
+    }
+ 
+-   private static AABB getDestroyRangeAABB(BlockPos p_155432_) {
++   public static AABB getDestroyRangeAABB(BlockPos p_155432_) {
+       int i = p_155432_.getX();
+       int j = p_155432_.getY();
+       int k = p_155432_.getZ();

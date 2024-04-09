@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_20_R3.block;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Nameable;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
@@ -15,8 +16,8 @@ public abstract class CraftLootable<T extends RandomizableContainerBlockEntity> 
         super(world, tileEntity);
     }
 
-    protected CraftLootable(CraftLootable<T> state) {
-        super(state);
+    protected CraftLootable(CraftLootable<T> state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -60,4 +61,7 @@ public abstract class CraftLootable<T extends RandomizableContainerBlockEntity> 
 
     @Override
     public abstract CraftLootable<T> copy();
+
+    @Override
+    public abstract CraftLootable<T> copy(Location location);
 }

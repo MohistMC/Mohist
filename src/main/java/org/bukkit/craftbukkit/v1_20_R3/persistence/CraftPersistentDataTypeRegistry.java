@@ -372,7 +372,7 @@ public final class CraftPersistentDataTypeRegistry {
             values.add(this.wrap(listPersistentDataType.elementType(), primitiveValue));
         }
 
-        return new ListTag(values, elementAdapter.nmsTypeByte());
+        return new ListTag(values, values.isEmpty() ? ListTag.TAG_END : elementAdapter.nmsTypeByte());
     }
 
     /**
@@ -422,6 +422,6 @@ public final class CraftPersistentDataTypeRegistry {
         final byte elementType = listTag.getElementType();
         final TagAdapter elementAdapter = this.getOrCreateAdapter(listPersistentDataType.elementType());
 
-        return elementAdapter.nmsTypeByte() == elementType;
+        return elementAdapter.nmsTypeByte() == elementType || elementType == ListTag.TAG_END;
     }
 }

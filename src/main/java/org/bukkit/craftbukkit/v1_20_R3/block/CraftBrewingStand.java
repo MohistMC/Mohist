@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryBrewer;
@@ -12,8 +13,8 @@ public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> i
         super(world, te);
     }
 
-    protected CraftBrewingStand(CraftBrewingStand state) {
-        super(state);
+    protected CraftBrewingStand(CraftBrewingStand state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -52,6 +53,11 @@ public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> i
 
     @Override
     public CraftBrewingStand copy() {
-        return new CraftBrewingStand(this);
+        return new CraftBrewingStand(this, null);
+    }
+
+    @Override
+    public CraftBrewingStand copy(Location location) {
+        return new CraftBrewingStand(this, location);
     }
 }

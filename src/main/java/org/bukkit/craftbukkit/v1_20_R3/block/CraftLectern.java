@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_20_R3.block;
 
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Lectern;
@@ -14,8 +15,8 @@ public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> impl
         super(world, te);
     }
 
-    protected CraftLectern(CraftLectern state) {
-        super(state);
+    protected CraftLectern(CraftLectern state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -55,6 +56,11 @@ public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> impl
 
     @Override
     public CraftLectern copy() {
-        return new CraftLectern(this);
+        return new CraftLectern(this, null);
+    }
+
+    @Override
+    public CraftLectern copy(Location location) {
+        return new CraftLectern(this, location);
     }
 }

@@ -4,6 +4,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Barrel;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
@@ -15,8 +16,8 @@ public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Bar
         super(world, tileEntity);
     }
 
-    protected CraftBarrel(CraftBarrel state) {
-        super(state);
+    protected CraftBarrel(CraftBarrel state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -65,6 +66,11 @@ public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Bar
 
     @Override
     public CraftBarrel copy() {
-        return new CraftBarrel(this);
+        return new CraftBarrel(this, null);
+    }
+
+    @Override
+    public CraftBarrel copy(Location location) {
+        return new CraftBarrel(this, location);
     }
 }

@@ -37,6 +37,7 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftContainer;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryAbstractHorse;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryDoubleChest;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryLectern;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryPlayer;
@@ -274,31 +275,33 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         ServerPlayer player = (ServerPlayer) getHandle();
         AbstractContainerMenu formerContainer = getHandle().containerMenu;
 
-        MenuProvider iinventory = null;
+        MenuProvider tileInventory  = null;
         if (inventory instanceof CraftInventoryDoubleChest) {
-            iinventory = ((CraftInventoryDoubleChest) inventory).tile;
+            tileInventory  = ((CraftInventoryDoubleChest) inventory).tile;
         } else if (inventory instanceof CraftInventoryLectern) {
-            iinventory = ((CraftInventoryLectern) inventory).tile;
+            tileInventory  = ((CraftInventoryLectern) inventory).tile;
         } else if (inventory instanceof CraftInventory) {
             CraftInventory craft = (CraftInventory) inventory;
             if (craft.getInventory() instanceof MenuProvider) {
-                iinventory = (MenuProvider) craft.getInventory();
+                tileInventory  = (MenuProvider) craft.getInventory();
             }
         }
 
-        if (iinventory instanceof MenuProvider) {
-            if (iinventory instanceof BlockEntity) {
-                BlockEntity te = (BlockEntity) iinventory;
+        if (tileInventory  instanceof MenuProvider) {
+            if (tileInventory  instanceof BlockEntity) {
+                BlockEntity te = (BlockEntity) tileInventory ;
                 if (!te.hasLevel()) {
                     te.setLevel(getHandle().level);
                 }
             }
         }
 
-        MenuType<?> container = CraftContainer.getNotchInventoryType(inventory);
-        if (iinventory instanceof MenuProvider) {
-            getHandle().openMenu(iinventory);
+        if (tileInventory  instanceof MenuProvider) {
+            getHandle().openMenu(tileInventory );
+        } else if (inventory instanceof CraftInventoryAbstractHorse craft && craft.getInventory().getOwner() instanceof CraftAbstractHorse horse) {
+            getHandle().openHorseInventory(horse.getHandle(), craft.getInventory());
         } else {
+            MenuType<?> container = CraftContainer.getNotchInventoryType(inventory);
             openCustomInventory(inventory, player, container);
         }
 
@@ -447,12 +450,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     @Override
     public boolean isHandRaised() {
         return getHandle().isUsingItem();
-    }
-
-    @Override
-    public ItemStack getItemInUse() {
-        net.minecraft.world.item.ItemStack item = getHandle().getUseItem();
-        return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 
     @Override

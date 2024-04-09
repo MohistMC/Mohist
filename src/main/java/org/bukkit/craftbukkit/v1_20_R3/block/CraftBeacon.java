@@ -5,6 +5,7 @@ import java.util.Collection;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Beacon;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
@@ -19,8 +20,8 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implem
         super(world, tileEntity);
     }
 
-    protected CraftBeacon(CraftBeacon state) {
-        super(state);
+    protected CraftBeacon(CraftBeacon state, Location location) {
+        super(state, location);
     }
 
     @Override
@@ -99,6 +100,11 @@ public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implem
 
     @Override
     public CraftBeacon copy() {
-        return new CraftBeacon(this);
+        return new CraftBeacon(this, null);
+    }
+
+    @Override
+    public CraftBeacon copy(Location location) {
+        return new CraftBeacon(this, location);
     }
 }
