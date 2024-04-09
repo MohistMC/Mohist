@@ -5,6 +5,7 @@ import com.mohistmc.mohist.api.PlayerAPI;
 import com.mohistmc.mohist.api.event.PlayerModsCheckEvent;
 import com.mohistmc.tools.ListUtils;
 import com.mojang.authlib.GameProfile;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -28,7 +29,7 @@ public class PlayerModsCheck {
             throw new IllegalStateException(event.message());
         }
         if (MohistConfig.modlist_check_whitelist_enable) {
-            if (!ListUtils.is(modlist, server_modlist_whitelist())) {
+            if (!ListUtils.is(Collections.singletonList(modlist), Collections.singletonList(server_modlist_whitelist()))) { // TODO
                 canLog.set(false);
                 throw new IllegalStateException(MohistConfig.modlist_check_whitelist_message);
             }

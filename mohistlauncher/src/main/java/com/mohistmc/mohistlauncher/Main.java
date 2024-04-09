@@ -21,7 +21,7 @@ package com.mohistmc.mohistlauncher;
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.mohistlauncher.action.v_1_20_R3;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
-import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
+import com.mohistmc.mohistlauncher.feature.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
 import com.mohistmc.tools.JarTool;
 import com.mohistmc.tools.MojangEulaUtil;
@@ -41,10 +41,10 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         DataParser.parseVersions();
-        MohistConfigUtil.copyMohistConfig();
+        MohistConfigUtil.init();
         MohistConfigUtil.i18n();
         jarTool = new JarTool(Main.class);
-        if (MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
+        if (MohistConfigUtil.SHOW_LOGO.asBoolean()) {
             String test = """
 
                      ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗

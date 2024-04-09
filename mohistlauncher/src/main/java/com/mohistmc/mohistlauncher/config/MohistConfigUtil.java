@@ -20,98 +20,46 @@ package com.mohistmc.mohistlauncher.config;
 
 import com.mohistmc.i18n.i18n;
 import com.mohistmc.mohistlauncher.Main;
-import com.mohistmc.mohistlauncher.download.DownloadSource;
-import com.mohistmc.yaml.file.YamlConfiguration;
-import java.io.File;
-import java.io.IOException;
+import com.mohistmc.yml.Yaml;
+import com.mohistmc.yml.YamlSection;
 import java.util.Locale;
 
 public class MohistConfigUtil {
 
-    public static final File mohistyml = new File("mohist-config", "mohist.yml");
-    public static final YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
+    public static final Yaml yaml = new Yaml("mohist-config/mohist.yml");
+    public static YamlSection INSTALLATIONFINISHED;
+    public static YamlSection CHECK_UPDATE_AUTO_DOWNLOAD;
+    public static YamlSection CHECK_LIBRARIES;
+    public static YamlSection LIBRARIES_DOWNLOADSOURCE;
+    public static YamlSection CHECK_UPDATE;
+    public static YamlSection MOHISTLANG;
+    public static YamlSection SHOW_LOGO;
 
-    public static void copyMohistConfig() {
+    public static void init() {
         try {
-            if (!mohistyml.exists()) {
-                mohistyml.getParentFile().mkdirs();
-                mohistyml.createNewFile();
-            }
+            yaml.load();
+            INSTALLATIONFINISHED = yaml.put("mohist", "installation-finished").setDefValues(false);
+            CHECK_UPDATE_AUTO_DOWNLOAD = yaml.put("mohist", "check_update_auto_download").setDefValues(false);
+            CHECK_LIBRARIES = yaml.put("mohist", "libraries", "check").setDefValues(true);
+            LIBRARIES_DOWNLOADSOURCE = yaml.put("mohist", "libraries", "downloadsource").setDefValues("AUTO");
+            CHECK_UPDATE = yaml.put("mohist", "check_update").setDefValues(true);
+            MOHISTLANG = yaml.put("mohist", "lang").setDefValues(Locale.getDefault().toString());
+            SHOW_LOGO = yaml.put("mohist", "show_logo").setDefValues(true);
+            yaml.save();
         } catch (Exception e) {
             System.out.println("File init exception!");
         }
     }
 
-    public static boolean CHECK_UPDATE_AUTO_DOWNLOAD() {
-        String key = "mohist.check_update_auto_download";
-        if (yml.get(key) == null) {
-            yml.set(key, false);
-            save();
-        }
-        return yml.getBoolean(key, false);
-    }
-
-    public static boolean CHECK_LIBRARIES() {
-        String key = "mohist.libraries.check";
-        if (System.getProperty("libraries.check") != null) {
-            return Boolean.getBoolean("libraries.check");
-        }
-        if (yml.get(key) == null) {
-            yml.set(key, true);
-            save();
-        }
-        return yml.getBoolean(key, true);
-    }
-
-    public static String LIBRARIES_DOWNLOADSOURCE() {
-        String key = "mohist.libraries.downloadsource";
-        if (yml.get(key) == null) {
-            yml.set(key, DownloadSource.defaultSource.name());
-            save();
-        }
-        return yml.getString(key, DownloadSource.defaultSource.name());
-    }
-
-    public static boolean CHECK_UPDATE() {
-        String key = "mohist.check_update";
-        if (yml.get(key) == null) {
-            yml.set(key, true);
-            save();
-        }
-        return yml.getBoolean(key, true);
-    }
-
-    public static boolean CHECK_CLIENT_MODS() {
-        String key = "mohist.check_client_mods";
-        if (yml.get(key) == null) {
-            yml.set(key, false);
-            save();
-        }
-        return yml.getBoolean(key, false);
-    }
-
-    public static boolean aBoolean(String key, boolean defaultReturn) {
-        return yml.getBoolean(key, defaultReturn);
+    public static void i18n() {
+        Main.i18n = new i18n(Main.class.getClassLoader(), MOHISTLANG.asString());
     }
 
     public static void save() {
         try {
-            yml.save(mohistyml);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            yaml.save();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
-
-    public static String MOHISTLANG() {
-        String key = "mohist.lang";
-        if (yml.get(key) == null) {
-            yml.set(key, Locale.getDefault().toString());
-            save();
-        }
-        return yml.getString(key, Locale.getDefault().toString());
-    }
-
-    public static void i18n() {
-        Main.i18n = new i18n(Main.class.getClassLoader(), MOHISTLANG());
     }
 }

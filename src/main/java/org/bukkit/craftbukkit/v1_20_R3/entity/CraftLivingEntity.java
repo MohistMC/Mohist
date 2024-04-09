@@ -27,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.damage.CraftDamageSource;
 import org.bukkit.craftbukkit.v1_20_R3.entity.memory.CraftMemoryKey;
 import org.bukkit.craftbukkit.v1_20_R3.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftEntityEquipment;

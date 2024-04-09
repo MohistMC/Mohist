@@ -19,7 +19,7 @@
 package com.mohistmc.mohistlauncher.action;
 
 import com.mohistmc.mohistlauncher.Main;
-import com.mohistmc.mohistlauncher.libraries.DefaultLibraries;
+import com.mohistmc.mohistlauncher.feature.DefaultLibraries;
 import com.mohistmc.mohistlauncher.util.DataParser;
 import com.mohistmc.tools.FileUtils;
 import com.mohistmc.tools.MD5Util;

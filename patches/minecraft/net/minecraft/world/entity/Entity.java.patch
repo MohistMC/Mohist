@@ -1546,7 +1546,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public final void setRemoved(Entity.RemovalReason p_146876_, EntityRemoveEvent.Cause cause) {
-+      removeCause(cause);
++      putRemoveCause(cause);
 +      setRemoved(p_146876_);
 +   }
 +   // CraftBukkit

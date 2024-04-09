@@ -918,6 +918,10 @@ public class CraftEventFactory {
         return event;
     }
 
+    private static EntityDamageEvent handleEntityDamageEvent(Entity entity, DamageSource source, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
+        return handleEntityDamageEvent(entity, source, modifiers, modifierFunctions, false);
+    }
+
     private static EntityDamageEvent handleEntityDamageEvent(Entity entity, DamageSource source, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions, boolean cancelled) {
         CraftDamageSource bukkitDamageSource = new CraftDamageSource(source);
         Entity damager = source.getCausingEntity();
