@@ -3,11 +3,13 @@ package org.bukkit.plugin.java;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.PluginsLibrarySource;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
+import com.mohistmc.mjson.Json;
+import com.mohistmc.mjson.XmlUtils;
 import com.mohistmc.tools.ConnectionUtil;
+import com.mohistmc.tools.IOUtil;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
-import mjson.Json;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +25,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.InputSource;
 
 class LibraryLoader {
 
@@ -55,14 +58,16 @@ class LibraryLoader {
             if (!d.contains(fileName)) {
                 if (dependency.version().toString().equalsIgnoreCase("LATEST")) {
                     URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(group, dependency.name(), "maven-metadata.xml")).toURL();
-                    Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+                    Json compile_json2Json = Json.factory().make(XmlUtils.xmlToMap(new InputSource(IOUtil.getInputStream(mavenUrl.toString())))).at("metadata");
                     List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                    Dependency dependency0 = new Dependency(group, dependency.name(),  v.get(v.size() - 1), false);
+                    Dependency dependency0 = new Dependency(group, dependency.name(), (String) v.get(v.size() - 1), false);
                     newDependencies.add(dependency0);
                 } else {
                     newDependencies.add(dependency);
                     String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
-                    newDependencies.addAll(initDependencies0(new URL(pomUrl)));
+                    if (ConnectionUtil.isValid(pomUrl)) {
+                        newDependencies.addAll(initDependencies0(new URL(pomUrl)));
+                    }
                 }
             }
         }
@@ -124,9 +129,9 @@ class LibraryLoader {
         return list;
     }
 
-    public List<Dependency> initDependencies(URL url) {
+    public List<Dependency> initDependencies(URL url) throws IOException {
         List<Dependency> list = new ArrayList<>();
-        Json json2Json = Json.readXml(url).at("project");
+        Json json2Json = Json.factory().make(XmlUtils.xmlToMap(new InputSource(IOUtil.getInputStream(url.toString())))).at("project");
         String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
         String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
 
@@ -168,7 +173,7 @@ class LibraryLoader {
                         URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
                         Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
                         List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                        Dependency dependency = new Dependency(groupId, artifactId, v.get(v.size() - 1), true);
+                        Dependency dependency = new Dependency(groupId, artifactId, (String) v.get(v.size() - 1), true);
                         list.add(dependency);
                     }
                 }
@@ -190,6 +195,6 @@ class LibraryLoader {
         return temp;
     }
 
-    public record Dependency(String group, String name, Object version, boolean extra) {
+    public record Dependency(String group, String name, String version, boolean extra) {
     }
 }
