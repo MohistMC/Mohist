@@ -31,7 +31,7 @@
 +public final class ClientboundSystemChatPacket implements Packet<ClientGamePacketListener> {
 +   private final Component f_237849_;
 +   private final boolean f_240374_;
-+   private String content0;
++   private final String content0;
 +
 +    public ClientboundSystemChatPacket(Component f_237849_, boolean f_240374_) {
 +        this.f_237849_ = f_237849_;
