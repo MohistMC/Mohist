@@ -119,6 +119,8 @@ dependencies {
     installer(project(':mclanguage'))
 
     runtimeOnly(libs.bootstrap)
+    runtimeOnly(libs.bootstrap.dev)
+
     // craftbukkit
     installer 'org.fusesource.jansi:jansi:1.18'
     implementation 'jline:jline:2.14.6'
@@ -703,5 +705,3 @@ task mohistJar(type: Jar, dependsOn: [genServerBinPatches, project(':bootstrap')
 tasks.register('genAllData') {
     dependsOn 'forge_data'
 }
-
-apply from: rootProject.file('build_forge_eclipse.gradle')
