@@ -1,13 +1,17 @@
 --- a/net/minecraft/world/entity/projectile/ThrowableProjectile.java
 +++ b/net/minecraft/world/entity/projectile/ThrowableProjectile.java
-@@ -58,8 +_,8 @@
+@@ -58,8 +_,12 @@
           }
        }
  
 -      if (hitresult.m_6662_() != HitResult.Type.MISS && !flag) {
 -         this.m_6532_(hitresult);
 +      if (hitresult.m_6662_() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-+         this.preOnHit(hitresult); // CraftBukkit - projectile hit event
++         org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory.callProjectileHitEvent(this, hitresult);
++         this.hitCancelled = event != null && event.isCancelled();
++         if (hitresult.m_6662_() == HitResult.Type.BLOCK || !this.hitCancelled) {
++            this.m_6532_(hitresult);
++         }
        }
  
        this.m_20101_();
