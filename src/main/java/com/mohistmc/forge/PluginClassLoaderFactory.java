@@ -8,6 +8,9 @@ import net.minecraftforge.eventbus.ClassLoaderFactory;
 import net.minecraftforge.eventbus.api.IEventListener;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+
+
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_SUPER;
 import static org.objectweb.asm.Opcodes.ALOAD;
@@ -19,7 +22,6 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
 import static org.objectweb.asm.Opcodes.V1_6;
-import org.objectweb.asm.Type;
 
 /**
  * @author Mgazul by MohistMC

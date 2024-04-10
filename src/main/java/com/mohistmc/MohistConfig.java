@@ -226,6 +226,11 @@ public class MohistConfig {
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
 
+    public static boolean recipe_warn;
+
+    public static boolean tpa_enable;
+    public static boolean back_enable;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
@@ -276,5 +281,9 @@ public class MohistConfig {
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");
+
+        recipe_warn = getBoolean("recipe.warn", false);
+        tpa_enable = getBoolean("tpa.enable", false);
+        back_enable = getBoolean("back.enable", false);
     }
 }

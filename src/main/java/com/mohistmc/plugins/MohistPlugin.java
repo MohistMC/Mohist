@@ -1,9 +1,13 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.plugins.back.BackCommands;
 import com.mohistmc.plugins.ban.BanListener;
 import com.mohistmc.plugins.item.ItemsConfig;
 import com.mohistmc.plugins.pluginmanager.Control;
+import com.mohistmc.plugins.tpa.TpaComamands;
+import com.mohistmc.plugins.tpa.TpacceptCommands;
+import com.mohistmc.plugins.tpa.TpadenyCommands;
 import com.mohistmc.plugins.warps.WarpsCommands;
 import com.mohistmc.plugins.warps.WarpsUtils;
 import com.mohistmc.plugins.world.WorldManage;
@@ -18,9 +22,11 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -62,6 +68,12 @@ public class MohistPlugin {
     public static void registerCommands(Map<String, Command> map) {
         if (MohistConfig.yml.getBoolean("worldmanage", true)) map.put("worlds", new WorldsCommands("worlds"));
         map.put("warps", new WarpsCommands("warps"));
+        if (MohistConfig.yml.getBoolean("tpa.enable", true)) {
+            map.put("tpa", new TpaComamands("tpa"));
+            map.put("tpadeny", new TpadenyCommands("tpadeny"));
+            map.put("tpaccept", new TpacceptCommands("tpaccept"));
+        }
+        map.put("back", new BackCommands("back"));
     }
 
     public static void registerListener(Event event) {
@@ -76,6 +88,12 @@ public class MohistPlugin {
         }
         if (event instanceof PluginEnableEvent event1) {
             PluginHooks.register(event1);
+        }
+        if (event instanceof PlayerTeleportEvent event1) {
+            BackCommands.hookTeleport(event1);
+        }
+        if (event instanceof PlayerDeathEvent event1) {
+            BackCommands.hooktDeath(event1);
         }
     }
 
