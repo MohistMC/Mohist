@@ -1,42 +1,33 @@
 package com.mohistmc.plugins.back;
 
-import com.mohistmc.util.YamlUtils;
+import com.mohistmc.plugins.config.MohistPluginConfig;
 import java.io.File;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class BackConfig {
+public class BackConfig extends MohistPluginConfig {
 
-    public static File config = new File("mohist-config", "back.yml");
-    public static FileConfiguration yaml = YamlConfiguration.loadConfiguration(config);
+    public static BackConfig INSTANCE;
+
+    public BackConfig(File file) {
+        super(file);
+    }
 
     public static void init() {
-        if (!config.exists()) {
-            save();
-        }
+        INSTANCE = new BackConfig(new File("mohist-config", "back.yml"));
     }
 
-    public static void save() {
-        YamlUtils.save(config, yaml);
-    }
-
-    public static void saveLocation(Player player, Location location, BackType backType) {
+    public void saveLocation(Player player, Location location, BackType backType) {
         yaml.set(player.getUniqueId() + ".location", location);
-        yaml.set(player.getUniqueId() + ".type", backType);
+        yaml.set(player.getUniqueId() + ".type", backType.name());
         save();
     }
 
-    public static Location getLocation(Player player) {
+    public Location getLocation(Player player) {
         return yaml.getLocation(player.getUniqueId() + ".location");
     }
 
-    public static BackType getBackType(Player player) {
+    public BackType getBackType(Player player) {
         return BackType.valueOf(yaml.getString(player.getUniqueId() + ".type"));
-    }
-
-    public static boolean hasLocation(Player player) {
-        return yaml.get(player.getUniqueId().toString()) != null;
     }
 }

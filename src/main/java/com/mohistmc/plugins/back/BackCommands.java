@@ -19,10 +19,10 @@ public class BackCommands extends Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (sender instanceof Player player) {
-            if (BackConfig.hasLocation(player)) {
-               player.teleport(BackConfig.getLocation(player));
+            if (BackConfig.INSTANCE.has(player.getName())) {
+               player.teleport(BackConfig.INSTANCE.getLocation(player));
                player.sendMessage(I18n.as("backcommands.success",
-                       BackConfig.getBackType(player).isTeleport() ? I18n.as("backcommands.backtype.teleport") : I18n.as("backcommands.backtype.death")));
+                       BackConfig.INSTANCE.getBackType(player).isTeleport() ? I18n.as("backcommands.backtype.teleport") : I18n.as("backcommands.backtype.death")));
             }
             else {
                 sender.sendMessage(I18n.as("backcommands.none"));
@@ -33,10 +33,10 @@ public class BackCommands extends Command {
 
     public static void hookTeleport(PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
-        BackConfig.saveLocation(event.getPlayer(), event.getFrom(), BackType.TELEPORT);
+        BackConfig.INSTANCE.saveLocation(event.getPlayer(), event.getFrom(), BackType.TELEPORT);
     }
 
     public static void hooktDeath(PlayerDeathEvent event) {
-        BackConfig.saveLocation(event.getPlayer(), event.getPlayer().getLocation(), BackType.DEATH);
+        BackConfig.INSTANCE.saveLocation(event.getPlayer(), event.getPlayer().getLocation(), BackType.DEATH);
     }
 }
