@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -10,9 +_,11 @@
+@@ -8,11 +_,14 @@
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
  import com.google.gson.JsonSyntaxException;
++import com.mohistmc.MohistConfig;
  import com.mojang.datafixers.util.Pair;
  import com.mojang.logging.LogUtils;
 +import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
@@ -60,12 +63,12 @@
 -               return ImmutableMap.builder();
 -            }).put(resourcelocation, recipe);
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
-+               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               if (MohistConfig.recipe_warn) f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
 +            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"), this.context);
 +            if (recipe == null) {
-+               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++               if (MohistConfig.recipe_warn) f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
 +            }
 +
@@ -77,7 +80,8 @@
 +
              builder.put(resourcelocation, recipe);
           } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
+-            f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
++            if (MohistConfig.recipe_warn) f_44006_.error("Parsing error loading recipe {}", resourcelocation, jsonparseexception);
           }
        }
  

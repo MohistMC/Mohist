@@ -114,8 +114,7 @@ public class ItemsCommand extends Command {
                     sender.sendMessage(ChatColor.RED + "Usage: /items save <name>");
                     return false;
                 }
-                ItemsConfig.yaml.set("items." + args[1], itemStack);
-                ItemsConfig.save();
+                ItemsConfig.INSTANCE.put("items." + args[1], itemStack);
                 sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.completeSet"));
                 return true;
             }
@@ -134,7 +133,7 @@ public class ItemsCommand extends Command {
                     return false;
                 }
                 if (player.getInventory().firstEmpty() != -1) {
-                    player.getInventory().addItem(ItemsConfig.get(args[1]));
+                    player.getInventory().addItem(ItemsConfig.INSTANCE.get(args[1]));
                 } else {
                     sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.inventoryFull"));
                     return false;
@@ -146,13 +145,13 @@ public class ItemsCommand extends Command {
                     sender.sendMessage(ChatColor.RED + "Usage: /items remove <name>");
                     return false;
                 }
-                ItemsConfig.remove(args[1]);
+                ItemsConfig.INSTANCE.remove(args[1]);
                 sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + I18n.as("itemscmd.removedItemp2") );
                 return true;
             }
             case "list" ->{
                 Warehouse wh = new Warehouse("Items");
-                for (ItemStack s : ItemsConfig.getItems()) {
+                for (ItemStack s : ItemsConfig.INSTANCE.getItems()) {
                     wh.addItem(new GUIItem(s) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack1) {
