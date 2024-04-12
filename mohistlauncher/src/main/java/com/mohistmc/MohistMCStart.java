@@ -55,7 +55,7 @@ public class MohistMCStart {
         DataParser.parseLaunchArgs();
         MohistConfigUtil.init();
         MohistConfigUtil.i18n();
-        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.SHOW_LOGO.asBoolean()) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             System.out.printf("%n%s%n%s - %s, Java(%s) %s PID: %s%n",
                     Logo.asMohist(),
                     i18n.as("mohist.launch.welcomemessage"),
@@ -70,14 +70,15 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.CHECK_UPDATE.asBoolean())
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             UpdateUtils.versionCheck();
+        }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.CHECK_LIBRARIES.asBoolean()) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.CHECK_LIBRARIES()) {
             DefaultLibraries.run();
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean()) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED()) {
             v_1_20_1.run();
         }
 
