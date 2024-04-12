@@ -107,7 +107,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,72 @@
+@@ -188,24 +_,71 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -152,7 +152,6 @@
        this.f_8549_ = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.f_63976_();
 +      // CraftBukkit start
-+      K.setWorld(this);
 +      if (biomeProvider != null) {
 +         WorldInfo worldInfo = new CraftWorldInfo(K, p_215001_, environment, p_215004_.f_63975_().m_203334_());
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
@@ -182,12 +181,13 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -240,6 +_,9 @@
+@@ -240,6 +_,10 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
++      K.setWorld(this);
 +      this.initCapabilities();
     }
  
