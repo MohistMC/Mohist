@@ -107,7 +107,7 @@
     private final GameEventDispatcher f_243695_;
     public boolean f_8564_;
     private final SleepStatus f_143245_;
-@@ -185,23 +_,71 @@
+@@ -185,23 +_,70 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -151,7 +151,6 @@
        this.f_8549_ = p_215002_;
        ChunkGenerator chunkgenerator = p_215004_.f_63976_();
 +      // CraftBukkit start
-+      serverLevelDataCB.setWorld(this);
 +      if (biomeProvider != null) {
 +         WorldInfo worldInfo = new CraftWorldInfo(serverLevelDataCB, p_215001_, environment, p_215004_.f_63975_().m_203334_());
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
@@ -181,13 +180,14 @@
           return p_214999_.m_129783_().m_8895_();
        });
        this.f_8547_.m_255415_().m_254958_();
-@@ -229,6 +_,10 @@
+@@ -229,6 +_,11 @@
  
        this.f_143245_ = new SleepStatus();
        this.f_243695_ = new GameEventDispatcher(this);
 +
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
++      this.serverLevelDataCB.setWorld(this);
 +      this.initCapabilities();
     }
  
