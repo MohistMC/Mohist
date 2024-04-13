@@ -73,7 +73,7 @@ dependencyResolutionManagement {
             bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jansi'])
 
             // The core of our configuration system, it has many flaws, but it works for the most part
-            version('night-config', '3.6.4')
+            version('night-config', '3.6.7')
             library('night-config-toml', 'com.electronwill.night-config', 'toml').versionRef('night-config')
             library('night-config-core', 'com.electronwill.night-config', 'core').versionRef('night-config')
             bundle('night-config', ['night-config-toml', 'night-config-core'])
@@ -128,8 +128,8 @@ dependencyResolutionManagement {
             library('json', 'com.mohistmc:json:0.4')
             library('tools', 'com.mohistmc:tools:0.5.1')
             library('snakeyaml', 'org.yaml:snakeyaml:2.2')
-            library('yaml', 'com.mohistmc:yaml:0.7')
-            library('dynamicenum', 'com.mohistmc:dynamicenum:0.3')
+            library('yaml', 'com.mohistmc:yaml:0.8')
+            library('dynamicenum', 'com.mohistmc:dynamicenum:0.3.1')
             library('libraries', 'com.mohistmc:libraries:0.3.1')
             library('progressbar', 'me.tongfei:progressbar:0.10.0')
             library('orgjline', 'org.jline:jline:3.25.1')

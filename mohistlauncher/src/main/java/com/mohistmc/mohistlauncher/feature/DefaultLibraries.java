@@ -34,7 +34,7 @@ public class DefaultLibraries {
 
     @SneakyThrows
     public static void run() {
-        String config = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE.asString();
+        String config = MohistConfigUtil.LIBRARIES_DOWNLOADSOURCE();
         String ds = System.getProperty("downloadsource") == null ? config : System.getProperty("downloadsource");
         String downloadSource = config;
         if (!Objects.equals(config, ds) && ConnectionUtil.isValid(ds)) {

@@ -44,7 +44,7 @@ public class Main {
         MohistConfigUtil.init();
         MohistConfigUtil.i18n();
         jarTool = new JarTool(Main.class);
-        if (MohistConfigUtil.SHOW_LOGO.asBoolean()) {
+        if (MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
             String test = """
 
                      ███╗   ███╗  ██████╗  ██╗  ██╗ ██╗ ███████╗ ████████╗

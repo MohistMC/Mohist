@@ -1,5 +1,6 @@
 package com.mohistmc.mohist.api;
 
+import com.mohistmc.dynamicenum.MohistDynamEnum;
 import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,6 @@ public class EnchantmentAPI {
     }
 
     public static String getNameByNMS(net.minecraft.world.item.enchantment.Enchantment nms) {
-        return ForgeInjectBukkit.normalizeName(EnchantmentHelper.getEnchantmentId(nms).toString());
+        return MohistDynamEnum.normalizeName(EnchantmentHelper.getEnchantmentId(nms).toString());
     }
 }
