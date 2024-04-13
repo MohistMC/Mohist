@@ -16,8 +16,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
     compileOnly 'org.projectlombok:lombok:1.18.30'
 
-    implementation 'com.mohistmc:yaml:0.6'
-    implementation 'org.yaml:snakeyaml:2.2'
+    implementation 'com.mohistmc:yaml:0.8'
     implementation 'com.mohistmc:i18n:0.6'
     implementation 'com.mohistmc:json:0.4'
     implementation 'com.mohistmc:tools:0.5.1'
@@ -30,7 +29,6 @@ dependencies {
 shadowJar {
     dependencies {
         include(dependency('com.mohistmc:yaml'))
-        include(dependency('org.yaml:snakeyaml'))
         include(dependency('com.mohistmc:i18n'))
         include(dependency('com.mohistmc:json'))
         include(dependency('com.mohistmc:tools'))
@@ -38,7 +36,6 @@ shadowJar {
         include(dependency('me.tongfei:progressbar'))
         include(dependency('org.jline:jline'))
     }
-    relocate("org.yaml.snakeyaml", "com.mohistmc.yaml")
 }
 
 jar.dependsOn(shadowJar)
