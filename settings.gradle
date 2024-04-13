@@ -69,8 +69,8 @@ dependencyResolutionManagement {
             version('jline', '3.21.0')
             library('jline-reader',       'org.jline', 'jline-reader'      ).versionRef('jline')
             library('jline-terminal',     'org.jline', 'jline-terminal'    ).versionRef('jline')
-            library('jline-terminal-jna', 'org.jline', 'jline-terminal-jna').versionRef('jline') // Colors and tab completeion
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jna'])
+            library('jline-terminal-jansi', 'org.jline', 'jline-terminal-jansi').versionRef('jline') // Colors and tab completeion
+            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jansi'])
 
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
@@ -129,6 +129,7 @@ dependencyResolutionManagement {
             library('tools', 'com.mohistmc:tools:0.5.1')
             library('snakeyaml', 'org.yaml:snakeyaml:2.2')
             library('yaml', 'com.mohistmc:yaml:0.7')
+            library('dynamicenum', 'com.mohistmc:dynamicenum:0.3')
             library('progressbar', 'me.tongfei:progressbar:0.10.0')
             library('orgjline', 'org.jline:jline:3.23.0')
         }
