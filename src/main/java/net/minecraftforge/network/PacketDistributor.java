@@ -131,7 +131,7 @@ public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<
 
     private Consumer<Packet<?>> playerConsumer(ServerPlayer player) {
         return p -> {
-            if (player != null && player.connection.isAcceptingMessages()) {
+            if (player.connection != null && player.connection.isAcceptingMessages()) {
                 player.connection.getConnection().send(p);
             }
         };
