@@ -297,13 +297,18 @@ public class ForgeInjectBukkit {
 
     private static void loadSpawnCategory() {
         for (MobCategory category : MobCategory.values()) {
-            try {
-                CraftSpawnCategory.toBukkit(category);
-            } catch (Exception e) {
-                String name = category.name();
-                SpawnCategory spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
-                MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
-            }
+            loadSpawnCategory0(category);
+        }
+    }
+
+    public static SpawnCategory loadSpawnCategory0(MobCategory category) {
+        try {
+            return SpawnCategory.valueOf(category.name());
+        } catch (Exception e) {
+            String name = category.name();
+            SpawnCategory spawnCategory = MohistDynamEnum.addEnum(SpawnCategory.class, name);
+            MohistMC.LOGGER.debug("Registered forge MobCategory as SpawnCategory(Bukkit) {}", spawnCategory);
+            return spawnCategory;
         }
     }
 

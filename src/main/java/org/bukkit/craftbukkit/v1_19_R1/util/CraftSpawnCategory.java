@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_19_R1.util;
 
+import com.mohistmc.forge.ForgeInjectBukkit;
 import net.minecraft.world.entity.MobCategory;
 import org.bukkit.entity.SpawnCategory;
 
@@ -53,7 +54,7 @@ public class CraftSpawnCategory {
             case WATER_AMBIENT -> SpawnCategory.WATER_AMBIENT;
             case UNDERGROUND_WATER_CREATURE -> SpawnCategory.WATER_UNDERGROUND_CREATURE;
             case MISC -> SpawnCategory.MISC;
-            default -> SpawnCategory.valueOf(enumCreatureType.name());
+            default -> ForgeInjectBukkit.loadSpawnCategory0(enumCreatureType);
         };
     }
 
