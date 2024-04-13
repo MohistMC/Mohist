@@ -34,7 +34,6 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Set;
 
 public abstract class Action {
 
@@ -89,8 +88,8 @@ public abstract class Action {
     }
 
     protected void run(String mainClass, String... args) throws Exception {
-        Set<URL> classPath = DefaultLibraries.installer();
-        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[classPath.size()]));
+        List<URL> classPath = DefaultLibraries.installerTourls;
+        URLClassLoader loader = URLClassLoader.newInstance(classPath.toArray(new URL[0]));
         Class.forName(mainClass, true, loader).getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
         loader.clearAssertionStatus();
         loader.close();

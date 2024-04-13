@@ -18,33 +18,19 @@
 
 package com.mohistmc.mohistlauncher.feature;
 
-import com.mohistmc.libraries.Libraries;
 import com.mohistmc.libraries.LibrariesDownloadQueue;
 import com.mohistmc.mohistlauncher.config.MohistConfigUtil;
 import com.mohistmc.mohistlauncher.util.I18n;
 import com.mohistmc.tools.ConnectionUtil;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import lombok.SneakyThrows;
 
 public class DefaultLibraries {
 
-    public static Set<Libraries> installer = new HashSet<>();
-
-
-    public static Set<URL> installer() throws MalformedURLException {
-        Set<URL> urls = new HashSet<>();
-        for (Libraries libraries : installer) {
-            File file = new File("libraries", libraries.getPath());
-            URL url = file.toURI().toURL();
-            urls.add(url);
-        }
-        return urls;
-    }
+    public static List<URL> installerTourls = new ArrayList<>();
 
     @SneakyThrows
     public static void run() {
@@ -59,7 +45,7 @@ public class DefaultLibraries {
                 .inputStream(DefaultLibraries.class.getClassLoader().getResourceAsStream("libraries.txt"))
                 .downloadSource(downloadSource)
                 .build();
-        installer = queue.installer;
+        installerTourls = queue.installerTourls;
         System.out.println(I18n.as("libraries.checking.start"));
         if (queue.needDownload()) {
             System.out.println(I18n.as("libraries.downloadsource", queue.downloadSource.name()));
