@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -81,7 +82,7 @@ public class RemapSourceHandler extends URLStreamHandler {
     @SuppressWarnings("unchecked")
     public static void register() {
         try {
-            Unsafe.ensureClassInitialized(URL.class);
+            MethodHandles.lookup().ensureInitialized(URL.class);
             MethodHandle getter = Unsafe.lookup().findStaticGetter(URL.class, "handlers", Hashtable.class);
             Hashtable<String, URLStreamHandler> handlers = (Hashtable<String, URLStreamHandler>) getter.invokeExact();
             handlers.put("remap", new RemapSourceHandler());

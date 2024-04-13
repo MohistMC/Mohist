@@ -150,9 +150,9 @@ public class MohistConfig {
         return config.getInt(path, config.getInt(path));
     }
 
-    private static <T> List getList(String path, T def) {
+    private static <T> List<String> getStringList(String path, T def) {
         config.addDefault(path, def);
-        return config.getList(path, config.getList(path));
+        return config.getStringList(path);
     }
 
     private static String getString(String path, String def) {
@@ -236,7 +236,7 @@ public class MohistConfig {
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
         modlist_check_blacklist_enable = getBoolean("modlist_check.blacklist.enable", false);
-        modlist_check_blacklist = getList("modlist_check.blacklist.list", new ArrayList<>());
+        modlist_check_blacklist = getStringList("modlist_check.blacklist.list", new ArrayList<>());
         modlist_check_blacklist_message = getString("modlist_check.blacklist.message", "Connection closed - PlayerModsCheck blacklist");
         modlist_check_whitelist_enable = getBoolean("modlist_check.whitelist.enable", false);
         modlist_check_whitelist = getString("modlist_check.whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
@@ -245,23 +245,23 @@ public class MohistConfig {
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
         networkmanager_debug = getBoolean("networkmanager.enable", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
-        networkmanager_intercept = getList("networkmanager.intercept", new ArrayList<>());
+        networkmanager_intercept = getStringList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
         server_thread = getInt("threadpriority.server_thread", 8);
 
         clear_item = getBoolean("entity.clear.item.enable", false);
-        clear_item__whitelist = getList("entity.clear.item.whitelist", new ArrayList<>());
+        clear_item__whitelist = getStringList("entity.clear.item.whitelist", new ArrayList<>());
         clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
         clear_item__time = getInt("entity.clear.item.time", 1800);
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
-        ban_item_materials = getList("ban.item.list", new ArrayList<>());
+        ban_item_materials = getStringList("ban.item.list", new ArrayList<>());
         ban_entity_enable = getBoolean("ban.entity.enable", false);
-        ban_entity_types = getList("ban.entity.list", new ArrayList<>());
+        ban_entity_types = getStringList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
-        ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
+        ban_enchantment_list = getStringList("ban.enchantment.list", new ArrayList<>());
         motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
         motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
 
