@@ -100,7 +100,7 @@ class LibraryLoader {
             }
         }
 
-        Set<URL> jarFiles = new HashSet<>();
+        List<URL> jarFiles = new ArrayList<>();
         for (File file : libraries) {
             try {
                 jarFiles.add(file.toURI().toURL());
@@ -113,8 +113,8 @@ class LibraryLoader {
         return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
     }
 
-    public List<Dependency> initDependencies0(String url) {
-        List<Dependency> list = new ArrayList<>();
+    public Set<Dependency> initDependencies0(String url) {
+        Set<Dependency> list = new HashSet<>();
         for (Dependency dependency : initDependencies(url)) {
             list.add(dependency);
             if (dependency.extra()) {
@@ -127,8 +127,8 @@ class LibraryLoader {
         return list;
     }
 
-    public List<Dependency> initDependencies(String url) {
-        List<Dependency> list = new ArrayList<>();
+    public Set<Dependency> initDependencies(String url) {
+        Set<Dependency> list = new HashSet<>();
         Json json2Json = Json.readXml(url).at("project");
         String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
         String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
@@ -146,7 +146,7 @@ class LibraryLoader {
         return list;
     }
 
-    public void dependency(Json json, List<Dependency> list, String version, String parent_groupId) {
+    public void dependency(Json json, Set<Dependency> list, String version, String parent_groupId) {
         try {
             if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
                 String groupId = json.asString("groupId");
@@ -186,7 +186,7 @@ class LibraryLoader {
         try {
             while ((str = b.readLine()) != null) {
                 String[] s = str.split("\\|");
-                temp.add(new File(s[0]).getName());
+                temp.add(new File("libraries", s[0]).getName());
             }
             b.close();
         } catch (Exception ignored) {}
