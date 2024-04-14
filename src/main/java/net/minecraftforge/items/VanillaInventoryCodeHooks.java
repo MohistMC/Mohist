@@ -27,6 +27,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 public class VanillaInventoryCodeHooks
 {
@@ -99,19 +101,12 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    Container container = HopperBlockEntity.getContainerAt(level, blockpos);
-                    org.bukkit.inventory.Inventory destinationInventory;
-                    // Have to special case large chests as they work oddly
-                    if (container instanceof CompoundContainer) {
-                        destinationInventory = new org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventoryDoubleChest((CompoundContainer) container);
-                    } else {
-                        destinationInventory = container.getOwner().getInventory();
-                    }
-
+                    InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
+                    Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
-                        return false;
+                        return true;
                     }
                     ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, CraftItemStack.asNMSCopy(event.getItem()));
 
