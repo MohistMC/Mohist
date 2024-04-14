@@ -152,7 +152,7 @@ class LibraryLoader {
                 String groupId = json.asString("groupId");
                 String artifactId = json.asString("artifactId");
                 if (json.toString().contains("version")) {
-                    if (json.has("scope") && json.asString("scope").equals("test")) {
+                    if (json.has("scope") && (json.asString("scope").equals("test")) || json.asString("scope").equals("provided")) {
                         return;
                     }
                     if (groupId.equals("${project.parent.groupId}")) {
