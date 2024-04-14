@@ -143,7 +143,7 @@
     }
  
     public boolean m_49967_() {
-@@ -473,20 +_,92 @@
+@@ -473,6 +_,74 @@
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
  
@@ -218,28 +218,6 @@
     /** @deprecated */
     @Deprecated
     public Holder.Reference<Block> m_204297_() {
-       return this.f_204296_;
-    }
- 
--   protected void m_220822_(ServerLevel p_220823_, BlockPos p_220824_, ItemStack p_220825_, IntProvider p_220826_) {
--      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_220825_) == 0) {
--         int i = p_220826_.m_214085_(p_220823_.f_46441_);
-+   protected int tryDropExperience(ServerLevel pLevel, BlockPos pPos, ItemStack pHeldItem, IntProvider pAmount) {
-+      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, pHeldItem) == 0) {
-+         int i = pAmount.m_214085_(pLevel.f_46441_);
-          if (i > 0) {
--            this.m_49805_(p_220823_, p_220824_, i);
-+            return i;
-          }
-       }
-+      return 0;
-+   }
- 
-+   public int getExpDrop(BlockState iblockdata, ServerLevel worldserver, BlockPos blockposition, ItemStack itemstack, boolean flag) {
-+      return 0;
-    }
- 
-    public static final class BlockStatePairKey {
 @@ -517,4 +_,10 @@
           return 31 * i + this.f_49982_.hashCode();
        }
