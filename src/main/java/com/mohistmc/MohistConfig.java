@@ -14,6 +14,7 @@ import com.mohistmc.commands.PingCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.commands.ShowsCommand;
 import com.mohistmc.plugins.MohistPlugin;
+import com.mohistmc.util.YamlUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -100,7 +101,7 @@ public class MohistConfig {
     }
 
     public static void save() {
-        readConfig();
+        YamlUtils.save(mohistyml, yml);
     }
 
     public static void registerCommands() {
