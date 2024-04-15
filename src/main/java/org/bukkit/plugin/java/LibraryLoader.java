@@ -55,11 +55,7 @@ class LibraryLoader {
             String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
             if (!d.contains(fileName)) {
                 if (dependency.version().equalsIgnoreCase("LATEST")) {
-                    String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(group, dependency.name(), "maven-metadata.xml");
-                    Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
-                    List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                    Dependency dependency0 = new Dependency(group, dependency.name(), (String) v.get(v.size() - 1), false);
-                    newDependencies.add(dependency0);
+                    newDependencies.add(findDependency(group, dependency.name(), false));
                 } else {
                     newDependencies.add(dependency);
                     String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
@@ -151,6 +147,9 @@ class LibraryLoader {
             if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
                 String groupId = json.asString("groupId");
                 String artifactId = json.asString("artifactId");
+                if (json.has("optional")) {
+                    return;
+                }
                 if (json.toString().contains("version")) {
                     if (json.has("scope") && (json.asString("scope").equals("test")) || json.asString("scope").equals("provided")) {
                         return;
@@ -167,16 +166,17 @@ class LibraryLoader {
                         list.add(dependency);
                     }
                 } else {
-                    if (json.has("scope") && json.asString("scope").equals("compile")) {
-                        String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml");
-                        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
-                        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                        Dependency dependency = new Dependency(groupId, artifactId, (String) v.get(v.size() - 1), true);
-                        list.add(dependency);
-                    }
+                    list.add(findDependency(groupId, artifactId, true));
                 }
             }
         } catch (Exception ignored) {}
+    }
+
+    public static Dependency findDependency(String groupId, String artifactId, boolean extra) {
+        String mavenUrl = "https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml");
+        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
+        return new Dependency(groupId, artifactId, (String) v.get(v.size() - 1), extra);
     }
 
     public List<String> mohistLibs() {
