@@ -173,7 +173,7 @@ class LibraryLoader {
     }
 
     public static Dependency findDependency(String groupId, String artifactId, boolean extra) {
-        String mavenUrl = "https://repo.maven.apache.org/maven2/%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml");
+        String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml");
         Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
         List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
         return new Dependency(groupId, artifactId, (String) v.get(v.size() - 1), extra);
