@@ -1,7 +1,6 @@
 package com.mohistmc.bukkit;
 
 import com.mohistmc.MohistMC;
-import com.mohistmc.tools.ConnectionUtil;
 
 /**
  * @author Mgazul by MohistMC
@@ -14,13 +13,9 @@ public enum PluginsLibrarySource {
 
     public final String url;
 
-    public static final String DEFAULT = isCN() ? ALIBABA.url : MAVEN2.url;
+    public static final String DEFAULT = MohistMC.i18n.isCN() ? ALIBABA.url : MAVEN2.url;
 
     PluginsLibrarySource(String url) {
         this.url = url;
-    }
-
-    public static boolean isCN() {
-        return MohistMC.i18n.isCN() && ConnectionUtil.measureLatency(ALIBABA.url) < ConnectionUtil.measureLatency(MAVEN2.url);
     }
 }
