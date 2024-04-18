@@ -82,9 +82,7 @@ class LibraryLoader {
             String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
             File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
 
-            if (file.exists()) {
-                MohistMC.LOGGER.info("[{}] Found libraries {}", desc.getName(), file);
-                libraries.add(file);
+            if (has(dependency)) {
                 continue;
             }
             try {
@@ -124,6 +122,11 @@ class LibraryLoader {
                 continue;
             }
             list.add(dependency);
+
+            if (dependencyIgnoreVersion.contains(dependency.toIgnoreVersion())) {
+                continue;
+            }
+            dependencyIgnoreVersion.add(dependency.toIgnoreVersion());
             if (dependency.extra()) {
                 String group = dependency.group().replace(".", "/");
                 String fileName = "%s-%s.pom".formatted(dependency.name(), dependency.version());
@@ -136,21 +139,24 @@ class LibraryLoader {
 
     public Set<Dependency> initDependencies(String url) {
         Set<Dependency> list = new HashSet<>();
-        Json json2Json = Json.readXml(url).at("project");
-        String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
-        String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
+        Json json = Json.readXml(url);
+        if (json != null) {
+            Json json2Json = json.at("project");
+            String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
+            String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
 
-        if (!json2Json.has("dependencies")) return list;
-        if (!json2Json.at("dependencies").toString().startsWith("{\"dependency\"")) return list;
-        Json json3Json = json2Json.at("dependencies").at("dependency");
-        if (json3Json.isArray()) {
-            for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
-                dependency(o, list, version, groupId);
+            if (!json2Json.has("dependencies")) return list;
+            if (!json2Json.at("dependencies").toString().startsWith("{\"dependency\"")) return list;
+            Json json3Json = json2Json.at("dependencies").at("dependency");
+            if (json3Json.isArray()) {
+                for (Json o : json2Json.at("dependencies").asJsonList("dependency")) {
+                    dependency(o, list, version, groupId);
+                }
+            } else {
+                dependency(json3Json, list, version, groupId);
             }
-        } else {
-            dependency(json3Json, list, version, groupId);
+            list.addAll(findDependency(list));
         }
-        list.addAll(findDependency(list));
         return list;
     }
 
@@ -158,6 +164,9 @@ class LibraryLoader {
         try {
             if (json.has("groupId") && json.has("artifactId")) {
                 String groupId = json.asString("groupId");
+                if (groupId.startsWith("${") ) {
+                    groupId = parent_groupId;
+                }
                 String artifactId = json.asString("artifactId");
                 DependencyIgnoreVersion d = new DependencyIgnoreVersion(groupId, artifactId);
                 if (dependencyIgnoreVersion.contains(d)) {
@@ -166,13 +175,10 @@ class LibraryLoader {
                 if (json.has("optional")) {
                     return;
                 }
+                if (json.has("scope") && (json.asString("scope").equals("test") || json.asString("scope").equals("provided"))) {
+                    return;
+                }
                 if (json.has("version")) {
-                    if (json.has("scope") && (json.asString("scope").equals("test") || json.asString("scope").equals("provided"))) {
-                        return;
-                    }
-                    if (groupId.equals("${project.parent.groupId}")) {
-                        groupId = parent_groupId;
-                    }
                     String versionAsString = json.asString("version");
                     if (versionAsString.contains("${project.version}") || versionAsString.contains("${project.parent.version}")) {
                         Dependency dependency = new Dependency(groupId, artifactId, version, true);
@@ -182,7 +188,9 @@ class LibraryLoader {
                         list.add(dependency);
                     }
                 } else {
-                    list.add(findDependency(groupId, artifactId, true));
+                    if (json.has("scope") && json.asString("scope").equals("compile")) {
+                        list.add(findDependency(groupId, artifactId, true));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -200,11 +208,10 @@ class LibraryLoader {
     public Set<Dependency> findDependency(Set<Dependency> dependencySet) {
         Set<Dependency> list = new HashSet<>();
         for (Dependency dependency : dependencySet) {
-            DependencyIgnoreVersion d = new DependencyIgnoreVersion(dependency.group, dependency.name);
-            if (dependencyIgnoreVersion.contains(d)) {
+            if (dependencyIgnoreVersion.contains(dependency.toIgnoreVersion())) {
                 continue;
             }
-            dependencyIgnoreVersion.add(d);
+            dependencyIgnoreVersion.add(dependency.toIgnoreVersion());
             String group = dependency.group.replace(".", "/");
             String fileName = "%s-%s.pom".formatted(dependency.name, dependency.version);
             String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name, dependency.version, fileName);
@@ -235,14 +242,21 @@ class LibraryLoader {
         File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(dependency.group, dependency.name, dependency.version(), fileName));
 
         if (file.exists()) {
-            MohistMC.LOGGER.info("[{}] Found libraries {}", dependency.name, file);
-            libraries.add(file);
-            return true;
+            if (!dependencyIgnoreVersion.contains(dependency.toIgnoreVersion())) {
+                libraries.add(file);
+                dependencyIgnoreVersion.add(dependency.toIgnoreVersion());
+                MohistMC.LOGGER.info("[{}] Found libraries {}", dependency.name, file);
+                return true;
+            }
         }
         return false;
     }
 
     public record Dependency(String group, String name, String version, boolean extra) {
+
+        public DependencyIgnoreVersion toIgnoreVersion() {
+            return new DependencyIgnoreVersion(group, name);
+        }
     }
 
     public record DependencyIgnoreVersion(String group, String name) {
