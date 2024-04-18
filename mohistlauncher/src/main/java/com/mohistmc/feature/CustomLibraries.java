@@ -18,13 +18,12 @@
 
 package com.mohistmc.feature;
 
-import com.mohistmc.MohistMCStart;
 import com.mohistmc.util.JarLoader;
 import java.io.File;
 
 public class CustomLibraries {
 
-    public static final File file = new File("./libraries/customize_libraries");
+    public static final File file = new File("libraries", "customize_libraries");
 
     public static void loadCustomLibs() {
         if (!file.exists()) {

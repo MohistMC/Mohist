@@ -9,6 +9,8 @@ import com.mohistmc.util.I18n;
 import com.mohistmc.util.MohistModuleManager;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +66,7 @@ public class v_1_20_1 {
         }
 
         private void install() throws Exception {
-            launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getAbsolutePath());
+            launchArgs.add(new File(URLDecoder.decode(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), StandardCharsets.UTF_8)).getAbsolutePath());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
             copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
