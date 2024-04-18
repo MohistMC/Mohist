@@ -75,15 +75,15 @@ public class WarpsCommands extends Command {
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
                 for (String w : WarpsConfig.INSTANCE.yaml.getKeys(false)) {
-                    wh.addItem(new GUIItem(new ItemStackFactory(Material.BAMBOO_SIGN)
+                    Location warpLoc = WarpAPI.get(w);
+                    MohistItem guiItem = MohistItem.create(Material.BAMBOO_HANGING_SIGN)
                             .setDisplayName(w)
-                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsConfig.INSTANCE.get(w).asString()))
-                            .toItemStack()) {
-                        @Override
-                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            u.teleport(WarpsConfig.INSTANCE.get(w));
-                        }
-                    });
+                            .setDisplayLore(WarpAPI.asStringList(w));
+
+                    if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
+                        guiItem.addDisplayLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
+                    }
+                    wh.addItem(new GUIItem(guiItem.build(), (clickType, owner, itemStack) -> WarpAPI.teleportSafe(owner, w, 0)));
                 }
 
                 ClosestDistance result = LocationAPI.findClosest(WarpAPI.asList(), playerLoc);

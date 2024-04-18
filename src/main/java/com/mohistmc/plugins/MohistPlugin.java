@@ -1,6 +1,9 @@
 package com.mohistmc.plugins;
 
 import com.mohistmc.MohistConfig;
+import com.mohistmc.api.WarpAPI;
+import com.mohistmc.api.combat.CombatAPI;
+import com.mohistmc.api.combat.CombatListener;
 import com.mohistmc.plugins.back.BackCommands;
 import com.mohistmc.plugins.back.BackConfig;
 import com.mohistmc.plugins.ban.BanListener;
@@ -119,6 +122,7 @@ public class MohistPlugin {
         }
         if (event instanceof PlayerItemConsumeEvent event1) {
             CombatListener.register(event1);
+        }
         if (event instanceof PlayerTeleportEvent event1) {
             BackCommands.hookTeleport(event1);
         }

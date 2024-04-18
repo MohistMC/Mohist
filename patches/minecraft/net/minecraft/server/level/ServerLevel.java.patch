@@ -107,7 +107,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,24 +_,71 @@
+@@ -188,58 +_,107 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -227,7 +227,6 @@
           return this.m_8895_().m_164861_((p_287374_) -> {
              return RandomSequences.m_287187_(i, p_287374_);
           }, () -> {
-@@ -240,6 +_,10 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
