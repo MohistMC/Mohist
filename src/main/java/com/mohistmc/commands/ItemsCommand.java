@@ -23,6 +23,7 @@ import com.mohistmc.api.gui.GUIItem;
 import com.mohistmc.api.gui.Warehouse;
 import com.mohistmc.api.item.ItemAPI;
 import com.mohistmc.plugins.item.ItemsConfig;
+import com.mohistmc.tools.NumberUtil;
 import com.mohistmc.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,12 +44,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemsCommand extends Command {
 
-    private final List<String> params = Arrays.asList("info", "name", "save", "remove", "list", "get");
+    private final List<String> params = Arrays.asList("info", "name", "save", "remove", "list", "get", "custommodeldata");
 
     public ItemsCommand(String name) {
         super(name);
         this.description = I18n.as("itemscmd.description");
-        this.usageMessage = "/items [info|name|save|list|get|remove]";
+        this.usageMessage = "/items [info|name|save|list|get|remove|custommodeldata]";
         this.setPermission("mohist.command.items");
     }
 
@@ -103,6 +104,24 @@ public class ItemsCommand extends Command {
                 }
                 ItemAPI.name(player.getInventory().getItemInMainHand(), args[1]);
                 sender.sendMessage(ChatColor.GREEN + "Item name set complete.");
+                return true;
+            }
+            case "custommodeldata" -> {
+                if (itemStack == null || itemStack.getType().isAir()) {
+                    player.sendMessage(ChatColor.RED + I18n.as("itemscmd.mainhandEmpty"));
+                    return false;
+                }
+                if (args.length != 2) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /items custommodeldata <Integer>");
+                    return false;
+                }
+                Integer data = NumberUtil.toInt(args[1]);
+                if (data == null) {
+                    sender.sendMessage(ChatColor.RED + "无效数字");
+                    return false;
+                }
+                ItemAPI.customModelData(player.getInventory().getItemInMainHand(), data);
+                sender.sendMessage(ChatColor.GREEN + "Item custommodeldata set complete.");
                 return true;
             }
             case "save" -> {

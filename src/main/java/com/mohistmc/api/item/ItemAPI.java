@@ -163,6 +163,12 @@ public class ItemAPI {
         itemStack.setItemMeta(im);
     }
 
+    public static void customModelData(ItemStack itemStack, Integer name) {
+        ItemMeta im = itemStack.getItemMeta();
+        im.setCustomModelData(name);
+        itemStack.setItemMeta(im);
+    }
+
     public static void lore(ItemStack itemStack, List<String> lore) {
         ItemMeta im = itemStack.getItemMeta();
         im.setLore(lore);
