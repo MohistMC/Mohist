@@ -934,6 +934,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (getHandle().containerMenu != getHandle().inventoryMenu) {
             getHandle().closeContainer();
         }
+        if (!to.getChunk().isLoaded()) {
+            to.getChunk().load();
+        }
 
         // Check if the fromWorld and toWorld are the same.
         if (fromWorld == toWorld) {
