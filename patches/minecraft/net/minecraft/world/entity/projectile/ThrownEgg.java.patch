@@ -9,16 +9,17 @@
  import net.minecraft.world.entity.EntityType;
  import net.minecraft.world.entity.LivingEntity;
  import net.minecraft.world.entity.animal.Chicken;
-@@ -10,6 +_,8 @@
+@@ -10,6 +_,9 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.phys.EntityHitResult;
  import net.minecraft.world.phys.HitResult;
++import org.bukkit.Bukkit;
 +import org.bukkit.entity.Ageable;
 +import org.bukkit.event.player.PlayerEggThrowEvent;
  
  public class ThrownEgg extends ThrowableItemProjectile {
     public ThrownEgg(EntityType<? extends ThrownEgg> p_37473_, Level p_37474_) {
-@@ -42,19 +_,48 @@
+@@ -42,19 +_,52 @@
  
     protected void m_6532_(HitResult p_37488_) {
        super.m_6532_(p_37488_);
@@ -49,7 +50,7 @@
 +
 +            if (shooter instanceof ServerPlayer) {
 +               PlayerEggThrowEvent event = new PlayerEggThrowEvent((org.bukkit.entity.Player) shooter.getBukkitEntity(), (org.bukkit.entity.Egg) this.getBukkitEntity(), hatching, i, hatchingType);
-+               this.m_9236_().getCraftServer().getPluginManager().callEvent(event);
++               Bukkit.getPluginManager().callEvent(event);
 +
 +               i = event.getNumHatches();
 +               hatching = event.isHatching();
@@ -63,14 +64,18 @@
 +
 +            if (hatching) {
 +               for (int i1 = 0; i1 < i; ++i1) {
-+                  Chicken entity = (Chicken) f_19853_.getWorld().createEntity(new org.bukkit.Location(m_9236_().getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
-+                  if (entity != null) {
++                  net.minecraft.world.entity.EntityType<?> entityType = EntityType.f_20555_;
++                  Chicken chicken = (Chicken) entityType.m_20615_(this.m_9236_());
++                  if (entityType == EntityType.f_20555_) {
++                     chicken = (Chicken) f_19853_.getWorld().createEntity(new org.bukkit.Location(m_9236_().getWorld(), this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F), hatchingType.getEntityClass());
++                  }
++                  if (chicken != null) {
 +                     // CraftBukkit start
-+                     if (entity.getBukkitEntity() instanceof Ageable) {
-+                        ((Ageable) entity.getBukkitEntity()).setBaby();
++                     if (chicken.getBukkitEntity() instanceof Ageable) {
++                        ((Ageable) chicken.getBukkitEntity()).setBaby();
 +                     }
-+                     entity.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
-+                     m_9236_().m_7967_(entity);
++                     chicken.spawnReason(org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG);
++                     m_9236_().m_7967_(chicken);
 +                     // CraftBukkit end
 +                  }
                 }

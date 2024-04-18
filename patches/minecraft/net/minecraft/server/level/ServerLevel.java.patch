@@ -27,10 +27,11 @@
  import java.util.List;
  import java.util.Locale;
  import java.util.Objects;
-@@ -27,6 +_,7 @@
+@@ -27,6 +_,8 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.BooleanSupplier;
  import java.util.function.Function;
@@ -444,7 +445,26 @@
        }
  
        this.m_7726_().m_8483_().m_78151_();
-@@ -807,10 +_,28 @@
+@@ -799,18 +_,46 @@
+       return list.isEmpty() ? null : list.get(this.f_46441_.m_188503_(list.size()));
+    }
+ 
++   // Mohist start
++   public AtomicBoolean canaddFreshEntity = new AtomicBoolean(false);
++
++   public boolean canAddFreshEntity() {
++      return canaddFreshEntity.getAndSet(false);
++   }
++   // Mohist end
++
+    public boolean m_7967_(Entity p_8837_) {
+-      return this.m_8872_(p_8837_);
++      boolean add = this.m_8872_(p_8837_);
++      canaddFreshEntity.set(add);
++      return add;
+    }
+ 
+    public boolean m_8847_(Entity p_8848_) {
        return this.m_8872_(p_8848_);
     }
  

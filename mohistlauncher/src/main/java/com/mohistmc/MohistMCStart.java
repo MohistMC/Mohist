@@ -70,7 +70,8 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.CHECK_UPDATE.asBoolean()) UpdateUtils.versionCheck();
+        if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.CHECK_UPDATE.asBoolean())
+            UpdateUtils.versionCheck();
 
         if (!MohistConfigUtil.INSTALLATIONFINISHED.asBoolean() && MohistConfigUtil.CHECK_LIBRARIES.asBoolean()) {
             DefaultLibraries.run();
@@ -85,11 +86,11 @@ public class MohistMCStart {
         CustomLibraries.loadCustomLibs();
         List<String> forgeArgs = new ArrayList<>();
         for (String arg : DataParser.launchArgs.stream().filter(s ->
-                s.startsWith("--launchTarget")
-                        || s.startsWith("--fml.forgeVersion")
-                        || s.startsWith("--fml.mcVersion")
-                        || s.startsWith("--fml.forgeGroup")
-                        || s.startsWith("--fml.mcpVersion"))
+                        s.startsWith("--launchTarget")
+                                || s.startsWith("--fml.forgeVersion")
+                                || s.startsWith("--fml.mcVersion")
+                                || s.startsWith("--fml.forgeGroup")
+                                || s.startsWith("--fml.mcpVersion"))
                 .toList()) {
             forgeArgs.add(arg.split(" ")[0]);
             forgeArgs.add(arg.split(" ")[1]);
