@@ -45,14 +45,14 @@ public class WarpsCommands extends Command {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "set" -> {
                         String name = args[1];
-                        WarpAPI.add(playerLoc, name);
+                        WarpsConfig.INSTANCE.put(name, player.getLocation());
                         player.sendMessage(I18n.as("warpscommands.set.success", name));
                         return true;
                     }
                     case "del" -> {
                         String name = args[1];
-                        if (WarpAPI.has(name)) {
-                            WarpAPI.del(name);
+                        if (WarpsConfig.INSTANCE.has(name)) {
+                            WarpsConfig.INSTANCE.remove(name);
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
                             return true;
                         } else {
@@ -62,8 +62,8 @@ public class WarpsCommands extends Command {
                     }
                     case "tp" -> {
                         String name = args[1];
-                        if (WarpAPI.has(name)) {
-                            WarpAPI.teleport(player, name);
+                        if (WarpsConfig.INSTANCE.has(name)) {
+                            player.teleport(WarpsConfig.INSTANCE.get(name));
                             return true;
                         } else {
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
@@ -74,16 +74,16 @@ public class WarpsCommands extends Command {
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
-                for (String w : WarpAPI.config.getKeys(false)) {
-                    Location warpLoc = WarpAPI.get(w);
-                    MohistItem guiItem = MohistItem.create(Material.BAMBOO_HANGING_SIGN)
+                for (String w : WarpsConfig.INSTANCE.yaml.getKeys(false)) {
+                    wh.addItem(new GUIItem(new ItemStackFactory(Material.BAMBOO_SIGN)
                             .setDisplayName(w)
-                            .setDisplayLore(WarpAPI.asStringList(w));
-
-                    if (Objects.equals(warpLoc.getWorld(), playerLoc.getWorld())) {
-                        guiItem.addDisplayLore("&6距离: &2%s格".formatted(LocationAPI.distanceBetweenLocation(playerLoc, warpLoc)));
-                    }
-                    wh.addItem(new GUIItem(guiItem.build(), (clickType, owner, itemStack) -> WarpAPI.teleportSafe(owner, w, 0)));
+                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsConfig.INSTANCE.get(w).asString()))
+                            .toItemStack()) {
+                        @Override
+                        public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
+                            u.teleport(WarpsConfig.INSTANCE.get(w));
+                        }
+                    });
                 }
 
                 ClosestDistance result = LocationAPI.findClosest(WarpAPI.asList(), playerLoc);
@@ -114,8 +114,8 @@ public class WarpsCommands extends Command {
                 sender.sendMessage(I18n.as("warpscommands.noplayer"));
                 return false;
             }
-            if (WarpAPI.has(warpsName)) {
-                WarpAPI.teleport(player, warpsName);
+            if (WarpsConfig.INSTANCE.has(warpsName)) {
+                player.teleport(WarpsConfig.INSTANCE.get(warpsName));
                 return true;
             } else {
                 sender.sendMessage(I18n.as("warpscommands.nowarp"));

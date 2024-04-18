@@ -14,6 +14,7 @@ import com.mohistmc.commands.PingCommand;
 import com.mohistmc.commands.PluginCommand;
 import com.mohistmc.commands.ShowsCommand;
 import com.mohistmc.plugins.MohistPlugin;
+import com.mohistmc.util.YamlUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -100,7 +101,7 @@ public class MohistConfig {
     }
 
     public static void save() {
-        readConfig();
+        YamlUtils.save(mohistyml, yml);
     }
 
     public static void registerCommands() {
@@ -146,9 +147,9 @@ public class MohistConfig {
         return config.getInt(path, config.getInt(path));
     }
 
-    private static <T> List getList(String path, T def) {
+    private static <T> List<String> getStringList(String path, T def) {
         config.addDefault(path, def);
-        return config.getList(path, config.getList(path));
+        return config.getStringList(path);
     }
 
     private static String getString(String path, String def) {
@@ -186,15 +187,22 @@ public class MohistConfig {
     public static List<String> networkmanager_intercept;
     public static boolean keepinventory_global;
     public static boolean keepinventory_inventory;
+    public static String keepinventory_inventory_permission;
     public static boolean keepinventory_exp;
+    public static String keepinventory_exp_permission;
 
     // Thread Priority
     public static int server_thread;
 
     public static boolean clear_item;
-    public static List<String> clear_item__whitelist;
-    public static String clear_item__msg;
-    public static int clear_item__time;
+    public static List<String> clear_item_whitelist;
+    public static String clear_item_msg;
+    public static int clear_item_time;
+
+    public static boolean clear_monster;
+    public static List<String> clear_monster_whitelist;
+    public static String clear_monster_msg;
+    public static int clear_monster_time;
 
     // Ban
     public static boolean ban_item_enable;
@@ -219,6 +227,11 @@ public class MohistConfig {
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
 
+    public static boolean recipe_warn;
+
+    public static boolean tpa_enable;
+    public static boolean back_enable;
+
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
         mohist_lang = getString("mohist.lang", Locale.getDefault().toString());
@@ -227,29 +240,36 @@ public class MohistConfig {
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
         player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
-        player_modlist_blacklist = getList("player_modlist_blacklist.list", new ArrayList<>());
+        player_modlist_blacklist = getStringList("player_modlist_blacklist.list", new ArrayList<>());
         server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
         server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
         maxBees = getInt("max-bees-in-hive", 3);
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
-        networkmanager_intercept = getList("networkmanager.intercept", new ArrayList<>());
+        networkmanager_intercept = getStringList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
+        keepinventory_inventory_permission = getString("keepinventory.permission.inventory", "mohist.keepinventory.inventory");
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
+        keepinventory_exp_permission = getString("keepinventory.permission.exp", "mohist.keepinventory.exp");
         server_thread = getInt("threadpriority.server_thread", 8);
 
         clear_item = getBoolean("entity.clear.item.enable", false);
-        clear_item__whitelist = getList("entity.clear.item.whitelist", new ArrayList<>());
-        clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
-        clear_item__time = getInt("entity.clear.item.time", 1800);
+        clear_item_whitelist = getStringList("entity.clear.item.whitelist", new ArrayList<>());
+        clear_item_msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drop item");
+        clear_item_time = getInt("entity.clear.item.time", 1800);
+
+        clear_monster = getBoolean("entity.clear.monster.enable", false);
+        clear_monster_whitelist = getStringList("entity.clear.monster.whitelist", new ArrayList<>());
+        clear_monster_msg = getString("entity.clear.monster.msg", "[Server] Cleaned up %size% monster");
+        clear_monster_time = getInt("entity.clear.monster.time", 1800);
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
-        ban_item_materials = getList("ban.item.list", new ArrayList<>());
+        ban_item_materials = getStringList("ban.item.list", new ArrayList<>());
         ban_entity_enable = getBoolean("ban.entity.enable", false);
-        ban_entity_types = getList("ban.entity.list", new ArrayList<>());
+        ban_entity_types = getStringList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
-        ban_enchantment_list = getList("ban.enchantment.list", new ArrayList<>());
+        ban_enchantment_list = getStringList("ban.enchantment.list", new ArrayList<>());
         motdEnable = getBoolean("motd.enable", true);
         motdFirstLine = getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>");
         motdSecondLine = getString("motd.secondline", "");
@@ -262,5 +282,9 @@ public class MohistConfig {
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");
+
+        recipe_warn = getBoolean("recipe.warn", false);
+        tpa_enable = getBoolean("tpa.enable", false);
+        back_enable = getBoolean("back.enable", false);
     }
 }

@@ -294,8 +294,8 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.ATTRIBUTES;
         for (Attribute attribute : registry) {
             ResourceLocation resourceLocation = registry.getKey(attribute);
-            String name = normalizeName(resourceLocation.getPath());
             if (isMods(resourceLocation)) {
+                String name = normalizeName(resourceLocation.getPath());
                 org.bukkit.attribute.Attribute ab = MohistDynamEnum.addEnum(org.bukkit.attribute.Attribute.class, name, List.of(String.class), List.of());
                 attributemap.put(ab, resourceLocation);
                 MohistMC.LOGGER.debug("Registered forge Attribute as Attribute(Bukkit) {}", ab.name());
@@ -307,8 +307,8 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.FLUIDS;
         for (net.minecraft.world.level.material.Fluid fluidType : registry) {
             ResourceLocation resourceLocation = registry.getKey(fluidType);
-            String name = normalizeName(resourceLocation.getPath());
             if (isMods(resourceLocation)) {
+                String name = normalizeName(resourceLocation.getPath());
                 Fluid fluid = MohistDynamEnum.addEnum(Fluid.class, name);
                 CraftMagicNumbers.FLUIDTYPE_FLUID.put(fluidType, fluid);
                 MohistMC.LOGGER.debug("Registered forge Fluid as Fluid(Bukkit) {}", fluid.name());
@@ -320,8 +320,8 @@ public class ForgeInjectBukkit {
         var registry = ForgeRegistries.STAT_TYPES;
         for (StatType<?> statType : registry) {
             ResourceLocation resourceLocation = registry.getKey(statType);
-            String name = normalizeName(resourceLocation.getPath());
             if (isMods(resourceLocation)) {
+                String name = normalizeName(resourceLocation.getPath());
                 Statistic statistic = MohistDynamEnum.addEnum(Statistic.class, name);
                 statisticMap.put(statType, statistic);
                 MohistMC.LOGGER.debug("Registered forge StatType as Statistic(Bukkit) {}", statistic.name());
@@ -356,7 +356,7 @@ public class ForgeInjectBukkit {
             int width = entry.getWidth();
             int height = entry.getHeight();
             ResourceLocation resourceLocation = ForgeRegistries.PAINTING_VARIANTS.getKey(entry);
-            if (!resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            if (isMods(resourceLocation)) {
                 String name = normalizeName(resourceLocation.toString());
                 String lookupName = resourceLocation.getPath().toLowerCase(Locale.ROOT);
                 int id = i - 1;
@@ -377,7 +377,7 @@ public class ForgeInjectBukkit {
     }
 
     public static boolean isMods(ResourceLocation resourceLocation) {
-        return !resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT);
+        return resourceLocation != null && !resourceLocation.getNamespace().equals(NamespacedKey.MINECRAFT);
     }
 
     public static boolean isMods(NamespacedKey namespacedkey) {

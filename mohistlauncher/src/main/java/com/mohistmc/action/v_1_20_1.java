@@ -20,7 +20,6 @@ public class v_1_20_1 {
 
     public static void restartServer(List<String> cmd, boolean shutdown) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(MohistMCStart.jarTool.getJarDir());
         pb.inheritIO().start().waitFor();
         Thread.sleep(2000);
         if (shutdown) {
@@ -65,7 +64,7 @@ public class v_1_20_1 {
         }
 
         private void install() throws Exception {
-            launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+            launchArgs.add(new File(MohistModuleManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getAbsolutePath());
             launchArgs.addAll(MohistMCStart.mainArgs);
             copyFileFromJar(lzma, "data/server.lzma");
             copyFileFromJar(fmlloader, "data/fmlloader-" + mcVer + "-" + forgeVer + ".jar");
@@ -190,7 +189,7 @@ public class v_1_20_1 {
             fw.close();
 
             System.out.println(I18n.as("installation.finished"));
-            MohistConfigUtil.INSTALLATIONFINISHED.setValues(true);
+            MohistConfigUtil.yml.set("mohist.installation-finished", true);
             MohistConfigUtil.save();
             restartServer(launchArgs, true);
         }

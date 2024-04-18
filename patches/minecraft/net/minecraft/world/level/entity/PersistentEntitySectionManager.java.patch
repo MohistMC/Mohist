@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -16,16 +_,20 @@
+@@ -16,16 +_,21 @@
  import java.util.Queue;
  import java.util.Set;
  import java.util.UUID;
@@ -10,6 +10,7 @@
  import java.util.stream.Stream;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.SectionPos;
++import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ChunkHolder;
  import net.minecraft.server.level.FullChunkStatus;
  import net.minecraft.util.CsvOutput;
@@ -38,6 +39,17 @@
     void m_157509_(long p_157510_, EntitySection<T> p_157511_) {
        if (p_157511_.m_156833_()) {
           this.f_157495_.m_156897_(p_157510_);
+@@ -60,7 +_,9 @@
+ 
+    private boolean m_157557_(T p_157558_) {
+       if (!this.f_157491_.add(p_157558_.m_20148_())) {
+-         f_157490_.warn("UUID of added entity already exists: {}", (Object)p_157558_);
++         if (MinecraftServer.getServer().isDebugging()) {
++            f_157490_.warn("UUID of added entity already exists: {}", (Object) p_157558_);
++         }
+          return false;
+       } else {
+          return true;
 @@ -71,7 +_,16 @@
        return this.m_157538_(p_157534_, false);
     }
@@ -75,7 +87,7 @@
     }
  
 +   // Mohist start
-+   private AtomicBoolean callEvent = new AtomicBoolean(false);
++   private final AtomicBoolean callEvent = new AtomicBoolean(false);
 +   private boolean storeChunkSections(long i, Consumer<T> consumer, boolean callEvent) {
 +      this.callEvent.set(callEvent);
 +      return m_157512_(i, consumer);

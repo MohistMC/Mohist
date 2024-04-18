@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,13 +49,20 @@ public class VanillaInventoryCodeHooks
                     for (int i = 0; i < handler.getSlots(); i++)
                     {
                         ItemStack extractItem = handler.extractItem(i, level.spigotConfig.hopperAmount, true);
-                        if (!extractItem.isEmpty()) {
+
+                        if (!extractItem.isEmpty())
+                        {
                             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
 
-                            org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get(dest);
-                            org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
+                            InventoryHolder owner = InventoryOwner.get(dest);
+                            Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
                             if (destinationInventory != null) {
-                                InventoryMoveItemEvent event = new InventoryMoveItemEvent(InventoryOwner.getInventory(container), oitemstack.clone(), destinationInventory, true);
+                                InventoryMoveItemEvent event = null;
+                                try {
+                                    event = new InventoryMoveItemEvent(InventoryOwner.getInventory(container), oitemstack.clone(), destinationInventory, true);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 Bukkit.getPluginManager().callEvent(event);
                                 if (event.isCancelled()) {
                                     extractItem = ItemStack.EMPTY;
@@ -60,9 +70,7 @@ public class VanillaInventoryCodeHooks
                                     extractItem = CraftItemStack.asNMSCopy(event.getItem());
                                 }
                             }
-                        }
-                        if (!extractItem.isEmpty())
-                        {
+
                             for (int j = 0; j < dest.getContainerSize(); j++)
                             {
                                 ItemStack destStack = dest.getItem(j);
@@ -82,10 +90,8 @@ public class VanillaInventoryCodeHooks
                             }
                         }
                     }
-
                     return false;
-                })
-                .orElse(null); // TODO bad null
+                }).orElse(null); // TODO bad null
     }
 
     /**
@@ -101,12 +107,12 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     // CraftBukkit start - Fire event when pushing items into other inventories
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
-                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
+                    InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
+                    Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                     InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
                     Bukkit.getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
-                        return false;
+                        return true;
                     }
                     ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, CraftItemStack.asNMSCopy(event.getItem()));
 
@@ -151,8 +157,8 @@ public class VanillaInventoryCodeHooks
                                 ItemStack stack = insertStack;
                                 if (!insertStack.isEmpty()) {
                                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(insertStack);
-                                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
-                                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
+                                    InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
+                                    Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
                                     if (destinationInventory != null) {
                                         InventoryMoveItemEvent event = new InventoryMoveItemEvent(InventoryOwner.getInventory(hopper), oitemstack.clone(), destinationInventory, true);
                                         Bukkit.getPluginManager().callEvent(event);
@@ -282,7 +288,7 @@ public class VanillaInventoryCodeHooks
         int j = Mth.floor(y);
         int k = Mth.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
-        net.minecraft.world.level.block.state.BlockState state = worldIn.getBlockState(blockpos);
+        BlockState state = worldIn.getBlockState(blockpos);
 
         if (state.hasBlockEntity())
         {

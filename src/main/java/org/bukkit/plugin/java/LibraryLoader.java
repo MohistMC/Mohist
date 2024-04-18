@@ -3,11 +3,12 @@ package org.bukkit.plugin.java;
 import com.mohistmc.MohistMC;
 import com.mohistmc.bukkit.PluginsLibrarySource;
 import com.mohistmc.bukkit.remapping.RemappingURLClassLoader;
+import com.mohistmc.mjson.Json;
 import com.mohistmc.tools.ConnectionUtil;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URI;
-import mjson.Json;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,43 +27,48 @@ import java.util.List;
 
 class LibraryLoader {
 
+    public static Set<File> libraries = new HashSet<>();
+    public static Set<Dependency> newDependencies = new HashSet<>();
+    public static Set<DependencyIgnoreVersion> dependencyIgnoreVersion = new HashSet<>();
+
     public LibraryLoader() {
     }
 
     @Nullable
-    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc) throws IOException {
+    public ClassLoader createLoader(@NotNull PluginDescriptionFile desc) {
         if (desc.getLibraries().isEmpty()) {
             return null;
         }
         MohistMC.LOGGER.info("[{}] Loading {} libraries... please wait", desc.getName(), desc.getLibraries().size());
 
         List<Dependency> dependencies = new ArrayList<>();
-        for (String libraries : desc.getLibraries()) {
-            String[] args = libraries.split(":");
+        for (String desc_libraries : desc.getLibraries()) {
+            String[] args = desc_libraries.split(":");
             if (args.length > 1) {
                 Dependency dependency = new Dependency(args[0], args[1], args[2], false);
+                if (has(dependency)) {
+                    continue;
+                }
                 dependencies.add(dependency);
             }
         }
-
-        List<File> libraries = new ArrayList<>();
-        List<Dependency> newDependencies = new ArrayList<>();
-        var d = mohistLibs();
+        var mohistLibs = mohistLibs();
 
         for (Dependency dependency : dependencies) {
             String group = dependency.group().replace(".", "/");
-            String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
-            if (!d.contains(fileName)) {
-                if (dependency.version().toString().equalsIgnoreCase("LATEST")) {
-                    URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(group, dependency.name(), "maven-metadata.xml")).toURL();
-                    Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
-                    List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                    Dependency dependency0 = new Dependency(group, dependency.name(),  v.get(v.size() - 1), false);
-                    newDependencies.add(dependency0);
+            String fileName = "%s-%s.pom".formatted(dependency.name(), dependency.version());
+            if (has(dependency)) {
+                continue;
+            }
+            if (!mohistLibs.contains(fileName)) {
+                if (dependency.version().equalsIgnoreCase("LATEST")) {
+                    newDependencies.add(findDependency(group, dependency.name(), false));
                 } else {
                     newDependencies.add(dependency);
-                    String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
-                    newDependencies.addAll(initDependencies0(new URL(pomUrl)));
+                    String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
+                    if (ConnectionUtil.isValid(pomUrl)) {
+                        newDependencies.addAll(initDependencies0(pomUrl));
+                    }
                 }
             }
         }
@@ -72,8 +78,8 @@ class LibraryLoader {
         for (Dependency dependency : newDependencies) {
             String group = dependency.group().replace(".", "/");
             String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
-            String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
 
+            String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
             File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName));
 
             if (file.exists()) {
@@ -83,6 +89,7 @@ class LibraryLoader {
             }
             try {
                 file.getParentFile().mkdirs();
+                file.createNewFile();
 
                 InputStream inputStream = new URL(mavenUrl).openStream();
                 ReadableByteChannel rbc = Channels.newChannel(inputStream);
@@ -93,7 +100,7 @@ class LibraryLoader {
                 rbc.close();
 
                 libraries.add(file);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -110,22 +117,25 @@ class LibraryLoader {
         return new RemappingURLClassLoader(jarFiles.toArray(new URL[0]), getClass().getClassLoader());
     }
 
-    public List<Dependency> initDependencies0(URL url) throws IOException {
-        List<Dependency> list = new ArrayList<>();
+    public Set<Dependency> initDependencies0(String url) {
+        Set<Dependency> list = new HashSet<>();
         for (Dependency dependency : initDependencies(url)) {
+            if (newDependencies.contains(dependency)){
+                continue;
+            }
             list.add(dependency);
             if (dependency.extra()) {
                 String group = dependency.group().replace(".", "/");
-                String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
-                String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName.replace("jar", "pom"));
-                if (ConnectionUtil.isValid(pomUrl)) list.addAll(initDependencies(new URL(pomUrl)));
+                String fileName = "%s-%s.pom".formatted(dependency.name(), dependency.version());
+                String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name(), dependency.version(), fileName);
+                if (ConnectionUtil.isValid(pomUrl)) list.addAll(initDependencies(pomUrl));
             }
         }
         return list;
     }
 
-    public List<Dependency> initDependencies(URL url) {
-        List<Dependency> list = new ArrayList<>();
+    public Set<Dependency> initDependencies(String url) {
+        Set<Dependency> list = new HashSet<>();
         Json json2Json = Json.readXml(url).at("project");
         String version = json2Json.has("parent") ? json2Json.at("parent").asString("version") : json2Json.asString("version");
         String groupId = json2Json.has("parent") ? json2Json.at("parent").asString("groupId") : json2Json.asString("groupId");
@@ -140,16 +150,24 @@ class LibraryLoader {
         } else {
             dependency(json3Json, list, version, groupId);
         }
+        list.addAll(findDependency(list));
         return list;
     }
 
-    public void dependency(Json json, List<Dependency> list, String version, String parent_groupId) {
+    public void dependency(Json json, Set<Dependency> list, String version, String parent_groupId) {
         try {
-            if (json.toString().contains("groupId") && json.toString().contains("artifactId")) {
+            if (json.has("groupId") && json.has("artifactId")) {
                 String groupId = json.asString("groupId");
                 String artifactId = json.asString("artifactId");
-                if (json.toString().contains("version")) {
-                    if (json.has("scope") && json.asString("scope").equals("test")) {
+                DependencyIgnoreVersion d = new DependencyIgnoreVersion(groupId, artifactId);
+                if (dependencyIgnoreVersion.contains(d)) {
+                    return;
+                }
+                if (json.has("optional")) {
+                    return;
+                }
+                if (json.has("version")) {
+                    if (json.has("scope") && (json.asString("scope").equals("test") || json.asString("scope").equals("provided"))) {
                         return;
                     }
                     if (groupId.equals("${project.parent.groupId}")) {
@@ -164,16 +182,38 @@ class LibraryLoader {
                         list.add(dependency);
                     }
                 } else {
-                    if (json.has("scope") && json.asString("scope").equals("compile")) {
-                        URL mavenUrl = URI.create(PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml")).toURL();
-                        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
-                        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
-                        Dependency dependency = new Dependency(groupId, artifactId, v.get(v.size() - 1), true);
-                        list.add(dependency);
-                    }
+                    list.add(findDependency(groupId, artifactId, true));
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Dependency findDependency(String groupId, String artifactId, boolean extra) {
+        String mavenUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s".formatted(groupId.replace(".", "/"), artifactId, "maven-metadata.xml");
+        Json compile_json2Json = Json.readXml(mavenUrl).at("metadata");
+        List<Object> v = compile_json2Json.at("versioning").at("versions").at("version").asList();
+        return new Dependency(groupId, artifactId, (String) v.get(v.size() - 1), extra);
+    }
+
+    public Set<Dependency> findDependency(Set<Dependency> dependencySet) {
+        Set<Dependency> list = new HashSet<>();
+        for (Dependency dependency : dependencySet) {
+            DependencyIgnoreVersion d = new DependencyIgnoreVersion(dependency.group, dependency.name);
+            if (dependencyIgnoreVersion.contains(d)) {
+                continue;
+            }
+            dependencyIgnoreVersion.add(d);
+            String group = dependency.group.replace(".", "/");
+            String fileName = "%s-%s.pom".formatted(dependency.name, dependency.version);
+            String pomUrl = PluginsLibrarySource.DEFAULT + "%s/%s/%s/%s".formatted(group, dependency.name, dependency.version, fileName);
+            if (ConnectionUtil.isValid(pomUrl)) {
+                list.addAll(initDependencies(pomUrl));
+            }
+        }
+
+        return list;
     }
 
     public List<String> mohistLibs() {
@@ -183,13 +223,28 @@ class LibraryLoader {
         try {
             while ((str = b.readLine()) != null) {
                 String[] s = str.split("\\|");
-                temp.add(new File(s[0]).getName());
+                temp.add(new File("libraries", s[0]).getName());
             }
             b.close();
         } catch (Exception ignored) {}
         return temp;
     }
 
-    public record Dependency(String group, String name, Object version, boolean extra) {
+    public boolean has(Dependency dependency) {
+        String fileName = "%s-%s.jar".formatted(dependency.name(), dependency.version());
+        File file = new File(new File("libraries", "plugins-lib"), "%s/%s/%s/%s".formatted(dependency.group, dependency.name, dependency.version(), fileName));
+
+        if (file.exists()) {
+            MohistMC.LOGGER.info("[{}] Found libraries {}", dependency.name, file);
+            libraries.add(file);
+            return true;
+        }
+        return false;
+    }
+
+    public record Dependency(String group, String name, String version, boolean extra) {
+    }
+
+    public record DependencyIgnoreVersion(String group, String name) {
     }
 }

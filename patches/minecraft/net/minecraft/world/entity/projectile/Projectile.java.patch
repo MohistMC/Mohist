@@ -21,7 +21,7 @@
     private boolean f_150164_;
  
 +   // CraftBukkit start
-+   private boolean hitCancelled = false;
++   public boolean hitCancelled = false; // Mohist private -> public
 +   // CraftBukkit end
 +
     protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {

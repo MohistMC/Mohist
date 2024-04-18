@@ -107,7 +107,7 @@
  import org.slf4j.Logger;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -188,58 +_,107 @@
+@@ -188,24 +_,71 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private EndDragonFight f_8559_;
@@ -161,7 +161,6 @@
 +      this.f_8549_ = pServerLevelData;
 +      ChunkGenerator chunkgenerator = pLevelStem.f_63976_();
 +      // CraftBukkit start
-+      K.setWorld(this);
 +      if (biomeProvider != null) {
 +         WorldInfo worldInfo = new CraftWorldInfo(K, pLevelStorageAccess, environment, pLevelStem.f_63975_().m_203334_());
 +         BiomeSource worldChunkManager = new CustomWorldChunkManager(worldInfo, biomeProvider, f_8548_.m_206579_().m_175515_(Registries.f_256952_));
@@ -171,13 +170,13 @@
 +            chunkgenerator = new FlatLevelSource(cpf.m_64191_(), worldChunkManager);
 +         }
 +      } else {
-+         biomeProvider = getCraftServer().getBiomeProvider(pServerLevelData.m_5462_());
++         biomeProvider = getCraftServer().getBiomeProvider(name);
 +      }
 +
 +      if (generator != null) {
 +         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R1.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      } else {
-+         generator = getCraftServer().getGenerator(pServerLevelData.m_5462_());
++         generator = getCraftServer().getGenerator(name);
 +      }
 +
 +      this.spigotConfig = new org.spigotmc.SpigotWorldConfig(name); // Spigot // Mohist
@@ -228,11 +227,13 @@
           return this.m_8895_().m_164861_((p_287374_) -> {
              return RandomSequences.m_287187_(i, p_287374_);
           }, () -> {
+@@ -240,6 +_,10 @@
              return new RandomSequences(i);
           }, "random_sequences");
        });
 +      this.world = new CraftWorld(this, generator, biomeProvider, environment);
 +      this.getCraftServer().addWorld(this.getWorld()); // CraftBukkit
++      K.setWorld(this);
 +      this.initCapabilities();
     }
  

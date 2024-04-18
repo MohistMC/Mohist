@@ -8,6 +8,14 @@
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.longs.LongIterator;
  import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+@@ -23,6 +_,7 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
++import java.util.ConcurrentModificationException;
+ import java.util.Iterator;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
 @@ -54,6 +_,8 @@
     private long f_140771_;
     private int f_183902_ = 10;
@@ -17,6 +25,21 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
+@@ -114,9 +_,11 @@
+       }
+ 
+       if (!this.f_140765_.isEmpty()) {
+-         this.f_140765_.forEach((p_183908_) -> {
+-            p_183908_.m_143003_(p_140806_, this.f_140770_);
+-         });
++         try {
++            this.f_140765_.forEach((p_183908_) -> {
++               p_183908_.m_143003_(p_140806_, this.f_140770_);
++            });
++         } catch (ConcurrentModificationException ignored) {}
+          this.f_140765_.clear();
+          return true;
+       } else {
 @@ -159,6 +_,25 @@
           this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
        }

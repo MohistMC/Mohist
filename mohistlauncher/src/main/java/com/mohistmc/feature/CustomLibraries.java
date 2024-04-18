@@ -24,7 +24,7 @@ import java.io.File;
 
 public class CustomLibraries {
 
-    public static final File file = new File(MohistMCStart.jarTool.getJarDir() + "/libraries/customize_libraries");
+    public static final File file = new File("./libraries/customize_libraries");
 
     public static void loadCustomLibs() {
         if (!file.exists()) {
