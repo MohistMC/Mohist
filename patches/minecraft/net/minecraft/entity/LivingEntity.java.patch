@@ -1027,7 +1027,7 @@
 +         if (f2 > 0.0F && f2 < 3.4028235E37F && p_70665_1_.func_76346_g() instanceof ServerPlayerEntity) {
 +            ((ServerPlayerEntity) p_70665_1_.func_76346_g()).func_195067_a(Stats.field_212735_F, Math.round(f2 * 10.0F));
 +         }
-+         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, f2);
++         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, p_70665_2_);
 +         if (p_70665_2_ > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the EntityHuman subclass each update.
