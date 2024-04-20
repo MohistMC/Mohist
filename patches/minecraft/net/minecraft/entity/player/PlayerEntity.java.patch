@@ -346,7 +346,7 @@
              });
              if (this.field_184627_bm.func_190926_b()) {
                 if (hand == Hand.MAIN_HAND) {
-@@ -845,29 +_,152 @@
+@@ -845,29 +_,154 @@
        }
     }
  
@@ -463,6 +463,8 @@
 +         if (f2 > 0.0F && f2 < 3.4028235E37F && p_70665_1_.func_76346_g() instanceof ServerPlayerEntity) {
 +            ((ServerPlayerEntity) p_70665_1_.func_76346_g()).func_195067_a(Stats.field_212735_F, Math.round(f2 * 10.0F));
 +         }
++
++         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, f2);
 +         if (p_70665_2_ > 0 || !human) {
 +            if (human) {
 +               // PAIL: Be sure to drag all this code from the EntityHuman subclass each update.
@@ -473,8 +475,8 @@
 +            }
 +            // CraftBukkit end
 +            float f3 = this.func_110143_aJ();
-+            this.func_70606_j(f3 - p_70665_2_);
 +            this.func_110142_aN().func_94547_a(p_70665_1_, f3, p_70665_2_);
++            this.func_70606_j(f3 - p_70665_2_); // Forge: moved to fix MC-121048
 +            // CraftBukkit start
 +            if (!human) {
 +               this.func_110149_m(this.func_110139_bj() - p_70665_2_);
