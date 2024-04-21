@@ -57,17 +57,17 @@ public class VanillaInventoryCodeHooks
                             InventoryHolder owner = InventoryOwner.get(dest);
                             Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
                             if (destinationInventory != null) {
-                                InventoryMoveItemEvent event = null;
+                                InventoryMoveItemEvent event;
                                 try {
                                     event = new InventoryMoveItemEvent(InventoryOwner.getInventory(container), oitemstack.clone(), destinationInventory, true);
+                                    Bukkit.getPluginManager().callEvent(event);
+                                    if (event.isCancelled()) {
+                                        extractItem = ItemStack.EMPTY;
+                                    } else {
+                                        extractItem = CraftItemStack.asNMSCopy(event.getItem());
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                }
-                                Bukkit.getPluginManager().callEvent(event);
-                                if (event.isCancelled()) {
-                                    extractItem = ItemStack.EMPTY;
-                                } else {
-                                    extractItem = CraftItemStack.asNMSCopy(event.getItem());
                                 }
                             }
 
