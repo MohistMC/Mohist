@@ -56,7 +56,7 @@ public abstract class Action {
     public final File mcpZip;
     public final File mcpTxt;
     public final File minecraft_server;
-    public String libPath = "libraries";
+    public final String libPath = "libraries";
 
     protected Action() {
         this.mohistVer = DataParser.versionMap.get("mohist");
