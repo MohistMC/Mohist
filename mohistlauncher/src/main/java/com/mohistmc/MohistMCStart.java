@@ -70,7 +70,7 @@ public class MohistMCStart {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
 
-        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.show_logo", true)) {
+        if (MohistConfigUtil.INSTALLATIONFINISHED() && MohistConfigUtil.aBoolean("mohist.check_update", true)) {
             UpdateUtils.versionCheck();
         }
 
