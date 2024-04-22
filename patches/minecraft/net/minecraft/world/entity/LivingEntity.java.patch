@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -1,21 +_,29 @@
+@@ -1,21 +_,30 @@
  package net.minecraft.world.entity;
  
 +import com.google.common.base.Function;
@@ -24,6 +24,7 @@
  import java.util.Optional;
 +import java.util.Set;
  import java.util.UUID;
++import java.util.concurrent.ConcurrentHashMap;
 +import java.util.concurrent.atomic.AtomicBoolean;
 +import java.util.concurrent.atomic.AtomicInteger;
 +import java.util.concurrent.atomic.AtomicReference;
@@ -85,6 +86,15 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -157,7 +_,7 @@
+    private static final int f_271312_ = 50;
+    private final AttributeMap f_20943_;
+    public CombatTracker f_20944_ = new CombatTracker(this);
+-   public final Map<MobEffect, MobEffectInstance> f_20945_ = Maps.newHashMap();
++   public final Map<MobEffect, MobEffectInstance> f_20945_ = new ConcurrentHashMap<>(); // Mohist
+    private final NonNullList<ItemStack> f_20946_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
+    private final NonNullList<ItemStack> f_20947_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+    public boolean f_20911_;
 @@ -207,7 +_,7 @@
     public boolean f_20948_ = true;
     @Nullable
@@ -354,36 +364,40 @@
     public boolean m_21219_() {
        if (this.m_9236_().f_46443_) {
           return false;
-@@ -879,7 +_,15 @@
+@@ -879,13 +_,31 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
 -            this.m_7285_(iterator.next());
+-            iterator.remove();
 +            // CraftBukkit start
 +            MobEffectInstance effect = iterator.next();
-+            if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect))) continue;
-+            EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, removeAllEffectsCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), EntityPotionEffectEvent.Action.CLEARED);
-+            if (event.isCancelled()) {
-+               continue;
++            try {
++               if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Remove(this, effect)))
++                  continue;
++               EntityPotionEffectEvent event = CraftEventFactory.callEntityPotionEffectChangeEvent(this, effect, null, removeAllEffectsCause.getAndSet(EntityPotionEffectEvent.Cause.UNKNOWN), EntityPotionEffectEvent.Action.CLEARED);
++               if (event.isCancelled()) {
++                  continue;
++               }
++               this.m_7285_(effect);
++               // CraftBukkit end
++               iterator.remove();
++            } catch (ConcurrentModificationException ignored) {
 +            }
-+            this.m_7285_(effect);
-+            // CraftBukkit end
-             iterator.remove();
           }
  
-@@ -887,6 +_,12 @@
+          return flag;
        }
     }
- 
++
 +   public boolean removeAllEffects(EntityPotionEffectEvent.Cause cause) {
 +      removeAllEffectsCause.set(cause);
 +      return m_21219_();
 +   }
 +   // Mohist end
-+
+ 
     public Collection<MobEffectInstance> m_21220_() {
        return this.f_20945_.values();
-    }
 @@ -908,25 +_,69 @@
        return this.m_147207_(p_21165_, (Entity)null);
     }
