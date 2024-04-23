@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Mgazul by MohistMC
@@ -22,7 +23,7 @@ public class PingCommand extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (Player param : Bukkit.getOnlinePlayers()) {
@@ -36,7 +37,7 @@ public class PingCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (!testPermission(sender)) {
             return false;
         }
@@ -57,7 +58,7 @@ public class PingCommand extends Command {
                 sender.sendMessage(output);
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotonline", args[1]));
+                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnline", args[0]));
                 return false;
             }
         }

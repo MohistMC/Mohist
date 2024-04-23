@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -50,7 +54,7 @@ public class ItemsCommand extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
@@ -111,8 +115,7 @@ public class ItemsCommand extends Command {
                     sender.sendMessage(ChatColor.RED + "Usage: /items save <name>");
                     return false;
                 }
-                ItemsConfig.yaml.set("items." + args[1], itemStack);
-                ItemsConfig.save();
+                ItemsConfig.INSTANCE.put("items." + args[1], itemStack);
                 sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.completeSet"));
                 return true;
             }
@@ -131,7 +134,7 @@ public class ItemsCommand extends Command {
                     return false;
                 }
                 if (player.getInventory().firstEmpty() != -1) {
-                    player.getInventory().addItem(ItemsConfig.get(args[1]));
+                    player.getInventory().addItem(ItemsConfig.INSTANCE.get(args[1]));
                 } else {
                     sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.inventoryFull"));
                     return false;
@@ -143,13 +146,13 @@ public class ItemsCommand extends Command {
                     sender.sendMessage(ChatColor.RED + "Usage: /items remove <name>");
                     return false;
                 }
-                ItemsConfig.remove(args[1]);
+                ItemsConfig.INSTANCE.remove(args[1]);
                 sender.sendMessage(ChatColor.GREEN + I18n.as("itemscmd.removedItemp1") + args[1] + ChatColor.GREEN + I18n.as("itemscmd.removedItemp2") );
                 return true;
             }
             case "list" ->{
                 Warehouse wh = new Warehouse("Items");
-                for (ItemStack s : ItemsConfig.getItems()) {
+                for (ItemStack s : ItemsConfig.INSTANCE.getItems()) {
                     wh.addItem(new GUIItem(s) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack1) {

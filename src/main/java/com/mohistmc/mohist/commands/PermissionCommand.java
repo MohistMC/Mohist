@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Mgazul by MohistMC
@@ -29,7 +30,7 @@ public class PermissionCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
         if (!testPermission(sender)) {
             return true;
         }
@@ -48,7 +49,7 @@ public class PermissionCommand extends Command {
             if (player != null) {
                 sender.sendMessage(player.hasPermission(permission) ? ChatColor.GREEN + "true" : ChatColor.RED + "false");
             } else {
-                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotonline", args[1]));
+                sender.sendMessage(ChatColor.RED + I18n.as("mohistcmd.playermods.playernotOnline", args[1]));
             }
         } else {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -57,7 +58,7 @@ public class PermissionCommand extends Command {
         return false;
     }
 
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {

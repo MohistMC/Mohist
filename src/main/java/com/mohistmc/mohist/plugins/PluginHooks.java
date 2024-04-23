@@ -1,5 +1,6 @@
 package com.mohistmc.mohist.plugins;
 
+import com.mohistmc.mohist.Mohist;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -20,6 +21,7 @@ public class PluginHooks {
         Plugin plugin = e.getPlugin();
         if (plugin.getName().equals("PlaceholderAPI")){
             MohistPapiHook.init();
+            Mohist.LOGGER.info("Hook PlaceholderAPI!");
         }
     }
 }

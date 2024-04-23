@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 
 package com.mohistmc.mohist.commands;
 
-import com.mohistmc.mohist.Mohist;
 import com.mohistmc.mohist.api.ChatComponentAPI;
 import com.mohistmc.mohist.api.ServerAPI;
-import com.mohistmc.tools.HasteUtils;
 import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.tools.HasteUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,12 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.io.FileUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -48,23 +44,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 public class DumpCommand extends Command {
-    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements", "plugins", "mods");
+    private final List<String> tab_cmd = Arrays.asList("potions", "effect", "particle", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material", "channels", "advancements");
     private final List<String> tab_mode = Arrays.asList("file", "web");
 
     public DumpCommand(String name) {
         super(name);
         this.description = I18n.as("dumpcmd.description");
-        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements|plugins|mods]";
+        this.usageMessage = "/dump <file|web> [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material|channels|advancements]";
         this.setPermission("mohist.command.dump");
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if ((sender.isOp() || testPermission(sender))) {
             switch (args.length) {
@@ -89,7 +85,7 @@ public class DumpCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
         if (!testPermission(sender)) {
             return true;
         }
@@ -109,12 +105,14 @@ public class DumpCommand extends Command {
                 case "entitytypes" -> dumpEntityTypes(sender, mode);
                 case "biomes" -> dumpBiomes(sender, mode);
                 case "pattern" -> dumpPattern(sender, mode);
+
+                /*case "worldgen":
+                    dumpWorldGen(sender, mode);
+                    break;*/
                 case "worldtype" -> dumpWorldType(sender, mode);
                 case "material" -> dumpMaterial(sender, mode);
                 case "channels" -> dumpChannels(sender, mode);
                 case "advancements" -> dumpAdvancements(sender, mode);
-                case "plugins" -> dumpPlugins(sender, mode);
-                case "mods" -> dumpMods(sender, mode);
                 default -> {
                     sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                     return false;
@@ -250,26 +248,10 @@ public class DumpCommand extends Command {
 
     private void dumpAdvancements(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for (AdvancementHolder channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
-            sb.append(channel.id()).append("\n");
+        for (Advancement channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
+            sb.append(channel.getId()).append("\n");
         }
         dump(sender, "advancements", sb, mode);
-    }
-
-    private void dumpPlugins(CommandSender sender, String mode) {
-        StringBuilder sb = new StringBuilder();
-        for (Plugin p : Bukkit.getServer().getPluginManager().getPlugins()) {
-            sb.append("%s - %s".formatted(p.getName(), p.getDescription().getVersion())).append("\n");
-        }
-        dump(sender, "plugins", sb, mode);
-    }
-
-    private void dumpMods(CommandSender sender, String mode) {
-        StringBuilder sb = new StringBuilder();
-        for (IModInfo modInfo : ModLoader.getModList().getMods()) {
-            sb.append("%s - %s".formatted(modInfo.getModId(), modInfo.getVersion().toString())).append("\n");
-        }
-        dump(sender, "mods", sb, mode);
     }
 
     private void dumpmsg(CommandSender sender, String path, String type) {
@@ -305,7 +287,7 @@ public class DumpCommand extends Command {
         try {
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            Mohist.LOGGER.error(e);
+            MohistMC.LOGGER.error(e);
         }
     }
 }

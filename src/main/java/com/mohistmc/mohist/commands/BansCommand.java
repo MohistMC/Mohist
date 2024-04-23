@@ -1,21 +1,23 @@
 package com.mohistmc.mohist.commands;
 
 import com.mohistmc.mohist.MohistConfig;
+import com.mohistmc.mohist.api.EntityAPI;
 import com.mohistmc.mohist.api.ItemAPI;
 import com.mohistmc.mohist.api.gui.GUIItem;
 import com.mohistmc.mohist.api.gui.ItemStackFactory;
 import com.mohistmc.mohist.api.gui.Warehouse;
+import com.mohistmc.mohist.plugins.ban.BanListener;
+import com.mohistmc.mohist.plugins.ban.BanType;
+import com.mohistmc.mohist.plugins.ban.utils.BanSaveInventory;
 import com.mohistmc.mohist.util.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -63,8 +65,10 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans item");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans item");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     case "entity" -> {
@@ -72,8 +76,10 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans entity");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans entity");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     case "enchantment" -> {
@@ -81,8 +87,10 @@ public class BansCommand extends Command {
                             sender.sendMessage(ChatColor.RED + check);
                             return false;
                         }
-                        Inventory inventory = Bukkit.createInventory(player, 54, "§4Add bans enchantment");
+                        BanSaveInventory banSaveInventory = new BanSaveInventory(BanType.ITEM, "§4Add bans enchantment");
+                        Inventory inventory = banSaveInventory.getInventory();
                         player.openInventory(inventory);
+                        BanListener.openInventory = banSaveInventory;
                         return true;
                     }
                     default -> {
@@ -110,7 +118,7 @@ public class BansCommand extends Command {
                     case "entity" -> {
                         Warehouse wh = new Warehouse("§2Show bans entity");
                         for (String s : MohistConfig.ban_entity_types) {
-                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityType.fromName(s)))
+                            wh.addItem(new GUIItem(new ItemStackFactory(ItemAPI.getEggMaterial(EntityAPI.entityType(s)))
                                     .setDisplayName(s)
                                     .toItemStack()));
                         }
@@ -122,7 +130,7 @@ public class BansCommand extends Command {
                         for (String s : MohistConfig.ban_enchantment_list) {
                             wh.addItem(new GUIItem(new ItemStackFactory(Material.ENCHANTED_BOOK)
                                     .setDisplayName(s)
-                                    .setEnchantment(ItemAPI.getEnchantment(s))
+                                    .setEnchantment(ItemAPI.getEnchantmentByKey(s))
                                     .toItemStack()));
                         }
                         wh.openGUI(player);
@@ -142,7 +150,7 @@ public class BansCommand extends Command {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {

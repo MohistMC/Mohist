@@ -28,7 +28,7 @@ public class MohistServerListPingEvent extends org.bukkit.event.server.ServerLis
     @Override
     public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
         if (!(icon instanceof CraftIconCache)) {
-            throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.v1_20_R3.CraftServer.class);
+            throw new IllegalArgumentException(icon + " was not created by " + CraftServer.class);
         }
         this.icon = (CraftIconCache) icon;
     }

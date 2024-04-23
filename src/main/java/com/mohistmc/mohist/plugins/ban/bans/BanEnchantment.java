@@ -2,14 +2,9 @@ package com.mohistmc.mohist.plugins.ban.bans;
 
 import com.mohistmc.mohist.MohistConfig;
 import com.mohistmc.mohist.api.EnchantmentAPI;
-import com.mohistmc.mohist.plugins.ban.BanType;
-import com.mohistmc.mohist.plugins.ban.BanUtils;
-import com.mohistmc.tools.ListUtils;
-import java.util.List;
 import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -45,22 +40,5 @@ public class BanEnchantment {
             }
         }
         return false;
-    }
-
-    public static void save(InventoryCloseEvent event) {
-        if (event.getView().getTitle().equals("§4Add bans enchantment")) {
-
-            List<String> old = MohistConfig.ban_enchantment_list;
-            for (org.bukkit.inventory.ItemStack itemStack : event.getInventory().getContents()) {
-                if (itemStack != null) {
-                    if (EnchantmentAPI.has(itemStack)) {
-                        for (Enchantment e : EnchantmentAPI.get(itemStack)) {
-                            ListUtils.isDuplicate(old, e.getName());
-                        }
-                    }
-                }
-            }
-            BanUtils.saveToYaml(old, BanType.ENCHANTMENT);
-        }
     }
 }

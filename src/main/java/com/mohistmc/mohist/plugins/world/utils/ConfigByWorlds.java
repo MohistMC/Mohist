@@ -63,6 +63,7 @@ public class ConfigByWorlds {
                     config.set("worlds." + world_name + ".info", "-/-");
                     config.set("worlds." + world_name + ".difficulty", world.getDifficulty().name());
                     config.set("worlds." + world_name + ".mohist", isMohist);
+                    config.set("worlds." + world_name + ".keepspawninmemory", true);
                 }
                 init();
             }
@@ -108,6 +109,7 @@ public class ConfigByWorlds {
                 boolean isMods = false;
                 boolean isMohist = false;
                 String modName = null;
+                boolean keepspawninmemory = true;
                 if (Bukkit.getWorld(w) == null) {
                     long seed = -1L;
                     if (config.get("worlds." + w + ".seed") != null) {
@@ -128,6 +130,9 @@ public class ConfigByWorlds {
                     if (config.get("worlds." + w + ".mohist") != null) {
                         isMohist = config.getBoolean("worlds." + w + ".mohist");
                     }
+                    if (config.get("worlds." + w + ".keepspawninmemory") != null) {
+                        keepspawninmemory = config.getBoolean("worlds." + w + ".keepspawninmemory");
+                    }
                     // Worlds created by mods are no longer loaded when the mod is unloaded
                     if (isMods && !ServerAPI.hasMod(modName)) {
                         config.set("worlds." + w, null);
@@ -147,13 +152,13 @@ public class ConfigByWorlds {
                 }
                 World world = Bukkit.getWorld(w);
                 if (world != null) {
-                    if (config.get("worlds." + w + ".difficulty") != null) {
-                        difficulty = config.getString("worlds." + w + ".difficulty");
+                    if (difficulty != null) {
                         world.setDifficulty(Difficulty.valueOf(difficulty));
                     }
                     if (config.get("worlds." + w + ".worldborder") != null) {
                         world.getWorldBorder().setSize(config.getDouble("worlds." + w + ".worldborder"));
                     }
+                    world.setKeepSpawnInMemory(keepspawninmemory);
                 }
             }
         }

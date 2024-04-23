@@ -1,6 +1,6 @@
 /*
  * Mohist - MohistMC
- * Copyright (C) 2018-2023.
+ * Copyright (C) 2018-2024.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 package com.mohistmc.mohist.commands;
 
 import com.mohistmc.mohist.Mohist;
-import com.mohistmc.tools.ZipUtil;
 import com.mohistmc.mohist.util.I18n;
+import com.mohistmc.tools.ZipUtil;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class BackupWorldCommand extends Command {
 
@@ -39,7 +40,7 @@ public class BackupWorldCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+    public boolean execute(CommandSender sender, @NotNull String currentAlias, String[] args) {
         if (sender.isOp()) {
             if (args.length != 1) {
                 sender.sendMessage(I18n.as("worldbackupcmd.notice.promptWorldName"));

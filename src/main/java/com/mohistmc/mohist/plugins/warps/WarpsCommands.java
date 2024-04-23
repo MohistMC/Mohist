@@ -41,14 +41,14 @@ public class WarpsCommands extends Command {
                 switch (args[0].toLowerCase(Locale.ENGLISH)) {
                     case "set" -> {
                         String name = args[1];
-                        WarpsUtils.add(player.getLocation(), name);
+                        WarpsConfig.INSTANCE.put(name, player.getLocation());
                         player.sendMessage(I18n.as("warpscommands.set.success", name));
                         return true;
                     }
                     case "del" -> {
                         String name = args[1];
-                        if (WarpsUtils.has(name)) {
-                            WarpsUtils.del(name);
+                        if (WarpsConfig.INSTANCE.has(name)) {
+                            WarpsConfig.INSTANCE.remove(name);
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
                             return true;
                         } else {
@@ -58,8 +58,8 @@ public class WarpsCommands extends Command {
                     }
                     case "tp" -> {
                         String name = args[1];
-                        if (WarpsUtils.has(name)) {
-                            player.teleport(WarpsUtils.get(name));
+                        if (WarpsConfig.INSTANCE.has(name)) {
+                            player.teleport(WarpsConfig.INSTANCE.get(name));
                             return true;
                         } else {
                             player.sendMessage(I18n.as("warpscommands.nowarp"));
@@ -70,14 +70,14 @@ public class WarpsCommands extends Command {
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("gui")) {
                 Warehouse wh = new Warehouse(I18n.as("warpscommands.prefix"));
-                for (String w : WarpsUtils.config.getKeys(false)) {
+                for (String w : WarpsConfig.INSTANCE.yaml.getKeys(false)) {
                     wh.addItem(new GUIItem(new ItemStackFactory(Material.BAMBOO_SIGN)
                             .setDisplayName(w)
-                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsUtils.get(w).asString()))
+                            .setLore(List.of(I18n.as("warpscommands.gui.click"), "§f" + WarpsConfig.INSTANCE.get(w).asString()))
                             .toItemStack()) {
                         @Override
                         public void ClickAction(ClickType type, Player u, ItemStack itemStack) {
-                            u.teleport(WarpsUtils.get(w));
+                            u.teleport(WarpsConfig.INSTANCE.get(w));
                         }
                     });
                 }
@@ -88,12 +88,13 @@ public class WarpsCommands extends Command {
         if (args.length == 3 && args[0].equalsIgnoreCase("tp")) {
             String playerName = args[1];
             String warpsName = args[2];
-            if (Bukkit.getPlayer(playerName) == null) {
+            Player player = Bukkit.getPlayer(playerName);
+            if (player == null) {
                 sender.sendMessage(I18n.as("warpscommands.noplayer"));
                 return false;
             }
-            if (WarpsUtils.has(warpsName)) {
-                Bukkit.getPlayer(playerName).teleport(WarpsUtils.get(warpsName));
+            if (WarpsConfig.INSTANCE.has(warpsName)) {
+                player.teleport(WarpsConfig.INSTANCE.get(warpsName));
                 return true;
             } else {
                 sender.sendMessage(I18n.as("warpscommands.nowarp"));
@@ -106,9 +107,8 @@ public class WarpsCommands extends Command {
 
     private final List<String> params = Arrays.asList("set", "del", "tp", "gui");
 
-
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
         if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
@@ -119,7 +119,6 @@ public class WarpsCommands extends Command {
         }
         return list;
     }
-
 
     private void sendHelp(CommandSender player) {
         String prefix = I18n.as("warpscommands.prefix");

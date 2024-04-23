@@ -7,14 +7,17 @@ import com.mohistmc.mohist.commands.BackupWorldCommand;
 import com.mohistmc.mohist.commands.BansCommand;
 import com.mohistmc.mohist.commands.DumpCommand;
 import com.mohistmc.mohist.commands.EntityCommand;
+import com.mohistmc.mohist.commands.GetPluginListCommand;
 import com.mohistmc.mohist.commands.ItemsCommand;
 import com.mohistmc.mohist.commands.MohistCommand;
 import com.mohistmc.mohist.commands.PermissionCommand;
 import com.mohistmc.mohist.commands.PingCommand;
 import com.mohistmc.mohist.commands.PluginCommand;
 import com.mohistmc.mohist.commands.ShowsCommand;
+import com.mohistmc.mohist.plugins.MohistPlugin;
 import com.mohistmc.mohist.plugins.warps.WarpsCommands;
 import com.mohistmc.mohist.plugins.world.commands.WorldsCommands;
+import com.mohistmc.mohist.util.YamlUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +50,6 @@ public class MohistConfig {
 
             Discord: https://discord.gg/mohistmc
             Forums: https://mohistmc.com/
-            Forums (CN): https://mohistmc.cn/
                         
             """.split("\\n"));
     /*========================================================================*/
@@ -74,6 +76,7 @@ public class MohistConfig {
 
         commands = new HashMap<>();
         commands.put("mohist", new MohistCommand("mohist"));
+        commands.put("getpluginlist", new GetPluginListCommand("getpluginlist"));
         commands.put("dump", new DumpCommand("dump"));
         commands.put("plugin", new PluginCommand("plugin"));
         commands.put("backupworld", new BackupWorldCommand("backupworld"));
@@ -82,12 +85,8 @@ public class MohistConfig {
         commands.put("bans", new BansCommand("bans"));
         commands.put("shows", new ShowsCommand("shows"));
         commands.put("ping", new PingCommand("ping"));
-        commands.put("entity", new EntityCommand("entity"));
 
-        if (getBoolean("worldmanage", true)) {
-            commands.put("worlds", new WorldsCommands("worlds"));
-        }
-        commands.put("warps", new WarpsCommands("warps"));
+        MohistPlugin.registerCommands(commands);
 
         version = getInt("config-version", 1);
         set("config-version", 1);
@@ -104,7 +103,7 @@ public class MohistConfig {
     }
 
     public static void save() {
-        readConfig();
+        YamlUtils.save(mohistyml, yml);
     }
 
     public static void registerCommands() {
@@ -136,7 +135,7 @@ public class MohistConfig {
         }
     }
 
-    public static void set(String path, Object val) {
+    private static void set(String path, Object val) {
         config.set(path, val);
     }
 
@@ -168,9 +167,8 @@ public class MohistConfig {
     public static String mohist_lang() {
         return yml.getString("mohist.lang", Locale.getDefault().toString());
     }
-
-    public static String networkmanager_enable() {
-        return yml.getString("networkmanager.enable", Locale.getDefault().toString());
+    public static String motd() {
+        return ColorsAPI.of(MohistConfig.motdFirstLine) + "\n" + ColorsAPI.of(MohistConfig.motdSecondLine);
     }
 
     public static boolean show_logo;
@@ -180,13 +178,11 @@ public class MohistConfig {
     public static boolean enchantment_fix;
     public static int max_enchantment_level;
 
-    public static boolean modlist_check_blacklist_enable;
-    public static List<String> modlist_check_blacklist;
-    public static String modlist_check_blacklist_message;
+    public static boolean player_modlist_blacklist_enable;
+    public static List<String> player_modlist_blacklist;
 
-    public static boolean modlist_check_whitelist_enable;
-    public static String modlist_check_whitelist;
-    public static String modlist_check_whitelist_message;
+    public static boolean server_modlist_whitelist_enable;
+    public static String server_modlist_whitelist;
     public static int maxBees;
     public static boolean bookAnimationTick;
     public static boolean networkmanager_enable;
@@ -194,15 +190,22 @@ public class MohistConfig {
     public static List<String> networkmanager_intercept;
     public static boolean keepinventory_global;
     public static boolean keepinventory_inventory;
+    public static String keepinventory_inventory_permission;
     public static boolean keepinventory_exp;
+    public static String keepinventory_exp_permission;
 
     // Thread Priority
     public static int server_thread;
 
     public static boolean clear_item;
-    public static List<String> clear_item__whitelist;
-    public static String clear_item__msg;
-    public static int clear_item__time;
+    public static List<String> clear_item_whitelist;
+    public static String clear_item_msg;
+    public static int clear_item_time;
+
+    public static boolean clear_monster;
+    public static List<String> clear_monster_whitelist;
+    public static String clear_monster_msg;
+    public static int clear_monster_time;
 
     // Ban
     public static boolean ban_item_enable;
@@ -213,6 +216,7 @@ public class MohistConfig {
     public static boolean ban_enchantment_enable;
     public static List<String> ban_enchantment_list;
 
+    public static boolean motdEnable;
     public static String motdFirstLine;
     public static String motdSecondLine;
     public static String pingCommandOutput;
@@ -222,11 +226,14 @@ public class MohistConfig {
     public static boolean worldmanage;
 
     public static boolean bukkitpermissionshandler;
-
-    public static String serverbranding;
     public static boolean velocity_enabled;
     public static boolean velocity_onlineMode;
     public static String velocity_secret;
+
+    public static boolean recipe_warn;
+
+    public static boolean tpa_enable;
+    public static boolean back_enable;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -235,26 +242,31 @@ public class MohistConfig {
         maximumRepairCost = getInt("anvilfix.maximumrepaircost", 40);
         enchantment_fix = getBoolean("anvilfix.enchantment_fix", false);
         max_enchantment_level = getInt("anvilfix.max_enchantment_level", 32767);
-        modlist_check_blacklist_enable = getBoolean("modlist_check.blacklist.enable", false);
-        modlist_check_blacklist = getStringList("modlist_check.blacklist.list", new ArrayList<>());
-        modlist_check_blacklist_message = getString("modlist_check.blacklist.message", "Connection closed - PlayerModsCheck blacklist");
-        modlist_check_whitelist_enable = getBoolean("modlist_check.whitelist.enable", false);
-        modlist_check_whitelist = getString("modlist_check.whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
-        modlist_check_whitelist_message = getString("modlist_check.whitelist.message", "Connection closed - PlayerModsCheck whitelist");
+        player_modlist_blacklist_enable = getBoolean("player_modlist_blacklist.enable", false);
+        player_modlist_blacklist = getStringList("player_modlist_blacklist.list", new ArrayList<>());
+        server_modlist_whitelist_enable = getBoolean("server_modlist_whitelist.enable", false);
+        server_modlist_whitelist = getString("server_modlist_whitelist.list", ServerAPI.modlists_All.toString().replace(", mohist", ""));
         maxBees = getInt("max-bees-in-hive", 3);
         bookAnimationTick = getBoolean("enchantment-table-book-animation-tick", false);
-        networkmanager_debug = getBoolean("networkmanager.enable", false);
+        networkmanager_enable = getBoolean("networkmanager.enable", false);
         networkmanager_debug = getBoolean("networkmanager.debug", false);
         networkmanager_intercept = getStringList("networkmanager.intercept", new ArrayList<>());
         keepinventory_global = getBoolean("keepinventory.global.enable", false);
         keepinventory_inventory = getBoolean("keepinventory.global.inventory", true);
+        keepinventory_inventory_permission = getString("keepinventory.permission.inventory", "mohist.keepinventory.inventory");
         keepinventory_exp = getBoolean("keepinventory.global.exp", true);
+        keepinventory_exp_permission = getString("keepinventory.permission.exp", "mohist.keepinventory.exp");
         server_thread = getInt("threadpriority.server_thread", 8);
 
         clear_item = getBoolean("entity.clear.item.enable", false);
-        clear_item__whitelist = getStringList("entity.clear.item.whitelist", new ArrayList<>());
-        clear_item__msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drops");
-        clear_item__time = getInt("entity.clear.item.time", 1800);
+        clear_item_whitelist = getStringList("entity.clear.item.whitelist", new ArrayList<>());
+        clear_item_msg = getString("entity.clear.item.msg", "[Server] Cleaned up %size% drop item");
+        clear_item_time = getInt("entity.clear.item.time", 1800);
+
+        clear_monster = getBoolean("entity.clear.monster.enable", false);
+        clear_monster_whitelist = getStringList("entity.clear.monster.whitelist", new ArrayList<>());
+        clear_monster_msg = getString("entity.clear.monster.msg", "[Server] Cleaned up %size% monster");
+        clear_monster_time = getInt("entity.clear.monster.time", 1800);
 
         ban_item_enable = getBoolean("ban.item.enable" , false);
         ban_item_materials = getStringList("ban.item.list", new ArrayList<>());
@@ -262,17 +274,21 @@ public class MohistConfig {
         ban_entity_types = getStringList("ban.entity.list", new ArrayList<>());
         ban_enchantment_enable = getBoolean("ban.enchantment.enable", false);
         ban_enchantment_list = getStringList("ban.enchantment.list", new ArrayList<>());
-        motdFirstLine = ColorsAPI.of(getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>"));
-        motdSecondLine = ColorsAPI.of(getString("motd.secondline", ""));
+        motdEnable = getBoolean("motd.enable", true);
+        motdFirstLine = getString("motd.firstline", "<RAINBOW1>A Minecraft Server</RAINBOW>");
+        motdSecondLine = getString("motd.secondline", "");
 
         pingCommandOutput = getString("settings.messages.ping-command-output", "§2%s's ping is %sms");
 
         doFireTick = getBoolean("events.fire_tick", false);
         bukkitpermissionshandler = getBoolean("forge.bukkitpermissionshandler", true);
         worldmanage = getBoolean("worldmanage", true);
-        serverbranding = ColorsAPI.of(getString("server_branding", Mohist.modid));
         velocity_enabled = getBoolean("velocity.enabled", false);
         velocity_onlineMode = getBoolean("velocity.onlineMode", false);
         velocity_secret = getString("velocity.secret", "");
+
+        recipe_warn = getBoolean("recipe.warn", false);
+        tpa_enable = getBoolean("tpa.enable", false);
+        back_enable = getBoolean("back.enable", false);
     }
 }

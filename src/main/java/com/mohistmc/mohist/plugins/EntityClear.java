@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Monster;
 
 /**
  * @author Mgazul by MohistMC
@@ -18,29 +19,59 @@ import org.bukkit.entity.Item;
  */
 public class EntityClear {
 
-    public static final ScheduledExecutorService ENTITYCLEAR = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("EntityClear"));
+    public static final ScheduledExecutorService ENTITYCLEAR_ITEM = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("EntityClear - Item"));
+    public static final ScheduledExecutorService ENTITYCLEAR_MONSTER = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("EntityClear - Item"));
 
     public static void start() {
-        ENTITYCLEAR.scheduleAtFixedRate(() -> {
-            if (MinecraftServer.getServer().hasStopped()) {
-                return;
-            }
-            if (MohistConfig.clear_item) run();
-        }, 1000 * 60, 1000L * MohistConfig.clear_item__time, TimeUnit.MILLISECONDS);
+        if (MohistConfig.clear_item) {
+            ENTITYCLEAR_ITEM.scheduleAtFixedRate(() -> {
+                if (MinecraftServer.getServer().hasStopped()) {
+                    return;
+                }
+                run_item();
+            }, 1000 * 60, 1000L * MohistConfig.clear_item_time, TimeUnit.MILLISECONDS);
+        }
+        if (MohistConfig.clear_monster) {
+            ENTITYCLEAR_MONSTER.scheduleAtFixedRate(() -> {
+                if (MinecraftServer.getServer().hasStopped()) {
+                    return;
+                }
+                run_monster();
+            }, 1000 * 60, 1000L * MohistConfig.clear_monster_time, TimeUnit.MILLISECONDS);
+        }
     }
 
-    public static void run() {
-        AtomicInteger size = new AtomicInteger(0);
+    public static void run_item() {
+        AtomicInteger size_item = new AtomicInteger(0);
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
                 if (entity instanceof Item item) {
-                    if (!MohistConfig.clear_item__whitelist.contains(item.getItemStack().getType().name())) {
+                    if (!MohistConfig.clear_item_whitelist.contains(item.getItemStack().getType().name())) {
                         entity.remove();
-                        size.addAndGet(1);
+                        size_item.addAndGet(1);
                     }
                 }
             }
         }
-        if (!MohistConfig.clear_item__msg.isEmpty()) Bukkit.broadcastMessage(MohistConfig.clear_item__msg.replace("&", "§").replace("%size%", String.valueOf(size.getAndSet(0))));
+        if (!MohistConfig.clear_item_msg.isEmpty()){
+            Bukkit.broadcastMessage(MohistConfig.clear_item_msg.replace("&", "§").replace("%size%", String.valueOf(size_item.getAndSet(0))));
+        }
+    }
+
+    public static void run_monster() {
+        AtomicInteger size_monster = new AtomicInteger(0);
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                if (entity instanceof Monster monster) {
+                    if (!MohistConfig.clear_monster_whitelist.contains(monster.getType().name()) && monster.getCustomName() == null) {
+                        entity.remove();
+                        size_monster.addAndGet(1);
+                    }
+                }
+            }
+        }
+        if (!MohistConfig.clear_monster_msg.isEmpty()){
+            Bukkit.broadcastMessage(MohistConfig.clear_monster_msg.replace("&", "§").replace("%size%", String.valueOf(size_monster.getAndSet(0))));
+        }
     }
 }

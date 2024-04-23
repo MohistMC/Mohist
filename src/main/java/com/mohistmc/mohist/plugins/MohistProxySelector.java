@@ -1,7 +1,7 @@
 package com.mohistmc.mohist.plugins;
 
-import com.mohistmc.mohist.MohistConfig;
 import com.mohistmc.mohist.Mohist;
+import com.mohistmc.mohist.MohistConfig;
 import com.mohistmc.mohist.api.event.MohistNetworkEvent;
 import com.mohistmc.tools.IOUtil;
 import java.io.IOException;

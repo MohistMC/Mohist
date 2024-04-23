@@ -10,7 +10,7 @@ public enum BanType {
     ENTITY("ban.entity.list"),
     ENCHANTMENT("ban.enchantment.list");
 
-    final String key;
+    public final String key;
 
     BanType(String key) {
         this.key = key;
