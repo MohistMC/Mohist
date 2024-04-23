@@ -381,6 +381,23 @@
        }
     }
  
+@@ -445,8 +_,15 @@
+       return this.m_183438_(ChunkPos.m_151388_(p_220394_));
+    }
+ 
++   // Mohist start
++   private AtomicBoolean mohist$pFire = new AtomicBoolean(false);
++   public void mohist$pFire(boolean pFire) {
++      mohist$pFire.set(pFire);
++   }
++   // Mohsit ene
++
+    public Explosion m_254849_(@Nullable Entity p_256599_, double p_255914_, double p_255684_, double p_255843_, float p_256310_, Level.ExplosionInteraction p_256178_) {
+-      return this.m_254877_(p_256599_, (DamageSource)null, (ExplosionDamageCalculator)null, p_255914_, p_255684_, p_255843_, p_256310_, false, p_256178_);
++      return this.m_254877_(p_256599_, (DamageSource)null, (ExplosionDamageCalculator)null, p_255914_, p_255684_, p_255843_, p_256310_, mohist$pFire.getAndSet(false), p_256178_);
+    }
+ 
+    public Explosion m_255391_(@Nullable Entity p_255682_, double p_255803_, double p_256403_, double p_256538_, float p_255674_, boolean p_256634_, Level.ExplosionInteraction p_256111_) {
 @@ -471,7 +_,7 @@
              explosion$blockinteraction1 = this.m_255157_(GameRules.f_254629_);
              break;

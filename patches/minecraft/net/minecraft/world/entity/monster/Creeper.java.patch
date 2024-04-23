@@ -47,7 +47,7 @@
     protected InteractionResult m_6071_(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.m_21120_(p_32302_);
        if (itemstack.m_204117_(ItemTags.f_262757_)) {
-@@ -221,13 +_,20 @@
+@@ -221,13 +_,21 @@
        }
     }
  
@@ -63,7 +63,8 @@
 +         ExplosionPrimeEvent event = CraftEventFactory.callExplosionPrimeEvent(this, this.f_32272_ * f, false);
 +         if (!event.isCancelled()) {
 +            this.f_20890_ = true;
-+            this.m_9236_().m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), event.getFire(), Level.ExplosionInteraction.MOB);
++            this.m_9236_().mohist$pFire(event.getFire());
++            this.m_9236_().m_254849_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), event.getRadius(), Level.ExplosionInteraction.MOB);
 +            this.m_146870_();
 +            this.m_32316_();
 +         } else {
