@@ -91,12 +91,15 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         if (entityTag.contains(PATTERNS.NBT)) {
             ListTag patterns = entityTag.getList(PATTERNS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
             for (int i = 0; i < Math.min(patterns.size(), 20); i++) {
-                CompoundTag p = patterns.getCompound(i);
-                DyeColor color = DyeColor.getByWoolData((byte) p.getInt(COLOR.NBT));
-                PatternType pattern = PatternType.getByIdentifier(p.getString(PATTERN.NBT));
+                try {
+                    CompoundTag p = patterns.getCompound(i);
+                    DyeColor color = DyeColor.getByWoolData((byte) p.getInt(COLOR.NBT));
+                    PatternType pattern = PatternType.getByIdentifier(p.getString(PATTERN.NBT));
 
-                if (color != null && pattern != null) {
-                    this.patterns.add(new Pattern(color, pattern));
+                    if (color != null && pattern != null) {
+                        this.patterns.add(new Pattern(color, pattern));
+                    }
+                } catch (NoClassDefFoundError ignored) {
                 }
             }
         }
