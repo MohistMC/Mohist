@@ -297,6 +297,11 @@ public enum Material implements Keyed, Translatable {
     RAW_IRON_BLOCK(32210),
     RAW_COPPER_BLOCK(17504),
     RAW_GOLD_BLOCK(23246),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    @MinecraftExperimental
+    HEAVY_CORE(15788, Waterlogged.class),
     AMETHYST_BLOCK(18919),
     BUDDING_AMETHYST(13963),
     IRON_BLOCK(24754),
@@ -624,7 +629,7 @@ public enum Material implements Keyed, Translatable {
     CHISELED_SANDSTONE(31763),
     CUT_SANDSTONE(6118),
     COBWEB(9469),
-    SHORT_GRASS(6155),
+    SHORT_GRASS(16335),
     FERN(15794),
     AZALEA(29386),
     FLOWERING_AZALEA(28270),
@@ -2323,7 +2328,9 @@ public enum Material implements Keyed, Translatable {
      */
     JIGSAW(17398, Jigsaw.class),
     TURTLE_HELMET(30120, 1, 275),
-    SCUTE(11914),
+    TURTLE_SCUTE(6766),
+    ARMADILLO_SCUTE(11497),
+    WOLF_ARMOR(17138, 1, 64),
     FLINT_AND_STEEL(28620, 1, 64),
     APPLE(7720),
     BOW(8745, 1, 384),
@@ -2664,11 +2671,14 @@ public enum Material implements Keyed, Translatable {
     CAULDRON(26531),
     ENDER_EYE(24860),
     GLISTERING_MELON_SLICE(20158),
+    ARMADILLO_SPAWN_EGG(22098),
     ALLAY_SPAWN_EGG(7909),
     AXOLOTL_SPAWN_EGG(30381),
     BAT_SPAWN_EGG(14607),
     BEE_SPAWN_EGG(22924),
     BLAZE_SPAWN_EGG(4759),
+    @MinecraftExperimental
+    BOGGED_SPAWN_EGG(12042),
     @MinecraftExperimental
     BREEZE_SPAWN_EGG(7580),
     CAT_SPAWN_EGG(29583),
@@ -2745,8 +2755,12 @@ public enum Material implements Keyed, Translatable {
     ZOMBIFIED_PIGLIN_SPAWN_EGG(6626),
     EXPERIENCE_BOTTLE(12858),
     FIRE_CHARGE(4842),
+    @MinecraftExperimental
+    WIND_CHARGE(23928),
     WRITABLE_BOOK(13393, 1),
     WRITTEN_BOOK(24164, 16),
+    @MinecraftExperimental
+    MACE(4771, 1, 250),
     ITEM_FRAME(27318),
     GLOW_ITEM_FRAME(26473),
     FLOWER_POT(30567),
@@ -2923,6 +2937,8 @@ public enum Material implements Keyed, Translatable {
     MOJANG_BANNER_PATTERN(11903, 1),
     GLOBE_BANNER_PATTERN(27753, 1),
     PIGLIN_BANNER_PATTERN(22028, 1),
+    FLOW_BANNER_PATTERN(32683, 1),
+    GUSTER_BANNER_PATTERN(27267, 1),
     GOAT_HORN(28237, 1),
     /**
      * BlockData: {@link Levelled}
@@ -3141,6 +3157,10 @@ public enum Material implements Keyed, Translatable {
     SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE(7070),
     RAISER_ARMOR_TRIM_SMITHING_TEMPLATE(29116),
     HOST_ARMOR_TRIM_SMITHING_TEMPLATE(12165),
+    @MinecraftExperimental
+    FLOW_ARMOR_TRIM_SMITHING_TEMPLATE(29175),
+    @MinecraftExperimental
+    BOLT_ARMOR_TRIM_SMITHING_TEMPLATE(9698),
     ANGLER_POTTERY_SHERD(9952),
     ARCHER_POTTERY_SHERD(21629),
     ARMS_UP_POTTERY_SHERD(5484),
@@ -3149,7 +3169,11 @@ public enum Material implements Keyed, Translatable {
     BURN_POTTERY_SHERD(21259),
     DANGER_POTTERY_SHERD(30506),
     EXPLORER_POTTERY_SHERD(5124),
+    @MinecraftExperimental
+    FLOW_POTTERY_SHERD(4896),
     FRIEND_POTTERY_SHERD(18221),
+    @MinecraftExperimental
+    GUSTER_POTTERY_SHERD(28193),
     HEART_POTTERY_SHERD(17607),
     HEARTBREAK_POTTERY_SHERD(21108),
     HOWL_POTTERY_SHERD(24900),
@@ -3157,6 +3181,8 @@ public enum Material implements Keyed, Translatable {
     MOURNER_POTTERY_SHERD(23993),
     PLENTY_POTTERY_SHERD(28236),
     PRIZE_POTTERY_SHERD(4341),
+    @MinecraftExperimental
+    SCRAPE_POTTERY_SHERD(30034),
     SHEAF_POTTERY_SHERD(23652),
     SHELTER_POTTERY_SHERD(28390),
     SKULL_POTTERY_SHERD(16980),
@@ -3248,6 +3274,17 @@ public enum Material implements Keyed, Translatable {
     TRIAL_SPAWNER(19902, TrialSpawner.class),
     @MinecraftExperimental
     TRIAL_KEY(12725),
+    @MinecraftExperimental
+    OMINOUS_TRIAL_KEY(4986),
+    /**
+     * BlockData: {@link Vault}
+     */
+    @MinecraftExperimental
+    VAULT(6288, Vault.class),
+    @MinecraftExperimental
+    OMINOUS_BOTTLE(26321),
+    @MinecraftExperimental
+    BREEZE_ROD(14281),
     /**
      * BlockData: {@link Levelled}
      */
@@ -5260,6 +5297,7 @@ public enum Material implements Keyed, Translatable {
             case GRINDSTONE:
             case HANGING_ROOTS:
             case HAY_BLOCK:
+            case HEAVY_CORE:
             case HEAVY_WEIGHTED_PRESSURE_PLATE:
             case HONEYCOMB_BLOCK:
             case HONEY_BLOCK:
@@ -5782,6 +5820,7 @@ public enum Material implements Keyed, Translatable {
             case TURTLE_EGG:
             case TWISTING_VINES:
             case TWISTING_VINES_PLANT:
+            case VAULT:
             case VERDANT_FROGLIGHT:
             case VINE:
             case VOID_AIR:
@@ -5932,6 +5971,7 @@ public enum Material implements Keyed, Translatable {
             case MELON_SLICE:
             case MUSHROOM_STEW:
             case MUTTON:
+            case OMINOUS_BOTTLE:
             case POISONOUS_POTATO:
             case PORKCHOP:
             case POTATO:
@@ -6859,6 +6899,7 @@ public enum Material implements Keyed, Translatable {
             case TUFF_STAIRS:
             case TUFF_WALL:
             case TURTLE_EGG:
+            case VAULT:
             case VERDANT_FROGLIGHT:
             case WARPED_DOOR:
             case WARPED_FENCE:
@@ -8638,6 +8679,7 @@ public enum Material implements Keyed, Translatable {
             case TUBE_CORAL_BLOCK:
             case TUFF:
             case TUFF_BRICKS:
+            case VAULT:
             case VERDANT_FROGLIGHT:
             case WARPED_HYPHAE:
             case WARPED_NYLIUM:
@@ -9314,6 +9356,7 @@ public enum Material implements Keyed, Translatable {
             case SWEET_BERRY_BUSH:
             case TNT:
             case TRAPPED_CHEST:
+            case VAULT:
             case WARPED_BUTTON:
             case WARPED_DOOR:
             case WARPED_FENCE:
@@ -10275,6 +10318,8 @@ public enum Material implements Keyed, Translatable {
             case REDSTONE_BLOCK:
             case SPAWNER:
                 return 5.0F;
+            case HEAVY_CORE:
+                return 10.0F;
             case ENDER_CHEST:
                 return 22.5F;
             case ANCIENT_DEBRIS:
@@ -10284,6 +10329,7 @@ public enum Material implements Keyed, Translatable {
             case OBSIDIAN:
             case RESPAWN_ANCHOR:
             case TRIAL_SPAWNER:
+            case VAULT:
                 return 50.0F;
             case REINFORCED_DEEPSLATE:
                 return 55.0F;
@@ -11208,6 +11254,7 @@ public enum Material implements Keyed, Translatable {
             case END_STONE_BRICK_WALL:
                 return 9.0F;
             case TRIAL_SPAWNER:
+            case VAULT:
                 return 50.0F;
             case LAVA:
             case WATER:
@@ -11220,6 +11267,7 @@ public enum Material implements Keyed, Translatable {
             case CRYING_OBSIDIAN:
             case DAMAGED_ANVIL:
             case ENCHANTING_TABLE:
+            case HEAVY_CORE:
             case NETHERITE_BLOCK:
             case OBSIDIAN:
             case REINFORCED_DEEPSLATE:
@@ -11352,6 +11400,28 @@ public enum Material implements Keyed, Translatable {
                 return EquipmentSlot.FEET;
             case SHIELD:
                 return EquipmentSlot.OFF_HAND;
+            case BLACK_CARPET:
+            case BLUE_CARPET:
+            case BROWN_CARPET:
+            case CYAN_CARPET:
+            case DIAMOND_HORSE_ARMOR:
+            case GOLDEN_HORSE_ARMOR:
+            case GRAY_CARPET:
+            case GREEN_CARPET:
+            case IRON_HORSE_ARMOR:
+            case LEATHER_HORSE_ARMOR:
+            case LIGHT_BLUE_CARPET:
+            case LIGHT_GRAY_CARPET:
+            case LIME_CARPET:
+            case MAGENTA_CARPET:
+            case ORANGE_CARPET:
+            case PINK_CARPET:
+            case PURPLE_CARPET:
+            case RED_CARPET:
+            case WHITE_CARPET:
+            case WOLF_ARMOR:
+            case YELLOW_CARPET:
+                return EquipmentSlot.BODY;
             default:
                 return EquipmentSlot.HAND;
             // </editor-fold>

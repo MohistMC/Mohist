@@ -3,7 +3,6 @@ package org.bukkit;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import org.bukkit.block.BlockFace;
-import org.bukkit.potion.Potion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,7 +106,7 @@ public enum Effect {
      * Visual effect of a splash potion breaking. Needs potion data value as
      * additional info.
      */
-    POTION_BREAK(2002, Type.VISUAL, Potion.class),
+    POTION_BREAK(2002, Type.VISUAL, Color.class),
     /**
      * Visual effect of an instant splash potion breaking. Needs color data
      * value as additional info.

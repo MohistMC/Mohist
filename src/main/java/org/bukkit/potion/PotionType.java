@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
+import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
  * the Creative mode inventory
  */
 public enum PotionType implements Keyed {
-    UNCRAFTABLE("empty"),
     WATER("water"),
     MUNDANE("mundane"),
     THICK("thick"),
@@ -24,12 +24,12 @@ public enum PotionType implements Keyed {
     LONG_NIGHT_VISION("long_night_vision"),
     INVISIBILITY("invisibility"),
     LONG_INVISIBILITY("long_invisibility"),
-    JUMP("leaping"),
+    LEAPING("leaping"),
     LONG_LEAPING("long_leaping"),
     STRONG_LEAPING("strong_leaping"),
     FIRE_RESISTANCE("fire_resistance"),
     LONG_FIRE_RESISTANCE("long_fire_resistance"),
-    SPEED("swiftness"),
+    SWIFTNESS("swiftness"),
     LONG_SWIFTNESS("long_swiftness"),
     STRONG_SWIFTNESS("strong_swiftness"),
     SLOWNESS("slowness"),
@@ -37,14 +37,14 @@ public enum PotionType implements Keyed {
     STRONG_SLOWNESS("strong_slowness"),
     WATER_BREATHING("water_breathing"),
     LONG_WATER_BREATHING("long_water_breathing"),
-    INSTANT_HEAL("healing"),
+    HEALING("healing"),
     STRONG_HEALING("strong_healing"),
-    INSTANT_DAMAGE("harming"),
+    HARMING("harming"),
     STRONG_HARMING("strong_harming"),
     POISON("poison"),
     LONG_POISON("long_poison"),
     STRONG_POISON("strong_poison"),
-    REGEN("regeneration"),
+    REGENERATION("regeneration"),
     LONG_REGENERATION("long_regeneration"),
     STRONG_REGENERATION("strong_regeneration"),
     STRENGTH("strength"),
@@ -58,6 +58,14 @@ public enum PotionType implements Keyed {
     STRONG_TURTLE_MASTER("strong_turtle_master"),
     SLOW_FALLING("slow_falling"),
     LONG_SLOW_FALLING("long_slow_falling"),
+    @MinecraftExperimental
+    WIND_CHARGED("wind_charged"),
+    @MinecraftExperimental
+    WEAVING("weaving"),
+    @MinecraftExperimental
+    OOZING("oozing"),
+    @MinecraftExperimental
+    INFESTED("infested"),
     ;
 
     private final NamespacedKey key;

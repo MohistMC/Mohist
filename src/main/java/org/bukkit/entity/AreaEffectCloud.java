@@ -3,7 +3,6 @@ package org.bukkit.entity;
 import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.Particle;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -137,31 +136,6 @@ public interface AreaEffectCloud extends Entity {
     void setParticle(@NotNull Particle particle);
 
     /**
-     * Sets the particle which this cloud will be composed of
-     *
-     * @param <T> type of particle data (see {@link Particle#getDataType()}
-     * @param particle the new particle type
-     * @param data the data to use for the particle or null,
-     *             the type of this depends on {@link Particle#getDataType()}
-     */
-    <T> void setParticle(@NotNull Particle particle, @Nullable T data);
-
-    /**
-     * Sets the underlying potion data
-     *
-     * @param data PotionData to set the base potion state to
-     */
-    void setBasePotionData(@NotNull PotionData data);
-
-    /**
-     * Returns the potion data about the base potion
-     *
-     * @return a PotionData object
-     */
-    @NotNull
-    PotionData getBasePotionData();
-
-    /**
      * Sets the underlying potion type
      *
      * @param type PotionType to set the base potion state to
@@ -203,7 +177,7 @@ public interface AreaEffectCloud extends Entity {
      * overwritten
      * @return true if the effect was added as a result of this call
      */
-    boolean addCustomEffect(@NotNull PotionEffect effect, boolean overwrite);
+    boolean addCustomEffect(@Nullable  PotionEffect effect, boolean overwrite);
 
     /**
      * Removes a custom potion effect from this cloud.
@@ -211,7 +185,7 @@ public interface AreaEffectCloud extends Entity {
      * @param type the potion effect type to remove
      * @return true if the an effect was removed as a result of this call
      */
-    boolean removeCustomEffect(@NotNull PotionEffectType type);
+    boolean removeCustomEffect(@Nullable  PotionEffectType type);
 
     /**
      * Checks for a specific custom potion effect type on this cloud.

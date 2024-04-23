@@ -262,7 +262,6 @@ import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.potion.Potion;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;

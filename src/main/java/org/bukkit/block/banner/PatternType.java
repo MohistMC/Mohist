@@ -3,6 +3,7 @@ package org.bukkit.block.banner;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Keyed;
+import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.Contract;
@@ -23,7 +24,7 @@ public enum PatternType implements Keyed {
     STRIPE_MIDDLE("ms", "stripe_middle"),
     STRIPE_DOWNRIGHT("drs", "stripe_downright"),
     STRIPE_DOWNLEFT("dls", "stripe_downleft"),
-    STRIPE_SMALL("ss", "small_stripes"),
+    SMALL_STRIPES("ss", "small_stripes"),
     CROSS("cr", "cross"),
     STRAIGHT_CROSS("sc", "straight_cross"),
     TRIANGLE_BOTTOM("bt", "triangle_bottom"),
@@ -31,15 +32,15 @@ public enum PatternType implements Keyed {
     TRIANGLES_BOTTOM("bts", "triangles_bottom"),
     TRIANGLES_TOP("tts", "triangles_top"),
     DIAGONAL_LEFT("ld", "diagonal_left"),
-    DIAGONAL_RIGHT("rd", "diagonal_up_right"), //PAIL - Why are these keys swapped?
-    DIAGONAL_LEFT_MIRROR("lud", "diagonal_up_left"),
-    DIAGONAL_RIGHT_MIRROR("rud", "diagonal_right"), //PAIL - Why are these keys swapped?
-    CIRCLE_MIDDLE("mc", "circle"),
-    RHOMBUS_MIDDLE("mr", "rhombus"),
+    DIAGONAL_UP_RIGHT("rd", "diagonal_up_right"),
+    DIAGONAL_UP_LEFT("lud", "diagonal_up_left"),
+    DIAGONAL_RIGHT("rud", "diagonal_right"),
+    CIRCLE("mc", "circle"),
+    RHOMBUS("mr", "rhombus"),
     HALF_VERTICAL("vh", "half_vertical"),
     HALF_HORIZONTAL("hh", "half_horizontal"),
-    HALF_VERTICAL_MIRROR("vhr", "half_vertical_right"),
-    HALF_HORIZONTAL_MIRROR("hhb", "half_horizontal_bottom"),
+    HALF_VERTICAL_RIGHT("vhr", "half_vertical_right"),
+    HALF_HORIZONTAL_BOTTOM("hhb", "half_horizontal_bottom"),
     BORDER("bo", "border"),
     CURLY_BORDER("cbo", "curly_border"),
     CREEPER("cre", "creeper"),
@@ -50,7 +51,11 @@ public enum PatternType implements Keyed {
     FLOWER("flo", "flower"),
     MOJANG("moj", "mojang"),
     GLOBE("glb", "globe"),
-    PIGLIN("pig", "piglin");
+    PIGLIN("pig", "piglin"),
+    @MinecraftExperimental
+    FLOW("flw", "flow"),
+    @MinecraftExperimental
+    GUSTER("gus", "guster");
 
     private final String identifier;
     private final NamespacedKey key;
@@ -82,7 +87,7 @@ public enum PatternType implements Keyed {
      * @deprecated magic value
      */
     @NotNull
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String getIdentifier() {
         return identifier;
     }
@@ -98,7 +103,7 @@ public enum PatternType implements Keyed {
      */
     @Contract("null -> null")
     @Nullable
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static PatternType getByIdentifier(@Nullable String identifier) {
         return byString.get(identifier);
     }

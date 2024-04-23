@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockType;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemType;
-import org.bukkit.potion.Potion;
 
 public class CraftEffect {
     public static <T> int getDataValue(Effect effect, T data) {

@@ -28,6 +28,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityFactory;
+import org.bukkit.entity.EntitySnapshot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.inventory.InventoryType;
@@ -1167,6 +1169,16 @@ public final class Bukkit {
     }
 
     /**
+     * Gets whether this server is allowing connections transferred from other
+     * servers.
+     *
+     * @return true if the server accepts transfers, false otherwise
+     */
+    public static boolean isAcceptingTransfers() {
+        return server.isAcceptingTransfers();
+    }
+
+    /**
      * Gets whether the Server hide online players in server status.
      *
      * @return true if the server hide online players, false otherwise
@@ -1728,6 +1740,17 @@ public final class Bukkit {
     @NotNull
     public static ItemFactory getItemFactory() {
         return server.getItemFactory();
+    }
+
+    /**
+     * Gets the instance of the entity factory (for {@link EntitySnapshot}).
+     *
+     * @return the entity factory
+     * @see EntityFactory
+     */
+    @NotNull
+    public static EntityFactory getEntityFactory() {
+        return server.getEntityFactory();
     }
 
     /**

@@ -2,21 +2,13 @@ package org.bukkit.inventory.meta.trim;
 
 import org.bukkit.Keyed;
 import org.bukkit.Material;
-import org.bukkit.MinecraftExperimental;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Translatable;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Represents a pattern that may be used in an {@link ArmorTrim}.
- *
- * @apiNote Armor trims are part of an experimental feature of Minecraft and
- * hence subject to change. Constants in this class may be null if a data pack
- * is not present to enable these features.
  */
-@MinecraftExperimental
-@ApiStatus.Experimental
 public interface TrimPattern extends Keyed, Translatable {
 
     /**
@@ -63,4 +55,32 @@ public interface TrimPattern extends Keyed, Translatable {
      * {@link Material#SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE}.
      */
     public static final TrimPattern SPIRE = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("spire"));
+    /**
+     * {@link Material#WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern WAYFINDER = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("wayfinder"));
+    /**
+     * {@link Material#SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern SHAPER = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("shaper"));
+    /**
+     * {@link Material#SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern SILENCE = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("silence"));
+    /**
+     * {@link Material#RAISER_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern RAISER = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("raiser"));
+    /**
+     * {@link Material#HOST_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern HOST = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("host"));
+    /**
+     * {@link Material#FLOW_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern FLOW = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("flow"));
+    /**
+     * {@link Material#BOLT_ARMOR_TRIM_SMITHING_TEMPLATE}.
+     */
+    public static final TrimPattern BOLT = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft("bolt"));
 }

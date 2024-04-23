@@ -2,7 +2,6 @@ package org.bukkit.inventory.meta;
 
 import java.util.List;
 import org.bukkit.Color;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -13,21 +12,6 @@ import org.jetbrains.annotations.Nullable;
  * Represents a potion or item that can have custom effects.
  */
 public interface PotionMeta extends ItemMeta {
-
-    /**
-     * Sets the underlying potion data
-     *
-     * @param data PotionData to set the base potion state to
-     */
-    void setBasePotionData(@NotNull PotionData data);
-
-    /**
-     * Returns the potion data about the base potion
-     *
-     * @return a PotionData object
-     */
-    @NotNull
-    PotionData getBasePotionData();
 
     /**
      * Sets the underlying potion type
@@ -96,7 +80,7 @@ public interface PotionMeta extends ItemMeta {
      *
      * @param type the potion effect type to move
      * @return true if the potion meta changed as a result of this call
-     * @deprecated use {@link #setBasePotionData(org.bukkit.potion.PotionData)}
+     * @deprecated use {@link #setBasePotionType(org.bukkit.potion.PotionType)}
      */
     @Deprecated
     boolean setMainEffect(@NotNull PotionEffectType type);

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.bukkit.potion.PotionBrewer;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;

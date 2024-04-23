@@ -2,7 +2,6 @@ package org.bukkit.entity;
 
 import java.util.List;
 import org.bukkit.Color;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -10,21 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Arrow extends AbstractArrow {
-
-    /**
-     * Sets the underlying potion data
-     *
-     * @param data PotionData to set the base potion state to
-     */
-    void setBasePotionData(@NotNull PotionData data);
-
-    /**
-     * Returns the potion data about the base potion
-     *
-     * @return a PotionData object
-     */
-    @NotNull
-    PotionData getBasePotionData();
 
     /**
      * Sets the underlying potion type
@@ -83,7 +67,7 @@ public interface Arrow extends AbstractArrow {
      * overwritten
      * @return true if the effect was added as a result of this call
      */
-    boolean addCustomEffect(@NotNull PotionEffect effect, boolean overwrite);
+    boolean addCustomEffect(@Nullable  PotionEffect effect, boolean overwrite);
 
     /**
      * Removes a custom potion effect from this arrow.
@@ -93,7 +77,7 @@ public interface Arrow extends AbstractArrow {
      * @throws IllegalArgumentException if this operation would leave the Arrow
      * in a state with no Custom Effects and PotionType.UNCRAFTABLE
      */
-    boolean removeCustomEffect(@NotNull PotionEffectType type);
+    boolean removeCustomEffect(@Nullable PotionEffectType type);
 
     /**
      * Checks for a specific custom potion effect type on this arrow.

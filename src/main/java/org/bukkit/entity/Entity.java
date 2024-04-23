@@ -739,6 +739,18 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * @return whether the entity has been spawned in a world
      */
     boolean isInWorld();
+
+    /**
+     * Get this entity as an NBT string.
+     * <p>
+     * This string should not be relied upon as a serializable value.
+     *
+     * @return the NBT string or null if one cannot be made
+     */
+    @Nullable
+    @ApiStatus.Experimental
+    String getAsString();
+
     /**
      * Crates an {@link EntitySnapshot} representing the current state of this entity.
      *

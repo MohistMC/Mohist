@@ -14,7 +14,6 @@ import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionType;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
