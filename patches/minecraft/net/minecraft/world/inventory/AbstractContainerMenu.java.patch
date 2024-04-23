@@ -40,7 +40,7 @@
  import org.slf4j.Logger;
  
  public abstract class AbstractContainerMenu {
-@@ -60,6 +_,41 @@
+@@ -60,6 +_,44 @@
     private ContainerSynchronizer f_150397_;
     private boolean f_150398_;
  
@@ -67,7 +67,10 @@
 +      if (this.title == null) {
 +         if (this.f_38843_ != null) {
 +            ResourceLocation key = ForgeRegistries.MENU_TYPES.getKey(this.f_38843_);
-+            return Component.m_237115_(key.toString());
++            if (key == null) {
++               this.title = Component.m_237113_(this.toString());
++            }
++           this.title = Component.m_237115_(key.toString());
 +         } else {
 +            this.title = Component.m_237113_(this.toString());
 +         }
