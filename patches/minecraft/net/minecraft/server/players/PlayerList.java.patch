@@ -408,7 +408,7 @@
        UUID uuid = UUIDUtil.m_235875_(p_215625_);
        List<ServerPlayer> list = Lists.newArrayList();
  
-@@ -415,76 +_,166 @@
+@@ -415,76 +_,167 @@
        return new ServerPlayer(this.f_11195_, this.f_11195_.m_129783_(), p_215625_);
     }
  
@@ -496,6 +496,7 @@
        serverplayer.f_8906_ = p_11237_.f_8906_;
 +
        serverplayer.m_9015_(p_11237_, p_11238_);
++      serverplayer.m_9158_(p_11237_.m_8963_(), p_11237_.m_8961_(), p_11237_.m_8962_(), p_11237_.m_8964_(), false);
        serverplayer.m_20234_(p_11237_.m_19879_());
        serverplayer.m_36163_(p_11237_.m_5737_());
  
