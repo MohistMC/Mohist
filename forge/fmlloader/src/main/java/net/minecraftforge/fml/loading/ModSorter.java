@@ -253,7 +253,6 @@ public class ModSorter
 
     private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
-        if (mv.getModId().equals("forge") && (mv.getVersionRange().toString().contains("47.1."))) return false;
         return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
                 (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
     }
