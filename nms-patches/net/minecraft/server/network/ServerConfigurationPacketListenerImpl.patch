@@ -1,0 +1,32 @@
+--- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
+@@ -47,8 +47,10 @@
+     @Nullable
+     private SynchronizeRegistriesTask synchronizeRegistriesTask;
+ 
+-    public ServerConfigurationPacketListenerImpl(MinecraftServer minecraftserver, NetworkManager networkmanager, CommonListenerCookie commonlistenercookie) {
+-        super(minecraftserver, networkmanager, commonlistenercookie);
++    // CraftBukkit start
++    public ServerConfigurationPacketListenerImpl(MinecraftServer minecraftserver, NetworkManager networkmanager, CommonListenerCookie commonlistenercookie, EntityPlayer player) {
++        super(minecraftserver, networkmanager, commonlistenercookie, player);
++        // CraftBukkit end
+         this.gameProfile = commonlistenercookie.gameProfile();
+         this.clientInformation = commonlistenercookie.clientInformation();
+     }
+@@ -134,14 +136,14 @@
+                 return;
+             }
+ 
+-            IChatBaseComponent ichatbasecomponent = playerlist.canPlayerLogin(this.connection.getRemoteAddress(), this.gameProfile);
++            IChatBaseComponent ichatbasecomponent = null; // CraftBukkit - login checks already completed
+ 
+             if (ichatbasecomponent != null) {
+                 this.disconnect(ichatbasecomponent);
+                 return;
+             }
+ 
+-            EntityPlayer entityplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation);
++            EntityPlayer entityplayer = playerlist.getPlayerForLogin(this.gameProfile, this.clientInformation, this.player); // CraftBukkit
+ 
+             playerlist.placeNewPlayer(this.connection, entityplayer, this.createCookie(this.clientInformation));
+         } catch (Exception exception) {
