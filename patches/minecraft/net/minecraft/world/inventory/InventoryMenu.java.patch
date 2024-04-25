@@ -4,8 +4,8 @@
  import net.minecraft.world.item.crafting.Recipe;
  import net.minecraft.world.item.crafting.RecipeHolder;
  import net.minecraft.world.item.enchantment.EnchantmentHelper;
-+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
  
  public class InventoryMenu extends RecipeBookMenu<CraftingContainer> {
     public static final int CONTAINER_ID = 0;

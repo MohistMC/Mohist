@@ -30,7 +30,7 @@
  
 +   public AtomicReference<PlayerSignOpenEvent.Cause> openTextEditcause = new AtomicReference<>(PlayerSignOpenEvent.Cause.UNKNOWN);
     public void openTextEdit(Player p_277738_, SignBlockEntity p_277467_, boolean p_277771_) {
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, openTextEditcause.getAndSet(PlayerSignOpenEvent.Cause.UNKNOWN))) {
++      if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callPlayerSignOpenEvent(p_277738_, p_277467_, p_277771_, openTextEditcause.getAndSet(PlayerSignOpenEvent.Cause.UNKNOWN))) {
 +         return;
 +      }
        p_277467_.setAllowedPlayerEditor(p_277738_.getUUID());

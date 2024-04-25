@@ -12,7 +12,7 @@
  import net.minecraft.world.level.block.state.properties.BlockSetType;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
-+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class WeightedPressurePlateBlock extends BasePressurePlateBlock {
@@ -33,7 +33,7 @@
 +         org.bukkit.event.Cancellable cancellable;
 +
 +         if (entity instanceof Player player) {
-+            cancellable = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
++            cancellable = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_58214_, null, null, null);
 +         } else {
 +            cancellable = new EntityInteractEvent(entity.getBukkitEntity(), CraftBlock.at(p_58213_, p_58214_));
 +            p_58213_.getCraftServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);

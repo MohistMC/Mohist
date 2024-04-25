@@ -28,7 +28,7 @@
           ItemStack itemstack = p_28357_.getItem();
           if (this.canHoldItem(itemstack)) {
 +            // CraftBukkit start - call EntityPickupItemEvent
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityPickupItemEvent(this, p_28357_, 0, false).isCancelled()) {
 +               return;
 +            }
 +            itemstack = p_28357_.getItem(); // update ItemStack from event

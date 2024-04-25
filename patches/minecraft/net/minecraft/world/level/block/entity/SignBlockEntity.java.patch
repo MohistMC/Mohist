@@ -21,8 +21,8 @@
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.block.sign.Side;
-+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 +import org.bukkit.event.block.SignChangeEvent;
  import org.slf4j.Logger;
  
@@ -94,7 +94,7 @@
 +         return originalText;
 +      }
 +
-+      Component[] components = org.bukkit.craftbukkit.v1_20_R3.block.CraftSign.sanitizeLines(event.getLines());
++      Component[] components = org.bukkit.craftbukkit.v1_20_R4.block.CraftSign.sanitizeLines(event.getLines());
 +      for (int i = 0; i < components.length; i++) {
 +         if (!Objects.equals(lines[i], event.getLine(i))) {
 +            pText = pText.setMessage(i, components[i]);
@@ -116,7 +116,7 @@
 +
 +   @Override
 +   public org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
-+      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R3.command.CraftBlockCommandSender(wrapper, this);
++      return wrapper.getEntity() != null ? wrapper.getEntity().getBukkitSender(wrapper) : new org.bukkit.craftbukkit.v1_20_R4.command.CraftBlockCommandSender(wrapper, this);
 +   }
 +
 +   @Override

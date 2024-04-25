@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.ticks.TickPriority;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
  
  public class ComparatorBlock extends DiodeBlock implements EntityBlock {
     public static final MapCodec<ComparatorBlock> CODEC = simpleCodec(ComparatorBlock::new);

@@ -4,7 +4,7 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
  
  public class ObserverBlock extends DirectionalBlock {
     public static final MapCodec<ObserverBlock> CODEC = simpleCodec(ObserverBlock::new);

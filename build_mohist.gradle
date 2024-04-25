@@ -624,7 +624,7 @@ tasks.named('universalJar').configure {
                 'Implementation-Title'  : 'Spigot',
                 'Implementation-Version': bukkit_version + '-' + craftbukkit_version + '-' + spigot_version + '-' + forge_version,
                 'Implementation-Vendor' : 'SpigotMC'
-        ] as LinkedHashMap, 'org/bukkit/craftbukkit/v1_20_R3/')
+        ] as LinkedHashMap, 'org/bukkit/craftbukkit/v1_20_R4/')
     }
     jarSigner.sign(it)
 }

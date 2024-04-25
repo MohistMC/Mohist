@@ -9,7 +9,7 @@
 +         // pPlayer.getFoodData().eat(2, 0.1F);
 +         int oldFoodLevel = p_51189_.getFoodData().foodLevel;
 +
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callFoodLevelChangeEvent(p_51189_, 2 + oldFoodLevel);
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callFoodLevelChangeEvent(p_51189_, 2 + oldFoodLevel);
 +
 +         if (!event.isCancelled()) {
 +            p_51189_.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 0.1F);

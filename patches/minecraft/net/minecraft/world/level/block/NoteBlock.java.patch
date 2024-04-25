@@ -13,7 +13,7 @@
     private void playNote(@Nullable Entity p_261664_, BlockState p_261606_, Level p_261819_, BlockPos p_262042_) {
        if (p_261606_.getValue(INSTRUMENT).worksAboveNoteBlock() || p_261819_.getBlockState(p_262042_.above()).isAir()) {
 +         // CraftBukkit start
-+         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callNotePlayEvent(p_261819_, p_262042_, p_261606_.getValue(INSTRUMENT), p_261606_.getValue(NOTE));
++         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callNotePlayEvent(p_261819_, p_262042_, p_261606_.getValue(INSTRUMENT), p_261606_.getValue(NOTE));
 +         if (event.isCancelled()) {
 +            return;
 +         }

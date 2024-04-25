@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
  
  public class CampfireBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<CampfireBlock> CODEC = RecordCodecBuilder.mapCodec((p_309276_) -> {

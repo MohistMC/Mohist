@@ -20,7 +20,7 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.levelgen.Heightmap;
-+import org.bukkit.craftbukkit.v1_20_R3.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_20_R4.util.BlockStateListPopulator;
  
 -public class PortalForcer {
 +public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {

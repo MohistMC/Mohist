@@ -23,7 +23,7 @@
           --this.attackWarmupDelay;
           if (this.attackWarmupDelay == 0) {
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.getSpell())) {
++            if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleEntitySpellCastEvent(SpellcasterIllager.this, this.getSpell())) {
 +               return;
 +            }
 +            // CraftBukkit end

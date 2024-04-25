@@ -45,9 +45,9 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R3.util.CraftVector;
++import org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.util.CraftVector;
 +import org.bukkit.entity.Item;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityDamageEvent;
@@ -880,7 +880,7 @@
           this.resetFallDistance();
 -         this.setSharedFlag(7, false);
 +         // CraftBukkit start
-+         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         if (getSharedFlag(7) && !org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.setSharedFlag(7, false);
 +         }
 +         // CraftBukkit end
@@ -910,7 +910,7 @@
     public void startFallFlying() {
 -      this.setSharedFlag(7, true);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +      } else {
 +         // SPIGOT-5542: must toggle like below
@@ -924,7 +924,7 @@
 -      this.setSharedFlag(7, true);
 -      this.setSharedFlag(7, false);
 +      // CraftBukkit start
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.setSharedFlag(7, true);
 +         this.setSharedFlag(7, false);
 +      }

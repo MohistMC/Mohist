@@ -5,7 +5,7 @@
        BlockPos blockpos = p_309542_.getBlockPos();
        if (!p_310477_.isClientSide && p_309867_.mayInteract(p_310477_, blockpos) && p_309867_.mayBreak(p_310477_)) {
 +         // CraftBukkit start - call EntityChangeBlockEvent
-+         if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(p_309867_, blockpos, this.getFluidState(p_309479_).createLegacyBlock())) {
++         if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(p_309867_, blockpos, this.getFluidState(p_309479_).createLegacyBlock())) {
 +            return;
 +         }
 +         // CraftBukkit end

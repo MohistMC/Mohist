@@ -19,7 +19,7 @@
  import net.minecraft.util.RandomSource;
 -import net.minecraft.world.entity.player.Player;
  import org.apache.commons.lang3.Validate;
-+import org.bukkit.craftbukkit.v1_20_R3.util.Waitable;
++import org.bukkit.craftbukkit.v1_20_R4.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
  import org.slf4j.Logger;
@@ -177,7 +177,7 @@
 +      String playerName = gameprofile.getName();
 +      java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getRemoteAddress()).getAddress();
 +      java.util.UUID uniqueId = gameprofile.getId();
-+      final org.bukkit.craftbukkit.v1_20_R3.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
++      final org.bukkit.craftbukkit.v1_20_R4.CraftServer server = ServerLoginPacketListenerImpl.this.server.server;
 +
 +      AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +      server.getPluginManager().callEvent(asyncEvent);

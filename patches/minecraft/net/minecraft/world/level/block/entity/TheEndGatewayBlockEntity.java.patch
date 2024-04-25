@@ -6,7 +6,7 @@
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
  import org.slf4j.Logger;
  
@@ -17,7 +17,7 @@
  
 +            // CraftBukkit start - Fire PlayerTeleportEvent/EntityTeleportEvent
 +            if (entity instanceof ServerPlayer serverPlayer) {
-+               org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
++               org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer player = (CraftPlayer) entity.getBukkitEntity();
 +               org.bukkit.Location location = new Location(p_155829_.getWorld(), (double) blockpos1.getX() + 0.5D, (double) blockpos1.getY() + 0.5D, (double) blockpos1.getZ() + 0.5D);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());
@@ -34,7 +34,7 @@
 +               return;
 +
 +            }
-+            org.bukkit.event.entity.EntityTeleportEvent teleEvent = org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityTeleportEvent(entity, blockpos1.getX() + 0.5, blockpos1.getY() + 0.5, blockpos1.getZ() + 0.5);
++            org.bukkit.event.entity.EntityTeleportEvent teleEvent = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityTeleportEvent(entity, blockpos1.getX() + 0.5, blockpos1.getY() + 0.5, blockpos1.getZ() + 0.5);
 +            if (teleEvent.isCancelled()) {
 +               return;
 +            }

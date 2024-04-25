@@ -4,8 +4,8 @@
  import net.minecraft.world.entity.Mob;
  import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
  import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
  
  public class StopAttackingIfTargetInvalid {

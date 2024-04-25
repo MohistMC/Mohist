@@ -12,7 +12,7 @@
        if (p_222177_ instanceof ServerLevel serverlevel) {
           ServerPlayer serverplayer = SculkShriekerBlockEntity.tryGetPlayer(p_222180_);
           if (serverplayer != null) {
-+            if (org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callPlayerInteractEvent(serverplayer, org.bukkit.event.block.Action.PHYSICAL, p_222178_, null, null, null).isCancelled()) return; // CraftBukkit
++            if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callPlayerInteractEvent(serverplayer, org.bukkit.event.block.Action.PHYSICAL, p_222178_, null, null, null).isCancelled()) return; // CraftBukkit
              serverlevel.getBlockEntity(p_222178_, BlockEntityType.SCULK_SHRIEKER).ifPresent((p_222163_) -> {
                 p_222163_.tryShriek(serverlevel, serverplayer);
              });

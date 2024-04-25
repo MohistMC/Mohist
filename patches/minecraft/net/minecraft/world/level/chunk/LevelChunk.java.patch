@@ -12,8 +12,8 @@
  import net.minecraft.world.level.material.Fluids;
  import net.minecraft.world.ticks.LevelChunkTicks;
  import net.minecraft.world.ticks.TickContainerAccess;
-+import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataTypeRegistry;
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
@@ -34,7 +34,7 @@
 +
 +   public boolean mustNotSave;
 +   public boolean needsDecoration;
-+   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry();
++   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataTypeRegistry();
 +   public CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer( DATA_TYPE_REGISTRY );
 +   // CraftBukkit end
 +
@@ -58,7 +58,7 @@
        this.blockTicks = p_196857_;
        this.fluidTicks = p_196858_;
 +      this.capProvider.initInternal();
-+      if (p_196855_ != null) this.bukkitChunk = new org.bukkit.craftbukkit.v1_20_R3.CraftChunk( this );
++      if (p_196855_ != null) this.bukkitChunk = new org.bukkit.craftbukkit.v1_20_R4.CraftChunk( this );
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
@@ -187,7 +187,7 @@
 +          * the World constructor. We can't reliably alter that, so we have
 +          * no way of creating a CraftWorld/CraftServer at that point.
 +          */
-+         org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_20_R3.CraftChunk(this);
++         org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_20_R4.CraftChunk(this);
 +         server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(bukkitChunk, this.needsDecoration));
 +
 +         if (this.needsDecoration) {
@@ -218,7 +218,7 @@
 +
 +   public void unloadCallback() {
 +      org.bukkit.Server server = this.level.getCraftServer();
-+      org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_20_R3.CraftChunk(this);
++      org.bukkit.Chunk bukkitChunk = new org.bukkit.craftbukkit.v1_20_R4.CraftChunk(this);
 +      org.bukkit.event.world.ChunkUnloadEvent unloadEvent = new org.bukkit.event.world.ChunkUnloadEvent(bukkitChunk, this.isUnsaved());
 +      server.getPluginManager().callEvent(unloadEvent);
 +      // note: saving can be prevented, but not forced if no saving is actually required

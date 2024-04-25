@@ -8,7 +8,7 @@
 +      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221807_, p_221808_, p_221806_, p_221809_.nextFloat() < (p_221807_.spigotConfig.wartModifier / (100.0f * 10)))) { // Spigot - SPIGOT-7159: Better modifier resolution
           p_221806_ = p_221806_.setValue(AGE, Integer.valueOf(i + 1));
 -         p_221807_.setBlock(p_221808_, p_221806_, 2);
-+         org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockGrowEvent(p_221807_, p_221808_, p_221806_, 2); // CraftBukkit
++         org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockGrowEvent(p_221807_, p_221808_, p_221806_, 2); // CraftBukkit
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221807_, p_221808_, p_221806_);
        }
  

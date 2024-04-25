@@ -5,8 +5,8 @@
     @Nullable
     private volatile BoundingBox cachedBoundingBox;
 +   // CraftBukkit start
-+   private static final org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry();
-+   public org.bukkit.craftbukkit.v1_20_R3.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R3.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
++   private static final org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataTypeRegistry();
++   public org.bukkit.craftbukkit.v1_20_R4.persistence.DirtyCraftPersistentDataContainer persistentDataContainer = new org.bukkit.craftbukkit.v1_20_R4.persistence.DirtyCraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 +   public org.bukkit.event.world.AsyncStructureGenerateEvent.Cause generationEventCause = org.bukkit.event.world.AsyncStructureGenerateEvent.Cause.WORLD_GENERATION;
 +   // CraftBukkit end
  

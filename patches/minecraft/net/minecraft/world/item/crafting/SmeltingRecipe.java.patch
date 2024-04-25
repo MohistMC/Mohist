@@ -7,9 +7,9 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.Blocks;
 +import org.bukkit.NamespacedKey;
-+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftFurnaceRecipe;
-+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftFurnaceRecipe;
++import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftRecipe;
 +import org.bukkit.inventory.Recipe;
  
  public class SmeltingRecipe extends AbstractCookingRecipe {

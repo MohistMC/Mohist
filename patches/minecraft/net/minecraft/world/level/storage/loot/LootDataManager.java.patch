@@ -4,8 +4,8 @@
  import net.minecraft.util.ProblemReporter;
  import net.minecraft.util.profiling.ProfilerFiller;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-+import org.bukkit.craftbukkit.v1_20_R3.CraftLootTable;
-+import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_20_R4.CraftLootTable;
++import org.bukkit.craftbukkit.v1_20_R4.util.CraftNamespacedKey;
  import org.slf4j.Logger;
  
  public class LootDataManager implements PreparableReloadListener, LootDataResolver {

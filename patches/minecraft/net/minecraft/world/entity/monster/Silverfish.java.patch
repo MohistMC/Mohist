@@ -11,7 +11,7 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.InfestedBlock;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
  import org.joml.Vector3f;
  
  public class Silverfish extends Monster {
@@ -42,7 +42,7 @@
                       if (block instanceof InfestedBlock) {
 -                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +                        // CraftBukkit start
-+                        if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                        if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                           continue;
 +                        }
 +                        // CraftBukkit end

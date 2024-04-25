@@ -37,7 +37,7 @@
 -               this.level().setBlockAndUpdate(blockpos, blockstate);
 +            if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
++               if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockFormEvent(this.level(), blockpos, blockstate, this)) {
 +                  continue;
 +               }
 +               // CraftBukkit end

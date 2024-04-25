@@ -2,8 +2,8 @@ package com.mohistmc.mohist.plugins.ban.bans;
 
 import com.mohistmc.mohist.MohistConfig;
 import com.mohistmc.mohist.api.EnchantmentAPI;
-import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R4.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 

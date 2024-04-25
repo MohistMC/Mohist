@@ -4,8 +4,8 @@
  import net.minecraft.world.level.material.Fluid;
  import net.minecraft.world.ticks.SerializableTickContainer;
  import net.minecraft.world.ticks.TickContainerAccess;
-+import org.bukkit.craftbukkit.v1_20_R3.persistence.CraftPersistentDataTypeRegistry;
-+import org.bukkit.craftbukkit.v1_20_R3.persistence.DirtyCraftPersistentDataContainer;
++import org.bukkit.craftbukkit.v1_20_R4.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.v1_20_R4.persistence.DirtyCraftPersistentDataContainer;
  import org.slf4j.Logger;
  
  public abstract class ChunkAccess implements BlockGetter, BiomeManager.NoiseBiomeSource, LightChunk, StructureAccess {

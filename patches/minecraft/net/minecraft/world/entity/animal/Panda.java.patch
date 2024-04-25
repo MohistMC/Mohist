@@ -14,7 +14,7 @@
     protected void pickUpItem(ItemEntity p_29121_) {
 -      if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_)) {
 +      //if (this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(pItemEntity)) {
-+      if (!org.bukkit.craftbukkit.v1_20_R3.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_))).isCancelled()) { // CraftBukkit
++      if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityPickupItemEvent(this, p_29121_, 0, !(this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && PANDA_ITEMS.test(p_29121_))).isCancelled()) { // CraftBukkit
           this.onItemPickup(p_29121_);
           ItemStack itemstack = p_29121_.getItem();
           this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
