@@ -21,7 +21,7 @@ public class DefaultLibraries {
 
     public static void loadDefaultLibs() throws Exception {
         System.out.println(i18n.get("libraries.checking.start"));
-        String url = mirror.equals("") ? (i18n.isLang("CN") ? "https://libraries.mohistmc.cn:25119/releases/" : "https://maven.mohistmc.com/") : mirror;
+        String url = mirror.equals("") ? (i18n.isLang("CN") ? "http://s1.devicloud.cn:25119/" : "https://maven.mohistmc.com/") : mirror;
         LinkedHashMap<File, String> libs = getDefaultLibs();
         AtomicLong currentSize = new AtomicLong();
         Set<File> defaultLibs = new LinkedHashSet<>();
@@ -64,7 +64,7 @@ public class DefaultLibraries {
 			}
             System.out.println(i18n.get("libraries.check.retry", 0));
 			System.out.println("Something went wrong during download, trying to download with the mirror...");
-			mirror = "https://mohistmc.github.io/maven/";
+			mirror = "http://mavenmirror.mohistmc.com/";
             loadDefaultLibs();
         } else System.out.println(i18n.get("libraries.check.end"));
     }
