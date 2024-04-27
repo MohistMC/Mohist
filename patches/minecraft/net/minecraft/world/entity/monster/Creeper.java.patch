@@ -8,27 +8,26 @@
  
  public class Creeper extends Monster implements PowerableMob {
     private static final EntityDataAccessor<Integer> f_32268_ = SynchedEntityData.m_135353_(Creeper.class, EntityDataSerializers.f_135028_);
-@@ -197,8 +_,18 @@
+@@ -197,9 +_,19 @@
  
     public void m_8038_(ServerLevel p_32286_, LightningBolt p_32287_) {
        super.m_8038_(p_32286_, p_32287_);
--      this.f_19804_.m_135381_(f_32274_, true);
--   }
 +      // CraftBukkit start
 +      if (CraftEventFactory.callCreeperPowerEvent(this, p_32287_, org.bukkit.event.entity.CreeperPowerEvent.PowerCause.LIGHTNING).isCancelled()) {
 +         return;
 +      }
 +
-+      this.setPowered(true);
-+   }
-+
+       this.f_19804_.m_135381_(f_32274_, true);
+    }
+ 
 +   public void setPowered(boolean powered) {
 +      this.f_19804_.m_135381_(f_32274_, powered);
 +   }
 +   // CraftBukkit end
- 
++
     protected InteractionResult m_6071_(Player p_32301_, InteractionHand p_32302_) {
        ItemStack itemstack = p_32301_.m_21120_(p_32302_);
+       if (itemstack.m_150930_(Items.f_42409_)) {
 @@ -217,9 +_,9 @@
        }
     }
