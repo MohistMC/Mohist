@@ -12,6 +12,7 @@ import com.mohistmc.command.PluginCommand;
 import com.mohistmc.command.UpdateMohistCommand;
 import com.mohistmc.command.WhitelistModsCommand;
 import com.mohistmc.plugins.WorldCommand;
+import com.mohistmc.util.i18n.i18n;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -170,6 +171,7 @@ public class MohistConfig {
     public static List<String> networkmanager_intercept;
     public static boolean hideJoinModsList;
     public static boolean check_update_auto_download;
+    public static String libraries_downloadsource;
 
     private static void mohist() {
         show_logo = getBoolean("mohist.show_logo", true);
@@ -189,5 +191,6 @@ public class MohistConfig {
         hideJoinModsList = getBoolean("forge.hidejoinmodslist", false);
         networkmanager_intercept = getList("mohist.networkmanager.intercept", new ArrayList<>());
         check_update_auto_download = getBoolean("mohist.check_update_auto_download", false);
+        libraries_downloadsource = getString("mohist.libraries_downloadsource", i18n.isCN() ? "CHINA" : "MOHIST");
     }
 }

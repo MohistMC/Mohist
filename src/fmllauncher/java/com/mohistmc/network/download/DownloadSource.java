@@ -29,7 +29,7 @@ import java.net.URLConnection;
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("http://s1.devicloud.cn:25119/"),
+    CHINA("https://libraries.mohistmc.cn:25119/releases/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
     String url;
@@ -44,10 +44,10 @@ public enum DownloadSource {
     }
 
     public static DownloadSource get() {
-        String ds = MohistConfigUtil.sMohist("libraries_downloadsource", defaultSource.name());
+        String ds = MohistConfigUtil.sMohist("mohist.libraries_downloadsource", defaultSource.name());
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (isDown(me.url) != 200) return GITHUB;
+                if (isDown(me.url.replace("releases/", "")) != 200) return GITHUB;
                 return me;
             }
         }
