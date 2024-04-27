@@ -25,18 +25,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-
 @Getter
 @ToString
 @AllArgsConstructor
 public enum DownloadSource {
 
     MOHIST("https://maven.mohistmc.com/"),
-    CHINA("http://s1.devicloud.cn:25119/"),
+    CHINA("https://libraries.mohistmc.cn:25119/releases/"),
     GITHUB("https://mohistmc.github.io/maven/");
 
     public static final DownloadSource defaultSource = isCN() ? CHINA : MOHIST;
@@ -47,7 +42,7 @@ public enum DownloadSource {
         String ds = MohistConfigUtil.defaultSource();
         for (DownloadSource me : DownloadSource.values()) {
             if (me.name().equalsIgnoreCase(ds)) {
-                if (ConnectionUtil.isDown(me.url)) return GITHUB;
+                if (ConnectionUtil.isDown(me.url.replace("releases/", ""))) return GITHUB;
                 return me;
             }
         }
