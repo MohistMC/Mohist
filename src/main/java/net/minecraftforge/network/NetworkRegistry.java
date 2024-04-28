@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import com.mohistmc.util.ProxyUtils;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -185,7 +186,7 @@ public class NetworkRegistry
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).toList();
 
-        if (!results.isEmpty()) {
+        if (!ProxyUtils.is() && !results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
                     results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
             return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());

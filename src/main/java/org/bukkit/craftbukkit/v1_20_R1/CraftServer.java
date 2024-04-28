@@ -15,6 +15,7 @@ import com.mohistmc.forge.ForgeEventHandler;
 import com.mohistmc.forge.ForgeInjectBukkit;
 import com.mohistmc.plugins.MohistPlugin;
 import com.mohistmc.util.Level2LevelStem;
+import com.mohistmc.util.ProxyUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
@@ -774,7 +775,7 @@ public final class CraftServer implements Server {
     @Override
     public long getConnectionThrottle() {
         // Spigot Start - Automatically set connection throttle for bungee configurations
-        if (MohistConfig.velocity_enabled || SpigotConfig.bungee) { // Mohist
+        if (ProxyUtils.is()) { // Mohist
             return -1;
         } else {
             return this.configuration.getInt("settings.connection-throttle");
