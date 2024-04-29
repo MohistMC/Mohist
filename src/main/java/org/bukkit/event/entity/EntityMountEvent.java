@@ -3,7 +3,6 @@ package org.bukkit.event.entity;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +19,11 @@ public class EntityMountEvent extends EntityEvent implements Cancellable {
         this.mount = mount;
     }
 
+    /**
+     * Gets the entity which will be ridden.
+     *
+     * @return mounted entity
+     */
     @NotNull
     public Entity getMount() {
         return mount;

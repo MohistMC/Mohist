@@ -25,7 +25,7 @@ public interface FishHook extends Projectile {
      * Note that this is before applying lure.
      *
      * @param minWaitTime Minimum number of ticks one has to wait for a fish
-     * biting
+     * appearing
      */
     public void setMinWaitTime(int minWaitTime);
 

@@ -88,7 +88,6 @@ public interface SkullMeta extends ItemMeta {
      *
      * @param noteBlockSound the key of the sound to be played, or null
      */
-
     void setNoteBlockSound(@Nullable NamespacedKey noteBlockSound);
 
     /**
@@ -99,7 +98,6 @@ public interface SkullMeta extends ItemMeta {
      *
      * @return the key of the sound, or null
      */
-
     @Nullable
     NamespacedKey getNoteBlockSound();
 

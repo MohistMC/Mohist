@@ -101,6 +101,7 @@ public interface Wolf extends Tameable, Sittable {
         Variant WOODS = getVariant("woods");
         Variant CHESTNUT = getVariant("chestnut");
         Variant STRIPED = getVariant("striped");
+
         @NotNull
         private static Variant getVariant(@NotNull String key) {
             NamespacedKey namespacedKey = NamespacedKey.minecraft(key);

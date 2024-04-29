@@ -3,14 +3,6 @@ package org.bukkit.plugin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
-import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
-import com.mohistmc.org.yaml.snakeyaml.Yaml;
-import com.mohistmc.org.yaml.snakeyaml.constructor.AbstractConstruct;
-import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
-import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
-import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
-import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -29,8 +21,17 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.AbstractConstruct;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * This type is the runtime-container for the information in the plugin.yml.
@@ -335,7 +336,7 @@ public final class PluginDescriptionFile {
      * <li>An entry of this list can be referenced in {@link #getDepend()},
      *    {@link #getSoftDepend()}, and {@link #getLoadBefore()}.
      * <li><code>provides</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -454,7 +455,7 @@ public final class PluginDescriptionFile {
      * <li>A SpigotMC forum handle or email address is recommended.
      * <li>Is displayed when a user types <code>/version PluginName</code>
      * <li><code>authors</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -491,7 +492,7 @@ public final class PluginDescriptionFile {
      * <li>A SpigotMC forum handle or email address is recommended.
      * <li>Is displayed when a user types <code>/version PluginName</code>
      * <li><code>contributors</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -538,7 +539,7 @@ public final class PluginDescriptionFile {
      *     href=https://en.wikipedia.org/wiki/Circular_dependency>network</a>,
      *     all plugins in that network will fail.
      * <li><code>depend</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -570,7 +571,7 @@ public final class PluginDescriptionFile {
      *     or soft-dependending each other), it will arbitrarily choose a
      *     plugin that can be resolved when ignoring soft-dependencies.
      * <li><code>softdepend</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -597,7 +598,7 @@ public final class PluginDescriptionFile {
      *     specified plugin's {@link #getSoftDepend()} include {@link
      *     #getName() this plugin}.
      * <li><code>loadbefore</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -661,7 +662,7 @@ public final class PluginDescriptionFile {
      *     <td><code>aliases</code></td>
      *     <td>{@link PluginCommand#setAliases(List)}</td>
      *     <td>String or <a
-     *         href="http://en.wikipedia.org/wiki/YAML#Lists">List</a> of
+     *         href="https://en.wikipedia.org/wiki/YAML#Lists">List</a> of
      *         strings</td>
      *     <td>Alternative command names, with special usefulness for commands
      *         that are already registered. <i>Aliases are not effective when
@@ -809,7 +810,7 @@ public final class PluginDescriptionFile {
      *         <p>
      *         Child permissions may be defined in a number of ways:<ul>
      *         <li>Children may be defined as a <a
-     *             href="http://en.wikipedia.org/wiki/YAML#Lists">list</a> of
+     *             href="https://en.wikipedia.org/wiki/YAML#Lists">list</a> of
      *             names. Using a list will treat all children associated
      *             positively to their parent.
      *         <li>Children may be defined as a map. Each permission name maps
@@ -917,7 +918,7 @@ public final class PluginDescriptionFile {
      *     by the API, effectively discluding any derived type from any
      *     plugin's classpath.
      * <li><code>awareness</code> must be in <a
-     *     href="http://en.wikipedia.org/wiki/YAML#Lists">YAML list
+     *     href="https://en.wikipedia.org/wiki/YAML#Lists">YAML list
      *     format</a>.
      * </ul>
      * <p>
@@ -1267,9 +1268,9 @@ public final class PluginDescriptionFile {
 
     /**
      * @return internal use
-     * @deprecated Internal use
+     * @apiNote Internal use
      */
-    @Deprecated
+    @ApiStatus.Internal
     @NotNull
     public String getRawName() {
         return rawName;

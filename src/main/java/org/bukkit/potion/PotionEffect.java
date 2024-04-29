@@ -25,6 +25,7 @@ public class PotionEffect implements ConfigurationSerializable {
      * A constant denoting infinite potion duration.
      */
     public static final int INFINITE_DURATION = -1;
+
     private static final String AMPLIFIER = "amplifier";
     private static final String DURATION = "duration";
     private static final String TYPE = "effect";

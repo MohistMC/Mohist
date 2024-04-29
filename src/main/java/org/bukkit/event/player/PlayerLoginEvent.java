@@ -61,20 +61,10 @@ public class PlayerLoginEvent extends PlayerEvent {
      * @param message The message to be displayed if result denies login
      * @param realAddress the actual, unspoofed connecting address
      */
-    public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final String message, @NotNull final InetAddress realAddress) { // Spigot
+    public PlayerLoginEvent(@NotNull final Player player, @NotNull String hostname, @NotNull final InetAddress address, @NotNull final Result result, @NotNull final String message, @NotNull final InetAddress realAddress) {
         this(player, hostname, address, realAddress);
         this.result = result;
         this.message = message;
-    }
-
-    /**
-     * Gets the connection address of this player, regardless of whether it has been spoofed or not.
-     *
-     * @return the player's connection address
-     */
-    @NotNull
-    public InetAddress getRealAddress() {
-        return realAddress;
     }
 
     /**
@@ -157,6 +147,18 @@ public class PlayerLoginEvent extends PlayerEvent {
     @NotNull
     public InetAddress getAddress() {
         return address;
+    }
+
+    /**
+     * Gets the connection address of this player, regardless of whether it has
+     * been spoofed or not.
+     *
+     * @return the player's connection address
+     * @see #getAddress()
+     */
+    @NotNull
+    public InetAddress getRealAddress() {
+        return realAddress;
     }
 
     @NotNull

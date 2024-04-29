@@ -285,7 +285,6 @@ public interface Chunk extends PersistentDataHolder {
     @NotNull
     Collection<GeneratedStructure> getStructures(@NotNull Structure structure);
 
-
     /**
      * An enum to specify the load level of a chunk.
      */

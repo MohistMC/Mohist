@@ -31,12 +31,11 @@ public enum ItemFlag {
      */
     HIDE_ADDITIONAL_TOOLTIP,
     /**
-     * Setting to show/hide dyes from colored leather armour
+     * Setting to show/hide dyes from colored leather armor.
      */
     HIDE_DYE,
     /**
      * Setting to show/hide armor trim from leather armor.
      */
-
     HIDE_ARMOR_TRIM;
 }

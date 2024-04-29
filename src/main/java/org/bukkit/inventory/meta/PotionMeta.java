@@ -18,15 +18,22 @@ public interface PotionMeta extends ItemMeta {
      *
      * @param type PotionType to set the base potion state to
      */
-    void setBasePotionType(@NotNull PotionType type);
+    void setBasePotionType(@Nullable PotionType type);
 
     /**
      * Returns the potion type about the base potion
      *
      * @return a PotionType object
      */
-    @NotNull
+    @Nullable
     PotionType getBasePotionType();
+
+    /**
+     * Checks for the presence of a base potion type
+     *
+     * @return true if a base potion type is present
+     */
+    boolean hasBasePotionType();
 
     /**
      * Checks for the presence of custom potion effects.

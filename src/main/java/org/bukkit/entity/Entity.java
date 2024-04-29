@@ -26,6 +26,9 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a base entity in the world
+ * <p>
+ * Not all methods are guaranteed to work/may have side effects when
+ * {@link #isInWorld()} is false.
  */
 public interface Entity extends Metadatable, CommandSender, Nameable, PersistentDataHolder {
 
@@ -392,7 +395,9 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      * Record the last {@link EntityDamageEvent} inflicted on this entity
      *
      * @param event a {@link EntityDamageEvent}
+     * @deprecated method is for internal use only and will be removed
      */
+    @Deprecated(forRemoval = true)
     public void setLastDamageCause(@Nullable EntityDamageEvent event);
 
     /**
@@ -759,6 +764,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @Nullable
     @ApiStatus.Experimental
     EntitySnapshot createSnapshot();
+
     /**
      * Creates a copy of this entity and all its data. Does not spawn the copy in
      * the world. <br>
@@ -769,6 +775,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     @NotNull
     @ApiStatus.Experimental
     Entity copy();
+
     /**
      * Creates a copy of this entity and all its data. Spawns the copy at the given location. <br>
      * <b>Note:</b> Players cannot be copied.

@@ -4,6 +4,7 @@ package org.bukkit.entity;
  * Represents a turtle.
  */
 public interface Turtle extends Animals {
+
     /**
      * Gets whether the turtle has an egg
      *

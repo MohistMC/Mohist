@@ -467,7 +467,7 @@ public abstract class ChunkGenerator {
      * {@link #shouldGenerateCaves(WorldInfo, Random, int, int)} is overridden.
      *
      * @return true if the server should generate Vanilla caves
-     * #shouldGenerateCaves(WorldInfo, Random, int, int)
+     * @see #shouldGenerateCaves(WorldInfo, Random, int, int)
      */
     public boolean shouldGenerateCaves() {
         return false;
@@ -504,7 +504,7 @@ public abstract class ChunkGenerator {
      * {@link #shouldGenerateDecorations(WorldInfo, Random, int, int)} is overridden.
      *
      * @return true if the server should generate Vanilla decorations
-     * #shouldGenerateDecorations(WorldInfo, Random, int, int)
+     * @see #shouldGenerateDecorations(WorldInfo, Random, int, int)
      */
     public boolean shouldGenerateDecorations() {
         return false;

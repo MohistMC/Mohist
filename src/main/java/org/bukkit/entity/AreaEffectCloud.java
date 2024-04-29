@@ -136,18 +136,28 @@ public interface AreaEffectCloud extends Entity {
     void setParticle(@NotNull Particle particle);
 
     /**
+     * Sets the particle which this cloud will be composed of
+     *
+     * @param <T> type of particle data (see {@link Particle#getDataType()}
+     * @param particle the new particle type
+     * @param data the data to use for the particle or null,
+     *             the type of this depends on {@link Particle#getDataType()}
+     */
+    <T> void setParticle(@NotNull Particle particle, @Nullable T data);
+
+    /**
      * Sets the underlying potion type
      *
      * @param type PotionType to set the base potion state to
      */
-    void setBasePotionType(@NotNull PotionType type);
+    void setBasePotionType(@Nullable PotionType type);
 
     /**
      * Returns the potion type about the base potion
      *
      * @return a PotionType object
      */
-    @NotNull
+    @Nullable
     PotionType getBasePotionType();
 
     /**
@@ -177,7 +187,7 @@ public interface AreaEffectCloud extends Entity {
      * overwritten
      * @return true if the effect was added as a result of this call
      */
-    boolean addCustomEffect(@Nullable  PotionEffect effect, boolean overwrite);
+    boolean addCustomEffect(@NotNull PotionEffect effect, boolean overwrite);
 
     /**
      * Removes a custom potion effect from this cloud.
@@ -185,7 +195,7 @@ public interface AreaEffectCloud extends Entity {
      * @param type the potion effect type to remove
      * @return true if the an effect was removed as a result of this call
      */
-    boolean removeCustomEffect(@Nullable  PotionEffectType type);
+    boolean removeCustomEffect(@NotNull PotionEffectType type);
 
     /**
      * Checks for a specific custom potion effect type on this cloud.

@@ -28,7 +28,6 @@ public abstract class MusicInstrument implements Keyed {
     @Nullable
     @Deprecated
     public static MusicInstrument getByKey(@NotNull NamespacedKey namespacedKey) {
-
         return Registry.INSTRUMENT.get(namespacedKey);
     }
 

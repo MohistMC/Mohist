@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a visible entity is hidden from a player.
- * <p>
+ * <br>
  * This event is only called when the entity's visibility status is actually
  * changed.
- *
+ * <br>
  * This event is called regardless of if the entity was within tracking range.
  *
  * @see Player#hideEntity(org.bukkit.plugin.Plugin, org.bukkit.entity.Entity)

@@ -882,6 +882,7 @@ public interface Server extends PluginMessageRecipient {
      */
     @NotNull
     public ItemStack craftItem(@NotNull ItemStack[] craftingMatrix, @NotNull World world);
+
     /**
      * Get the crafted item using the list of {@link ItemStack} provided.
      *
@@ -908,6 +909,7 @@ public interface Server extends PluginMessageRecipient {
      */
     @NotNull
     public ItemCraftResult craftItemResult(@NotNull ItemStack[] craftingMatrix, @NotNull World world, @NotNull Player player);
+
     /**
      * Get the crafted item using the list of {@link ItemStack} provided.
      *
@@ -1304,22 +1306,6 @@ public interface Server extends PluginMessageRecipient {
     @NotNull
     Inventory createInventory(@Nullable InventoryHolder owner, int size) throws IllegalArgumentException;
 
-    // Paper start
-    /**
-     * Creates an empty inventory of type {@link InventoryType#CHEST} with the
-     * specified size and title.
-     *
-     * @param owner the holder of the inventory, or null to indicate no holder
-     * @param size a multiple of 9 as the size of inventory to create
-     * @param title the title of the inventory, displayed when inventory is
-     *     viewed
-     * @return a new inventory
-     * @throws IllegalArgumentException if the size is not a multiple of 9
-     */
-    @NotNull
-    Inventory createInventory(@Nullable InventoryHolder owner, int size, net.kyori.adventure.text.@NotNull Component title) throws IllegalArgumentException;
-    // Paper end
-
     /**
      * Creates an empty inventory of type {@link InventoryType#CHEST} with the
      * specified size and title.
@@ -1669,15 +1655,6 @@ public interface Server extends PluginMessageRecipient {
     @Nullable
     Entity getEntity(@NotNull UUID uuid);
 
-    // Paper start
-    /**
-     * Gets the current server TPS
-     *
-     * @return current server TPS (1m, 5m, 15m in Paper-Server)
-     */
-    @NotNull
-    public double[] getTPS();
-
     /**
      * Get the advancement specified by this key.
      *
@@ -1852,26 +1829,6 @@ public interface Server extends PluginMessageRecipient {
         public org.bukkit.configuration.file.YamlConfiguration getConfig() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-
-        // Paper start
-        @NotNull
-        public org.bukkit.configuration.file.YamlConfiguration getBukkitConfig()
-        {
-            throw new UnsupportedOperationException( "Not supported yet." );
-        }
-
-        @NotNull
-        public org.bukkit.configuration.file.YamlConfiguration getSpigotConfig()
-        {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @NotNull
-        public org.bukkit.configuration.file.YamlConfiguration getPaperConfig()
-        {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-        // Paper end
 
         /**
          * Sends the component to the player

@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a hidden entity is shown to a player.
- * <p>
+ * <br>
  * This event is only called when the entity's visibility status is actually
  * changed.
- * <p>
+ * <br>
  * This event is called regardless of whether the entity was within tracking
  * range.
  *

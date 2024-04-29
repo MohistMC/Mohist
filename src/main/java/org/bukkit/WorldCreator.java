@@ -30,9 +30,7 @@ public class WorldCreator {
      * @param name Name of the world that will be created
      */
     public WorldCreator(@NotNull String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("World name cannot be null");
-        }
+        Preconditions.checkArgument(name != null, "World name cannot be null");
 
         this.name = name;
         this.seed = (new Random()).nextLong();
@@ -46,7 +44,7 @@ public class WorldCreator {
      */
     @NotNull
     public WorldCreator copy(@NotNull World world) {
-        Preconditions.checkArgument(name != null, "World name cannot be null");
+        Preconditions.checkArgument(world != null, "World cannot be null");
 
         seed = world.getSeed();
         environment = world.getEnvironment();
@@ -55,6 +53,7 @@ public class WorldCreator {
         type = world.getWorldType();
         generateStructures = world.canGenerateStructures();
         hardcore = world.isHardcore();
+        keepSpawnInMemory = world.getKeepSpawnInMemory();
 
         return this;
     }
@@ -67,7 +66,7 @@ public class WorldCreator {
      */
     @NotNull
     public WorldCreator copy(@NotNull WorldCreator creator) {
-        Preconditions.checkArgument(name != null, "World name cannot be null");
+        Preconditions.checkArgument(creator != null, "Creator cannot be null");
 
         seed = creator.seed();
         environment = creator.environment();

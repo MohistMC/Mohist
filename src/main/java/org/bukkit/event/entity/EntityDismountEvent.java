@@ -3,7 +3,6 @@ package org.bukkit.event.entity;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +19,11 @@ public class EntityDismountEvent extends EntityEvent implements Cancellable {
         this.dismounted = dismounted;
     }
 
+    /**
+     * Gets the entity which will no longer be ridden.
+     *
+     * @return dismounted entity
+     */
     @NotNull
     public Entity getDismounted() {
         return dismounted;

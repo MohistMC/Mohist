@@ -43,6 +43,7 @@ public interface SpawnEggMeta extends ItemMeta {
      */
     @Nullable
     EntitySnapshot getSpawnedEntity();
+
     /**
      * Sets the {@link EntitySnapshot} that will be spawned by this spawn egg. <br>
      * <p>

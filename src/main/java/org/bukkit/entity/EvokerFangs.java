@@ -28,6 +28,7 @@ public interface EvokerFangs extends Entity {
      * @return the delay
      */
     int getAttackDelay();
+
     /**
      * Set the delay in ticks until the fang attacks.
      *

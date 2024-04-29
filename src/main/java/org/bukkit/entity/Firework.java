@@ -1,8 +1,8 @@
 package org.bukkit.entity;
 
-import javax.annotation.Nullable;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Firework extends Projectile {
 

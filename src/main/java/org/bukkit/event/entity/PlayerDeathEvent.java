@@ -39,18 +39,6 @@ public class PlayerDeathEvent extends EntityDeathEvent {
         return (Player) entity;
     }
 
-    // Paper start
-    /**
-     * Clarity method for getting the player. Not really needed except
-     * for reasons of clarity.
-     *
-     * @return Player who is involved in this event
-     */
-    @NotNull
-    public Player getPlayer() {
-        return getEntity();
-    }
-
     /**
      * Set the death message that will appear to everyone on the server.
      *
@@ -176,12 +164,5 @@ public class PlayerDeathEvent extends EntityDeathEvent {
      */
     public boolean getKeepInventory() {
         return keepInventory;
-    }
-
-    private List<ItemStack> itemsToKeep = new java.util.ArrayList<>();
-
-    @NotNull
-    public List<ItemStack> getItemsToKeep() {
-        return itemsToKeep;
     }
 }

@@ -271,6 +271,7 @@ public final class GameRule<T> {
      * portal activates.
      */
     public static final GameRule<Integer> PLAYERS_NETHER_PORTAL_DEFAULT_DELAY = new GameRule<>("playersNetherPortalDefaultDelay", Integer.class);
+
     /**
      * The amount of time a player in creative mode must stand in a nether
      * portal before the portal activates.

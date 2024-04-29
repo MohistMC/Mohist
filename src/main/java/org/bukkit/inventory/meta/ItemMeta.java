@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.meta.components.FoodComponent;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataHolder;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -569,9 +570,9 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable, Persiste
      * Internal use only! Do not use under any circumstances!
      *
      * @param version version
-     * @deprecated internal use only
+     * @apiNote  internal use only
      */
-    @Deprecated
+    @ApiStatus.Internal
     void setVersion(int version);
 
     @SuppressWarnings("javadoc")

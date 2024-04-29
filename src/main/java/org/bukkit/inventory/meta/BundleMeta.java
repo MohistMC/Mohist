@@ -1,13 +1,11 @@
 package org.bukkit.inventory.meta;
 
 import java.util.List;
-import org.bukkit.MinecraftExperimental;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@MinecraftExperimental
 @ApiStatus.Experimental
 public interface BundleMeta extends ItemMeta {
 
@@ -28,7 +26,7 @@ public interface BundleMeta extends ItemMeta {
 
     /**
      * Sets the items stored in this item.
-     *
+     * <br>
      * Removes all items when given null.
      *
      * @param items the items to set

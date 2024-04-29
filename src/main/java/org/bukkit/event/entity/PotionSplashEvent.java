@@ -29,7 +29,6 @@ public class PotionSplashEvent extends ProjectileHitEvent implements Cancellable
 
     public PotionSplashEvent(@NotNull final ThrownPotion potion, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace hitFace, @NotNull final Map<LivingEntity, Double> affectedEntities) {
         super(potion, hitEntity, hitBlock, hitFace);
-
         this.affectedEntities = affectedEntities;
     }
 

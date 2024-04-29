@@ -1,13 +1,6 @@
 package org.bukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.mohist.bukkit.entity.MohistModsAbstractHorse;
-import com.mohistmc.mohist.bukkit.entity.MohistModsAnimals;
-import com.mohistmc.mohist.bukkit.entity.MohistModsChestHorse;
-import com.mohistmc.mohist.bukkit.entity.MohistModsMinecartContainer;
-import com.mohistmc.mohist.bukkit.entity.MohistModsMonster;
-import com.mohistmc.mohist.bukkit.entity.MohistModsProjectileEntity;
-import com.mohistmc.mohist.bukkit.entity.MohistModsTameableEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.MinecraftExperimental;
+import org.bukkit.MinecraftExperimental.Requires;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Translatable;
 import org.bukkit.World;
@@ -294,20 +288,20 @@ public enum EntityType implements Keyed, Translatable {
     ITEM_DISPLAY("item_display", ItemDisplay.class, -1),
     SNIFFER("sniffer", Sniffer.class, -1),
     TEXT_DISPLAY("text_display", TextDisplay.class, -1),
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     @ApiStatus.Experimental
     BREEZE("breeze", Breeze.class, -1),
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     @ApiStatus.Experimental
     WIND_CHARGE("wind_charge", WindCharge.class, -1),
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     @ApiStatus.Experimental
     BREEZE_WIND_CHARGE("breeze_wind_charge", BreezeWindCharge.class, -1),
     ARMADILLO("armadillo", Armadillo.class, -1),
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     @ApiStatus.Experimental
     BOGGED("bogged", Bogged.class, -1),
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     @ApiStatus.Experimental
     OMINOUS_ITEM_SPAWNER("ominous_item_spawner", OminousItemSpawner.class, -1),
     /**
@@ -324,14 +318,7 @@ public enum EntityType implements Keyed, Translatable {
     /**
      * An unknown entity without an Entity Class
      */
-    UNKNOWN(null, null, -1, false),
-    FORGE_MOD_PROJECTILE("forge_mod_projectile", MohistModsProjectileEntity.class, -1, false),
-    FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", MohistModsChestHorse.class, -1, false),
-    FORGE_MOD_MINECART_CONTAINER("forge_mod_minecart_container", MohistModsMinecartContainer.class, -1, false),
-    FORGE_MOD_HORSE("forge_mod_horse", MohistModsAbstractHorse.class, -1, false),
-    FORGE_MOD_TAMEABLE_ANIMALS("forge_mod_tameable_animal", MohistModsTameableEntity.class, -1, false ),
-    FORGE_MOD_ANIMAL("forge_mod_animal", MohistModsAnimals.class, -1, false ),
-    FORGE_MOD_MONSTER("forge_mod_monster", MohistModsMonster.class, -1, false);
+    UNKNOWN(null, null, -1, false);
 
     private final String name;
     private final Class<? extends Entity> clazz;
@@ -381,7 +368,7 @@ public enum EntityType implements Keyed, Translatable {
     @NotNull
     @Override
     public NamespacedKey getKey() {
-        Preconditions.checkArgument(key != null, "EntityType doesn't have key! Is it: %s".formatted(name()) );
+        Preconditions.checkArgument(key != null, "EntityType doesn't have key! Is it UNKNOWN?");
 
         return key;
     }

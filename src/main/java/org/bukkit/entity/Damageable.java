@@ -36,7 +36,6 @@ public interface Damageable extends Entity {
     @ApiStatus.Experimental
     void damage(double amount, @NotNull DamageSource damageSource);
 
-
     /**
      * Gets the entity's health from 0 to {@link #getMaxHealth()}, where 0 is dead.
      *

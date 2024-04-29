@@ -1,9 +1,9 @@
 package org.bukkit.plugin;
 
-import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
-import com.mohistmc.org.yaml.snakeyaml.resolver.Resolver;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.resolver.Resolver;
 
-public class PluginDescriptionResolver extends Resolver {
+final class PluginDescriptionResolver extends Resolver {
 
     @Override
     protected void addImplicitResolvers() {

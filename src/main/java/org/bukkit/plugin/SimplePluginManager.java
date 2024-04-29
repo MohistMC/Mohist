@@ -5,8 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
-import com.mohistmc.mohist.bukkit.pluginfix.UltraCosmetics;
-import com.mohistmc.mohist.plugins.MohistPlugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -173,10 +171,10 @@ public final class SimplePluginManager implements PluginManager {
             File replacedFile = plugins.put(description.getName(), file);
             if (replacedFile != null) {
                 server.getLogger().severe(String.format(
-                    "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
-                    description.getName(),
-                    file.getPath(),
-                    replacedFile.getPath()
+                        "Ambiguous plugin name `%s' for files `%s' and `%s'",
+                        description.getName(),
+                        file.getPath(),
+                        replacedFile.getPath()
                 ));
             }
 
@@ -371,6 +369,7 @@ public final class SimplePluginManager implements PluginManager {
             }
         }
 
+        org.bukkit.command.defaults.TimingsCommand.timingStart = System.nanoTime(); // Spigot
         return result.toArray(new Plugin[result.size()]);
     }
 
@@ -495,7 +494,6 @@ public final class SimplePluginManager implements PluginManager {
             }
 
             HandlerList.bakeAll();
-            UltraCosmetics.lockRegistries(plugin);
         }
     }
 
@@ -509,9 +507,6 @@ public final class SimplePluginManager implements PluginManager {
 
     @Override
     public void disablePlugin(@NotNull final Plugin plugin) {
-        if (plugin.getName().equals("mohist")) {
-            return;
-        }
         if (plugin.isEnabled()) {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);
@@ -576,33 +571,26 @@ public final class SimplePluginManager implements PluginManager {
      */
     @Override
     public void callEvent(@NotNull Event event) {
-        // KTP start - optimize spigot event bus
-        final boolean isAsync = event.isAsynchronous();
-        final boolean isPrimary = server.isPrimaryThread(); // Cache to prevent multiple thread object comparisons.
-        if (isAsync) {
+        if (event.isAsynchronous()) {
             if (Thread.holdsLock(this)) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
             }
-            if (isPrimary) {
+            if (server.isPrimaryThread()) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
             }
         } else {
-            if (!isPrimary) {
+            if (!server.isPrimaryThread()) {
                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from another thread.");
             }
         }
-        // KTP end - optimize spigot event bus
 
         fireEvent(event);
     }
 
     private void fireEvent(@NotNull Event event) {
-        MohistPlugin.registerListener(event);
         HandlerList handlers = event.getHandlers();
         RegisteredListener[] listeners = handlers.getRegisteredListeners();
-        if (listeners.length == 0) {
-            return;
-        }
+
         for (RegisteredListener registration : listeners) {
             if (!registration.getPlugin().isEnabled()) {
                 continue;

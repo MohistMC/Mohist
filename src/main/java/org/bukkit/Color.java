@@ -206,7 +206,6 @@ public final class Color implements ConfigurationSerializable {
         Preconditions.checkArgument(blue >= 0 && blue <= BIT_MASK, "Blue[%s] is not between 0-255", blue);
 
         this.alpha = (byte) alpha;
-
         this.red = (byte) red;
         this.green = (byte) green;
         this.blue = (byte) blue;

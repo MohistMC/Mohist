@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.bukkit.Keyed;
 import org.bukkit.MinecraftExperimental;
+import org.bukkit.MinecraftExperimental.Requires;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Translatable;
@@ -196,19 +197,19 @@ public abstract class Enchantment implements Keyed, Translatable {
     /**
      * Increases fall damage of maces
      */
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment DENSITY = getEnchantment("density");
 
     /**
      * Reduces armor effectiveness against maces
      */
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment BREACH = getEnchantment("breach");
 
     /**
      * Emits wind burst upon hitting enemy
      */
-    @MinecraftExperimental
+    @MinecraftExperimental(Requires.UPDATE_1_21)
     public static final Enchantment WIND_BURST = getEnchantment("wind_burst");
 
     /**

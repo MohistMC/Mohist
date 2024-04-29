@@ -20,7 +20,6 @@ public class AsyncPlayerPreLoginEvent extends Event {
     private final UUID uniqueId;
     private final boolean transferred;
 
-
     @Deprecated
     public AsyncPlayerPreLoginEvent(@NotNull final String name, @NotNull final InetAddress ipAddress) {
         this(name, ipAddress, null);

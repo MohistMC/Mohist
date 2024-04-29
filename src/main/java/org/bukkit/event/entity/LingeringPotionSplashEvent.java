@@ -20,7 +20,7 @@ public class LingeringPotionSplashEvent extends ProjectileHitEvent implements Ca
 
     @Deprecated
     public LingeringPotionSplashEvent(@NotNull final ThrownPotion potion, @NotNull final AreaEffectCloud entity) {
-        this(potion, null, null, null, entity);
+       this(potion, null, null, null, entity);
     }
 
     public LingeringPotionSplashEvent(@NotNull final ThrownPotion potion, @Nullable Entity hitEntity, @Nullable Block hitBlock, @Nullable BlockFace hitFace, @NotNull final AreaEffectCloud entity) {

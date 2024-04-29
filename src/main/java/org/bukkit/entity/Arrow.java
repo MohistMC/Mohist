@@ -15,14 +15,14 @@ public interface Arrow extends AbstractArrow {
      *
      * @param type PotionType to set the base potion state to
      */
-    void setBasePotionType(@NotNull PotionType type);
+    void setBasePotionType(@Nullable PotionType type);
 
     /**
      * Returns the potion type about the base potion
      *
      * @return a PotionType object
      */
-    @NotNull
+    @Nullable
     PotionType getBasePotionType();
 
     /**
@@ -67,7 +67,7 @@ public interface Arrow extends AbstractArrow {
      * overwritten
      * @return true if the effect was added as a result of this call
      */
-    boolean addCustomEffect(@Nullable  PotionEffect effect, boolean overwrite);
+    boolean addCustomEffect(@NotNull PotionEffect effect, boolean overwrite);
 
     /**
      * Removes a custom potion effect from this arrow.
@@ -77,7 +77,7 @@ public interface Arrow extends AbstractArrow {
      * @throws IllegalArgumentException if this operation would leave the Arrow
      * in a state with no Custom Effects and PotionType.UNCRAFTABLE
      */
-    boolean removeCustomEffect(@Nullable PotionEffectType type);
+    boolean removeCustomEffect(@NotNull PotionEffectType type);
 
     /**
      * Checks for a specific custom potion effect type on this arrow.

@@ -27,6 +27,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.WorldBorder;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.ban.IpBanList;
 import org.bukkit.ban.ProfileBanList;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -334,8 +335,6 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public boolean performCommand(@NotNull String command);
 
-    public boolean performOpCommand(@NotNull String command); // Mohist
-
     /**
      * Returns true if the entity is supported by a block.
      *
@@ -355,7 +354,6 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @return true if player is in sneak mode
      */
-    @Override
     public boolean isSneaking();
 
     /**
@@ -363,7 +361,6 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *
      * @param sneak true if player should appear sneaking
      */
-    @Override
     public void setSneaking(boolean sneak);
 
     /**
@@ -1139,16 +1136,6 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public void resetPlayerWeather();
 
-    // Paper start
-    /**
-     * Gives the player the amount of experience specified.
-     *
-     * @param amount Exp amount to give
-     */
-    public default void giveExp(int amount) {
-        giveExp(amount, false);
-    }
-
     /**
      * Gets the player's cooldown between picking up experience orbs.
      *
@@ -1174,19 +1161,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * Gives the player the amount of experience specified.
      *
      * @param amount Exp amount to give
-     * @param applyMending Mend players items with mending, with same behavior as picking up orbs. calls {@link #applyMending(int)}
      */
-    public void giveExp(int amount, boolean applyMending);
-    /**
-     * Applies the mending effect to any items just as picking up an orb would.
-     *
-     * Can also be called with {@link #giveExp(int, boolean)} by passing true to applyMending
-     *
-     * @param amount Exp to apply
-     * @return the remaining experience
-     */
-    public int applyMending(int amount);
-    // Paper end
+    public void giveExp(int amount);
 
     /**
      * Gives the player the amount of experience levels specified. Levels can
@@ -1543,9 +1519,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     case this method will have no affect on them. Use the
      *     {@link PlayerResourcePackStatusEvent} to figure out whether or not
      *     the player loaded the pack!
-     * <li>There is no concept of resetting resource packs back to default
-     *     within Minecraft, so players will have to relog to do so or you
-     *     have to send an empty pack.
+     * <li>To remove a resource pack you can use
+     *     {@link #removeResourcePack(UUID)} or {@link #removeResourcePacks()}.
      * <li>The request is sent with empty string as the hash when the hash is
      *     not provided. This might result in newer versions not loading the
      *     pack correctly.
@@ -1587,9 +1562,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     case this method will have no affect on them. Use the
      *     {@link PlayerResourcePackStatusEvent} to figure out whether or not
      *     the player loaded the pack!
-     * <li>There is no concept of resetting resource packs back to default
-     *     within Minecraft, so players will have to relog to do so or you
-     *     have to send an empty pack.
+     * <li>To remove a resource pack you can use
+     *     {@link #removeResourcePack(UUID)} or {@link #removeResourcePacks()}.
      * <li>The request is sent with empty string as the hash when the hash is
      *     not provided. This might result in newer versions not loading the
      *     pack correctly.
@@ -1632,9 +1606,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     case this method will have no affect on them. Use the
      *     {@link PlayerResourcePackStatusEvent} to figure out whether or not
      *     the player loaded the pack!
-     * <li>There is no concept of resetting resource packs back to default
-     *     within Minecraft, so players will have to relog to do so or you
-     *     have to send an empty pack.
+     * <li>To remove a resource pack you can use
+     *     {@link #removeResourcePack(UUID)} or {@link #removeResourcePacks()}.
      * <li>The request is sent with empty string as the hash when the hash is
      *     not provided. This might result in newer versions not loading the
      *     pack correctly.
@@ -1678,9 +1651,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      *     case this method will have no affect on them. Use the
      *     {@link PlayerResourcePackStatusEvent} to figure out whether or not
      *     the player loaded the pack!
-     * <li>There is no concept of resetting resource packs back to default
-     *     within Minecraft, so players will have to relog to do so or you
-     *     have to send an empty pack.
+     * <li>To remove a resource pack you can use
+     *     {@link #removeResourcePack(UUID)} or {@link #removeResourcePacks()}.
      * <li>The request is sent with empty string as the hash when the hash is
      *     not provided. This might result in newer versions not loading the
      *     pack correctly.
@@ -2145,15 +2117,6 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      */
     public int getClientViewDistance();
 
-    // Paper start
-    /**
-     * Gets the player's current locale.
-     *
-     * @return the player's locale
-     */
-    @NotNull java.util.Locale locale();
-    // Paper end
-
     /**
      * Gets the player's estimated ping in milliseconds.
      *
@@ -2234,6 +2197,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
 
     // Spigot start
     public class Spigot extends Entity.Spigot {
+
         /**
          * Gets the connection address of this player, regardless of whether it
          * has been spoofed or not.
@@ -2299,7 +2263,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          * @param sender the sender of the message
          * @param component the components to send
          */
-        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable java.util.UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -2310,7 +2274,7 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
          * @param sender the sender of the message
          * @param components the components to send
          */
-        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @Nullable java.util.UUID sender, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
