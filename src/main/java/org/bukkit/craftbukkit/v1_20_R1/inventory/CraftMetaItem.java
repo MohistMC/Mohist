@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.mohistmc.api.ItemAPI;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -852,6 +853,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         this.displayName = CraftChatMessage.fromStringOrNullToJSON(name);
     }
 
+    // Paper start
+    @Override
+    public void setDisplayNameComponent(net.md_5.bungee.api.chat.BaseComponent[] component) {
+        this.displayName = net.md_5.bungee.chat.ComponentSerializer.toString(component);
+    }
+    // Paper end
+
     @Override
     public boolean hasDisplayName() {
         return displayName != null;
@@ -1013,6 +1021,22 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             safelyAdd(lore, this.lore, false);
         }
     }
+
+    // Paper start
+    @Override
+    public void setLoreComponents(List<net.md_5.bungee.api.chat.BaseComponent[]> lore) {
+        if (lore == null) {
+            this.lore = null;
+        } else {
+            if (this.lore == null) {
+                safelyAdd(lore, this.lore = new ArrayList<>(lore.size()), false);
+            } else {
+                this.lore.clear();
+                safelyAdd(lore, this.lore, false);
+            }
+        }
+    }
+    // Paper end
 
     @Override
     public boolean hasCustomModelData() {
