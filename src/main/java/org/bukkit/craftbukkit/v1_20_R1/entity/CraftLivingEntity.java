@@ -10,6 +10,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import org.bukkit.FluidCollisionMode;
@@ -642,6 +643,13 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return getHandle().craftAttributes.getAttribute(attribute);
     }
 
+    // Paper start
+    @Override
+    public void registerAttribute(Attribute attribute) {
+        getHandle().craftAttributes.registerAttribute(attribute);
+    }
+    // Paper end
+
     @Override
     public void setAI(boolean ai) {
         if (this.getHandle() instanceof Mob) {
@@ -790,4 +798,52 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         getHandle().persistentInvisibility = invisible;
         getHandle().setSharedFlag(5, invisible);
     }
+
+    // Paper start
+    public static MobType fromBukkitEntityCategory(EntityCategory entityCategory) {
+        switch (entityCategory) {
+            case NONE:
+                return MobType.UNDEFINED;
+            case UNDEAD:
+                return MobType.UNDEAD;
+            case ARTHROPOD:
+                return MobType.ARTHROPOD;
+            case ILLAGER:
+                return MobType.ILLAGER;
+            case WATER:
+                return MobType.WATER;
+        }
+        throw new IllegalArgumentException(entityCategory + " is an unrecognized entity category");
+    }
+
+    @Override
+    public ItemStack damageItemStack(ItemStack stack, int amount) {
+        final net.minecraft.world.item.ItemStack nmsStack;
+        if (stack instanceof CraftItemStack craftItemStack) {
+            if (craftItemStack.handle == null || craftItemStack.handle.isEmpty()) {
+                return stack;
+            }
+            nmsStack = craftItemStack.handle;
+        } else {
+            nmsStack = CraftItemStack.asNMSCopy(stack);
+            stack = CraftItemStack.asCraftMirror(nmsStack); // mirror to capture changes in hurt logic & events
+        }
+        this.damageItemStack0(nmsStack, amount, null);
+        return stack;
+    }
+
+    @Override
+    public void damageItemStack(org.bukkit.inventory.EquipmentSlot slot, int amount) {
+        final net.minecraft.world.entity.EquipmentSlot nmsSlot = org.bukkit.craftbukkit.v1_20_R1.CraftEquipmentSlot.getNMS(slot);
+        this.damageItemStack0(this.getHandle().getItemBySlot(nmsSlot), amount, nmsSlot);
+    }
+
+    private void damageItemStack0(net.minecraft.world.item.ItemStack nmsStack, int amount, net.minecraft.world.entity.EquipmentSlot slot) {
+        nmsStack.hurtAndBreak(amount, this.getHandle(), livingEntity -> {
+            if (slot != null) {
+                livingEntity.broadcastBreakEvent(slot);
+            }
+        });
+    }
+    // Paper end
 }

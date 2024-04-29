@@ -395,7 +395,91 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return CraftFeatureFlag.getFromNMS(namespacedKey);
     }
 
+    @Override
+    public boolean isSupportedApiVersion(String apiVersion) {
+        return apiVersion != null && SUPPORTED_API.contains(apiVersion);
+    }
+
     // Paper start
+    @Override
+    public byte[] serializeItem(ItemStack item) {
+        Preconditions.checkNotNull(item, "null cannot be serialized");
+        Preconditions.checkArgument(item.getType() != Material.AIR, "air cannot be serialized");
+
+        return serializeNbtToBytes((item instanceof CraftItemStack ? ((CraftItemStack) item).handle : CraftItemStack.asNMSCopy(item)).save(new CompoundTag()));
+    }
+
+    @Override
+    public ItemStack deserializeItem(byte[] data) {
+        Preconditions.checkNotNull(data, "null cannot be deserialized");
+        Preconditions.checkArgument(data.length > 0, "cannot deserialize nothing");
+
+        CompoundTag compound = deserializeNbtFromBytes(data);
+        int dataVersion = compound.getInt("DataVersion");
+        return CraftItemStack.asCraftMirror(net.minecraft.world.item.ItemStack.of(ca.spottedleaf.dataconverter.minecraft.MCDataConverter.convertTag(ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry.ITEM_STACK, compound, dataVersion, getDataVersion())));
+    }
+
+    @Override
+    public byte[] serializeEntity(org.bukkit.entity.Entity entity) {
+        Preconditions.checkNotNull(entity, "null cannot be serialized");
+        Preconditions.checkArgument(entity instanceof org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity, "only CraftEntities can be serialized");
+
+        CompoundTag compound = new CompoundTag();
+        ((org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity) entity).getHandle().serializeEntity(compound);
+        return serializeNbtToBytes(compound);
+    }
+
+    @Override
+    public org.bukkit.entity.Entity deserializeEntity(byte[] data, org.bukkit.World world, boolean preserveUUID) {
+        Preconditions.checkNotNull(data, "null cannot be deserialized");
+        Preconditions.checkArgument(data.length > 0, "cannot deserialize nothing");
+
+        CompoundTag compound = deserializeNbtFromBytes(data);
+        int dataVersion = compound.getInt("DataVersion");
+        compound = ca.spottedleaf.dataconverter.minecraft.MCDataConverter.convertTag(ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry.ENTITY, compound, dataVersion, getDataVersion());
+        if (!preserveUUID) compound.remove("UUID"); // Generate a new UUID so we don't have to worry about deserializing the same entity twice
+        return net.minecraft.world.entity.EntityType.create(compound, ((org.bukkit.craftbukkit.v1_20_R1.CraftWorld) world).getHandle())
+                .orElseThrow(() -> new IllegalArgumentException("An ID was not found for the data. Did you downgrade?")).getBukkitEntity();
+    }
+
+    private byte[] serializeNbtToBytes(CompoundTag compound) {
+        compound.putInt("DataVersion", getDataVersion());
+        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+        try {
+            net.minecraft.nbt.NbtIo.writeCompressed(
+                    compound,
+                    outputStream
+            );
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return outputStream.toByteArray();
+    }
+
+    private CompoundTag deserializeNbtFromBytes(byte[] data) {
+        CompoundTag compound;
+        try {
+            compound = net.minecraft.nbt.NbtIo.readCompressed(
+                    new java.io.ByteArrayInputStream(data)
+            );
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        int dataVersion = compound.getInt("DataVersion");
+        Preconditions.checkArgument(dataVersion <= getDataVersion(), "Newer version! Server downgrades are not supported!");
+        return compound;
+    }
+
+    @Override
+    public int nextEntityId() {
+        return net.minecraft.world.entity.Entity.nextEntityId();
+    }
+
+    @Override
+    public String getMainLevelName() {
+        return ((net.minecraft.server.dedicated.DedicatedServer) net.minecraft.server.MinecraftServer.getServer()).getProperties().levelName;
+    }
+
     @Override
     public io.papermc.paper.inventory.ItemRarity getItemRarity(org.bukkit.Material material) {
         Item item = getItem(material);
@@ -408,6 +492,69 @@ public final class CraftMagicNumbers implements UnsafeValues {
     @Override
     public io.papermc.paper.inventory.ItemRarity getItemStackRarity(org.bukkit.inventory.ItemStack itemStack) {
         return io.papermc.paper.inventory.ItemRarity.values()[getItem(itemStack.getType()).getRarity(CraftItemStack.asNMSCopy(itemStack)).ordinal()];
+    }
+
+    @Override
+    public boolean isValidRepairItemStack(org.bukkit.inventory.ItemStack itemToBeRepaired, org.bukkit.inventory.ItemStack repairMaterial) {
+        if (!itemToBeRepaired.getType().isItem() || !repairMaterial.getType().isItem()) {
+            return false;
+        }
+        return CraftMagicNumbers.getItem(itemToBeRepaired.getType()).isValidRepairItem(CraftItemStack.asNMSCopy(itemToBeRepaired), CraftItemStack.asNMSCopy(repairMaterial));
+    }
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getItemAttributes(Material material, EquipmentSlot equipmentSlot) {
+        Item item = CraftMagicNumbers.getItem(material);
+        if (item == null) {
+            throw new IllegalArgumentException(material + " is not an item and therefore does not have attributes");
+        }
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeMapBuilder = ImmutableMultimap.builder();
+        item.getDefaultAttributeModifiers(CraftEquipmentSlot.getNMS(equipmentSlot)).forEach((attributeBase, attributeModifier) -> {
+            attributeMapBuilder.put(CraftAttributeMap.fromMinecraft(net.minecraft.core.registries.BuiltInRegistries.ATTRIBUTE.getKey(attributeBase).toString()), CraftAttributeInstance.convert(attributeModifier, equipmentSlot));
+        });
+        return attributeMapBuilder.build();
+    }
+
+    @Override
+    public int getProtocolVersion() {
+        return net.minecraft.SharedConstants.getCurrentVersion().getProtocolVersion();
+    }
+
+    @Override
+    public boolean hasDefaultEntityAttributes(NamespacedKey bukkitEntityKey) {
+        return net.minecraft.world.entity.ai.attributes.DefaultAttributes.hasSupplier(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(bukkitEntityKey)));
+    }
+
+    @Override
+    public org.bukkit.attribute.Attributable getDefaultEntityAttributes(NamespacedKey bukkitEntityKey) {
+        Preconditions.checkArgument(hasDefaultEntityAttributes(bukkitEntityKey), bukkitEntityKey + " doesn't have default attributes");
+        var supplier = net.minecraft.world.entity.ai.attributes.DefaultAttributes.getSupplier((net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.LivingEntity>) net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(bukkitEntityKey)));
+        return new io.papermc.paper.attribute.UnmodifiableAttributeMap(supplier);
+    }
+
+    @Override
+    public boolean isCollidable(Material material) {
+        Preconditions.checkArgument(material.isBlock(), material + " is not a block");
+        return getBlock(material).hasCollision;
+    }
+
+    @Override
+    public org.bukkit.NamespacedKey getBiomeKey(org.bukkit.RegionAccessor accessor, int x, int y, int z) {
+        org.bukkit.craftbukkit.v1_20_R1.CraftRegionAccessor cra = (org.bukkit.craftbukkit.v1_20_R1.CraftRegionAccessor) accessor;
+        return org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.fromMinecraft(cra.getHandle().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getKey(cra.getHandle().getBiome(new net.minecraft.core.BlockPos(x, y, z)).value()));
+    }
+
+    @Override
+    public void setBiomeKey(org.bukkit.RegionAccessor accessor, int x, int y, int z, org.bukkit.NamespacedKey biomeKey) {
+        org.bukkit.craftbukkit.v1_20_R1.CraftRegionAccessor cra = (org.bukkit.craftbukkit.v1_20_R1.CraftRegionAccessor) accessor;
+        net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> biomeBase = cra.getHandle().registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getHolderOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BIOME, org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey.toMinecraft(biomeKey)));
+        cra.setBiome(x, y, z, biomeBase);
+    }
+
+    @Override
+    public String getStatisticCriteriaKey(org.bukkit.Statistic statistic) {
+        if (statistic.getType() != org.bukkit.Statistic.Type.UNTYPED) return "minecraft.custom:minecraft." + statistic.getKey().getKey();
+        return org.bukkit.craftbukkit.v1_20_R1.CraftStatistic.getNMSStatistic(statistic).getName();
     }
     // Paper end
 

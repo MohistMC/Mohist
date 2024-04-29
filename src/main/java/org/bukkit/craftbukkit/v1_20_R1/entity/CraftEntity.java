@@ -785,6 +785,18 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return getHandle().getVehicle().getBukkitEntity();
     }
 
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.Component customName() {
+        final Component name = this.getHandle().getCustomName();
+        return name != null ? io.papermc.paper.adventure.PaperAdventure.asAdventure(name) : null;
+    }
+
+    @Override
+    public void customName(final net.kyori.adventure.text.Component customName) {
+        this.getHandle().setCustomName(customName != null ? io.papermc.paper.adventure.PaperAdventure.asVanilla(customName) : null);
+    }
+
     @Override
     public void setCustomName(String name) {
         // sane limit for name length

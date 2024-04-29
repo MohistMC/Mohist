@@ -93,6 +93,42 @@ public interface UnsafeValues {
     @Nullable
     FeatureFlag getFeatureFlag(@NotNull NamespacedKey key);
 
+    // Paper start
+    @Deprecated(forRemoval = true)
+    boolean isSupportedApiVersion(String apiVersion);
+
+    @Deprecated(forRemoval = true)
+    static boolean isLegacyPlugin(org.bukkit.plugin.Plugin plugin) {
+        return !Bukkit.getUnsafe().isSupportedApiVersion(plugin.getDescription().getAPIVersion());
+    }
+    // Paper end
+
+    // Paper start
+
+    byte[] serializeItem(ItemStack item);
+
+    ItemStack deserializeItem(byte[] data);
+
+    byte[] serializeEntity(org.bukkit.entity.Entity entity);
+
+    default org.bukkit.entity.Entity deserializeEntity(byte[] data, World world) {
+        return deserializeEntity(data, world, false);
+    }
+
+    org.bukkit.entity.Entity deserializeEntity(byte[] data, World world, boolean preserveUUID);
+
+    /**
+     * Creates and returns the next EntityId available.
+     * <p>
+     * Use this when sending custom packets, so that there are no collisions on the client or server.
+     */
+    public int nextEntityId();
+
+    /**
+     * Just don't use it.
+     */
+    @org.jetbrains.annotations.NotNull String getMainLevelName();
+
     /**
      * Gets the item rarity of a material. The material <b>MUST</b> be an item.
      * Use {@link Material#isItem()} before this.
@@ -109,4 +145,89 @@ public interface UnsafeValues {
      * @return the itemstack rarity
      */
     public io.papermc.paper.inventory.ItemRarity getItemStackRarity(ItemStack itemStack);
+
+    /**
+     * Checks if an itemstack can be repaired with another itemstack.
+     * Returns false if either argument's type is not an item ({@link Material#isItem()}).
+     *
+     * @param itemToBeRepaired the itemstack to be repaired
+     * @param repairMaterial the repair material
+     * @return true if valid repair, false if not
+     */
+    public boolean isValidRepairItemStack(@org.jetbrains.annotations.NotNull ItemStack itemToBeRepaired, @org.jetbrains.annotations.NotNull ItemStack repairMaterial);
+
+    /**
+     * Returns an immutable multimap of attributes for the material and slot.
+     * {@link Material#isItem()} must be true for this material.
+     *
+     * @param material the material
+     * @param equipmentSlot the slot to get the attributes for
+     * @throws IllegalArgumentException if {@link Material#isItem()} is false
+     * @return an immutable multimap of attributes
+     */
+    @org.jetbrains.annotations.NotNull
+    public Multimap<Attribute, AttributeModifier> getItemAttributes(@org.jetbrains.annotations.NotNull Material material, @org.jetbrains.annotations.NotNull EquipmentSlot equipmentSlot);
+
+    /**
+     * Returns the server's protocol version.
+     *
+     * @return the server's protocol version
+     */
+    int getProtocolVersion();
+
+    /**
+     * Checks if the entity represented by the namespaced key has default attributes.
+     *
+     * @param entityKey the entity's key
+     * @return true if it has default attributes
+     */
+    boolean hasDefaultEntityAttributes(@org.jetbrains.annotations.NotNull NamespacedKey entityKey);
+
+    /**
+     * Gets the default attributes for the entity represented by the namespaced key.
+     *
+     * @param entityKey the entity's key
+     * @return an unmodifiable instance of Attributable for reading default attributes.
+     * @throws IllegalArgumentException if the entity does not exist of have default attributes (use {@link #hasDefaultEntityAttributes(NamespacedKey)} first)
+     */
+    @org.jetbrains.annotations.NotNull org.bukkit.attribute.Attributable getDefaultEntityAttributes(@org.jetbrains.annotations.NotNull NamespacedKey entityKey);
+
+    /**
+     * Checks if this material is collidable.
+     *
+     * @param material the material to check
+     * @return true if collidable
+     * @throws IllegalArgumentException if {@link Material#isBlock()} is false
+     */
+    boolean isCollidable(@org.jetbrains.annotations.NotNull Material material);
+
+    /**
+     * Gets the {@link NamespacedKey} for the biome at the given location.
+     *
+     * @param accessor The {@link RegionAccessor} of the provided coordinates
+     * @param x X-coordinate of the block
+     * @param y Y-coordinate of the block
+     * @param z Z-coordinate of the block
+     * @return the biome's {@link NamespacedKey}
+     */
+    @org.jetbrains.annotations.NotNull
+    NamespacedKey getBiomeKey(RegionAccessor accessor, int x, int y, int z);
+
+    /**
+     * Sets the biome at the given location to a biome registered
+     * to the given {@link NamespacedKey}. If no biome by the given
+     * {@link NamespacedKey} exists, an {@link IllegalStateException}
+     * will be thrown.
+     *
+     * @param accessor The {@link RegionAccessor} of the provided coordinates
+     * @param x X-coordinate of the block
+     * @param y Y-coordinate of the block
+     * @param z Z-coordinate of the block
+     * @param biomeKey Biome key
+     * @throws IllegalStateException if no biome by the given key is registered.
+     */
+    void setBiomeKey(RegionAccessor accessor, int x, int y, int z, NamespacedKey biomeKey);
+
+    String getStatisticCriteriaKey(@NotNull org.bukkit.Statistic statistic);
+    // Paper end
 }

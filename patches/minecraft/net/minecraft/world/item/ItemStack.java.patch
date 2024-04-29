@@ -346,8 +346,29 @@
     public CompoundTag m_41784_() {
        if (this.f_41590_ == null) {
           this.m_41751_(new CompoundTag());
-@@ -522,7 +_,7 @@
+@@ -520,9 +_,28 @@
+       return this.f_41590_ != null ? this.f_41590_.m_128437_("Enchantments", 10) : new ListTag();
+    }
  
++   // Paper start - (this is just a good no conflict location)
++   public org.bukkit.inventory.ItemStack asBukkitMirror() {
++      return CraftItemStack.asCraftMirror(this);
++   }
++   public org.bukkit.inventory.ItemStack asBukkitCopy() {
++      return CraftItemStack.asCraftMirror(this.m_41777_());
++   }
++   public static ItemStack fromBukkitCopy(org.bukkit.inventory.ItemStack itemstack) {
++      return CraftItemStack.asNMSCopy(itemstack);
++   }
++   private org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack bukkitStack;
++   public org.bukkit.inventory.ItemStack getBukkitStack() {
++      if (bukkitStack == null || bukkitStack.handle != this) {
++         bukkitStack = org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack.asCraftMirror(this);
++      }
++      return bukkitStack;
++   }
++   // Paper end
++
     public void m_41751_(@Nullable CompoundTag p_41752_) {
        this.f_41590_ = p_41752_;
 -      if (this.m_41720_().m_41465_()) {
