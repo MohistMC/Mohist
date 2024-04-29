@@ -33,7 +33,7 @@
  
 +   // CraftBukkit start - call projectile hit event
 +   protected void preOnHit(HitResult movingobjectposition) {
-+      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
++      org.bukkit.event.entity.ProjectileHitEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, movingobjectposition);
 +      this.hitCancelled = event != null && event.isCancelled();
 +      if (movingobjectposition.getType() == HitResult.Type.BLOCK || !this.hitCancelled) {
 +         this.onHit(movingobjectposition);

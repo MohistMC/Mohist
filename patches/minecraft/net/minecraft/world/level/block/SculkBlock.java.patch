@@ -17,7 +17,7 @@
 +               // Mohist start - Fix LostFeatures mod mixin
 +               if (p_222074_ instanceof Level) {
 +                  // CraftBukkit start - Call BlockSpreadEvent
-+                  if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
++                  if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_222074_, p_222075_, blockpos1, blockstate, 3)) {
 +                     p_222074_.playSound((Player)null, blockpos, blockstate.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 +                  }
 +                  // CraftBukkit end

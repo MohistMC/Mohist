@@ -4,7 +4,7 @@
  import net.minecraft.world.level.pathfinder.PathComputationType;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class CocoaBlock extends HorizontalDirectionalBlock implements BonemealableBlock {
     public static final MapCodec<CocoaBlock> CODEC = simpleCodec(CocoaBlock::new);

@@ -25,9 +25,9 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
-import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 
 public class PlayerEventDispatcher {

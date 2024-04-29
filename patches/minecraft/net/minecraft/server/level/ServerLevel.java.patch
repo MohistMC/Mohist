@@ -83,11 +83,11 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import net.minecraft.world.ticks.LevelTicks;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R4.generator.CraftWorldInfo;
-+import org.bukkit.craftbukkit.v1_20_R4.generator.CustomWorldChunkManager;
-+import org.bukkit.craftbukkit.v1_20_R4.util.WorldUUID;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.generator.CraftWorldInfo;
++import org.bukkit.craftbukkit.generator.CustomWorldChunkManager;
++import org.bukkit.craftbukkit.util.WorldUUID;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.server.MapInitializeEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
@@ -155,7 +155,7 @@
 +      }
 +
 +      if (generator != null) {
-+         chunkgenerator = new org.bukkit.craftbukkit.v1_20_R4.generator.CustomChunkGenerator(this, chunkgenerator, generator);
++         chunkgenerator = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, chunkgenerator, generator);
 +      } else {
 +         generator = getCraftServer().getGenerator(p_215002_.getLevelName());
 +      }
@@ -639,7 +639,7 @@
        int k = blockpos.getZ();
 +
 +      // CraftBukkit start
-+      org.bukkit.craftbukkit.v1_20_R4.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.v1_20_R4.util.BlockStateListPopulator(p_8618_);
++      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(p_8618_);
        BlockPos.betweenClosed(i - 2, j + 1, k - 2, i + 2, j + 3, k + 2).forEach((p_207578_) -> {
 -         p_8618_.setBlockAndUpdate(p_207578_, Blocks.AIR.defaultBlockState());
 +         blockList.setBlock(p_207578_, Blocks.AIR.defaultBlockState(), 3);

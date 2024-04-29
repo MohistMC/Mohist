@@ -1,7 +1,7 @@
 package com.mohistmc.mohist.api;
 
 import com.mohistmc.mohist.bukkit.inventory.MohistModsInventory;
-import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
 /**

@@ -46,7 +46,7 @@
                    f1 *= f5 / f4;
                    f2 *= f5 / f4;
                    f3 *= f5 / f4;
-+                  org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callPlayerRiptideEvent(player, p_43394_, f1, f2, f3); // CraftBukkit
++                  org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerRiptideEvent(player, p_43394_, f1, f2, f3); // CraftBukkit
                    player.push((double)f1, (double)f2, (double)f3);
                    player.startAutoSpinAttack(20);
                    if (player.onGround()) {

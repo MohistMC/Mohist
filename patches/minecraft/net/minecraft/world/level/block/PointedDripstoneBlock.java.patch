@@ -12,7 +12,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class PointedDripstoneBlock extends Block implements Fallable, SimpleWaterloggedBlock {
     public static final MapCodec<PointedDripstoneBlock> CODEC = simpleCodec(PointedDripstoneBlock::new);
@@ -57,7 +57,7 @@
     private static void createDripstone(LevelAccessor p_154088_, BlockPos p_154089_, Direction p_154090_, DripstoneThickness p_154091_) {
        BlockState blockstate = Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(TIP_DIRECTION, p_154090_).setValue(THICKNESS, p_154091_).setValue(WATERLOGGED, Boolean.valueOf(p_154088_.getFluidState(p_154089_).getType() == Fluids.WATER));
 -      p_154088_.setBlock(p_154089_, blockstate, 3);
-+      org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
++      org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_154088_, sourcePos.getAndSet(null), p_154089_, blockstate, 3); // CraftBukkit
     }
  
     private static void createMergedTips(BlockState p_154231_, LevelAccessor p_154232_, BlockPos p_154233_) {

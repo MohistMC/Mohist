@@ -17,7 +17,7 @@
  import net.minecraft.world.level.block.entity.BlockEntity;
  
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +
  public interface Container extends Clearable {
     int LARGE_MAX_STACK_SIZE = 64;

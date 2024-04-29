@@ -40,9 +40,9 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R4.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 +import org.bukkit.event.player.PlayerItemDamageEvent;
  import org.slf4j.Logger;
  

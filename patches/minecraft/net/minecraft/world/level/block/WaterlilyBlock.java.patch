@@ -5,7 +5,7 @@
     public void entityInside(BlockState p_58164_, Level p_58165_, BlockPos p_58166_, Entity p_58167_) {
        super.entityInside(p_58164_, p_58165_, p_58166_, p_58167_);
 -      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat) {
-+      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat && org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(p_58167_, p_58166_, Blocks.AIR.defaultBlockState())) { // CraftBukkit
++      if (p_58165_ instanceof ServerLevel && p_58167_ instanceof Boat && org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_58167_, p_58166_, Blocks.AIR.defaultBlockState())) { // CraftBukkit
           p_58165_.destroyBlock(new BlockPos(p_58166_), true, p_58167_);
        }
  

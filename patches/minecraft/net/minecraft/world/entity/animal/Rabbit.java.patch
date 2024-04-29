@@ -12,7 +12,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.level.pathfinder.Path;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class Rabbit extends Animal implements VariantHolder<Rabbit.Variant> {
     public static final double STROLL_SPEED_MOD = 0.6D;

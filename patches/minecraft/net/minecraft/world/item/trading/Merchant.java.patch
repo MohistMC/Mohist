@@ -4,7 +4,7 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.inventory.MerchantMenu;
  import net.minecraft.world.item.ItemStack;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.inventory.CraftMerchant;
  
  public interface Merchant {
     void setTradingPlayer(@Nullable Player p_45307_);

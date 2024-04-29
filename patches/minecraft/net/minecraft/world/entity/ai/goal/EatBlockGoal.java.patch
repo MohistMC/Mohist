@@ -4,7 +4,7 @@
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class EatBlockGoal extends Goal {
     private static final int EAT_ANIMATION_TICKS = 40;

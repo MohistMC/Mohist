@@ -12,7 +12,7 @@
 +      if (merchantoffer != null && player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
 +         if (this.merchant instanceof net.minecraft.world.entity.npc.AbstractVillager abstractVillager) {
 +            event = new io.papermc.paper.event.player.PlayerTradeEvent(serverPlayer.getBukkitEntity(), (org.bukkit.entity.AbstractVillager) abstractVillager.getBukkitEntity(), merchantoffer.asBukkit(), true, true);
-+         } else if (this.merchant instanceof org.bukkit.craftbukkit.v1_20_R4.inventory.CraftMerchantCustom.MinecraftMerchant) {
++         } else if (this.merchant instanceof org.bukkit.craftbukkit.inventory.CraftMerchantCustom.MinecraftMerchant) {
 +            event = new io.papermc.paper.event.player.PlayerPurchaseEvent(serverPlayer.getBukkitEntity(), merchantoffer.asBukkit(), false, true);
 +         }
 +         if (event != null) {
@@ -21,7 +21,7 @@
 +               event.getPlayer().updateInventory();
 +               return;
 +            }
-+            merchantoffer = org.bukkit.craftbukkit.v1_20_R4.inventory.CraftMerchantRecipe.fromBukkit(event.getTrade()).toMinecraft();
++            merchantoffer = org.bukkit.craftbukkit.inventory.CraftMerchantRecipe.fromBukkit(event.getTrade()).toMinecraft();
 +         }
 +      }
 +      this.checkTakeAchievements(p_150632_);

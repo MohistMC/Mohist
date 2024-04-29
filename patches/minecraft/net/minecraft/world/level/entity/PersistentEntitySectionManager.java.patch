@@ -13,7 +13,7 @@
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.level.ChunkPos;
 +import net.minecraft.world.level.chunk.storage.EntityStorage;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  import org.slf4j.Logger;
  
  public class PersistentEntitySectionManager<T extends EntityAccess> implements AutoCloseable {

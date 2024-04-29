@@ -1,8 +1,8 @@
 package com.mohistmc.mohist.bukkit.entity;
 
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
-import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R4.entity.CraftMinecartContainer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftMinecartContainer;
 
 public class MohistModsMinecartContainer extends CraftMinecartContainer {
 

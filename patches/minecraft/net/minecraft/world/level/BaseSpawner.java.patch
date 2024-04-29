@@ -62,7 +62,7 @@
 +                     // Spigot End
 +                  }
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
++                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callSpawnerSpawnEvent(entity, p_151313_).isCancelled()) {
 +                     continue;
 +                  }
 +                  entity.spawnReason(CreatureSpawnEvent.SpawnReason.SPAWNER); // Mohist

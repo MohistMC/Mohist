@@ -4,8 +4,8 @@
  import net.minecraft.world.level.pathfinder.BlockPathTypes;
  import net.minecraft.world.phys.Vec3;
  import org.joml.Vector3f;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
  
  public class Goat extends Animal {
     public static final EntityDimensions LONG_JUMPING_DIMENSIONS = EntityDimensions.scalable(0.9F, 1.3F).scale(0.7F);

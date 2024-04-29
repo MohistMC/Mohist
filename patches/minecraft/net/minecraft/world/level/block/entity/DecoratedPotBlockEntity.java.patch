@@ -14,8 +14,8 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.ticks.ContainerSingleItem;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R4.util.CraftLocation;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.util.CraftLocation;
 +import org.bukkit.entity.HumanEntity;
  
  public class DecoratedPotBlockEntity extends BlockEntity implements RandomizableContainer, ContainerSingleItem {

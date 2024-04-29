@@ -16,7 +16,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe(NamespacedKey id) {
-+      return new org.bukkit.craftbukkit.v1_20_R4.inventory.CraftComplexRecipe(id,this);
++      return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(id,this);
 +   }
 +   // CraftBukkit end
  }

@@ -13,7 +13,7 @@
     public void tick(BlockState p_221020_, ServerLevel p_221021_, BlockPos p_221022_, RandomSource p_221023_) {
        if (!this.scanForWater(p_221021_, p_221022_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.deadBlock.defaultBlockState()).isCancelled()) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_221021_, p_221022_, this.deadBlock.defaultBlockState()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

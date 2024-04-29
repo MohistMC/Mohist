@@ -4,10 +4,10 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.block.state.BlockState;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventorySmithing;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventorySmithing;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
  public class SmithingMenu extends ItemCombinerMenu {
     public static final int TEMPLATE_SLOT = 0;

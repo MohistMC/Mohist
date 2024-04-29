@@ -12,8 +12,8 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
  
  public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {

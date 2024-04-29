@@ -5,7 +5,7 @@
              }
  
 -            return p_221702_.setBlock(p_221703_.pos(), blockstate, 2);
-+            return org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockSpreadEvent(p_221702_, p_221703_.source(), p_221703_.pos(), blockstate, 2); // CraftBukkit
++            return org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_221702_, p_221703_.source(), p_221703_.pos(), blockstate, 2); // CraftBukkit
           } else {
              return false;
           }

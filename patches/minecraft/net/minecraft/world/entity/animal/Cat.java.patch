@@ -15,7 +15,7 @@
           } else if (this.isFood(itemstack)) {
              this.usePlayerItem(p_28153_, p_28154_, itemstack);
 -            if (this.random.nextInt(3) == 0) {
-+            if (this.random.nextInt(3) == 0 && (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_) || !org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityTameEvent(this, p_28153_).isCancelled())) {
++            if (this.random.nextInt(3) == 0 && (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_) || !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_28153_).isCancelled())) {
                 this.tame(p_28153_);
                 this.setOrderedToSit(true);
                 this.level().broadcastEntityEvent(this, (byte)7);

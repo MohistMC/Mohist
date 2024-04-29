@@ -104,7 +104,7 @@
 -               level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 -               this.enderman.setCarriedBlock((BlockState)null);
 +            if (this.canPlaceBlock(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(enderman, net.minecraftforge.common.util.BlockSnapshot.create(level.dimension(), level, blockpos1), net.minecraft.core.Direction.UP)) {
-+               if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) {
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, blockstate2)) {
 +                  level.setBlock(blockpos, blockstate2, 3);
 +                  level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
 +                  this.enderman.setCarriedBlock((BlockState) null);
@@ -139,7 +139,7 @@
 -            this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());
 +		 if (blockstate.is(BlockTags.ENDERMAN_HOLDABLE) && flag) {
 +            // CraftBukkit start - Pickup event
-+            if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.enderman, blockpos, Blocks.AIR.defaultBlockState())) {
 +               level.removeBlock(blockpos, false);
 +               level.gameEvent(GameEvent.BLOCK_DESTROY, blockpos, GameEvent.Context.of(this.enderman, blockstate));
 +               this.enderman.setCarriedBlock(blockstate.getBlock().defaultBlockState());

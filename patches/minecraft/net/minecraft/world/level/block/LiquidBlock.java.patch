@@ -77,7 +77,7 @@
 -               p_54697_.setBlockAndUpdate(p_54698_, block.defaultBlockState());
 -               this.fizz(p_54697_, p_54698_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, block.defaultBlockState())) {
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, block.defaultBlockState())) {
 +                  this.fizz(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end
@@ -88,7 +88,7 @@
 -               p_54697_.setBlockAndUpdate(p_54698_, Blocks.BASALT.defaultBlockState());
 -               this.fizz(p_54697_, p_54698_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, Blocks.BASALT.defaultBlockState())) {
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_54697_, p_54698_, Blocks.BASALT.defaultBlockState())) {
 +                  this.fizz(p_54697_, p_54698_);
 +               }
 +               // CraftBukkit end

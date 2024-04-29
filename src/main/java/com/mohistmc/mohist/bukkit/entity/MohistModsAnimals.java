@@ -1,8 +1,8 @@
 package com.mohistmc.mohist.bukkit.entity;
 
 import net.minecraft.world.entity.animal.Animal;
-import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R4.entity.CraftAnimals;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftAnimals;
 
 /**
  * Mohist

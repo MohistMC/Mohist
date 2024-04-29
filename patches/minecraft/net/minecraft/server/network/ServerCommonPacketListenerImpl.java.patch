@@ -24,10 +24,10 @@
 +import net.minecraft.util.StringUtil;
  import net.minecraft.util.VisibleForDebug;
 +import net.minecraftforge.server.ServerLifecycleHooks;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_20_R4.util.CraftLocation;
-+import org.bukkit.craftbukkit.v1_20_R4.util.Waitable;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.util.CraftLocation;
++import org.bukkit.craftbukkit.util.Waitable;
 +import org.bukkit.event.player.PlayerKickEvent;
 +import org.bukkit.event.player.PlayerResourcePackStatusEvent;
  import org.slf4j.Logger;
@@ -57,7 +57,7 @@
 +   }
 +
 +   protected final ServerPlayer player;
-+   protected final org.bukkit.craftbukkit.v1_20_R4.CraftServer cserver;
++   protected final org.bukkit.craftbukkit.CraftServer cserver;
 +   public boolean processedDisconnect;
 +
 +   public CraftPlayer getCraftPlayer() {

@@ -4,8 +4,8 @@
  import net.minecraft.world.entity.npc.Villager;
  import net.minecraft.world.entity.npc.VillagerData;
  import net.minecraft.world.entity.npc.VillagerProfession;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftVillager;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.entity.CraftVillager;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.VillagerCareerChangeEvent;
  
  public class ResetProfession {

@@ -23,12 +23,12 @@
 +   }
 +
 +   @Override
-+   public void onOpen(org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity who) {
++   public void onOpen(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +       transaction.add(who);
 +   }
 +
 +   @Override
-+   public void onClose(org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity who) {
++   public void onClose(org.bukkit.craftbukkit.entity.CraftHumanEntity who) {
 +       transaction.remove(who);
 +   }
 +

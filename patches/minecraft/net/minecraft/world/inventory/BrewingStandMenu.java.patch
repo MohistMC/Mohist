@@ -6,8 +6,8 @@
  import net.minecraft.world.item.alchemy.Potion;
 -import net.minecraft.world.item.alchemy.PotionBrewing;
  import net.minecraft.world.item.alchemy.PotionUtils;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryBrewer;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
  public class BrewingStandMenu extends AbstractContainerMenu {
     private static final int BOTTLE_SLOT_START = 0;

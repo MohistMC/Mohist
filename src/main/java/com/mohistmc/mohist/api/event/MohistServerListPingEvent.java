@@ -6,8 +6,8 @@ import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R4.util.CraftIconCache;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftIconCache;
 import org.bukkit.entity.Player;
 
 public class MohistServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {

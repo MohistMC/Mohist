@@ -22,7 +22,7 @@
                 Block block = blockstate.getBlock();
                 if (block instanceof LeavesBlock) {
 +                  // CraftBukkit start
-+                  if (!org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
++                  if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) {
 +                     continue;
 +                  }
 +                  // CraftBukkit end

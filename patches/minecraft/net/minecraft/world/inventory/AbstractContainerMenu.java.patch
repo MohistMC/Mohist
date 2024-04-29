@@ -26,9 +26,9 @@
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.entity.BlockEntity;
 +import net.minecraftforge.registries.ForgeRegistries;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.Event.Result;
 +import org.bukkit.event.inventory.InventoryDragEvent;
 +import org.bukkit.event.inventory.InventoryType;

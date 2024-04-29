@@ -43,7 +43,7 @@
 +      if (this.stored.size() < this.maxBees) { // CraftBukkit
 +         // CraftBukkit start
 +         if (this.level != null) {
-+            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_58745_.getBukkitEntity(), org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock.at(level, getBlockPos()));
++            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_58745_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(level, getBlockPos()));
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               if (p_58745_ instanceof Bee) {

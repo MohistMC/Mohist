@@ -14,10 +14,10 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemType;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftItemType;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.block.BlockExpEvent;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;

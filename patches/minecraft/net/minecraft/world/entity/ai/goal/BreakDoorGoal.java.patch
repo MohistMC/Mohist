@@ -22,7 +22,7 @@
  
        if (this.breakTime == this.getDoorBreakTime() && this.isValidDifficulty(this.mob.level().getDifficulty())) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreakDoorEvent(this.mob, this.doorPos).isCancelled()) {
 +            this.start();
 +            return;
 +         }

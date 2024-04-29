@@ -4,7 +4,7 @@
  
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.resources.ResourceLocation;
-+import org.bukkit.craftbukkit.v1_20_R4.advancement.CraftAdvancement;
++import org.bukkit.craftbukkit.advancement.CraftAdvancement;
  
  public record AdvancementHolder(ResourceLocation id, Advancement value) {
     public void write(FriendlyByteBuf p_299066_) {

@@ -4,8 +4,8 @@
  import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
  import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
  import org.apache.commons.lang3.mutable.MutableBoolean;
-+import org.bukkit.craftbukkit.v1_20_R4.generator.CraftLimitedRegion;
-+import org.bukkit.craftbukkit.v1_20_R4.util.RandomSourceWrapper;
++import org.bukkit.craftbukkit.generator.CraftLimitedRegion;
++import org.bukkit.craftbukkit.util.RandomSourceWrapper;
 +import org.bukkit.generator.BlockPopulator;
  
  public abstract class ChunkGenerator {
@@ -56,7 +56,7 @@
        if (structurestart.isValid()) {
 +         // CraftBukkit start
 +         BoundingBox box = structurestart.getBoundingBox();
-+         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.level.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.v1_20_R4.generator.structure.CraftStructure.minecraftToBukkit(structure), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), p_223112_.x, p_223112_.z);
++         org.bukkit.event.world.AsyncStructureSpawnEvent event = new org.bukkit.event.world.AsyncStructureSpawnEvent(p_223106_.level.getMinecraftWorld().getWorld(), org.bukkit.craftbukkit.generator.structure.CraftStructure.minecraftToBukkit(structure), new org.bukkit.util.BoundingBox(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()), p_223112_.x, p_223112_.z);
 +         org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return true;

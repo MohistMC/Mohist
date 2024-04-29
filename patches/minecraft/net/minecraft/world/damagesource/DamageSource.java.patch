@@ -62,7 +62,7 @@
 +      if (blockPosition == null || world == null) {
 +         return this;
 +      }
-+      return directBlock(org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock.at(world, blockPosition));
++      return directBlock(org.bukkit.craftbukkit.block.CraftBlock.at(world, blockPosition));
 +   }
 +
 +   public DamageSource directBlock(org.bukkit.block.Block block) {

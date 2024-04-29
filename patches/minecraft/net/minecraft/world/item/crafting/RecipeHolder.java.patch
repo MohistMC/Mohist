@@ -4,7 +4,7 @@
  package net.minecraft.world.item.crafting;
  
  import net.minecraft.resources.ResourceLocation;
-+import org.bukkit.craftbukkit.v1_20_R4.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.util.CraftNamespacedKey;
  
  public record RecipeHolder<T extends Recipe<?>>(ResourceLocation id, T value) {
     public boolean equals(Object p_298053_) {

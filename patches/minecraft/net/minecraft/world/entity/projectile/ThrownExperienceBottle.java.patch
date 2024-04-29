@@ -8,7 +8,7 @@
 -         int i = 3 + this.level().random.nextInt(5) + this.level().random.nextInt(5);
 +         int i = 3 + this.level.random.nextInt(5) + this.level.random.nextInt(5);
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callExpBottleEvent(this, p_37521_, i);
++         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, p_37521_, i);
 +         i = event.getExperience();
 +         if (event.getShowEffect()) {
 +            this.level().levelEvent(2002, this.blockPosition(), PotionUtils.getColor(Potions.WATER));

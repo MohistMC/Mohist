@@ -5,7 +5,7 @@
  
           if (!this.level().isClientSide) {
 -            if (this.random.nextInt(10) == 0) {
-+            if (this.random.nextInt(10) == 0 && (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_) || !org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.callEntityTameEvent(this, p_29414_).isCancelled())) {
++            if (this.random.nextInt(10) == 0 && (!net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_) || !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_29414_).isCancelled())) {
                 this.tame(p_29414_);
                 this.level().broadcastEntityEvent(this, (byte)7);
              } else {

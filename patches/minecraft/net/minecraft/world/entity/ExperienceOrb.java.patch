@@ -4,8 +4,8 @@
  import net.minecraft.world.level.entity.EntityTypeTest;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R4.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.EntityRemoveEvent.Cause;
 +import org.bukkit.event.entity.EntityTargetEvent;

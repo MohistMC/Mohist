@@ -1,7 +1,7 @@
 package com.mohistmc.mohist.bukkit.entity;
 
-import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R4.entity.CraftEntity;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 public class MohistModsEntity extends CraftEntity {
 

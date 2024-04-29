@@ -76,7 +76,7 @@
        int j = (p_261759_ < 11 || !(p_261633_.nextFloat() < 0.25F)) && p_261759_ != 15 ? 0 : 1;
 -      p_262076_.setBlock(p_262109_.above(), this.defaultBlockState().setValue(AGE, Integer.valueOf(i)).setValue(LEAVES, bambooleaves).setValue(STAGE, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_20_R4.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), this.defaultBlockState().setValue(AGE, i).setValue(LEAVES, bambooleaves).setValue(STAGE, j), 3)) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_262076_, p_262109_, p_262109_.above(), this.defaultBlockState().setValue(AGE, i).setValue(LEAVES, bambooleaves).setValue(STAGE, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_262076_.setBlock(p_262109_.below(), blockstate.setValue(LEAVES, BambooLeaves.SMALL), 3);
 +            p_262076_.setBlock(blockpos, blockstate1.setValue(LEAVES, BambooLeaves.NONE), 3);
