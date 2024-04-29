@@ -19,42 +19,42 @@ public class CraftInventoryAnvil extends CraftResultInventory implements AnvilIn
 
     @Override
     public Location getLocation() {
-        return location;
+        return this.location;
     }
 
     @Override
     public String getRenameText() {
-        return container.itemName;
+        return this.container.itemName;
     }
 
     @Override
     public int getRepairCostAmount() {
-        return container.repairItemCountCost;
+        return this.container.repairItemCountCost;
     }
 
     @Override
     public void setRepairCostAmount(int amount) {
-        container.repairItemCountCost = amount;
+        this.container.repairItemCountCost = amount;
     }
 
     @Override
     public int getRepairCost() {
-        return container.cost.get();
+        return this.container.cost.get();
     }
 
     @Override
     public void setRepairCost(int i) {
-        container.cost.set(i);
+        this.container.cost.set(i);
     }
 
     @Override
     public int getMaximumRepairCost() {
-        return container.maximumRepairCost;
+        return this.container.maximumRepairCost;
     }
 
     @Override
     public void setMaximumRepairCost(int levels) {
         Preconditions.checkArgument(levels >= 0, "Maximum repair cost must be positive (or 0)");
-        container.maximumRepairCost = levels;
+        this.container.maximumRepairCost = levels;
     }
 }

@@ -11,7 +11,7 @@ public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
 
     @Override
     public net.minecraft.world.entity.monster.Ghast getHandle() {
-        return (net.minecraft.world.entity.monster.Ghast) entity;
+        return (net.minecraft.world.entity.monster.Ghast) this.entity;
     }
 
     @Override
@@ -21,11 +21,11 @@ public class CraftGhast extends CraftFlying implements Ghast, CraftEnemy {
 
     @Override
     public boolean isCharging() {
-        return getHandle().isCharging();
+        return this.getHandle().isCharging();
     }
 
     @Override
     public void setCharging(boolean flag) {
-        getHandle().setCharging(flag);
+        this.getHandle().setCharging(flag);
     }
 }

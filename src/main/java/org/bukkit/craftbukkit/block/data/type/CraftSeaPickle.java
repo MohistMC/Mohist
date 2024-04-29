@@ -9,21 +9,21 @@ public abstract class CraftSeaPickle extends CraftBlockData implements SeaPickle
 
     @Override
     public int getPickles() {
-        return get(PICKLES);
+        return this.get(CraftSeaPickle.PICKLES);
     }
 
     @Override
     public void setPickles(int pickles) {
-        set(PICKLES, pickles);
+        this.set(CraftSeaPickle.PICKLES, pickles);
     }
 
     @Override
     public int getMinimumPickles() {
-        return getMin(PICKLES);
+        return getMin(CraftSeaPickle.PICKLES);
     }
 
     @Override
     public int getMaximumPickles() {
-        return getMax(PICKLES);
+        return getMax(CraftSeaPickle.PICKLES);
     }
 }

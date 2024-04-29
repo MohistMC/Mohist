@@ -11,8 +11,8 @@ import org.bukkit.inventory.Inventory;
 
 public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> implements Lectern {
 
-    public CraftLectern(World world, LecternBlockEntity te) {
-        super(world, te);
+    public CraftLectern(World world, LecternBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftLectern(CraftLectern state, Location location) {
@@ -21,12 +21,12 @@ public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> impl
 
     @Override
     public int getPage() {
-        return getSnapshot().getPage();
+        return this.getSnapshot().getPage();
     }
 
     @Override
     public void setPage(int page) {
-        getSnapshot().setPage(page);
+        this.getSnapshot().setPage(page);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> impl
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
 
-        if (result && this.getType() == Material.LECTERN && getWorldHandle() instanceof net.minecraft.world.level.Level) {
+        if (result && this.getType() == Material.LECTERN && this.getWorldHandle() instanceof net.minecraft.world.level.Level) {
             LecternBlock.signalPageChange(this.world.getHandle(), this.getPosition(), this.getHandle());
         }
 

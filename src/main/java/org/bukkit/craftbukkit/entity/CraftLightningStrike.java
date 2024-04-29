@@ -1,48 +1,49 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LightningBolt;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 
 public class CraftLightningStrike extends CraftEntity implements LightningStrike {
-    public CraftLightningStrike(final CraftServer server, final net.minecraft.world.entity.LightningBolt entity) {
+    public CraftLightningStrike(final CraftServer server, final LightningBolt entity) {
         super(server, entity);
     }
 
     @Override
     public boolean isEffect() {
-        return getHandle().visualOnly;
+        return this.getHandle().visualOnly;
     }
 
     public int getFlashes() {
-        return getHandle().flashes;
+        return this.getHandle().flashes;
     }
 
     public void setFlashes(int flashes) {
-        getHandle().flashes = flashes;
+        this.getHandle().flashes = flashes;
     }
 
     public int getLifeTicks() {
-        return getHandle().life;
+        return this.getHandle().life;
     }
 
     public void setLifeTicks(int ticks) {
-        getHandle().life = ticks;
+        this.getHandle().life = ticks;
     }
 
     public Player getCausingPlayer() {
-        ServerPlayer player = getHandle().getCause();
+        ServerPlayer player = this.getHandle().getCause();
         return (player != null) ? player.getBukkitEntity() : null;
     }
 
     public void setCausingPlayer(Player player) {
-        getHandle().setCause((player != null) ? ((CraftPlayer) player).getHandle() : null);
+        this.getHandle().setCause((player != null) ? ((CraftPlayer) player).getHandle() : null);
     }
 
     @Override
-    public net.minecraft.world.entity.LightningBolt getHandle() {
-        return (net.minecraft.world.entity.LightningBolt) entity;
+    public LightningBolt getHandle() {
+        return (LightningBolt) this.entity;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class CraftLightningStrike extends CraftEntity implements LightningStrike
 
     @Override
     public LightningStrike.Spigot spigot() {
-        return spigot;
+        return this.spigot;
     }
     // Spigot end
 }

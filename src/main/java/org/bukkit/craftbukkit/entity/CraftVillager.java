@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.level.block.BedBlock;
@@ -16,6 +15,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class CraftVillager extends CraftAbstractVillager implements Villager {
@@ -26,7 +26,7 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public net.minecraft.world.entity.npc.Villager getHandle() {
-        return (net.minecraft.world.entity.npc.Villager) entity;
+        return (net.minecraft.world.entity.npc.Villager) this.entity;
     }
 
     @Override
@@ -36,91 +36,91 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public void remove() {
-        getHandle().releaseAllPois();
+        this.getHandle().releaseAllPois();
 
         super.remove();
     }
 
     @Override
     public Profession getProfession() {
-        return CraftProfession.minecraftToBukkit(getHandle().getVillagerData().getProfession());
+        return CraftProfession.minecraftToBukkit(this.getHandle().getVillagerData().getProfession());
     }
 
     @Override
     public void setProfession(Profession profession) {
         Preconditions.checkArgument(profession != null, "Profession cannot be null");
-        getHandle().setVillagerData(getHandle().getVillagerData().setProfession(CraftProfession.bukkitToMinecraft(profession)));
+        this.getHandle().setVillagerData(this.getHandle().getVillagerData().setProfession(CraftProfession.bukkitToMinecraft(profession)));
     }
 
     @Override
     public Type getVillagerType() {
-        return CraftType.minecraftToBukkit(getHandle().getVillagerData().getType());
+        return CraftType.minecraftToBukkit(this.getHandle().getVillagerData().getType());
     }
 
     @Override
     public void setVillagerType(Type type) {
         Preconditions.checkArgument(type != null, "Type cannot be null");
-        getHandle().setVillagerData(getHandle().getVillagerData().setType(CraftType.bukkitToMinecraft(type)));
+        this.getHandle().setVillagerData(this.getHandle().getVillagerData().setType(CraftType.bukkitToMinecraft(type)));
     }
 
     @Override
     public int getVillagerLevel() {
-        return getHandle().getVillagerData().getLevel();
+        return this.getHandle().getVillagerData().getLevel();
     }
 
     @Override
     public void setVillagerLevel(int level) {
         Preconditions.checkArgument(1 <= level && level <= 5, "level (%s) must be between [1, 5]", level);
 
-        getHandle().setVillagerData(getHandle().getVillagerData().setLevel(level));
+        this.getHandle().setVillagerData(this.getHandle().getVillagerData().setLevel(level));
     }
 
     @Override
     public int getVillagerExperience() {
-        return getHandle().getVillagerXp();
+        return this.getHandle().getVillagerXp();
     }
 
     @Override
     public void setVillagerExperience(int experience) {
         Preconditions.checkArgument(experience >= 0, "Experience (%s) must be positive", experience);
 
-        getHandle().setVillagerXp(experience);
+        this.getHandle().setVillagerXp(experience);
     }
 
     @Override
     public boolean sleep(Location location) {
         Preconditions.checkArgument(location != null, "Location cannot be null");
         Preconditions.checkArgument(location.getWorld() != null, "Location needs to be in a world");
-        Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
-        Preconditions.checkState(!getHandle().generation, "Cannot sleep during world generation");
+        Preconditions.checkArgument(location.getWorld().equals(this.getWorld()), "Cannot sleep across worlds");
+        Preconditions.checkState(!this.getHandle().generation, "Cannot sleep during world generation");
 
         BlockPos position = CraftLocation.toBlockPosition(location);
-        BlockState iblockdata = getHandle().level().getBlockState(position);
+        BlockState iblockdata = this.getHandle().level().getBlockState(position);
         if (!(iblockdata.getBlock() instanceof BedBlock)) {
             return false;
         }
 
-        getHandle().startSleeping(position);
+        this.getHandle().startSleeping(position);
         return true;
     }
 
     @Override
     public void wakeup() {
-        Preconditions.checkState(isSleeping(), "Cannot wakeup if not sleeping");
-        Preconditions.checkState(!getHandle().generation, "Cannot wakeup during world generation");
+        Preconditions.checkState(this.isSleeping(), "Cannot wakeup if not sleeping");
+        Preconditions.checkState(!this.getHandle().generation, "Cannot wakeup during world generation");
 
-        getHandle().stopSleeping();
+        this.getHandle().stopSleeping();
     }
 
     @Override
     public void shakeHead() {
-        getHandle().setUnhappy();
+        this.getHandle().setUnhappy();
     }
 
     @Override
-    public org.bukkit.entity.ZombieVillager zombify() {
-        ZombieVillager entityzombievillager = Zombie.zombifyVillager(getHandle().level().getMinecraftWorld(), getHandle(), getHandle().blockPosition(), isSilent(), CreatureSpawnEvent.SpawnReason.CUSTOM);
-        return (entityzombievillager != null) ? (org.bukkit.entity.ZombieVillager) entityzombievillager.getBukkitEntity() : null;
+    public ZombieVillager zombify() {
+        net.minecraft.world.entity.monster.ZombieVillager entityzombievillager = Zombie.zombifyVillager(this.getHandle().level().getMinecraftWorld(), this.getHandle(), this.getHandle().blockPosition(), this.isSilent(), CreatureSpawnEvent.SpawnReason.CUSTOM);
+        return (entityzombievillager != null) ? (ZombieVillager) entityzombievillager.getBukkitEntity() : null;
     }
 
     public static class CraftType {

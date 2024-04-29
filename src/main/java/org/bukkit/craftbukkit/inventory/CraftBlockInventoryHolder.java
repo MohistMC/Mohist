@@ -20,11 +20,11 @@ public class CraftBlockInventoryHolder implements BlockInventoryHolder {
 
     @Override
     public Block getBlock() {
-        return block;
+        return this.block;
     }
 
     @Override
     public Inventory getInventory() {
-        return inventory;
+        return this.inventory;
     }
 }

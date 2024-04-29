@@ -11,7 +11,7 @@ public class CraftChicken extends CraftAnimals implements Chicken {
 
     @Override
     public net.minecraft.world.entity.animal.Chicken getHandle() {
-        return (net.minecraft.world.entity.animal.Chicken) entity;
+        return (net.minecraft.world.entity.animal.Chicken) this.entity;
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.bukkit.Registry;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
 public class CraftArt {
+
     public static Art minecraftToBukkit(PaintingVariant minecraft) {
         Preconditions.checkArgument(minecraft != null);
 
@@ -21,7 +22,7 @@ public class CraftArt {
     }
 
     public static Art minecraftHolderToBukkit(Holder<PaintingVariant> minecraft) {
-        return minecraftToBukkit(minecraft.value());
+        return CraftArt.minecraftToBukkit(minecraft.value());
     }
 
     public static PaintingVariant bukkitToMinecraft(Art bukkit) {
@@ -36,7 +37,7 @@ public class CraftArt {
 
         net.minecraft.core.Registry<PaintingVariant> registry = CraftRegistry.getMinecraftRegistry(Registries.PAINTING_VARIANT);
 
-        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.Reference<PaintingVariant> holder) {
+        if (registry.wrapAsHolder(CraftArt.bukkitToMinecraft(bukkit)) instanceof Holder.Reference<PaintingVariant> holder) {
             return holder;
         }
 

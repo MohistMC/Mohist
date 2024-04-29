@@ -8,11 +8,11 @@ public abstract class CraftHangable extends CraftBlockData implements Hangable {
 
     @Override
     public boolean isHanging() {
-        return get(HANGING);
+        return this.get(CraftHangable.HANGING);
     }
 
     @Override
     public void setHanging(boolean hanging) {
-        set(HANGING, hanging);
+        this.set(CraftHangable.HANGING, hanging);
     }
 }

@@ -9,11 +9,11 @@ public abstract class CraftSwitch extends CraftBlockData implements Switch {
 
     @Override
     public org.bukkit.block.data.type.Switch.Face getFace() {
-        return get(FACE, org.bukkit.block.data.type.Switch.Face.class);
+        return this.get(CraftSwitch.FACE, org.bukkit.block.data.type.Switch.Face.class);
     }
 
     @Override
     public void setFace(org.bukkit.block.data.type.Switch.Face face) {
-        set(FACE, face);
+        this.set(CraftSwitch.FACE, face);
     }
 }

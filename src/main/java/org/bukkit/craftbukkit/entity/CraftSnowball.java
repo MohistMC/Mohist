@@ -10,7 +10,7 @@ public class CraftSnowball extends CraftThrowableProjectile implements Snowball 
 
     @Override
     public net.minecraft.world.entity.projectile.Snowball getHandle() {
-        return (net.minecraft.world.entity.projectile.Snowball) entity;
+        return (net.minecraft.world.entity.projectile.Snowball) this.entity;
     }
 
     @Override

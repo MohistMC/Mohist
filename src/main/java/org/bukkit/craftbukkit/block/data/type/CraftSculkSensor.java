@@ -9,11 +9,11 @@ public abstract class CraftSculkSensor extends CraftBlockData implements SculkSe
 
     @Override
     public org.bukkit.block.data.type.SculkSensor.Phase getPhase() {
-        return get(PHASE, org.bukkit.block.data.type.SculkSensor.Phase.class);
+        return this.get(CraftSculkSensor.PHASE, org.bukkit.block.data.type.SculkSensor.Phase.class);
     }
 
     @Override
     public void setPhase(org.bukkit.block.data.type.SculkSensor.Phase phase) {
-        set(PHASE, phase);
+        this.set(CraftSculkSensor.PHASE, phase);
     }
 }

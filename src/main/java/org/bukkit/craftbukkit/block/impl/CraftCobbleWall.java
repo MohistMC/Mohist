@@ -13,7 +13,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftWall
+    // org.bukkit.craftbukkit.block.data.type.CraftWall
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty UP = getBoolean(net.minecraft.world.level.block.WallBlock.class, "up");
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?>[] HEIGHTS = new net.minecraft.world.level.block.state.properties.EnumProperty[]{
@@ -22,35 +22,35 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public boolean isUp() {
-        return get(UP);
+        return this.get(CraftCobbleWall.UP);
     }
 
     @Override
     public void setUp(boolean up) {
-        set(UP, up);
+        this.set(CraftCobbleWall.UP, up);
     }
 
     @Override
     public org.bukkit.block.data.type.Wall.Height getHeight(org.bukkit.block.BlockFace face) {
-        return get(HEIGHTS[face.ordinal()], org.bukkit.block.data.type.Wall.Height.class);
+        return this.get(CraftCobbleWall.HEIGHTS[face.ordinal()], org.bukkit.block.data.type.Wall.Height.class);
     }
 
     @Override
     public void setHeight(org.bukkit.block.BlockFace face, org.bukkit.block.data.type.Wall.Height height) {
-        set(HEIGHTS[face.ordinal()], height);
+        this.set(CraftCobbleWall.HEIGHTS[face.ordinal()], height);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.WallBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftCobbleWall.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftCobbleWall.WATERLOGGED, waterlogged);
     }
 }

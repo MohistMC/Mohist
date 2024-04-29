@@ -8,16 +8,16 @@ public abstract class CraftAgeable extends CraftBlockData implements Ageable {
 
     @Override
     public int getAge() {
-        return get(AGE);
+        return this.get(CraftAgeable.AGE);
     }
 
     @Override
     public void setAge(int age) {
-        set(AGE, age);
+        this.set(CraftAgeable.AGE, age);
     }
 
     @Override
     public int getMaximumAge() {
-        return getMax(AGE);
+        return getMax(CraftAgeable.AGE);
     }
 }

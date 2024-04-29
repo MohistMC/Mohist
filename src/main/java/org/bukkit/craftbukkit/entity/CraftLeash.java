@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.LeashHitch;
 
 public class CraftLeash extends CraftHanging implements LeashHitch {
-    public CraftLeash(CraftServer server, net.minecraft.world.entity.decoration.LeashFenceKnotEntity entity) {
+    public CraftLeash(CraftServer server, LeashFenceKnotEntity entity) {
         super(server, entity);
     }
 
@@ -14,7 +15,7 @@ public class CraftLeash extends CraftHanging implements LeashHitch {
     public boolean setFacingDirection(BlockFace face, boolean force) {
         Preconditions.checkArgument(face == BlockFace.SELF, "%s is not a valid facing direction", face);
 
-        return force || getHandle().generation || getHandle().survives();
+        return force || this.getHandle().generation || this.getHandle().survives();
     }
 
     @Override
@@ -24,8 +25,8 @@ public class CraftLeash extends CraftHanging implements LeashHitch {
     }
 
     @Override
-    public net.minecraft.world.entity.decoration.LeashFenceKnotEntity getHandle() {
-        return (net.minecraft.world.entity.decoration.LeashFenceKnotEntity) entity;
+    public LeashFenceKnotEntity getHandle() {
+        return (LeashFenceKnotEntity) this.entity;
     }
 
     @Override

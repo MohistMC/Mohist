@@ -8,11 +8,11 @@ public abstract class CraftPowerable extends CraftBlockData implements Powerable
 
     @Override
     public boolean isPowered() {
-        return get(POWERED);
+        return this.get(CraftPowerable.POWERED);
     }
 
     @Override
     public void setPowered(boolean powered) {
-        set(POWERED, powered);
+        this.set(CraftPowerable.POWERED, powered);
     }
 }

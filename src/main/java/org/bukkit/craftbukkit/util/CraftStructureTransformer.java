@@ -38,23 +38,23 @@ public class CraftStructureTransformer {
 
         @Override
         public BlockState getOriginal() {
-            if (originalCopy != null) {
-                return originalCopy;
+            if (this.originalCopy != null) {
+                return this.originalCopy;
             }
-            return originalCopy = original.copy();
+            return this.originalCopy = this.original.copy();
         }
 
         @Override
         public BlockState getWorld() {
-            if (worldCopy != null) {
-                return worldCopy;
+            if (this.worldCopy != null) {
+                return this.worldCopy;
             }
-            return worldCopy = world.copy();
+            return this.worldCopy = this.world.copy();
         }
 
         private void destroyCopies() {
-            originalCopy = null;
-            worldCopy = null;
+            this.originalCopy = null;
+            this.worldCopy = null;
         }
 
     }
@@ -78,11 +78,11 @@ public class CraftStructureTransformer {
     }
 
     public boolean transformEntity(Entity entity) {
-        EntityTransformer[] transformers = entityTransformers;
+        EntityTransformer[] transformers = this.entityTransformers;
         if (transformers == null || transformers.length == 0) {
             return true;
         }
-        CraftLimitedRegion region = limitedRegion;
+        CraftLimitedRegion region = this.limitedRegion;
         if (region == null) {
             return true;
         }
@@ -99,15 +99,15 @@ public class CraftStructureTransformer {
     }
 
     public boolean canTransformBlocks() {
-        return blockTransformers != null && blockTransformers.length != 0 && limitedRegion != null;
+        return this.blockTransformers != null && this.blockTransformers.length != 0 && this.limitedRegion != null;
     }
 
     public CraftBlockState transformCraftState(CraftBlockState originalState) {
-        BlockTransformer[] transformers = blockTransformers;
+        BlockTransformer[] transformers = this.blockTransformers;
         if (transformers == null || transformers.length == 0) {
             return originalState;
         }
-        CraftLimitedRegion region = limitedRegion;
+        CraftLimitedRegion region = this.limitedRegion;
         if (region == null) {
             return originalState;
         }
@@ -123,8 +123,8 @@ public class CraftStructureTransformer {
     }
 
     public void discard() {
-        limitedRegion.saveEntities();
-        limitedRegion.breakLink();
+        this.limitedRegion.saveEntities();
+        this.limitedRegion.breakLink();
         this.limitedRegion = null;
         this.blockTransformers = null;
         this.entityTransformers = null;

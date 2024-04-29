@@ -10,7 +10,7 @@ public class CraftIronGolem extends CraftGolem implements IronGolem {
 
     @Override
     public net.minecraft.world.entity.animal.IronGolem getHandle() {
-        return (net.minecraft.world.entity.animal.IronGolem) entity;
+        return (net.minecraft.world.entity.animal.IronGolem) this.entity;
     }
 
     @Override
@@ -20,11 +20,11 @@ public class CraftIronGolem extends CraftGolem implements IronGolem {
 
     @Override
     public boolean isPlayerCreated() {
-        return getHandle().isPlayerCreated();
+        return this.getHandle().isPlayerCreated();
     }
 
     @Override
     public void setPlayerCreated(boolean playerCreated) {
-        getHandle().setPlayerCreated(playerCreated);
+        this.getHandle().setPlayerCreated(playerCreated);
     }
 }

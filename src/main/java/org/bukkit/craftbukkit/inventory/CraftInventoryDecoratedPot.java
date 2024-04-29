@@ -13,16 +13,16 @@ public class CraftInventoryDecoratedPot extends CraftInventory implements Decora
 
     @Override
     public void setItem(ItemStack item) {
-        setItem(0, item);
+        this.setItem(0, item);
     }
 
     @Override
     public ItemStack getItem() {
-        return getItem(0);
+        return this.getItem(0);
     }
 
     @Override
     public DecoratedPot getHolder() {
-        return (DecoratedPot) inventory.getOwner();
+        return (DecoratedPot) this.inventory.getOwner();
     }
 }

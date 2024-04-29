@@ -21,31 +21,31 @@ public final class CraftCrafter extends org.bukkit.craftbukkit.block.data.CraftB
 
     @Override
     public boolean isCrafting() {
-        return get(CRAFTING);
+        return this.get(CraftCrafter.CRAFTING);
     }
 
     @Override
     public void setCrafting(boolean crafting) {
-        set(CRAFTING, crafting);
+        this.set(CraftCrafter.CRAFTING, crafting);
     }
 
     @Override
     public boolean isTriggered() {
-        return get(TRIGGERED);
+        return this.get(CraftCrafter.TRIGGERED);
     }
 
     @Override
     public void setTriggered(boolean triggered) {
-        set(TRIGGERED, triggered);
+        this.set(CraftCrafter.TRIGGERED, triggered);
     }
 
     @Override
     public org.bukkit.block.data.type.Crafter.Orientation getOrientation() {
-        return get(ORIENTATION, org.bukkit.block.data.type.Crafter.Orientation.class);
+        return this.get(CraftCrafter.ORIENTATION, org.bukkit.block.data.type.Crafter.Orientation.class);
     }
 
     @Override
     public void setOrientation(org.bukkit.block.data.type.Crafter.Orientation orientation) {
-        set(ORIENTATION, orientation);
+        this.set(CraftCrafter.ORIENTATION, orientation);
     }
 }

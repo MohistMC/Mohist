@@ -4,19 +4,30 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.block.CraftBanner;
 import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.block.CraftBlockStates;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-@DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+@DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta {
 
     private static final Set<Material> SHULKER_BOX_MATERIALS = Sets.newHashSet(
@@ -120,8 +131,37 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             Material.CHISELED_BOOKSHELF,
             Material.DECORATED_POT,
             Material.SUSPICIOUS_SAND,
-            Material.SUSPICIOUS_GRAVEL
+            Material.SUSPICIOUS_GRAVEL,
+            Material.TRIAL_SPAWNER,
+            Material.CRAFTER,
+            Material.VAULT
     );
+
+    private static final class TrackedDataComponentMap implements DataComponentMap {
+
+        private final Set<DataComponentType<?>> seen = new HashSet<>();
+        private final DataComponentMap handle;
+
+        public TrackedDataComponentMap(DataComponentMap map) {
+            this.handle = map;
+        }
+
+        @Override
+        public <T> T get(DataComponentType<? extends T> type) {
+            this.seen.add(type);
+            return this.handle.get(type);
+        }
+
+        @Override
+        public Set<DataComponentType<?>> keySet() {
+            return this.handle.keySet();
+        }
+
+        @Override
+        public Iterator<TypedDataComponent<?>> iterator() {
+            return this.handle.iterator();
+        }
+    }
 
     static {
         // Add shulker boxes to the list of block state materials too
@@ -129,10 +169,11 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     }
 
     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
-    static final ItemMetaKey BLOCK_ENTITY_TAG = new ItemMetaKey("BlockEntityTag");
+    static final ItemMetaKeyType<CustomData> BLOCK_ENTITY_TAG = new ItemMetaKeyType<>(DataComponents.BLOCK_ENTITY_DATA, "BlockEntityTag");
 
     final Material material;
-    CompoundTag blockEntityTag;
+    private CraftBlockEntityState<?> blockEntityTag;
+    private CompoundTag internalTag;
 
     CraftMetaBlockState(CraftMetaItem meta, Material material) {
         super(meta);
@@ -140,7 +181,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
 
         if (!(meta instanceof CraftMetaBlockState)
                 || ((CraftMetaBlockState) meta).material != material) {
-            blockEntityTag = null;
+            this.blockEntityTag = null;
             return;
         }
 
@@ -148,14 +189,30 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         this.blockEntityTag = te.blockEntityTag;
     }
 
-    CraftMetaBlockState(CompoundTag tag, Material material) {
+    CraftMetaBlockState(DataComponentPatch tag, Material material) {
         super(tag);
         this.material = material;
 
-        if (tag.contains(BLOCK_ENTITY_TAG.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
-            blockEntityTag = tag.getCompound(BLOCK_ENTITY_TAG.NBT).copy();
-        } else {
-            blockEntityTag = null;
+        getOrEmpty(tag, CraftMetaBlockState.BLOCK_ENTITY_TAG).ifPresent((nbt) -> {
+            this.blockEntityTag = CraftMetaBlockState.getBlockState(material, nbt.copyTag());
+        });
+
+        if (!tag.isEmpty()) {
+            if (this.blockEntityTag == null) {
+                this.blockEntityTag = CraftMetaBlockState.getBlockState(material, null);
+            }
+
+            // Convert to map
+            PatchedDataComponentMap map = new PatchedDataComponentMap(DataComponentMap.EMPTY);
+            map.applyPatch(tag);
+            // Setup tracking
+            TrackedDataComponentMap track = new TrackedDataComponentMap(map);
+            // Apply
+            this.blockEntityTag.applyComponents(track, tag);
+            // Mark applied components as handled
+            for (DataComponentType<?> seen : track.seen) {
+                this.unhandledTags.clear(seen);
+            }
         }
     }
 
@@ -164,18 +221,24 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         String matName = SerializableMeta.getString(map, "blockMaterial", true);
         Material m = Material.getMaterial(matName);
         if (m != null) {
-            material = m;
+            this.material = m;
         } else {
-            material = Material.AIR;
+            this.material = Material.AIR;
         }
+        this.blockEntityTag = CraftMetaBlockState.getBlockState(this.material, this.internalTag);
+        this.internalTag = null;
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
-        if (blockEntityTag != null) {
-            tag.put(BLOCK_ENTITY_TAG.NBT, blockEntityTag);
+        if (this.blockEntityTag != null) {
+            tag.put(CraftMetaBlockState.BLOCK_ENTITY_TAG, CustomData.of(this.blockEntityTag.getSnapshotNBTWithoutComponents()));
+
+            for (TypedDataComponent<?> component : this.blockEntityTag.collectComponents()) {
+                tag.builder.set(component);
+            }
         }
     }
 
@@ -183,22 +246,22 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     void deserializeInternal(CompoundTag tag, Object context) {
         super.deserializeInternal(tag, context);
 
-        if (tag.contains(BLOCK_ENTITY_TAG.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
-            blockEntityTag = tag.getCompound(BLOCK_ENTITY_TAG.NBT);
+        if (tag.contains(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
+            this.internalTag = tag.getCompound(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT);
         }
     }
 
     @Override
     void serializeInternal(final Map<String, Tag> internalTags) {
-        if (blockEntityTag != null) {
-            internalTags.put(BLOCK_ENTITY_TAG.NBT, blockEntityTag);
+        if (this.blockEntityTag != null) {
+            internalTags.put(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT, this.blockEntityTag.getSnapshotNBT());
         }
     }
 
     @Override
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         super.serialize(builder);
-        builder.put("blockMaterial", material.name());
+        builder.put("blockMaterial", this.material.name());
         return builder;
     }
 
@@ -206,7 +269,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     int applyHash() {
         final int original;
         int hash = original = super.applyHash();
-        if (blockEntityTag != null) {
+        if (this.blockEntityTag != null) {
             hash = 61 * hash + this.blockEntityTag.hashCode();
         }
         return original != hash ? CraftMetaBlockState.class.hashCode() ^ hash : hash;
@@ -227,104 +290,69 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
 
     @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftMetaBlockState || blockEntityTag == null);
+        return super.notUncommon(meta) && (meta instanceof CraftMetaBlockState || this.blockEntityTag == null);
     }
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && blockEntityTag == null;
+        return super.isEmpty() && this.blockEntityTag == null;
     }
 
     @Override
     boolean applicableTo(Material type) {
-        return BLOCK_STATE_MATERIALS.contains(type);
+        return CraftMetaBlockState.BLOCK_STATE_MATERIALS.contains(type);
     }
 
     @Override
     public CraftMetaBlockState clone() {
         CraftMetaBlockState meta = (CraftMetaBlockState) super.clone();
-        if (blockEntityTag != null) {
-            meta.blockEntityTag = blockEntityTag.copy();
+        if (this.blockEntityTag != null) {
+            meta.blockEntityTag = this.blockEntityTag.copy();
         }
         return meta;
     }
 
     @Override
     public boolean hasBlockState() {
-        return blockEntityTag != null;
+        return this.blockEntityTag != null;
     }
 
     @Override
-    public org.bukkit.block.BlockState getBlockState() {
-        Material stateMaterial = (material != Material.SHIELD) ? material : shieldToBannerHack(blockEntityTag); // Only actually used for jigsaws
+    public BlockState getBlockState() {
+        return (this.blockEntityTag != null) ? this.blockEntityTag.copy() : CraftMetaBlockState.getBlockState(this.material, null);
+    }
+
+    private static CraftBlockEntityState<?> getBlockState(Material material, CompoundTag blockEntityTag) {
+        BlockPos pos = BlockPos.ZERO;
+        Material stateMaterial = (material != Material.SHIELD) ? material : CraftMetaBlockState.shieldToBannerHack(); // Only actually used for jigsaws
         if (blockEntityTag != null) {
             if (material == Material.SHIELD) {
                 blockEntityTag.putString("id", "minecraft:banner");
             } else if (material == Material.BEE_NEST || material == Material.BEEHIVE) {
                 blockEntityTag.putString("id", "minecraft:beehive");
-            } else if (SHULKER_BOX_MATERIALS.contains(material)) {
+            } else if (CraftMetaBlockState.SHULKER_BOX_MATERIALS.contains(material)) {
                 blockEntityTag.putString("id", "minecraft:shulker_box");
             }
+
+            pos = BlockEntity.getPosFromTag(blockEntityTag);
         }
+
         // This is expected to always return a CraftBlockEntityState for the passed material:
-        return CraftBlockStates.getBlockState(stateMaterial, blockEntityTag);
+        return (CraftBlockEntityState<?>) CraftBlockStates.getBlockState(pos, stateMaterial, blockEntityTag);
     }
 
     @Override
-    public void setBlockState(org.bukkit.block.BlockState blockState) {
+    public void setBlockState(BlockState blockState) {
         Preconditions.checkArgument(blockState != null, "blockState must not be null");
 
-        Material stateMaterial = (material != Material.SHIELD) ? material : shieldToBannerHack(blockEntityTag);
+        Material stateMaterial = (this.material != Material.SHIELD) ? this.material : CraftMetaBlockState.shieldToBannerHack();
         Class<?> blockStateType = CraftBlockStates.getBlockStateType(stateMaterial);
-        Preconditions.checkArgument(blockStateType == blockState.getClass() && blockState instanceof CraftBlockEntityState, "Invalid blockState for " + material);
+        Preconditions.checkArgument(blockStateType == blockState.getClass() && blockState instanceof CraftBlockEntityState, "Invalid blockState for " + this.material);
 
-        blockEntityTag = ((CraftBlockEntityState) blockState).getSnapshotNBT();
-        // Set shield base
-        if (material == Material.SHIELD) {
-            blockEntityTag.putInt(CraftMetaBanner.BASE.NBT, ((CraftBanner) blockState).getBaseColor().getWoolData());
-        }
+        this.blockEntityTag = (CraftBlockEntityState<?>) blockState;
     }
 
-    private static Material shieldToBannerHack(CompoundTag tag) {
-        if (tag == null || !tag.contains(CraftMetaBanner.BASE.NBT, CraftMagicNumbers.NBT.TAG_INT)) {
-            return Material.WHITE_BANNER;
-        }
-
-        switch (tag.getInt(CraftMetaBanner.BASE.NBT)) {
-            case 0:
-                return Material.WHITE_BANNER;
-            case 1:
-                return Material.ORANGE_BANNER;
-            case 2:
-                return Material.MAGENTA_BANNER;
-            case 3:
-                return Material.LIGHT_BLUE_BANNER;
-            case 4:
-                return Material.YELLOW_BANNER;
-            case 5:
-                return Material.LIME_BANNER;
-            case 6:
-                return Material.PINK_BANNER;
-            case 7:
-                return Material.GRAY_BANNER;
-            case 8:
-                return Material.LIGHT_GRAY_BANNER;
-            case 9:
-                return Material.CYAN_BANNER;
-            case 10:
-                return Material.PURPLE_BANNER;
-            case 11:
-                return Material.BLUE_BANNER;
-            case 12:
-                return Material.BROWN_BANNER;
-            case 13:
-                return Material.GREEN_BANNER;
-            case 14:
-                return Material.RED_BANNER;
-            case 15:
-                return Material.BLACK_BANNER;
-            default:
-                throw new IllegalArgumentException("Unknown banner colour");
-        }
+    private static Material shieldToBannerHack() {
+        return Material.WHITE_BANNER;
     }
 }

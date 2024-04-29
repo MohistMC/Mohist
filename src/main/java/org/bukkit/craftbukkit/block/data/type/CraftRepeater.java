@@ -10,31 +10,31 @@ public abstract class CraftRepeater extends CraftBlockData implements Repeater {
 
     @Override
     public int getDelay() {
-        return get(DELAY);
+        return this.get(CraftRepeater.DELAY);
     }
 
     @Override
     public void setDelay(int delay) {
-        set(DELAY, delay);
+        this.set(CraftRepeater.DELAY, delay);
     }
 
     @Override
     public int getMinimumDelay() {
-        return getMin(DELAY);
+        return getMin(CraftRepeater.DELAY);
     }
 
     @Override
     public int getMaximumDelay() {
-        return getMax(DELAY);
+        return getMax(CraftRepeater.DELAY);
     }
 
     @Override
     public boolean isLocked() {
-        return get(LOCKED);
+        return this.get(CraftRepeater.LOCKED);
     }
 
     @Override
     public void setLocked(boolean locked) {
-        set(LOCKED, locked);
+        this.set(CraftRepeater.LOCKED, locked);
     }
 }

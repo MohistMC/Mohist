@@ -10,16 +10,16 @@ public abstract class CraftBed extends CraftBlockData implements Bed {
 
     @Override
     public org.bukkit.block.data.type.Bed.Part getPart() {
-        return get(PART, org.bukkit.block.data.type.Bed.Part.class);
+        return this.get(CraftBed.PART, org.bukkit.block.data.type.Bed.Part.class);
     }
 
     @Override
     public void setPart(org.bukkit.block.data.type.Bed.Part part) {
-        set(PART, part);
+        this.set(CraftBed.PART, part);
     }
 
     @Override
     public boolean isOccupied() {
-        return get(OCCUPIED);
+        return this.get(CraftBed.OCCUPIED);
     }
 }

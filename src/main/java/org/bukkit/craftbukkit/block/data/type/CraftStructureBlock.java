@@ -9,11 +9,11 @@ public abstract class CraftStructureBlock extends CraftBlockData implements Stru
 
     @Override
     public org.bukkit.block.data.type.StructureBlock.Mode getMode() {
-        return get(MODE, org.bukkit.block.data.type.StructureBlock.Mode.class);
+        return this.get(CraftStructureBlock.MODE, org.bukkit.block.data.type.StructureBlock.Mode.class);
     }
 
     @Override
     public void setMode(org.bukkit.block.data.type.StructureBlock.Mode mode) {
-        set(MODE, mode);
+        this.set(CraftStructureBlock.MODE, mode);
     }
 }

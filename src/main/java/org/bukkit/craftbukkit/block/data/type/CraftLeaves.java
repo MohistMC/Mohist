@@ -10,21 +10,21 @@ public abstract class CraftLeaves extends CraftBlockData implements Leaves {
 
     @Override
     public boolean isPersistent() {
-        return get(PERSISTENT);
+        return this.get(CraftLeaves.PERSISTENT);
     }
 
     @Override
     public void setPersistent(boolean persistent) {
-        set(PERSISTENT, persistent);
+        this.set(CraftLeaves.PERSISTENT, persistent);
     }
 
     @Override
     public int getDistance() {
-        return get(DISTANCE);
+        return this.get(CraftLeaves.DISTANCE);
     }
 
     @Override
     public void setDistance(int distance) {
-        set(DISTANCE, distance);
+        this.set(CraftLeaves.DISTANCE, distance);
     }
 }

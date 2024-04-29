@@ -32,15 +32,15 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         super(vanillaCommand.getName(), "A Mojang provided command.", vanillaCommand.getUsageText(), Collections.EMPTY_LIST);
         this.dispatcher = dispatcher;
         this.vanillaCommand = vanillaCommand;
-        this.setPermission(getPermission(vanillaCommand));
+        this.setPermission(VanillaCommandWrapper.getPermission(vanillaCommand));
     }
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!this.testPermission(sender)) return true;
 
-        CommandSourceStack icommandlistener = getListener(sender);
-        dispatcher.performPrefixedCommand(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel));
+        CommandSourceStack icommandlistener = VanillaCommandWrapper.getListener(sender);
+        this.dispatcher.performPrefixedCommand(icommandlistener, this.toDispatcher(args, this.getName()), this.toDispatcher(args, commandLabel));
         return true;
     }
 
@@ -50,11 +50,11 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         Preconditions.checkArgument(args != null, "Arguments cannot be null");
         Preconditions.checkArgument(alias != null, "Alias cannot be null");
 
-        CommandSourceStack icommandlistener = getListener(sender);
-        ParseResults<CommandSourceStack> parsed = dispatcher.getDispatcher().parse(toDispatcher(args, getName()), icommandlistener);
+        CommandSourceStack icommandlistener = VanillaCommandWrapper.getListener(sender);
+        ParseResults<CommandSourceStack> parsed = this.dispatcher.getDispatcher().parse(this.toDispatcher(args, this.getName()), icommandlistener);
 
         List<String> results = new ArrayList<>();
-        dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept((suggestions) -> {
+        this.dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept((suggestions) -> {
             suggestions.getList().forEach((s) -> results.add(s.getText()));
         });
 
@@ -73,7 +73,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((CraftBlockCommandSender) sender).getWrapper();
         }
         if (sender instanceof RemoteConsoleCommandSender) {
-            return  ((CraftRemoteConsoleCommandSender) sender).getListener().createCommandSourceStack();
+            return ((CraftRemoteConsoleCommandSender) sender).getListener().createCommandSourceStack();
         }
         if (sender instanceof ConsoleCommandSender) {
             return ((CraftServer) sender.getServer()).getServer().createCommandSourceStack();

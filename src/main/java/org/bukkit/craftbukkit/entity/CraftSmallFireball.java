@@ -10,7 +10,7 @@ public class CraftSmallFireball extends CraftSizedFireball implements SmallFireb
 
     @Override
     public net.minecraft.world.entity.projectile.SmallFireball getHandle() {
-        return (net.minecraft.world.entity.projectile.SmallFireball) entity;
+        return (net.minecraft.world.entity.projectile.SmallFireball) this.entity;
     }
 
     @Override

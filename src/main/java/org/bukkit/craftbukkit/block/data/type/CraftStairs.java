@@ -9,11 +9,11 @@ public abstract class CraftStairs extends CraftBlockData implements Stairs {
 
     @Override
     public org.bukkit.block.data.type.Stairs.Shape getShape() {
-        return get(SHAPE, org.bukkit.block.data.type.Stairs.Shape.class);
+        return this.get(CraftStairs.SHAPE, org.bukkit.block.data.type.Stairs.Shape.class);
     }
 
     @Override
     public void setShape(org.bukkit.block.data.type.Stairs.Shape shape) {
-        set(SHAPE, shape);
+        this.set(CraftStairs.SHAPE, shape);
     }
 }

@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -69,7 +69,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public void scheduleTick(BlockPos blockposition, Block block, int i) {
+    public void scheduleTick(BlockPos pos, Block block, int delay) {
         // Used by BlockComposter
     }
 
@@ -84,7 +84,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public DifficultyInstance getCurrentDifficultyAt(BlockPos blockposition) {
+    public DifficultyInstance getCurrentDifficultyAt(BlockPos pos) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -104,32 +104,32 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public void playSound(Player entityhuman, BlockPos blockposition, SoundEvent soundeffect, SoundSource soundcategory, float f, float f1) {
+    public void playSound(Player source, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void addParticle(ParticleOptions particleparam, double d0, double d1, double d2, double d3, double d4, double d5) {
+    public void addParticle(ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void levelEvent(Player entityhuman, int i, BlockPos blockposition, int j) {
+    public void levelEvent(Player player, int eventId, BlockPos pos, int data) {
         // Used by PowderSnowBlock.removeFluid
     }
 
     @Override
-    public void gameEvent(GameEvent gameevent, Vec3 vec3d, GameEvent.Context gameevent_a) {
+    public void gameEvent(Holder<GameEvent> event, Vec3 emitterPos, GameEvent.Context emitter) {
         // Used by BlockComposter
     }
 
     @Override
-    public List<Entity> getEntities(Entity entity, AABB aabb, Predicate<? super Entity> prdct) {
+    public List<Entity> getEntities(Entity except, AABB box, Predicate<? super Entity> predicate) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T extends Entity> List<T> getEntities(EntityTypeTest<Entity, T> ett, AABB aabb, Predicate<? super T> prdct) {
+    public <T extends Entity> List<T> getEntities(EntityTypeTest<Entity, T> filter, AABB box, Predicate<? super T> predicate) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -139,12 +139,12 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public ChunkAccess getChunk(int i, int i1, ChunkStatus cs, boolean bln) {
+    public ChunkAccess getChunk(int chunkX, int chunkZ, ChunkStatus leastStatus, boolean create) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getHeight(Heightmap.Types type, int i, int i1) {
+    public int getHeight(Heightmap.Types heightmap, int x, int z) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -159,7 +159,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public Holder<Biome> getUncachedNoiseBiome(int i, int i1, int i2) {
+    public Holder<Biome> getUncachedNoiseBiome(int biomeX, int biomeY, int biomeZ) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -189,7 +189,7 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public float getShade(Direction ed, boolean bln) {
+    public float getShade(Direction direction, boolean shaded) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -199,17 +199,17 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public BlockEntity getBlockEntity(BlockPos blockposition) {
+    public BlockEntity getBlockEntity(BlockPos pos) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public BlockState getBlockState(BlockPos blockposition) {
+    public BlockState getBlockState(BlockPos pos) {
         return Blocks.AIR.defaultBlockState(); // SPIGOT-6515
     }
 
     @Override
-    public FluidState getFluidState(BlockPos blockposition) {
+    public FluidState getFluidState(BlockPos pos) {
         return Fluids.EMPTY.defaultFluidState(); // SPIGOT-6634
     }
 
@@ -219,27 +219,27 @@ public class DummyGeneratorAccess implements WorldGenLevel {
     }
 
     @Override
-    public boolean isStateAtPosition(BlockPos bp, Predicate<BlockState> prdct) {
+    public boolean isStateAtPosition(BlockPos pos, Predicate<BlockState> state) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean isFluidAtPosition(BlockPos bp, Predicate<FluidState> prdct) {
+    public boolean isFluidAtPosition(BlockPos pos, Predicate<FluidState> state) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean setBlock(BlockPos blockposition, BlockState iblockdata, int i, int j) {
+    public boolean setBlock(BlockPos pos, BlockState state, int flags, int maxUpdateDepth) {
         return false;
     }
 
     @Override
-    public boolean removeBlock(BlockPos blockposition, boolean flag) {
+    public boolean removeBlock(BlockPos pos, boolean move) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean destroyBlock(BlockPos blockposition, boolean flag, Entity entity, int i) {
+    public boolean destroyBlock(BlockPos pos, boolean drop, Entity breakingEntity, int maxUpdateDepth) {
         return false; // SPIGOT-6515
     }
 }

@@ -13,7 +13,7 @@ public class CraftCreeper extends CraftMonster implements Creeper {
 
     @Override
     public boolean isPowered() {
-        return getHandle().isPowered();
+        return this.getHandle().isPowered();
     }
 
     @Override
@@ -21,14 +21,14 @@ public class CraftCreeper extends CraftMonster implements Creeper {
         CreeperPowerEvent.PowerCause cause = powered ? CreeperPowerEvent.PowerCause.SET_ON : CreeperPowerEvent.PowerCause.SET_OFF;
 
         // only call event when we are not in world generation
-        if (getHandle().generation || !callPowerEvent(cause)) {
-            getHandle().setPowered(powered);
+        if (this.getHandle().generation || !this.callPowerEvent(cause)) {
+            this.getHandle().setPowered(powered);
         }
     }
 
     private boolean callPowerEvent(CreeperPowerEvent.PowerCause cause) {
-        CreeperPowerEvent event = new CreeperPowerEvent((Creeper) getHandle().getBukkitEntity(), cause);
-        server.getPluginManager().callEvent(event);
+        CreeperPowerEvent event = new CreeperPowerEvent((Creeper) this.getHandle().getBukkitEntity(), cause);
+        this.server.getPluginManager().callEvent(event);
         return event.isCancelled();
     }
 
@@ -36,52 +36,52 @@ public class CraftCreeper extends CraftMonster implements Creeper {
     public void setMaxFuseTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "ticks < 0");
 
-        getHandle().maxSwell = ticks;
+        this.getHandle().maxSwell = ticks;
     }
 
     @Override
     public int getMaxFuseTicks() {
-        return getHandle().maxSwell;
+        return this.getHandle().maxSwell;
     }
 
     @Override
     public void setFuseTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "ticks < 0");
-        Preconditions.checkArgument(ticks <= getMaxFuseTicks(), "ticks > maxFuseTicks");
+        Preconditions.checkArgument(ticks <= this.getMaxFuseTicks(), "ticks > maxFuseTicks");
 
-        getHandle().swell = ticks;
+        this.getHandle().swell = ticks;
     }
 
     @Override
     public int getFuseTicks() {
-        return getHandle().swell;
+        return this.getHandle().swell;
     }
 
     @Override
     public void setExplosionRadius(int radius) {
         Preconditions.checkArgument(radius >= 0, "radius < 0");
 
-        getHandle().explosionRadius = radius;
+        this.getHandle().explosionRadius = radius;
     }
 
     @Override
     public int getExplosionRadius() {
-        return getHandle().explosionRadius;
+        return this.getHandle().explosionRadius;
     }
 
     @Override
     public void explode() {
-        getHandle().explodeCreeper();
+        this.getHandle().explodeCreeper();
     }
 
     @Override
     public void ignite() {
-        getHandle().ignite();
+        this.getHandle().ignite();
     }
 
     @Override
     public net.minecraft.world.entity.monster.Creeper getHandle() {
-        return (net.minecraft.world.entity.monster.Creeper) entity;
+        return (net.minecraft.world.entity.monster.Creeper) this.entity;
     }
 
     @Override

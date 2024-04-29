@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.arguments.item.ItemParser;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
@@ -17,6 +17,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftEntityType;
+import org.bukkit.craftbukkit.inventory.components.CraftFoodComponent;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -31,7 +32,9 @@ public final class CraftItemFactory implements ItemFactory {
 
     static {
         instance = new CraftItemFactory();
-        ConfigurationSerialization.registerClass(CraftMetaItem.SerializableMeta.class);
+        ConfigurationSerialization.registerClass(SerializableMeta.class);
+        ConfigurationSerialization.registerClass(CraftFoodComponent.class);
+        ConfigurationSerialization.registerClass(CraftFoodComponent.CraftFoodEffect.class);
     }
 
     private CraftItemFactory() {
@@ -42,7 +45,7 @@ public final class CraftItemFactory implements ItemFactory {
         if (itemstack == null) {
             return false;
         }
-        return isApplicable(meta, itemstack.getType());
+        return this.isApplicable(meta, itemstack.getType());
     }
 
     @Override
@@ -51,6 +54,7 @@ public final class CraftItemFactory implements ItemFactory {
         if (type == null || meta == null) {
             return false;
         }
+
         Preconditions.checkArgument(meta instanceof CraftMetaItem, "Meta of %s not created by %s", meta.getClass().toString(), CraftItemFactory.class.getName());
 
         return ((CraftMetaItem) meta).applicableTo(type);
@@ -59,7 +63,7 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public ItemMeta getItemMeta(Material material) {
         Preconditions.checkArgument(material != null, "Material cannot be null");
-        return getItemMeta(material, null);
+        return this.getItemMeta(material, null);
     }
 
     private ItemMeta getItemMeta(Material material, CraftMetaItem meta) {
@@ -109,10 +113,12 @@ public final class CraftItemFactory implements ItemFactory {
         case TURTLE_HELMET:
             return meta != null && meta.getClass().equals(CraftMetaArmor.class) ? meta : new CraftMetaArmor(meta);
         case LEATHER_HELMET:
-        case LEATHER_HORSE_ARMOR:
         case LEATHER_CHESTPLATE:
         case LEATHER_LEGGINGS:
         case LEATHER_BOOTS:
+        case WOLF_ARMOR:
+            return meta instanceof CraftMetaColorableArmor ? meta : new CraftMetaColorableArmor(meta);
+        case LEATHER_HORSE_ARMOR:
             return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
         case POTION:
         case SPLASH_POTION:
@@ -160,11 +166,13 @@ public final class CraftItemFactory implements ItemFactory {
         case YELLOW_BANNER:
         case YELLOW_WALL_BANNER:
             return meta instanceof CraftMetaBanner ? meta : new CraftMetaBanner(meta);
+        case ARMADILLO_SPAWN_EGG:
         case ALLAY_SPAWN_EGG:
         case AXOLOTL_SPAWN_EGG:
         case BAT_SPAWN_EGG:
         case BEE_SPAWN_EGG:
         case BLAZE_SPAWN_EGG:
+        case BOGGED_SPAWN_EGG:
         case BREEZE_SPAWN_EGG:
         case CAT_SPAWN_EGG:
         case CAMEL_SPAWN_EGG:
@@ -343,6 +351,7 @@ public final class CraftItemFactory implements ItemFactory {
         case SUSPICIOUS_GRAVEL:
         case CRAFTER:
         case TRIAL_SPAWNER:
+        case VAULT:
             return new CraftMetaBlockState(meta, material);
         case TROPICAL_FISH_BUCKET:
             return meta instanceof CraftMetaTropicalFishBucket ? meta : new CraftMetaTropicalFishBucket(meta);
@@ -365,6 +374,8 @@ public final class CraftItemFactory implements ItemFactory {
             return meta instanceof CraftMetaBundle ? meta : new CraftMetaBundle(meta);
         case GOAT_HORN:
             return meta instanceof CraftMetaMusicInstrument ? meta : new CraftMetaMusicInstrument(meta);
+        case OMINOUS_BOTTLE:
+            return meta instanceof CraftMetaOminousBottle ? meta : new CraftMetaOminousBottle(meta);
         default:
             return new CraftMetaItem(meta);
         }
@@ -375,6 +386,7 @@ public final class CraftItemFactory implements ItemFactory {
         if (meta1 == meta2) {
             return true;
         }
+
         if (meta1 != null) {
             Preconditions.checkArgument(meta1 instanceof CraftMetaItem, "First meta of %s does not belong to %s", meta1.getClass().getName(), CraftItemFactory.class.getName());
         } else {
@@ -386,7 +398,7 @@ public final class CraftItemFactory implements ItemFactory {
             return ((CraftMetaItem) meta1).isEmpty();
         }
 
-        return equals((CraftMetaItem) meta1, (CraftMetaItem) meta2);
+        return this.equals((CraftMetaItem) meta1, (CraftMetaItem) meta2);
     }
 
     boolean equals(CraftMetaItem meta1, CraftMetaItem meta2) {
@@ -403,38 +415,38 @@ public final class CraftItemFactory implements ItemFactory {
     }
 
     public static CraftItemFactory instance() {
-        return instance;
+        return CraftItemFactory.instance;
     }
 
     @Override
     public ItemMeta asMetaFor(ItemMeta meta, ItemStack stack) {
         Preconditions.checkArgument(stack != null, "ItemStack stack cannot be null");
-        return asMetaFor(meta, stack.getType());
+        return this.asMetaFor(meta, stack.getType());
     }
 
     @Override
     public ItemMeta asMetaFor(ItemMeta meta, Material material) {
         Preconditions.checkArgument(material != null, "Material cannot be null");
         Preconditions.checkArgument(meta instanceof CraftMetaItem, "ItemMeta of %s not created by %s", (meta != null ? meta.getClass().toString() : "null"), CraftItemFactory.class.getName());
-        return getItemMeta(material, (CraftMetaItem) meta);
+        return this.getItemMeta(material, (CraftMetaItem) meta);
     }
 
     @Override
     public Color getDefaultLeatherColor() {
-        return DEFAULT_LEATHER_COLOR;
+        return CraftItemFactory.DEFAULT_LEATHER_COLOR;
     }
 
     @Override
     public ItemStack createItemStack(String input) throws IllegalArgumentException {
         try {
-            ItemParser.ItemResult arg = ItemParser.parseForItem(BuiltInRegistries.ITEM.asLookup(), new StringReader(input)); // false = no tags
+            ItemParser.ItemResult arg = new ItemParser(MinecraftServer.getDefaultRegistryAccess()).parse(new StringReader(input));
 
             Item item = arg.item().value();
             net.minecraft.world.item.ItemStack nmsItemStack = new net.minecraft.world.item.ItemStack(item);
 
-            CompoundTag nbt = arg.nbt();
+            DataComponentMap nbt = arg.components();
             if (nbt != null) {
-                nmsItemStack.setTag(nbt);
+                nmsItemStack.applyComponents(nbt);
             }
 
             return CraftItemStack.asCraftMirror(nmsItemStack);
@@ -466,22 +478,27 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public ItemStack enchantItem(Entity entity, ItemStack itemStack, int level, boolean allowTreasures) {
         Preconditions.checkArgument(entity != null, "The entity must not be null");
-        return enchantItem(((CraftEntity) entity).getHandle().random, itemStack, level, allowTreasures);
+
+        return CraftItemFactory.enchantItem(((CraftEntity) entity).getHandle().random, itemStack, level, allowTreasures);
     }
+
     @Override
     public ItemStack enchantItem(final World world, final ItemStack itemStack, final int level, final boolean allowTreasures) {
         Preconditions.checkArgument(world != null, "The world must not be null");
-        return enchantItem(((CraftWorld) world).getHandle().random, itemStack, level, allowTreasures);
+
+        return CraftItemFactory.enchantItem(((CraftWorld) world).getHandle().random, itemStack, level, allowTreasures);
     }
+
     @Override
     public ItemStack enchantItem(final ItemStack itemStack, final int level, final boolean allowTreasures) {
-        return enchantItem(randomSource, itemStack, level, allowTreasures);
+        return CraftItemFactory.enchantItem(CraftItemFactory.randomSource, itemStack, level, allowTreasures);
     }
+
     private static ItemStack enchantItem(RandomSource source, ItemStack itemStack, int level, boolean allowTreasures) {
         Preconditions.checkArgument(itemStack != null, "ItemStack must not be null");
         Preconditions.checkArgument(!itemStack.getType().isAir(), "ItemStack must not be air");
         itemStack = CraftItemStack.asCraftCopy(itemStack);
         CraftItemStack craft = (CraftItemStack) itemStack;
-        return CraftItemStack.asCraftMirror(EnchantmentHelper.enchantItem(source, craft.handle, level, allowTreasures));
+        return CraftItemStack.asCraftMirror(EnchantmentHelper.enchantItem(MinecraftServer.getServer().getWorldData().enabledFeatures(), source, craft.handle, level, allowTreasures));
     }
 }

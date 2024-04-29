@@ -25,7 +25,7 @@ public final class WorldUUID {
                 dis = new DataInputStream(new FileInputStream(file1));
                 return new UUID(dis.readLong(), dis.readLong());
             } catch (IOException ex) {
-                LOGGER.warn("Failed to read " + file1 + ", generating new random UUID", ex);
+                WorldUUID.LOGGER.warn("Failed to read " + file1 + ", generating new random UUID", ex);
             } finally {
                 if (dis != null) {
                     try {
@@ -39,12 +39,11 @@ public final class WorldUUID {
         UUID uuid = UUID.randomUUID();
         DataOutputStream dos = null;
         try {
-            baseDir.mkdirs();
             dos = new DataOutputStream(new FileOutputStream(file1));
             dos.writeLong(uuid.getMostSignificantBits());
             dos.writeLong(uuid.getLeastSignificantBits());
         } catch (IOException ex) {
-            LOGGER.warn("Failed to write " + file1, ex);
+            WorldUUID.LOGGER.warn("Failed to write " + file1, ex);
         } finally {
             if (dos != null) {
                 try {

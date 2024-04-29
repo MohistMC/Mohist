@@ -60,7 +60,6 @@ import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 public class CraftBlock implements Block {
     private final net.minecraft.world.level.LevelAccessor world;
@@ -76,38 +75,38 @@ public class CraftBlock implements Block {
     }
 
     public net.minecraft.world.level.block.state.BlockState getNMS() {
-        return world.getBlockState(position);
+        return this.world.getBlockState(this.position);
     }
 
     public BlockPos getPosition() {
-        return position;
+        return this.position;
     }
 
     public LevelAccessor getHandle() {
-        return world;
+        return this.world;
     }
 
     @Override
     public World getWorld() {
-        return world.getMinecraftWorld().getWorld();
+        return this.world.getMinecraftWorld().getWorld();
     }
 
     public CraftWorld getCraftWorld() {
-        return (CraftWorld) getWorld();
+        return (CraftWorld) this.getWorld();
     }
 
     @Override
     public Location getLocation() {
-        return CraftLocation.toBukkit(position, getWorld());
+        return CraftLocation.toBukkit(this.position, this.getWorld());
     }
 
     @Override
     public Location getLocation(Location loc) {
         if (loc != null) {
-            loc.setWorld(getWorld());
-            loc.setX(position.getX());
-            loc.setY(position.getY());
-            loc.setZ(position.getZ());
+            loc.setWorld(this.getWorld());
+            loc.setX(this.position.getX());
+            loc.setY(this.position.getY());
+            loc.setZ(this.position.getZ());
             loc.setYaw(0);
             loc.setPitch(0);
         }
@@ -116,80 +115,80 @@ public class CraftBlock implements Block {
     }
 
     public BlockVector getVector() {
-        return new BlockVector(getX(), getY(), getZ());
+        return new BlockVector(this.getX(), this.getY(), this.getZ());
     }
 
     @Override
     public int getX() {
-        return position.getX();
+        return this.position.getX();
     }
 
     @Override
     public int getY() {
-        return position.getY();
+        return this.position.getY();
     }
 
     @Override
     public int getZ() {
-        return position.getZ();
+        return this.position.getZ();
     }
 
     @Override
     public Chunk getChunk() {
-        return getWorld().getChunkAt(this);
+        return this.getWorld().getChunkAt(this);
     }
 
     public void setData(final byte data) {
-        setData(data, 3);
+        this.setData(data, 3);
     }
 
     public void setData(final byte data, boolean applyPhysics) {
         if (applyPhysics) {
-            setData(data, 3);
+            this.setData(data, 3);
         } else {
-            setData(data, 2);
+            this.setData(data, 2);
         }
     }
 
     private void setData(final byte data, int flag) {
-        world.setBlock(position, CraftMagicNumbers.getBlock(getType(), data), flag);
+        this.world.setBlock(this.position, CraftMagicNumbers.getBlock(this.getType(), data), flag);
     }
 
     @Override
     public byte getData() {
-        net.minecraft.world.level.block.state.BlockState blockData = world.getBlockState(position);
+        net.minecraft.world.level.block.state.BlockState blockData = this.world.getBlockState(this.position);
         return CraftMagicNumbers.toLegacyData(blockData);
     }
 
     @Override
     public BlockData getBlockData() {
-        return CraftBlockData.fromData(getNMS());
+        return CraftBlockData.fromData(this.getNMS());
     }
 
     @Override
     public void setType(final Material type) {
-        setType(type, true);
+        this.setType(type, true);
     }
 
     @Override
     public void setType(Material type, boolean applyPhysics) {
         Preconditions.checkArgument(type != null, "Material cannot be null");
-        setBlockData(type.createBlockData(), applyPhysics);
+        this.setBlockData(type.createBlockData(), applyPhysics);
     }
 
     @Override
     public void setBlockData(BlockData data) {
-        setBlockData(data, true);
+        this.setBlockData(data, true);
     }
 
     @Override
     public void setBlockData(BlockData data, boolean applyPhysics) {
         Preconditions.checkArgument(data != null, "BlockData cannot be null");
-        setTypeAndData(((CraftBlockData) data).getState(), applyPhysics);
+        this.setTypeAndData(((CraftBlockData) data).getState(), applyPhysics);
     }
 
-    public boolean setTypeAndData(final net.minecraft.world.level.block.state.BlockState blockData, final boolean applyPhysics) {
-        return setTypeAndData(world, position, getNMS(), blockData, applyPhysics);
+    boolean setTypeAndData(final net.minecraft.world.level.block.state.BlockState blockData, final boolean applyPhysics) {
+        return CraftBlock.setTypeAndData(this.world, this.position, this.getNMS(), blockData, applyPhysics);
     }
 
     public static boolean setTypeAndData(LevelAccessor world, BlockPos position, net.minecraft.world.level.block.state.BlockState old, net.minecraft.world.level.block.state.BlockState blockData, boolean applyPhysics) {
@@ -221,45 +220,45 @@ public class CraftBlock implements Block {
 
     @Override
     public Material getType() {
-        return CraftBlockType.minecraftToBukkit(world.getBlockState(position).getBlock());
+        return CraftBlockType.minecraftToBukkit(this.world.getBlockState(this.position).getBlock());
     }
 
     @Override
     public byte getLightLevel() {
-        return (byte) world.getMinecraftWorld().getMaxLocalRawBrightness(position);
+        return (byte) this.world.getMinecraftWorld().getMaxLocalRawBrightness(this.position);
     }
 
     @Override
     public byte getLightFromSky() {
-        return (byte) world.getBrightness(LightLayer.SKY, position);
+        return (byte) this.world.getBrightness(LightLayer.SKY, this.position);
     }
 
     @Override
     public byte getLightFromBlocks() {
-        return (byte) world.getBrightness(LightLayer.BLOCK, position);
+        return (byte) this.world.getBrightness(LightLayer.BLOCK, this.position);
     }
 
     public Block getFace(final BlockFace face) {
-        return getRelative(face, 1);
+        return this.getRelative(face, 1);
     }
 
     public Block getFace(final BlockFace face, final int distance) {
-        return getRelative(face, distance);
+        return this.getRelative(face, distance);
     }
 
     @Override
     public Block getRelative(final int modX, final int modY, final int modZ) {
-        return getWorld().getBlockAt(getX() + modX, getY() + modY, getZ() + modZ);
+        return this.getWorld().getBlockAt(this.getX() + modX, this.getY() + modY, this.getZ() + modZ);
     }
 
     @Override
     public Block getRelative(BlockFace face) {
-        return getRelative(face, 1);
+        return this.getRelative(face, 1);
     }
 
     @Override
     public Block getRelative(BlockFace face, int distance) {
-        return getRelative(face.getModX() * distance, face.getModY() * distance, face.getModZ() * distance);
+        return this.getRelative(face.getModX() * distance, face.getModY() * distance, face.getModZ() * distance);
     }
 
     @Override
@@ -277,7 +276,7 @@ public class CraftBlock implements Block {
 
     @Override
     public String toString() {
-        return "CraftBlock{pos=" + position + ",type=" + getType() + ",data=" + getNMS() + ",fluid=" + world.getFluidState(position) + '}';
+        return "CraftBlock{pos=" + this.position + ",type=" + this.getType() + ",data=" + this.getNMS() + ",fluid=" + this.world.getFluidState(this.position) + '}';
     }
 
     public static BlockFace notchToBlockFace(Direction notch) {
@@ -325,38 +324,38 @@ public class CraftBlock implements Block {
     }
 
     @Override
-    public org.bukkit.block.BlockState getState() {
+    public BlockState getState() {
         return CraftBlockStates.getBlockState(this);
     }
 
     @Override
     public Biome getBiome() {
-        return getWorld().getBiome(getX(), getY(), getZ());
+        return this.getWorld().getBiome(this.getX(), this.getY(), this.getZ());
     }
 
     @Override
     public void setBiome(Biome bio) {
-        getWorld().setBiome(getX(), getY(), getZ(), bio);
+        this.getWorld().setBiome(this.getX(), this.getY(), this.getZ(), bio);
     }
 
     @Override
     public double getTemperature() {
-        return world.getBiome(position).value().getTemperature(position);
+        return this.world.getBiome(this.position).value().getTemperature(this.position);
     }
 
     @Override
     public double getHumidity() {
-        return getWorld().getHumidity(getX(), getY(), getZ());
+        return this.getWorld().getHumidity(this.getX(), this.getY(), this.getZ());
     }
 
     @Override
     public boolean isBlockPowered() {
-        return world.getMinecraftWorld().getDirectSignalTo(position) > 0;
+        return this.world.getMinecraftWorld().getDirectSignalTo(this.position) > 0;
     }
 
     @Override
     public boolean isBlockIndirectlyPowered() {
-        return world.getMinecraftWorld().hasNeighborSignal(position);
+        return this.world.getMinecraftWorld().hasNeighborSignal(this.position);
     }
 
     @Override
@@ -378,14 +377,14 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isBlockFacePowered(BlockFace face) {
-        return world.getMinecraftWorld().hasSignal(position, blockFaceToNotch(face));
+        return this.world.getMinecraftWorld().hasSignal(this.position, CraftBlock.blockFaceToNotch(face));
     }
 
     @Override
     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
-        int power = world.getMinecraftWorld().getSignal(position, blockFaceToNotch(face));
+        int power = this.world.getMinecraftWorld().getSignal(this.position, CraftBlock.blockFaceToNotch(face));
 
-        Block relative = getRelative(face);
+        Block relative = this.getRelative(face);
         if (relative.getType() == Material.REDSTONE_WIRE) {
             return Math.max(power, relative.getData()) > 0;
         }
@@ -397,16 +396,16 @@ public class CraftBlock implements Block {
     public int getBlockPower(BlockFace face) {
         int power = 0;
         net.minecraft.world.level.Level world = this.world.getMinecraftWorld();
-        int x = getX();
-        int y = getY();
-        int z = getZ();
-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x, y - 1, z), Direction.DOWN)) power = getPower(power, world.getBlockState(BlockPos.containing(x, y - 1, z)));
-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x, y + 1, z), Direction.UP)) power = getPower(power, world.getBlockState(BlockPos.containing(x, y + 1, z)));
-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x + 1, y, z), Direction.EAST)) power = getPower(power, world.getBlockState(BlockPos.containing(x + 1, y, z)));
-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x - 1, y, z), Direction.WEST)) power = getPower(power, world.getBlockState(BlockPos.containing(x - 1, y, z)));
-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x, y, z - 1), Direction.NORTH)) power = getPower(power, world.getBlockState(BlockPos.containing(x, y, z - 1)));
-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.hasSignal(BlockPos.containing(x, y, z + 1), Direction.SOUTH)) power = getPower(power, world.getBlockState(BlockPos.containing(x, y, z + 1)));
-        return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
+        int x = this.getX();
+        int y = this.getY();
+        int z = this.getZ();
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y - 1, z), Direction.DOWN)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x, y - 1, z)));
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y + 1, z), Direction.UP)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x, y + 1, z)));
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x + 1, y, z), Direction.EAST)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x + 1, y, z)));
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x - 1, y, z), Direction.WEST)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x - 1, y, z)));
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y, z - 1), Direction.NORTH)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x, y, z - 1)));
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.hasSignal(new BlockPos(x, y, z + 1), Direction.SOUTH)) power = CraftBlock.getPower(power, world.getBlockState(new BlockPos(x, y, z + 1)));
+        return power > 0 ? power : (face == BlockFace.SELF ? this.isBlockIndirectlyPowered() : this.isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
     }
 
     private static int getPower(int i, net.minecraft.world.level.block.state.BlockState iblockdata) {
@@ -421,46 +420,27 @@ public class CraftBlock implements Block {
 
     @Override
     public int getBlockPower() {
-        return getBlockPower(BlockFace.SELF);
+        return this.getBlockPower(BlockFace.SELF);
     }
 
     @Override
     public boolean isEmpty() {
-        return getNMS().isAir();
+        return this.getNMS().isAir();
     }
 
     @Override
     public boolean isLiquid() {
-        return getNMS().liquid();
+        return this.getNMS().liquid();
     }
-
-    // Paper start
-    @Override
-    public boolean isBuildable() {
-        return this.getNMS().isSolid(); // This is in fact isSolid, despite the fact that isSolid below returns blocksMotion
-    }
-    @Override
-    public boolean isBurnable() {
-        return this.getNMS().ignitedByLava();
-    }
-    @Override
-    public boolean isReplaceable() {
-        return this.getNMS().canBeReplaced();
-    }
-    @Override
-    public boolean isSolid() {
-        return this.getNMS().blocksMotion();
-    }
-    // Paper end
 
     @Override
     public PistonMoveReaction getPistonMoveReaction() {
-        return PistonMoveReaction.getById(getNMS().getPistonPushReaction().ordinal());
+        return PistonMoveReaction.getById(this.getNMS().getPistonPushReaction().ordinal());
     }
 
     @Override
     public boolean breakNaturally() {
-        return breakNaturally(null);
+        return this.breakNaturally(null);
     }
 
     @Override
@@ -471,22 +451,22 @@ public class CraftBlock implements Block {
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         boolean result = false;
 
-        // Modelled off net.minecraft.world.entity.player.Player#hasBlock
+        // Modelled off EntityHuman#hasBlock
         if (block != Blocks.AIR && (item == null || !iblockdata.requiresCorrectToolForDrops() || nmsItem.isCorrectToolForDrops(iblockdata))) {
-            net.minecraft.world.level.block.Block.dropResources(iblockdata, world.getMinecraftWorld(), position, world.getBlockEntity(position), null, nmsItem);
+            net.minecraft.world.level.block.Block.dropResources(iblockdata, this.world.getMinecraftWorld(), this.position, this.world.getBlockEntity(this.position), null, nmsItem);
             result = true;
         }
 
         // SPIGOT-6778: Directly call setBlock instead of setTypeAndData, so that the tile entiy is not removed and custom remove logic is run.
-        return world.setBlock(position, Blocks.AIR.defaultBlockState(), 3) && result;
+        return this.world.setBlock(this.position, Blocks.AIR.defaultBlockState(), 3) && result;
     }
 
     @Override
     public boolean applyBoneMeal(BlockFace face) {
-        Direction direction = blockFaceToNotch(face);
+        Direction direction = CraftBlock.blockFaceToNotch(face);
         BlockFertilizeEvent event = null;
-        ServerLevel world = getCraftWorld().getHandle();
-        UseOnContext context = new UseOnContext(world, null, InteractionHand.MAIN_HAND, Items.BONE_MEAL.getDefaultInstance(), new BlockHitResult(Vec3.ZERO, direction, getPosition(), false));
+        ServerLevel world = this.getCraftWorld().getHandle();
+        UseOnContext context = new UseOnContext(world, null, InteractionHand.MAIN_HAND, Items.BONE_MEAL.getDefaultInstance(), new BlockHitResult(Vec3.ZERO, direction, this.getPosition(), false));
 
         // SPIGOT-6895: Call StructureGrowEvent and BlockFertilizeEvent
         world.captureTreeGeneration = true;
@@ -501,11 +481,11 @@ public class CraftBlock implements Block {
             StructureGrowEvent structureEvent = null;
 
             if (treeType != null) {
-                structureEvent = new StructureGrowEvent(getLocation(), treeType, true, null, blocks);
+                structureEvent = new StructureGrowEvent(this.getLocation(), treeType, true, null, blocks);
                 Bukkit.getPluginManager().callEvent(structureEvent);
             }
 
-            event = new BlockFertilizeEvent(CraftBlock.at(world, getPosition()), null, blocks);
+            event = new BlockFertilizeEvent(CraftBlock.at(world, this.getPosition()), null, blocks);
             event.setCancelled(structureEvent != null && structureEvent.isCancelled());
             Bukkit.getPluginManager().callEvent(event);
 
@@ -515,27 +495,28 @@ public class CraftBlock implements Block {
                 }
             }
         }
+
         return result == InteractionResult.SUCCESS && (event == null || !event.isCancelled());
     }
 
     @Override
     public Collection<ItemStack> getDrops() {
-        return getDrops(null);
+        return this.getDrops(null);
     }
 
     @Override
     public Collection<ItemStack> getDrops(ItemStack item) {
-        return getDrops(item, null);
+        return this.getDrops(item, null);
     }
 
     @Override
     public Collection<ItemStack> getDrops(ItemStack item, Entity entity) {
-        net.minecraft.world.level.block.state.BlockState iblockdata = getNMS();
+        net.minecraft.world.level.block.state.BlockState iblockdata = this.getNMS();
         net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
-        // Modelled off net.minecraft.world.entity.player.Player#hasBlock
+        // Modelled off EntityHuman#hasBlock
         if (item == null || CraftBlockData.isPreferredTool(iblockdata, nms)) {
-            return net.minecraft.world.level.block.Block.getDrops(iblockdata, (ServerLevel) world.getMinecraftWorld(), position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
+            return net.minecraft.world.level.block.Block.getDrops(iblockdata, (ServerLevel) this.world.getMinecraftWorld(), this.position, this.world.getBlockEntity(this.position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
@@ -544,7 +525,7 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isPreferredTool(ItemStack item) {
-        net.minecraft.world.level.block.state.BlockState iblockdata = getNMS();
+        net.minecraft.world.level.block.state.BlockState iblockdata = this.getNMS();
         net.minecraft.world.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
         return CraftBlockData.isPreferredTool(iblockdata, nms);
     }
@@ -552,32 +533,32 @@ public class CraftBlock implements Block {
     @Override
     public float getBreakSpeed(Player player) {
         Preconditions.checkArgument(player != null, "player cannot be null");
-        return getNMS().getDestroyProgress(((CraftPlayer) player).getHandle(), world, position);
+        return this.getNMS().getDestroyProgress(((CraftPlayer) player).getHandle(), this.world, this.position);
     }
 
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-        getCraftWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        this.getCraftWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
 
     @Override
     public List<MetadataValue> getMetadata(String metadataKey) {
-        return getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey);
+        return this.getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey);
     }
 
     @Override
     public boolean hasMetadata(String metadataKey) {
-        return getCraftWorld().getBlockMetadata().hasMetadata(this, metadataKey);
+        return this.getCraftWorld().getBlockMetadata().hasMetadata(this, metadataKey);
     }
 
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-        getCraftWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        this.getCraftWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
     @Override
     public boolean isPassable() {
-        return this.getNMS().getCollisionShape(world, position).isEmpty();
+        return this.getNMS().getCollisionShape(this.world, this.position).isEmpty();
     }
 
     @Override
@@ -599,30 +580,30 @@ public class CraftBlock implements Block {
         Vec3 startPos = CraftLocation.toVec3D(start);
         Vec3 endPos = startPos.add(dir.getX(), dir.getY(), dir.getZ());
 
-        HitResult nmsHitResult = world.clip(new ClipContext(startPos, endPos, ClipContext.Block.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), CollisionContext.empty()), position);
+        HitResult nmsHitResult = this.world.clip(new ClipContext(startPos, endPos, ClipContext.Block.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), CollisionContext.empty()), this.position);
         return CraftRayTraceResult.fromNMS(this.getWorld(), nmsHitResult);
     }
 
     @Override
     public BoundingBox getBoundingBox() {
-        VoxelShape shape = getNMS().getShape(world, position);
+        VoxelShape shape = this.getNMS().getShape(this.world, this.position);
 
         if (shape.isEmpty()) {
             return new BoundingBox(); // Return an empty bounding box if the block has no dimension
         }
 
         AABB aabb = shape.bounds();
-        return new BoundingBox(getX() + aabb.minX, getY() + aabb.minY, getZ() + aabb.minZ, getX() + aabb.maxX, getY() + aabb.maxY, getZ() + aabb.maxZ);
+        return new BoundingBox(this.getX() + aabb.minX, this.getY() + aabb.minY, this.getZ() + aabb.minZ, this.getX() + aabb.maxX, this.getY() + aabb.maxY, this.getZ() + aabb.maxZ);
     }
 
     @Override
     public org.bukkit.util.VoxelShape getCollisionShape() {
-        VoxelShape shape = getNMS().getCollisionShape(world, position);
+        VoxelShape shape = this.getNMS().getCollisionShape(this.world, this.position);
         return new CraftVoxelShape(shape);
     }
 
     @Override
-    public boolean canPlace(@NotNull BlockData data) {
+    public boolean canPlace(BlockData data) {
         Preconditions.checkArgument(data != null, "BlockData cannot be null");
         net.minecraft.world.level.block.state.BlockState iblockdata = ((CraftBlockData) data).getState();
         net.minecraft.world.level.Level world = this.world.getMinecraftWorld();
@@ -632,6 +613,6 @@ public class CraftBlock implements Block {
 
     @Override
     public String getTranslationKey() {
-        return getNMS().getBlock().getDescriptionId();
+        return this.getNMS().getBlock().getDescriptionId();
     }
 }

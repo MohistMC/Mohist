@@ -32,46 +32,46 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
     private final BlockEntity tile;
 
     public CraftBlockCommandSender(CommandSourceStack commandBlockListenerAbstract, BlockEntity tile) {
-        super(SHARED_PERM);
+        super(CraftBlockCommandSender.SHARED_PERM);
         this.block = commandBlockListenerAbstract;
         this.tile = tile;
     }
 
     @Override
     public Block getBlock() {
-        return CraftBlock.at(tile.getLevel(), tile.getBlockPos());
+        return CraftBlock.at(this.tile.getLevel(), this.tile.getBlockPos());
     }
 
     @Override
     public void sendMessage(String message) {
         for (Component component : CraftChatMessage.fromString(message)) {
-            block.source.sendSystemMessage(component);
+            this.block.source.sendSystemMessage(component);
         }
     }
 
     @Override
     public void sendMessage(String... messages) {
         for (String message : messages) {
-            sendMessage(message);
+            this.sendMessage(message);
         }
     }
 
     @Override
     public String getName() {
-        return block.getTextName();
+        return this.block.getTextName();
     }
 
     @Override
     public boolean isOp() {
-        return SHARED_PERM.isOp();
+        return CraftBlockCommandSender.SHARED_PERM.isOp();
     }
 
     @Override
     public void setOp(boolean value) {
-        SHARED_PERM.setOp(value);
+        CraftBlockCommandSender.SHARED_PERM.setOp(value);
     }
 
     public CommandSourceStack getWrapper() {
-        return block;
+        return this.block;
     }
 }

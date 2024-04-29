@@ -13,7 +13,7 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftMultipleFacing
+    // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty[] FACES = new net.minecraft.world.level.block.state.properties.BooleanProperty[]{
         getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "north", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "east", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "south", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "west", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "up", true), getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "down", true)
@@ -21,28 +21,28 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
 
     @Override
     public boolean hasFace(org.bukkit.block.BlockFace face) {
-        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = CraftStainedGlassPane.FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }
-        return get(state);
+        return this.get(state);
     }
 
     @Override
     public void setFace(org.bukkit.block.BlockFace face, boolean has) {
-        net.minecraft.world.level.block.state.properties.BooleanProperty state = FACES[face.ordinal()];
+        net.minecraft.world.level.block.state.properties.BooleanProperty state = CraftStainedGlassPane.FACES[face.ordinal()];
         if (state == null) {
             throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
         }
-        set(state, has);
+        this.set(state, has);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
         com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < FACES.length; i++) {
-            if (FACES[i] != null && get(FACES[i])) {
+        for (int i = 0; i < CraftStainedGlassPane.FACES.length; i++) {
+            if (CraftStainedGlassPane.FACES[i] != null && this.get(CraftStainedGlassPane.FACES[i])) {
                 faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
@@ -54,8 +54,8 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
     public java.util.Set<org.bukkit.block.BlockFace> getAllowedFaces() {
         com.google.common.collect.ImmutableSet.Builder<org.bukkit.block.BlockFace> faces = com.google.common.collect.ImmutableSet.builder();
 
-        for (int i = 0; i < FACES.length; i++) {
-            if (FACES[i] != null) {
+        for (int i = 0; i < CraftStainedGlassPane.FACES.length; i++) {
+            if (CraftStainedGlassPane.FACES[i] != null) {
                 faces.add(org.bukkit.block.BlockFace.values()[i]);
             }
         }
@@ -63,17 +63,17 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
         return faces.build();
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftWaterlogged
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.world.level.block.StainedGlassPaneBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftStainedGlassPane.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftStainedGlassPane.WATERLOGGED, waterlogged);
     }
 }

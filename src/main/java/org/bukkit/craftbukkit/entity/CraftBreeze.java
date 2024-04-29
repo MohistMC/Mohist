@@ -11,7 +11,7 @@ public class CraftBreeze extends CraftMonster implements Breeze {
 
     @Override
     public net.minecraft.world.entity.monster.breeze.Breeze getHandle() {
-        return (net.minecraft.world.entity.monster.breeze.Breeze) entity;
+        return (net.minecraft.world.entity.monster.breeze.Breeze) this.entity;
     }
 
     @Override

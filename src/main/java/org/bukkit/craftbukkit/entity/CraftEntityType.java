@@ -1,9 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import net.minecraft.core.registries.Registries;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -15,11 +13,8 @@ public class CraftEntityType {
         Preconditions.checkArgument(minecraft != null);
 
         net.minecraft.core.Registry<net.minecraft.world.entity.EntityType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE);
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location());
-        EntityType bukkit = Registry.ENTITY_TYPE.get(key);
-        if (bukkit == null) {
-            bukkit = ForgeInjectBukkit.entityTypeMap.get(key);
-        }
+        EntityType bukkit = Registry.ENTITY_TYPE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
+
         Preconditions.checkArgument(bukkit != null);
 
         return bukkit;
@@ -28,6 +23,7 @@ public class CraftEntityType {
     public static net.minecraft.world.entity.EntityType<?> bukkitToMinecraft(EntityType bukkit) {
         Preconditions.checkArgument(bukkit != null);
 
-        return CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE).getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
+        return CraftRegistry.getMinecraftRegistry(Registries.ENTITY_TYPE)
+                .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
     }
 }

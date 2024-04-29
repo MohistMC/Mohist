@@ -8,16 +8,16 @@ public abstract class CraftBrushable extends CraftBlockData implements Brushable
 
     @Override
     public int getDusted() {
-        return get(DUSTED);
+        return this.get(CraftBrushable.DUSTED);
     }
 
     @Override
     public void setDusted(int dusted) {
-        set(DUSTED, dusted);
+        this.set(CraftBrushable.DUSTED, dusted);
     }
 
     @Override
     public int getMaximumDusted() {
-        return getMax(DUSTED);
+        return getMax(CraftBrushable.DUSTED);
     }
 }

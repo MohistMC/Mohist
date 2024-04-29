@@ -64,7 +64,7 @@ public final class CraftProfileBanEntry implements BanEntry<PlayerProfile> {
 
     @Override
     public void setExpiration(Date expiration) {
-        if (expiration != null && expiration.getTime() == minorDate.getTime()) {
+        if (expiration != null && expiration.getTime() == CraftProfileBanEntry.minorDate.getTime()) {
             expiration = null; // Forces "forever"
         }
 

@@ -9,11 +9,11 @@ public abstract class CraftBell extends CraftBlockData implements Bell {
 
     @Override
     public org.bukkit.block.data.type.Bell.Attachment getAttachment() {
-        return get(ATTACHMENT, org.bukkit.block.data.type.Bell.Attachment.class);
+        return this.get(CraftBell.ATTACHMENT, org.bukkit.block.data.type.Bell.Attachment.class);
     }
 
     @Override
     public void setAttachment(org.bukkit.block.data.type.Bell.Attachment leaves) {
-        set(ATTACHMENT, leaves);
+        this.set(CraftBell.ATTACHMENT, leaves);
     }
 }

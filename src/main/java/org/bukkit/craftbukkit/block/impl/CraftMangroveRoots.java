@@ -3,9 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-import org.bukkit.craftbukkit.block.data.CraftBlockData;
-
-public final class CraftMangroveRoots extends CraftBlockData implements org.bukkit.block.data.Waterlogged {
+public final class CraftMangroveRoots extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Waterlogged {
 
     public CraftMangroveRoots() {
         super();
@@ -21,11 +19,11 @@ public final class CraftMangroveRoots extends CraftBlockData implements org.bukk
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftMangroveRoots.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftMangroveRoots.WATERLOGGED, waterlogged);
     }
 }

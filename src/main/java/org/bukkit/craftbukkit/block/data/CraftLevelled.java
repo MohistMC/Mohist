@@ -8,16 +8,16 @@ public abstract class CraftLevelled extends CraftBlockData implements Levelled {
 
     @Override
     public int getLevel() {
-        return get(LEVEL);
+        return this.get(CraftLevelled.LEVEL);
     }
 
     @Override
     public void setLevel(int level) {
-        set(LEVEL, level);
+        this.set(CraftLevelled.LEVEL, level);
     }
 
     @Override
     public int getMaximumLevel() {
-        return getMax(LEVEL);
+        return getMax(CraftLevelled.LEVEL);
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.world.level.biome.BiomeSource;
 // Do not implement functions to this class, add to NormalChunkGenerator
 public abstract class InternalChunkGenerator extends net.minecraft.world.level.chunk.ChunkGenerator {
 
-    public InternalChunkGenerator(BiomeSource worldchunkmanager, Function<Holder<Biome>, BiomeGenerationSettings> function) {
-        super(worldchunkmanager, function);
+    public InternalChunkGenerator(BiomeSource biomeSource, Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter) {
+        super(biomeSource, generationSettingsGetter);
     }
 }

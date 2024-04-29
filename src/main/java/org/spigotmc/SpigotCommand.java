@@ -18,10 +18,10 @@ public class SpigotCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!this.testPermission(sender)) return true;
 
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            sender.sendMessage(ChatColor.RED + "Usage: " + this.usageMessage);
             return false;
         }
 
@@ -30,7 +30,7 @@ public class SpigotCommand extends Command {
             Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
 
             MinecraftServer console = MinecraftServer.getServer();
-            SpigotConfig.init((File) MinecraftServer.options.valueOf("spigot-settings"));
+            org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings"));
             for (ServerLevel world : console.getAllLevels()) {
                 world.spigotConfig.init();
             }

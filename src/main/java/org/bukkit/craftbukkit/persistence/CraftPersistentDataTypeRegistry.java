@@ -12,19 +12,19 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.LongArrayTag;
+import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import org.bukkit.persistence.ListPersistentDataType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -91,7 +91,7 @@ public final class CraftPersistentDataTypeRegistry {
          * extractor function.
          */
         private P extract(final PersistentDataType<P, ?> dataType, final Tag base) {
-            Preconditions.checkArgument(this.nbtBaseType.isInstance(base), "The provided Tag was of the type %s. Expected type %s", base.getClass().getSimpleName(), this.nbtBaseType.getSimpleName());
+            Preconditions.checkArgument(this.nbtBaseType.isInstance(base), "The provided NBTBase was of the type %s. Expected type %s", base.getClass().getSimpleName(), this.nbtBaseType.getSimpleName());
             return this.extractor.apply(dataType, this.nbtBaseType.cast(base));
         }
 
@@ -244,7 +244,7 @@ public final class CraftPersistentDataTypeRegistry {
         }
 
         if (Objects.equals(List.class, type)) {
-            return createAdapter(
+            return this.createAdapter(
                     List.class,
                     net.minecraft.nbt.ListTag.class,
                     Tag.TAG_LIST,
@@ -262,7 +262,7 @@ public final class CraftPersistentDataTypeRegistry {
             final Class<T> primitiveType, final Class<Z> nbtBaseType, final byte nmsTypeByte,
             final Function<T, Z> builder, final Function<Z, T> extractor
     ) {
-        return createAdapter(
+        return this.createAdapter(
                 primitiveType,
                 nbtBaseType,
                 nmsTypeByte,
@@ -324,7 +324,7 @@ public final class CraftPersistentDataTypeRegistry {
      */
     @NotNull
     private <T, Z extends Tag> TagAdapter<T, Z> getOrCreateAdapter(@NotNull final PersistentDataType<T, ?> type) {
-        return this.adapters.computeIfAbsent(type.getPrimitiveType(), CREATE_ADAPTER);
+        return this.adapters.computeIfAbsent(type.getPrimitiveType(), this.CREATE_ADAPTER);
     }
 
     /**
@@ -389,7 +389,7 @@ public final class CraftPersistentDataTypeRegistry {
      * extract a {@link List}.
      */
     private <P> List<P> extractList(@NotNull final PersistentDataType<P, ?> type,
-                                    @NotNull final ListTag listTag) {
+            @NotNull final ListTag listTag) {
         Preconditions.checkArgument(type instanceof ListPersistentDataType<?, ?>, "The found list tag cannot be read with a %s (expected a list data type)", type.getClass().getSimpleName());
         final ListPersistentDataType<P, ?> listPersistentDataType = (ListPersistentDataType<P, ?>) type;
 
@@ -405,6 +405,11 @@ public final class CraftPersistentDataTypeRegistry {
      * Computes if the passed {@link Tag} is a {@link ListTag} and it,
      * including its elements, can be read/written via the passed
      * {@link PersistentDataType}.
+     * <p>
+     * As empty lists do not explicitly store their type, an empty nbt list can be matched to any
+     * ListPersistentDataType.
+     * As the persistent data container API does a full copy, this is a non-issue as callers to
+     * PDC#get(key, LIST.strings()) and PDC#get(key, LIST.ints()) will receive individual copies, avoiding interference.
      *
      * @param type the persistent data type for which to check if the tag
      * matches.

@@ -9,11 +9,11 @@ public abstract class CraftSlab extends CraftBlockData implements Slab {
 
     @Override
     public org.bukkit.block.data.type.Slab.Type getType() {
-        return get(TYPE, org.bukkit.block.data.type.Slab.Type.class);
+        return this.get(CraftSlab.TYPE, org.bukkit.block.data.type.Slab.Type.class);
     }
 
     @Override
     public void setType(org.bukkit.block.data.type.Slab.Type type) {
-        set(TYPE, type);
+        this.set(CraftSlab.TYPE, type);
     }
 }

@@ -9,11 +9,11 @@ public abstract class CraftGate extends CraftBlockData implements Gate {
 
     @Override
     public boolean isInWall() {
-        return get(IN_WALL);
+        return this.get(CraftGate.IN_WALL);
     }
 
     @Override
     public void setInWall(boolean inWall) {
-        set(IN_WALL, inWall);
+        this.set(CraftGate.IN_WALL, inWall);
     }
 }

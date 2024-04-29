@@ -9,11 +9,11 @@ public abstract class CraftDoor extends CraftBlockData implements Door {
 
     @Override
     public org.bukkit.block.data.type.Door.Hinge getHinge() {
-        return get(HINGE, org.bukkit.block.data.type.Door.Hinge.class);
+        return this.get(CraftDoor.HINGE, org.bukkit.block.data.type.Door.Hinge.class);
     }
 
     @Override
     public void setHinge(org.bukkit.block.data.type.Door.Hinge hinge) {
-        set(HINGE, hinge);
+        this.set(CraftDoor.HINGE, hinge);
     }
 }

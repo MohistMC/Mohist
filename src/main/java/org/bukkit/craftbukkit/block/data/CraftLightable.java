@@ -8,11 +8,11 @@ public abstract class CraftLightable extends CraftBlockData implements Lightable
 
     @Override
     public boolean isLit() {
-        return get(LIT);
+        return this.get(CraftLightable.LIT);
     }
 
     @Override
     public void setLit(boolean lit) {
-        set(LIT, lit);
+        this.set(CraftLightable.LIT, lit);
     }
 }

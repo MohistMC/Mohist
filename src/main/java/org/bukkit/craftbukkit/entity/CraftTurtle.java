@@ -21,11 +21,11 @@ public class CraftTurtle extends CraftAnimals implements Turtle {
 
     @Override
     public boolean hasEgg() {
-        return getHandle().hasEgg();
+        return this.getHandle().hasEgg();
     }
 
     @Override
     public boolean isLayingEgg() {
-        return getHandle().isLayingEgg();
+        return this.getHandle().isLayingEgg();
     }
 }

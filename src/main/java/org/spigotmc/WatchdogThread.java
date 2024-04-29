@@ -31,37 +31,37 @@ public class WatchdogThread extends Thread
 
     public static void doStart(int timeoutTime, boolean restart)
     {
-        if ( instance == null )
+        if ( WatchdogThread.instance == null )
         {
-            instance = new WatchdogThread( timeoutTime * 1000L, restart );
-            instance.start();
+            WatchdogThread.instance = new WatchdogThread( timeoutTime * 1000L, restart );
+            WatchdogThread.instance.start();
         } else
         {
-            instance.timeoutTime = timeoutTime * 1000L;
-            instance.restart = restart;
+            WatchdogThread.instance.timeoutTime = timeoutTime * 1000L;
+            WatchdogThread.instance.restart = restart;
         }
     }
 
     public static void tick()
     {
-        instance.lastTick = monotonicMillis();
+        WatchdogThread.instance.lastTick = WatchdogThread.monotonicMillis();
     }
 
     public static void doStop()
     {
-        if ( instance != null )
+        if ( WatchdogThread.instance != null )
         {
-            instance.stopping = true;
+            WatchdogThread.instance.stopping = true;
         }
     }
 
     @Override
     public void run()
     {
-        while ( !stopping )
+        while ( !this.stopping )
         {
             //
-            if ( lastTick != 0 && timeoutTime > 0 && monotonicMillis() > lastTick + timeoutTime )
+            if ( this.lastTick != 0 && this.timeoutTime > 0 && WatchdogThread.monotonicMillis() > this.lastTick + this.timeoutTime )
             {
                 Logger log = Bukkit.getServer().getLogger();
                 log.log( Level.SEVERE, "------------------------------" );
@@ -73,19 +73,31 @@ public class WatchdogThread extends Thread
                 log.log( Level.SEVERE, "If you are unsure or still think this is a Spigot bug, please report to https://www.spigotmc.org/" );
                 log.log( Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports" );
                 log.log( Level.SEVERE, "Spigot version: " + Bukkit.getServer().getVersion() );
+                //
+                if ( net.minecraft.world.level.Level.lastPhysicsProblem != null )
+                {
+                    log.log( Level.SEVERE, "------------------------------" );
+                    log.log( Level.SEVERE, "During the run of the server, a physics stackoverflow was supressed" );
+                    log.log( Level.SEVERE, "near " + net.minecraft.world.level.Level.lastPhysicsProblem );
+                }
+                //
                 log.log( Level.SEVERE, "------------------------------" );
                 log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Spigot!):" );
-                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
+                WatchdogThread.dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
                 log.log( Level.SEVERE, "------------------------------" );
                 //
                 log.log( Level.SEVERE, "Entire Thread Dump:" );
                 ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads( true, true );
                 for ( ThreadInfo thread : threads )
                 {
-                    dumpThread( thread, log );
+                    WatchdogThread.dumpThread( thread, log );
                 }
                 log.log( Level.SEVERE, "------------------------------" );
 
+                if ( this.restart && !MinecraftServer.getServer().hasStopped() )
+                {
+                    RestartCommand.restart();
+                }
                 break;
             }
 
@@ -94,7 +106,7 @@ public class WatchdogThread extends Thread
                 sleep( 10000 );
             } catch ( InterruptedException ex )
             {
-                interrupt();
+                this.interrupt();
             }
         }
     }

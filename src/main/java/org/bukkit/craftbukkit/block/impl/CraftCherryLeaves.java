@@ -20,22 +20,22 @@ public final class CraftCherryLeaves extends org.bukkit.craftbukkit.block.data.C
 
     @Override
     public boolean isPersistent() {
-        return get(PERSISTENT);
+        return this.get(CraftCherryLeaves.PERSISTENT);
     }
 
     @Override
     public void setPersistent(boolean persistent) {
-        set(PERSISTENT, persistent);
+        this.set(CraftCherryLeaves.PERSISTENT, persistent);
     }
 
     @Override
     public int getDistance() {
-        return get(DISTANCE);
+        return this.get(CraftCherryLeaves.DISTANCE);
     }
 
     @Override
     public void setDistance(int distance) {
-        set(DISTANCE, distance);
+        this.set(CraftCherryLeaves.DISTANCE, distance);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
@@ -44,11 +44,11 @@ public final class CraftCherryLeaves extends org.bukkit.craftbukkit.block.data.C
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftCherryLeaves.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftCherryLeaves.WATERLOGGED, waterlogged);
     }
 }

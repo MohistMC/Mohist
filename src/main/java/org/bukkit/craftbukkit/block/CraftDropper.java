@@ -14,8 +14,8 @@ import org.bukkit.inventory.Inventory;
 
 public class CraftDropper extends CraftLootable<DropperBlockEntity> implements Dropper {
 
-    public CraftDropper(World world, DropperBlockEntity te) {
-        super(world, te);
+    public CraftDropper(World world, DropperBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftDropper(CraftDropper state, Location location) {
@@ -38,8 +38,8 @@ public class CraftDropper extends CraftLootable<DropperBlockEntity> implements D
 
     @Override
     public void drop() {
-        ensureNoWorldGeneration();
-        Block block = getBlock();
+        this.ensureNoWorldGeneration();
+        Block block = this.getBlock();
         if (block.getType() == Material.DROPPER) {
             CraftWorld world = (CraftWorld) this.getWorld();
             DropperBlock drop = (DropperBlock) Blocks.DROPPER;

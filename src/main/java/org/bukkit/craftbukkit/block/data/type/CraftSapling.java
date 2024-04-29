@@ -9,16 +9,16 @@ public abstract class CraftSapling extends CraftBlockData implements Sapling {
 
     @Override
     public int getStage() {
-        return get(STAGE);
+        return this.get(CraftSapling.STAGE);
     }
 
     @Override
     public void setStage(int stage) {
-        set(STAGE, stage);
+        this.set(CraftSapling.STAGE, stage);
     }
 
     @Override
     public int getMaximumStage() {
-        return getMax(STAGE);
+        return getMax(CraftSapling.STAGE);
     }
 }

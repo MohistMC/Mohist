@@ -11,11 +11,11 @@ public final class CraftLocation {
     }
 
     public static Location toBukkit(Vec3 vec3D) {
-        return toBukkit(vec3D, null);
+        return CraftLocation.toBukkit(vec3D, null);
     }
 
     public static Location toBukkit(Vec3 vec3D, World world) {
-        return toBukkit(vec3D, world, 0.0F, 0.0F);
+        return CraftLocation.toBukkit(vec3D, world, 0.0F, 0.0F);
     }
 
     public static Location toBukkit(Vec3 vec3D, World world, float yaw, float pitch) {
@@ -23,14 +23,13 @@ public final class CraftLocation {
     }
 
     public static Location toBukkit(BlockPos blockPosition) {
-        return toBukkit(blockPosition, (World) null);
+        return CraftLocation.toBukkit(blockPosition, (World) null);
     }
     public static Location toBukkit(BlockPos blockPosition, net.minecraft.world.level.Level world) {
-        return toBukkit(blockPosition, world.getWorld(), 0.0F, 0.0F);
+        return CraftLocation.toBukkit(blockPosition, world.getWorld(), 0.0F, 0.0F);
     }
-
     public static Location toBukkit(BlockPos blockPosition, World world) {
-        return toBukkit(blockPosition, world, 0.0F, 0.0F);
+        return CraftLocation.toBukkit(blockPosition, world, 0.0F, 0.0F);
     }
 
     public static Location toBukkit(BlockPos blockPosition, World world, float yaw, float pitch) {

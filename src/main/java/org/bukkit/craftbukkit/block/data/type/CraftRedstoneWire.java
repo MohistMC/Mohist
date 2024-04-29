@@ -14,13 +14,13 @@ public abstract class CraftRedstoneWire extends CraftBlockData implements Redsto
     public org.bukkit.block.data.type.RedstoneWire.Connection getFace(org.bukkit.block.BlockFace face) {
         switch (face) {
             case NORTH:
-                return get(NORTH, org.bukkit.block.data.type.RedstoneWire.Connection.class);
+                return this.get(CraftRedstoneWire.NORTH, org.bukkit.block.data.type.RedstoneWire.Connection.class);
             case EAST:
-                return get(EAST, org.bukkit.block.data.type.RedstoneWire.Connection.class);
+                return this.get(CraftRedstoneWire.EAST, org.bukkit.block.data.type.RedstoneWire.Connection.class);
             case SOUTH:
-                return get(SOUTH, org.bukkit.block.data.type.RedstoneWire.Connection.class);
+                return this.get(CraftRedstoneWire.SOUTH, org.bukkit.block.data.type.RedstoneWire.Connection.class);
             case WEST:
-                return get(WEST, org.bukkit.block.data.type.RedstoneWire.Connection.class);
+                return this.get(CraftRedstoneWire.WEST, org.bukkit.block.data.type.RedstoneWire.Connection.class);
             default:
                 throw new IllegalArgumentException("Cannot have face " + face);
         }
@@ -30,16 +30,16 @@ public abstract class CraftRedstoneWire extends CraftBlockData implements Redsto
     public void setFace(org.bukkit.block.BlockFace face, org.bukkit.block.data.type.RedstoneWire.Connection connection) {
         switch (face) {
             case NORTH:
-                set(NORTH, connection);
+                this.set(CraftRedstoneWire.NORTH, connection);
                 break;
             case EAST:
-                set(EAST, connection);
+                this.set(CraftRedstoneWire.EAST, connection);
                 break;
             case SOUTH:
-                set(SOUTH, connection);
+                this.set(CraftRedstoneWire.SOUTH, connection);
                 break;
             case WEST:
-                set(WEST, connection);
+                this.set(CraftRedstoneWire.WEST, connection);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot have face " + face);

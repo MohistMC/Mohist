@@ -63,7 +63,7 @@ public final class CraftIpBanEntry implements BanEntry<InetAddress> {
 
     @Override
     public void setExpiration(Date expiration) {
-        if (expiration != null && expiration.getTime() == minorDate.getTime()) {
+        if (expiration != null && expiration.getTime() == CraftIpBanEntry.minorDate.getTime()) {
             expiration = null; // Forces "forever"
         }
 
@@ -88,6 +88,6 @@ public final class CraftIpBanEntry implements BanEntry<InetAddress> {
 
     @Override
     public void remove() {
-        this.list.remove(target);
+        this.list.remove(this.target);
     }
 }

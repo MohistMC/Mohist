@@ -8,11 +8,11 @@ public abstract class CraftFaceAttachable extends CraftBlockData implements Face
 
     @Override
     public org.bukkit.block.data.FaceAttachable.AttachedFace getAttachedFace() {
-        return get(ATTACH_FACE, org.bukkit.block.data.FaceAttachable.AttachedFace.class);
+        return this.get(CraftFaceAttachable.ATTACH_FACE, org.bukkit.block.data.FaceAttachable.AttachedFace.class);
     }
 
     @Override
     public void setAttachedFace(org.bukkit.block.data.FaceAttachable.AttachedFace face) {
-        set(ATTACH_FACE, face);
+        this.set(CraftFaceAttachable.ATTACH_FACE, face);
     }
 }

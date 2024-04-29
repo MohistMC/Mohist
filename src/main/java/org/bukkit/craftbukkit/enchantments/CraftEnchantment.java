@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.enchantments;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.enchantment.BindingCurseEnchantment;
@@ -15,8 +16,13 @@ import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftEnchantment extends Enchantment implements Handleable<net.minecraft.world.item.enchantment.Enchantment> {
+
     public static Enchantment minecraftToBukkit(net.minecraft.world.item.enchantment.Enchantment minecraft) {
         return CraftRegistry.minecraftToBukkit(minecraft, Registries.ENCHANTMENT, Registry.ENCHANTMENT);
+    }
+
+    public static Enchantment minecraftHolderToBukkit(Holder<net.minecraft.world.item.enchantment.Enchantment> minecraft) {
+        return CraftEnchantment.minecraftToBukkit(minecraft.value());
     }
 
     public static net.minecraft.world.item.enchantment.Enchantment bukkitToMinecraft(Enchantment bukkit) {
@@ -35,63 +41,48 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
 
     @Override
     public net.minecraft.world.item.enchantment.Enchantment getHandle() {
-        return handle;
+        return this.handle;
     }
 
     @Override
     public NamespacedKey getKey() {
-        return key;
+        return this.key;
     }
 
     @Override
     public int getMaxLevel() {
-        return handle.getMaxLevel();
+        return this.handle.getMaxLevel();
     }
 
     @Override
     public int getStartLevel() {
-        return handle.getMinLevel();
+        return this.handle.getMinLevel();
     }
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        return switch (handle.category) {
-            case ARMOR -> EnchantmentTarget.ARMOR;
-            case ARMOR_FEET -> EnchantmentTarget.ARMOR_FEET;
-            case ARMOR_HEAD -> EnchantmentTarget.ARMOR_HEAD;
-            case ARMOR_LEGS -> EnchantmentTarget.ARMOR_LEGS;
-            case ARMOR_CHEST -> EnchantmentTarget.ARMOR_TORSO;
-            case DIGGER -> EnchantmentTarget.TOOL;
-            case WEAPON -> EnchantmentTarget.WEAPON;
-            case BOW -> EnchantmentTarget.BOW;
-            case FISHING_ROD -> EnchantmentTarget.FISHING_ROD;
-            case BREAKABLE -> EnchantmentTarget.BREAKABLE;
-            case WEARABLE -> EnchantmentTarget.WEARABLE;
-            case TRIDENT -> EnchantmentTarget.TRIDENT;
-            case CROSSBOW -> EnchantmentTarget.CROSSBOW;
-            case VANISHABLE -> EnchantmentTarget.VANISHABLE;
-        };
+        throw new UnsupportedOperationException("Method no longer applicable. Use Tags instead.");
     }
 
     @Override
     public boolean isTreasure() {
-        return handle.isTreasureOnly();
+        return this.handle.isTreasureOnly();
     }
 
     @Override
     public boolean isCursed() {
-        return handle instanceof BindingCurseEnchantment || handle instanceof VanishingCurseEnchantment;
+        return this.handle instanceof BindingCurseEnchantment || this.handle instanceof VanishingCurseEnchantment;
     }
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return handle.canEnchant(CraftItemStack.asNMSCopy(item));
+        return this.handle.canEnchant(CraftItemStack.asNMSCopy(item));
     }
 
     @Override
     public String getName() {
         // PAIL: migration paths
-        return switch (id) {
+        return switch (this.id) {
             case 0 -> "PROTECTION_ENVIRONMENTAL";
             case 1 -> "PROTECTION_FIRE";
             case 2 -> "PROTECTION_FALL";
@@ -129,9 +120,12 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
             case 34 -> "MULTISHOT";
             case 35 -> "QUICK_CHARGE";
             case 36 -> "PIERCING";
-            case 37 -> "MENDING";
-            case 38 -> "VANISHING_CURSE";
-            default -> getKey().toString();
+            case 37 -> "DENSITY";
+            case 38 -> "BREACH";
+            case 39 -> "WIND_BURST";
+            case 40 -> "MENDING";
+            case 41 -> "VANISHING_CURSE";
+            default -> this.getKey().toString();
         };
     }
 
@@ -144,12 +138,12 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
             return false;
         }
         CraftEnchantment ench = (CraftEnchantment) other;
-        return !handle.isCompatibleWith(ench.getHandle());
+        return !this.handle.isCompatibleWith(ench.getHandle());
     }
 
     @Override
     public String getTranslationKey() {
-        return handle.getDescriptionId();
+        return this.handle.getDescriptionId();
     }
 
     @Override
@@ -162,16 +156,16 @@ public class CraftEnchantment extends Enchantment implements Handleable<net.mine
             return false;
         }
 
-        return getKey().equals(((Enchantment) other).getKey());
+        return this.getKey().equals(((Enchantment) other).getKey());
     }
 
     @Override
     public int hashCode() {
-        return getKey().hashCode();
+        return this.getKey().hashCode();
     }
 
     @Override
     public String toString() {
-        return "CraftEnchantment[" + getKey() + "]";
+        return "CraftEnchantment[" + this.getKey() + "]";
     }
 }

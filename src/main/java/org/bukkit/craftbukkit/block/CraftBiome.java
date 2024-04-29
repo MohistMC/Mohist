@@ -24,7 +24,7 @@ public class CraftBiome {
     }
 
     public static Biome minecraftHolderToBukkit(Holder<net.minecraft.world.level.biome.Biome> minecraft) {
-        return minecraftToBukkit(minecraft.value());
+        return CraftBiome.minecraftToBukkit(minecraft.value());
     }
 
     public static net.minecraft.world.level.biome.Biome bukkitToMinecraft(Biome bukkit) {
@@ -43,7 +43,7 @@ public class CraftBiome {
 
         net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> registry = CraftRegistry.getMinecraftRegistry(Registries.BIOME);
 
-        if (registry.wrapAsHolder(bukkitToMinecraft(bukkit)) instanceof Holder.Reference<net.minecraft.world.level.biome.Biome> holder) {
+        if (registry.wrapAsHolder(CraftBiome.bukkitToMinecraft(bukkit)) instanceof Holder.Reference<net.minecraft.world.level.biome.Biome> holder) {
             return holder;
         }
 

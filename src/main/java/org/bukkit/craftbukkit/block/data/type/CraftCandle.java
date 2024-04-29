@@ -9,16 +9,16 @@ public abstract class CraftCandle extends CraftBlockData implements Candle {
 
     @Override
     public int getCandles() {
-        return get(CANDLES);
+        return this.get(CraftCandle.CANDLES);
     }
 
     @Override
     public void setCandles(int candles) {
-        set(CANDLES, candles);
+        this.set(CraftCandle.CANDLES, candles);
     }
 
     @Override
     public int getMaximumCandles() {
-        return getMax(CANDLES);
+        return getMax(CraftCandle.CANDLES);
     }
 }

@@ -15,8 +15,8 @@ import org.bukkit.entity.Entity;
 
 public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements Bell {
 
-    public CraftBell(World world, BellBlockEntity te) {
-        super(world, te);
+    public CraftBell(World world, BellBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftBell(CraftBell state, Location location) {
@@ -27,7 +27,7 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
     public boolean ring(Entity entity, BlockFace direction) {
         Preconditions.checkArgument(direction == null || direction.isCartesian(), "direction must be cartesian, given %s", direction);
 
-        BlockEntity tileEntity = getTileEntityFromWorld();
+        BlockEntity tileEntity = this.getTileEntityFromWorld();
         if (tileEntity == null) {
             return false;
         }
@@ -35,42 +35,42 @@ public class CraftBell extends CraftBlockEntityState<BellBlockEntity> implements
         net.minecraft.world.entity.Entity nmsEntity = (entity != null) ? ((CraftEntity) entity).getHandle() : null;
         Direction enumDirection = CraftBlock.blockFaceToNotch(direction);
 
-        return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, world.getHandle(), getPosition(), enumDirection);
+        return ((BellBlock) Blocks.BELL).attemptToRing(nmsEntity, this.world.getHandle(), this.getPosition(), enumDirection);
     }
 
     @Override
-    public boolean ring(org.bukkit.entity.Entity entity) {
-        return ring(entity, null);
+    public boolean ring(Entity entity) {
+        return this.ring(entity, null);
     }
 
     @Override
     public boolean ring(BlockFace direction) {
-        return ring(null, direction);
+        return this.ring(null, direction);
     }
 
     @Override
     public boolean ring() {
-        return ring(null, null);
+        return this.ring(null, null);
     }
 
     @Override
     public boolean isShaking() {
-        return getSnapshot().shaking;
+        return this.getSnapshot().shaking;
     }
 
     @Override
     public int getShakingTicks() {
-        return getSnapshot().ticks;
+        return this.getSnapshot().ticks;
     }
 
     @Override
     public boolean isResonating() {
-        return getSnapshot().resonating;
+        return this.getSnapshot().resonating;
     }
 
     @Override
     public int getResonatingTicks() {
-        return isResonating() ? getSnapshot().ticks : 0;
+        return this.isResonating() ? this.getSnapshot().ticks : 0;
     }
 
     @Override

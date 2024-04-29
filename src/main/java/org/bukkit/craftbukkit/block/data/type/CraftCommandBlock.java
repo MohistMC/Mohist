@@ -9,11 +9,11 @@ public abstract class CraftCommandBlock extends CraftBlockData implements Comman
 
     @Override
     public boolean isConditional() {
-        return get(CONDITIONAL);
+        return this.get(CraftCommandBlock.CONDITIONAL);
     }
 
     @Override
     public void setConditional(boolean conditional) {
-        set(CONDITIONAL, conditional);
+        this.set(CraftCommandBlock.CONDITIONAL, conditional);
     }
 }

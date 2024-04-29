@@ -20,7 +20,7 @@ public class CraftEndPortal extends CraftBlockEntityState<TheEndPortalBlockEntit
     }
 
     @Override
-    public CraftEndPortal  copy(Location location) {
-        return new CraftEndPortal (this, location);
+    public CraftEndPortal copy(Location location) {
+        return new CraftEndPortal(this, location);
     }
 }

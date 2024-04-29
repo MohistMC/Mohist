@@ -9,8 +9,9 @@ import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Ghast;
 
-public class TrackingRange {
-    
+public class TrackingRange
+{
+
     /**
      * Gets the range an entity should be 'tracked' by players and visible in
      * the client.
@@ -25,34 +26,34 @@ public class TrackingRange {
         {
             return defaultRange;
         }
-        SpigotWorldConfig config = entity.level.spigotConfig;
-        if ( entity instanceof ServerPlayer)
+        SpigotWorldConfig config = entity.level().spigotConfig;
+        if ( entity instanceof ServerPlayer )
         {
             return config.playerTrackingRange;
         } else if ( entity.activationType == ActivationRange.ActivationType.MONSTER || entity.activationType == ActivationRange.ActivationType.RAIDER )
         {
             return config.monsterTrackingRange;
-        } else if ( entity instanceof Ghast)
+        } else if ( entity instanceof Ghast )
         {
             if ( config.monsterTrackingRange > config.monsterActivationRange )
             {
                 return config.monsterTrackingRange;
             } else
             {
-                    return config.monsterActivationRange;
+                return config.monsterActivationRange;
             }
         } else if ( entity.activationType == ActivationRange.ActivationType.ANIMAL )
         {
             return config.animalTrackingRange;
-        } else if ( entity instanceof ItemFrame || entity instanceof Painting || entity instanceof ItemEntity || entity instanceof ExperienceOrb)
+        } else if ( entity instanceof ItemFrame || entity instanceof Painting || entity instanceof ItemEntity || entity instanceof ExperienceOrb )
         {
             return config.miscTrackingRange;
-        } else if ( entity instanceof Display)
+        } else if ( entity instanceof Display )
         {
             return config.displayTrackingRange;
         } else
         {
-                return config.otherTrackingRange;
+            return config.otherTrackingRange;
         }
     }
 }

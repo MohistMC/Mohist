@@ -9,11 +9,11 @@ public abstract class CraftBubbleColumn extends CraftBlockData implements Bubble
 
     @Override
     public boolean isDrag() {
-        return get(DRAG);
+        return this.get(CraftBubbleColumn.DRAG);
     }
 
     @Override
     public void setDrag(boolean drag) {
-        set(DRAG, drag);
+        this.set(CraftBubbleColumn.DRAG, drag);
     }
 }

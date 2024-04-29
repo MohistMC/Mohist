@@ -11,7 +11,7 @@ public class CraftSquid extends CraftWaterMob implements Squid {
 
     @Override
     public net.minecraft.world.entity.animal.Squid getHandle() {
-        return (net.minecraft.world.entity.animal.Squid) entity;
+        return (net.minecraft.world.entity.animal.Squid) this.entity;
     }
 
     @Override

@@ -3,13 +3,17 @@ package org.bukkit.craftbukkit.block;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedEntry.Wrapper;
+import net.minecraft.world.entity.EquipmentTable;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import org.bukkit.Location;
@@ -17,6 +21,8 @@ import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
+import org.bukkit.craftbukkit.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.CraftLootTable;
 import org.bukkit.craftbukkit.entity.CraftEntitySnapshot;
 import org.bukkit.craftbukkit.entity.CraftEntityType;
 import org.bukkit.entity.EntitySnapshot;
@@ -24,8 +30,8 @@ import org.bukkit.entity.EntityType;
 
 public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEntity> implements CreatureSpawner {
 
-    public CraftCreatureSpawner(World world, SpawnerBlockEntity te) {
-        super(world, te);
+    public CraftCreatureSpawner(World world, SpawnerBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftCreatureSpawner(CraftCreatureSpawner state, Location location) {
@@ -56,63 +62,75 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         this.getSnapshot().setEntityId(CraftEntityType.bukkitToMinecraft(entityType), rand);
     }
 
-
     @Override
     public EntitySnapshot getSpawnedEntity() {
         SpawnData spawnData = this.getSnapshot().getSpawner().nextSpawnData;
         if (spawnData == null) {
             return null;
         }
+
         return CraftEntitySnapshot.create(spawnData.getEntityToSpawn());
     }
+
     @Override
     public void setSpawnedEntity(EntitySnapshot snapshot) {
         CompoundTag compoundTag = ((CraftEntitySnapshot) snapshot).getData();
+
         this.getSnapshot().getSpawner().spawnPotentials = SimpleWeightedRandomList.empty();
-        this.getSnapshot().getSpawner().nextSpawnData = new SpawnData(compoundTag, Optional.empty());
+        this.getSnapshot().getSpawner().nextSpawnData = new SpawnData(compoundTag, Optional.empty(), Optional.empty());
     }
+
     @Override
     public void addPotentialSpawn(EntitySnapshot snapshot, int weight, SpawnRule spawnRule) {
         CompoundTag compoundTag = ((CraftEntitySnapshot) snapshot).getData();
+
         SimpleWeightedRandomList.Builder<SpawnData> builder = SimpleWeightedRandomList.builder(); // PAIL rename Builder
-        this.getSnapshot().getSpawner().spawnPotentials.unwrap().forEach(entry -> builder.add(entry.getData(), entry.getWeight().asInt()));
-        builder.add(new SpawnData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnRule))), weight);
+        this.getSnapshot().getSpawner().spawnPotentials.unwrap().forEach(entry -> builder.add(entry.data(), entry.getWeight().asInt()));
+        builder.add(new SpawnData(compoundTag, Optional.ofNullable(this.toMinecraftRule(spawnRule)), Optional.empty()), weight);
         this.getSnapshot().getSpawner().spawnPotentials = builder.build();
     }
+
     @Override
     public void addPotentialSpawn(SpawnerEntry spawnerEntry) {
-        addPotentialSpawn(spawnerEntry.getSnapshot(), spawnerEntry.getSpawnWeight(), spawnerEntry.getSpawnRule());
+        this.addPotentialSpawn(spawnerEntry.getSnapshot(), spawnerEntry.getSpawnWeight(), spawnerEntry.getSpawnRule());
     }
+
     @Override
     public void setPotentialSpawns(Collection<SpawnerEntry> entries) {
         SimpleWeightedRandomList.Builder<SpawnData> builder = SimpleWeightedRandomList.builder();
         for (SpawnerEntry spawnerEntry : entries) {
             CompoundTag compoundTag = ((CraftEntitySnapshot) spawnerEntry.getSnapshot()).getData();
-            builder.add(new SpawnData(compoundTag, Optional.ofNullable(toMinecraftRule(spawnerEntry.getSpawnRule()))), spawnerEntry.getSpawnWeight());
+            builder.add(new SpawnData(compoundTag, Optional.ofNullable(this.toMinecraftRule(spawnerEntry.getSpawnRule())), CraftCreatureSpawner.getEquipment(spawnerEntry.getEquipment())), spawnerEntry.getSpawnWeight());
         }
         this.getSnapshot().getSpawner().spawnPotentials = builder.build();
     }
+
     @Override
     public List<SpawnerEntry> getPotentialSpawns() {
         List<SpawnerEntry> entries = new ArrayList<>();
-        for (WeightedEntry.Wrapper<SpawnData> entry : this.getSnapshot().getSpawner().spawnPotentials.unwrap()) { // PAIL rename Wrapper
-            CraftEntitySnapshot snapshot = CraftEntitySnapshot.create(entry.getData().getEntityToSpawn());
+
+        for (Wrapper<SpawnData> entry : this.getSnapshot().getSpawner().spawnPotentials.unwrap()) { // PAIL rename Wrapper
+            CraftEntitySnapshot snapshot = CraftEntitySnapshot.create(entry.data().getEntityToSpawn());
+
             if (snapshot != null) {
-                SpawnRule rule = entry.getData().customSpawnRules().map(this::fromMinecraftRule).orElse(null);
-                entries.add(new SpawnerEntry(snapshot, entry.getWeight().asInt(), rule));
+                SpawnRule rule = entry.data().customSpawnRules().map(this::fromMinecraftRule).orElse(null);
+                entries.add(new SpawnerEntry(snapshot, entry.getWeight().asInt(), rule, CraftCreatureSpawner.getEquipment(entry.data().equipment())));
             }
         }
         return entries;
     }
+
     private SpawnData.CustomSpawnRules toMinecraftRule(SpawnRule rule) { // PAIL rename CustomSpawnRules
         if (rule == null) {
             return null;
         }
         return new SpawnData.CustomSpawnRules(new InclusiveRange<>(rule.getMinBlockLight(), rule.getMaxBlockLight()), new InclusiveRange<>(rule.getMinSkyLight(), rule.getMaxSkyLight()));
     }
+
     private SpawnRule fromMinecraftRule(SpawnData.CustomSpawnRules rule) {
         InclusiveRange<Integer> blockLight = rule.blockLightLimit();
         InclusiveRange<Integer> skyLight = rule.skyLightLimit();
+
         return new SpawnRule(blockLight.maxInclusive(), blockLight.maxInclusive(), skyLight.minInclusive(), skyLight.maxInclusive());
     }
 
@@ -132,10 +150,10 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
         // Verify input
         EntityType type = EntityType.fromName(creatureType);
         if (type == null) {
-            setSpawnedType(null);
+            this.setSpawnedType(null);
             return;
         }
-        setSpawnedType(type);
+        this.setSpawnedType(type);
     }
 
     @Override
@@ -155,7 +173,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
 
     @Override
     public void setMinSpawnDelay(int spawnDelay) {
-        Preconditions.checkArgument(spawnDelay <= getMaxSpawnDelay(), "Minimum Spawn Delay must be less than or equal to Maximum Spawn Delay");
+        Preconditions.checkArgument(spawnDelay <= this.getMaxSpawnDelay(), "Minimum Spawn Delay must be less than or equal to Maximum Spawn Delay");
         this.getSnapshot().getSpawner().minSpawnDelay = spawnDelay;
     }
 
@@ -167,7 +185,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     @Override
     public void setMaxSpawnDelay(int spawnDelay) {
         Preconditions.checkArgument(spawnDelay > 0, "Maximum Spawn Delay must be greater than 0.");
-        Preconditions.checkArgument(spawnDelay >= getMinSpawnDelay(), "Maximum Spawn Delay must be greater than or equal to Minimum Spawn Delay");
+        Preconditions.checkArgument(spawnDelay >= this.getMinSpawnDelay(), "Maximum Spawn Delay must be greater than or equal to Minimum Spawn Delay");
         this.getSnapshot().getSpawner().maxSpawnDelay = spawnDelay;
     }
 
@@ -219,5 +237,23 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<SpawnerBlockEnti
     @Override
     public CraftCreatureSpawner copy(Location location) {
         return new CraftCreatureSpawner(this, location);
+    }
+
+    private static Optional<EquipmentTable> getEquipment(SpawnerEntry.Equipment bukkit) {
+        if (bukkit == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new EquipmentTable(
+                CraftLootTable.bukkitToMinecraft(bukkit.getEquipmentLootTable()),
+                bukkit.getDropChances().entrySet().stream().collect(Collectors.toMap((entry) -> CraftEquipmentSlot.getNMS(entry.getKey()), Map.Entry::getValue)))
+        );
+    }
+
+    private static SpawnerEntry.Equipment getEquipment(Optional<EquipmentTable> optional) {
+        return optional.map((nms) -> new SpawnerEntry.Equipment(
+                CraftLootTable.minecraftToBukkit(nms.lootTable()),
+                new HashMap<>(nms.slotDropChances().entrySet().stream().collect(Collectors.toMap((entry) -> CraftEquipmentSlot.getSlot(entry.getKey()), Map.Entry::getValue)))
+        )).orElse(null);
     }
 }

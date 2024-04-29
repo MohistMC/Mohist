@@ -19,16 +19,16 @@ public final class CraftTorchflowerCrop extends org.bukkit.craftbukkit.block.dat
 
     @Override
     public int getAge() {
-        return get(AGE);
+        return this.get(CraftTorchflowerCrop.AGE);
     }
 
     @Override
     public void setAge(int age) {
-        set(AGE, age);
+        this.set(CraftTorchflowerCrop.AGE, age);
     }
 
     @Override
     public int getMaximumAge() {
-        return getMax(AGE);
+        return getMax(CraftTorchflowerCrop.AGE);
     }
 }

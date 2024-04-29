@@ -9,11 +9,11 @@ public abstract class CraftCaveVinesPlant extends CraftBlockData implements Cave
 
     @Override
     public boolean isBerries() {
-        return get(BERRIES);
+        return this.get(CraftCaveVinesPlant.BERRIES);
     }
 
     @Override
     public void setBerries(boolean berries) {
-        set(BERRIES, berries);
+        this.set(CraftCaveVinesPlant.BERRIES, berries);
     }
 }

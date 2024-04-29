@@ -6,40 +6,40 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 
 public final class CraftMinecartTNT extends CraftMinecart implements ExplosiveMinecart {
-    CraftMinecartTNT(CraftServer server, net.minecraft.world.entity.vehicle.MinecartTNT entity) {
+    CraftMinecartTNT(CraftServer server, MinecartTNT entity) {
         super(server, entity);
     }
 
     @Override
     public void setFuseTicks(int ticks) {
-        getHandle().fuse = ticks;
+        this.getHandle().fuse = ticks;
     }
 
     @Override
     public int getFuseTicks() {
-        return getHandle().getFuse();
+        return this.getHandle().getFuse();
     }
 
     @Override
     public void ignite() {
-        getHandle().primeFuse();
+        this.getHandle().primeFuse();
     }
 
     @Override
     public boolean isIgnited() {
-        return getHandle().isPrimed();
+        return this.getHandle().isPrimed();
     }
 
     @Override
     public void explode() {
-        getHandle().explode(getHandle().getDeltaMovement().horizontalDistanceSqr());
+        this.getHandle().explode(this.getHandle().getDeltaMovement().horizontalDistanceSqr());
     }
 
     @Override
     public void explode(double power) {
         Preconditions.checkArgument(0 <= power && power <= 5, "Power must be in range [0, 5] (got %s)", power);
 
-        getHandle().explode(power);
+        this.getHandle().explode(power);
     }
 
     @Override

@@ -13,7 +13,6 @@ import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
@@ -28,6 +27,7 @@ import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import org.bukkit.craftbukkit.SpigotTimings;
 
 public class ActivationRange
 {
@@ -56,7 +56,7 @@ public class ActivationRange
         if ( entity instanceof Raider )
         {
             return ActivationType.RAIDER;
-        } else if ( entity instanceof Monster || entity instanceof Slime)
+        } else if ( entity instanceof Monster || entity instanceof Slime )
         {
             return ActivationType.MONSTER;
         } else if ( entity instanceof PathfinderMob || entity instanceof AmbientCreature )
@@ -107,6 +107,7 @@ public class ActivationRange
      */
     public static void activateEntities(Level world)
     {
+        SpigotTimings.entityActivationCheckTimer.startTiming();
         final int miscActivationRange = world.spigotConfig.miscActivationRange;
         final int raiderActivationRange = world.spigotConfig.raiderActivationRange;
         final int animalActivationRange = world.spigotConfig.animalActivationRange;
@@ -130,8 +131,10 @@ public class ActivationRange
             ActivationType.RAIDER.boundingBox = player.getBoundingBox().inflate( raiderActivationRange, 256, raiderActivationRange );
             ActivationType.ANIMAL.boundingBox = player.getBoundingBox().inflate( animalActivationRange, 256, animalActivationRange );
             ActivationType.MONSTER.boundingBox = player.getBoundingBox().inflate( monsterActivationRange, 256, monsterActivationRange );
-			world.getEntities().get(maxBB, ActivationRange::activateEntity);
+
+            world.getEntities().get(ActivationRange.maxBB, ActivationRange::activateEntity);
         }
+        SpigotTimings.entityActivationCheckTimer.stopTiming();
     }
 
     /**
@@ -226,23 +229,22 @@ public class ActivationRange
      */
     public static boolean checkIfActive(Entity entity)
     {
+        SpigotTimings.checkIfActiveTimer.startTiming();
         // Never safe to skip fireworks or entities not yet added to chunk
         if ( entity instanceof FireworkRocketEntity ) {
-            return true;
-        }
-
-        if ( entity instanceof ItemEntity) {
+            SpigotTimings.checkIfActiveTimer.stopTiming();
             return true;
         }
 
         boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
+
         // Should this entity tick?
         if ( !isActive )
         {
             if ( ( MinecraftServer.currentTick - entity.activatedTick - 1 ) % 20 == 0 )
             {
                 // Check immunities every 20 ticks.
-                if ( checkEntityImmunities( entity ) )
+                if ( ActivationRange.checkEntityImmunities( entity ) )
                 {
                     // Triggered some sort of immunity, give 20 full ticks before we check again.
                     entity.activatedTick = MinecraftServer.currentTick + 20;
@@ -250,10 +252,11 @@ public class ActivationRange
                 isActive = true;
             }
             // Add a little performance juice to active entities. Skip 1/4 if not immune.
-        } else if ( !entity.defaultActivationState && entity.tickCount % 4 == 0 && !checkEntityImmunities( entity ) )
+        } else if ( !entity.defaultActivationState && entity.tickCount % 4 == 0 && !ActivationRange.checkEntityImmunities( entity ) )
         {
             isActive = false;
         }
+        SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
 }

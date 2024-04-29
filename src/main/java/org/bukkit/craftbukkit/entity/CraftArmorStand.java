@@ -4,6 +4,7 @@ import net.minecraft.core.Rotations;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ArmorStand.LockType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -26,159 +27,159 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
 
     @Override
     public ItemStack getItemInHand() {
-        return getEquipment().getItemInHand();
+        return this.getEquipment().getItemInHand();
     }
 
     @Override
     public void setItemInHand(ItemStack item) {
-        getEquipment().setItemInHand(item);
+        this.getEquipment().setItemInHand(item);
     }
 
     @Override
     public ItemStack getBoots() {
-        return getEquipment().getBoots();
+        return this.getEquipment().getBoots();
     }
 
     @Override
     public void setBoots(ItemStack item) {
-        getEquipment().setBoots(item);
+        this.getEquipment().setBoots(item);
     }
 
     @Override
     public ItemStack getLeggings() {
-        return getEquipment().getLeggings();
+        return this.getEquipment().getLeggings();
     }
 
     @Override
     public void setLeggings(ItemStack item) {
-        getEquipment().setLeggings(item);
+        this.getEquipment().setLeggings(item);
     }
 
     @Override
     public ItemStack getChestplate() {
-        return getEquipment().getChestplate();
+        return this.getEquipment().getChestplate();
     }
 
     @Override
     public void setChestplate(ItemStack item) {
-        getEquipment().setChestplate(item);
+        this.getEquipment().setChestplate(item);
     }
 
     @Override
     public ItemStack getHelmet() {
-        return getEquipment().getHelmet();
+        return this.getEquipment().getHelmet();
     }
 
     @Override
     public void setHelmet(ItemStack item) {
-        getEquipment().setHelmet(item);
+        this.getEquipment().setHelmet(item);
     }
 
     @Override
     public EulerAngle getBodyPose() {
-        return fromNMS(getHandle().bodyPose);
+        return CraftArmorStand.fromNMS(this.getHandle().bodyPose);
     }
 
     @Override
     public void setBodyPose(EulerAngle pose) {
-        getHandle().setBodyPose(toNMS(pose));
+        this.getHandle().setBodyPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public EulerAngle getLeftArmPose() {
-        return fromNMS(getHandle().leftArmPose);
+        return CraftArmorStand.fromNMS(this.getHandle().leftArmPose);
     }
 
     @Override
     public void setLeftArmPose(EulerAngle pose) {
-        getHandle().setLeftArmPose(toNMS(pose));
+        this.getHandle().setLeftArmPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public EulerAngle getRightArmPose() {
-        return fromNMS(getHandle().rightArmPose);
+        return CraftArmorStand.fromNMS(this.getHandle().rightArmPose);
     }
 
     @Override
     public void setRightArmPose(EulerAngle pose) {
-        getHandle().setRightArmPose(toNMS(pose));
+        this.getHandle().setRightArmPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public EulerAngle getLeftLegPose() {
-        return fromNMS(getHandle().leftLegPose);
+        return CraftArmorStand.fromNMS(this.getHandle().leftLegPose);
     }
 
     @Override
     public void setLeftLegPose(EulerAngle pose) {
-        getHandle().setLeftLegPose(toNMS(pose));
+        this.getHandle().setLeftLegPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public EulerAngle getRightLegPose() {
-        return fromNMS(getHandle().rightLegPose);
+        return CraftArmorStand.fromNMS(this.getHandle().rightLegPose);
     }
 
     @Override
     public void setRightLegPose(EulerAngle pose) {
-        getHandle().setRightLegPose(toNMS(pose));
+        this.getHandle().setRightLegPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public EulerAngle getHeadPose() {
-        return fromNMS(getHandle().headPose);
+        return CraftArmorStand.fromNMS(this.getHandle().headPose);
     }
 
     @Override
     public void setHeadPose(EulerAngle pose) {
-        getHandle().setHeadPose(toNMS(pose));
+        this.getHandle().setHeadPose(CraftArmorStand.toNMS(pose));
     }
 
     @Override
     public boolean hasBasePlate() {
-        return !getHandle().isNoBasePlate();
+        return !this.getHandle().isNoBasePlate();
     }
 
     @Override
     public void setBasePlate(boolean basePlate) {
-        getHandle().setNoBasePlate(!basePlate);
+        this.getHandle().setNoBasePlate(!basePlate);
     }
 
     @Override
     public void setGravity(boolean gravity) {
         super.setGravity(gravity);
         // Armor stands are special
-        getHandle().noPhysics = !gravity;
+        this.getHandle().noPhysics = !gravity;
     }
 
     @Override
     public boolean isVisible() {
-        return !getHandle().isInvisible();
+        return !this.getHandle().isInvisible();
     }
 
     @Override
     public void setVisible(boolean visible) {
-        getHandle().setInvisible(!visible);
+        this.getHandle().setInvisible(!visible);
     }
 
     @Override
     public boolean hasArms() {
-        return getHandle().isShowArms();
+        return this.getHandle().isShowArms();
     }
 
     @Override
     public void setArms(boolean arms) {
-        getHandle().setShowArms(arms);
+        this.getHandle().setShowArms(arms);
     }
 
     @Override
     public boolean isSmall() {
-        return getHandle().isSmall();
+        return this.getHandle().isSmall();
     }
 
     @Override
     public void setSmall(boolean small) {
-        getHandle().setSmall(small);
+        this.getHandle().setSmall(small);
     }
 
     private static EulerAngle fromNMS(Rotations old) {
@@ -199,26 +200,26 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
 
     @Override
     public boolean isMarker() {
-        return getHandle().isMarker();
+        return this.getHandle().isMarker();
     }
 
     @Override
     public void setMarker(boolean marker) {
-        getHandle().setMarker(marker);
+        this.getHandle().setMarker(marker);
     }
 
     @Override
     public void addEquipmentLock(EquipmentSlot equipmentSlot, LockType lockType) {
-        getHandle().disabledSlots |= (1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8);
+        this.getHandle().disabledSlots |= (1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8);
     }
 
     @Override
     public void removeEquipmentLock(EquipmentSlot equipmentSlot, LockType lockType) {
-        getHandle().disabledSlots &= ~(1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8);
+        this.getHandle().disabledSlots &= ~(1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8);
     }
 
     @Override
     public boolean hasEquipmentLock(EquipmentSlot equipmentSlot, LockType lockType) {
-        return (getHandle().disabledSlots & (1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8)) != 0;
+        return (this.getHandle().disabledSlots & (1 << CraftEquipmentSlot.getNMS(equipmentSlot).getFilterFlag() + lockType.ordinal() * 8)) != 0;
     }
 }

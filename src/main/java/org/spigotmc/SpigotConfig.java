@@ -48,14 +48,15 @@ public class SpigotConfig
     static int version;
     static Map<String, Command> commands;
     /*========================================================================*/
+    private static Metrics metrics;
 
     public static void init(File configFile)
     {
-        CONFIG_FILE = configFile;
-        config = new YamlConfiguration();
+        SpigotConfig.CONFIG_FILE = configFile;
+        SpigotConfig.config = new YamlConfiguration();
         try
         {
-            config.load( CONFIG_FILE );
+            SpigotConfig.config.load( SpigotConfig.CONFIG_FILE );
         } catch ( IOException ex )
         {
         } catch ( InvalidConfigurationException ex )
@@ -64,21 +65,34 @@ public class SpigotConfig
             throw Throwables.propagate( ex );
         }
 
-        config.options().header( HEADER );
-        config.options().copyDefaults( true );
+        SpigotConfig.config.options().header( SpigotConfig.HEADER );
+        SpigotConfig.config.options().copyDefaults( true );
 
-        commands = new HashMap<String, Command>();
-        commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        SpigotConfig.commands = new HashMap<String, Command>();
+        SpigotConfig.commands.put( "spigot", new SpigotCommand( "spigot" ) );
 
-        version = getInt( "config-version", 12 );
-        set( "config-version", 12 );
-        readConfig( SpigotConfig.class, null );
+        SpigotConfig.version = SpigotConfig.getInt( "config-version", 12 );
+        SpigotConfig.set( "config-version", 12 );
+        SpigotConfig.readConfig( SpigotConfig.class, null );
     }
 
     public static void registerCommands()
     {
-        for ( Map.Entry<String, Command> entry : commands.entrySet() ) {
-            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "Spigot", entry.getValue());
+        for ( Map.Entry<String, Command> entry : SpigotConfig.commands.entrySet() )
+        {
+            MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
+        }
+
+        if ( SpigotConfig.metrics == null )
+        {
+            try
+            {
+                SpigotConfig.metrics = new Metrics();
+                SpigotConfig.metrics.start();
+            } catch ( IOException ex )
+            {
+                Bukkit.getServer().getLogger().log( Level.SEVERE, "Could not start metrics service", ex );
+            }
         }
     }
 
@@ -107,71 +121,71 @@ public class SpigotConfig
 
         try
         {
-            config.save( CONFIG_FILE );
+            SpigotConfig.config.save( SpigotConfig.CONFIG_FILE );
         } catch ( IOException ex )
         {
-            Bukkit.getLogger().log( Level.SEVERE, "Could not save " + CONFIG_FILE, ex );
+            Bukkit.getLogger().log( Level.SEVERE, "Could not save " + SpigotConfig.CONFIG_FILE, ex );
         }
     }
 
     private static void set(String path, Object val)
     {
-        config.set( path, val );
+        SpigotConfig.config.set( path, val );
     }
 
     private static boolean getBoolean(String path, boolean def)
     {
-        config.addDefault( path, def );
-        return config.getBoolean( path, config.getBoolean( path ) );
+        SpigotConfig.config.addDefault( path, def );
+        return SpigotConfig.config.getBoolean( path, SpigotConfig.config.getBoolean( path ) );
     }
 
     private static int getInt(String path, int def)
     {
-        config.addDefault( path, def );
-        return config.getInt( path, config.getInt( path ) );
+        SpigotConfig.config.addDefault( path, def );
+        return SpigotConfig.config.getInt( path, SpigotConfig.config.getInt( path ) );
     }
 
     private static <T> List getList(String path, T def)
     {
-        config.addDefault( path, def );
-        return (List<T>) config.getList( path, config.getList( path ) );
+        SpigotConfig.config.addDefault( path, def );
+        return (List<T>) SpigotConfig.config.getList( path, SpigotConfig.config.getList( path ) );
     }
 
     private static String getString(String path, String def)
     {
-        config.addDefault( path, def );
-        return config.getString( path, config.getString( path ) );
+        SpigotConfig.config.addDefault( path, def );
+        return SpigotConfig.config.getString( path, SpigotConfig.config.getString( path ) );
     }
 
     private static double getDouble(String path, double def)
     {
-        config.addDefault( path, def );
-        return config.getDouble( path, config.getDouble( path ) );
+        SpigotConfig.config.addDefault( path, def );
+        return SpigotConfig.config.getDouble( path, SpigotConfig.config.getDouble( path ) );
     }
 
     public static boolean logCommands;
     private static void logCommands()
     {
-        logCommands = getBoolean( "commands.log", true );
+        SpigotConfig.logCommands = SpigotConfig.getBoolean( "commands.log", true );
     }
 
     public static int tabComplete;
     public static boolean sendNamespaced;
     private static void tabComplete()
     {
-        if ( version < 6 )
+        if ( SpigotConfig.version < 6 )
         {
-            boolean oldValue = getBoolean( "commands.tab-complete", true );
+            boolean oldValue = SpigotConfig.getBoolean( "commands.tab-complete", true );
             if ( oldValue )
             {
-                set( "commands.tab-complete", 0 );
+                SpigotConfig.set( "commands.tab-complete", 0 );
             } else
             {
-                set( "commands.tab-complete", -1 );
+                SpigotConfig.set( "commands.tab-complete", -1 );
             }
         }
-        tabComplete = getInt( "commands.tab-complete", 0 );
-        sendNamespaced = getBoolean( "commands.send-namespaced", true );
+        SpigotConfig.tabComplete = SpigotConfig.getInt( "commands.tab-complete", 0 );
+        SpigotConfig.sendNamespaced = SpigotConfig.getBoolean( "commands.send-namespaced", true );
     }
 
     public static String whitelistMessage;
@@ -185,17 +199,17 @@ public class SpigotConfig
     }
     private static void messages()
     {
-        if (version < 8)
+        if (SpigotConfig.version < 8)
         {
-            set( "messages.outdated-client", outdatedClientMessage );
-            set( "messages.outdated-server", outdatedServerMessage );
+            SpigotConfig.set( "messages.outdated-client", SpigotConfig.outdatedClientMessage );
+            SpigotConfig.set( "messages.outdated-server", SpigotConfig.outdatedServerMessage );
         }
 
-        whitelistMessage = transform( getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
-        unknownCommandMessage = transform( getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
-        serverFullMessage = transform( getString( "messages.server-full", "The server is full!" ) );
-        outdatedClientMessage = transform( getString( "messages.outdated-client", outdatedClientMessage ) );
-        outdatedServerMessage = transform( getString( "messages.outdated-server", outdatedServerMessage ) );
+        SpigotConfig.whitelistMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
+        SpigotConfig.unknownCommandMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
+        SpigotConfig.serverFullMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.server-full", "The server is full!" ) );
+        SpigotConfig.outdatedClientMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.outdated-client", SpigotConfig.outdatedClientMessage ) );
+        SpigotConfig.outdatedServerMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.outdated-server", SpigotConfig.outdatedServerMessage ) );
     }
 
     public static int timeoutTime = 60;
@@ -204,26 +218,27 @@ public class SpigotConfig
     public static String restartMessage;
     private static void watchdog()
     {
-        timeoutTime = getInt( "settings.timeout-time", timeoutTime );
-        restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
-        restartScript = getString( "settings.restart-script", restartScript );
-        restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
-        WatchdogThread.doStart( timeoutTime, restartOnCrash );
+        SpigotConfig.timeoutTime = SpigotConfig.getInt( "settings.timeout-time", SpigotConfig.timeoutTime );
+        SpigotConfig.restartOnCrash = SpigotConfig.getBoolean( "settings.restart-on-crash", SpigotConfig.restartOnCrash );
+        SpigotConfig.restartScript = SpigotConfig.getString( "settings.restart-script", SpigotConfig.restartScript );
+        SpigotConfig.restartMessage = SpigotConfig.transform( SpigotConfig.getString( "messages.restart", "Server is restarting" ) );
+        SpigotConfig.commands.put( "restart", new RestartCommand( "restart" ) );
+        WatchdogThread.doStart( SpigotConfig.timeoutTime, SpigotConfig.restartOnCrash );
     }
 
     public static boolean bungee;
     private static void bungee() {
-        if ( version < 4 )
+        if ( SpigotConfig.version < 4 )
         {
-            set( "settings.bungeecord", false );
-            System.out.println( "Oudated config, disabling BungeeCord support!" );
+            SpigotConfig.set( "settings.bungeecord", false );
+            System.out.println( "Outdated config, disabling BungeeCord support!" );
         }
-        bungee = getBoolean( "settings.bungeecord", false );
+        SpigotConfig.bungee = SpigotConfig.getBoolean( "settings.bungeecord", false );
     }
 
     private static void nettyThreads()
     {
-        int count = getInt( "settings.netty-threads", 4 );
+        int count = SpigotConfig.getInt( "settings.netty-threads", 4 );
         System.setProperty( "io.netty.eventLoopThreads", Integer.toString( count ) );
         Bukkit.getLogger().log( Level.INFO, "Using {0} threads for Netty based IO", count );
     }
@@ -232,13 +247,13 @@ public class SpigotConfig
     public static Map<ResourceLocation, Integer> forcedStats = new HashMap<>();
     private static void stats()
     {
-        disableStatSaving = getBoolean( "stats.disable-saving", false );
+        SpigotConfig.disableStatSaving = SpigotConfig.getBoolean( "stats.disable-saving", false );
 
-        if ( !config.contains( "stats.forced-stats" ) ) {
-            config.createSection( "stats.forced-stats" );
+        if ( !SpigotConfig.config.contains( "stats.forced-stats" ) ) {
+            SpigotConfig.config.createSection( "stats.forced-stats" );
         }
 
-        ConfigurationSection section = config.getConfigurationSection( "stats.forced-stats" );
+        ConfigurationSection section = SpigotConfig.config.getConfigurationSection( "stats.forced-stats" );
         for ( String name : section.getKeys( true ) )
         {
             if ( section.isInt( name ) )
@@ -251,7 +266,7 @@ public class SpigotConfig
                         Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
                         continue;
                     }
-                    forcedStats.put( key, section.getInt( name ) );
+                    SpigotConfig.forcedStats.put( key, section.getInt( name ) );
                 } catch (Exception ex)
                 {
                     Bukkit.getLogger().log(Level.WARNING, "Ignoring invalid stats.forced-stats " + name);
@@ -262,26 +277,26 @@ public class SpigotConfig
 
     private static void tpsCommand()
     {
-        commands.put( "tps", new TicksPerSecondCommand( "tps" ) );
+        SpigotConfig.commands.put( "tps", new TicksPerSecondCommand( "tps" ) );
     }
 
     public static int playerSample;
     private static void playerSample()
     {
-        playerSample = getInt( "settings.sample-count", 12 );
-        System.out.println( "Server Ping Player Sample Count: " + playerSample );
+        SpigotConfig.playerSample = SpigotConfig.getInt( "settings.sample-count", 12 );
+        System.out.println( "Server Ping Player Sample Count: " + SpigotConfig.playerSample );
     }
 
     public static int playerShuffle;
     private static void playerShuffle()
     {
-        playerShuffle = getInt( "settings.player-shuffle", 0 );
+        SpigotConfig.playerShuffle = SpigotConfig.getInt( "settings.player-shuffle", 0 );
     }
 
     public static List<String> spamExclusions;
     private static void spamExclusions()
     {
-        spamExclusions = getList( "commands.spam-exclusions", Arrays.asList( new String[]
+        SpigotConfig.spamExclusions = SpigotConfig.getList( "commands.spam-exclusions", Arrays.asList( new String[]
         {
                 "/skill"
         } ) );
@@ -290,43 +305,43 @@ public class SpigotConfig
     public static boolean silentCommandBlocks;
     private static void silentCommandBlocks()
     {
-        silentCommandBlocks = getBoolean( "commands.silent-commandblock-console", false );
+        SpigotConfig.silentCommandBlocks = SpigotConfig.getBoolean( "commands.silent-commandblock-console", false );
     }
 
     public static Set<String> replaceCommands;
     private static void replaceCommands()
     {
-        if ( config.contains( "replace-commands" ) )
+        if ( SpigotConfig.config.contains( "replace-commands" ) )
         {
-            set( "commands.replace-commands", config.getStringList( "replace-commands" ) );
-            config.set( "replace-commands", null );
+            SpigotConfig.set( "commands.replace-commands", SpigotConfig.config.getStringList( "replace-commands" ) );
+            SpigotConfig.config.set( "replace-commands", null );
         }
-        replaceCommands = new HashSet<String>( (List<String>) getList( "commands.replace-commands",
+        SpigotConfig.replaceCommands = new HashSet<String>( (List<String>) SpigotConfig.getList( "commands.replace-commands",
                 Arrays.asList( "setblock", "summon", "testforblock", "tellraw" ) ) );
     }
 
     public static int userCacheCap;
     private static void userCacheCap()
     {
-        userCacheCap = getInt( "settings.user-cache-size", 1000 );
+        SpigotConfig.userCacheCap = SpigotConfig.getInt( "settings.user-cache-size", 1000 );
     }
 
     public static boolean saveUserCacheOnStopOnly;
     private static void saveUserCacheOnStopOnly()
     {
-        saveUserCacheOnStopOnly = getBoolean( "settings.save-user-cache-on-stop-only", false );
+        SpigotConfig.saveUserCacheOnStopOnly = SpigotConfig.getBoolean( "settings.save-user-cache-on-stop-only", false );
     }
 
     public static double movedWronglyThreshold;
     private static void movedWronglyThreshold()
     {
-        movedWronglyThreshold = getDouble( "settings.moved-wrongly-threshold", 0.0625D );
+        SpigotConfig.movedWronglyThreshold = SpigotConfig.getDouble( "settings.moved-wrongly-threshold", 0.0625D );
     }
 
     public static double movedTooQuicklyMultiplier;
     private static void movedTooQuicklyMultiplier()
     {
-        movedTooQuicklyMultiplier = getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
+        SpigotConfig.movedTooQuicklyMultiplier = SpigotConfig.getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
     }
 
     public static double maxHealth = 2048;
@@ -334,20 +349,20 @@ public class SpigotConfig
     public static double attackDamage = 2048;
     private static void attributeMaxes()
     {
-        maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
-        ( (RangedAttribute) Attributes.MAX_HEALTH ).maxValue = maxHealth;
-        movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
-        ( (RangedAttribute) Attributes.MOVEMENT_SPEED ).maxValue = movementSpeed;
-        attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
-        ( (RangedAttribute) Attributes.ATTACK_DAMAGE ).maxValue = attackDamage;
+        SpigotConfig.maxHealth = SpigotConfig.getDouble( "settings.attribute.maxHealth.max", SpigotConfig.maxHealth );
+        ( (RangedAttribute) Attributes.MAX_HEALTH.value() ).maxValue = SpigotConfig.maxHealth;
+        SpigotConfig.movementSpeed = SpigotConfig.getDouble( "settings.attribute.movementSpeed.max", SpigotConfig.movementSpeed );
+        ( (RangedAttribute) Attributes.MOVEMENT_SPEED.value() ).maxValue = SpigotConfig.movementSpeed;
+        SpigotConfig.attackDamage = SpigotConfig.getDouble( "settings.attribute.attackDamage.max", SpigotConfig.attackDamage );
+        ( (RangedAttribute) Attributes.ATTACK_DAMAGE.value() ).maxValue = SpigotConfig.attackDamage;
     }
 
     public static boolean debug;
     private static void debug()
     {
-        debug = getBoolean( "settings.debug", false );
+        SpigotConfig.debug = SpigotConfig.getBoolean( "settings.debug", false );
 
-        if ( debug && !LogManager.getRootLogger().isTraceEnabled() )
+        if ( SpigotConfig.debug && !LogManager.getRootLogger().isTraceEnabled() )
         {
             // Enable debug logging
             LoggerContext ctx = (LoggerContext) LogManager.getContext( false );
@@ -368,24 +383,24 @@ public class SpigotConfig
     public static boolean disableAdvancementSaving;
     public static List<String> disabledAdvancements;
     private static void disabledAdvancements() {
-        disableAdvancementSaving = getBoolean("advancements.disable-saving", false);
-        disabledAdvancements = getList("advancements.disabled", Arrays.asList(new String[]{"minecraft:story/disabled"}));
+        SpigotConfig.disableAdvancementSaving = SpigotConfig.getBoolean("advancements.disable-saving", false);
+        SpigotConfig.disabledAdvancements = SpigotConfig.getList("advancements.disabled", Arrays.asList(new String[]{"minecraft:story/disabled"}));
     }
 
     public static boolean logVillagerDeaths;
     public static boolean logNamedDeaths;
     private static void logDeaths() {
-        logVillagerDeaths = getBoolean("settings.log-villager-deaths", false);
-        logNamedDeaths = getBoolean("settings.log-named-deaths", false);
+        SpigotConfig.logVillagerDeaths = SpigotConfig.getBoolean("settings.log-villager-deaths", true);
+        SpigotConfig.logNamedDeaths = SpigotConfig.getBoolean("settings.log-named-deaths", true);
     }
 
     public static boolean disablePlayerDataSaving;
     private static void disablePlayerDataSaving() {
-        disablePlayerDataSaving = getBoolean("players.disable-saving", false);
+        SpigotConfig.disablePlayerDataSaving = SpigotConfig.getBoolean("players.disable-saving", false);
     }
 
     public static boolean belowZeroGenerationInExistingChunks;
     private static void belowZeroGenerationInExistingChunks() {
-        belowZeroGenerationInExistingChunks = getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
+        SpigotConfig.belowZeroGenerationInExistingChunks = SpigotConfig.getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
     }
 }

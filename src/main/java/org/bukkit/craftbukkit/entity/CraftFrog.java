@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.animal.frog.Frog;
@@ -18,7 +19,7 @@ public class CraftFrog extends CraftAnimals implements org.bukkit.entity.Frog {
 
     @Override
     public Frog getHandle() {
-        return (Frog) entity;
+        return (Frog) this.entity;
     }
 
     @Override
@@ -28,28 +29,28 @@ public class CraftFrog extends CraftAnimals implements org.bukkit.entity.Frog {
 
     @Override
     public Entity getTongueTarget() {
-        return getHandle().getTongueTarget().map(net.minecraft.world.entity.Entity::getBukkitEntity).orElse(null);
+        return this.getHandle().getTongueTarget().map(net.minecraft.world.entity.Entity::getBukkitEntity).orElse(null);
     }
 
     @Override
     public void setTongueTarget(Entity target) {
         if (target == null) {
-            getHandle().eraseTongueTarget();
+            this.getHandle().eraseTongueTarget();
         } else {
-            getHandle().setTongueTarget(((CraftEntity) target).getHandle());
+            this.getHandle().setTongueTarget(((CraftEntity) target).getHandle());
         }
     }
 
     @Override
     public Variant getVariant() {
-        return CraftVariant.minecraftToBukkit(getHandle().getVariant());
+        return CraftVariant.minecraftHolderToBukkit(this.getHandle().getVariant());
     }
 
     @Override
     public void setVariant(Variant variant) {
         Preconditions.checkArgument(variant != null, "variant");
 
-        getHandle().setVariant(CraftVariant.bukkitToMinecraft(variant));
+        this.getHandle().setVariant(CraftVariant.bukkitToMinecraftHolder(variant));
     }
 
     public static class CraftVariant {
@@ -65,11 +66,28 @@ public class CraftFrog extends CraftAnimals implements org.bukkit.entity.Frog {
             return bukkit;
         }
 
+        public static Variant minecraftHolderToBukkit(Holder<FrogVariant> minecraft) {
+            return CraftVariant.minecraftToBukkit(minecraft.value());
+        }
+
         public static FrogVariant bukkitToMinecraft(Variant bukkit) {
             Preconditions.checkArgument(bukkit != null);
 
             return CraftRegistry.getMinecraftRegistry(Registries.FROG_VARIANT)
                     .getOptional(CraftNamespacedKey.toMinecraft(bukkit.getKey())).orElseThrow();
+        }
+
+        public static Holder<FrogVariant> bukkitToMinecraftHolder(Variant bukkit) {
+            Preconditions.checkArgument(bukkit != null);
+
+            net.minecraft.core.Registry<FrogVariant> registry = CraftRegistry.getMinecraftRegistry(Registries.FROG_VARIANT);
+
+            if (registry.wrapAsHolder(CraftVariant.bukkitToMinecraft(bukkit)) instanceof Holder.Reference<FrogVariant> holder) {
+                return holder;
+            }
+
+            throw new IllegalArgumentException("No Reference holder found for " + bukkit
+                    + ", this can happen if a plugin creates its own frog variant with out properly registering it.");
         }
     }
 }

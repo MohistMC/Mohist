@@ -13,36 +13,36 @@ public final class CraftDropper extends org.bukkit.craftbukkit.block.data.CraftB
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftDispenser
+    // org.bukkit.craftbukkit.block.data.type.CraftDispenser
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = getBoolean(net.minecraft.world.level.block.DropperBlock.class, "triggered");
 
     @Override
     public boolean isTriggered() {
-        return get(TRIGGERED);
+        return this.get(CraftDropper.TRIGGERED);
     }
 
     @Override
     public void setTriggered(boolean triggered) {
-        set(TRIGGERED, triggered);
+        this.set(CraftDropper.TRIGGERED, triggered);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.DropperBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+        return this.get(CraftDropper.FACING, org.bukkit.block.BlockFace.class);
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+        this.set(CraftDropper.FACING, facing);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
+        return this.getValues(CraftDropper.FACING, org.bukkit.block.BlockFace.class);
     }
 }

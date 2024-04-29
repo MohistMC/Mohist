@@ -3,7 +3,9 @@ package org.bukkit.craftbukkit.generator;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -21,12 +23,12 @@ import org.bukkit.material.MaterialData;
 public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
     private final int minHeight;
     private final int maxHeight;
-    private final net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> biomes;
     private final LevelChunkSection[] sections;
+    private final Registry<net.minecraft.world.level.biome.Biome> biomes;
     private Set<BlockPos> tiles;
     private final Set<BlockPos> lights = new HashSet<>();
 
-    public OldCraftChunkData(int minHeight, int maxHeight, net.minecraft.core.Registry<net.minecraft.world.level.biome.Biome> biomes) {
+    public OldCraftChunkData(int minHeight, int maxHeight, Registry<net.minecraft.world.level.biome.Biome> biomes) {
         this.minHeight = minHeight;
         this.maxHeight = maxHeight;
         this.biomes = biomes;
@@ -35,12 +37,12 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
 
     @Override
     public int getMinHeight() {
-        return minHeight;
+        return this.minHeight;
     }
 
     @Override
     public int getMaxHeight() {
-        return maxHeight;
+        return this.maxHeight;
     }
 
     @Override
@@ -50,59 +52,59 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
 
     @Override
     public void setBlock(int x, int y, int z, Material material) {
-        setBlock(x, y, z, material.createBlockData());
+        this.setBlock(x, y, z, material.createBlockData());
     }
 
     @Override
     public void setBlock(int x, int y, int z, MaterialData material) {
-        setBlock(x, y, z, CraftMagicNumbers.getBlock(material));
+        this.setBlock(x, y, z, CraftMagicNumbers.getBlock(material));
     }
 
     @Override
     public void setBlock(int x, int y, int z, BlockData blockData) {
-        setBlock(x, y, z, ((CraftBlockData) blockData).getState());
+        this.setBlock(x, y, z, ((CraftBlockData) blockData).getState());
     }
 
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Material material) {
-        setRegion(xMin, yMin, zMin, xMax, yMax, zMax, material.createBlockData());
+        this.setRegion(xMin, yMin, zMin, xMax, yMax, zMax, material.createBlockData());
     }
 
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, MaterialData material) {
-        setRegion(xMin, yMin, zMin, xMax, yMax, zMax, CraftMagicNumbers.getBlock(material));
+        this.setRegion(xMin, yMin, zMin, xMax, yMax, zMax, CraftMagicNumbers.getBlock(material));
     }
 
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, BlockData blockData) {
-        setRegion(xMin, yMin, zMin, xMax, yMax, zMax, ((CraftBlockData) blockData).getState());
+        this.setRegion(xMin, yMin, zMin, xMax, yMax, zMax, ((CraftBlockData) blockData).getState());
     }
 
     @Override
     public Material getType(int x, int y, int z) {
-        return CraftBlockType.minecraftToBukkit(getTypeId(x, y, z).getBlock());
+        return CraftBlockType.minecraftToBukkit(this.getTypeId(x, y, z).getBlock());
     }
 
     @Override
     public MaterialData getTypeAndData(int x, int y, int z) {
-        return CraftMagicNumbers.getMaterial(getTypeId(x, y, z));
+        return CraftMagicNumbers.getMaterial(this.getTypeId(x, y, z));
     }
 
     @Override
     public BlockData getBlockData(int x, int y, int z) {
-        return CraftBlockData.fromData(getTypeId(x, y, z));
+        return CraftBlockData.fromData(this.getTypeId(x, y, z));
     }
 
-    public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, net.minecraft.world.level.block.state.BlockState type) {
+    public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, BlockState type) {
         // Clamp to sane values.
-        if (xMin > 0xf || yMin >= maxHeight || zMin > 0xf) {
+        if (xMin > 0xf || yMin >= this.maxHeight || zMin > 0xf) {
             return;
         }
         if (xMin < 0) {
             xMin = 0;
         }
-        if (yMin < minHeight) {
-            yMin = minHeight;
+        if (yMin < this.minHeight) {
+            yMin = this.minHeight;
         }
         if (zMin < 0) {
             zMin = 0;
@@ -110,8 +112,8 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
         if (xMax > 0x10) {
             xMax = 0x10;
         }
-        if (yMax > maxHeight) {
-            yMax = maxHeight;
+        if (yMax > this.maxHeight) {
+            yMax = this.maxHeight;
         }
         if (zMax > 0x10) {
             zMax = 0x10;
@@ -120,7 +122,7 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
             return;
         }
         for (int y = yMin; y < yMax; y++) {
-            LevelChunkSection section = getChunkSection(y, true);
+            LevelChunkSection section = this.getChunkSection(y, true);
             int offsetBase = y & 0xf;
             for (int x = xMin; x < xMax; x++) {
                 for (int z = zMin; z < zMax; z++) {
@@ -130,11 +132,11 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
         }
     }
 
-    public net.minecraft.world.level.block.state.BlockState getTypeId(int x, int y, int z) {
-        if (x != (x & 0xf) || y < minHeight || y >= maxHeight || z != (z & 0xf)) {
+    public BlockState getTypeId(int x, int y, int z) {
+        if (x != (x & 0xf) || y < this.minHeight || y >= this.maxHeight || z != (z & 0xf)) {
             return Blocks.AIR.defaultBlockState();
         }
-        LevelChunkSection section = getChunkSection(y, false);
+        LevelChunkSection section = this.getChunkSection(y, false);
         if (section == null) {
             return Blocks.AIR.defaultBlockState();
         } else {
@@ -144,50 +146,50 @@ public final class OldCraftChunkData implements ChunkGenerator.ChunkData {
 
     @Override
     public byte getData(int x, int y, int z) {
-        return CraftMagicNumbers.toLegacyData(getTypeId(x, y, z));
+        return CraftMagicNumbers.toLegacyData(this.getTypeId(x, y, z));
     }
 
-    private void setBlock(int x, int y, int z, net.minecraft.world.level.block.state.BlockState type) {
-        if (x != (x & 0xf) || y < minHeight || y >= maxHeight || z != (z & 0xf)) {
+    private void setBlock(int x, int y, int z, BlockState type) {
+        if (x != (x & 0xf) || y < this.minHeight || y >= this.maxHeight || z != (z & 0xf)) {
             return;
         }
-        LevelChunkSection section = getChunkSection(y, true);
+        LevelChunkSection section = this.getChunkSection(y, true);
         section.setBlockState(x, y & 0xf, z, type);
 
         // SPIGOT-1753: Capture light blocks, for light updates
-        if (type.getLightEmission() > 0) { // PAIL rename getLightEmission
-            lights.add(BlockPos.containing(x, y, z));
+        if (type.getLightEmission() > 0) {
+            this.lights.add(new BlockPos(x, y, z));
         } else {
-            lights.remove(BlockPos.containing(x, y, z));
+            this.lights.remove(new BlockPos(x, y, z));
         }
 
         if (type.hasBlockEntity()) {
-            if (tiles == null) {
-                tiles = new HashSet<>();
+            if (this.tiles == null) {
+                this.tiles = new HashSet<>();
             }
 
-            tiles.add(BlockPos.containing(x, y, z));
+            this.tiles.add(new BlockPos(x, y, z));
         }
     }
 
     private LevelChunkSection getChunkSection(int y, boolean create) {
-        int offset = (y - minHeight) >> 4;
-        LevelChunkSection section = sections[offset];
+        int offset = (y - this.minHeight) >> 4;
+        LevelChunkSection section = this.sections[offset];
         if (create && section == null) {
-            sections[offset] = section = new LevelChunkSection(biomes);
+            this.sections[offset] = section = new LevelChunkSection(this.biomes);
         }
         return section;
     }
 
     LevelChunkSection[] getRawChunkData() {
-        return sections;
+        return this.sections;
     }
 
     Set<BlockPos> getTiles() {
-        return tiles;
+        return this.tiles;
     }
 
     Set<BlockPos> getLights() {
-        return lights;
+        return this.lights;
     }
 }

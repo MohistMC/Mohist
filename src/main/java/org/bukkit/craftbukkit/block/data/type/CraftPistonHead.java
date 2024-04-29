@@ -9,11 +9,11 @@ public abstract class CraftPistonHead extends CraftBlockData implements PistonHe
 
     @Override
     public boolean isShort() {
-        return get(SHORT);
+        return this.get(CraftPistonHead.SHORT);
     }
 
     @Override
     public void setShort(boolean _short) {
-        set(SHORT, _short);
+        this.set(CraftPistonHead.SHORT, _short);
     }
 }

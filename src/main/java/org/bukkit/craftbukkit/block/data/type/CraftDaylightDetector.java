@@ -9,11 +9,11 @@ public abstract class CraftDaylightDetector extends CraftBlockData implements Da
 
     @Override
     public boolean isInverted() {
-        return get(INVERTED);
+        return this.get(CraftDaylightDetector.INVERTED);
     }
 
     @Override
     public void setInverted(boolean inverted) {
-        set(INVERTED, inverted);
+        this.set(CraftDaylightDetector.INVERTED, inverted);
     }
 }

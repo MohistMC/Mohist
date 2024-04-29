@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.util.List;
+import net.minecraft.world.entity.npc.Villager;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftMerchant;
@@ -18,7 +19,7 @@ public class CraftAbstractVillager extends CraftAgeable implements AbstractVilla
 
     @Override
     public net.minecraft.world.entity.npc.AbstractVillager getHandle() {
-        return (net.minecraft.world.entity.npc.AbstractVillager) entity;
+        return (Villager) this.entity;
     }
 
     @Override
@@ -28,16 +29,16 @@ public class CraftAbstractVillager extends CraftAgeable implements AbstractVilla
 
     @Override
     public Inventory getInventory() {
-        return new CraftInventory(getHandle().getInventory());
+        return new CraftInventory(this.getHandle().getInventory());
     }
 
     private CraftMerchant getMerchant() {
-        return getHandle().getCraftMerchant();
+        return this.getHandle().getCraftMerchant();
     }
 
     @Override
     public List<MerchantRecipe> getRecipes() {
-        return getMerchant().getRecipes();
+        return this.getMerchant().getRecipes();
     }
 
     @Override
@@ -47,26 +48,26 @@ public class CraftAbstractVillager extends CraftAgeable implements AbstractVilla
 
     @Override
     public MerchantRecipe getRecipe(int i) {
-        return getMerchant().getRecipe(i);
+        return this.getMerchant().getRecipe(i);
     }
 
     @Override
     public void setRecipe(int i, MerchantRecipe merchantRecipe) {
-        getMerchant().setRecipe(i, merchantRecipe);
+        this.getMerchant().setRecipe(i, merchantRecipe);
     }
 
     @Override
     public int getRecipeCount() {
-        return getMerchant().getRecipeCount();
+        return this.getMerchant().getRecipeCount();
     }
 
     @Override
     public boolean isTrading() {
-        return getTrader() != null;
+        return this.getTrader() != null;
     }
 
     @Override
     public HumanEntity getTrader() {
-        return getMerchant().getTrader();
+        return this.getMerchant().getTrader();
     }
 }

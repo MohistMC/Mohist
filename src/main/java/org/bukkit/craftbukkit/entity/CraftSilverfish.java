@@ -10,7 +10,7 @@ public class CraftSilverfish extends CraftMonster implements Silverfish {
 
     @Override
     public net.minecraft.world.entity.monster.Silverfish getHandle() {
-        return (net.minecraft.world.entity.monster.Silverfish) entity;
+        return (net.minecraft.world.entity.monster.Silverfish) this.entity;
     }
 
     @Override

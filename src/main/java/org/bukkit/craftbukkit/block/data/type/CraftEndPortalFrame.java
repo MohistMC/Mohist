@@ -9,11 +9,11 @@ public abstract class CraftEndPortalFrame extends CraftBlockData implements EndP
 
     @Override
     public boolean hasEye() {
-        return get(EYE);
+        return this.get(CraftEndPortalFrame.EYE);
     }
 
     @Override
     public void setEye(boolean eye) {
-        set(EYE, eye);
+        this.set(CraftEndPortalFrame.EYE, eye);
     }
 }

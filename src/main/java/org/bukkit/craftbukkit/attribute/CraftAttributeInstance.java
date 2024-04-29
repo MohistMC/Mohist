@@ -21,24 +21,24 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public Attribute getAttribute() {
-        return attribute;
+        return this.attribute;
     }
 
     @Override
     public double getBaseValue() {
-        return handle.getBaseValue();
+        return this.handle.getBaseValue();
     }
 
     @Override
     public void setBaseValue(double d) {
-        handle.setBaseValue(d);
+        this.handle.setBaseValue(d);
     }
 
     @Override
     public Collection<AttributeModifier> getModifiers() {
         List<AttributeModifier> result = new ArrayList<AttributeModifier>();
-        for (net.minecraft.world.entity.ai.attributes.AttributeModifier nms : handle.getModifiers()) {
-            result.add(convert(nms));
+        for (net.minecraft.world.entity.ai.attributes.AttributeModifier nms : this.handle.getModifiers()) {
+            result.add(CraftAttributeInstance.convert(nms));
         }
 
         return result;
@@ -47,23 +47,23 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public void addModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        handle.addPermanentModifier(convert(modifier));
+        this.handle.addPermanentModifier(CraftAttributeInstance.convert(modifier));
     }
 
     @Override
     public void removeModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        handle.removeModifier(convert(modifier));
+        this.handle.removeModifier(CraftAttributeInstance.convert(modifier));
     }
 
     @Override
     public double getValue() {
-        return handle.getValue();
+        return this.handle.getValue();
     }
 
     @Override
     public double getDefaultValue() {
-       return handle.getAttribute().getDefaultValue();
+       return this.handle.getAttribute().value().getDefaultValue();
     }
 
     public static net.minecraft.world.entity.ai.attributes.AttributeModifier convert(AttributeModifier bukkit) {
@@ -71,10 +71,10 @@ public class CraftAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(net.minecraft.world.entity.ai.attributes.AttributeModifier nms) {
-        return new AttributeModifier(nms.getId(), nms.name, nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+        return new AttributeModifier(nms.id(), nms.name, nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()]);
     }
 
     public static AttributeModifier convert(net.minecraft.world.entity.ai.attributes.AttributeModifier nms, EquipmentSlot slot) {
-        return new AttributeModifier(nms.getId(), nms.name, nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()], slot);
+        return new AttributeModifier(nms.id(), nms.name, nms.amount(), AttributeModifier.Operation.values()[nms.operation().ordinal()], slot);
     }
 }

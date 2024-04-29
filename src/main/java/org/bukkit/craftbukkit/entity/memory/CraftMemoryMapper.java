@@ -14,7 +14,7 @@ public final class CraftMemoryMapper {
 
     public static Object fromNms(Object object) {
         if (object instanceof GlobalPos) {
-            return fromNms((GlobalPos) object);
+            return CraftMemoryMapper.fromNms((GlobalPos) object);
         } else if (object instanceof Long) {
             return (Long) object;
         } else if (object instanceof UUID) {
@@ -32,7 +32,7 @@ public final class CraftMemoryMapper {
         if (object == null) {
             return null;
         } else if (object instanceof Location) {
-            return toNms((Location) object);
+            return CraftMemoryMapper.toNms((Location) object);
         } else if (object instanceof Long) {
             return (Long) object;
         } else if (object instanceof UUID) {

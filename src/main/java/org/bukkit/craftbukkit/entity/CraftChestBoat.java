@@ -1,12 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.ChestBoat;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.CraftLootTable;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.loot.LootTable;
 
@@ -16,12 +13,12 @@ public class CraftChestBoat extends CraftBoat implements org.bukkit.entity.Chest
 
     public CraftChestBoat(CraftServer server, ChestBoat entity) {
         super(server, entity);
-        inventory = new CraftInventory(entity);
+        this.inventory = new CraftInventory(entity);
     }
 
     @Override
     public ChestBoat getHandle() {
-        return (ChestBoat) entity;
+        return (ChestBoat) this.entity;
     }
 
     @Override
@@ -31,38 +28,31 @@ public class CraftChestBoat extends CraftBoat implements org.bukkit.entity.Chest
 
     @Override
     public Inventory getInventory() {
-        return inventory;
+        return this.inventory;
     }
 
     @Override
     public void setLootTable(LootTable table) {
-        setLootTable(table, getSeed());
+        this.setLootTable(table, this.getSeed());
     }
 
     @Override
     public LootTable getLootTable() {
-        ResourceLocation nmsTable = getHandle().getLootTable();
-        if (nmsTable == null) {
-            return null; // return empty loot table?
-        }
-
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(nmsTable);
-        return Bukkit.getLootTable(key);
+        return CraftLootTable.minecraftToBukkit(this.getHandle().getLootTable());
     }
 
     @Override
     public void setSeed(long seed) {
-        setLootTable(getLootTable(), seed);
+        this.setLootTable(this.getLootTable(), seed);
     }
 
     @Override
     public long getSeed() {
-        return getHandle().getLootTableSeed();
+        return this.getHandle().getLootTableSeed();
     }
 
     private void setLootTable(LootTable table, long seed) {
-        ResourceLocation newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
-        getHandle().setLootTable(newKey);
-        getHandle().setLootTableSeed(seed);
+        this.getHandle().setLootTable(CraftLootTable.bukkitToMinecraft(table));
+        this.getHandle().setLootTableSeed(seed);
     }
 }

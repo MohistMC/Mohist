@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.monster.SpellcasterIllager;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Spellcaster;
+import org.bukkit.entity.Spellcaster.Spell;
 
 public class CraftSpellcaster extends CraftIllager implements Spellcaster {
 
@@ -23,14 +24,14 @@ public class CraftSpellcaster extends CraftIllager implements Spellcaster {
 
     @Override
     public Spell getSpell() {
-        return toBukkitSpell(getHandle().getCurrentSpell());
+        return CraftSpellcaster.toBukkitSpell(this.getHandle().getCurrentSpell());
     }
 
     @Override
     public void setSpell(Spell spell) {
         Preconditions.checkArgument(spell != null, "Use Spell.NONE");
 
-        getHandle().setIsCastingSpell(toNMSSpell(spell));
+        this.getHandle().setIsCastingSpell(CraftSpellcaster.toNMSSpell(spell));
     }
 
     public static Spell toBukkitSpell(SpellcasterIllager.IllagerSpell spell) {

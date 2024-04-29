@@ -10,7 +10,7 @@ public class CraftBat extends CraftAmbient implements Bat {
 
     @Override
     public net.minecraft.world.entity.ambient.Bat getHandle() {
-        return (net.minecraft.world.entity.ambient.Bat) entity;
+        return (net.minecraft.world.entity.ambient.Bat) this.entity;
     }
 
     @Override
@@ -20,11 +20,11 @@ public class CraftBat extends CraftAmbient implements Bat {
 
     @Override
     public boolean isAwake() {
-        return !getHandle().isResting();
+        return !this.getHandle().isResting();
     }
 
     @Override
     public void setAwake(boolean state) {
-        getHandle().setResting(!state);
+        this.getHandle().setResting(!state);
     }
 }

@@ -11,21 +11,21 @@ public class CraftInventoryEnchanting extends CraftInventory implements Enchanti
 
     @Override
     public void setItem(ItemStack item) {
-        setItem(0, item);
+        this.setItem(0, item);
     }
 
     @Override
     public ItemStack getItem() {
-        return getItem(0);
+        return this.getItem(0);
     }
 
     @Override
     public void setSecondary(ItemStack item) {
-        setItem(1, item);
+        this.setItem(1, item);
     }
 
     @Override
     public ItemStack getSecondary() {
-        return getItem(1);
+        return this.getItem(1);
     }
 }

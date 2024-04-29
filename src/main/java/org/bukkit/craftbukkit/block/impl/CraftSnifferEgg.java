@@ -19,16 +19,16 @@ public final class CraftSnifferEgg extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public int getHatch() {
-        return get(HATCH);
+        return this.get(CraftSnifferEgg.HATCH);
     }
 
     @Override
     public void setHatch(int hatch) {
-        set(HATCH, hatch);
+        this.set(CraftSnifferEgg.HATCH, hatch);
     }
 
     @Override
     public int getMaximumHatch() {
-        return getMax(HATCH);
+        return getMax(CraftSnifferEgg.HATCH);
     }
 }

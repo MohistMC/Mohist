@@ -19,17 +19,17 @@ public final class CraftPinkPetals extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public int getFlowerAmount() {
-        return get(FLOWER_AMOUNT);
+        return this.get(CraftPinkPetals.FLOWER_AMOUNT);
     }
 
     @Override
     public void setFlowerAmount(int flower_amount) {
-        set(FLOWER_AMOUNT, flower_amount);
+        this.set(CraftPinkPetals.FLOWER_AMOUNT, flower_amount);
     }
 
     @Override
     public int getMaximumFlowerAmount() {
-        return getMax(FLOWER_AMOUNT);
+        return getMax(CraftPinkPetals.FLOWER_AMOUNT);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
@@ -38,16 +38,16 @@ public final class CraftPinkPetals extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+        return this.get(CraftPinkPetals.FACING, org.bukkit.block.BlockFace.class);
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+        this.set(CraftPinkPetals.FACING, facing);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
+        return this.getValues(CraftPinkPetals.FACING, org.bukkit.block.BlockFace.class);
     }
 }

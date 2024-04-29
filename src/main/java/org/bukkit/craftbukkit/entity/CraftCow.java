@@ -11,7 +11,7 @@ public class CraftCow extends CraftAnimals implements Cow {
 
     @Override
     public net.minecraft.world.entity.animal.Cow getHandle() {
-        return (net.minecraft.world.entity.animal.Cow) entity;
+        return (net.minecraft.world.entity.animal.Cow) this.entity;
     }
 
     @Override

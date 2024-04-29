@@ -30,7 +30,7 @@ public final class CraftCriteria implements Criteria {
 
     private CraftCriteria(String bukkitName) {
         this.bukkitName = bukkitName;
-        this.criteria = DUMMY.criteria;
+        this.criteria = CraftCriteria.DUMMY.criteria;
     }
 
     private CraftCriteria(ObjectiveCriteria criteria) {
@@ -40,28 +40,29 @@ public final class CraftCriteria implements Criteria {
 
     @Override
     public String getName() {
-        return bukkitName;
+        return this.bukkitName;
     }
 
     @Override
     public boolean isReadOnly() {
-        return criteria.isReadOnly();
+        return this.criteria.isReadOnly();
     }
 
     @Override
     public RenderType getDefaultRenderType() {
-        return RenderType.values()[criteria.getDefaultRenderType().ordinal()];
+        return RenderType.values()[this.criteria.getDefaultRenderType().ordinal()];
     }
 
     static CraftCriteria getFromNMS(Objective objective) {
-        return DEFAULTS.get(objective.getCriteria().getName());
+        return CraftCriteria.DEFAULTS.get(objective.getCriteria().getName());
     }
 
     public static CraftCriteria getFromBukkit(String name) {
-        CraftCriteria criteria = DEFAULTS.get(name);
+        CraftCriteria criteria = CraftCriteria.DEFAULTS.get(name);
         if (criteria != null) {
             return criteria;
         }
+
         return ObjectiveCriteria.byName(name).map(CraftCriteria::new).orElseGet(() -> new CraftCriteria(name));
     }
 

@@ -11,61 +11,61 @@ public class CraftAgeable extends CraftCreature implements Ageable {
 
     @Override
     public int getAge() {
-        return getHandle().getAge();
+        return this.getHandle().getAge();
     }
 
     @Override
     public void setAge(int age) {
-        getHandle().setAge(age);
+        this.getHandle().setAge(age);
     }
 
     @Override
     public void setAgeLock(boolean lock) {
-        getHandle().ageLocked = lock;
+        this.getHandle().ageLocked = lock;
     }
 
     @Override
     public boolean getAgeLock() {
-        return getHandle().ageLocked;
+        return this.getHandle().ageLocked;
     }
 
     @Override
     public void setBaby() {
-        if (isAdult()) {
-            setAge(-24000);
+        if (this.isAdult()) {
+            this.setAge(-24000);
         }
     }
 
     @Override
     public void setAdult() {
-        if (!isAdult()) {
-            setAge(0);
+        if (!this.isAdult()) {
+            this.setAge(0);
         }
     }
 
     @Override
     public boolean isAdult() {
-        return getAge() >= 0;
+        return this.getAge() >= 0;
     }
 
 
     @Override
     public boolean canBreed() {
-        return getAge() == 0;
+        return this.getAge() == 0;
     }
 
     @Override
     public void setBreed(boolean breed) {
         if (breed) {
-            setAge(0);
-        } else if (isAdult()) {
-            setAge(6000);
+            this.setAge(0);
+        } else if (this.isAdult()) {
+            this.setAge(6000);
         }
     }
 
     @Override
     public AgeableMob getHandle() {
-        return (AgeableMob) entity;
+        return (AgeableMob) this.entity;
     }
 
     @Override

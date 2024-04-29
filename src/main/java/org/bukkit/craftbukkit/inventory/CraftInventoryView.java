@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.mohist.bukkit.inventory.MohistModsInventory;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 public class CraftInventoryView extends InventoryView {
     private final AbstractContainerMenu container;
     private final CraftHumanEntity player;
-    private CraftInventory viewing;
+    private final CraftInventory viewing;
     private final String originalTitle;
     private String title;
 
@@ -29,31 +28,28 @@ public class CraftInventoryView extends InventoryView {
         this.viewing = (CraftInventory) viewing;
         this.container = container;
         this.originalTitle = CraftChatMessage.fromComponent(container.getTitle());
-        this.title = originalTitle;
-        if (container.slots.size() > this.countSlots()) {
-            this.viewing = new CraftInventory(new MohistModsInventory(container, ((CraftHumanEntity) player).getHandle()));
-        }
+        this.title = this.originalTitle;
     }
 
     @Override
     public Inventory getTopInventory() {
-        return viewing;
+        return this.viewing;
     }
 
     @Override
     public Inventory getBottomInventory() {
-        return player.getInventory();
+        return this.player.getInventory();
     }
 
     @Override
     public HumanEntity getPlayer() {
-        return player;
+        return this.player;
     }
 
     @Override
     public InventoryType getType() {
-        InventoryType type = viewing.getType();
-        if (type == InventoryType.CRAFTING && player.getGameMode() == GameMode.CREATIVE) {
+        InventoryType type = this.viewing.getType();
+        if (type == InventoryType.CRAFTING && this.player.getGameMode() == GameMode.CREATIVE) {
             return InventoryType.CREATIVE;
         }
         return type;
@@ -63,9 +59,9 @@ public class CraftInventoryView extends InventoryView {
     public void setItem(int slot, ItemStack item) {
         net.minecraft.world.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
         if (slot >= 0) {
-            container.getSlot(slot).set(stack);
+            this.container.getSlot(slot).set(stack);
         } else {
-            player.getHandle().drop(stack, false);
+            this.player.getHandle().drop(stack, false);
         }
     }
 
@@ -74,37 +70,38 @@ public class CraftInventoryView extends InventoryView {
         if (slot < 0) {
             return null;
         }
-        return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
+        return CraftItemStack.asCraftMirror(this.container.getSlot(slot).getItem());
     }
 
     @Override
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     @Override
     public String getOriginalTitle() {
-        return originalTitle;
+        return this.originalTitle;
     }
 
     @Override
     public void setTitle(String title) {
-        sendInventoryTitleChange(this, title);
+        CraftInventoryView.sendInventoryTitleChange(this, title);
         this.title = title;
     }
 
     public boolean isInTop(int rawSlot) {
-        return rawSlot < viewing.getSize();
+        return rawSlot < this.viewing.getSize();
     }
 
     public AbstractContainerMenu getHandle() {
-        return container;
+        return this.container;
     }
 
     public static void sendInventoryTitleChange(InventoryView view, String title) {
         Preconditions.checkArgument(view != null, "InventoryView cannot be null");
         Preconditions.checkArgument(title != null, "Title cannot be null");
         Preconditions.checkArgument(view.getPlayer() instanceof Player, "NPCs are not currently supported for this function");
+        Preconditions.checkArgument(view.getTopInventory().getType().isCreatable(), "Only creatable inventories can have their title changed");
 
         final ServerPlayer entityPlayer = (ServerPlayer) ((CraftHumanEntity) view.getPlayer()).getHandle();
         final int containerId = entityPlayer.containerMenu.containerId;

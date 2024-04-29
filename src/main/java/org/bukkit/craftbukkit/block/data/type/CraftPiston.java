@@ -9,11 +9,11 @@ public abstract class CraftPiston extends CraftBlockData implements Piston {
 
     @Override
     public boolean isExtended() {
-        return get(EXTENDED);
+        return this.get(CraftPiston.EXTENDED);
     }
 
     @Override
     public void setExtended(boolean extended) {
-        set(EXTENDED, extended);
+        this.set(CraftPiston.EXTENDED, extended);
     }
 }

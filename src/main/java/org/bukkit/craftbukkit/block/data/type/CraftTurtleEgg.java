@@ -9,21 +9,21 @@ public abstract class CraftTurtleEgg extends CraftBlockData implements TurtleEgg
 
     @Override
     public int getEggs() {
-        return get(EGGS);
+        return this.get(CraftTurtleEgg.EGGS);
     }
 
     @Override
     public void setEggs(int eggs) {
-        set(EGGS, eggs);
+        this.set(CraftTurtleEgg.EGGS, eggs);
     }
 
     @Override
     public int getMinimumEggs() {
-        return getMin(EGGS);
+        return getMin(CraftTurtleEgg.EGGS);
     }
 
     @Override
     public int getMaximumEggs() {
-        return getMax(EGGS);
+        return getMax(CraftTurtleEgg.EGGS);
     }
 }

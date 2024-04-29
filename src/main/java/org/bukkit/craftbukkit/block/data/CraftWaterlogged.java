@@ -8,11 +8,11 @@ public abstract class CraftWaterlogged extends CraftBlockData implements Waterlo
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftWaterlogged.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftWaterlogged.WATERLOGGED, waterlogged);
     }
 }

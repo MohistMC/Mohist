@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.generator;
 
-import com.mohistmc.mohist.util.Level2LevelStem;
 import java.util.UUID;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -19,11 +18,11 @@ public class CraftWorldInfo implements WorldInfo {
     private final int minHeight;
     private final int maxHeight;
 
-    public CraftWorldInfo(ServerLevelData K, LevelStorageSource.LevelStorageAccess session, World.Environment environment, DimensionType dimensionManager) {
-        this.name = K.getLevelName();
-        this.uuid = WorldUUID.getUUID(Level2LevelStem.checkPath(session.levelDirectory.path()).toFile());
+    public CraftWorldInfo(ServerLevelData worldDataServer, LevelStorageSource.LevelStorageAccess session, World.Environment environment, DimensionType dimensionManager) {
+        this.name = worldDataServer.getLevelName();
+        this.uuid = WorldUUID.getUUID(session.levelDirectory.path().toFile());
         this.environment = environment;
-        this.seed = ((PrimaryLevelData) K).worldGenOptions().seed();
+        this.seed = ((PrimaryLevelData) worldDataServer).worldGenOptions().seed();
         this.minHeight = dimensionManager.minY();
         this.maxHeight = dimensionManager.minY() + dimensionManager.height();
     }
@@ -39,31 +38,31 @@ public class CraftWorldInfo implements WorldInfo {
 
     @Override
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
     public UUID getUID() {
-        return uuid;
+        return this.uuid;
     }
 
     @Override
     public World.Environment getEnvironment() {
-        return environment;
+        return this.environment;
     }
 
     @Override
     public long getSeed() {
-        return seed;
+        return this.seed;
     }
 
     @Override
     public int getMinHeight() {
-        return minHeight;
+        return this.minHeight;
     }
 
     @Override
     public int getMaxHeight() {
-        return maxHeight;
+        return this.maxHeight;
     }
 }

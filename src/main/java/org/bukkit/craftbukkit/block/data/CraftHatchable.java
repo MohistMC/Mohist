@@ -8,16 +8,16 @@ public abstract class CraftHatchable extends CraftBlockData implements Hatchable
 
     @Override
     public int getHatch() {
-        return get(HATCH);
+        return this.get(CraftHatchable.HATCH);
     }
 
     @Override
     public void setHatch(int hatch) {
-        set(HATCH, hatch);
+        this.set(CraftHatchable.HATCH, hatch);
     }
 
     @Override
     public int getMaximumHatch() {
-        return getMax(HATCH);
+        return getMax(CraftHatchable.HATCH);
     }
 }

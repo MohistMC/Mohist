@@ -9,11 +9,11 @@ public abstract class CraftCampfire extends CraftBlockData implements Campfire {
 
     @Override
     public boolean isSignalFire() {
-        return get(SIGNAL_FIRE);
+        return this.get(CraftCampfire.SIGNAL_FIRE);
     }
 
     @Override
     public void setSignalFire(boolean signalFire) {
-        set(SIGNAL_FIRE, signalFire);
+        this.set(CraftCampfire.SIGNAL_FIRE, signalFire);
     }
 }

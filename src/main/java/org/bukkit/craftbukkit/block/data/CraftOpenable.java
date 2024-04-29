@@ -8,11 +8,11 @@ public abstract class CraftOpenable extends CraftBlockData implements Openable {
 
     @Override
     public boolean isOpen() {
-        return get(OPEN);
+        return this.get(CraftOpenable.OPEN);
     }
 
     @Override
     public void setOpen(boolean open) {
-        set(OPEN, open);
+        this.set(CraftOpenable.OPEN, open);
     }
 }

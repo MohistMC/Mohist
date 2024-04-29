@@ -28,17 +28,17 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type) {
-        return getInventory(getTileEntity());
+        return this.getInventory(this.getTileEntity());
     }
 
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {
-        Container te = getTileEntity();
+        Container te = this.getTileEntity();
         if (te instanceof RandomizableContainerBlockEntity) {
-            ((RandomizableContainerBlockEntity) te).setCustomName(CraftChatMessage.fromStringOrNull(title));
+            ((RandomizableContainerBlockEntity) te).name = CraftChatMessage.fromStringOrNull(title);
         }
 
-        return getInventory(te);
+        return this.getInventory(te);
     }
 
     public Inventory getInventory(Container tileEntity) {
@@ -55,9 +55,9 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
-            Container tileEntity = getTileEntity();
-            ((AbstractFurnaceBlockEntity) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
-            return getInventory(tileEntity);
+            Container tileEntity = this.getTileEntity();
+            ((AbstractFurnaceBlockEntity) tileEntity).name = CraftChatMessage.fromStringOrNull(title);
+            return this.getInventory(tileEntity);
         }
 
         @Override
@@ -75,12 +75,12 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {
-            // BrewingStand does not extend RandomizableContainerBlockEntity
-            Container tileEntity = getTileEntity();
+            // BrewingStand does not extend TileEntityLootable
+            Container tileEntity = this.getTileEntity();
             if (tileEntity instanceof BrewingStandBlockEntity) {
-                ((BrewingStandBlockEntity) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
+                ((BrewingStandBlockEntity) tileEntity).name = CraftChatMessage.fromStringOrNull(title);
             }
-            return getInventory(tileEntity);
+            return this.getInventory(tileEntity);
         }
 
         @Override
@@ -138,6 +138,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Crafter extends CraftTileInventoryConverter {
+
         @Override
         public Container getTileEntity() {
             return new CrafterBlockEntity(BlockPos.ZERO, Blocks.CRAFTER.defaultBlockState());

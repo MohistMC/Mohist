@@ -10,11 +10,11 @@ public class TickLimiter {
     }
 
     public void initTick() {
-        startTime = System.currentTimeMillis();
+        this.startTime = System.currentTimeMillis();
     }
 
     public boolean shouldContinue() {
-        long remaining = System.currentTimeMillis() - startTime;
-        return remaining < maxTime;
+        long remaining = System.currentTimeMillis() - this.startTime;
+        return remaining < this.maxTime;
     }
 }

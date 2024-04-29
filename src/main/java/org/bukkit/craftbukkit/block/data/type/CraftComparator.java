@@ -9,11 +9,11 @@ public abstract class CraftComparator extends CraftBlockData implements Comparat
 
     @Override
     public org.bukkit.block.data.type.Comparator.Mode getMode() {
-        return get(MODE, org.bukkit.block.data.type.Comparator.Mode.class);
+        return this.get(CraftComparator.MODE, org.bukkit.block.data.type.Comparator.Mode.class);
     }
 
     @Override
     public void setMode(org.bukkit.block.data.type.Comparator.Mode mode) {
-        set(MODE, mode);
+        this.set(CraftComparator.MODE, mode);
     }
 }

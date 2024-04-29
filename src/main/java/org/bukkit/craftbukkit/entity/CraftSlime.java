@@ -11,17 +11,17 @@ public class CraftSlime extends CraftMob implements Slime, CraftEnemy {
 
     @Override
     public int getSize() {
-        return getHandle().getSize();
+        return this.getHandle().getSize();
     }
 
     @Override
     public void setSize(int size) {
-        getHandle().setSize(size, true);
+        this.getHandle().setSize(size, true);
     }
 
     @Override
     public net.minecraft.world.entity.monster.Slime getHandle() {
-        return (net.minecraft.world.entity.monster.Slime) entity;
+        return (net.minecraft.world.entity.monster.Slime) this.entity;
     }
 
     @Override

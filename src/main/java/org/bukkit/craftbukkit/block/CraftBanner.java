@@ -3,23 +3,22 @@ package org.bukkit.craftbukkit.block;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.block.banner.CraftPatternType;
 
 public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implements Banner {
 
     private DyeColor base;
     private List<Pattern> patterns;
 
-    public CraftBanner(World world, final BannerBlockEntity tileEntity) {
+    public CraftBanner(World world, BannerBlockEntity tileEntity) {
         super(world, tileEntity);
     }
 
@@ -31,13 +30,13 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
     public void load(BannerBlockEntity banner) {
         super.load(banner);
 
-        base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
-        patterns = new ArrayList<Pattern>();
+        this.base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
+        this.patterns = new ArrayList<Pattern>();
 
-        if (banner.itemPatterns != null) {
-            for (int i = 0; i < banner.itemPatterns.size(); i++) {
-                CompoundTag p = (CompoundTag) banner.itemPatterns.get(i);
-                patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
+        if (banner.getPatterns() != null) {
+            for (int i = 0; i < banner.getPatterns().layers().size(); i++) {
+                BannerPatternLayers.Layer p = banner.getPatterns().layers().get(i);
+                this.patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.color().getId()), CraftPatternType.minecraftHolderToBukkit(p.pattern())));
             }
         }
     }
@@ -55,7 +54,7 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
 
     @Override
     public List<Pattern> getPatterns() {
-        return new ArrayList<Pattern>(patterns);
+        return new ArrayList<Pattern>(this.patterns);
     }
 
     @Override
@@ -85,24 +84,21 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
 
     @Override
     public int numberOfPatterns() {
-        return patterns.size();
+        return this.patterns.size();
     }
 
     @Override
     public void applyTo(BannerBlockEntity banner) {
         super.applyTo(banner);
 
-        banner.baseColor = net.minecraft.world.item.DyeColor.byId(base.getWoolData());
+        banner.baseColor = net.minecraft.world.item.DyeColor.byId(this.base.getWoolData());
 
-        ListTag newPatterns = new ListTag();
+        List<BannerPatternLayers.Layer> newPatterns = new ArrayList<>();
 
-        for (Pattern p : patterns) {
-            CompoundTag compound = new CompoundTag();
-            compound.putInt("Color", p.getColor().getWoolData());
-            compound.putString("Pattern", p.getPattern().getIdentifier());
-            newPatterns.add(compound);
+        for (Pattern p : this.patterns) {
+            newPatterns.add(new net.minecraft.world.level.block.entity.BannerPatternLayers.Layer(CraftPatternType.bukkitToMinecraftHolder(p.getPattern()), net.minecraft.world.item.DyeColor.byId(p.getColor().getWoolData())));
         }
-        banner.itemPatterns = newPatterns;
+        banner.setPatterns(new BannerPatternLayers(newPatterns));
     }
 
     @Override

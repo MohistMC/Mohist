@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
@@ -31,9 +30,10 @@ public final class CapturedBlockState extends CraftBlockState {
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
+
         // Probably no longer needed with the extra #updatedTree method,
         // but leave if here for now in case a plugin for whatever reason relies on this.
-        addBees();
+        this.addBees();
 
         return result;
     }
@@ -41,14 +41,14 @@ public final class CapturedBlockState extends CraftBlockState {
     private void updatedTree() {
         // SPIGOT-7248 - Manual update to avoid physics where appropriate
         // SPIGOT-7572 - Move SPIGOT-7248 fix from nms ItemStack to here, to allow bee generation in nests
-        world.getHandle().setBlock(CraftLocation.toBlockPosition(getLocation()), getHandle(), getFlag());
+        this.world.getHandle().setBlock(CraftLocation.toBlockPosition(this.getLocation()), this.getHandle(), this.getFlag());
 
-        addBees();
+        this.addBees();
     }
 
     private void addBees() {
         // SPIGOT-5537: Horrible hack to manually add bees given World.captureTreeGeneration does not support tiles
-        if (this.treeBlock && getType() == Material.BEE_NEST) {
+        if (this.treeBlock && this.getType() == Material.BEE_NEST) {
             WorldGenLevel generatoraccessseed = this.world.getHandle();
             BlockPos blockposition1 = this.getPosition();
             RandomSource random = generatoraccessseed.getRandom();
@@ -61,9 +61,7 @@ public final class CapturedBlockState extends CraftBlockState {
                 int j = 2 + random.nextInt(2);
 
                 for (int k = 0; k < j; ++k) {
-                    Bee entitybee = new Bee(net.minecraft.world.entity.EntityType.BEE, generatoraccessseed.getMinecraftWorld());
-
-                    tileentitybeehive.addOccupantWithPresetTicks(entitybee, false, random.nextInt(599));
+                    tileentitybeehive.storeBee(BeehiveBlockEntity.Occupant.create(random.nextInt(599)));
                 }
             }
             // End copied block

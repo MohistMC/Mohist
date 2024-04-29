@@ -11,12 +11,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.ClickEvent.Action;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {
@@ -33,7 +35,7 @@ public final class CraftChatMessage {
     }
 
     public static ChatFormatting getColor(ChatColor color) {
-        return formatMap.get(color.getChar());
+        return CraftChatMessage.formatMap.get(color.getChar());
     }
 
     public static ChatColor getColor(ChatFormatting format) {
@@ -58,12 +60,12 @@ public final class CraftChatMessage {
         private StringMessage(String message, boolean keepNewlines, boolean plain) {
             this.message = message;
             if (message == null) {
-                output = new Component[]{currentChatComponent};
+                this.output = new Component[]{this.currentChatComponent};
                 return;
             }
-            list.add(currentChatComponent);
+            this.list.add(this.currentChatComponent);
 
-            Matcher matcher = (keepNewlines ? INCREMENTAL_PATTERN_KEEP_NEWLINES : INCREMENTAL_PATTERN).matcher(message);
+            Matcher matcher = (keepNewlines ? StringMessage.INCREMENTAL_PATTERN_KEEP_NEWLINES : StringMessage.INCREMENTAL_PATTERN).matcher(message);
             String match = null;
             boolean needsAdd = false;
             while (matcher.find()) {
@@ -72,107 +74,115 @@ public final class CraftChatMessage {
                     // NOOP
                 }
                 int index = matcher.start(groupId);
-                if (index > currentIndex) {
+                if (index > this.currentIndex) {
                     needsAdd = false;
-                    appendNewComponent(index);
+                    this.appendNewComponent(index);
                 }
                 switch (groupId) {
                 case 1:
                     char c = match.toLowerCase(java.util.Locale.ENGLISH).charAt(1);
-                    ChatFormatting format = formatMap.get(c);
+                    ChatFormatting format = CraftChatMessage.formatMap.get(c);
 
                     if (c == 'x') {
-                        hex = new StringBuilder("#");
-                    } else if (hex != null) {
-                        hex.append(c);
+                        this.hex = new StringBuilder("#");
+                    } else if (this.hex != null) {
+                        this.hex.append(c);
 
-                        if (hex.length() == 7) {
-                            modifier = RESET.withColor(TextColor.parseColor(hex.toString()).result().get());
-                            hex = null;
+                        if (this.hex.length() == 7) {
+                            this.modifier = StringMessage.RESET.withColor(TextColor.parseColor(this.hex.toString()).result().get());
+                            this.hex = null;
                         }
                     } else if (format.isFormat() && format != ChatFormatting.RESET) {
                         switch (format) {
                         case BOLD:
-                            modifier = modifier.withBold(Boolean.TRUE);
+                            this.modifier = this.modifier.withBold(Boolean.TRUE);
                             break;
                         case ITALIC:
-                            modifier = modifier.withItalic(Boolean.TRUE);
+                            this.modifier = this.modifier.withItalic(Boolean.TRUE);
                             break;
                         case STRIKETHROUGH:
-                            modifier = modifier.withStrikethrough(Boolean.TRUE);
+                            this.modifier = this.modifier.withStrikethrough(Boolean.TRUE);
                             break;
                         case UNDERLINE:
-                            modifier = modifier.withUnderlined(Boolean.TRUE);
+                            this.modifier = this.modifier.withUnderlined(Boolean.TRUE);
                             break;
                         case OBFUSCATED:
-                            modifier = modifier.withObfuscated(Boolean.TRUE);
+                            this.modifier = this.modifier.withObfuscated(Boolean.TRUE);
                             break;
                         default:
                             throw new AssertionError("Unexpected message format");
                         }
                     } else { // Color resets formatting
-                        modifier = RESET.withColor(format);
+                        this.modifier = StringMessage.RESET.withColor(format);
                     }
                     needsAdd = true;
                     break;
                 case 2:
                     if (plain) {
-                        appendNewComponent(matcher.end(groupId));
+                        this.appendNewComponent(matcher.end(groupId));
                     } else {
                         if (!(match.startsWith("http://") || match.startsWith("https://"))) {
                             match = "http://" + match;
                         }
-                        modifier = modifier.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, match));
-                        appendNewComponent(matcher.end(groupId));
-                        modifier = modifier.withClickEvent((ClickEvent) null);
+                        this.modifier = this.modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                        this.appendNewComponent(matcher.end(groupId));
+                        this.modifier = this.modifier.withClickEvent((ClickEvent) null);
                     }
                     break;
                 case 3:
                     if (needsAdd) {
-                        appendNewComponent(index);
+                        this.appendNewComponent(index);
                     }
-                    currentChatComponent = null;
+                    this.currentChatComponent = null;
                     break;
                 }
-                currentIndex = matcher.end(groupId);
+                this.currentIndex = matcher.end(groupId);
             }
 
-            if (currentIndex < message.length() || needsAdd) {
-                appendNewComponent(message.length());
+            if (this.currentIndex < message.length() || needsAdd) {
+                this.appendNewComponent(message.length());
             }
 
-            output = list.toArray(new Component[list.size()]);
+            this.output = this.list.toArray(new Component[this.list.size()]);
         }
 
         private void appendNewComponent(int index) {
-            Component addition = Component.literal(message.substring(currentIndex, index)).setStyle(modifier);
-            currentIndex = index;
-            if (currentChatComponent == null) {
-                currentChatComponent = Component.empty();
-                list.add(currentChatComponent);
+            Component addition = Component.literal(this.message.substring(this.currentIndex, index)).setStyle(this.modifier);
+            this.currentIndex = index;
+            if (this.currentChatComponent == null) {
+                this.currentChatComponent = Component.empty();
+                this.list.add(this.currentChatComponent);
             }
-            currentChatComponent.append(addition);
+            this.currentChatComponent.append(addition);
         }
 
         private Component[] getOutput() {
-            return output;
+            return this.output;
         }
     }
 
+    public static Optional<Component> fromStringOrOptional(String message) {
+        return Optional.ofNullable(CraftChatMessage.fromStringOrNull(message));
+    }
+
+    public static Optional<Component> fromStringOrOptional(String message, boolean keepNewlines) {
+        return Optional.ofNullable(CraftChatMessage.fromStringOrNull(message, keepNewlines));
+    }
+
     public static Component fromStringOrNull(String message) {
-        return fromStringOrNull(message, false);
+        return CraftChatMessage.fromStringOrNull(message, false);
     }
 
     public static Component fromStringOrNull(String message, boolean keepNewlines) {
-        return (message == null || message.isEmpty()) ? null : fromString(message, keepNewlines)[0];
+        return (message == null || message.isEmpty()) ? null : CraftChatMessage.fromString(message, keepNewlines)[0];
     }
 
     public static Component[] fromString(String message) {
-        return fromString(message, false);
+        return CraftChatMessage.fromString(message, false);
     }
 
     public static Component[] fromString(String message, boolean keepNewlines) {
-        return fromString(message, keepNewlines, false);
+        return CraftChatMessage.fromString(message, keepNewlines, false);
     }
 
     public static Component[] fromString(String message, boolean keepNewlines, boolean plain) {
@@ -180,83 +190,83 @@ public final class CraftChatMessage {
     }
 
     public static String toJSON(Component component) {
-        return Component.Serializer.toJson(component);
+        return Component.Serializer.toJson(component, MinecraftServer.getDefaultRegistryAccess());
     }
 
     public static String toJSONOrNull(Component component) {
         if (component == null) return null;
-        return toJSON(component);
+        return CraftChatMessage.toJSON(component);
     }
 
     public static Component fromJSON(String jsonMessage) throws JsonParseException {
         // Note: This also parses plain Strings to text components.
         // Note: An empty message (empty, or only consisting of whitespace) results in null rather than a parse exception.
-        return Component.Serializer.fromJson(jsonMessage);
+        return Component.Serializer.fromJson(jsonMessage, MinecraftServer.getDefaultRegistryAccess());
     }
 
     public static Component fromJSONOrNull(String jsonMessage) {
         if (jsonMessage == null) return null;
         try {
-            return fromJSON(jsonMessage); // Can return null
+            return CraftChatMessage.fromJSON(jsonMessage); // Can return null
         } catch (JsonParseException ex) {
             return null;
         }
     }
 
     public static Component fromJSONOrString(String message) {
-        return fromJSONOrString(message, false);
+        return CraftChatMessage.fromJSONOrString(message, false);
     }
 
     public static Component fromJSONOrString(String message, boolean keepNewlines) {
-        return fromJSONOrString(message, false, keepNewlines);
+        return CraftChatMessage.fromJSONOrString(message, false, keepNewlines);
     }
 
-    private static Component fromJSONOrString(String message, boolean nullable, boolean keepNewlines) {
+    public static Component fromJSONOrString(String message, boolean nullable, boolean keepNewlines) {
         if (message == null) message = "";
         if (nullable && message.isEmpty()) return null;
-        Component component = fromJSONOrNull(message);
+        Component component = CraftChatMessage.fromJSONOrNull(message);
         if (component != null) {
             return component;
         } else {
-            return fromString(message, keepNewlines)[0];
+            return CraftChatMessage.fromString(message, keepNewlines)[0];
         }
     }
 
     public static String fromJSONOrStringToJSON(String message) {
-        return fromJSONOrStringToJSON(message, false);
+        return CraftChatMessage.fromJSONOrStringToJSON(message, false);
     }
 
     public static String fromJSONOrStringToJSON(String message, boolean keepNewlines) {
-        return fromJSONOrStringToJSON(message, false, keepNewlines, Integer.MAX_VALUE, false);
+        return CraftChatMessage.fromJSONOrStringToJSON(message, false, keepNewlines, Integer.MAX_VALUE, false);
     }
 
     public static String fromJSONOrStringOrNullToJSON(String message) {
-        return fromJSONOrStringOrNullToJSON(message, false);
+        return CraftChatMessage.fromJSONOrStringOrNullToJSON(message, false);
     }
 
     public static String fromJSONOrStringOrNullToJSON(String message, boolean keepNewlines) {
-        return fromJSONOrStringToJSON(message, true, keepNewlines, Integer.MAX_VALUE, false);
+        return CraftChatMessage.fromJSONOrStringToJSON(message, true, keepNewlines, Integer.MAX_VALUE, false);
     }
 
     public static String fromJSONOrStringToJSON(String message, boolean nullable, boolean keepNewlines, int maxLength, boolean checkJsonContentLength) {
         if (message == null) message = "";
         if (nullable && message.isEmpty()) return null;
         // If the input can be parsed as JSON, we use that:
-        Component component = fromJSONOrNull(message);
+        Component component = CraftChatMessage.fromJSONOrNull(message);
         if (component != null) {
             if (checkJsonContentLength) {
-                String content = fromComponent(component);
-                String trimmedContent = trimMessage(content, maxLength);
+                String content = CraftChatMessage.fromComponent(component);
+                String trimmedContent = CraftChatMessage.trimMessage(content, maxLength);
                 if (content != trimmedContent) { // identity comparison is fine here
                     // Note: The resulting text has all non-plain text features stripped.
-                    return fromStringToJSON(trimmedContent, keepNewlines);
+                    return CraftChatMessage.fromStringToJSON(trimmedContent, keepNewlines);
                 }
             }
             return message;
         } else {
             // Else we interpret the input as legacy text:
-            message = trimMessage(message, maxLength);
-            return fromStringToJSON(message, keepNewlines);
+            message = CraftChatMessage.trimMessage(message, maxLength);
+            return CraftChatMessage.fromStringToJSON(message, keepNewlines);
         }
     }
 
@@ -269,7 +279,7 @@ public final class CraftChatMessage {
     }
 
     public static String fromStringToJSON(String message) {
-        return fromStringToJSON(message, false);
+        return CraftChatMessage.fromStringToJSON(message, false);
     }
 
     public static String fromStringToJSON(String message, boolean keepNewlines) {
@@ -295,7 +305,7 @@ public final class CraftChatMessage {
         for (Component c : component) {
             Style modi = c.getStyle();
             TextColor color = modi.getColor();
-            if (c.getContents() != PlainTextContents.LiteralContents.EMPTY || color != null) {
+            if (c.getContents() != PlainTextContents.EMPTY || color != null) {
                 if (color != null) {
                     if (color.format != null) {
                         out.append(color.format);
@@ -340,13 +350,13 @@ public final class CraftChatMessage {
     }
 
     public static Component fixComponent(MutableComponent component) {
-        Matcher matcher = LINK_PATTERN.matcher("");
-        return fixComponent(component, matcher);
+        Matcher matcher = CraftChatMessage.LINK_PATTERN.matcher("");
+        return CraftChatMessage.fixComponent(component, matcher);
     }
 
     private static Component fixComponent(MutableComponent component, Matcher matcher) {
-        if (component.getContents() instanceof PlainTextContents.LiteralContents) {
-            PlainTextContents.LiteralContents text = ((PlainTextContents.LiteralContents) component.getContents());
+        if (component.getContents() instanceof PlainTextContents) {
+            PlainTextContents text = ((PlainTextContents) component.getContents());
             String msg = text.text();
             if (matcher.reset(msg).find()) {
                 matcher.reset();
@@ -355,7 +365,6 @@ public final class CraftChatMessage {
                 List<Component> extras = new ArrayList<Component>();
                 List<Component> extrasOld = new ArrayList<Component>(component.getSiblings());
                 component = Component.empty();
-
 
                 int pos = 0;
                 while (matcher.find()) {
@@ -370,7 +379,7 @@ public final class CraftChatMessage {
                     extras.add(prev);
 
                     MutableComponent link = Component.literal(matcher.group());
-                    Style linkModi = modifier.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, match));
+                    Style linkModi = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     link.setStyle(linkModi);
                     extras.add(link);
 
@@ -392,7 +401,7 @@ public final class CraftChatMessage {
         for (int i = 0; i < extras.size(); i++) {
             Component comp = extras.get(i);
             if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null) {
-                extras.set(i, fixComponent(comp.copy(), matcher));
+                extras.set(i, CraftChatMessage.fixComponent(comp.copy(), matcher));
             }
         }
 
@@ -403,10 +412,10 @@ public final class CraftChatMessage {
                 if (comp instanceof Component) {
                     Component c = (Component) comp;
                     if (c.getStyle() != null && c.getStyle().getClickEvent() == null) {
-                        subs[i] = fixComponent(c.copy(), matcher);
+                        subs[i] = CraftChatMessage.fixComponent(c.copy(), matcher);
                     }
                 } else if (comp instanceof String && matcher.reset((String) comp).find()) {
-                    subs[i] = fixComponent(Component.literal((String) comp), matcher);
+                    subs[i] = CraftChatMessage.fixComponent(Component.literal((String) comp), matcher);
                 }
             }
         }

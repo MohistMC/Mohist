@@ -9,11 +9,11 @@ public abstract class CraftDispenser extends CraftBlockData implements Dispenser
 
     @Override
     public boolean isTriggered() {
-        return get(TRIGGERED);
+        return this.get(CraftDispenser.TRIGGERED);
     }
 
     @Override
     public void setTriggered(boolean triggered) {
-        set(TRIGGERED, triggered);
+        this.set(CraftDispenser.TRIGGERED, triggered);
     }
 }

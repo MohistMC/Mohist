@@ -9,11 +9,11 @@ public abstract class CraftTripwire extends CraftBlockData implements Tripwire {
 
     @Override
     public boolean isDisarmed() {
-        return get(DISARMED);
+        return this.get(CraftTripwire.DISARMED);
     }
 
     @Override
     public void setDisarmed(boolean disarmed) {
-        set(DISARMED, disarmed);
+        this.set(CraftTripwire.DISARMED, disarmed);
     }
 }

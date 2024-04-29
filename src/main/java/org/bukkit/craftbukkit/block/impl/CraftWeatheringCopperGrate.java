@@ -19,11 +19,11 @@ public final class CraftWeatheringCopperGrate extends org.bukkit.craftbukkit.blo
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftWeatheringCopperGrate.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftWeatheringCopperGrate.WATERLOGGED, waterlogged);
     }
 }

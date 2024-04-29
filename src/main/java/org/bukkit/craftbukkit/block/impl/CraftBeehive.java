@@ -13,41 +13,41 @@ public final class CraftBeehive extends org.bukkit.craftbukkit.block.data.CraftB
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBeehive
+    // org.bukkit.craftbukkit.block.data.type.CraftBeehive
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty HONEY_LEVEL = getInteger(net.minecraft.world.level.block.BeehiveBlock.class, "honey_level");
 
     @Override
     public int getHoneyLevel() {
-        return get(HONEY_LEVEL);
+        return this.get(CraftBeehive.HONEY_LEVEL);
     }
 
     @Override
     public void setHoneyLevel(int honeyLevel) {
-        set(HONEY_LEVEL, honeyLevel);
+        this.set(CraftBeehive.HONEY_LEVEL, honeyLevel);
     }
 
     @Override
     public int getMaximumHoneyLevel() {
-        return getMax(HONEY_LEVEL);
+        return getMax(CraftBeehive.HONEY_LEVEL);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.CraftDirectional
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> FACING = getEnum(net.minecraft.world.level.block.BeehiveBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+        return this.get(CraftBeehive.FACING, org.bukkit.block.BlockFace.class);
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+        this.set(CraftBeehive.FACING, facing);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
+        return this.getValues(CraftBeehive.FACING, org.bukkit.block.BlockFace.class);
     }
 }

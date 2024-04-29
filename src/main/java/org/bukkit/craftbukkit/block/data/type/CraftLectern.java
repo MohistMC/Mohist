@@ -9,6 +9,6 @@ public abstract class CraftLectern extends CraftBlockData implements Lectern {
 
     @Override
     public boolean hasBook() {
-        return get(HAS_BOOK);
+        return this.get(CraftLectern.HAS_BOOK);
     }
 }

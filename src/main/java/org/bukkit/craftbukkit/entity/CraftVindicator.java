@@ -21,11 +21,11 @@ public class CraftVindicator extends CraftIllager implements Vindicator {
 
     @Override
     public boolean isJohnny() {
-        return getHandle().isJohnny;
+        return this.getHandle().isJohnny;
     }
 
     @Override
     public void setJohnny(boolean johnny) {
-        getHandle().isJohnny = johnny;
+        this.getHandle().isJohnny = johnny;
     }
 }

@@ -19,8 +19,6 @@ public class CraftEffect {
             datavalue = (Integer) data;
             break;
         case POTION_BREAK:
-            datavalue = ((Potion) data).toDamageValue() & 0x3F;
-            break;
         case INSTANT_POTION_BREAK:
             datavalue = ((Color) data).asRGB();
             break;

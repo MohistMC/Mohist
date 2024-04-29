@@ -11,7 +11,7 @@ public class CraftWanderingTrader extends CraftAbstractVillager implements Wande
 
     @Override
     public net.minecraft.world.entity.npc.WanderingTrader getHandle() {
-        return (net.minecraft.world.entity.npc.WanderingTrader) entity;
+        return (net.minecraft.world.entity.npc.WanderingTrader) this.entity;
     }
 
     @Override
@@ -21,11 +21,11 @@ public class CraftWanderingTrader extends CraftAbstractVillager implements Wande
 
     @Override
     public int getDespawnDelay() {
-        return getHandle().getDespawnDelay();
+        return this.getHandle().getDespawnDelay();
     }
 
     @Override
     public void setDespawnDelay(int despawnDelay) {
-        getHandle().setDespawnDelay(despawnDelay);
+        this.getHandle().setDespawnDelay(despawnDelay);
     }
 }

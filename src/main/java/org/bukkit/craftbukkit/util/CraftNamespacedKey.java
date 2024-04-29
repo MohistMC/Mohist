@@ -13,11 +13,11 @@ public final class CraftNamespacedKey {
             return null;
         }
         ResourceLocation minecraft = ResourceLocation.tryParse(string);
-        return (minecraft == null) ? null : fromMinecraft(minecraft);
+        return (minecraft == null) ? null : CraftNamespacedKey.fromMinecraft(minecraft);
     }
 
     public static NamespacedKey fromString(String string) {
-        return fromMinecraft(new ResourceLocation(string));
+        return CraftNamespacedKey.fromMinecraft(new ResourceLocation(string));
     }
 
     public static NamespacedKey fromMinecraft(ResourceLocation minecraft) {

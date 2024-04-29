@@ -10,21 +10,21 @@ public abstract class CraftSculkShrieker extends CraftBlockData implements Sculk
 
     @Override
     public boolean isCanSummon() {
-        return get(CAN_SUMMON);
+        return this.get(CraftSculkShrieker.CAN_SUMMON);
     }
 
     @Override
     public void setCanSummon(boolean can_summon) {
-        set(CAN_SUMMON, can_summon);
+        this.set(CraftSculkShrieker.CAN_SUMMON, can_summon);
     }
 
     @Override
     public boolean isShrieking() {
-        return get(SHRIEKING);
+        return this.get(CraftSculkShrieker.SHRIEKING);
     }
 
     @Override
     public void setShrieking(boolean shrieking) {
-        set(SHRIEKING, shrieking);
+        this.set(CraftSculkShrieker.SHRIEKING, shrieking);
     }
 }

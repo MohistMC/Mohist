@@ -9,6 +9,6 @@ public abstract class CraftJukebox extends CraftBlockData implements Jukebox {
 
     @Override
     public boolean hasRecord() {
-        return get(HAS_RECORD);
+        return this.get(CraftJukebox.HAS_RECORD);
     }
 }

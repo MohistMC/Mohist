@@ -11,12 +11,12 @@ public class CraftLargeFireball extends CraftSizedFireball implements LargeFireb
     @Override
     public void setYield(float yield) {
         super.setYield(yield);
-        getHandle().explosionPower = (int) yield;
+        this.getHandle().explosionPower = (int) yield;
     }
 
     @Override
     public net.minecraft.world.entity.projectile.LargeFireball getHandle() {
-        return (net.minecraft.world.entity.projectile.LargeFireball) entity;
+        return (net.minecraft.world.entity.projectile.LargeFireball) this.entity;
     }
 
     @Override

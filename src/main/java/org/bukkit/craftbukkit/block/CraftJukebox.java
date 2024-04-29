@@ -17,13 +17,14 @@ import org.bukkit.inventory.JukeboxInventory;
 
 public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
 
-    public CraftJukebox(World world, JukeboxBlockEntity te) {
-        super(world, te);
+    public CraftJukebox(World world, JukeboxBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftJukebox(CraftJukebox state, Location location) {
         super(state, location);
     }
+
     @Override
     public JukeboxInventory getSnapshotInventory() {
         return new CraftInventoryJukebox(this.getSnapshot());
@@ -44,7 +45,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
         if (result && this.isPlaced() && this.getType() == Material.JUKEBOX) {
             Material record = this.getPlaying();
-            getWorldHandle().setBlock(this.getPosition(), data, 3);
+            this.getWorldHandle().setBlock(this.getPosition(), this.data, 3);
 
             BlockEntity tileEntity = this.getTileEntityFromWorld();
             if (tileEntity instanceof JukeboxBlockEntity jukebox) {
@@ -63,7 +64,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public Material getPlaying() {
-        return getRecord().getType();
+        return this.getRecord().getType();
     }
 
     @Override
@@ -72,12 +73,12 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
             record = Material.AIR;
         }
 
-        setRecord(new org.bukkit.inventory.ItemStack(record));
+        this.setRecord(new org.bukkit.inventory.ItemStack(record));
     }
 
     @Override
     public boolean hasRecord() {
-        return getHandle().getValue(JukeboxBlock.HAS_RECORD) && !getPlaying().isAir();
+        return this.getHandle().getValue(JukeboxBlock.HAS_RECORD) && !this.getPlaying().isAir();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public boolean isPlaying() {
-        requirePlaced();
+        this.requirePlaced();
 
         BlockEntity tileEntity = this.getTileEntityFromWorld();
         return tileEntity instanceof JukeboxBlockEntity jukebox && jukebox.isRecordPlaying();
@@ -108,7 +109,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public boolean startPlaying() {
-        requirePlaced();
+        this.requirePlaced();
 
         BlockEntity tileEntity = this.getTileEntityFromWorld();
         if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
@@ -116,19 +117,19 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         }
 
         ItemStack record = jukebox.getTheItem();
-        if (record.isEmpty() || isPlaying()) {
+        if (record.isEmpty() || this.isPlaying()) {
             return false;
         }
 
         jukebox.isPlaying = true;
         jukebox.recordStartedTick = jukebox.tickCount;
-        getWorld().playEffect(getLocation(), Effect.RECORD_PLAY, CraftItemType.minecraftToBukkit(record.getItem()));
+        this.getWorld().playEffect(this.getLocation(), Effect.RECORD_PLAY, CraftItemType.minecraftToBukkit(record.getItem()));
         return true;
     }
 
     @Override
     public void stopPlaying() {
-        requirePlaced();
+        this.requirePlaced();
 
         BlockEntity tileEntity = this.getTileEntityFromWorld();
         if (!(tileEntity instanceof JukeboxBlockEntity jukebox)) {
@@ -136,12 +137,12 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         }
 
         jukebox.isPlaying = false;
-        getWorld().playEffect(getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
+        this.getWorld().playEffect(this.getLocation(), Effect.IRON_DOOR_CLOSE, 0); // TODO: Fix this enum constant. This stops jukeboxes
     }
 
     @Override
     public boolean eject() {
-        ensureNoWorldGeneration();
+        this.ensureNoWorldGeneration();
 
         BlockEntity tileEntity = this.getTileEntityFromWorld();
         if (!(tileEntity instanceof JukeboxBlockEntity)) return false;

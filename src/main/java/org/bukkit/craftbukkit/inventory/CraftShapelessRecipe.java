@@ -42,7 +42,7 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
         List<org.bukkit.inventory.RecipeChoice> ingred = this.getChoiceList();
         NonNullList<Ingredient> data = NonNullList.withSize(ingred.size(), Ingredient.EMPTY);
         for (int i = 0; i < ingred.size(); i++) {
-            data.set(i, toNMS(ingred.get(i), true));
+            data.set(i, this.toNMS(ingred.get(i), true));
         }
 
         MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapelessRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data)));

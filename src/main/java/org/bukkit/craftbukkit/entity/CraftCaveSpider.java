@@ -10,7 +10,7 @@ public class CraftCaveSpider extends CraftSpider implements CaveSpider {
 
     @Override
     public net.minecraft.world.entity.monster.CaveSpider getHandle() {
-        return (net.minecraft.world.entity.monster.CaveSpider) entity;
+        return (net.minecraft.world.entity.monster.CaveSpider) this.entity;
     }
 
     @Override

@@ -3,9 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-import org.bukkit.craftbukkit.block.data.CraftBlockData;
-
-public final class CraftSculkCatalyst extends CraftBlockData implements org.bukkit.block.data.type.SculkCatalyst {
+public final class CraftSculkCatalyst extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.SculkCatalyst {
 
     public CraftSculkCatalyst() {
         super();
@@ -21,11 +19,11 @@ public final class CraftSculkCatalyst extends CraftBlockData implements org.bukk
 
     @Override
     public boolean isBloom() {
-        return get(BLOOM);
+        return this.get(CraftSculkCatalyst.BLOOM);
     }
 
     @Override
     public void setBloom(boolean bloom) {
-        set(BLOOM, bloom);
+        this.set(CraftSculkCatalyst.BLOOM, bloom);
     }
 }

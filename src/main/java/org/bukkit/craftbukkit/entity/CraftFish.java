@@ -12,7 +12,7 @@ public class CraftFish extends CraftWaterMob implements Fish {
 
     @Override
     public AbstractFish getHandle() {
-        return (AbstractFish) entity;
+        return (AbstractFish) this.entity;
     }
 
     @Override

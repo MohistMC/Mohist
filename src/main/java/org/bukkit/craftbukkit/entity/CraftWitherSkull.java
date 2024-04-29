@@ -10,17 +10,17 @@ public class CraftWitherSkull extends CraftFireball implements WitherSkull {
 
     @Override
     public void setCharged(boolean charged) {
-        getHandle().setDangerous(charged);
+        this.getHandle().setDangerous(charged);
     }
 
     @Override
     public boolean isCharged() {
-        return getHandle().isDangerous();
+        return this.getHandle().isDangerous();
     }
 
     @Override
     public net.minecraft.world.entity.projectile.WitherSkull getHandle() {
-        return (net.minecraft.world.entity.projectile.WitherSkull) entity;
+        return (net.minecraft.world.entity.projectile.WitherSkull) this.entity;
     }
 
     @Override

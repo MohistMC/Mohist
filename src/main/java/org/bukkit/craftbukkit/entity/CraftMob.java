@@ -2,12 +2,10 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.sounds.SoundEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.CraftLootTable;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
@@ -19,8 +17,9 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
 
     @Override
     public void setTarget(LivingEntity target) {
-        Preconditions.checkState(!getHandle().generation, "Cannot set target during world generation");
-        net.minecraft.world.entity.Mob entity = getHandle();
+        Preconditions.checkState(!this.getHandle().generation, "Cannot set target during world generation");
+
+        net.minecraft.world.entity.Mob entity = this.getHandle();
         if (target == null) {
             entity.setTarget(null, null, false);
         } else if (target instanceof CraftLivingEntity) {
@@ -30,30 +29,30 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
 
     @Override
     public CraftLivingEntity getTarget() {
-        if (getHandle().getTarget() == null) return null;
+        if (this.getHandle().getTarget() == null) return null;
 
-        return (CraftLivingEntity) getHandle().getTarget().getBukkitEntity();
+        return (CraftLivingEntity) this.getHandle().getTarget().getBukkitEntity();
     }
 
     @Override
     public void setAware(boolean aware) {
-        getHandle().aware = aware;
+        this.getHandle().aware = aware;
     }
 
     @Override
     public boolean isAware() {
-        return getHandle().aware;
+        return this.getHandle().aware;
     }
 
     @Override
     public Sound getAmbientSound() {
-        SoundEvent sound = getHandle().getAmbientSound0();
+        SoundEvent sound = this.getHandle().getAmbientSound0();
         return (sound != null) ? CraftSound.minecraftToBukkit(sound) : null;
     }
 
     @Override
     public net.minecraft.world.entity.Mob getHandle() {
-        return (net.minecraft.world.entity.Mob) entity;
+        return (net.minecraft.world.entity.Mob) this.entity;
     }
 
     @Override
@@ -63,22 +62,21 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
 
     @Override
     public void setLootTable(LootTable table) {
-        getHandle().lootTable = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
+        this.getHandle().lootTable = CraftLootTable.bukkitToMinecraft(table);
     }
 
     @Override
     public LootTable getLootTable() {
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(getHandle().getLootTable());
-        return Bukkit.getLootTable(key);
+        return CraftLootTable.minecraftToBukkit(this.getHandle().getLootTable());
     }
 
     @Override
     public void setSeed(long seed) {
-        getHandle().lootTableSeed = seed;
+        this.getHandle().lootTableSeed = seed;
     }
 
     @Override
     public long getSeed() {
-        return getHandle().lootTableSeed;
+        return this.getHandle().lootTableSeed;
     }
 }

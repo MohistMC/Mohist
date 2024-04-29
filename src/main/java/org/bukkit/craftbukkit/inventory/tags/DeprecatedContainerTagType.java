@@ -17,6 +17,7 @@ public final class DeprecatedContainerTagType<C> implements PersistentDataType<P
         this.deprecated = deprecated;
     }
 
+    @NotNull
     @Override
     public Class<PersistentDataContainer> getPrimitiveType() {
         return PersistentDataContainer.class;
@@ -25,9 +26,10 @@ public final class DeprecatedContainerTagType<C> implements PersistentDataType<P
     @NotNull
     @Override
     public Class<C> getComplexType() {
-        return deprecated.getComplexType();
+        return this.deprecated.getComplexType();
     }
 
+    @NotNull
     @Override
     public PersistentDataContainer toPrimitive(@NotNull C complex, @NotNull PersistentDataAdapterContext context) {
         CustomItemTagContainer deprecated = this.deprecated.toPrimitive(complex, new DeprecatedItemAdapterContext(context));
@@ -41,6 +43,7 @@ public final class DeprecatedContainerTagType<C> implements PersistentDataType<P
         return new CraftPersistentDataContainer(craftTagContainer.getRaw(), craftTagContainer.getDataTagTypeRegistry());
     }
 
+    @NotNull
     @Override
     public C fromPrimitive(@NotNull PersistentDataContainer primitive, @NotNull PersistentDataAdapterContext context) {
         Preconditions.checkArgument(primitive instanceof CraftPersistentDataContainer, "Could not wrap deprecated API due to foreign PersistentMetadataContainer implementation %s", primitive.getClass().getSimpleName());

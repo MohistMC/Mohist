@@ -8,7 +8,7 @@ public abstract class CraftRotatable extends CraftBlockData implements Rotatable
 
     @Override
     public org.bukkit.block.BlockFace getRotation() {
-        int data = get(ROTATION);
+        int data = this.get(CraftRotatable.ROTATION);
         switch (data) {
             case 0x0:
                 return org.bukkit.block.BlockFace.SOUTH;
@@ -102,6 +102,6 @@ public abstract class CraftRotatable extends CraftBlockData implements Rotatable
             default:
                 throw new IllegalArgumentException("Illegal rotation " + rotation);
         }
-        set(ROTATION, val);
+        this.set(CraftRotatable.ROTATION, val);
     }
 }

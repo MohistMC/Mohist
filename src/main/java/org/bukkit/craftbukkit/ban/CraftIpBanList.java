@@ -28,7 +28,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
             return null;
         }
 
-        return new CraftIpBanEntry(target, entry, list);
+        return new CraftIpBanEntry(target, entry, this.list);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
 
         this.list.add(entry);
 
-        return new CraftIpBanEntry(target, entry, list);
+        return new CraftIpBanEntry(target, entry, this.list);
     }
 
     @Override
@@ -57,22 +57,22 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     @Override
     public BanEntry<InetAddress> addBan(InetAddress target, String reason, Instant expires, String source) {
         Date date = expires != null ? Date.from(expires) : null;
-        return addBan(target, reason, date, source);
+        return this.addBan(target, reason, date, source);
     }
 
     @Override
     public BanEntry<InetAddress> addBan(InetAddress target, String reason, Duration duration, String source) {
         Instant instant = duration != null ? Instant.now().plus(duration) : null;
-        return addBan(target, reason, instant, source);
+        return this.addBan(target, reason, instant, source);
     }
 
     @Override
     public Set<BanEntry> getBanEntries() {
         ImmutableSet.Builder<BanEntry> builder = ImmutableSet.builder();
-        for (String target : list.getUserList()) {
-            IpBanListEntry ipBanEntry = list.get(target);
+        for (String target : this.list.getUserList()) {
+            IpBanListEntry ipBanEntry = this.list.get(target);
             if (ipBanEntry != null) {
-                builder.add(new CraftIpBanEntry(target, ipBanEntry, list));
+                builder.add(new CraftIpBanEntry(target, ipBanEntry, this.list));
             }
         }
         return builder.build();
@@ -81,10 +81,10 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
     @Override
     public Set<BanEntry<InetAddress>> getEntries() {
         ImmutableSet.Builder<BanEntry<InetAddress>> builder = ImmutableSet.builder();
-        for (String target : list.getUserList()) {
-            IpBanListEntry ipBanEntry = list.get(target);
+        for (String target : this.list.getUserList()) {
+            IpBanListEntry ipBanEntry = this.list.get(target);
             if (ipBanEntry != null) {
-                builder.add(new CraftIpBanEntry(target, ipBanEntry, list));
+                builder.add(new CraftIpBanEntry(target, ipBanEntry, this.list));
             }
         }
         return builder.build();
@@ -98,7 +98,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
 
     @Override
     public boolean isBanned(InetAddress target) {
-        return this.isBanned(getIpFromAddress(target));
+        return this.isBanned(this.getIpFromAddress(target));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class CraftIpBanList implements org.bukkit.ban.IpBanList {
 
     @Override
     public void pardon(InetAddress target) {
-        this.pardon(getIpFromAddress(target));
+        this.pardon(this.getIpFromAddress(target));
     }
 
     private String getIpFromAddress(InetAddress address) {

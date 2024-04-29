@@ -8,11 +8,11 @@ public abstract class CraftAttachable extends CraftBlockData implements Attachab
 
     @Override
     public boolean isAttached() {
-        return get(ATTACHED);
+        return this.get(CraftAttachable.ATTACHED);
     }
 
     @Override
     public void setAttached(boolean attached) {
-        set(ATTACHED, attached);
+        this.set(CraftAttachable.ATTACHED, attached);
     }
 }

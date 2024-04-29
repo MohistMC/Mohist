@@ -55,10 +55,9 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
         for (int i = 0; i < shape.length; i++) {
             String row = shape[i];
             for (int j = 0; j < row.length(); j++) {
-                data.set(i * width + j, toNMS(ingred.get(row.charAt(j)), false));
+                data.set(i * width + j, this.toNMS(ingred.get(row.charAt(j)), false));
             }
         }
-
         MinecraftServer.getServer().getRecipeManager().addRecipe(new RecipeHolder<>(CraftNamespacedKey.toMinecraft(this.getKey()), new net.minecraft.world.item.crafting.ShapedRecipe(this.getGroup(), CraftRecipe.getCategory(this.getCategory()), new ShapedRecipePattern(width, shape.length, data, Optional.empty()), CraftItemStack.asNMSCopy(this.getResult()))));
     }
 }

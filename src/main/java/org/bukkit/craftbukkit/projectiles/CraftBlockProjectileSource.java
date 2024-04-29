@@ -2,11 +2,16 @@ package org.bukkit.craftbukkit.projectiles;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.entity.projectile.ThrownEgg;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.ThrownExperienceBottle;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import org.bukkit.Material;
@@ -40,34 +45,34 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
 
     @Override
     public Block getBlock() {
-        return dispenserBlock.getLevel().getWorld().getBlockAt(dispenserBlock.getBlockPos().getX(), dispenserBlock.getBlockPos().getY(), dispenserBlock.getBlockPos().getZ());
+        return this.dispenserBlock.getLevel().getWorld().getBlockAt(this.dispenserBlock.getBlockPos().getX(), this.dispenserBlock.getBlockPos().getY(), this.dispenserBlock.getBlockPos().getZ());
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
-        return launchProjectile(projectile, null);
+        return this.launchProjectile(projectile, null);
     }
 
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
-        Preconditions.checkArgument(getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
-        // Copied from DispenserBlock.dispense()
-        BlockSource sourceblock = new BlockSource((ServerLevel) dispenserBlock.getLevel(), dispenserBlock.getBlockPos(), dispenserBlock.getBlockState(), dispenserBlock);
+        Preconditions.checkArgument(this.getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
+        // Copied from BlockDispenser.dispense()
+        BlockSource sourceblock = new BlockSource((ServerLevel) this.dispenserBlock.getLevel(), this.dispenserBlock.getBlockPos(), this.dispenserBlock.getBlockState(), this.dispenserBlock);
         // Copied from DispenseBehaviorProjectile
-        net.minecraft.core.Position iposition = DispenserBlock.getDispensePosition(sourceblock);
+        Position iposition = DispenserBlock.getDispensePosition(sourceblock);
         Direction enumdirection = (Direction) sourceblock.state().getValue(DispenserBlock.FACING);
-        net.minecraft.world.level.Level world = dispenserBlock.getLevel();
+        net.minecraft.world.level.Level world = this.dispenserBlock.getLevel();
         net.minecraft.world.entity.Entity launch = null;
 
         if (Snowball.class.isAssignableFrom(projectile)) {
             launch = new net.minecraft.world.entity.projectile.Snowball(world, iposition.x(), iposition.y(), iposition.z());
         } else if (Egg.class.isAssignableFrom(projectile)) {
-            launch = new net.minecraft.world.entity.projectile.ThrownEgg(world, iposition.x(), iposition.y(), iposition.z());
+            launch = new ThrownEgg(world, iposition.x(), iposition.y(), iposition.z());
         } else if (EnderPearl.class.isAssignableFrom(projectile)) {
             launch = new ThrownEnderpearl(world, null);
             launch.setPos(iposition.x(), iposition.y(), iposition.z());
         } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
-            launch = new net.minecraft.world.entity.projectile.ThrownExperienceBottle(world, iposition.x(), iposition.y(), iposition.z());
+            launch = new ThrownExperienceBottle(world, iposition.x(), iposition.y(), iposition.z());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             if (LingeringPotion.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.world.entity.projectile.ThrownPotion(world, iposition.x(), iposition.y(), iposition.z());
@@ -83,7 +88,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SPECTRAL_ARROW));
             } else {
-                launch = new net.minecraft.world.entity.projectile.SpectralArrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+                launch = new net.minecraft.world.entity.projectile.Arrow(world, iposition.x(), iposition.y(), iposition.z(), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
             }
             ((net.minecraft.world.entity.projectile.AbstractArrow) launch).pickup = net.minecraft.world.entity.projectile.AbstractArrow.Pickup.ALLOWED;
             ((net.minecraft.world.entity.projectile.AbstractArrow) launch).projectileSource = this;
@@ -99,7 +104,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             if (SmallFireball.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.world.entity.projectile.SmallFireball(world, null, d0, d1, d2);
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
-                launch = net.minecraft.world.entity.EntityType.WITHER_SKULL.create(world);
+                launch = EntityType.WITHER_SKULL.create(world);
                 launch.setPos(d0, d1, d2);
                 double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
@@ -107,7 +112,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
                 ((AbstractHurtingProjectile) launch).yPower = d4 / d6 * 0.1D;
                 ((AbstractHurtingProjectile) launch).zPower = d5 / d6 * 0.1D;
             } else {
-                launch = net.minecraft.world.entity.EntityType.FIREBALL.create(world);
+                launch = EntityType.FIREBALL.create(world);
                 launch.setPos(d0, d1, d2);
                 double d6 = Math.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
@@ -122,13 +127,13 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
         Preconditions.checkArgument(launch != null, "Projectile not supported");
 
         if (launch instanceof net.minecraft.world.entity.projectile.Projectile) {
-            if (launch instanceof net.minecraft.world.entity.projectile.ThrowableProjectile) {
-                ((net.minecraft.world.entity.projectile.ThrowableProjectile) launch).projectileSource = this;
+            if (launch instanceof ThrowableProjectile) {
+                ((ThrowableProjectile) launch).projectileSource = this;
             }
             // Values from DispenseBehaviorProjectile
             float a = 6.0F;
             float b = 1.1F;
-            if (launch instanceof ThrownPotion || launch instanceof ThrownExpBottle) {
+            if (launch instanceof net.minecraft.world.entity.projectile.ThrownPotion || launch instanceof ThrownExpBottle) {
                 // Values from respective DispenseBehavior classes
                 a *= 0.5F;
                 b *= 1.25F;

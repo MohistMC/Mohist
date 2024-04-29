@@ -23,7 +23,7 @@ public class CraftDataPack implements DataPack {
 
     public CraftDataPack(Pack handler) {
         this.handle = handler;
-        try (PackResources iresourcepack = this.handle.resources.openPrimary(this.handle.getId())) {
+        try (PackResources iresourcepack = this.handle.resources.openPrimary(this.handle.location())) {
             this.resourcePackInfo = iresourcepack.getMetadataSection(PackMetadataSection.TYPE);
         } catch (IOException e) { // This is already called in NMS then if in NMS not happen is secure this not throw here
             throw new RuntimeException(e);
@@ -35,7 +35,7 @@ public class CraftDataPack implements DataPack {
     }
 
     public String getRawId() {
-        return getHandle().getId();
+        return this.getHandle().getId();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CraftDataPack implements DataPack {
 
     @Override
     public boolean isRequired() {
-        return getHandle().isRequired();
+        return this.getHandle().isRequired();
     }
 
     @Override
@@ -79,11 +79,11 @@ public class CraftDataPack implements DataPack {
 
     @Override
     public boolean isEnabled() {
-        return ((CraftServer) Bukkit.getServer()).getServer().getPackRepository().getSelectedIds().contains(getRawId());
+        return ((CraftServer) Bukkit.getServer()).getServer().getPackRepository().getSelectedIds().contains(this.getRawId());
     }
 
     @Override
-    public Source getSource() {
+    public DataPack.Source getSource() {
         if (this.getHandle().getPackSource() == PackSource.BUILT_IN) {
             return Source.BUILT_IN;
         } else if (this.getHandle().getPackSource() == PackSource.FEATURE) {
@@ -103,12 +103,12 @@ public class CraftDataPack implements DataPack {
 
     @Override
     public NamespacedKey getKey() {
-        return NamespacedKey.fromString(getRawId());
+        return NamespacedKey.fromString(this.getRawId());
     }
 
     @Override
     public String toString() {
-        String requestedFeatures = getRequestedFeatures().stream().map(featureFlag -> featureFlag.getKey().toString()).collect(Collectors.joining(","));
+        String requestedFeatures = this.getRequestedFeatures().stream().map(featureFlag -> featureFlag.getKey().toString()).collect(Collectors.joining(","));
         return "CraftDataPack{rawId=" + this.getRawId() + ",id=" + this.getKey() + ",title=" + this.getTitle() + ",description=" + this.getDescription() + ",packformat=" + this.getPackFormat() + ",minSupportedPackFormat=" + this.getMinSupportedPackFormat() + ",maxSupportedPackFormat=" + this.getMaxSupportedPackFormat() + ",compatibility=" + this.getCompatibility() + ",source=" + this.getSource() + ",enabled=" + this.isEnabled() + ",requestedFeatures=[" + requestedFeatures + "]}";
     }
 }

@@ -19,17 +19,17 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.blo
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+        return this.get(CraftCalibratedSculkSensor.FACING, org.bukkit.block.BlockFace.class);
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+        this.set(CraftCalibratedSculkSensor.FACING, facing);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
+        return this.getValues(CraftCalibratedSculkSensor.FACING, org.bukkit.block.BlockFace.class);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftSculkSensor
@@ -37,13 +37,13 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.blo
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> PHASE = getEnum(net.minecraft.world.level.block.CalibratedSculkSensorBlock.class, "sculk_sensor_phase");
 
     @Override
-    public Phase getPhase() {
-        return get(PHASE, Phase.class);
+    public org.bukkit.block.data.type.SculkSensor.Phase getPhase() {
+        return this.get(CraftCalibratedSculkSensor.PHASE, org.bukkit.block.data.type.SculkSensor.Phase.class);
     }
 
     @Override
-    public void setPhase(Phase phase) {
-        set(PHASE, phase);
+    public void setPhase(org.bukkit.block.data.type.SculkSensor.Phase phase) {
+        this.set(CraftCalibratedSculkSensor.PHASE, phase);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
@@ -52,17 +52,17 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.blo
 
     @Override
     public int getPower() {
-        return get(POWER);
+        return this.get(CraftCalibratedSculkSensor.POWER);
     }
 
     @Override
     public void setPower(int power) {
-        set(POWER, power);
+        this.set(CraftCalibratedSculkSensor.POWER, power);
     }
 
     @Override
     public int getMaximumPower() {
-        return getMax(POWER);
+        return getMax(CraftCalibratedSculkSensor.POWER);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
@@ -71,11 +71,11 @@ public final class CraftCalibratedSculkSensor extends org.bukkit.craftbukkit.blo
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftCalibratedSculkSensor.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftCalibratedSculkSensor.WATERLOGGED, waterlogged);
     }
 }

@@ -9,11 +9,11 @@ public abstract class CraftHopper extends CraftBlockData implements Hopper {
 
     @Override
     public boolean isEnabled() {
-        return get(ENABLED);
+        return this.get(CraftHopper.ENABLED);
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        set(ENABLED, enabled);
+        this.set(CraftHopper.ENABLED, enabled);
     }
 }

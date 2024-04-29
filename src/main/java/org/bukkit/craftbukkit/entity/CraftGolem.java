@@ -11,7 +11,7 @@ public class CraftGolem extends CraftCreature implements Golem {
 
     @Override
     public AbstractGolem getHandle() {
-        return (AbstractGolem) entity;
+        return (AbstractGolem) this.entity;
     }
 
     @Override

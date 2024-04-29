@@ -9,11 +9,11 @@ public abstract class CraftTechnicalPiston extends CraftBlockData implements Tec
 
     @Override
     public org.bukkit.block.data.type.TechnicalPiston.Type getType() {
-        return get(TYPE, org.bukkit.block.data.type.TechnicalPiston.Type.class);
+        return this.get(CraftTechnicalPiston.TYPE, org.bukkit.block.data.type.TechnicalPiston.Type.class);
     }
 
     @Override
     public void setType(org.bukkit.block.data.type.TechnicalPiston.Type type) {
-        set(TYPE, type);
+        this.set(CraftTechnicalPiston.TYPE, type);
     }
 }

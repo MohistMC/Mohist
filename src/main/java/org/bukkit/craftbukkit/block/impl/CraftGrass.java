@@ -13,17 +13,17 @@ public final class CraftGrass extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftSnowable
+    // org.bukkit.craftbukkit.block.data.CraftSnowable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty SNOWY = getBoolean(net.minecraft.world.level.block.GrassBlock.class, "snowy");
 
     @Override
     public boolean isSnowy() {
-        return get(SNOWY);
+        return this.get(CraftGrass.SNOWY);
     }
 
     @Override
     public void setSnowy(boolean snowy) {
-        set(SNOWY, snowy);
+        this.set(CraftGrass.SNOWY, snowy);
     }
 }

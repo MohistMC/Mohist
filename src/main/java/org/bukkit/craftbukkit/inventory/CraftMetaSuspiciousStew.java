@@ -7,22 +7,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.SuspiciousStewEffects;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-@DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+@DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaSuspiciousStew extends CraftMetaItem implements SuspiciousStewMeta {
 
-    static final ItemMetaKey DURATION = new ItemMetaKey("duration", "duration");
-    static final ItemMetaKey EFFECTS = new ItemMetaKey("effects", "effects");
-    static final ItemMetaKey ID = new ItemMetaKey("id", "id");
+    static final ItemMetaKeyType<SuspiciousStewEffects> EFFECTS = new ItemMetaKeyType<>(DataComponents.SUSPICIOUS_STEW_EFFECTS, "effects");
 
     private List<PotionEffect> customEffects;
 
@@ -36,63 +34,60 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
         }
     }
 
-    CraftMetaSuspiciousStew(CompoundTag tag) {
+    CraftMetaSuspiciousStew(DataComponentPatch tag) {
         super(tag);
-        if (tag.contains(EFFECTS.NBT)) {
-            ListTag list = tag.getList(EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+        getOrEmpty(tag, CraftMetaSuspiciousStew.EFFECTS).ifPresent((suspiciousStewEffects) -> {
+            List<SuspiciousStewEffects.Entry> list = suspiciousStewEffects.effects();
             int length = list.size();
-            customEffects = new ArrayList<>(length);
+            this.customEffects = new ArrayList<>(length);
 
             for (int i = 0; i < length; i++) {
-                CompoundTag effect = list.getCompound(i);
-                PotionEffectType type = PotionEffectType.getByKey(NamespacedKey.fromString(effect.getString(ID.NBT)));
+                SuspiciousStewEffects.Entry effect = list.get(i);
+                PotionEffectType type = CraftPotionEffectType.minecraftHolderToBukkit(effect.effect());
                 if (type == null) {
                     continue;
                 }
-                int duration = effect.getInt(DURATION.NBT);
-                customEffects.add(new PotionEffect(type, duration, 0));
+                int duration = effect.duration();
+                this.customEffects.add(new PotionEffect(type, duration, 0));
             }
-        }
+        });
     }
 
     CraftMetaSuspiciousStew(Map<String, Object> map) {
         super(map);
 
-        Iterable<?> rawEffectList = SerializableMeta.getObject(Iterable.class, map, EFFECTS.BUKKIT, true);
+        Iterable<?> rawEffectList = SerializableMeta.getObject(Iterable.class, map, CraftMetaSuspiciousStew.EFFECTS.BUKKIT, true);
         if (rawEffectList == null) {
             return;
         }
 
         for (Object obj : rawEffectList) {
             Preconditions.checkArgument(obj instanceof PotionEffect, "Object (%s) in effect list is not valid", obj.getClass());
-            addCustomEffect((PotionEffect) obj, true);
+            this.addCustomEffect((PotionEffect) obj, true);
         }
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(CraftMetaItem.Applicator tag) {
         super.applyToItem(tag);
 
-        if (customEffects != null) {
-            ListTag effectList = new ListTag();
-            tag.put(EFFECTS.NBT, effectList);
+        if (this.customEffects != null) {
+            List<SuspiciousStewEffects.Entry> effectList = new ArrayList<>();
 
-            for (PotionEffect effect : customEffects) {
-                CompoundTag effectData = new CompoundTag();
-                effectData.putString(ID.NBT, effect.getType().getKey().toString());
-                effectData.putInt(DURATION.NBT, effect.getDuration());
-                effectList.add(effectData);
+            for (PotionEffect effect : this.customEffects) {
+                effectList.add(new net.minecraft.world.item.component.SuspiciousStewEffects.Entry(CraftPotionEffectType.bukkitToMinecraftHolder(effect.getType()), effect.getDuration()));
             }
+            tag.put(CraftMetaSuspiciousStew.EFFECTS, new SuspiciousStewEffects(effectList));
         }
     }
 
     @Override
     boolean isEmpty() {
-        return super.isEmpty() && isStewEmpty();
+        return super.isEmpty() && this.isStewEmpty();
     }
 
     boolean isStewEmpty() {
-        return !hasCustomEffects();
+        return !this.hasCustomEffects();
     }
 
     @Override
@@ -111,13 +106,13 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
 
     @Override
     public boolean hasCustomEffects() {
-        return customEffects != null;
+        return this.customEffects != null;
     }
 
     @Override
     public List<PotionEffect> getCustomEffects() {
-        if (hasCustomEffects()) {
-            return ImmutableList.copyOf(customEffects);
+        if (this.hasCustomEffects()) {
+            return ImmutableList.copyOf(this.customEffects);
         }
         return ImmutableList.of();
     }
@@ -126,23 +121,23 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
     public boolean addCustomEffect(PotionEffect effect, boolean overwrite) {
         Preconditions.checkArgument(effect != null, "Potion effect cannot be null");
 
-        int index = indexOfEffect(effect.getType());
+        int index = this.indexOfEffect(effect.getType());
         if (index != -1) {
             if (overwrite) {
-                PotionEffect old = customEffects.get(index);
+                PotionEffect old = this.customEffects.get(index);
                 if (old.getDuration() == effect.getDuration()) {
                     return false;
                 }
-                customEffects.set(index, effect);
+                this.customEffects.set(index, effect);
                 return true;
             } else {
                 return false;
             }
         } else {
-            if (customEffects == null) {
-                customEffects = new ArrayList<>();
+            if (this.customEffects == null) {
+                this.customEffects = new ArrayList<>();
             }
-            customEffects.add(effect);
+            this.customEffects.add(effect);
             return true;
         }
     }
@@ -151,12 +146,12 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
     public boolean removeCustomEffect(PotionEffectType type) {
         Preconditions.checkArgument(type != null, "Potion effect type cannot be null");
 
-        if (!hasCustomEffects()) {
+        if (!this.hasCustomEffects()) {
             return false;
         }
 
         boolean changed = false;
-        Iterator<PotionEffect> iterator = customEffects.iterator();
+        Iterator<PotionEffect> iterator = this.customEffects.iterator();
         while (iterator.hasNext()) {
             PotionEffect effect = iterator.next();
             if (type.equals(effect.getType())) {
@@ -164,8 +159,8 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
                 changed = true;
             }
         }
-        if (customEffects.isEmpty()) {
-            customEffects = null;
+        if (this.customEffects.isEmpty()) {
+            this.customEffects = null;
         }
         return changed;
     }
@@ -173,16 +168,16 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
     @Override
     public boolean hasCustomEffect(PotionEffectType type) {
         Preconditions.checkArgument(type != null, "Potion effect type cannot be null");
-        return indexOfEffect(type) != -1;
+        return this.indexOfEffect(type) != -1;
     }
 
     private int indexOfEffect(PotionEffectType type) {
-        if (!hasCustomEffects()) {
+        if (!this.hasCustomEffects()) {
             return -1;
         }
 
-        for (int i = 0; i < customEffects.size(); i++) {
-            if (customEffects.get(i).getType().equals(type)) {
+        for (int i = 0; i < this.customEffects.size(); i++) {
+            if (this.customEffects.get(i).getType().equals(type)) {
                 return i;
             }
         }
@@ -191,8 +186,8 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
 
     @Override
     public boolean clearCustomEffects() {
-        boolean changed = hasCustomEffects();
-        customEffects = null;
+        boolean changed = this.hasCustomEffects();
+        this.customEffects = null;
         return changed;
     }
 
@@ -200,8 +195,8 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
     int applyHash() {
         final int original;
         int hash = original = super.applyHash();
-        if (hasCustomEffects()) {
-            hash = 73 * hash + customEffects.hashCode();
+        if (this.hasCustomEffects()) {
+            hash = 73 * hash + this.customEffects.hashCode();
         }
         return original != hash ? CraftMetaSuspiciousStew.class.hashCode() ^ hash : hash;
     }
@@ -212,7 +207,6 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
             return false;
         }
         if (meta instanceof CraftMetaSuspiciousStew that) {
-
             return (this.hasCustomEffects() ? that.hasCustomEffects() && this.customEffects.equals(that.customEffects) : !that.hasCustomEffects());
         }
         return true;
@@ -220,15 +214,15 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
 
     @Override
     boolean notUncommon(CraftMetaItem meta) {
-        return super.notUncommon(meta) && (meta instanceof CraftMetaSuspiciousStew || isStewEmpty());
+        return super.notUncommon(meta) && (meta instanceof CraftMetaSuspiciousStew || this.isStewEmpty());
     }
 
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
 
-        if (hasCustomEffects()) {
-            builder.put(EFFECTS.BUKKIT, ImmutableList.copyOf(this.customEffects));
+        if (this.hasCustomEffects()) {
+            builder.put(CraftMetaSuspiciousStew.EFFECTS.BUKKIT, ImmutableList.copyOf(this.customEffects));
         }
 
         return builder;

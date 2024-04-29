@@ -1,3 +1,6 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.block.impl;
 
 public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.HangingSign, org.bukkit.block.data.Attachable, org.bukkit.block.data.Rotatable, org.bukkit.block.data.Waterlogged {
@@ -16,12 +19,12 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
 
     @Override
     public boolean isAttached() {
-        return get(ATTACHED);
+        return this.get(CraftCeilingHangingSign.ATTACHED);
     }
 
     @Override
     public void setAttached(boolean attached) {
-        set(ATTACHED, attached);
+        this.set(CraftCeilingHangingSign.ATTACHED, attached);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftRotatable
@@ -30,7 +33,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
 
     @Override
     public org.bukkit.block.BlockFace getRotation() {
-        int data = get(ROTATION);
+        int data = this.get(CraftCeilingHangingSign.ROTATION);
         switch (data) {
             case 0x0:
                 return org.bukkit.block.BlockFace.SOUTH;
@@ -124,7 +127,7 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
             default:
                 throw new IllegalArgumentException("Illegal rotation " + rotation);
         }
-        set(ROTATION, val);
+        this.set(CraftCeilingHangingSign.ROTATION, val);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
@@ -133,11 +136,11 @@ public final class CraftCeilingHangingSign extends org.bukkit.craftbukkit.block.
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftCeilingHangingSign.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftCeilingHangingSign.WATERLOGGED, waterlogged);
     }
 }

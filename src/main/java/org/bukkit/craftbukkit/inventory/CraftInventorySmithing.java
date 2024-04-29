@@ -24,22 +24,22 @@ public class CraftInventorySmithing extends CraftResultInventory implements Smit
 
     @Override
     public Location getLocation() {
-        return location;
+        return this.location;
     }
 
     @Override
     public ItemStack getResult() {
-        return getItem(3);
+        return this.getItem(3);
     }
 
     @Override
     public void setResult(ItemStack item) {
-        setItem(3, item);
+        this.setItem(3, item);
     }
 
     @Override
     public Recipe getRecipe() {
-        RecipeHolder<?> recipe = getResultInventory().getRecipeUsed();
+        RecipeHolder<?> recipe = this.getResultInventory().getRecipeUsed();
         return (recipe == null) ? null : recipe.toBukkitRecipe();
     }
 }

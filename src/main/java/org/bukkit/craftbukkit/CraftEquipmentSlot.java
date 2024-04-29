@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit;
 
+import java.util.Locale;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class CraftEquipmentSlot {
@@ -15,19 +17,28 @@ public class CraftEquipmentSlot {
         set(EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.LEGS);
         set(EquipmentSlot.CHEST, net.minecraft.world.entity.EquipmentSlot.CHEST);
         set(EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.HEAD);
+        set(EquipmentSlot.BODY, net.minecraft.world.entity.EquipmentSlot.BODY);
     }
 
     private static void set(EquipmentSlot type, net.minecraft.world.entity.EquipmentSlot value) {
-        slots[type.ordinal()] = value;
-        enums[value.ordinal()] = type;
+        CraftEquipmentSlot.slots[type.ordinal()] = value;
+        CraftEquipmentSlot.enums[value.ordinal()] = type;
     }
 
     public static EquipmentSlot getSlot(net.minecraft.world.entity.EquipmentSlot nms) {
-        return enums[nms.ordinal()];
+        return CraftEquipmentSlot.enums[nms.ordinal()];
+    }
+
+    public static org.bukkit.inventory.EquipmentSlotGroup getSlot(EquipmentSlotGroup nms) {
+        return org.bukkit.inventory.EquipmentSlotGroup.getByName(nms.getSerializedName());
     }
 
     public static net.minecraft.world.entity.EquipmentSlot getNMS(EquipmentSlot slot) {
-        return slots[slot.ordinal()];
+        return CraftEquipmentSlot.slots[slot.ordinal()];
+    }
+
+    public static EquipmentSlotGroup getNMSGroup(org.bukkit.inventory.EquipmentSlotGroup slot) {
+        return EquipmentSlotGroup.valueOf(slot.toString().toUpperCase(Locale.ROOT));
     }
 
     public static EquipmentSlot getHand(InteractionHand enumhand) {

@@ -9,16 +9,16 @@ public abstract class CraftCake extends CraftBlockData implements Cake {
 
     @Override
     public int getBites() {
-        return get(BITES);
+        return this.get(CraftCake.BITES);
     }
 
     @Override
     public void setBites(int bites) {
-        set(BITES, bites);
+        this.set(CraftCake.BITES, bites);
     }
 
     @Override
     public int getMaximumBites() {
-        return getMax(BITES);
+        return getMax(CraftCake.BITES);
     }
 }

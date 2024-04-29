@@ -41,7 +41,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -56,7 +56,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.LevelTickAccess;
-import net.minecraft.world.ticks.ScheduledTick;
 import net.minecraft.world.ticks.TickPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
@@ -69,753 +68,743 @@ public abstract class DelegatedGeneratorAccess implements WorldGenLevel {
     }
 
     public WorldGenLevel getHandle() {
-        return handle;
+        return this.handle;
     }
 
     @Override
     public long getSeed() {
-        return handle.getSeed();
+        return this.handle.getSeed();
     }
 
     @Override
-    public void setCurrentlyGenerating(Supplier<String> arg0) {
-        handle.setCurrentlyGenerating(arg0);
+    public void setCurrentlyGenerating(Supplier<String> structureName) {
+        this.handle.setCurrentlyGenerating(structureName);
     }
 
     @Override
-    public boolean ensureCanWrite(BlockPos arg0) {
-        return handle.ensureCanWrite(arg0);
+    public boolean ensureCanWrite(BlockPos pos) {
+        return this.handle.ensureCanWrite(pos);
     }
 
     @Override
     public ServerLevel getLevel() {
-        return handle.getLevel();
+        return this.handle.getLevel();
     }
 
     @Override
     public void addFreshEntityWithPassengers(Entity arg0, CreatureSpawnEvent.SpawnReason arg1) {
-        handle.addFreshEntityWithPassengers(arg0, arg1);
+        this.handle.addFreshEntityWithPassengers(arg0, arg1);
     }
 
     @Override
-    public void addFreshEntityWithPassengers(Entity arg0) {
-        handle.addFreshEntityWithPassengers(arg0);
+    public void addFreshEntityWithPassengers(Entity entity) {
+        this.handle.addFreshEntityWithPassengers(entity);
     }
 
     @Override
     public ServerLevel getMinecraftWorld() {
-        return handle.getMinecraftWorld();
+        return this.handle.getMinecraftWorld();
     }
 
     @Override
-    public DifficultyInstance getCurrentDifficultyAt(BlockPos arg0) {
-        return handle.getCurrentDifficultyAt(arg0);
+    public DifficultyInstance getCurrentDifficultyAt(BlockPos pos) {
+        return this.handle.getCurrentDifficultyAt(pos);
     }
 
     @Override
-    public void neighborShapeChanged(Direction arg0, BlockState arg1, BlockPos arg2, BlockPos arg3, int arg4, int arg5) {
-        handle.neighborShapeChanged(arg0, arg1, arg2, arg3, arg4, arg5);
+    public void neighborShapeChanged(Direction direction, BlockState neighborState, BlockPos pos, BlockPos neighborPos, int flags, int maxUpdateDepth) {
+        this.handle.neighborShapeChanged(direction, neighborState, pos, neighborPos, flags, maxUpdateDepth);
     }
 
     @Override
     public long dayTime() {
-        return handle.dayTime();
+        return this.handle.dayTime();
     }
 
     @Override
     public LevelData getLevelData() {
-        return handle.getLevelData();
+        return this.handle.getLevelData();
     }
 
     @Override
-    public boolean hasChunk(int arg0, int arg1) {
-        return handle.hasChunk(arg0, arg1);
+    public boolean hasChunk(int chunkX, int chunkZ) {
+        return this.handle.hasChunk(chunkX, chunkZ);
     }
 
     @Override
     public ChunkSource getChunkSource() {
-        return handle.getChunkSource();
+        return this.handle.getChunkSource();
     }
 
     @Override
-    public void scheduleTick(BlockPos arg0, Block arg1, int arg2, TickPriority arg3) {
-        handle.scheduleTick(arg0, arg1, arg2, arg3);
+    public void scheduleTick(BlockPos pos, Block block, int delay, TickPriority priority) {
+        this.handle.scheduleTick(pos, block, delay, priority);
     }
 
     @Override
-    public void scheduleTick(BlockPos arg0, Block arg1, int arg2) {
-        handle.scheduleTick(arg0, arg1, arg2);
+    public void scheduleTick(BlockPos pos, Block block, int delay) {
+        this.handle.scheduleTick(pos, block, delay);
     }
 
     @Override
-    public void scheduleTick(BlockPos arg0, Fluid arg1, int arg2, TickPriority arg3) {
-        handle.scheduleTick(arg0, arg1, arg2, arg3);
+    public void scheduleTick(BlockPos pos, Fluid fluid, int delay, TickPriority priority) {
+        this.handle.scheduleTick(pos, fluid, delay, priority);
     }
 
     @Override
-    public void scheduleTick(BlockPos arg0, Fluid arg1, int arg2) {
-        handle.scheduleTick(arg0, arg1, arg2);
+    public void scheduleTick(BlockPos pos, Fluid fluid, int delay) {
+        this.handle.scheduleTick(pos, fluid, delay);
     }
 
     @Override
     public Difficulty getDifficulty() {
-        return handle.getDifficulty();
+        return this.handle.getDifficulty();
     }
 
     @Override
-    public void blockUpdated(BlockPos arg0, Block arg1) {
-        handle.blockUpdated(arg0, arg1);
+    public void blockUpdated(BlockPos pos, Block block) {
+        this.handle.blockUpdated(pos, block);
     }
 
     @Override
     public MinecraftServer getServer() {
-        return handle.getServer();
+        return this.handle.getServer();
     }
 
     @Override
     public RandomSource getRandom() {
-        return handle.getRandom();
+        return this.handle.getRandom();
     }
 
     @Override
     public LevelTickAccess<Block> getBlockTicks() {
-        return handle.getBlockTicks();
+        return this.handle.getBlockTicks();
     }
 
     @Override
     public long nextSubTickCount() {
-        return handle.nextSubTickCount();
-    }
-
-    @Override
-    public <T> ScheduledTick<T> createTick(BlockPos arg0, T arg1, int arg2) {
-        return handle.createTick(arg0, arg1, arg2);
-    }
-
-    @Override
-    public <T> ScheduledTick<T> createTick(BlockPos arg0, T arg1, int arg2, TickPriority arg3) {
-        return handle.createTick(arg0, arg1, arg2, arg3);
+        return this.handle.nextSubTickCount();
     }
 
     @Override
     public LevelTickAccess<Fluid> getFluidTicks() {
-        return handle.getFluidTicks();
+        return this.handle.getFluidTicks();
     }
 
     @Override
-    public void playSound(Player arg0, BlockPos arg1, SoundEvent arg2, SoundSource arg3) {
-        handle.playSound(arg0, arg1, arg2, arg3);
+    public void playSound(Player except, BlockPos pos, SoundEvent sound, SoundSource category) {
+        this.handle.playSound(except, pos, sound, category);
     }
 
     @Override
-    public void playSound(Player arg0, BlockPos arg1, SoundEvent arg2, SoundSource arg3, float arg4, float arg5) {
-        handle.playSound(arg0, arg1, arg2, arg3, arg4, arg5);
+    public void playSound(Player source, BlockPos pos, SoundEvent sound, SoundSource category, float volume, float pitch) {
+        this.handle.playSound(source, pos, sound, category, volume, pitch);
     }
 
     @Override
-    public void levelEvent(int arg0, BlockPos arg1, int arg2) {
-        handle.levelEvent(arg0, arg1, arg2);
+    public void levelEvent(int eventId, BlockPos pos, int data) {
+        this.handle.levelEvent(eventId, pos, data);
     }
 
     @Override
-    public void levelEvent(Player arg0, int arg1, BlockPos arg2, int arg3) {
-        handle.levelEvent(arg0, arg1, arg2, arg3);
+    public void levelEvent(Player player, int eventId, BlockPos pos, int data) {
+        this.handle.levelEvent(player, eventId, pos, data);
     }
 
     @Override
-    public void addParticle(ParticleOptions arg0, double arg1, double arg2, double arg3, double arg4, double arg5, double arg6) {
-        handle.addParticle(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    public void addParticle(ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        this.handle.addParticle(parameters, x, y, z, velocityX, velocityY, velocityZ);
     }
 
     @Override
-    public void gameEvent(GameEvent arg0, Vec3 arg1, GameEvent.Context arg2) {
-        handle.gameEvent(arg0, arg1, arg2);
+    public void gameEvent(Holder<GameEvent> event, Vec3 emitterPos, GameEvent.Context emitter) {
+        this.handle.gameEvent(event, emitterPos, emitter);
     }
 
     @Override
-    public void gameEvent(GameEvent arg0, BlockPos arg1, GameEvent.Context arg2) {
-        handle.gameEvent(arg0, arg1, arg2);
+    public void gameEvent(Holder<GameEvent> event, BlockPos pos, GameEvent.Context emitter) {
+        this.handle.gameEvent(event, pos, emitter);
     }
 
     @Override
-    public void gameEvent(Entity arg0, GameEvent arg1, BlockPos arg2) {
-        handle.gameEvent(arg0, arg1, arg2);
+    public void gameEvent(Entity entity, Holder<GameEvent> event, BlockPos pos) {
+        this.handle.gameEvent(entity, event, pos);
     }
 
     @Override
-    public void gameEvent(Entity arg0, GameEvent arg1, Vec3 arg2) {
-        handle.gameEvent(arg0, arg1, arg2);
+    public void gameEvent(Entity entity, Holder<GameEvent> event, Vec3 pos) {
+        this.handle.gameEvent(entity, event, pos);
     }
 
     @Override
-    public List<VoxelShape> getEntityCollisions(Entity arg0, AABB arg1) {
-        return handle.getEntityCollisions(arg0, arg1);
+    public List<VoxelShape> getEntityCollisions(Entity entity, AABB box) {
+        return this.handle.getEntityCollisions(entity, box);
     }
 
     @Override
-    public <T extends BlockEntity> Optional<T> getBlockEntity(BlockPos arg0, BlockEntityType<T> arg1) {
-        return handle.getBlockEntity(arg0, arg1);
+    public <T extends BlockEntity> Optional<T> getBlockEntity(BlockPos pos, BlockEntityType<T> type) {
+        return this.handle.getBlockEntity(pos, type);
     }
 
     @Override
-    public BlockPos getHeightmapPos(Heightmap.Types arg0, BlockPos arg1) {
-        return handle.getHeightmapPos(arg0, arg1);
+    public BlockPos getHeightmapPos(Heightmap.Types heightmap, BlockPos pos) {
+        return this.handle.getHeightmapPos(heightmap, pos);
     }
 
     @Override
-    public boolean isUnobstructed(Entity arg0, VoxelShape arg1) {
-        return handle.isUnobstructed(arg0, arg1);
+    public boolean isUnobstructed(Entity except, VoxelShape shape) {
+        return this.handle.isUnobstructed(except, shape);
     }
 
     @Override
-    public boolean hasNearbyAlivePlayer(double arg0, double arg1, double arg2, double arg3) {
-        return handle.hasNearbyAlivePlayer(arg0, arg1, arg2, arg3);
+    public boolean hasNearbyAlivePlayer(double x, double y, double z, double range) {
+        return this.handle.hasNearbyAlivePlayer(x, y, z, range);
     }
 
     @Override
     public List<? extends Player> players() {
-        return handle.players();
+        return this.handle.players();
     }
 
     @Override
-    public List<Entity> getEntities(Entity arg0, AABB arg1, Predicate<? super Entity> arg2) {
-        return handle.getEntities(arg0, arg1, arg2);
+    public List<Entity> getEntities(Entity except, AABB box, Predicate<? super Entity> predicate) {
+        return this.handle.getEntities(except, box, predicate);
     }
 
     @Override
-    public <T extends Entity> List<T> getEntities(EntityTypeTest<Entity, T> arg0, AABB arg1, Predicate<? super T> arg2) {
-        return handle.getEntities(arg0, arg1, arg2);
+    public <T extends Entity> List<T> getEntities(EntityTypeTest<Entity, T> filter, AABB box, Predicate<? super T> predicate) {
+        return this.handle.getEntities(filter, box, predicate);
     }
 
     @Override
-    public List<Entity> getEntities(Entity arg0, AABB arg1) {
-        return handle.getEntities(arg0, arg1);
+    public List<Entity> getEntities(Entity except, AABB box) {
+        return this.handle.getEntities(except, box);
     }
 
     @Override
-    public <T extends Entity> List<T> getEntitiesOfClass(Class<T> arg0, AABB arg1) {
-        return handle.getEntitiesOfClass(arg0, arg1);
+    public <T extends Entity> List<T> getEntitiesOfClass(Class<T> entityClass, AABB box) {
+        return this.handle.getEntitiesOfClass(entityClass, box);
     }
 
     @Override
-    public <T extends Entity> List<T> getEntitiesOfClass(Class<T> arg0, AABB arg1, Predicate<? super T> arg2) {
-        return handle.getEntitiesOfClass(arg0, arg1, arg2);
+    public <T extends Entity> List<T> getEntitiesOfClass(Class<T> entityClass, AABB box, Predicate<? super T> predicate) {
+        return this.handle.getEntitiesOfClass(entityClass, box, predicate);
     }
 
     @Override
-    public Player getNearestPlayer(TargetingConditions arg0, LivingEntity arg1, double arg2, double arg3, double arg4) {
-        return handle.getNearestPlayer(arg0, arg1, arg2, arg3, arg4);
+    public Player getNearestPlayer(TargetingConditions targetPredicate, LivingEntity entity, double x, double y, double z) {
+        return this.handle.getNearestPlayer(targetPredicate, entity, x, y, z);
     }
 
     @Override
-    public Player getNearestPlayer(TargetingConditions arg0, double arg1, double arg2, double arg3) {
-        return handle.getNearestPlayer(arg0, arg1, arg2, arg3);
+    public Player getNearestPlayer(TargetingConditions targetPredicate, double x, double y, double z) {
+        return this.handle.getNearestPlayer(targetPredicate, x, y, z);
     }
 
     @Override
-    public Player getNearestPlayer(Entity arg0, double arg1) {
-        return handle.getNearestPlayer(arg0, arg1);
+    public Player getNearestPlayer(Entity entity, double maxDistance) {
+        return this.handle.getNearestPlayer(entity, maxDistance);
     }
 
     @Override
-    public Player getNearestPlayer(double arg0, double arg1, double arg2, double arg3, Predicate<Entity> arg4) {
-        return handle.getNearestPlayer(arg0, arg1, arg2, arg3, arg4);
+    public Player getNearestPlayer(double x, double y, double z, double maxDistance, Predicate<Entity> targetPredicate) {
+        return this.handle.getNearestPlayer(x, y, z, maxDistance, targetPredicate);
     }
 
     @Override
-    public Player getNearestPlayer(double arg0, double arg1, double arg2, double arg3, boolean arg4) {
-        return handle.getNearestPlayer(arg0, arg1, arg2, arg3, arg4);
+    public Player getNearestPlayer(double x, double y, double z, double maxDistance, boolean ignoreCreative) {
+        return this.handle.getNearestPlayer(x, y, z, maxDistance, ignoreCreative);
     }
 
     @Override
-    public Player getNearestPlayer(TargetingConditions arg0, LivingEntity arg1) {
-        return handle.getNearestPlayer(arg0, arg1);
+    public Player getNearestPlayer(TargetingConditions targetPredicate, LivingEntity entity) {
+        return this.handle.getNearestPlayer(targetPredicate, entity);
     }
 
     @Override
-    public <T extends LivingEntity> T getNearestEntity(Class<? extends T> arg0, TargetingConditions arg1, LivingEntity arg2, double arg3, double arg4, double arg5, AABB arg6) {
-        return handle.getNearestEntity(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    public <T extends LivingEntity> T getNearestEntity(Class<? extends T> entityClass, TargetingConditions targetPredicate, LivingEntity entity, double x, double y, double z, AABB box) {
+        return this.handle.getNearestEntity(entityClass, targetPredicate, entity, x, y, z, box);
     }
 
     @Override
-    public <T extends LivingEntity> T getNearestEntity(List<? extends T> arg0, TargetingConditions arg1, LivingEntity arg2, double arg3, double arg4, double arg5) {
-        return handle.getNearestEntity(arg0, arg1, arg2, arg3, arg4, arg5);
+    public <T extends LivingEntity> T getNearestEntity(List<? extends T> entityList, TargetingConditions targetPredicate, LivingEntity entity, double x, double y, double z) {
+        return this.handle.getNearestEntity(entityList, targetPredicate, entity, x, y, z);
     }
 
     @Override
-    public Player getPlayerByUUID(UUID arg0) {
-        return handle.getPlayerByUUID(arg0);
+    public Player getPlayerByUUID(UUID uuid) {
+        return this.handle.getPlayerByUUID(uuid);
     }
 
     @Override
-    public List<Player> getNearbyPlayers(TargetingConditions arg0, LivingEntity arg1, AABB arg2) {
-        return handle.getNearbyPlayers(arg0, arg1, arg2);
+    public List<Player> getNearbyPlayers(TargetingConditions targetPredicate, LivingEntity entity, AABB box) {
+        return this.handle.getNearbyPlayers(targetPredicate, entity, box);
     }
 
     @Override
-    public <T extends LivingEntity> List<T> getNearbyEntities(Class<T> arg0, TargetingConditions arg1, LivingEntity arg2, AABB arg3) {
-        return handle.getNearbyEntities(arg0, arg1, arg2, arg3);
+    public <T extends LivingEntity> List<T> getNearbyEntities(Class<T> entityClass, TargetingConditions targetPredicate, LivingEntity targetingEntity, AABB box) {
+        return this.handle.getNearbyEntities(entityClass, targetPredicate, targetingEntity, box);
     }
 
     @Override
     @Deprecated
-    public float getLightLevelDependentMagicValue(BlockPos arg0) {
-        return handle.getLightLevelDependentMagicValue(arg0);
+    public float getLightLevelDependentMagicValue(BlockPos pos) {
+        return this.handle.getLightLevelDependentMagicValue(pos);
     }
 
     @Override
-    public BlockGetter getChunkForCollisions(int arg0, int arg1) {
-        return handle.getChunkForCollisions(arg0, arg1);
+    public BlockGetter getChunkForCollisions(int chunkX, int chunkZ) {
+        return this.handle.getChunkForCollisions(chunkX, chunkZ);
     }
 
     @Override
-    public int getMaxLocalRawBrightness(BlockPos arg0) {
-        return handle.getMaxLocalRawBrightness(arg0);
+    public int getMaxLocalRawBrightness(BlockPos pos) {
+        return this.handle.getMaxLocalRawBrightness(pos);
     }
 
     @Override
-    public int getMaxLocalRawBrightness(BlockPos arg0, int arg1) {
-        return handle.getMaxLocalRawBrightness(arg0, arg1);
+    public int getMaxLocalRawBrightness(BlockPos pos, int ambientDarkness) {
+        return this.handle.getMaxLocalRawBrightness(pos, ambientDarkness);
     }
 
     @Override
-    public boolean canSeeSkyFromBelowWater(BlockPos arg0) {
-        return handle.canSeeSkyFromBelowWater(arg0);
+    public boolean canSeeSkyFromBelowWater(BlockPos pos) {
+        return this.handle.canSeeSkyFromBelowWater(pos);
     }
 
     @Override
-    public float getPathfindingCostFromLightLevels(BlockPos arg0) {
-        return handle.getPathfindingCostFromLightLevels(arg0);
+    public float getPathfindingCostFromLightLevels(BlockPos pos) {
+        return this.handle.getPathfindingCostFromLightLevels(pos);
     }
 
     @Override
-    public Stream<BlockState> getBlockStatesIfLoaded(AABB arg0) {
-        return handle.getBlockStatesIfLoaded(arg0);
+    public Stream<BlockState> getBlockStatesIfLoaded(AABB box) {
+        return this.handle.getBlockStatesIfLoaded(box);
     }
 
     @Override
-    public Holder<Biome> getUncachedNoiseBiome(int arg0, int arg1, int arg2) {
-        return handle.getUncachedNoiseBiome(arg0, arg1, arg2);
+    public Holder<Biome> getUncachedNoiseBiome(int biomeX, int biomeY, int biomeZ) {
+        return this.handle.getUncachedNoiseBiome(biomeX, biomeY, biomeZ);
     }
 
     @Override
     @Deprecated
     public int getSeaLevel() {
-        return handle.getSeaLevel();
+        return this.handle.getSeaLevel();
     }
 
     @Override
-    public boolean containsAnyLiquid(AABB arg0) {
-        return handle.containsAnyLiquid(arg0);
+    public boolean containsAnyLiquid(AABB box) {
+        return this.handle.containsAnyLiquid(box);
     }
 
     @Override
     public int getMinBuildHeight() {
-        return handle.getMinBuildHeight();
+        return this.handle.getMinBuildHeight();
     }
 
     @Override
-    public boolean isWaterAt(BlockPos arg0) {
-        return handle.isWaterAt(arg0);
+    public boolean isWaterAt(BlockPos pos) {
+        return this.handle.isWaterAt(pos);
     }
 
     @Override
-    public boolean isEmptyBlock(BlockPos arg0) {
-        return handle.isEmptyBlock(arg0);
+    public boolean isEmptyBlock(BlockPos pos) {
+        return this.handle.isEmptyBlock(pos);
     }
 
     @Override
     public boolean isClientSide() {
-        return handle.isClientSide();
+        return this.handle.isClientSide();
     }
 
     @Override
     public DimensionType dimensionType() {
-        return handle.dimensionType();
+        return this.handle.dimensionType();
     }
 
     @Override
     public FeatureFlagSet enabledFeatures() {
-        return handle.enabledFeatures();
+        return this.handle.enabledFeatures();
     }
 
     @Override
     @Deprecated
-    public boolean hasChunkAt(int arg0, int arg1) {
-        return handle.hasChunkAt(arg0, arg1);
+    public boolean hasChunkAt(int x, int z) {
+        return this.handle.hasChunkAt(x, z);
     }
 
     @Override
     @Deprecated
-    public boolean hasChunkAt(BlockPos arg0) {
-        return handle.hasChunkAt(arg0);
+    public boolean hasChunkAt(BlockPos pos) {
+        return this.handle.hasChunkAt(pos);
     }
 
     @Override
-    public <T> HolderLookup<T> holderLookup(ResourceKey<? extends Registry<? extends T>> arg0) {
-        return handle.holderLookup(arg0);
+    public <T> HolderLookup<T> holderLookup(ResourceKey<? extends Registry<? extends T>> registryRef) {
+        return this.handle.holderLookup(registryRef);
     }
 
     @Override
     public RegistryAccess registryAccess() {
-        return handle.registryAccess();
+        return this.handle.registryAccess();
     }
 
     @Override
-    public Holder<Biome> getNoiseBiome(int arg0, int arg1, int arg2) {
-        return handle.getNoiseBiome(arg0, arg1, arg2);
+    public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ) {
+        return this.handle.getNoiseBiome(biomeX, biomeY, biomeZ);
     }
 
     @Override
-    public int getBlockTint(BlockPos arg0, ColorResolver arg1) {
-        return handle.getBlockTint(arg0, arg1);
-    }
-
-    @Override
-    @Deprecated
-    public boolean hasChunksAt(BlockPos arg0, BlockPos arg1) {
-        return handle.hasChunksAt(arg0, arg1);
+    public int getBlockTint(BlockPos pos, ColorResolver colorResolver) {
+        return this.handle.getBlockTint(pos, colorResolver);
     }
 
     @Override
     @Deprecated
-    public boolean hasChunksAt(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5) {
-        return handle.hasChunksAt(arg0, arg1, arg2, arg3, arg4, arg5);
+    public boolean hasChunksAt(BlockPos min, BlockPos max) {
+        return this.handle.hasChunksAt(min, max);
     }
 
     @Override
     @Deprecated
-    public boolean hasChunksAt(int arg0, int arg1, int arg2, int arg3) {
-        return handle.hasChunksAt(arg0, arg1, arg2, arg3);
+    public boolean hasChunksAt(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        return this.handle.hasChunksAt(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     @Override
-    public ChunkAccess getChunk(int arg0, int arg1, ChunkStatus arg2, boolean arg3) {
-        return handle.getChunk(arg0, arg1, arg2, arg3);
+    @Deprecated
+    public boolean hasChunksAt(int minX, int minZ, int maxX, int maxZ) {
+        return this.handle.hasChunksAt(minX, minZ, maxX, maxZ);
     }
 
     @Override
-    public ChunkAccess getChunk(int arg0, int arg1, ChunkStatus arg2) {
-        return handle.getChunk(arg0, arg1, arg2);
+    public ChunkAccess getChunk(int chunkX, int chunkZ, ChunkStatus leastStatus, boolean create) {
+        return this.handle.getChunk(chunkX, chunkZ, leastStatus, create);
     }
 
     @Override
-    public ChunkAccess getChunk(BlockPos arg0) {
-        return handle.getChunk(arg0);
+    public ChunkAccess getChunk(int chunkX, int chunkZ, ChunkStatus status) {
+        return this.handle.getChunk(chunkX, chunkZ, status);
     }
 
     @Override
-    public ChunkAccess getChunk(int arg0, int arg1) {
-        return handle.getChunk(arg0, arg1);
+    public ChunkAccess getChunk(BlockPos pos) {
+        return this.handle.getChunk(pos);
     }
 
     @Override
-    public int getHeight(Heightmap.Types arg0, int arg1, int arg2) {
-        return handle.getHeight(arg0, arg1, arg2);
+    public ChunkAccess getChunk(int chunkX, int chunkZ) {
+        return this.handle.getChunk(chunkX, chunkZ);
+    }
+
+    @Override
+    public int getHeight(Heightmap.Types heightmap, int x, int z) {
+        return this.handle.getHeight(heightmap, x, z);
     }
 
     @Override
     public int getHeight() {
-        return handle.getHeight();
+        return this.handle.getHeight();
     }
 
     @Override
-    public Holder<Biome> getBiome(BlockPos arg0) {
-        return handle.getBiome(arg0);
+    public Holder<Biome> getBiome(BlockPos pos) {
+        return this.handle.getBiome(pos);
     }
 
     @Override
     public int getSkyDarken() {
-        return handle.getSkyDarken();
+        return this.handle.getSkyDarken();
     }
 
     @Override
     public BiomeManager getBiomeManager() {
-        return handle.getBiomeManager();
+        return this.handle.getBiomeManager();
     }
 
     @Override
-    public boolean canSeeSky(BlockPos arg0) {
-        return handle.canSeeSky(arg0);
+    public boolean canSeeSky(BlockPos pos) {
+        return this.handle.canSeeSky(pos);
     }
 
     @Override
-    public int getRawBrightness(BlockPos arg0, int arg1) {
-        return handle.getRawBrightness(arg0, arg1);
+    public int getRawBrightness(BlockPos pos, int ambientDarkness) {
+        return this.handle.getRawBrightness(pos, ambientDarkness);
     }
 
     @Override
     public LevelLightEngine getLightEngine() {
-        return handle.getLightEngine();
+        return this.handle.getLightEngine();
     }
 
     @Override
-    public int getBrightness(LightLayer arg0, BlockPos arg1) {
-        return handle.getBrightness(arg0, arg1);
+    public int getBrightness(LightLayer type, BlockPos pos) {
+        return this.handle.getBrightness(type, pos);
     }
 
     @Override
-    public float getShade(Direction arg0, boolean arg1) {
-        return handle.getShade(arg0, arg1);
+    public float getShade(Direction direction, boolean shaded) {
+        return this.handle.getShade(direction, shaded);
     }
 
     @Override
-    public BlockEntity getBlockEntity(BlockPos arg0) {
-        return handle.getBlockEntity(arg0);
+    public BlockEntity getBlockEntity(BlockPos pos) {
+        return this.handle.getBlockEntity(pos);
     }
 
     @Override
-    public double getBlockFloorHeight(VoxelShape arg0, Supplier<VoxelShape> arg1) {
-        return handle.getBlockFloorHeight(arg0, arg1);
+    public double getBlockFloorHeight(VoxelShape blockCollisionShape, Supplier<VoxelShape> belowBlockCollisionShapeGetter) {
+        return this.handle.getBlockFloorHeight(blockCollisionShape, belowBlockCollisionShapeGetter);
     }
 
     @Override
-    public double getBlockFloorHeight(BlockPos arg0) {
-        return handle.getBlockFloorHeight(arg0);
+    public double getBlockFloorHeight(BlockPos pos) {
+        return this.handle.getBlockFloorHeight(pos);
     }
 
     @Override
-    public BlockHitResult clipWithInteractionOverride(Vec3 arg0, Vec3 arg1, BlockPos arg2, VoxelShape arg3, BlockState arg4) {
-        return handle.clipWithInteractionOverride(arg0, arg1, arg2, arg3, arg4);
+    public BlockHitResult clipWithInteractionOverride(Vec3 start, Vec3 end, BlockPos pos, VoxelShape shape, BlockState state) {
+        return this.handle.clipWithInteractionOverride(start, end, pos, shape, state);
     }
 
     @Override
-    public BlockState getBlockState(BlockPos arg0) {
-        return handle.getBlockState(arg0);
+    public BlockState getBlockState(BlockPos pos) {
+        return this.handle.getBlockState(pos);
     }
 
     @Override
-    public FluidState getFluidState(BlockPos arg0) {
-        return handle.getFluidState(arg0);
+    public FluidState getFluidState(BlockPos pos) {
+        return this.handle.getFluidState(pos);
     }
 
     @Override
-    public int getLightEmission(BlockPos arg0) {
-        return handle.getLightEmission(arg0);
+    public int getLightEmission(BlockPos pos) {
+        return this.handle.getLightEmission(pos);
     }
 
     @Override
-    public BlockHitResult clip(ClipContext arg0) {
-        return handle.clip(arg0);
+    public BlockHitResult clip(ClipContext context) {
+        return this.handle.clip(context);
     }
 
     @Override
     public BlockHitResult clip(ClipContext arg0, BlockPos arg1) {
-        return handle.clip(arg0, arg1);
+        return this.handle.clip(arg0, arg1);
     }
 
     @Override
     public int getMaxLightLevel() {
-        return handle.getMaxLightLevel();
+        return this.handle.getMaxLightLevel();
     }
 
     @Override
-    public BlockHitResult isBlockInLine(ClipBlockStateContext arg0) {
-        return handle.isBlockInLine(arg0);
+    public BlockHitResult isBlockInLine(ClipBlockStateContext context) {
+        return this.handle.isBlockInLine(context);
     }
 
     @Override
-    public Stream<BlockState> getBlockStates(AABB arg0) {
-        return handle.getBlockStates(arg0);
+    public Stream<BlockState> getBlockStates(AABB box) {
+        return this.handle.getBlockStates(box);
     }
 
     @Override
-    public boolean isOutsideBuildHeight(int arg0) {
-        return handle.isOutsideBuildHeight(arg0);
+    public boolean isOutsideBuildHeight(int y) {
+        return this.handle.isOutsideBuildHeight(y);
     }
 
     @Override
-    public boolean isOutsideBuildHeight(BlockPos arg0) {
-        return handle.isOutsideBuildHeight(arg0);
+    public boolean isOutsideBuildHeight(BlockPos pos) {
+        return this.handle.isOutsideBuildHeight(pos);
     }
 
     @Override
-    public int getSectionIndexFromSectionY(int arg0) {
-        return handle.getSectionIndexFromSectionY(arg0);
+    public int getSectionIndexFromSectionY(int coord) {
+        return this.handle.getSectionIndexFromSectionY(coord);
     }
 
     @Override
-    public int getSectionYFromSectionIndex(int arg0) {
-        return handle.getSectionYFromSectionIndex(arg0);
+    public int getSectionYFromSectionIndex(int index) {
+        return this.handle.getSectionYFromSectionIndex(index);
     }
 
     @Override
     public int getMaxSection() {
-        return handle.getMaxSection();
+        return this.handle.getMaxSection();
     }
 
     @Override
     public int getMinSection() {
-        return handle.getMinSection();
+        return this.handle.getMinSection();
     }
 
     @Override
-    public int getSectionIndex(int arg0) {
-        return handle.getSectionIndex(arg0);
+    public int getSectionIndex(int y) {
+        return this.handle.getSectionIndex(y);
     }
 
     @Override
     public int getSectionsCount() {
-        return handle.getSectionsCount();
+        return this.handle.getSectionsCount();
     }
 
     @Override
     public int getMaxBuildHeight() {
-        return handle.getMaxBuildHeight();
+        return this.handle.getMaxBuildHeight();
     }
 
     @Override
-    public boolean isUnobstructed(BlockState arg0, BlockPos arg1, CollisionContext arg2) {
-        return handle.isUnobstructed(arg0, arg1, arg2);
+    public boolean isUnobstructed(BlockState state, BlockPos pos, CollisionContext context) {
+        return this.handle.isUnobstructed(state, pos, context);
     }
 
     @Override
-    public boolean isUnobstructed(Entity arg0) {
-        return handle.isUnobstructed(arg0);
+    public boolean isUnobstructed(Entity entity) {
+        return this.handle.isUnobstructed(entity);
     }
 
     @Override
     public WorldBorder getWorldBorder() {
-        return handle.getWorldBorder();
+        return this.handle.getWorldBorder();
     }
 
     @Override
-    public Optional<Vec3> findFreePosition(Entity arg0, VoxelShape arg1, Vec3 arg2, double arg3, double arg4, double arg5) {
-        return handle.findFreePosition(arg0, arg1, arg2, arg3, arg4, arg5);
+    public Optional<Vec3> findFreePosition(Entity entity, VoxelShape shape, Vec3 target, double x, double y, double z) {
+        return this.handle.findFreePosition(entity, shape, target, x, y, z);
     }
 
     @Override
-    public Iterable<VoxelShape> getCollisions(Entity arg0, AABB arg1) {
-        return handle.getCollisions(arg0, arg1);
+    public Iterable<VoxelShape> getCollisions(Entity entity, AABB box) {
+        return this.handle.getCollisions(entity, box);
     }
 
     @Override
-    public Iterable<VoxelShape> getBlockCollisions(Entity arg0, AABB arg1) {
-        return handle.getBlockCollisions(arg0, arg1);
+    public Iterable<VoxelShape> getBlockCollisions(Entity entity, AABB box) {
+        return this.handle.getBlockCollisions(entity, box);
     }
 
     @Override
-    public boolean noCollision(AABB arg0) {
-        return handle.noCollision(arg0);
+    public boolean noCollision(AABB box) {
+        return this.handle.noCollision(box);
     }
 
     @Override
-    public boolean noCollision(Entity arg0) {
-        return handle.noCollision(arg0);
+    public boolean noCollision(Entity entity) {
+        return this.handle.noCollision(entity);
     }
 
     @Override
-    public boolean noCollision(Entity arg0, AABB arg1) {
-        return handle.noCollision(arg0, arg1);
+    public boolean noCollision(Entity entity, AABB box) {
+        return this.handle.noCollision(entity, box);
     }
 
     @Override
-    public boolean collidesWithSuffocatingBlock(Entity arg0, AABB arg1) {
-        return handle.collidesWithSuffocatingBlock(arg0, arg1);
+    public boolean collidesWithSuffocatingBlock(Entity entity, AABB box) {
+        return this.handle.collidesWithSuffocatingBlock(entity, box);
     }
 
     @Override
-    public Optional<BlockPos> findSupportingBlock(Entity arg0, AABB arg1) {
-        return handle.findSupportingBlock(arg0, arg1);
+    public Optional<BlockPos> findSupportingBlock(Entity entity, AABB box) {
+        return this.handle.findSupportingBlock(entity, box);
     }
 
     @Override
-    public int getBestNeighborSignal(BlockPos arg0) {
-        return handle.getBestNeighborSignal(arg0);
+    public int getBestNeighborSignal(BlockPos pos) {
+        return this.handle.getBestNeighborSignal(pos);
     }
 
     @Override
-    public int getControlInputSignal(BlockPos arg0, Direction arg1, boolean arg2) {
-        return handle.getControlInputSignal(arg0, arg1, arg2);
+    public int getControlInputSignal(BlockPos pos, Direction direction, boolean onlyFromGate) {
+        return this.handle.getControlInputSignal(pos, direction, onlyFromGate);
     }
 
     @Override
-    public int getDirectSignal(BlockPos arg0, Direction arg1) {
-        return handle.getDirectSignal(arg0, arg1);
+    public int getDirectSignal(BlockPos pos, Direction direction) {
+        return this.handle.getDirectSignal(pos, direction);
     }
 
     @Override
-    public int getDirectSignalTo(BlockPos arg0) {
-        return handle.getDirectSignalTo(arg0);
+    public int getDirectSignalTo(BlockPos pos) {
+        return this.handle.getDirectSignalTo(pos);
     }
 
     @Override
-    public boolean hasNeighborSignal(BlockPos arg0) {
-        return handle.hasNeighborSignal(arg0);
+    public boolean hasNeighborSignal(BlockPos pos) {
+        return this.handle.hasNeighborSignal(pos);
     }
 
     @Override
-    public boolean hasSignal(BlockPos arg0, Direction arg1) {
-        return handle.hasSignal(arg0, arg1);
+    public boolean hasSignal(BlockPos pos, Direction direction) {
+        return this.handle.hasSignal(pos, direction);
     }
 
     @Override
-    public int getSignal(BlockPos arg0, Direction arg1) {
-        return handle.getSignal(arg0, arg1);
+    public int getSignal(BlockPos pos, Direction direction) {
+        return this.handle.getSignal(pos, direction);
     }
 
     @Override
-    public boolean isStateAtPosition(BlockPos arg0, Predicate<BlockState> arg1) {
-        return handle.isStateAtPosition(arg0, arg1);
+    public boolean isStateAtPosition(BlockPos pos, Predicate<BlockState> state) {
+        return this.handle.isStateAtPosition(pos, state);
     }
 
     @Override
-    public boolean isFluidAtPosition(BlockPos arg0, Predicate<FluidState> arg1) {
-        return handle.isFluidAtPosition(arg0, arg1);
+    public boolean isFluidAtPosition(BlockPos pos, Predicate<FluidState> state) {
+        return this.handle.isFluidAtPosition(pos, state);
     }
 
     @Override
     public boolean addFreshEntity(Entity arg0, CreatureSpawnEvent.SpawnReason arg1) {
-        return handle.addFreshEntity(arg0, arg1);
+        return this.handle.addFreshEntity(arg0, arg1);
     }
 
     @Override
-    public boolean addFreshEntity(Entity arg0) {
-        return handle.addFreshEntity(arg0);
+    public boolean addFreshEntity(Entity entity) {
+        return this.handle.addFreshEntity(entity);
     }
 
     @Override
-    public boolean removeBlock(BlockPos arg0, boolean arg1) {
-        return handle.removeBlock(arg0, arg1);
+    public boolean removeBlock(BlockPos pos, boolean move) {
+        return this.handle.removeBlock(pos, move);
     }
 
     @Override
-    public boolean destroyBlock(BlockPos arg0, boolean arg1, Entity arg2, int arg3) {
-        return handle.destroyBlock(arg0, arg1, arg2, arg3);
+    public boolean destroyBlock(BlockPos pos, boolean drop, Entity breakingEntity, int maxUpdateDepth) {
+        return this.handle.destroyBlock(pos, drop, breakingEntity, maxUpdateDepth);
     }
 
     @Override
-    public boolean destroyBlock(BlockPos arg0, boolean arg1, Entity arg2) {
-        return handle.destroyBlock(arg0, arg1, arg2);
+    public boolean destroyBlock(BlockPos pos, boolean drop, Entity breakingEntity) {
+        return this.handle.destroyBlock(pos, drop, breakingEntity);
     }
 
     @Override
-    public boolean destroyBlock(BlockPos arg0, boolean arg1) {
-        return handle.destroyBlock(arg0, arg1);
+    public boolean destroyBlock(BlockPos pos, boolean drop) {
+        return this.handle.destroyBlock(pos, drop);
     }
 
     @Override
-    public boolean setBlock(BlockPos arg0, BlockState arg1, int arg2) {
-        return handle.setBlock(arg0, arg1, arg2);
+    public boolean setBlock(BlockPos pos, BlockState state, int flags) {
+        return this.handle.setBlock(pos, state, flags);
     }
 
     @Override
-    public boolean setBlock(BlockPos arg0, BlockState arg1, int arg2, int arg3) {
-        return handle.setBlock(arg0, arg1, arg2, arg3);
+    public boolean setBlock(BlockPos pos, BlockState state, int flags, int maxUpdateDepth) {
+        return this.handle.setBlock(pos, state, flags, maxUpdateDepth);
     }
 
     @Override
-    public float getTimeOfDay(float arg0) {
-        return handle.getTimeOfDay(arg0);
+    public float getTimeOfDay(float tickDelta) {
+        return this.handle.getTimeOfDay(tickDelta);
     }
 
     @Override
     public float getMoonBrightness() {
-        return handle.getMoonBrightness();
+        return this.handle.getMoonBrightness();
     }
 
     @Override
     public int getMoonPhase() {
-        return handle.getMoonPhase();
+        return this.handle.getMoonPhase();
     }
 }

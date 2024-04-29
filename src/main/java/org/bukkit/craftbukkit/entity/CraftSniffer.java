@@ -34,7 +34,7 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
     @Override
     public void removeExploredLocation(Location location) {
         Preconditions.checkArgument(location != null, "location cannot be null");
-        if (location.getWorld() != getWorld()) {
+        if (location.getWorld() != this.getWorld()) {
             return;
         }
 
@@ -45,7 +45,7 @@ public class CraftSniffer extends CraftAnimals implements Sniffer {
     @Override
     public void addExploredLocation(Location location) {
         Preconditions.checkArgument(location != null, "location cannot be null");
-        if (location.getWorld() != getWorld()) {
+        if (location.getWorld() != this.getWorld()) {
             return;
         }
 

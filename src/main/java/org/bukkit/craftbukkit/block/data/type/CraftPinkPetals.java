@@ -9,16 +9,16 @@ public abstract class CraftPinkPetals extends CraftBlockData implements PinkPeta
 
     @Override
     public int getFlowerAmount() {
-        return get(FLOWER_AMOUNT);
+        return this.get(CraftPinkPetals.FLOWER_AMOUNT);
     }
 
     @Override
     public void setFlowerAmount(int flower_amount) {
-        set(FLOWER_AMOUNT, flower_amount);
+        this.set(CraftPinkPetals.FLOWER_AMOUNT, flower_amount);
     }
 
     @Override
     public int getMaximumFlowerAmount() {
-        return getMax(FLOWER_AMOUNT);
+        return getMax(CraftPinkPetals.FLOWER_AMOUNT);
     }
 }

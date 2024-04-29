@@ -13,17 +13,17 @@ public final class CraftMycel extends org.bukkit.craftbukkit.block.data.CraftBlo
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftSnowable
+    // org.bukkit.craftbukkit.block.data.CraftSnowable
 
     private static final net.minecraft.world.level.block.state.properties.BooleanProperty SNOWY = getBoolean(net.minecraft.world.level.block.MyceliumBlock.class, "snowy");
 
     @Override
     public boolean isSnowy() {
-        return get(SNOWY);
+        return this.get(CraftMycel.SNOWY);
     }
 
     @Override
     public void setSnowy(boolean snowy) {
-        set(SNOWY, snowy);
+        this.set(CraftMycel.SNOWY, snowy);
     }
 }

@@ -20,39 +20,39 @@ public class CraftShulker extends CraftGolem implements Shulker, CraftEnemy {
 
     @Override
     public net.minecraft.world.entity.monster.Shulker getHandle() {
-        return (net.minecraft.world.entity.monster.Shulker) entity;
+        return (net.minecraft.world.entity.monster.Shulker) this.entity;
     }
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData(getHandle().getEntityData().get(net.minecraft.world.entity.monster.Shulker.DATA_COLOR_ID));
+        return DyeColor.getByWoolData(this.getHandle().getEntityData().get(net.minecraft.world.entity.monster.Shulker.DATA_COLOR_ID));
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getHandle().getEntityData().set(net.minecraft.world.entity.monster.Shulker.DATA_COLOR_ID, (color == null) ? 16 : color.getWoolData());
+        this.getHandle().getEntityData().set(net.minecraft.world.entity.monster.Shulker.DATA_COLOR_ID, (color == null) ? 16 : color.getWoolData());
     }
 
     @Override
     public float getPeek() {
-        return (float) getHandle().getRawPeekAmount() / 100;
+        return (float) this.getHandle().getRawPeekAmount() / 100;
     }
 
     @Override
     public void setPeek(float value) {
         Preconditions.checkArgument(value >= 0 && value <= 1, "value needs to be in between or equal to 0 and 1");
-        getHandle().setRawPeekAmount((int) (value * 100));
+        this.getHandle().setRawPeekAmount((int) (value * 100));
     }
 
     @Override
     public BlockFace getAttachedFace() {
-        return CraftBlock.notchToBlockFace(getHandle().getAttachFace());
+        return CraftBlock.notchToBlockFace(this.getHandle().getAttachFace());
     }
 
     @Override
     public void setAttachedFace(BlockFace face) {
         Preconditions.checkNotNull(face, "face cannot be null");
         Preconditions.checkArgument(face.isCartesian(), "%s is not a valid block face to attach a shulker to, a cartesian block face is expected", face);
-        getHandle().setAttachFace(CraftBlock.blockFaceToNotch(face));
+        this.getHandle().setAttachFace(CraftBlock.blockFaceToNotch(face));
     }
 }

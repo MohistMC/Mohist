@@ -16,8 +16,8 @@ import org.bukkit.projectiles.BlockProjectileSource;
 
 public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implements Dispenser {
 
-    public CraftDispenser(World world, final DispenserBlockEntity te) {
-        super(world, te);
+    public CraftDispenser(World world, DispenserBlockEntity tileEntity) {
+        super(world, tileEntity);
     }
 
     protected CraftDispenser(CraftDispenser state, Location location) {
@@ -40,7 +40,7 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
 
     @Override
     public BlockProjectileSource getBlockProjectileSource() {
-        Block block = getBlock();
+        Block block = this.getBlock();
 
         if (block.getType() != Material.DISPENSER) {
             return null;
@@ -51,8 +51,8 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
 
     @Override
     public boolean dispense() {
-        ensureNoWorldGeneration();
-        Block block = getBlock();
+        this.ensureNoWorldGeneration();
+        Block block = this.getBlock();
         if (block.getType() == Material.DISPENSER) {
             CraftWorld world = (CraftWorld) this.getWorld();
             DispenserBlock dispense = (DispenserBlock) Blocks.DISPENSER;

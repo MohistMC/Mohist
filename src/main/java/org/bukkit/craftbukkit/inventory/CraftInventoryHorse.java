@@ -12,11 +12,11 @@ public class CraftInventoryHorse extends CraftInventoryAbstractHorse implements 
 
     @Override
     public ItemStack getArmor() {
-       return getItem(1);
+       return this.getItem(1);
     }
 
     @Override
     public void setArmor(ItemStack stack) {
-        setItem(1, stack);
+        this.setItem(1, stack);
     }
 }

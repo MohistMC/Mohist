@@ -16,12 +16,12 @@ public class CraftPhantom extends CraftFlying implements Phantom, CraftEnemy {
 
     @Override
     public int getSize() {
-        return getHandle().getPhantomSize();
+        return this.getHandle().getPhantomSize();
     }
 
     @Override
     public void setSize(int sz) {
-        getHandle().setPhantomSize(sz);
+        this.getHandle().setPhantomSize(sz);
     }
 
     @Override

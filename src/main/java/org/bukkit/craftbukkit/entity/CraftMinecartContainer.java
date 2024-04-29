@@ -1,53 +1,44 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.CraftLootTable;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.loot.LootTable;
 import org.bukkit.loot.Lootable;
 
 public abstract class CraftMinecartContainer extends CraftMinecart implements Lootable {
 
-    public CraftMinecartContainer(CraftServer server, net.minecraft.world.entity.vehicle.AbstractMinecart entity) {
+    public CraftMinecartContainer(CraftServer server, AbstractMinecart entity) {
         super(server, entity);
     }
 
     @Override
     public AbstractMinecartContainer getHandle() {
-        return (AbstractMinecartContainer) entity;
+        return (AbstractMinecartContainer) this.entity;
     }
 
     @Override
     public void setLootTable(LootTable table) {
-        setLootTable(table, getSeed());
+        this.setLootTable(table, this.getSeed());
     }
 
     @Override
     public LootTable getLootTable() {
-        ResourceLocation nmsTable = getHandle().lootTable;
-        if (nmsTable == null) {
-            return null; // return empty loot table?
-        }
-
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(nmsTable);
-        return Bukkit.getLootTable(key);
+        return CraftLootTable.minecraftToBukkit(this.getHandle().lootTable);
     }
 
     @Override
     public void setSeed(long seed) {
-        setLootTable(getLootTable(), seed);
+        this.setLootTable(this.getLootTable(), seed);
     }
 
     @Override
     public long getSeed() {
-        return getHandle().lootTableSeed;
+        return this.getHandle().lootTableSeed;
     }
 
     private void setLootTable(LootTable table, long seed) {
-        ResourceLocation newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
-        getHandle().setLootTable(newKey, seed);
+        this.getHandle().setLootTable(CraftLootTable.bukkitToMinecraft(table), seed);
     }
 }

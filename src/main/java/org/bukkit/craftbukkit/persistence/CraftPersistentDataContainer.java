@@ -39,7 +39,7 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
         Preconditions.checkArgument(type != null, "The provided type cannot be null");
         Preconditions.checkArgument(value != null, "The provided value cannot be null");
 
-        this.customDataTags.put(key.toString(), this.registry.wrap(type, type.toPrimitive(value, adapterContext)));
+        this.customDataTags.put(key.toString(), this.registry.wrap(type, type.toPrimitive(value, this.adapterContext)));
     }
 
     @Override
@@ -70,15 +70,17 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
             return null;
         }
 
-        return type.fromPrimitive(this.registry.extract(type, value), adapterContext);
+        return type.fromPrimitive(this.registry.extract(type, value), this.adapterContext);
     }
 
+    @NotNull
     @Override
     public <T, Z> Z getOrDefault(@NotNull NamespacedKey key, @NotNull PersistentDataType<T, Z> type, @NotNull Z defaultValue) {
         Z z = this.get(key, type);
         return z != null ? z : defaultValue;
     }
 
+    @NotNull
     @Override
     public Set<NamespacedKey> getKeys() {
         Set<NamespacedKey> keys = new HashSet<>();
@@ -112,9 +114,9 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
 
         CraftPersistentDataContainer target = (CraftPersistentDataContainer) other;
         if (replace) {
-            target.customDataTags.putAll(customDataTags);
+            target.customDataTags.putAll(this.customDataTags);
         } else {
-            customDataTags.forEach(target.customDataTags::putIfAbsent);
+            this.customDataTags.forEach(target.customDataTags::putIfAbsent);
         }
     }
 
@@ -173,6 +175,6 @@ public class CraftPersistentDataContainer implements PersistentDataContainer {
     }
 
     public String serialize() {
-        return CraftNBTTagConfigSerializer.serialize(toTagCompound());
+        return CraftNBTTagConfigSerializer.serialize(this.toTagCompound());
     }
 }

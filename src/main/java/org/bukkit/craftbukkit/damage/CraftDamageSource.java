@@ -26,7 +26,7 @@ public class CraftDamageSource implements DamageSource {
     }
 
     public World getCausingEntityWorld() {
-        Entity causingEntity = getCausingEntity();
+        org.bukkit.entity.Entity causingEntity = this.getCausingEntity();
         return causingEntity != null ? causingEntity.getWorld() : null;
     }
 
@@ -40,13 +40,13 @@ public class CraftDamageSource implements DamageSource {
     }
 
     @Override
-    public Entity getCausingEntity() {
+    public org.bukkit.entity.Entity getCausingEntity() {
         net.minecraft.world.entity.Entity entity = this.getHandle().getCausingEntity();
         return (entity != null) ? entity.getBukkitEntity() : null;
     }
 
     @Override
-    public Entity getDirectEntity() {
+    public org.bukkit.entity.Entity getDirectEntity() {
         net.minecraft.world.entity.Entity entity = this.getHandle().getDirectEntity();
         return (entity != null) ? entity.getBukkitEntity() : null;
     }

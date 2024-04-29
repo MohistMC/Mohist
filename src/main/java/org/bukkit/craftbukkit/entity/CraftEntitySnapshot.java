@@ -21,12 +21,12 @@ public class CraftEntitySnapshot implements EntitySnapshot {
 
     @Override
     public EntityType getEntityType() {
-        return type;
+        return this.type;
     }
 
     @Override
     public Entity createEntity(World world) {
-        net.minecraft.world.entity.Entity internal = createInternal(world);
+        net.minecraft.world.entity.Entity internal = this.createInternal(world);
 
         return internal.getBukkitEntity();
     }
@@ -35,27 +35,32 @@ public class CraftEntitySnapshot implements EntitySnapshot {
     public Entity createEntity(Location location) {
         Preconditions.checkArgument(location.getWorld() != null, "Location has no world");
 
-        net.minecraft.world.entity.Entity internal = createInternal(location.getWorld());
+        net.minecraft.world.entity.Entity internal = this.createInternal(location.getWorld());
 
         internal.setPos(location.getX(), location.getY(), location.getZ());
         return location.getWorld().addEntity(internal.getBukkitEntity());
     }
 
+    @Override
+    public String getAsString() {
+        return this.data.getAsString();
+    }
+
     private net.minecraft.world.entity.Entity createInternal(World world) {
         net.minecraft.world.level.Level nms = ((CraftWorld) world).getHandle();
-        net.minecraft.world.entity.Entity internal = net.minecraft.world.entity.EntityType.loadEntityRecursive(data, nms, Function.identity());
+        net.minecraft.world.entity.Entity internal = net.minecraft.world.entity.EntityType.loadEntityRecursive(this.data, nms, Function.identity());
         if (internal == null) { // Try creating by type
-            internal = CraftEntityType.bukkitToMinecraft(type).create(nms);
+            internal = CraftEntityType.bukkitToMinecraft(this.type).create(nms);
         }
 
         Preconditions.checkArgument(internal != null, "Error creating new entity."); // This should only fail if the stored NBTTagCompound is malformed.
-        internal.load(data);
+        internal.load(this.data);
 
         return internal;
     }
 
     public CompoundTag getData() {
-        return data;
+        return this.data;
     }
 
     public static CraftEntitySnapshot create(CraftEntity entity) {
@@ -77,6 +82,6 @@ public class CraftEntitySnapshot implements EntitySnapshot {
 
     public static CraftEntitySnapshot create(CompoundTag tag) {
         EntityType type = net.minecraft.world.entity.EntityType.by(tag).map(CraftEntityType::minecraftToBukkit).orElse(null);
-        return create(tag, type);
+        return CraftEntitySnapshot.create(tag, type);
     }
 }

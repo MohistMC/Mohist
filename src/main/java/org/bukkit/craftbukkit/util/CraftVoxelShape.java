@@ -18,7 +18,7 @@ public final class CraftVoxelShape implements org.bukkit.util.VoxelShape {
 
     @Override
     public Collection<BoundingBox> getBoundingBoxes() {
-        List<AABB> boxes = shape.toAabbs();
+        List<AABB> boxes = this.shape.toAabbs();
         List<BoundingBox> craftBoxes = new ArrayList<>(boxes.size());
         for (AABB aabb : boxes) {
             craftBoxes.add(new BoundingBox(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ));
@@ -30,7 +30,7 @@ public final class CraftVoxelShape implements org.bukkit.util.VoxelShape {
     public boolean overlaps(BoundingBox other) {
         Preconditions.checkArgument(other != null, "Other cannot be null");
 
-        for (BoundingBox box : getBoundingBoxes()) {
+        for (BoundingBox box : this.getBoundingBoxes()) {
             if (box.overlaps(other)) {
                 return true;
             }

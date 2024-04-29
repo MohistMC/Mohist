@@ -25,24 +25,24 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public Color getColor() {
-        return Color.values()[getHandle().getVariant().getId()];
+        return Color.values()[this.getHandle().getVariant().getId()];
     }
 
     @Override
     public void setColor(Color color) {
         Preconditions.checkArgument(color != null, "Color cannot be null");
-        getHandle().setVariantAndMarkings(net.minecraft.world.entity.animal.horse.Variant.byId(color.ordinal()), getHandle().getMarkings());
+        this.getHandle().setVariantAndMarkings(net.minecraft.world.entity.animal.horse.Variant.byId(color.ordinal()), this.getHandle().getMarkings());
     }
 
     @Override
     public Style getStyle() {
-        return Style.values()[getHandle().getMarkings().getId()];
+        return Style.values()[this.getHandle().getMarkings().getId()];
     }
 
     @Override
     public void setStyle(Style style) {
         Preconditions.checkArgument(style != null, "Style cannot be null");
-        getHandle().setVariantAndMarkings(getHandle().getVariant(), Markings.byId(style.ordinal()));
+        this.getHandle().setVariantAndMarkings(this.getHandle().getVariant(), Markings.byId(style.ordinal()));
     }
 
     @Override
@@ -57,11 +57,11 @@ public class CraftHorse extends CraftAbstractHorse implements Horse {
 
     @Override
     public HorseInventory getInventory() {
-        return new CraftInventoryHorse(getHandle().inventory);
+        return new CraftInventoryHorse(this.getHandle().inventory);
     }
 
     @Override
     public String toString() {
-        return "CraftHorse{variant=" + getVariant() + ", owner=" + getOwner() + '}';
+        return "CraftHorse{variant=" + this.getVariant() + ", owner=" + this.getOwner() + '}';
     }
 }

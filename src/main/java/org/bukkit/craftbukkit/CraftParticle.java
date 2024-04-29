@@ -1,16 +1,15 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
-import com.mohistmc.mohist.forge.ForgeInjectBukkit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.DustColorTransitionOptions;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SculkChargeParticleOptions;
 import net.minecraft.core.particles.ShriekParticleOption;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -46,11 +45,8 @@ public abstract class CraftParticle<D> implements Keyed {
         Preconditions.checkArgument(minecraft != null);
 
         net.minecraft.core.Registry<net.minecraft.core.particles.ParticleType<?>> registry = CraftRegistry.getMinecraftRegistry(Registries.PARTICLE_TYPE);
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location());
-        Particle bukkit = Registry.PARTICLE_TYPE.get(key);
-        if (bukkit == null) {
-            bukkit = ForgeInjectBukkit.particleMap.get(key);
-        }
+        Particle bukkit = Registry.PARTICLE_TYPE.get(CraftNamespacedKey.fromMinecraft(registry.getResourceKey(minecraft).orElseThrow().location()));
+
         Preconditions.checkArgument(bukkit != null);
 
         return bukkit;
@@ -64,9 +60,17 @@ public abstract class CraftParticle<D> implements Keyed {
     }
 
     public static <D> ParticleOptions createParticleParam(Particle particle, D data) {
-        Preconditions.checkArgument(particle != null);
+        Preconditions.checkArgument(particle != null, "particle cannot be null");
 
-        CraftParticle<D> craftParticle = (CraftParticle<D>) CRAFT_PARTICLE_REGISTRY.get(particle.getKey());
+        data = CraftParticle.convertLegacy(data);
+        if (particle.getDataType() != Void.class) {
+            Preconditions.checkArgument(data != null, "missing required data %s", particle.getDataType());
+        }
+        if (data != null) {
+            Preconditions.checkArgument(particle.getDataType().isInstance(data), "data (%s) should be %s", data.getClass(), particle.getDataType());
+        }
+
+        CraftParticle<D> craftParticle = (CraftParticle<D>) CraftParticle.CRAFT_PARTICLE_REGISTRY.get(particle.getKey());
 
         Preconditions.checkArgument(craftParticle != null);
 
@@ -81,15 +85,6 @@ public abstract class CraftParticle<D> implements Keyed {
         return object;
     }
 
-    public static Particle convertLegacy(Particle particle) {
-        return switch (particle) {
-            case LEGACY_BLOCK_DUST -> Particle.BLOCK_DUST;
-            case LEGACY_FALLING_DUST -> Particle.FALLING_DUST;
-            case LEGACY_BLOCK_CRACK -> Particle.BLOCK_CRACK;
-            default -> particle;
-        };
-    }
-
     private final NamespacedKey key;
     private final net.minecraft.core.particles.ParticleType<?> particle;
     private final Class<D> clazz;
@@ -101,14 +96,14 @@ public abstract class CraftParticle<D> implements Keyed {
     }
 
     public net.minecraft.core.particles.ParticleType<?> getHandle() {
-        return particle;
+        return this.particle;
     }
 
     public abstract ParticleOptions createParticleParam(D data);
 
     @Override
     public NamespacedKey getKey() {
-        return key;
+        return this.key;
     }
 
     public static class CraftParticleRegistry extends CraftRegistry<CraftParticle<?>, net.minecraft.core.particles.ParticleType<?>> {
@@ -118,7 +113,7 @@ public abstract class CraftParticle<D> implements Keyed {
         private static final BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> VOID_FUNCTION = (name, particle) -> new CraftParticle<>(name, particle, Void.class) {
             @Override
             public ParticleOptions createParticleParam(Void data) {
-                return (SimpleParticleType) getHandle();
+                return (SimpleParticleType) this.getHandle();
             }
         };
 
@@ -134,14 +129,14 @@ public abstract class CraftParticle<D> implements Keyed {
             BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> itemStackFunction = (name, particle) -> new CraftParticle<>(name, particle, ItemStack.class) {
                 @Override
                 public ParticleOptions createParticleParam(ItemStack data) {
-                    return new ItemParticleOption((net.minecraft.core.particles.ParticleType<ItemParticleOption>) getHandle(), CraftItemStack.asNMSCopy(data));
+                    return new ItemParticleOption((net.minecraft.core.particles.ParticleType<ItemParticleOption>) this.getHandle(), CraftItemStack.asNMSCopy(data));
                 }
             };
 
             BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> blockDataFunction = (name, particle) -> new CraftParticle<>(name, particle, BlockData.class) {
                 @Override
                 public ParticleOptions createParticleParam(BlockData data) {
-                    return new BlockParticleOption((net.minecraft.core.particles.ParticleType<BlockParticleOption>) getHandle(), ((CraftBlockData) data).getState());
+                    return new BlockParticleOption((net.minecraft.core.particles.ParticleType<BlockParticleOption>) this.getHandle(), ((CraftBlockData) data).getState());
                 }
             };
 
@@ -186,6 +181,13 @@ public abstract class CraftParticle<D> implements Keyed {
                 }
             };
 
+            BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> colorFunction = (name, particle) -> new CraftParticle<>(name, particle, Color.class) {
+                @Override
+                public ParticleOptions createParticleParam(Color color) {
+                    return ColorParticleOption.create((net.minecraft.core.particles.ParticleType<ColorParticleOption>) particle, color.asARGB());
+                }
+            };
+
             add("dust", dustOptionsFunction);
             add("item", itemStackFunction);
             add("block", blockDataFunction);
@@ -195,10 +197,12 @@ public abstract class CraftParticle<D> implements Keyed {
             add("sculk_charge", floatFunction);
             add("shriek", integerFunction);
             add("block_marker", blockDataFunction);
+            add("entity_effect", colorFunction);
+            add("dust_pillar", blockDataFunction);
         }
 
-        private static void add(String name, BiFunction<NamespacedKey, ParticleType<?>, CraftParticle<?>> function) {
-            PARTICLE_MAP.put(NamespacedKey.fromString(name), function);
+        private static void add(String name, BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> function) {
+            CraftParticleRegistry.PARTICLE_MAP.put(NamespacedKey.fromString(name), function);
         }
 
         public CraftParticleRegistry(net.minecraft.core.Registry<net.minecraft.core.particles.ParticleType<?>> minecraftRegistry) {
@@ -211,10 +215,9 @@ public abstract class CraftParticle<D> implements Keyed {
                 return null;
             }
 
-            BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> function = PARTICLE_MAP.getOrDefault(namespacedKey, VOID_FUNCTION);
+            BiFunction<NamespacedKey, net.minecraft.core.particles.ParticleType<?>, CraftParticle<?>> function = CraftParticleRegistry.PARTICLE_MAP.getOrDefault(namespacedKey, CraftParticleRegistry.VOID_FUNCTION);
 
             return function.apply(namespacedKey, particle);
         }
     }
 }
-

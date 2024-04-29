@@ -19,11 +19,11 @@ public final class CraftWaterloggedTransparent extends org.bukkit.craftbukkit.bl
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftWaterloggedTransparent.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftWaterloggedTransparent.WATERLOGGED, waterlogged);
     }
 }

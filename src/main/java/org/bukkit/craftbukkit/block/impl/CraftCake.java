@@ -13,22 +13,22 @@ public final class CraftCake extends org.bukkit.craftbukkit.block.data.CraftBloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftCake
+    // org.bukkit.craftbukkit.block.data.type.CraftCake
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty BITES = getInteger(net.minecraft.world.level.block.CakeBlock.class, "bites");
 
     @Override
     public int getBites() {
-        return get(BITES);
+        return this.get(CraftCake.BITES);
     }
 
     @Override
     public void setBites(int bites) {
-        set(BITES, bites);
+        this.set(CraftCake.BITES, bites);
     }
 
     @Override
     public int getMaximumBites() {
-        return getMax(BITES);
+        return getMax(CraftCake.BITES);
     }
 }

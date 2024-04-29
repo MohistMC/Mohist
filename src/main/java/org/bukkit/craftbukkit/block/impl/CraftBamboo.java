@@ -13,55 +13,55 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBl
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftBamboo
+    // org.bukkit.craftbukkit.block.data.type.CraftBamboo
 
     private static final net.minecraft.world.level.block.state.properties.EnumProperty<?> LEAVES = getEnum(net.minecraft.world.level.block.BambooStalkBlock.class, "leaves");
 
     @Override
     public org.bukkit.block.data.type.Bamboo.Leaves getLeaves() {
-        return get(LEAVES, org.bukkit.block.data.type.Bamboo.Leaves.class);
+        return this.get(CraftBamboo.LEAVES, org.bukkit.block.data.type.Bamboo.Leaves.class);
     }
 
     @Override
     public void setLeaves(org.bukkit.block.data.type.Bamboo.Leaves leaves) {
-        set(LEAVES, leaves);
+        this.set(CraftBamboo.LEAVES, leaves);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.CraftAgeable
+    // org.bukkit.craftbukkit.block.data.CraftAgeable
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty AGE = getInteger(net.minecraft.world.level.block.BambooStalkBlock.class, "age");
 
     @Override
     public int getAge() {
-        return get(AGE);
+        return this.get(CraftBamboo.AGE);
     }
 
     @Override
     public void setAge(int age) {
-        set(AGE, age);
+        this.set(CraftBamboo.AGE, age);
     }
 
     @Override
     public int getMaximumAge() {
-        return getMax(AGE);
+        return getMax(CraftBamboo.AGE);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftSapling
+    // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE = getInteger(net.minecraft.world.level.block.BambooStalkBlock.class, "stage");
 
     @Override
     public int getStage() {
-        return get(STAGE);
+        return this.get(CraftBamboo.STAGE);
     }
 
     @Override
     public void setStage(int stage) {
-        set(STAGE, stage);
+        this.set(CraftBamboo.STAGE, stage);
     }
 
     @Override
     public int getMaximumStage() {
-        return getMax(STAGE);
+        return getMax(CraftBamboo.STAGE);
     }
 }

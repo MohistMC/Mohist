@@ -14,23 +14,23 @@ public class CraftRemoteConsoleCommandSender extends ServerCommandSender impleme
     }
 
     public RconConsoleSource getListener() {
-        return listener;
+        return this.listener;
     }
 
     @Override
     public SocketAddress getAddress() {
-        return listener.socketAddress;
+       return this.listener.socketAddress;
     }
 
     @Override
     public void sendMessage(String message) {
-        listener.sendSystemMessage(Component.literal(message + "\n")); // Send a newline after each message, to preserve formatting.
+        this.listener.sendSystemMessage(Component.literal(message + "\n")); // Send a newline after each message, to preserve formatting.
     }
 
     @Override
     public void sendMessage(String... messages) {
         for (String message : messages) {
-            sendMessage(message);
+            this.sendMessage(message);
         }
     }
 

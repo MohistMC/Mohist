@@ -9,16 +9,16 @@ public abstract class CraftFarmland extends CraftBlockData implements Farmland {
 
     @Override
     public int getMoisture() {
-        return get(MOISTURE);
+        return this.get(CraftFarmland.MOISTURE);
     }
 
     @Override
     public void setMoisture(int moisture) {
-        set(MOISTURE, moisture);
+        this.set(CraftFarmland.MOISTURE, moisture);
     }
 
     @Override
     public int getMaximumMoisture() {
-        return getMax(MOISTURE);
+        return getMax(CraftFarmland.MOISTURE);
     }
 }

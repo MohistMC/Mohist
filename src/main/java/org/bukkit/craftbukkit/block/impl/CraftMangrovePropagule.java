@@ -3,9 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-import org.bukkit.craftbukkit.block.data.CraftBlockData;
-
-public final class CraftMangrovePropagule extends CraftBlockData implements org.bukkit.block.data.type.MangrovePropagule, org.bukkit.block.data.Ageable, org.bukkit.block.data.Hangable, org.bukkit.block.data.type.Sapling, org.bukkit.block.data.Waterlogged {
+public final class CraftMangrovePropagule extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.MangrovePropagule, org.bukkit.block.data.Ageable, org.bukkit.block.data.Hangable, org.bukkit.block.data.type.Sapling, org.bukkit.block.data.Waterlogged {
 
     public CraftMangrovePropagule() {
         super();
@@ -21,17 +19,17 @@ public final class CraftMangrovePropagule extends CraftBlockData implements org.
 
     @Override
     public int getAge() {
-        return get(AGE);
+        return this.get(CraftMangrovePropagule.AGE);
     }
 
     @Override
     public void setAge(int age) {
-        set(AGE, age);
+        this.set(CraftMangrovePropagule.AGE, age);
     }
 
     @Override
     public int getMaximumAge() {
-        return getMax(AGE);
+        return getMax(CraftMangrovePropagule.AGE);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftHangable
@@ -40,30 +38,31 @@ public final class CraftMangrovePropagule extends CraftBlockData implements org.
 
     @Override
     public boolean isHanging() {
-        return get(HANGING);
+        return this.get(CraftMangrovePropagule.HANGING);
     }
 
     @Override
     public void setHanging(boolean hanging) {
-        set(HANGING, hanging);
+        this.set(CraftMangrovePropagule.HANGING, hanging);
     }
+
     // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty STAGE = getInteger(net.minecraft.world.level.block.MangrovePropaguleBlock.class, "stage");
 
     @Override
     public int getStage() {
-        return get(STAGE);
+        return this.get(CraftMangrovePropagule.STAGE);
     }
 
     @Override
     public void setStage(int stage) {
-        set(STAGE, stage);
+        this.set(CraftMangrovePropagule.STAGE, stage);
     }
 
     @Override
     public int getMaximumStage() {
-        return getMax(STAGE);
+        return getMax(CraftMangrovePropagule.STAGE);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
@@ -72,11 +71,11 @@ public final class CraftMangrovePropagule extends CraftBlockData implements org.
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftMangrovePropagule.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftMangrovePropagule.WATERLOGGED, waterlogged);
     }
 }

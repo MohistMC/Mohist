@@ -15,83 +15,83 @@ public class CraftBoat extends CraftVehicle implements Boat {
 
     @Override
     public TreeSpecies getWoodType() {
-        return getTreeSpecies(getHandle().getVariant());
+        return CraftBoat.getTreeSpecies(this.getHandle().getVariant());
     }
 
     @Override
     public void setWoodType(TreeSpecies species) {
-        getHandle().setVariant(getBoatType(species));
+        this.getHandle().setVariant(CraftBoat.getBoatType(species));
     }
 
     @Override
     public Type getBoatType() {
-        return boatTypeFromNms(getHandle().getVariant());
+        return CraftBoat.boatTypeFromNms(this.getHandle().getVariant());
     }
 
     @Override
     public void setBoatType(Type type) {
         Preconditions.checkArgument(type != null, "Boat.Type cannot be null");
 
-        getHandle().setVariant(boatTypeToNms(type));
+        this.getHandle().setVariant(CraftBoat.boatTypeToNms(type));
     }
 
     @Override
     public double getMaxSpeed() {
-        return getHandle().maxSpeed;
+        return this.getHandle().maxSpeed;
     }
 
     @Override
     public void setMaxSpeed(double speed) {
         if (speed >= 0D) {
-            getHandle().maxSpeed = speed;
+            this.getHandle().maxSpeed = speed;
         }
     }
 
     @Override
     public double getOccupiedDeceleration() {
-        return getHandle().occupiedDeceleration;
+        return this.getHandle().occupiedDeceleration;
     }
 
     @Override
     public void setOccupiedDeceleration(double speed) {
         if (speed >= 0D) {
-            getHandle().occupiedDeceleration = speed;
+            this.getHandle().occupiedDeceleration = speed;
         }
     }
 
     @Override
     public double getUnoccupiedDeceleration() {
-        return getHandle().unoccupiedDeceleration;
+        return this.getHandle().unoccupiedDeceleration;
     }
 
     @Override
     public void setUnoccupiedDeceleration(double speed) {
-        getHandle().unoccupiedDeceleration = speed;
+        this.getHandle().unoccupiedDeceleration = speed;
     }
 
     @Override
     public boolean getWorkOnLand() {
-        return getHandle().landBoats;
+        return this.getHandle().landBoats;
     }
 
     @Override
     public void setWorkOnLand(boolean workOnLand) {
-        getHandle().landBoats = workOnLand;
+        this.getHandle().landBoats = workOnLand;
     }
 
     @Override
     public Status getStatus() {
-        return boatStatusFromNms(getHandle().status);
+        return CraftBoat.boatStatusFromNms(this.getHandle().status);
     }
 
     @Override
     public net.minecraft.world.entity.vehicle.Boat getHandle() {
-        return (net.minecraft.world.entity.vehicle.Boat) entity;
+        return (net.minecraft.world.entity.vehicle.Boat) this.entity;
     }
 
     @Override
     public String toString() {
-        return "CraftBoat{boatType=" + getBoatType() + ",status=" + getStatus() + ",passengers=" + getPassengers().stream().map(Entity::toString).collect(Collectors.joining("-", "{", "}")) + "}";
+        return "CraftBoat{boatType=" + this.getBoatType() + ",status=" + this.getStatus() + ",passengers=" + this.getPassengers().stream().map(Entity::toString).collect(Collectors.joining("-", "{", "}")) + "}";
     }
 
     public static Boat.Type boatTypeFromNms(net.minecraft.world.entity.vehicle.Boat.Type boatType) {
@@ -105,12 +105,14 @@ public class CraftBoat extends CraftVehicle implements Boat {
             case SPRUCE -> Type.SPRUCE;
             case DARK_OAK -> Type.DARK_OAK;
             case MANGROVE -> Type.MANGROVE;
+            case BAMBOO -> Type.BAMBOO;
         };
     }
 
     public static net.minecraft.world.entity.vehicle.Boat.Type boatTypeToNms(Boat.Type type) {
         return switch (type) {
             default -> throw new EnumConstantNotPresentException(net.minecraft.world.entity.vehicle.Boat.Type.class, type.name());
+            case BAMBOO -> net.minecraft.world.entity.vehicle.Boat.Type.BAMBOO;
             case MANGROVE -> net.minecraft.world.entity.vehicle.Boat.Type.MANGROVE;
             case SPRUCE -> net.minecraft.world.entity.vehicle.Boat.Type.SPRUCE;
             case DARK_OAK -> net.minecraft.world.entity.vehicle.Boat.Type.DARK_OAK;

@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -11,65 +12,65 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 public abstract class CraftMinecart extends CraftVehicle implements Minecart {
-    public CraftMinecart(CraftServer server, net.minecraft.world.entity.vehicle.AbstractMinecart entity) {
+    public CraftMinecart(CraftServer server, AbstractMinecart entity) {
         super(server, entity);
     }
 
     @Override
     public void setDamage(double damage) {
-        getHandle().setDamage((float) damage);
+        this.getHandle().setDamage((float) damage);
     }
 
     @Override
     public double getDamage() {
-        return getHandle().getDamage();
+        return this.getHandle().getDamage();
     }
 
     @Override
     public double getMaxSpeed() {
-        return getHandle().maxSpeed;
+        return this.getHandle().maxSpeed;
     }
 
     @Override
     public void setMaxSpeed(double speed) {
         if (speed >= 0D) {
-            getHandle().maxSpeed = speed;
+            this.getHandle().maxSpeed = speed;
         }
     }
 
     @Override
     public boolean isSlowWhenEmpty() {
-        return getHandle().slowWhenEmpty;
+        return this.getHandle().slowWhenEmpty;
     }
 
     @Override
     public void setSlowWhenEmpty(boolean slow) {
-        getHandle().slowWhenEmpty = slow;
+        this.getHandle().slowWhenEmpty = slow;
     }
 
     @Override
     public Vector getFlyingVelocityMod() {
-        return getHandle().getFlyingVelocityMod();
+        return this.getHandle().getFlyingVelocityMod();
     }
 
     @Override
     public void setFlyingVelocityMod(Vector flying) {
-        getHandle().setFlyingVelocityMod(flying);
+        this.getHandle().setFlyingVelocityMod(flying);
     }
 
     @Override
     public Vector getDerailedVelocityMod() {
-        return getHandle().getDerailedVelocityMod();
+        return this.getHandle().getDerailedVelocityMod();
     }
 
     @Override
     public void setDerailedVelocityMod(Vector derailed) {
-        getHandle().setDerailedVelocityMod(derailed);
+        this.getHandle().setDerailedVelocityMod(derailed);
     }
 
     @Override
-    public net.minecraft.world.entity.vehicle.AbstractMinecart getHandle() {
-        return (net.minecraft.world.entity.vehicle.AbstractMinecart) entity;
+    public AbstractMinecart getHandle() {
+        return (AbstractMinecart) this.entity;
     }
 
     @Override
@@ -98,23 +99,23 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
 
     @Override
     public MaterialData getDisplayBlock() {
-        BlockState blockData = getHandle().getDisplayBlockState();
+        BlockState blockData = this.getHandle().getDisplayBlockState();
         return CraftMagicNumbers.getMaterial(blockData);
     }
 
     @Override
     public BlockData getDisplayBlockData() {
-        BlockState blockData = getHandle().getDisplayBlockState();
+        BlockState blockData = this.getHandle().getDisplayBlockState();
         return CraftBlockData.fromData(blockData);
     }
 
     @Override
     public void setDisplayBlockOffset(int offset) {
-        getHandle().setDisplayOffset(offset);
+        this.getHandle().setDisplayOffset(offset);
     }
 
     @Override
     public int getDisplayBlockOffset() {
-        return getHandle().getDisplayOffset();
+        return this.getHandle().getDisplayOffset();
     }
 }

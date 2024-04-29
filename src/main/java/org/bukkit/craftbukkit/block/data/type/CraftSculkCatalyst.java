@@ -9,11 +9,11 @@ public abstract class CraftSculkCatalyst extends CraftBlockData implements Sculk
 
     @Override
     public boolean isBloom() {
-        return get(BLOOM);
+        return this.get(CraftSculkCatalyst.BLOOM);
     }
 
     @Override
     public void setBloom(boolean bloom) {
-        set(BLOOM, bloom);
+        this.set(CraftSculkCatalyst.BLOOM, bloom);
     }
 }

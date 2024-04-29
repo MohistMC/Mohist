@@ -19,12 +19,12 @@ public final class CraftWeatheringCopperDoor extends org.bukkit.craftbukkit.bloc
 
     @Override
     public org.bukkit.block.data.type.Door.Hinge getHinge() {
-        return get(HINGE, org.bukkit.block.data.type.Door.Hinge.class);
+        return this.get(CraftWeatheringCopperDoor.HINGE, org.bukkit.block.data.type.Door.Hinge.class);
     }
 
     @Override
     public void setHinge(org.bukkit.block.data.type.Door.Hinge hinge) {
-        set(HINGE, hinge);
+        this.set(CraftWeatheringCopperDoor.HINGE, hinge);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
@@ -33,12 +33,12 @@ public final class CraftWeatheringCopperDoor extends org.bukkit.craftbukkit.bloc
 
     @Override
     public org.bukkit.block.data.Bisected.Half getHalf() {
-        return get(HALF, org.bukkit.block.data.Bisected.Half.class);
+        return this.get(CraftWeatheringCopperDoor.HALF, org.bukkit.block.data.Bisected.Half.class);
     }
 
     @Override
     public void setHalf(org.bukkit.block.data.Bisected.Half half) {
-        set(HALF, half);
+        this.set(CraftWeatheringCopperDoor.HALF, half);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
@@ -47,17 +47,17 @@ public final class CraftWeatheringCopperDoor extends org.bukkit.craftbukkit.bloc
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+        return this.get(CraftWeatheringCopperDoor.FACING, org.bukkit.block.BlockFace.class);
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+        this.set(CraftWeatheringCopperDoor.FACING, facing);
     }
 
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
+        return this.getValues(CraftWeatheringCopperDoor.FACING, org.bukkit.block.BlockFace.class);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftOpenable
@@ -66,12 +66,12 @@ public final class CraftWeatheringCopperDoor extends org.bukkit.craftbukkit.bloc
 
     @Override
     public boolean isOpen() {
-        return get(OPEN);
+        return this.get(CraftWeatheringCopperDoor.OPEN);
     }
 
     @Override
     public void setOpen(boolean open) {
-        set(OPEN, open);
+        this.set(CraftWeatheringCopperDoor.OPEN, open);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
@@ -80,11 +80,11 @@ public final class CraftWeatheringCopperDoor extends org.bukkit.craftbukkit.bloc
 
     @Override
     public boolean isPowered() {
-        return get(POWERED);
+        return this.get(CraftWeatheringCopperDoor.POWERED);
     }
 
     @Override
     public void setPowered(boolean powered) {
-        set(POWERED, powered);
+        this.set(CraftWeatheringCopperDoor.POWERED, powered);
     }
 }

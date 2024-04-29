@@ -10,7 +10,7 @@ public class CraftWitch extends CraftRaider implements Witch {
 
     @Override
     public net.minecraft.world.entity.monster.Witch getHandle() {
-        return (net.minecraft.world.entity.monster.Witch) entity;
+        return (net.minecraft.world.entity.monster.Witch) this.entity;
     }
 
     @Override
@@ -20,6 +20,6 @@ public class CraftWitch extends CraftRaider implements Witch {
 
     @Override
     public boolean isDrinkingPotion() {
-        return getHandle().isDrinkingPotion();
+        return this.getHandle().isDrinkingPotion();
     }
 }

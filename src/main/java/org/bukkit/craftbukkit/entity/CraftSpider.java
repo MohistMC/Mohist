@@ -11,7 +11,7 @@ public class CraftSpider extends CraftMonster implements Spider {
 
     @Override
     public net.minecraft.world.entity.monster.Spider getHandle() {
-        return (net.minecraft.world.entity.monster.Spider) entity;
+        return (net.minecraft.world.entity.monster.Spider) this.entity;
     }
 
     @Override

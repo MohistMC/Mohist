@@ -13,22 +13,22 @@ public final class CraftSoil extends org.bukkit.craftbukkit.block.data.CraftBloc
         super(state);
     }
 
-    // org.bukkit.craftbukkit.v1_20_R2.block.data.type.CraftFarmland
+    // org.bukkit.craftbukkit.block.data.type.CraftFarmland
 
     private static final net.minecraft.world.level.block.state.properties.IntegerProperty MOISTURE = getInteger(net.minecraft.world.level.block.FarmBlock.class, "moisture");
 
     @Override
     public int getMoisture() {
-        return get(MOISTURE);
+        return this.get(CraftSoil.MOISTURE);
     }
 
     @Override
     public void setMoisture(int moisture) {
-        set(MOISTURE, moisture);
+        this.set(CraftSoil.MOISTURE, moisture);
     }
 
     @Override
     public int getMaximumMoisture() {
-        return getMax(MOISTURE);
+        return getMax(CraftSoil.MOISTURE);
     }
 }

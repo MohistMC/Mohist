@@ -12,11 +12,11 @@ public class CraftInventoryLlama extends CraftInventoryAbstractHorse implements 
 
     @Override
     public ItemStack getDecor() {
-        return getItem(1);
+        return this.getItem(1);
     }
 
     @Override
     public void setDecor(ItemStack stack) {
-        setItem(1, stack);
+        this.setItem(1, stack);
     }
 }

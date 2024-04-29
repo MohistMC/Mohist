@@ -1,143 +1,121 @@
 package org.bukkit.craftbukkit.entity;
 
-import com.google.common.base.Preconditions;
-import net.minecraft.core.BlockPos;
-import org.bukkit.block.Block;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Optional;
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.PotionContents;
+import org.bukkit.Color;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.potion.CraftPotionType;
+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
+import org.bukkit.entity.Arrow;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
-public class CraftArrow extends AbstractProjectile implements AbstractArrow {
+public class CraftArrow extends CraftAbstractArrow implements Arrow {
 
-    public CraftArrow(CraftServer server, net.minecraft.world.entity.projectile.AbstractArrow entity) {
+    public CraftArrow(CraftServer server, net.minecraft.world.entity.projectile.Arrow entity) {
         super(server, entity);
     }
 
     @Override
-    public void setKnockbackStrength(int knockbackStrength) {
-        Preconditions.checkArgument(knockbackStrength >= 0, "Knockback value (%s) cannot be negative", knockbackStrength);
-        getHandle().setKnockback(knockbackStrength);
-    }
-
-    @Override
-    public int getKnockbackStrength() {
-        return getHandle().knockback;
-    }
-
-    @Override
-    public double getDamage() {
-        return getHandle().getBaseDamage();
-    }
-
-    @Override
-    public void setDamage(double damage) {
-        Preconditions.checkArgument(damage >= 0, "Damage value (%s) must be positive", damage);
-        getHandle().setBaseDamage(damage);
-    }
-
-    @Override
-    public int getPierceLevel() {
-        return getHandle().getPierceLevel();
-    }
-
-    @Override
-    public void setPierceLevel(int pierceLevel) {
-        Preconditions.checkArgument(0 <= pierceLevel && pierceLevel <= Byte.MAX_VALUE, "Pierce level (%s) out of range, expected 0 < level < 127", pierceLevel);
-
-        getHandle().setPierceLevel((byte) pierceLevel);
-    }
-
-    @Override
-    public boolean isCritical() {
-        return getHandle().isCritArrow();
-    }
-
-    @Override
-    public void setCritical(boolean critical) {
-        getHandle().setCritArrow(critical);
-    }
-
-    @Override
-    public ProjectileSource getShooter() {
-        return getHandle().projectileSource;
-    }
-
-    @Override
-    public void setShooter(ProjectileSource shooter) {
-        if (shooter instanceof Entity) {
-            getHandle().setOwner(((CraftEntity) shooter).getHandle());
-        } else {
-            getHandle().setOwner(null);
-        }
-        getHandle().projectileSource = shooter;
-    }
-
-    @Override
-    public boolean isInBlock() {
-        return getHandle().inGround;
-    }
-
-    @Override
-    public Block getAttachedBlock() {
-        if (!isInBlock()) {
-            return null;
-        }
-
-        BlockPos pos = getHandle().blockPosition();
-        return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    @Override
-    public PickupStatus getPickupStatus() {
-        return PickupStatus.values()[getHandle().pickup.ordinal()];
-    }
-
-    @Override
-    public void setPickupStatus(PickupStatus status) {
-        Preconditions.checkArgument(status != null, "PickupStatus cannot be null");
-        getHandle().pickup = net.minecraft.world.entity.projectile.AbstractArrow.Pickup.byOrdinal(status.ordinal());
-    }
-
-    @Override
-    public void setTicksLived(int value) {
-        super.setTicksLived(value);
-
-        // Second field for net.minecraft.world.entity.projectile.AbstractArrow
-        getHandle().life = value;
-    }
-
-    @Override
-    public boolean isShotFromCrossbow() {
-        return getHandle().shotFromCrossbow();
-    }
-
-    @Override
-    public void setShotFromCrossbow(boolean shotFromCrossbow) {
-        getHandle().setShotFromCrossbow(shotFromCrossbow);
-    }
-
-    @Override
-    public ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(getHandle().pickupItemStack);
-    }
-
-    @Override
-    public void setItem(ItemStack item) {
-        Preconditions.checkArgument(item != null, "ItemStack cannot be null");
-
-        getHandle().pickupItemStack = CraftItemStack.asNMSCopy(item);
-    }
-
-    @Override
-    public net.minecraft.world.entity.projectile.AbstractArrow getHandle() {
-        return (net.minecraft.world.entity.projectile.AbstractArrow) entity;
+    public net.minecraft.world.entity.projectile.Arrow getHandle() {
+        return (net.minecraft.world.entity.projectile.Arrow) this.entity;
     }
 
     @Override
     public String toString() {
-        return "CraftArrow";
+        return "CraftTippedArrow";
+    }
+
+    @Override
+    public boolean addCustomEffect(PotionEffect effect, boolean override) {
+        if (this.hasCustomEffect(effect.getType())) {
+            if (!override) {
+                return false;
+            }
+            this.removeCustomEffect(effect.getType());
+        }
+        this.getHandle().addEffect(CraftPotionUtil.fromBukkit(effect));
+        this.getHandle().updateColor();
+        return true;
+    }
+
+    @Override
+    public void clearCustomEffects() {
+        PotionContents old = this.getHandle().getPotionContents();
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), old.customColor(), List.of()));
+        this.getHandle().updateColor();
+    }
+
+    @Override
+    public List<PotionEffect> getCustomEffects() {
+        ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
+        for (MobEffectInstance effect : this.getHandle().getPotionContents().customEffects()) {
+            builder.add(CraftPotionUtil.toBukkit(effect));
+        }
+        return builder.build();
+    }
+
+    @Override
+    public boolean hasCustomEffect(PotionEffectType type) {
+        for (MobEffectInstance effect : this.getHandle().getPotionContents().customEffects()) {
+            if (CraftPotionUtil.equals(effect.getEffect(), type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasCustomEffects() {
+        return !this.getHandle().getPotionContents().customEffects().isEmpty();
+    }
+
+    @Override
+    public boolean removeCustomEffect(PotionEffectType effect) {
+        if (!this.hasCustomEffect(effect)) {
+            return false;
+        }
+        Holder<MobEffect> minecraft = CraftPotionEffectType.bukkitToMinecraftHolder(effect);
+
+        PotionContents old = this.getHandle().getPotionContents();
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), old.customColor(), old.customEffects().stream().filter((mobEffect) -> !mobEffect.getEffect().equals(minecraft)).toList()));
+        return true;
+    }
+
+    @Override
+    public void setBasePotionType(PotionType potionType) {
+        if (potionType != null) {
+            this.getHandle().setPotionContents(this.getHandle().getPotionContents().withPotion(CraftPotionType.bukkitToMinecraftHolder(potionType)));
+        } else {
+            PotionContents old = this.getHandle().getPotionContents();
+            this.getHandle().setPotionContents(new PotionContents(Optional.empty(), old.customColor(), old.customEffects()));
+        }
+    }
+
+    @Override
+    public PotionType getBasePotionType() {
+        return this.getHandle().getPotionContents().potion().map(CraftPotionType::minecraftHolderToBukkit).orElse(null);
+    }
+
+    @Override
+    public void setColor(Color color) {
+        int colorRGB = (color == null) ? -1 : color.asRGB();
+        PotionContents old = this.getHandle().getPotionContents();
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), Optional.of(colorRGB), old.customEffects()));
+    }
+
+    @Override
+    public Color getColor() {
+        if (this.getHandle().getColor() <= -1) {
+            return null;
+        }
+        return Color.fromRGB(this.getHandle().getColor());
     }
 }

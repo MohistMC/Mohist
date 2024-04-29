@@ -19,12 +19,12 @@ public final class CraftCopperBulb extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public boolean isLit() {
-        return get(LIT);
+        return this.get(CraftCopperBulb.LIT);
     }
 
     @Override
     public void setLit(boolean lit) {
-        set(LIT, lit);
+        this.set(CraftCopperBulb.LIT, lit);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
@@ -33,11 +33,11 @@ public final class CraftCopperBulb extends org.bukkit.craftbukkit.block.data.Cra
 
     @Override
     public boolean isPowered() {
-        return get(POWERED);
+        return this.get(CraftCopperBulb.POWERED);
     }
 
     @Override
     public void setPowered(boolean powered) {
-        set(POWERED, powered);
+        this.set(CraftCopperBulb.POWERED, powered);
     }
 }

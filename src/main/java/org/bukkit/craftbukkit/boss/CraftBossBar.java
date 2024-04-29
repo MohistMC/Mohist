@@ -25,10 +25,10 @@ public class CraftBossBar implements BossBar {
     private Map<BarFlag, FlagContainer> flags;
 
     public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
-        handle = new ServerBossEvent(
+        this.handle = new ServerBossEvent(
                 CraftChatMessage.fromString(title, true)[0],
-                convertColor(color),
-                convertStyle(style)
+                this.convertColor(color),
+                this.convertStyle(style)
         );
 
         this.initialize();
@@ -97,40 +97,40 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public String getTitle() {
-        return CraftChatMessage.fromComponent(handle.name);
+        return CraftChatMessage.fromComponent(this.handle.name);
     }
 
     @Override
     public void setTitle(String title) {
-        handle.name = CraftChatMessage.fromString(title, true)[0];
-        handle.broadcast(ClientboundBossEventPacket::createUpdateNamePacket);
+        this.handle.name = CraftChatMessage.fromString(title, true)[0];
+        this.handle.broadcast(ClientboundBossEventPacket::createUpdateNamePacket);
     }
 
     @Override
     public BarColor getColor() {
-        return convertColor(handle.color);
+        return this.convertColor(this.handle.color);
     }
 
     @Override
     public void setColor(BarColor color) {
-        handle.color = convertColor(color);
-        handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
+        this.handle.color = this.convertColor(color);
+        this.handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
     }
 
     @Override
     public BarStyle getStyle() {
-        return convertStyle(handle.overlay);
+        return this.convertStyle(this.handle.overlay);
     }
 
     @Override
     public void setStyle(BarStyle style) {
-        handle.overlay = convertStyle(style);
-        handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
+        this.handle.overlay = this.convertStyle(style);
+        this.handle.broadcast(ClientboundBossEventPacket::createUpdateStylePacket);
     }
 
     @Override
     public void addFlag(BarFlag flag) {
-        FlagContainer flagContainer = flags.get(flag);
+        FlagContainer flagContainer = this.flags.get(flag);
         if (flagContainer != null) {
             flagContainer.set.accept(true);
         }
@@ -138,7 +138,7 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public void removeFlag(BarFlag flag) {
-        FlagContainer flagContainer = flags.get(flag);
+        FlagContainer flagContainer = this.flags.get(flag);
         if (flagContainer != null) {
             flagContainer.set.accept(false);
         }
@@ -146,7 +146,7 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public boolean hasFlag(BarFlag flag) {
-        FlagContainer flagContainer = flags.get(flag);
+        FlagContainer flagContainer = this.flags.get(flag);
         if (flagContainer != null) {
             return flagContainer.get.get();
         }
@@ -156,12 +156,12 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setProgress(double progress) {
         Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0 (%s)", progress);
-        handle.setProgress((float) progress);
+        this.handle.setProgress((float) progress);
     }
 
     @Override
     public double getProgress() {
-        return handle.getProgress();
+        return this.handle.getProgress();
     }
 
     @Override
@@ -169,20 +169,20 @@ public class CraftBossBar implements BossBar {
         Preconditions.checkArgument(player != null, "player == null");
         Preconditions.checkArgument(((CraftPlayer) player).getHandle().connection != null, "player is not fully connected (wait for PlayerJoinEvent)");
 
-        handle.addPlayer(((CraftPlayer) player).getHandle());
+        this.handle.addPlayer(((CraftPlayer) player).getHandle());
     }
 
     @Override
     public void removePlayer(Player player) {
         Preconditions.checkArgument(player != null, "player == null");
 
-        handle.removePlayer(((CraftPlayer) player).getHandle());
+        this.handle.removePlayer(((CraftPlayer) player).getHandle());
     }
 
     @Override
     public List<Player> getPlayers() {
         ImmutableList.Builder<Player> players = ImmutableList.builder();
-        for (ServerPlayer p : handle.getPlayers()) {
+        for (ServerPlayer p : this.handle.getPlayers()) {
             players.add(p.getBukkitEntity());
         }
         return players.build();
@@ -190,28 +190,28 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public void setVisible(boolean visible) {
-        handle.setVisible(visible);
+        this.handle.setVisible(visible);
     }
 
     @Override
     public boolean isVisible() {
-        return handle.visible;
+        return this.handle.visible;
     }
 
     @Override
     public void show() {
-        handle.setVisible(true);
+        this.handle.setVisible(true);
     }
 
     @Override
     public void hide() {
-        handle.setVisible(false);
+        this.handle.setVisible(false);
     }
 
     @Override
     public void removeAll() {
-        for (Player player : getPlayers()) {
-            removePlayer(player);
+        for (Player player : this.getPlayers()) {
+            this.removePlayer(player);
         }
     }
 
@@ -227,6 +227,6 @@ public class CraftBossBar implements BossBar {
     }
 
     public ServerBossEvent getHandle() {
-        return handle;
+        return this.handle;
     }
 }

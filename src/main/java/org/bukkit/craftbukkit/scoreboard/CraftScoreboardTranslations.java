@@ -28,14 +28,15 @@ final class CraftScoreboardTranslations {
             .put(DisplaySlot.SIDEBAR_YELLOW, "sidebar.team.yellow")
             .put(DisplaySlot.SIDEBAR_WHITE, "sidebar.team.white")
             .buildOrThrow();
+
     private CraftScoreboardTranslations() {}
 
     static DisplaySlot toBukkitSlot(net.minecraft.world.scores.DisplaySlot minecraft) {
-        return SLOTS.inverse().get(minecraft.getSerializedName());
+        return CraftScoreboardTranslations.SLOTS.inverse().get(minecraft.getSerializedName());
     }
 
     static net.minecraft.world.scores.DisplaySlot fromBukkitSlot(DisplaySlot slot) {
-        return net.minecraft.world.scores.DisplaySlot.CODEC.byName(SLOTS.get(slot));
+        return net.minecraft.world.scores.DisplaySlot.CODEC.byName(CraftScoreboardTranslations.SLOTS.get(slot));
     }
 
     static RenderType toBukkitRender(ObjectiveCriteria.RenderType display) {

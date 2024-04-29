@@ -5,10 +5,6 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.JukeboxInventory;
 
-/**
- * @author Mgazul by MohistMC
- * @date 2023/3/26 4:56:10
- */
 public class CraftInventoryJukebox extends CraftInventory implements JukeboxInventory {
 
     public CraftInventoryJukebox(Container inventory) {
@@ -18,19 +14,19 @@ public class CraftInventoryJukebox extends CraftInventory implements JukeboxInve
     @Override
     public void setRecord(ItemStack item) {
         if (item == null) {
-            inventory.removeItem(0, 0); // Second parameter is unused in TileEntityJukebox
+            this.inventory.removeItem(0, 0); // Second parameter is unused in TileEntityJukebox
         } else {
-            setItem(0, item);
+            this.setItem(0, item);
         }
     }
 
     @Override
     public ItemStack getRecord() {
-        return getItem(0);
+        return this.getItem(0);
     }
 
     @Override
     public Jukebox getHolder() {
-        return (Jukebox) inventory.getOwner();
+        return (Jukebox) this.inventory.getOwner();
     }
 }

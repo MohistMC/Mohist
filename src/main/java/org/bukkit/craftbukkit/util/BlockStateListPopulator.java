@@ -24,68 +24,69 @@ import org.bukkit.craftbukkit.block.CraftBlockState;
 public class BlockStateListPopulator extends DummyGeneratorAccess {
     private final LevelAccessor world;
     private final Map<BlockPos, net.minecraft.world.level.block.state.BlockState> dataMap = new HashMap<>();
-    private final Map<BlockPos, net.minecraft.world.level.block.entity.BlockEntity> entityMap = new HashMap<>();
-    private final LinkedHashMap<net.minecraft.core.BlockPos, CraftBlockState> list;
+    private final Map<BlockPos, BlockEntity> entityMap = new HashMap<>();
+    private final LinkedHashMap<BlockPos, CraftBlockState> list;
 
     public BlockStateListPopulator(LevelAccessor world) {
         this(world, new LinkedHashMap<>());
     }
 
-    private BlockStateListPopulator(LevelAccessor world, LinkedHashMap<net.minecraft.core.BlockPos, CraftBlockState> list) {
+    private BlockStateListPopulator(LevelAccessor world, LinkedHashMap<BlockPos, CraftBlockState> list) {
         this.world = world;
         this.list = list;
     }
 
     @Override
-    public net.minecraft.world.level.block.state.BlockState getBlockState(net.minecraft.core.BlockPos bp) {
-        net.minecraft.world.level.block.state.BlockState blockData = dataMap.get(bp);
-        return (blockData != null) ? blockData : world.getBlockState(bp);
+    public net.minecraft.world.level.block.state.BlockState getBlockState(BlockPos pos) {
+        net.minecraft.world.level.block.state.BlockState blockData = this.dataMap.get(pos);
+        return (blockData != null) ? blockData : this.world.getBlockState(pos);
     }
 
     @Override
-    public FluidState getFluidState(net.minecraft.core.BlockPos bp) {
-        net.minecraft.world.level.block.state.BlockState blockData = dataMap.get(bp);
-        return (blockData != null) ? blockData.getFluidState() : world.getFluidState(bp);
+    public FluidState getFluidState(BlockPos pos) {
+        net.minecraft.world.level.block.state.BlockState blockData = this.dataMap.get(pos);
+        return (blockData != null) ? blockData.getFluidState() : this.world.getFluidState(pos);
     }
 
     @Override
-    public BlockEntity getBlockEntity(BlockPos blockposition) {
+    public BlockEntity getBlockEntity(BlockPos pos) {
         // The contains is important to check for null values
-        if (entityMap.containsKey(blockposition)) {
-            return entityMap.get(blockposition);
+        if (this.entityMap.containsKey(pos)) {
+            return this.entityMap.get(pos);
         }
 
-        return world.getBlockEntity(blockposition);
+        return this.world.getBlockEntity(pos);
     }
 
     @Override
-    public boolean setBlock(net.minecraft.core.BlockPos position, net.minecraft.world.level.block.state.BlockState data, int flag) {
-        position = position.immutable();
+    public boolean setBlock(BlockPos pos, net.minecraft.world.level.block.state.BlockState state, int flags) {
+        pos = pos.immutable();
         // remove first to keep insertion order
-        list.remove(position);
-        dataMap.put(position, data);
-        if (data.hasBlockEntity()) {
-            entityMap.put(position, ((EntityBlock) data.getBlock()).newBlockEntity(position, data));
+        this.list.remove(pos);
+
+        this.dataMap.put(pos, state);
+        if (state.hasBlockEntity()) {
+            this.entityMap.put(pos, ((EntityBlock) state.getBlock()).newBlockEntity(pos, state));
         } else {
-            entityMap.put(position, null);
+            this.entityMap.put(pos, null);
         }
 
         // use 'this' to ensure that the block state is the correct TileState
-        CraftBlockState state = (CraftBlockState) CraftBlock.at(this, position).getState();
-        state.setFlag(flag);
+        CraftBlockState state1 = (CraftBlockState) CraftBlock.at(this, pos).getState();
+        state1.setFlag(flags);
         // set world handle to ensure that updated calls are done to the world and not to this populator
-        state.setWorldHandle(world);
-        list.put(position, state);
+        state1.setWorldHandle(this.world);
+        this.list.put(pos, state1);
         return true;
     }
 
     @Override
     public ServerLevel getMinecraftWorld() {
-        return world.getMinecraftWorld();
+        return this.world.getMinecraftWorld();
     }
 
     public void refreshTiles() {
-        for (CraftBlockState state : list.values()) {
+        for (CraftBlockState state : this.list.values()) {
             if (state instanceof CraftBlockEntityState) {
                 ((CraftBlockEntityState<?>) state).refreshSnapshot();
             }
@@ -93,62 +94,62 @@ public class BlockStateListPopulator extends DummyGeneratorAccess {
     }
 
     public void updateList() {
-        for (BlockState state : list.values()) {
+        for (BlockState state : this.list.values()) {
             state.update(true);
         }
     }
 
-    public Set<net.minecraft.core.BlockPos> getBlocks() {
-        return list.keySet();
+    public Set<BlockPos> getBlocks() {
+        return this.list.keySet();
     }
 
     public List<CraftBlockState> getList() {
-        return new ArrayList<>(list.values());
+        return new ArrayList<>(this.list.values());
     }
 
     public LevelAccessor getWorld() {
-        return world;
+        return this.world;
     }
 
     // For tree generation
     @Override
     public int getMinBuildHeight() {
-        return getWorld().getMinBuildHeight();
+        return this.getWorld().getMinBuildHeight();
     }
 
     @Override
     public int getHeight() {
-        return getWorld().getHeight();
+        return this.getWorld().getHeight();
     }
 
     @Override
-    public boolean isStateAtPosition(BlockPos blockposition, Predicate<net.minecraft.world.level.block.state.BlockState> predicate) {
-        return predicate.test(getBlockState(blockposition));
+    public boolean isStateAtPosition(BlockPos pos, Predicate<net.minecraft.world.level.block.state.BlockState> state) {
+        return state.test(this.getBlockState(pos));
     }
 
     @Override
-    public boolean isFluidAtPosition(BlockPos bp, Predicate<FluidState> prdct) {
-        return world.isFluidAtPosition(bp, prdct);
+    public boolean isFluidAtPosition(BlockPos pos, Predicate<FluidState> state) {
+        return this.world.isFluidAtPosition(pos, state);
     }
 
     @Override
     public DimensionType dimensionType() {
-        return world.dimensionType();
+        return this.world.dimensionType();
     }
 
     @Override
     public RegistryAccess registryAccess() {
-        return world.registryAccess();
+        return this.world.registryAccess();
     }
 
     // Needed when a tree generates in water
     @Override
     public LevelData getLevelData() {
-        return world.getLevelData();
+        return this.world.getLevelData();
     }
 
     @Override
     public long nextSubTickCount() {
-        return world.nextSubTickCount();
+        return this.world.nextSubTickCount();
     }
 }

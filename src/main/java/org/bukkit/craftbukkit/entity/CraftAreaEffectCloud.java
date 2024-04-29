@@ -1,10 +1,12 @@
 package org.bukkit.craftbukkit.entity;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.PotionContents;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.CraftParticle;
@@ -18,7 +20,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
-import org.jetbrains.annotations.NotNull;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
@@ -38,134 +39,124 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public int getDuration() {
-        return getHandle().getDuration();
+        return this.getHandle().getDuration();
     }
 
     @Override
     public void setDuration(int duration) {
-        getHandle().setDuration(duration);
+        this.getHandle().setDuration(duration);
     }
 
     @Override
     public int getWaitTime() {
-        return getHandle().waitTime;
+        return this.getHandle().waitTime;
     }
 
     @Override
     public void setWaitTime(int waitTime) {
-        getHandle().setWaitTime(waitTime);
+        this.getHandle().setWaitTime(waitTime);
     }
 
     @Override
     public int getReapplicationDelay() {
-        return getHandle().reapplicationDelay;
+        return this.getHandle().reapplicationDelay;
     }
 
     @Override
     public void setReapplicationDelay(int delay) {
-        getHandle().reapplicationDelay = delay;
+        this.getHandle().reapplicationDelay = delay;
     }
 
     @Override
     public int getDurationOnUse() {
-        return getHandle().durationOnUse;
+        return this.getHandle().durationOnUse;
     }
 
     @Override
     public void setDurationOnUse(int duration) {
-        getHandle().durationOnUse = duration;
+        this.getHandle().durationOnUse = duration;
     }
 
     @Override
     public float getRadius() {
-        return getHandle().getRadius();
+        return this.getHandle().getRadius();
     }
 
     @Override
     public void setRadius(float radius) {
-        getHandle().setRadius(radius);
+        this.getHandle().setRadius(radius);
     }
 
     @Override
     public float getRadiusOnUse() {
-        return getHandle().radiusOnUse;
+        return this.getHandle().radiusOnUse;
     }
 
     @Override
     public void setRadiusOnUse(float radius) {
-        getHandle().setRadiusOnUse(radius);
+        this.getHandle().setRadiusOnUse(radius);
     }
 
     @Override
     public float getRadiusPerTick() {
-        return getHandle().radiusPerTick;
+        return this.getHandle().radiusPerTick;
     }
 
     @Override
     public void setRadiusPerTick(float radius) {
-        getHandle().setRadiusPerTick(radius);
+        this.getHandle().setRadiusPerTick(radius);
     }
 
     @Override
     public Particle getParticle() {
-        return CraftParticle.minecraftToBukkit(getHandle().getParticle().getType());
+        return CraftParticle.minecraftToBukkit(this.getHandle().getParticle().getType());
     }
 
     @Override
     public void setParticle(Particle particle) {
-        setParticle(particle, null);
+        this.setParticle(particle, null);
     }
 
     @Override
     public <T> void setParticle(Particle particle, T data) {
-        particle = CraftParticle.convertLegacy(particle);
-        data = CraftParticle.convertLegacy(data);
-        if (data != null) {
-            Preconditions.checkArgument(particle.getDataType().isInstance(data), "data (%s) should be %s", data.getClass(), particle.getDataType());
-        }
-        getHandle().setParticle(CraftParticle.createParticleParam(particle, data));
+        this.getHandle().setParticle(CraftParticle.createParticleParam(particle, data));
     }
 
     @Override
     public Color getColor() {
-        return Color.fromRGB(getHandle().getColor());
+        return Color.fromRGB(this.getHandle().potionContents.getColor());
     }
 
     @Override
     public void setColor(Color color) {
-        getHandle().setFixedColor(color.asRGB());
+        PotionContents old = this.getHandle().potionContents;
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), Optional.of(color.asRGB()), old.customEffects()));
     }
 
     @Override
     public boolean addCustomEffect(PotionEffect effect, boolean override) {
-        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect.getType());
-        MobEffectInstance existing = null;
-        for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (mobEffect.getEffect() == minecraft) {
-                existing = mobEffect;
-            }
-        }
-        if (existing != null) {
+        if (this.hasCustomEffect(effect.getType())) {
             if (!override) {
                 return false;
             }
-            getHandle().effects.remove(existing);
+            this.removeCustomEffect(effect.getType());
         }
-        getHandle().addEffect(CraftPotionUtil.fromBukkit(effect));
-        getHandle().updateColor();
+        this.getHandle().addEffect(CraftPotionUtil.fromBukkit(effect));
+        this.getHandle().updateColor();
         return true;
     }
 
     @Override
     public void clearCustomEffects() {
-        getHandle().effects.clear();
-        getHandle().updateColor();
+        PotionContents old = this.getHandle().potionContents;
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), old.customColor(), List.of()));
+        this.getHandle().updateColor();
     }
 
     @Override
     public List<PotionEffect> getCustomEffects() {
         ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
-        for (MobEffectInstance effect : getHandle().effects) {
+        for (MobEffectInstance effect : this.getHandle().potionContents.customEffects()) {
             builder.add(CraftPotionUtil.toBukkit(effect));
         }
         return builder.build();
@@ -173,7 +164,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean hasCustomEffect(PotionEffectType type) {
-        for (MobEffectInstance effect : getHandle().effects) {
+        for (MobEffectInstance effect : this.getHandle().potionContents.customEffects()) {
             if (CraftPotionUtil.equals(effect.getEffect(), type)) {
                 return true;
             }
@@ -183,63 +174,48 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public boolean hasCustomEffects() {
-        return !getHandle().effects.isEmpty();
+        return !this.getHandle().potionContents.customEffects().isEmpty();
     }
 
     @Override
     public boolean removeCustomEffect(PotionEffectType effect) {
-        MobEffect minecraft = CraftPotionEffectType.bukkitToMinecraft(effect);
-        MobEffectInstance existing = null;
-        for (MobEffectInstance mobEffect : getHandle().effects) {
-            if (mobEffect.getEffect() == minecraft) {
-                existing = mobEffect;
-            }
-        }
-        if (existing == null) {
+        if (!this.hasCustomEffect(effect)) {
             return false;
         }
-        getHandle().effects.remove(existing);
-        getHandle().updateColor();
+        Holder<MobEffect> minecraft = CraftPotionEffectType.bukkitToMinecraftHolder(effect);
+
+        PotionContents old = this.getHandle().potionContents;
+        this.getHandle().setPotionContents(new PotionContents(old.potion(), old.customColor(), old.customEffects().stream().filter((mobEffect) -> !mobEffect.getEffect().equals(minecraft)).toList()));
         return true;
     }
 
     @Override
-    public void setBasePotionData(PotionData data) {
-        Preconditions.checkArgument(data != null, "PotionData cannot be null");
-        getHandle().setPotion(CraftPotionType.bukkitToMinecraft(CraftPotionUtil.fromBukkit(data)));
+    public void setBasePotionType(PotionType potionType) {
+        if (potionType != null) {
+            this.getHandle().setPotionContents(this.getHandle().potionContents.withPotion(CraftPotionType.bukkitToMinecraftHolder(potionType)));
+        } else {
+            PotionContents old = this.getHandle().potionContents;
+            this.getHandle().setPotionContents(new PotionContents(Optional.empty(), old.customColor(), old.customEffects()));
+        }
     }
 
-    @Override
-    public PotionData getBasePotionData() {
-        return CraftPotionUtil.toBukkit(CraftPotionType.minecraftToBukkit(getHandle().getPotion()));
-    }
-
-    @Override
-    public void setBasePotionType(@NotNull PotionType potionType) {
-        // TODO: 10/6/23 Change PotionType.UNCRAFTABLE to PotionType.EMPTY in error message
-        Preconditions.checkArgument(potionType != null, "PotionType cannot be null use PotionType.UNCRAFTABLE to represent no effect instead.");
-
-        getHandle().setPotion(CraftPotionType.bukkitToMinecraft(potionType));
-    }
-
-    @NotNull
     @Override
     public PotionType getBasePotionType() {
-        return CraftPotionType.minecraftToBukkit(getHandle().getPotion());
+        return this.getHandle().potionContents.potion().map(CraftPotionType::minecraftHolderToBukkit).orElse(null);
     }
 
     @Override
     public ProjectileSource getSource() {
-        net.minecraft.world.entity.LivingEntity source = getHandle().getOwner();
+        net.minecraft.world.entity.LivingEntity source = this.getHandle().getOwner();
         return (source == null) ? null : (LivingEntity) source.getBukkitEntity();
     }
 
     @Override
     public void setSource(ProjectileSource shooter) {
         if (shooter instanceof CraftLivingEntity craftLivingEntity) {
-            getHandle().setOwner(craftLivingEntity.getHandle());
+            this.getHandle().setOwner(craftLivingEntity.getHandle());
         } else {
-            getHandle().setOwner(null);
+            this.getHandle().setOwner(null);
         }
     }
 }

@@ -1,9 +1,8 @@
+/**
+ * Automatically generated file, changes will be lost.
+ */
 package org.bukkit.craftbukkit.block.impl;
 
-/**
- * @author Mgazul by MohistMC
- * @date 2023/9/24 11:14:05
- */
 public final class CraftBarrier extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Waterlogged {
 
     public CraftBarrier() {
@@ -20,11 +19,11 @@ public final class CraftBarrier extends org.bukkit.craftbukkit.block.data.CraftB
 
     @Override
     public boolean isWaterlogged() {
-        return get(WATERLOGGED);
+        return this.get(CraftBarrier.WATERLOGGED);
     }
 
     @Override
     public void setWaterlogged(boolean waterlogged) {
-        set(WATERLOGGED, waterlogged);
+        this.set(CraftBarrier.WATERLOGGED, waterlogged);
     }
 }

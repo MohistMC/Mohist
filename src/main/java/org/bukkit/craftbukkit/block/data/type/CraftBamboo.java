@@ -9,11 +9,11 @@ public abstract class CraftBamboo extends CraftBlockData implements Bamboo {
 
     @Override
     public org.bukkit.block.data.type.Bamboo.Leaves getLeaves() {
-        return get(LEAVES, org.bukkit.block.data.type.Bamboo.Leaves.class);
+        return this.get(CraftBamboo.LEAVES, org.bukkit.block.data.type.Bamboo.Leaves.class);
     }
 
     @Override
     public void setLeaves(org.bukkit.block.data.type.Bamboo.Leaves leaves) {
-        set(LEAVES, leaves);
+        this.set(CraftBamboo.LEAVES, leaves);
     }
 }

@@ -8,11 +8,11 @@ public abstract class CraftSnowable extends CraftBlockData implements Snowable {
 
     @Override
     public boolean isSnowy() {
-        return get(SNOWY);
+        return this.get(CraftSnowable.SNOWY);
     }
 
     @Override
     public void setSnowy(boolean snowy) {
-        set(SNOWY, snowy);
+        this.set(CraftSnowable.SNOWY, snowy);
     }
 }

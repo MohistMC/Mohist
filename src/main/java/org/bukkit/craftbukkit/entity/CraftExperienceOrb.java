@@ -10,29 +10,17 @@ public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
 
     @Override
     public int getExperience() {
-        return getHandle().value;
+        return this.getHandle().value;
     }
 
     @Override
     public void setExperience(int value) {
-        getHandle().value = value;
+        this.getHandle().value = value;
     }
-
-    // Paper start
-    public java.util.UUID getTriggerEntityId() {
-        return getHandle().triggerEntityId;
-    }
-    public java.util.UUID getSourceEntityId() {
-        return getHandle().sourceEntityId;
-    }
-    public SpawnReason getSpawnReason() {
-        return getHandle().spawnReason;
-    }
-    // Paper end
 
     @Override
     public net.minecraft.world.entity.ExperienceOrb getHandle() {
-        return (net.minecraft.world.entity.ExperienceOrb) entity;
+        return (net.minecraft.world.entity.ExperienceOrb) this.entity;
     }
 
     @Override

@@ -7,36 +7,38 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemCraftResult;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @author Mgazul by MohistMC
- * @date 2023/11/9 16:42:42
- */
-public class CraftItemCraftResult implements ItemCraftResult {
+public final class CraftItemCraftResult implements ItemCraftResult {
 
     private final ItemStack result;
     private final ItemStack[] resultMatrix;
     private final List<ItemStack> overflowItems;
+
     public CraftItemCraftResult(ItemStack result) {
         this.result = Objects.requireNonNullElseGet(result, () -> new ItemStack(Material.AIR));
         this.resultMatrix = new ItemStack[9];
         this.overflowItems = new ArrayList<>();
-        for (int i = 0; i < resultMatrix.length; i++) {
-            resultMatrix[i] = new ItemStack(Material.AIR);
+
+        for (int i = 0; i < this.resultMatrix.length; i++) {
+            this.resultMatrix[i] = new ItemStack(Material.AIR);
         }
     }
+
     @Override
     public ItemStack getResult() {
-        return result;
+        return this.result;
     }
+
     @Override
     public ItemStack[] getResultingMatrix() {
-        return resultMatrix;
+        return this.resultMatrix;
     }
+
     @Override
     public List<ItemStack> getOverflowItems() {
-        return overflowItems;
+        return this.overflowItems;
     }
+
     public void setResultMatrix(int i, ItemStack itemStack) {
-        resultMatrix[i] = Objects.requireNonNullElseGet(itemStack, () -> new ItemStack(Material.AIR));
+        this.resultMatrix[i] = Objects.requireNonNullElseGet(itemStack, () -> new ItemStack(Material.AIR));
     }
 }

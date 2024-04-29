@@ -17,7 +17,7 @@ public class CraftAnimals extends CraftAgeable implements Animals {
 
     @Override
     public Animal getHandle() {
-        return (Animal) entity;
+        return (Animal) this.entity;
     }
 
     @Override
@@ -27,37 +27,37 @@ public class CraftAnimals extends CraftAgeable implements Animals {
 
     @Override
     public UUID getBreedCause() {
-        return getHandle().loveCause;
+        return this.getHandle().loveCause;
     }
 
     @Override
     public void setBreedCause(UUID uuid) {
-        getHandle().loveCause = uuid;
+        this.getHandle().loveCause = uuid;
     }
 
     @Override
     public boolean isLoveMode() {
-        return getHandle().isInLove();
+        return this.getHandle().isInLove();
     }
 
     @Override
     public void setLoveModeTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "Love mode ticks must be positive or 0");
-        getHandle().setInLoveTime(ticks);
+        this.getHandle().setInLoveTime(ticks);
     }
 
     @Override
     public int getLoveModeTicks() {
-        return getHandle().inLove;
+        return this.getHandle().inLove;
     }
 
     @Override
     public boolean isBreedItem(ItemStack itemStack) {
-        return getHandle().isFood(CraftItemStack.asNMSCopy(itemStack));
+        return this.getHandle().isFood(CraftItemStack.asNMSCopy(itemStack));
     }
 
     @Override
     public boolean isBreedItem(Material material) {
-        return isBreedItem(new ItemStack(material));
+        return this.isBreedItem(new ItemStack(material));
     }
 }

@@ -36,32 +36,32 @@ public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Bar
 
     @Override
     public void open() {
-        requirePlaced();
-        if (!getTileEntity().openersCounter.opened) {
-            BlockState blockData = getTileEntity().getBlockState();
+        this.requirePlaced();
+        if (!this.getTileEntity().openersCounter.opened) {
+            BlockState blockData = this.getTileEntity().getBlockState();
             boolean open = blockData.getValue(BarrelBlock.OPEN);
 
             if (!open) {
-                getTileEntity().updateBlockState(blockData, true);
-                if (getWorldHandle() instanceof net.minecraft.world.level.Level) {
-                    getTileEntity().playSound(blockData, SoundEvents.BARREL_OPEN);
+                this.getTileEntity().updateBlockState(blockData, true);
+                if (this.getWorldHandle() instanceof net.minecraft.world.level.Level) {
+                    this.getTileEntity().playSound(blockData, SoundEvents.BARREL_OPEN);
                 }
             }
         }
-        getTileEntity().openersCounter.opened = true;
+        this.getTileEntity().openersCounter.opened = true;
     }
 
     @Override
     public void close() {
-        requirePlaced();
-        if (getTileEntity().openersCounter.opened) {
-            BlockState blockData = getTileEntity().getBlockState();
-            getTileEntity().updateBlockState(blockData, false);
-            if (getWorldHandle() instanceof net.minecraft.world.level.Level) {
-                getTileEntity().playSound(blockData, SoundEvents.BARREL_CLOSE);
+        this.requirePlaced();
+        if (this.getTileEntity().openersCounter.opened) {
+            BlockState blockData = this.getTileEntity().getBlockState();
+            this.getTileEntity().updateBlockState(blockData, false);
+            if (this.getWorldHandle() instanceof net.minecraft.world.level.Level) {
+                this.getTileEntity().playSound(blockData, SoundEvents.BARREL_CLOSE);
             }
         }
-        getTileEntity().openersCounter.opened = false;
+        this.getTileEntity().openersCounter.opened = false;
     }
 
     @Override

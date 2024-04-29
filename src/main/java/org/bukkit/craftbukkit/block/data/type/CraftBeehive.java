@@ -9,16 +9,16 @@ public abstract class CraftBeehive extends CraftBlockData implements Beehive {
 
     @Override
     public int getHoneyLevel() {
-        return get(HONEY_LEVEL);
+        return this.get(CraftBeehive.HONEY_LEVEL);
     }
 
     @Override
     public void setHoneyLevel(int honeyLevel) {
-        set(HONEY_LEVEL, honeyLevel);
+        this.set(CraftBeehive.HONEY_LEVEL, honeyLevel);
     }
 
     @Override
     public int getMaximumHoneyLevel() {
-        return getMax(HONEY_LEVEL);
+        return getMax(CraftBeehive.HONEY_LEVEL);
     }
 }
