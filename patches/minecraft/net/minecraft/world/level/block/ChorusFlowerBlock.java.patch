@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -7,6 +_,7 @@
- import net.minecraft.core.Direction;
- import net.minecraft.core.registries.BuiltInRegistries;
- import net.minecraft.server.level.ServerLevel;
-+import net.minecraft.tags.EntityTypeTags;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.level.BlockGetter;
 @@ -20,6 +_,7 @@
  import net.minecraft.world.level.block.state.properties.IntegerProperty;
  import net.minecraft.world.phys.BlockHitResult;

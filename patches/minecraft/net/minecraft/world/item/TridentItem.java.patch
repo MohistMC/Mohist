@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/item/TridentItem.java
 +++ b/net/minecraft/world/item/TridentItem.java
-@@ -23,6 +_,7 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.phys.Vec3;
-+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
- 
- public class TridentItem extends Item implements Vanishable {
-    public static final int THROW_THRESHOLD_TIME = 10;
 @@ -57,9 +_,6 @@
              int j = EnchantmentHelper.getRiptide(p_43394_);
              if (j <= 0 || player.isInWaterOrRain()) {
