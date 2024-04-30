@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.proxy;
+package com.mohistmc.paper.proxy;
 
 import com.google.common.net.InetAddresses;
 import com.mohistmc.MohistConfig;

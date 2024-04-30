@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.event.server;
+package com.mohistmc.paper.event.server;
 
 import com.google.common.base.Preconditions;
 import io.papermc.paper.util.TransformingRandomAccessList;

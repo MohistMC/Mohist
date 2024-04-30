@@ -102,7 +102,7 @@
 -   }
 +      boolean i = ignited.getAndSet(true);
 +      if (m_32311_() != i) {
-+         com.destroystokyo.paper.event.entity.CreeperIgniteEvent event = new com.destroystokyo.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
++         com.mohistmc.paper.event.entity.CreeperIgniteEvent event = new com.mohistmc.paper.event.entity.CreeperIgniteEvent((org.bukkit.entity.Creeper) getBukkitEntity(), i);
 +         if (event.callEvent()) {
 +            this.f_19804_.m_135381_(f_32275_, event.isIgnited());
 +         }
