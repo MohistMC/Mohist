@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -1,6 +_,8 @@
+@@ -1,6 +_,9 @@
  package net.minecraft.server.network;
  
  import com.google.common.primitives.Ints;
 +import com.mohistmc.MohistConfig;
++import com.mohistmc.paper.proxy.VelocityProxy;
 +import com.mohistmc.plugins.PlayerModsCheck;
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
@@ -139,8 +140,8 @@
 +            if (MohistConfig.velocity_enabled) {
 +               this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
 +               net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-+               buf.writeByte(com.mohistmc.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
-+               net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, com.mohistmc.paper.proxy.VelocityProxy.PLAYER_INFO_CHANNEL, buf);
++               buf.writeByte(VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++               net.minecraft.network.protocol.login.ClientboundCustomQueryPacket packet1 = new net.minecraft.network.protocol.login.ClientboundCustomQueryPacket(this.velocityLoginMessageId, VelocityProxy.PLAYER_INFO_CHANNEL, buf);
 +               this.f_10013_.m_129512_(packet1);
 +               return;
 +            }
@@ -235,14 +236,14 @@
 +            return;
 +         }
 +
-+         if (!com.mohistmc.paper.proxy.VelocityProxy.checkIntegrity(buf)) {
++         if (!VelocityProxy.checkIntegrity(buf)) {
 +            this.disconnect("Unable to verify player details");
 +            return;
 +         }
 +
 +         int version = buf.m_130242_();
-+         if (version > com.mohistmc.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION) {
-+            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted upto " + com.mohistmc.paper.proxy.VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
++         if (version > VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION) {
++            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted upto " + VelocityProxy.MAX_SUPPORTED_FORWARDING_VERSION);
 +         }
 +
 +         java.net.SocketAddress listening = this.f_10013_.m_129523_();
@@ -250,9 +251,9 @@
 +         if (listening instanceof java.net.InetSocketAddress) {
 +            port = ((java.net.InetSocketAddress) listening).getPort();
 +         }
-+         this.f_10013_.f_129469_ = new java.net.InetSocketAddress(com.mohistmc.paper.proxy.VelocityProxy.readAddress(buf), port);
++         this.f_10013_.f_129469_ = new java.net.InetSocketAddress(VelocityProxy.readAddress(buf), port);
 +
-+         this.f_10021_ = com.mohistmc.paper.proxy.VelocityProxy.createProfile(buf);
++         this.f_10021_ = VelocityProxy.createProfile(buf);
 +
 +         //TODO Update handling for lazy sessions, might not even have to do anything?
 +
