@@ -1,18 +1,104 @@
 --- a/net/minecraft/world/level/block/SculkCatalystBlock.java
 +++ b/net/minecraft/world/level/block/SculkCatalystBlock.java
-@@ -60,9 +_,11 @@
+@@ -20,54 +_,51 @@
+ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  
-    public void spawnAfterBreak(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
-       super.spawnAfterBreak(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
--      if (p_222113_) {
--         this.tryDropExperience(p_222110_, p_222111_, p_222112_, this.xpRange);
--      }
+ public class SculkCatalystBlock extends BaseEntityBlock {
+-    public static final MapCodec<SculkCatalystBlock> CODEC = simpleCodec(SculkCatalystBlock::new);
+-    public static final BooleanProperty PULSE = BlockStateProperties.BLOOM;
+-    private final IntProvider xpRange = ConstantInt.of(5);
 -
+-    @Override
+-    public MapCodec<SculkCatalystBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public SculkCatalystBlock(BlockBehaviour.Properties p_222090_) {
+-        super(p_222090_);
+-        this.registerDefaultState(this.stateDefinition.any().setValue(PULSE, Boolean.valueOf(false)));
+-    }
+-
+-    @Override
+-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_222115_) {
+-        p_222115_.add(PULSE);
+-    }
+-
+-    @Override
+-    protected void tick(BlockState p_222104_, ServerLevel p_222105_, BlockPos p_222106_, RandomSource p_222107_) {
+-        if (p_222104_.getValue(PULSE)) {
+-            p_222105_.setBlock(p_222106_, p_222104_.setValue(PULSE, Boolean.valueOf(false)), 3);
+-        }
+-    }
+-
+-    @Nullable
+-    @Override
+-    public BlockEntity newBlockEntity(BlockPos p_222117_, BlockState p_222118_) {
+-        return new SculkCatalystBlockEntity(p_222117_, p_222118_);
+-    }
+-
+-    @Nullable
+-    @Override
+-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_222100_, BlockState p_222101_, BlockEntityType<T> p_222102_) {
+-        return p_222100_.isClientSide ? null : createTickerHelper(p_222102_, BlockEntityType.SCULK_CATALYST, SculkCatalystBlockEntity::serverTick);
+-    }
+-
+-    @Override
+-    protected RenderShape getRenderShape(BlockState p_222120_) {
+-        return RenderShape.MODEL;
+-    }
+-
+-    @Override
+-    protected void spawnAfterBreak(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
+-        super.spawnAfterBreak(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
+-        if (p_222113_) {
+-            this.tryDropExperience(p_222110_, p_222111_, p_222112_, this.xpRange);
+-        }
+-    }
++   public static final MapCodec<SculkCatalystBlock> CODEC = simpleCodec(SculkCatalystBlock::new);
++   public static final BooleanProperty PULSE = BlockStateProperties.BLOOM;
++   private final IntProvider xpRange = ConstantInt.of(5);
++
++   public MapCodec<SculkCatalystBlock> codec() {
++      return CODEC;
++   }
++
++   public SculkCatalystBlock(BlockBehaviour.Properties p_222090_) {
++      super(p_222090_);
++      this.registerDefaultState(this.stateDefinition.any().setValue(PULSE, Boolean.valueOf(false)));
++   }
++
++   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_222115_) {
++      p_222115_.add(PULSE);
++   }
++
++   public void tick(BlockState p_222104_, ServerLevel p_222105_, BlockPos p_222106_, RandomSource p_222107_) {
++      if (p_222104_.getValue(PULSE)) {
++         p_222105_.setBlock(p_222106_, p_222104_.setValue(PULSE, Boolean.valueOf(false)), 3);
++      }
++
++   }
++
++   @Nullable
++   public BlockEntity newBlockEntity(BlockPos p_222117_, BlockState p_222118_) {
++      return new SculkCatalystBlockEntity(p_222117_, p_222118_);
++   }
++
++   @Nullable
++   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_222100_, BlockState p_222101_, BlockEntityType<T> p_222102_) {
++      return p_222100_.isClientSide ? null : createTickerHelper(p_222102_, BlockEntityType.SCULK_CATALYST, SculkCatalystBlockEntity::serverTick);
++   }
++
++   public RenderShape getRenderShape(BlockState p_222120_) {
++      return RenderShape.MODEL;
++   }
++
++   public void spawnAfterBreak(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
++      super.spawnAfterBreak(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
 +
 +   }
 +
 +   @Override
 +   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
 +      return silkTouchLevel == 0 ? this.xpRange.sample(randomSource) : 0;
-    }
++   }
  }

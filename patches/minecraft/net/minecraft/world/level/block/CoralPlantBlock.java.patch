@@ -1,14 +1,112 @@
 --- a/net/minecraft/world/level/block/CoralPlantBlock.java
 +++ b/net/minecraft/world/level/block/CoralPlantBlock.java
-@@ -40,6 +_,11 @@
+@@ -2,7 +_,6 @@
  
-    public void tick(BlockState p_221030_, ServerLevel p_221031_, BlockPos p_221032_, RandomSource p_221033_) {
-       if (!scanForWater(p_221030_, p_221031_, p_221032_)) {
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.server.level.ServerLevel;
+@@ -17,51 +_,54 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+ public class CoralPlantBlock extends BaseCoralPlantTypeBlock {
+-    public static final MapCodec<CoralPlantBlock> CODEC = RecordCodecBuilder.mapCodec(
+-        p_312298_ -> p_312298_.group(CoralBlock.DEAD_CORAL_FIELD.forGetter(p_312756_ -> p_312756_.deadBlock), propertiesCodec()).apply(p_312298_, CoralPlantBlock::new)
+-    );
+-    private final Block deadBlock;
+-    protected static final float AABB_OFFSET = 6.0F;
+-    protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 15.0, 14.0);
+-
+-    @Override
+-    public MapCodec<CoralPlantBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public CoralPlantBlock(Block p_52175_, BlockBehaviour.Properties p_52176_) {
+-        super(p_52176_);
+-        this.deadBlock = p_52175_;
+-    }
+-
+-    @Override
+-    protected void onPlace(BlockState p_52195_, Level p_52196_, BlockPos p_52197_, BlockState p_52198_, boolean p_52199_) {
+-        this.tryScheduleDieTick(p_52195_, p_52196_, p_52197_);
+-    }
+-
+-    @Override
+-    protected void tick(BlockState p_221030_, ServerLevel p_221031_, BlockPos p_221032_, RandomSource p_221033_) {
+-        if (!scanForWater(p_221030_, p_221031_, p_221032_)) {
+-            p_221031_.setBlock(p_221032_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, Boolean.valueOf(false)), 2);
+-        }
+-    }
+-
+-    @Override
+-    protected BlockState updateShape(BlockState p_52183_, Direction p_52184_, BlockState p_52185_, LevelAccessor p_52186_, BlockPos p_52187_, BlockPos p_52188_) {
+-        if (p_52184_ == Direction.DOWN && !p_52183_.canSurvive(p_52186_, p_52187_)) {
+-            return Blocks.AIR.defaultBlockState();
+-        } else {
+-            this.tryScheduleDieTick(p_52183_, p_52186_, p_52187_);
+-            if (p_52183_.getValue(WATERLOGGED)) {
+-                p_52186_.scheduleTick(p_52187_, Fluids.WATER, Fluids.WATER.getTickDelay(p_52186_));
+-            }
+-
+-            return super.updateShape(p_52183_, p_52184_, p_52185_, p_52186_, p_52187_, p_52188_);
+-        }
+-    }
+-
+-    @Override
+-    protected VoxelShape getShape(BlockState p_52190_, BlockGetter p_52191_, BlockPos p_52192_, CollisionContext p_52193_) {
+-        return SHAPE;
+-    }
++   public static final MapCodec<CoralPlantBlock> CODEC = RecordCodecBuilder.mapCodec((p_312298_) -> {
++      return p_312298_.group(CoralBlock.DEAD_CORAL_FIELD.forGetter((p_312756_) -> {
++         return p_312756_.deadBlock;
++      }), propertiesCodec()).apply(p_312298_, CoralPlantBlock::new);
++   });
++   private final Block deadBlock;
++   protected static final float AABB_OFFSET = 6.0F;
++   protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 15.0D, 14.0D);
++
++   public MapCodec<CoralPlantBlock> codec() {
++      return CODEC;
++   }
++
++   public CoralPlantBlock(Block p_52175_, BlockBehaviour.Properties p_52176_) {
++      super(p_52176_);
++      this.deadBlock = p_52175_;
++   }
++
++   public void onPlace(BlockState p_52195_, Level p_52196_, BlockPos p_52197_, BlockState p_52198_, boolean p_52199_) {
++      this.tryScheduleDieTick(p_52195_, p_52196_, p_52197_);
++   }
++
++   public void tick(BlockState p_221030_, ServerLevel p_221031_, BlockPos p_221032_, RandomSource p_221033_) {
++      if (!scanForWater(p_221030_, p_221031_, p_221032_)) {
 +         // CraftBukkit start
 +         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_221031_, p_221032_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_221031_.setBlock(p_221032_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, Boolean.valueOf(false)), 2);
-       }
- 
++         p_221031_.setBlock(p_221032_, this.deadBlock.defaultBlockState().setValue(WATERLOGGED, Boolean.valueOf(false)), 2);
++      }
++
++   }
++
++   public BlockState updateShape(BlockState p_52183_, Direction p_52184_, BlockState p_52185_, LevelAccessor p_52186_, BlockPos p_52187_, BlockPos p_52188_) {
++      if (p_52184_ == Direction.DOWN && !p_52183_.canSurvive(p_52186_, p_52187_)) {
++         return Blocks.AIR.defaultBlockState();
++      } else {
++         this.tryScheduleDieTick(p_52183_, p_52186_, p_52187_);
++         if (p_52183_.getValue(WATERLOGGED)) {
++            p_52186_.scheduleTick(p_52187_, Fluids.WATER, Fluids.WATER.getTickDelay(p_52186_));
++         }
++
++         return super.updateShape(p_52183_, p_52184_, p_52185_, p_52186_, p_52187_, p_52188_);
++      }
++   }
++
++   public VoxelShape getShape(BlockState p_52190_, BlockGetter p_52191_, BlockPos p_52192_, CollisionContext p_52193_) {
++      return SHAPE;
++   }
+ }

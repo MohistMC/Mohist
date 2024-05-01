@@ -5,13 +5,6 @@
 
 package net.minecraftforge.gametest;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.SharedConstants;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestRegistry;
@@ -29,6 +22,14 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Internal class used to glue mods into the game test framework.
@@ -172,13 +173,13 @@ public class ForgeGameTestHooks {
     }
 
     public static void addTest(Collection<TestFunction> functions, Set<String> classes, Set<String> filters, TestFunction func) {
-        boolean allowed = filters.isEmpty() || filters.stream().anyMatch(f -> f.equals(func.getBatchName()) || func.getBatchName().startsWith(f + '.'));
+        boolean allowed = filters.isEmpty() || filters.stream().anyMatch(f -> f.equals(func.batchName()) || func.batchName().startsWith(f + '.'));
         if (!allowed)
             return;
 
         functions.add(func);
 
-        var batch = func.getBatchName();
+        var batch = func.batchName();
         classes.add(batch);
 
         int idx = batch.indexOf('.');

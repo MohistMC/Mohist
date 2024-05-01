@@ -1,20 +1,74 @@
 --- a/net/minecraft/server/commands/ListPlayersCommand.java
 +++ b/net/minecraft/server/commands/ListPlayersCommand.java
-@@ -33,9 +_,16 @@
-    private static int format(CommandSourceStack p_137827_, Function<ServerPlayer, Component> p_137828_) {
-       PlayerList playerlist = p_137827_.getServer().getPlayerList();
-       List<ServerPlayer> list = playerlist.getPlayers();
+@@ -1,7 +_,6 @@
+ package net.minecraft.server.commands;
+ 
+ import com.mojang.brigadier.CommandDispatcher;
+-import com.mojang.brigadier.context.CommandContext;
+ import java.util.List;
+ import java.util.function.Function;
+ import net.minecraft.commands.CommandSourceStack;
+@@ -13,29 +_,38 @@
+ import net.minecraft.world.entity.player.Player;
+ 
+ public class ListPlayersCommand {
+-    public static void register(CommandDispatcher<CommandSourceStack> p_137821_) {
+-        p_137821_.register(
+-            Commands.literal("list")
+-                .executes(p_137830_ -> listPlayers(p_137830_.getSource()))
+-                .then(Commands.literal("uuids").executes(p_137823_ -> listPlayersWithUuids(p_137823_.getSource())))
+-        );
+-    }
+-
+-    private static int listPlayers(CommandSourceStack p_137825_) {
+-        return format(p_137825_, Player::getDisplayName);
+-    }
+-
+-    private static int listPlayersWithUuids(CommandSourceStack p_137832_) {
+-        return format(
+-            p_137832_, p_326285_ -> Component.translatable("commands.list.nameAndId", p_326285_.getName(), Component.translationArg(p_326285_.getGameProfile().getId()))
+-        );
+-    }
+-
+-    private static int format(CommandSourceStack p_137827_, Function<ServerPlayer, Component> p_137828_) {
+-        PlayerList playerlist = p_137827_.getServer().getPlayerList();
+-        List<ServerPlayer> list = playerlist.getPlayers();
+-        Component component = ComponentUtils.formatList(list, p_137828_);
+-        p_137827_.sendSuccess(() -> Component.translatable("commands.list.players", list.size(), playerlist.getMaxPlayers(), component), false);
+-        return list.size();
+-    }
++   public static void register(CommandDispatcher<CommandSourceStack> p_137821_) {
++      p_137821_.register(Commands.literal("list").executes((p_137830_) -> {
++         return listPlayers(p_137830_.getSource());
++      }).then(Commands.literal("uuids").executes((p_137823_) -> {
++         return listPlayersWithUuids(p_137823_.getSource());
++      })));
++   }
++
++   private static int listPlayers(CommandSourceStack p_137825_) {
++      return format(p_137825_, Player::getDisplayName);
++   }
++
++   private static int listPlayersWithUuids(CommandSourceStack p_137832_) {
++      return format(p_137832_, (p_308762_) -> {
++         return Component.translatable("commands.list.nameAndId", p_308762_.getName(), Component.translationArg(p_308762_.getGameProfile().getId()));
++      });
++   }
++
++   private static int format(CommandSourceStack p_137827_, Function<ServerPlayer, Component> p_137828_) {
++      PlayerList playerlist = p_137827_.getServer().getPlayerList();
++      List<ServerPlayer> list = playerlist.getPlayers();
 +      // CraftBukkit start
 +      if (p_137827_.getBukkitSender() instanceof org.bukkit.entity.Player) {
 +         org.bukkit.entity.Player sender = (org.bukkit.entity.Player) p_137827_.getBukkitSender();
 +         list = list.stream().filter((ep) -> sender.canSee(ep.getBukkitEntity())).collect(java.util.stream.Collectors.toList());
 +      }
 +      // CraftBukkit end
-       Component component = ComponentUtils.formatList(list, p_137828_);
++      Component component = ComponentUtils.formatList(list, p_137828_);
 +      List<ServerPlayer> finalList = list;
-       p_137827_.sendSuccess(() -> {
--         return Component.translatable("commands.list.players", list.size(), playerlist.getMaxPlayers(), component);
++      p_137827_.sendSuccess(() -> {
 +         return Component.translatable("commands.list.players", finalList.size(), playerlist.getMaxPlayers(), component);
-       }, false);
-       return list.size();
-    }
++      }, false);
++      return list.size();
++   }
+ }

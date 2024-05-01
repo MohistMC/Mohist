@@ -1,11 +1,75 @@
 --- a/net/minecraft/world/level/block/TallGrassBlock.java
 +++ b/net/minecraft/world/level/block/TallGrassBlock.java
-@@ -12,7 +_,7 @@
+@@ -12,40 +_,36 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class TallGrassBlock extends BushBlock implements BonemealableBlock {
+-    public static final MapCodec<TallGrassBlock> CODEC = simpleCodec(TallGrassBlock::new);
+-    protected static final float AABB_OFFSET = 6.0F;
+-    protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 13.0, 14.0);
+-
+-    @Override
+-    public MapCodec<TallGrassBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public TallGrassBlock(BlockBehaviour.Properties p_57318_) {
+-        super(p_57318_);
+-    }
+-
+-    @Override
+-    protected VoxelShape getShape(BlockState p_57336_, BlockGetter p_57337_, BlockPos p_57338_, CollisionContext p_57339_) {
+-        return SHAPE;
+-    }
+-
+-    @Override
+-    public boolean isValidBonemealTarget(LevelReader p_255692_, BlockPos p_57326_, BlockState p_57327_) {
+-        return true;
+-    }
+-
+-    @Override
+-    public boolean isBonemealSuccess(Level p_222583_, RandomSource p_222584_, BlockPos p_222585_, BlockState p_222586_) {
+-        return true;
+-    }
+-
+-    @Override
+-    public void performBonemeal(ServerLevel p_222578_, RandomSource p_222579_, BlockPos p_222580_, BlockState p_222581_) {
+-        DoublePlantBlock doubleplantblock = (DoublePlantBlock)(p_222581_.is(Blocks.FERN) ? Blocks.LARGE_FERN : Blocks.TALL_GRASS);
+-        if (doubleplantblock.defaultBlockState().canSurvive(p_222578_, p_222580_) && p_222578_.isEmptyBlock(p_222580_.above())) {
+-            DoublePlantBlock.placeAt(p_222578_, doubleplantblock.defaultBlockState(), p_222580_, 2);
+-        }
+-    }
 +public class TallGrassBlock extends BushBlock implements BonemealableBlock, net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<TallGrassBlock> CODEC = simpleCodec(TallGrassBlock::new);
-    protected static final float AABB_OFFSET = 6.0F;
-    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
++   public static final MapCodec<TallGrassBlock> CODEC = simpleCodec(TallGrassBlock::new);
++   protected static final float AABB_OFFSET = 6.0F;
++   protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
++
++   public MapCodec<TallGrassBlock> codec() {
++      return CODEC;
++   }
++
++   public TallGrassBlock(BlockBehaviour.Properties p_57318_) {
++      super(p_57318_);
++   }
++
++   public VoxelShape getShape(BlockState p_57336_, BlockGetter p_57337_, BlockPos p_57338_, CollisionContext p_57339_) {
++      return SHAPE;
++   }
++
++   public boolean isValidBonemealTarget(LevelReader p_255692_, BlockPos p_57326_, BlockState p_57327_) {
++      return true;
++   }
++
++   public boolean isBonemealSuccess(Level p_222583_, RandomSource p_222584_, BlockPos p_222585_, BlockState p_222586_) {
++      return true;
++   }
++
++   public void performBonemeal(ServerLevel p_222578_, RandomSource p_222579_, BlockPos p_222580_, BlockState p_222581_) {
++      DoublePlantBlock doubleplantblock = (DoublePlantBlock)(p_222581_.is(Blocks.FERN) ? Blocks.LARGE_FERN : Blocks.TALL_GRASS);
++      if (doubleplantblock.defaultBlockState().canSurvive(p_222578_, p_222580_) && p_222578_.isEmptyBlock(p_222580_.above())) {
++         DoublePlantBlock.placeAt(p_222578_, doubleplantblock.defaultBlockState(), p_222580_, 2);
++      }
++
++   }
+ }

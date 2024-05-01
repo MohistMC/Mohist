@@ -1,28 +1,11 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelector.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelector.java
-@@ -11,6 +_,7 @@
- import javax.annotation.Nullable;
- import net.minecraft.advancements.critereon.MinMaxBounds;
- import net.minecraft.commands.CommandSourceStack;
-+import net.minecraft.commands.Commands;
- import net.minecraft.commands.arguments.EntityArgument;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.chat.ComponentUtils;
-@@ -49,7 +_,7 @@
-    private final String playerName;
-    @Nullable
-    private final UUID entityUUID;
--   private final EntityTypeTest<Entity, ?> type;
-+   private EntityTypeTest<Entity, ?> type;
-    private final boolean usesSelector;
+@@ -104,7 +_,7 @@
+     }
  
-    public EntitySelector(int p_121125_, boolean p_121126_, boolean p_121127_, Predicate<Entity> p_121128_, MinMaxBounds.Doubles p_121129_, Function<Vec3, Vec3> p_121130_, @Nullable AABB p_121131_, BiConsumer<Vec3, List<? extends Entity>> p_121132_, boolean p_121133_, @Nullable String p_121134_, @Nullable UUID p_121135_, @Nullable EntityType<?> p_121136_, boolean p_121137_) {
-@@ -89,7 +_,7 @@
-    }
- 
-    private void checkPermissions(CommandSourceStack p_121169_) throws CommandSyntaxException {
--      if (this.usesSelector && !p_121169_.hasPermission(2)) {
-+      if (this.usesSelector && !net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_121169_) && !p_121169_.hasPermission(Commands.LEVEL_GAMEMASTERS, "minecraft.command.selector")) { // CraftBukkit
-          throw EntityArgument.ERROR_SELECTORS_NOT_ALLOWED.create();
-       }
-    }
+     private void checkPermissions(CommandSourceStack p_121169_) throws CommandSyntaxException {
+-        if (this.usesSelector && !p_121169_.hasPermission(2)) {
++        if (this.usesSelector && !net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_121169_)) {
+             throw EntityArgument.ERROR_SELECTORS_NOT_ALLOWED.create();
+         }
+     }

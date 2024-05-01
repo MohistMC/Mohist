@@ -5,40 +5,33 @@
 
 package net.minecraftforge.client.loading;
 
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.repository.PackRepository;
+import java.io.File;
+import java.util.Collections;
+import java.util.concurrent.*;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.LoadingErrorScreen;
-import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.internal.BrandingControl;
 import net.minecraftforge.logging.CrashReportExtender;
-import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.server.LanguageHook;
+import net.minecraftforge.common.util.LogicalSidedProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.PackType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.client.gui.LoadingErrorScreen;
+import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraftforge.server.LanguageHook;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader {

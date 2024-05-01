@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/portal/PortalInfo.java
 +++ b/net/minecraft/world/level/portal/PortalInfo.java
-@@ -1,12 +_,16 @@
+@@ -1,17 +_,38 @@
  package net.minecraft.world.level.portal;
  
 +import net.minecraft.server.level.ServerLevel;
@@ -8,19 +8,30 @@
 +import org.bukkit.craftbukkit.event.CraftPortalEvent;
  
  public class PortalInfo {
-    public final Vec3 pos;
-    public final Vec3 speed;
-    public final float yRot;
-    public final float xRot;
+-    public final Vec3 pos;
+-    public final Vec3 speed;
+-    public final float yRot;
+-    public final float xRot;
+-
+-    public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
+-        this.pos = p_77681_;
+-        this.speed = p_77682_;
+-        this.yRot = p_77683_;
+-        this.xRot = p_77684_;
+-    }
++   public final Vec3 pos;
++   public final Vec3 speed;
++   public final float yRot;
++   public final float xRot;
 +   public ServerLevel world;
 +   public CraftPortalEvent portalEventInfo;
- 
-    public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
-       this.pos = p_77681_;
-@@ -14,4 +_,21 @@
-       this.yRot = p_77683_;
-       this.xRot = p_77684_;
-    }
++
++   public PortalInfo(Vec3 p_77681_, Vec3 p_77682_, float p_77683_, float p_77684_) {
++      this.pos = p_77681_;
++      this.speed = p_77682_;
++      this.yRot = p_77683_;
++      this.xRot = p_77684_;
++   }
 +
 +   public void setPortalEventInfo(CraftPortalEvent event) {
 +      this.portalEventInfo = event;

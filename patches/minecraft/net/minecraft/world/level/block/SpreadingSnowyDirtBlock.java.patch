@@ -1,26 +1,98 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
-@@ -38,15 +_,22 @@
+@@ -12,48 +_,52 @@
+ import net.minecraft.world.level.lighting.LightEngine;
  
-    public void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
-       if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
+ public abstract class SpreadingSnowyDirtBlock extends SnowyDirtBlock {
+-    protected SpreadingSnowyDirtBlock(BlockBehaviour.Properties p_56817_) {
+-        super(p_56817_);
+-    }
+-
+-    private static boolean canBeGrass(BlockState p_56824_, LevelReader p_56825_, BlockPos p_56826_) {
+-        BlockPos blockpos = p_56826_.above();
+-        BlockState blockstate = p_56825_.getBlockState(blockpos);
+-        if (blockstate.is(Blocks.SNOW) && blockstate.getValue(SnowLayerBlock.LAYERS) == 1) {
+-            return true;
+-        } else if (blockstate.getFluidState().getAmount() == 8) {
+-            return false;
+-        } else {
+-            int i = LightEngine.getLightBlockInto(p_56825_, p_56824_, p_56826_, blockstate, blockpos, Direction.UP, blockstate.getLightBlock(p_56825_, blockpos));
+-            return i < p_56825_.getMaxLightLevel();
+-        }
+-    }
+-
+-    @Override
+-    protected abstract MapCodec<? extends SpreadingSnowyDirtBlock> codec();
+-
+-    private static boolean canPropagate(BlockState p_56828_, LevelReader p_56829_, BlockPos p_56830_) {
+-        BlockPos blockpos = p_56830_.above();
+-        return canBeGrass(p_56828_, p_56829_, p_56830_) && !p_56829_.getFluidState(blockpos).is(FluidTags.WATER);
+-    }
+-
+-    @Override
+-    protected void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
+-        if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
+-            p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
+-        } else {
+-            if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
+-                BlockState blockstate = this.defaultBlockState();
+-
+-                for (int i = 0; i < 4; i++) {
+-                    BlockPos blockpos = p_222510_.offset(p_222511_.nextInt(3) - 1, p_222511_.nextInt(5) - 3, p_222511_.nextInt(3) - 1);
+-                    if (p_222509_.getBlockState(blockpos).is(Blocks.DIRT) && canPropagate(blockstate, p_222509_, blockpos)) {
+-                        p_222509_.setBlockAndUpdate(
+-                            blockpos, blockstate.setValue(SNOWY, Boolean.valueOf(p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW)))
+-                        );
+-                    }
+-                }
++   protected SpreadingSnowyDirtBlock(BlockBehaviour.Properties p_56817_) {
++      super(p_56817_);
++   }
++
++   private static boolean canBeGrass(BlockState p_56824_, LevelReader p_56825_, BlockPos p_56826_) {
++      BlockPos blockpos = p_56826_.above();
++      BlockState blockstate = p_56825_.getBlockState(blockpos);
++      if (blockstate.is(Blocks.SNOW) && blockstate.getValue(SnowLayerBlock.LAYERS) == 1) {
++         return true;
++      } else if (blockstate.getFluidState().getAmount() == 8) {
++         return false;
++      } else {
++         int i = LightEngine.getLightBlockInto(p_56825_, p_56824_, p_56826_, blockstate, blockpos, Direction.UP, blockstate.getLightBlock(p_56825_, blockpos));
++         return i < p_56825_.getMaxLightLevel();
++      }
++   }
++
++   protected abstract MapCodec<? extends SpreadingSnowyDirtBlock> codec();
++
++   private static boolean canPropagate(BlockState p_56828_, LevelReader p_56829_, BlockPos p_56830_) {
++      BlockPos blockpos = p_56830_.above();
++      return canBeGrass(p_56828_, p_56829_, p_56830_) && !p_56829_.getFluidState(blockpos).is(FluidTags.WATER);
++   }
++
++   public void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
++      if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
 +         if (!p_222509_.isAreaLoaded(p_222510_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 +         // CraftBukkit start
 +         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_222509_, p_222510_, Blocks.DIRT.defaultBlockState()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
-       } else {
++         p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
++      } else {
 +         if (!p_222509_.isAreaLoaded(p_222510_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-          if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
-             BlockState blockstate = this.defaultBlockState();
- 
-             for(int i = 0; i < 4; ++i) {
-                BlockPos blockpos = p_222510_.offset(p_222511_.nextInt(3) - 1, p_222511_.nextInt(5) - 3, p_222511_.nextInt(3) - 1);
-                if (p_222509_.getBlockState(blockpos).is(Blocks.DIRT) && canPropagate(blockstate, p_222509_, blockpos)) {
--                  p_222509_.setBlockAndUpdate(blockpos, blockstate.setValue(SNOWY, Boolean.valueOf(p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW))));
++         if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
++            BlockState blockstate = this.defaultBlockState();
++
++            for(int i = 0; i < 4; ++i) {
++               BlockPos blockpos = p_222510_.offset(p_222511_.nextInt(3) - 1, p_222511_.nextInt(5) - 3, p_222511_.nextInt(3) - 1);
++               if (p_222509_.getBlockState(blockpos).is(Blocks.DIRT) && canPropagate(blockstate, p_222509_, blockpos)) {
 +                  org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_222509_, p_222510_, blockpos, blockstate.setValue(SNOWY, p_222509_.getBlockState(blockpos.above()).is(Blocks.SNOW))); // CraftBukkit
-                }
++               }
              }
-          }
+-        }
+-    }
++         }
++
++      }
++   }
+ }

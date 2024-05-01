@@ -1,11 +1,181 @@
 --- a/net/minecraft/core/RegistrySynchronization.java
 +++ b/net/minecraft/core/RegistrySynchronization.java
-@@ -29,7 +_,7 @@
-       put(builder, Registries.TRIM_MATERIAL, TrimMaterial.DIRECT_CODEC);
-       put(builder, Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC);
-       put(builder, Registries.DAMAGE_TYPE, DamageType.CODEC);
--      return builder.build();
-+      return net.minecraftforge.registries.DataPackRegistriesHooks.grabNetworkableRegistries(builder); // FORGE: Keep the map so custom registries can be added later
-    });
-    public static final Codec<RegistryAccess> NETWORK_CODEC = makeNetworkCodec();
+@@ -1,97 +_,91 @@
+ package net.minecraft.core;
  
+-import com.mojang.serialization.DynamicOps;
+-import io.netty.buffer.ByteBuf;
+-import java.util.ArrayList;
+-import java.util.List;
++import com.google.common.collect.ImmutableMap;
++import com.mojang.serialization.Codec;
++import com.mojang.serialization.DataResult;
++import com.mojang.serialization.Lifecycle;
++import com.mojang.serialization.codecs.UnboundedMapCodec;
++import java.util.Map;
+ import java.util.Optional;
+-import java.util.Set;
+-import java.util.function.BiConsumer;
+-import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+-import net.minecraft.nbt.Tag;
+-import net.minecraft.network.codec.ByteBufCodecs;
+-import net.minecraft.network.codec.StreamCodec;
+-import net.minecraft.resources.RegistryDataLoader;
++import net.minecraft.Util;
++import net.minecraft.core.registries.Registries;
++import net.minecraft.network.chat.ChatType;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.RegistryLayer;
+-import net.minecraft.server.packs.repository.KnownPack;
++import net.minecraft.world.damagesource.DamageType;
++import net.minecraft.world.item.armortrim.TrimMaterial;
++import net.minecraft.world.item.armortrim.TrimPattern;
++import net.minecraft.world.level.biome.Biome;
++import net.minecraft.world.level.dimension.DimensionType;
+ 
+ public class RegistrySynchronization {
+-    public static final Set<ResourceKey<? extends Registry<?>>> NETWORKABLE_REGISTRIES = RegistryDataLoader.SYNCHRONIZED_REGISTRIES
+-        .stream()
+-        .map(RegistryDataLoader.RegistryData::key)
+-        .collect(Collectors.toUnmodifiableSet());
+-
+-    public static void packRegistries(
+-        DynamicOps<Tag> p_330752_,
+-        RegistryAccess p_332359_,
+-        Set<KnownPack> p_331327_,
+-        BiConsumer<ResourceKey<? extends Registry<?>>, List<RegistrySynchronization.PackedRegistryEntry>> p_335166_
+-    ) {
+-        RegistryDataLoader.SYNCHRONIZED_REGISTRIES.forEach(p_325710_ -> packRegistry(p_330752_, (RegistryDataLoader.RegistryData<?>)p_325710_, p_332359_, p_331327_, p_335166_));
+-    }
+-
+-    private static <T> void packRegistry(
+-        DynamicOps<Tag> p_328835_,
+-        RegistryDataLoader.RegistryData<T> p_329218_,
+-        RegistryAccess p_335981_,
+-        Set<KnownPack> p_330196_,
+-        BiConsumer<ResourceKey<? extends Registry<?>>, List<RegistrySynchronization.PackedRegistryEntry>> p_330046_
+-    ) {
+-        p_335981_.registry(p_329218_.key())
+-            .ifPresent(
+-                p_325705_ -> {
+-                    List<RegistrySynchronization.PackedRegistryEntry> list = new ArrayList<>(p_325705_.size());
+-                    p_325705_.holders()
+-                        .forEach(
+-                            p_325717_ -> {
+-                                boolean flag = p_325705_.registrationInfo(p_325717_.key())
+-                                    .flatMap(RegistrationInfo::knownPackInfo)
+-                                    .filter(p_330196_::contains)
+-                                    .isPresent();
+-                                Optional<Tag> optional;
+-                                if (flag) {
+-                                    optional = Optional.empty();
+-                                } else {
+-                                    Tag tag = p_329218_.elementCodec()
+-                                        .encodeStart(p_328835_, p_325717_.value())
+-                                        .getOrThrow(
+-                                            p_325700_ -> new IllegalArgumentException("Failed to serialize " + p_325717_.key() + ": " + p_325700_)
+-                                        );
+-                                    optional = Optional.of(tag);
+-                                }
+-
+-                                list.add(new RegistrySynchronization.PackedRegistryEntry(p_325717_.key().location(), optional));
+-                            }
+-                        );
+-                    p_330046_.accept(p_325705_.key(), list);
+-                }
+-            );
+-    }
+-
+-    private static Stream<RegistryAccess.RegistryEntry<?>> ownedNetworkableRegistries(RegistryAccess p_251842_) {
+-        return p_251842_.registries().filter(p_325711_ -> NETWORKABLE_REGISTRIES.contains(p_325711_.key()));
+-    }
+-
+-    public static Stream<RegistryAccess.RegistryEntry<?>> networkedRegistries(LayeredRegistryAccess<RegistryLayer> p_259290_) {
+-        return ownedNetworkableRegistries(p_259290_.getAccessFrom(RegistryLayer.WORLDGEN));
+-    }
+-
+-    public static Stream<RegistryAccess.RegistryEntry<?>> networkSafeRegistries(LayeredRegistryAccess<RegistryLayer> p_249066_) {
+-        Stream<RegistryAccess.RegistryEntry<?>> stream = p_249066_.getLayer(RegistryLayer.STATIC).registries();
+-        Stream<RegistryAccess.RegistryEntry<?>> stream1 = networkedRegistries(p_249066_);
+-        return Stream.concat(stream1, stream);
+-    }
+-
+-    public static record PackedRegistryEntry(ResourceLocation id, Optional<Tag> data) {
+-        public static final StreamCodec<ByteBuf, RegistrySynchronization.PackedRegistryEntry> STREAM_CODEC = StreamCodec.composite(
+-            ResourceLocation.STREAM_CODEC,
+-            RegistrySynchronization.PackedRegistryEntry::id,
+-            ByteBufCodecs.TAG.apply(ByteBufCodecs::optional),
+-            RegistrySynchronization.PackedRegistryEntry::data,
+-            RegistrySynchronization.PackedRegistryEntry::new
+-        );
+-    }
++   private static final Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = Util.make(() -> {
++      ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> builder = ImmutableMap.builder();
++      put(builder, Registries.BIOME, Biome.NETWORK_CODEC);
++      put(builder, Registries.CHAT_TYPE, ChatType.CODEC);
++      put(builder, Registries.TRIM_PATTERN, TrimPattern.DIRECT_CODEC);
++      put(builder, Registries.TRIM_MATERIAL, TrimMaterial.DIRECT_CODEC);
++      put(builder, Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC);
++      put(builder, Registries.DAMAGE_TYPE, DamageType.CODEC);
++      return net.minecraftforge.registries.DataPackRegistriesHooks.grabNetworkableRegistries(builder); // FORGE: Keep the map so custom registries can be added later
++   });
++   public static final Codec<RegistryAccess> NETWORK_CODEC = makeNetworkCodec();
++
++   private static <E> void put(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> p_251643_, ResourceKey<? extends Registry<E>> p_249195_, Codec<E> p_249212_) {
++      p_251643_.put(p_249195_, new RegistrySynchronization.NetworkedRegistryData<>(p_249195_, p_249212_));
++   }
++
++   private static Stream<RegistryAccess.RegistryEntry<?>> ownedNetworkableRegistries(RegistryAccess p_251842_) {
++      return p_251842_.registries().filter((p_250129_) -> {
++         return NETWORKABLE_REGISTRIES.containsKey(p_250129_.key());
++      });
++   }
++
++   private static <E> DataResult<? extends Codec<E>> getNetworkCodec(ResourceKey<? extends Registry<E>> p_252190_) {
++      return Optional.ofNullable(NETWORKABLE_REGISTRIES.get(p_252190_)).map((p_250582_) -> {
++         return (Codec<E>)p_250582_.networkCodec();
++      }).map(DataResult::success).orElseGet(() -> {
++         return DataResult.error(() -> {
++            return "Unknown or not serializable registry: " + p_252190_;
++         });
++      });
++   }
++
++   private static <E> Codec<RegistryAccess> makeNetworkCodec() {
++      Codec<ResourceKey<? extends Registry<E>>> codec = ResourceLocation.CODEC.xmap(ResourceKey::createRegistryKey, ResourceKey::location);
++      Codec<Registry<E>> codec1 = codec.partialDispatch("type", (p_258198_) -> {
++         return DataResult.success(p_258198_.key());
++      }, (p_250682_) -> {
++         return getNetworkCodec(p_250682_).map((p_252116_) -> {
++            return RegistryCodecs.networkCodec(p_250682_, Lifecycle.experimental(), p_252116_);
++         });
++      });
++      UnboundedMapCodec<? extends ResourceKey<? extends Registry<?>>, ? extends Registry<?>> unboundedmapcodec = Codec.unboundedMap(codec, codec1);
++      return captureMap(unboundedmapcodec);
++   }
++
++   private static <K extends ResourceKey<? extends Registry<?>>, V extends Registry<?>> Codec<RegistryAccess> captureMap(UnboundedMapCodec<K, V> p_249934_) {
++      return p_249934_.xmap(RegistryAccess.ImmutableRegistryAccess::new, (p_251578_) -> {
++         return ownedNetworkableRegistries(p_251578_).collect(ImmutableMap.toImmutableMap((p_250395_) -> {
++            return (K)p_250395_.key();
++         }, (p_248951_) -> {
++            return (V)p_248951_.value();
++         }));
++      });
++   }
++
++   public static Stream<RegistryAccess.RegistryEntry<?>> networkedRegistries(LayeredRegistryAccess<RegistryLayer> p_259290_) {
++      return ownedNetworkableRegistries(p_259290_.getAccessFrom(RegistryLayer.WORLDGEN));
++   }
++
++   public static Stream<RegistryAccess.RegistryEntry<?>> networkSafeRegistries(LayeredRegistryAccess<RegistryLayer> p_249066_) {
++      Stream<RegistryAccess.RegistryEntry<?>> stream = p_249066_.getLayer(RegistryLayer.STATIC).registries();
++      Stream<RegistryAccess.RegistryEntry<?>> stream1 = networkedRegistries(p_249066_);
++      return Stream.concat(stream1, stream);
++   }
++
++   public static record NetworkedRegistryData<E>(ResourceKey<? extends Registry<E>> key, Codec<E> networkCodec) {
++   }
+ }

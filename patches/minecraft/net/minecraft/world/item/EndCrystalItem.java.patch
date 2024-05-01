@@ -1,14 +1,90 @@
 --- a/net/minecraft/world/item/EndCrystalItem.java
 +++ b/net/minecraft/world/item/EndCrystalItem.java
-@@ -40,6 +_,11 @@
-                if (level instanceof ServerLevel) {
-                   EndCrystal endcrystal = new EndCrystal(level, d0 + 0.5D, d1, d2 + 0.5D);
-                   endcrystal.setShowBottom(false);
+@@ -15,44 +_,52 @@
+ import net.minecraft.world.phys.AABB;
+ 
+ public class EndCrystalItem extends Item {
+-    public EndCrystalItem(Item.Properties p_41174_) {
+-        super(p_41174_);
+-    }
++   public EndCrystalItem(Item.Properties p_41174_) {
++      super(p_41174_);
++   }
+ 
+-    @Override
+-    public InteractionResult useOn(UseOnContext p_41176_) {
+-        Level level = p_41176_.getLevel();
+-        BlockPos blockpos = p_41176_.getClickedPos();
+-        BlockState blockstate = level.getBlockState(blockpos);
+-        if (!blockstate.is(Blocks.OBSIDIAN) && !blockstate.is(Blocks.BEDROCK)) {
++   public InteractionResult useOn(UseOnContext p_41176_) {
++      Level level = p_41176_.getLevel();
++      BlockPos blockpos = p_41176_.getClickedPos();
++      BlockState blockstate = level.getBlockState(blockpos);
++      if (!blockstate.is(Blocks.OBSIDIAN) && !blockstate.is(Blocks.BEDROCK)) {
++         return InteractionResult.FAIL;
++      } else {
++         BlockPos blockpos1 = blockpos.above();
++         if (!level.isEmptyBlock(blockpos1)) {
+             return InteractionResult.FAIL;
+-        } else {
+-            BlockPos blockpos1 = blockpos.above();
+-            if (!level.isEmptyBlock(blockpos1)) {
+-                return InteractionResult.FAIL;
++         } else {
++            double d0 = (double)blockpos1.getX();
++            double d1 = (double)blockpos1.getY();
++            double d2 = (double)blockpos1.getZ();
++            List<Entity> list = level.getEntities((Entity)null, new AABB(d0, d1, d2, d0 + 1.0D, d1 + 2.0D, d2 + 1.0D));
++            if (!list.isEmpty()) {
++               return InteractionResult.FAIL;
+             } else {
+-                double d0 = (double)blockpos1.getX();
+-                double d1 = (double)blockpos1.getY();
+-                double d2 = (double)blockpos1.getZ();
+-                List<Entity> list = level.getEntities(null, new AABB(d0, d1, d2, d0 + 1.0, d1 + 2.0, d2 + 1.0));
+-                if (!list.isEmpty()) {
+-                    return InteractionResult.FAIL;
+-                } else {
+-                    if (level instanceof ServerLevel) {
+-                        EndCrystal endcrystal = new EndCrystal(level, d0 + 0.5, d1, d2 + 0.5);
+-                        endcrystal.setShowBottom(false);
+-                        level.addFreshEntity(endcrystal);
+-                        level.gameEvent(p_41176_.getPlayer(), GameEvent.ENTITY_PLACE, blockpos1);
+-                        EndDragonFight enddragonfight = ((ServerLevel)level).getDragonFight();
+-                        if (enddragonfight != null) {
+-                            enddragonfight.tryRespawn();
+-                        }
+-                    }
++               if (level instanceof ServerLevel) {
++                  EndCrystal endcrystal = new EndCrystal(level, d0 + 0.5D, d1, d2 + 0.5D);
++                  endcrystal.setShowBottom(false);
 +                  // CraftBukkit start
 +                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_41176_, endcrystal).isCancelled()) {
 +                     return InteractionResult.FAIL;
 +                  }
 +                  // CraftBukkit end
-                   level.addFreshEntity(endcrystal);
-                   level.gameEvent(p_41176_.getPlayer(), GameEvent.ENTITY_PLACE, blockpos1);
-                   EndDragonFight enddragonfight = ((ServerLevel)level).getDragonFight();
++                  level.addFreshEntity(endcrystal);
++                  level.gameEvent(p_41176_.getPlayer(), GameEvent.ENTITY_PLACE, blockpos1);
++                  EndDragonFight enddragonfight = ((ServerLevel)level).getDragonFight();
++                  if (enddragonfight != null) {
++                     enddragonfight.tryRespawn();
++                  }
++               }
+ 
+-                    p_41176_.getItemInHand().shrink(1);
+-                    return InteractionResult.sidedSuccess(level.isClientSide);
+-                }
++               p_41176_.getItemInHand().shrink(1);
++               return InteractionResult.sidedSuccess(level.isClientSide);
+             }
+-        }
+-    }
++         }
++      }
++   }
++
++   public boolean isFoil(ItemStack p_41178_) {
++      return true;
++   }
+ }

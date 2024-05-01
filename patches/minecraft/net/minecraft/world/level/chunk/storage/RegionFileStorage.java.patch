@@ -8,64 +8,193 @@
  import javax.annotation.Nullable;
  import net.minecraft.FileUtil;
  import net.minecraft.nbt.CompoundTag;
-@@ -26,6 +_,8 @@
-       this.sync = p_196955_;
-    }
+@@ -15,92 +_,101 @@
+ import net.minecraft.world.level.ChunkPos;
  
+ public final class RegionFileStorage implements AutoCloseable {
+-    public static final String ANVIL_EXTENSION = ".mca";
+-    private static final int MAX_CACHE_SIZE = 256;
+-    public final Long2ObjectLinkedOpenHashMap<RegionFile> regionCache = new Long2ObjectLinkedOpenHashMap<>();
+-    private final RegionStorageInfo info;
+-    private final Path folder;
+-    private final boolean sync;
+-
+-    RegionFileStorage(RegionStorageInfo p_330451_, Path p_196954_, boolean p_196955_) {
+-        this.folder = p_196954_;
+-        this.sync = p_196955_;
+-        this.info = p_330451_;
+-    }
+-
+-    private RegionFile getRegionFile(ChunkPos p_63712_) throws IOException {
+-        long i = ChunkPos.asLong(p_63712_.getRegionX(), p_63712_.getRegionZ());
+-        RegionFile regionfile = this.regionCache.getAndMoveToFirst(i);
+-        if (regionfile != null) {
+-            return regionfile;
+-        } else {
+-            if (this.regionCache.size() >= 256) {
+-                this.regionCache.removeLast().close();
+-            }
+-
+-            FileUtil.createDirectoriesSafe(this.folder);
+-            Path path = this.folder.resolve("r." + p_63712_.getRegionX() + "." + p_63712_.getRegionZ() + ".mca");
+-            RegionFile regionfile1 = new RegionFile(this.info, path, this.folder, this.sync);
+-            this.regionCache.putAndMoveToFirst(i, regionfile1);
+-            return regionfile1;
+-        }
+-    }
+-
+-    @Nullable
+-    public CompoundTag read(ChunkPos p_63707_) throws IOException {
+-        RegionFile regionfile = this.getRegionFile(p_63707_);
+-
+-        CompoundTag compoundtag;
+-        try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_63707_)) {
+-            if (datainputstream == null) {
+-                return null;
+-            }
+-
+-            compoundtag = NbtIo.read(datainputstream);
+-        }
+-
+-        return compoundtag;
+-    }
+-
+-    public void scanChunk(ChunkPos p_196957_, StreamTagVisitor p_196958_) throws IOException {
+-        RegionFile regionfile = this.getRegionFile(p_196957_);
+-
+-        try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_196957_)) {
+-            if (datainputstream != null) {
+-                NbtIo.parse(datainputstream, p_196958_, NbtAccounter.unlimitedHeap());
+-            }
+-        }
+-    }
+-
+-    protected void write(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {
+-        RegionFile regionfile = this.getRegionFile(p_63709_);
+-        if (p_63710_ == null) {
+-            regionfile.clear(p_63709_);
+-        } else {
+-            try (DataOutputStream dataoutputstream = regionfile.getChunkDataOutputStream(p_63709_)) {
+-                NbtIo.write(p_63710_, dataoutputstream);
+-            }
+-        }
+-    }
+-
+-    @Override
+-    public void close() throws IOException {
+-        ExceptionCollector<IOException> exceptioncollector = new ExceptionCollector<>();
+-
+-        for (RegionFile regionfile : this.regionCache.values()) {
+-            try {
+-                regionfile.close();
+-            } catch (IOException ioexception) {
+-                exceptioncollector.add(ioexception);
+-            }
+-        }
+-
+-        exceptioncollector.throwIfPresent();
+-    }
+-
+-    public void flush() throws IOException {
+-        for (RegionFile regionfile : this.regionCache.values()) {
+-            regionfile.flush();
+-        }
+-    }
++   public static final String ANVIL_EXTENSION = ".mca";
++   private static final int MAX_CACHE_SIZE = 256;
++   public final Long2ObjectLinkedOpenHashMap<RegionFile> regionCache = new Long2ObjectLinkedOpenHashMap<>();
++   private final Path folder;
++   private final boolean sync;
++
++   RegionFileStorage(Path p_196954_, boolean p_196955_) {
++      this.folder = p_196954_;
++      this.sync = p_196955_;
++   }
++
 +   private AtomicBoolean mohist$existingOnly = new AtomicBoolean(true);
 +
-    private RegionFile getRegionFile(ChunkPos p_63712_) throws IOException {
-       long i = ChunkPos.asLong(p_63712_.getRegionX(), p_63712_.getRegionZ());
-       RegionFile regionfile = this.regionCache.getAndMoveToFirst(i);
-@@ -38,24 +_,38 @@
- 
-          FileUtil.createDirectoriesSafe(this.folder);
-          Path path = this.folder.resolve("r." + p_63712_.getRegionX() + "." + p_63712_.getRegionZ() + ".mca");
++   private RegionFile getRegionFile(ChunkPos p_63712_) throws IOException {
++      long i = ChunkPos.asLong(p_63712_.getRegionX(), p_63712_.getRegionZ());
++      RegionFile regionfile = this.regionCache.getAndMoveToFirst(i);
++      if (regionfile != null) {
++         return regionfile;
++      } else {
++         if (this.regionCache.size() >= 256) {
++            this.regionCache.removeLast().close();
++         }
++
++         FileUtil.createDirectoriesSafe(this.folder);
++         Path path = this.folder.resolve("r." + p_63712_.getRegionX() + "." + p_63712_.getRegionZ() + ".mca");
 +         if (mohist$existingOnly.get() && !java.nio.file.Files.exists(path)) return null; // CraftBukkit
-          RegionFile regionfile1 = new RegionFile(path, this.folder, this.sync);
-          this.regionCache.putAndMoveToFirst(i, regionfile1);
-          return regionfile1;
-       }
-    }
- 
++         RegionFile regionfile1 = new RegionFile(path, this.folder, this.sync);
++         this.regionCache.putAndMoveToFirst(i, regionfile1);
++         return regionfile1;
++      }
++   }
++
 +   private RegionFile getRegionFile(ChunkPos pChunkPos, boolean existingOnly) throws IOException { // CraftBukkit
 +      mohist$existingOnly.set(existingOnly);
 +      return getRegionFile(pChunkPos);
 +   }
 +
-    @Nullable
-    public CompoundTag read(ChunkPos p_63707_) throws IOException {
--      RegionFile regionfile = this.getRegionFile(p_63707_);
--
++   @Nullable
++   public CompoundTag read(ChunkPos p_63707_) throws IOException {
 +      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
 +      RegionFile regionfile = this.getRegionFile(p_63707_, true);
 +      if (regionfile == null) {
 +         return null;
 +      }
 +      // CraftBukkit end
-       try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_63707_)) {
-          return datainputstream == null ? null : NbtIo.read(datainputstream);
-       }
-    }
- 
-    public void scanChunk(ChunkPos p_196957_, StreamTagVisitor p_196958_) throws IOException {
--      RegionFile regionfile = this.getRegionFile(p_196957_);
--
++      try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_63707_)) {
++         return datainputstream == null ? null : NbtIo.read(datainputstream);
++      }
++   }
++
++   public void scanChunk(ChunkPos p_196957_, StreamTagVisitor p_196958_) throws IOException {
 +      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
 +      RegionFile regionfile = this.getRegionFile(p_196957_, true);
 +      if (regionfile == null) {
 +         return;
 +      }
 +      // CraftBukkit end
-       try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_196957_)) {
-          if (datainputstream != null) {
-             NbtIo.parse(datainputstream, p_196958_, NbtAccounter.unlimitedHeap());
-@@ -65,7 +_,7 @@
-    }
- 
-    protected void write(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {
--      RegionFile regionfile = this.getRegionFile(p_63709_);
++      try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(p_196957_)) {
++         if (datainputstream != null) {
++            NbtIo.parse(datainputstream, p_196958_, NbtAccounter.unlimitedHeap());
++         }
++      }
++
++   }
++
++   protected void write(ChunkPos p_63709_, @Nullable CompoundTag p_63710_) throws IOException {
 +      RegionFile regionfile = this.getRegionFile(p_63709_, false);
-       if (p_63710_ == null) {
-          regionfile.clear(p_63709_);
-       } else {
++      if (p_63710_ == null) {
++         regionfile.clear(p_63709_);
++      } else {
++         try (DataOutputStream dataoutputstream = regionfile.getChunkDataOutputStream(p_63709_)) {
++            NbtIo.write(p_63710_, dataoutputstream);
++         }
++      }
++
++   }
++
++   public void close() throws IOException {
++      ExceptionCollector<IOException> exceptioncollector = new ExceptionCollector<>();
++
++      for(RegionFile regionfile : this.regionCache.values()) {
++         try {
++            regionfile.close();
++         } catch (IOException ioexception) {
++            exceptioncollector.add(ioexception);
++         }
++      }
++
++      exceptioncollector.throwIfPresent();
++   }
++
++   public void flush() throws IOException {
++      for(RegionFile regionfile : this.regionCache.values()) {
++         regionfile.flush();
++      }
++
++   }
+ }

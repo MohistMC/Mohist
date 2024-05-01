@@ -1,10 +1,40 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSystemChatPacket.java
-@@ -4,18 +_,35 @@
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.Packet;
+@@ -1,33 +_,41 @@
+ package net.minecraft.network.protocol.game;
  
+-import net.minecraft.network.RegistryFriendlyByteBuf;
++import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.ComponentSerialization;
+-import net.minecraft.network.codec.ByteBufCodecs;
+-import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.network.protocol.Packet;
+-import net.minecraft.network.protocol.PacketType;
+-
 -public record ClientboundSystemChatPacket(Component content, boolean overlay) implements Packet<ClientGamePacketListener> {
+-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSystemChatPacket> STREAM_CODEC = StreamCodec.composite(
+-        ComponentSerialization.TRUSTED_STREAM_CODEC,
+-        ClientboundSystemChatPacket::content,
+-        ByteBufCodecs.BOOL,
+-        ClientboundSystemChatPacket::overlay,
+-        ClientboundSystemChatPacket::new
+-    );
+-
+-    @Override
+-    public PacketType<ClientboundSystemChatPacket> type() {
+-        return GamePacketTypes.CLIENTBOUND_SYSTEM_CHAT;
+-    }
+-
+-    public void handle(ClientGamePacketListener p_237864_) {
+-        p_237864_.handleSystemChat(this);
+-    }
+-
+-    @Override
+-    public boolean isSkippable() {
+-        return true;
+-    }
++
 +public record ClientboundSystemChatPacket(String a, boolean overlay) implements Packet<ClientGamePacketListener> {
 +
 +   public ClientboundSystemChatPacket(Component content, boolean overlay) {
@@ -15,18 +45,17 @@
 +      this(content.length == 1 ? net.md_5.bungee.chat.ComponentSerializer.toString(content[0]) : net.md_5.bungee.chat.ComponentSerializer.toString(content), overlay);
 +   }
 +   // Spigot end
-    public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
-       this(p_237852_.readComponentTrusted(), p_237852_.readBoolean());
-    }
- 
-    public void write(FriendlyByteBuf p_237860_) {
--      p_237860_.writeComponent(this.content);
++   public ClientboundSystemChatPacket(FriendlyByteBuf p_237852_) {
++      this(p_237852_.readComponentTrusted(), p_237852_.readBoolean());
++   }
++
++   public void write(FriendlyByteBuf p_237860_) {
 +      p_237860_.writeUtf(this.a, 262144); // Spigot
-       p_237860_.writeBoolean(this.overlay);
-    }
- 
-    public void handle(ClientGamePacketListener p_237864_) {
-       p_237864_.handleSystemChat(this);
++      p_237860_.writeBoolean(this.overlay);
++   }
++
++   public void handle(ClientGamePacketListener p_237864_) {
++      p_237864_.handleSystemChat(this);
 +   }
 +
 +   public Component content() {
@@ -35,6 +64,9 @@
 +
 +   public String content0() {
 +      return a;
-    }
- 
-    public boolean isSkippable() {
++   }
++
++   public boolean isSkippable() {
++      return true;
++   }
+ }

@@ -11,7 +11,6 @@ import net.minecraft.world.entity.ai.behavior.StartAttacking;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import org.bukkit.event.entity.EntityTargetEvent;
 
 /**
  * This event allows you to change the target an entity has. <br>
@@ -35,49 +34,22 @@ import org.bukkit.event.entity.EntityTargetEvent;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class LivingChangeTargetEvent extends LivingEvent
-{
+public class LivingChangeTargetEvent extends LivingEvent {
     private final ILivingTargetType targetType;
     private final LivingEntity originalTarget;
     private LivingEntity newTarget;
-    // Mohist start
-    private EntityTargetEvent.TargetReason reason;
-    private boolean fireCBEvent;
-    
-    public LivingChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType)
-    {
+
+    public LivingChangeTargetEvent(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType) {
         super(entity);
         this.originalTarget = originalTarget;
         this.newTarget = originalTarget;
         this.targetType = targetType;
-        this.reason = EntityTargetEvent.TargetReason.UNKNOWN;
-        this.fireCBEvent = true;
     }
-
-    public EntityTargetEvent.TargetReason getReason() {
-        return reason;
-    }
-
-    public void setReason(EntityTargetEvent.TargetReason reason) {
-        this.reason = reason;
-    }
-
-    public boolean isFireCBEvent() {
-        return fireCBEvent;
-    }
-
-    public void setfireCBEvent(boolean cancel) {
-        this.fireCBEvent = fireCBEvent;
-    }
-
-    // Mohist end
-
 
     /**
      * {@return the new target of this entity.}
      */
-    public LivingEntity getNewTarget()
-    {
+    public LivingEntity getNewTarget() {
         return newTarget;
     }
 
@@ -85,43 +57,36 @@ public class LivingChangeTargetEvent extends LivingEvent
      * Sets the new target this entity shall have.
      * @param newTarget The new target of this entity.
      */
-    public void setNewTarget(LivingEntity newTarget)
-    {
+    public void setNewTarget(LivingEntity newTarget) {
         this.newTarget = newTarget;
     }
-    
+
     /**
      * {@return the living target type.}
      */
-    public ILivingTargetType getTargetType()
-    {
+    public ILivingTargetType getTargetType() {
         return targetType;
     }
 
     /**
      * {@return the original entity MC intended to use as a target before firing this event.}
      */
-    public LivingEntity getOriginalTarget()
-    {
+    public LivingEntity getOriginalTarget() {
         return originalTarget;
     }
-    
-    
+
+
     /**
      * A living target type indicates what kind of system caused a change of
      * targets. For a list of default target types, take a look at
      * {@link LivingTargetType}.
      */
-    public static interface ILivingTargetType
-    {
-        
-    }
-    
+    public static interface ILivingTargetType { }
+
     /**
      * This enum contains two default living target types.
      */
-    public static enum LivingTargetType implements ILivingTargetType
-    {
+    public static enum LivingTargetType implements ILivingTargetType {
         /**
          * This target type indicates that the target has been set by calling {@link Mob#setTarget(LivingEntity)}.
          */

@@ -5,21 +5,9 @@
 
 package net.minecraftforge.common;
 
-import com.mojang.serialization.Codec;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import net.minecraft.DetectedVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.commands.Commands;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -27,32 +15,83 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.item.Items;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
+import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+import net.minecraftforge.common.data.ForgeLootTableProvider;
+import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
+import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
+import net.minecraftforge.common.loot.CanToolPerformAction;
+import net.minecraftforge.common.loot.LootTableIdCondition;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
+import net.minecraftforge.common.world.NoneBiomeModifier;
+import net.minecraftforge.common.world.NoneStructureModifier;
+import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.holdersets.AndHolderSet;
+import net.minecraftforge.registries.holdersets.AnyHolderSet;
+import net.minecraftforge.registries.holdersets.HolderSetType;
+import net.minecraftforge.registries.holdersets.NotHolderSet;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
+import net.minecraftforge.network.NetworkInitialization;
+import net.minecraftforge.network.tasks.ForgeNetworkConfigurationHandler;
+import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.server.command.EnumArgument;
+import net.minecraftforge.server.command.ModIdArgument;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftforge.server.permission.nodes.PermissionTypes;
+import net.minecraftforge.unsafe.UnsafeHacks;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
 import net.minecraftforge.common.crafting.conditions.FalseCondition;
@@ -69,73 +108,24 @@ import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.crafting.ingredients.IntersectionIngredient;
 import net.minecraftforge.common.crafting.ingredients.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.ingredients.StrictNBTIngredient;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
-import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
-import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
-import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
-import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
-import net.minecraftforge.common.extensions.IForgeEntity;
-import net.minecraftforge.common.extensions.IForgePlayer;
-import net.minecraftforge.common.loot.CanToolPerformAction;
-import net.minecraftforge.common.loot.LootTableIdCondition;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
-import net.minecraftforge.common.world.NoneBiomeModifier;
-import net.minecraftforge.common.world.NoneStructureModifier;
-import net.minecraftforge.common.world.StructureModifier;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.CrashReportCallables;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.tasks.ForgeNetworkConfigurationHandler;
-import net.minecraftforge.registries.DataPackRegistryEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryInternal;
-import net.minecraftforge.registries.IdMappingEvent;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.holdersets.AndHolderSet;
-import net.minecraftforge.registries.holdersets.AnyHolderSet;
-import net.minecraftforge.registries.holdersets.HolderSetType;
-import net.minecraftforge.registries.holdersets.NotHolderSet;
-import net.minecraftforge.registries.holdersets.OrHolderSet;
-import net.minecraftforge.server.command.EnumArgument;
-import net.minecraftforge.server.command.ModIdArgument;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
-import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import net.minecraftforge.unsafe.UnsafeHacks;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.versions.mcp.MCPVersion;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Mod("forge")
 public class ForgeMod {
@@ -163,32 +153,8 @@ public class ForgeMod {
     private static final DeferredRegister<Attribute> ATTRIBUTES = deferred(ForgeRegistries.Keys.ATTRIBUTES);
     public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
     public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.name_tag_distance", 64.0D, 0.0D, 64.0).setSyncable(true));
-    public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true));
 
-    /**
-     * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of block reach.
-     * @see IForgePlayer#getBlockReach()
-     * @see IForgePlayer#canReach(BlockPos, double)
-     */
-    public static final RegistryObject<Attribute> BLOCK_REACH = ATTRIBUTES.register("block_reach", () -> new RangedAttribute("forge.block_reach", 4.5D, 0.0D, 1024.0D).setSyncable(true));
-
-    /**
-     * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of entity reach.
-     * The default of 3.0 is technically considered a bug by Mojang - see MC-172289 and MC-92484. However, updating this value would allow for longer-range attacks on vanilla servers, which makes some people mad.
-     * @see IForgePlayer#getEntityReach()
-     * @see IForgePlayer#canReach(Entity, double)
-     * @see IForgePlayer#canReach(Vec3, double)
-     */
-    public static final RegistryObject<Attribute> ENTITY_REACH = ATTRIBUTES.register("entity_reach", () -> new RangedAttribute("forge.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true));
-
-    /**
-     * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.
-     * @see IForgeEntity#getStepHeight()
-     */
-    public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.step_height", 0.0D, -512.0D, 512.0D).setSyncable(true));
-
-
-    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS);
     static {
         BIOME_MODIFIER_SERIALIZERS.register("none", () -> NoneBiomeModifier.CODEC);
         BIOME_MODIFIER_SERIALIZERS.register("add_features", () -> AddFeaturesBiomeModifier.CODEC);
@@ -197,7 +163,7 @@ public class ForgeMod {
         BIOME_MODIFIER_SERIALIZERS.register("remove_spawns", () -> RemoveSpawnsBiomeModifier.CODEC);
     }
 
-    private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS);
     static {
         STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> NoneStructureModifier.CODEC);
     }
@@ -260,8 +226,49 @@ public class ForgeMod {
                     .canHydrate(true))
             {
                 @Override
-                public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
+                public @Nullable PathType getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
                     return canFluidLog ? super.getBlockPathType(state, level, pos, mob, true) : null;
+                }
+
+                @Override
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
+                        private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
+                                WATER_STILL = new ResourceLocation("block/water_still"),
+                                WATER_FLOW = new ResourceLocation("block/water_flow"),
+                                WATER_OVERLAY = new ResourceLocation("block/water_overlay");
+
+                        @Override
+                        public ResourceLocation getStillTexture() {
+                            return WATER_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture() {
+                            return WATER_FLOW;
+                        }
+
+                        @Nullable
+                        @Override
+                        public ResourceLocation getOverlayTexture() {
+                            return WATER_OVERLAY;
+                        }
+
+                        @Override
+                        public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
+                            return UNDERWATER_LOCATION;
+                        }
+
+                        @Override
+                        public int getTintColor() {
+                            return 0xFF3F76E4;
+                        }
+
+                        @Override
+                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
+                            return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
+                        }
+                    });
                 }
             });
 
@@ -270,7 +277,7 @@ public class ForgeMod {
                     .descriptionId("block.minecraft.lava")
                     .canSwim(false)
                     .canDrown(false)
-                    .pathType(BlockPathTypes.LAVA)
+                    .pathType(PathType.LAVA)
                     .adjacentPathType(null)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)
@@ -289,6 +296,24 @@ public class ForgeMod {
                     Vec3 vec3 = entity.getDeltaMovement();
                     entity.setDeltaMovement(vec3.x * (double)0.95F, vec3.y + (double)(vec3.y < (double)0.06F ? 5.0E-4F : 0.0F), vec3.z * (double)0.95F);
                 }
+
+                @Override
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
+                        private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
+                                LAVA_FLOW = new ResourceLocation("block/lava_flow");
+
+                        @Override
+                        public ResourceLocation getStillTexture() {
+                            return LAVA_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture() {
+                            return LAVA_FLOW;
+                        }
+                    });
+                }
             });
 
     private static final DeferredRegister<LootItemConditionType> LOOT_CONDITION_TYPES = deferred(Registries.LOOT_CONDITION_TYPE);
@@ -297,7 +322,7 @@ public class ForgeMod {
         LOOT_CONDITION_TYPES.register("can_tool_perform_action", () -> CanToolPerformAction.TYPE);
     }
 
-    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = deferred(ForgeRegistries.Keys.CONDITION_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_SERIALIZERS = deferred(ForgeRegistries.Keys.CONDITION_SERIALIZERS);
     static {
         CONDITION_SERIALIZERS.register("and", () -> AndCondition.CODEC);
         CONDITION_SERIALIZERS.register("false", () -> FalseCondition.CODEC);
@@ -330,6 +355,12 @@ public class ForgeMod {
     public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(new ResourceLocation("milk"), ForgeRegistries.Keys.FLUID_TYPES.location(), "minecraft");
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
+    /*
+    private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);
+    private static final DeferredRegister<ChatType> CHAT_TYPES = deferred(Registries.CHAT_TYPE);
+    public static final RegistryObject<ChatType> SYSTEM_CHAT_TYPE = CHAT_TYPES.register("syste_chat", () -> new ChatType(SYSTEM_CHAT_TYPE_DECORATION, SYSTEM_CHAT_TYPE_DECORATION));
+    */
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance() {
@@ -399,7 +430,7 @@ public class ForgeMod {
     }
 
     public void preInit(FMLCommonSetupEvent evt) {
-        // VersionChecker.startVersionCheck(); // Mohist
+        VersionChecker.startVersionCheck();
         //VanillaPacketSplitter.register();
     }
 
@@ -436,8 +467,8 @@ public class ForgeMod {
         gen.addProvider(event.includeServer(), new ForgeItemTagsProvider(packOutput, lookupProvider, blockTags.contentsGetter(), existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeRecipeProvider(packOutput));
-        gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput));
+        gen.addProvider(event.includeServer(), new ForgeRecipeProvider(packOutput, lookupProvider));
+        gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput, lookupProvider));
         gen.addProvider(event.includeServer(), new ForgeBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
         gen.addProvider(event.includeClient(), new ForgeSpriteSourceProvider(packOutput, existingFileHelper));
@@ -459,6 +490,23 @@ public class ForgeMod {
                     .sound(SoundActions.BUCKET_FILL, BUCKET_FILL_MILK.get())
                     .sound(SoundActions.BUCKET_EMPTY, BUCKET_EMPTY_MILK.get())
             ) {
+                @Override
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
+                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still");
+                        private static final ResourceLocation MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
+
+                        @Override
+                        public ResourceLocation getStillTexture() {
+                            return MILK_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture() {
+                            return MILK_FLOW;
+                        }
+                    });
+                }
             }));
 
             // register fluids

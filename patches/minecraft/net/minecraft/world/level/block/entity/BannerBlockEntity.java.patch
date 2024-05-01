@@ -1,14 +1,291 @@
 --- a/net/minecraft/world/level/block/entity/BannerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BannerBlockEntity.java
-@@ -96,6 +_,11 @@
-       }
+@@ -1,125 +_,179 @@
+ package net.minecraft.world.level.block.entity;
  
-       this.itemPatterns = p_155042_.getList("Patterns", 10);
+-import com.mojang.logging.LogUtils;
++import com.google.common.collect.Lists;
++import com.mojang.datafixers.util.Pair;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.core.BlockPos;
+-import net.minecraft.core.HolderLookup;
+-import net.minecraft.core.component.DataComponentMap;
+-import net.minecraft.core.component.DataComponents;
++import net.minecraft.core.Holder;
++import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.nbt.CompoundTag;
+-import net.minecraft.nbt.NbtOps;
++import net.minecraft.nbt.ListTag;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+ import net.minecraft.world.Nameable;
++import net.minecraft.world.item.BlockItem;
+ import net.minecraft.world.item.DyeColor;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.block.AbstractBannerBlock;
+ import net.minecraft.world.level.block.BannerBlock;
+ import net.minecraft.world.level.block.state.BlockState;
+-import org.slf4j.Logger;
+ 
+ public class BannerBlockEntity extends BlockEntity implements Nameable {
+-    private static final Logger LOGGER = LogUtils.getLogger();
+-    public static final int MAX_PATTERNS = 6;
+-    private static final String TAG_PATTERNS = "patterns";
+-    @Nullable
+-    private Component name;
+-    public DyeColor baseColor;
+-    private BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
+-
+-    public BannerBlockEntity(BlockPos p_155035_, BlockState p_155036_) {
+-        super(BlockEntityType.BANNER, p_155035_, p_155036_);
+-        this.baseColor = ((AbstractBannerBlock)p_155036_.getBlock()).getColor();
+-    }
+-
+-    public BannerBlockEntity(BlockPos p_155038_, BlockState p_155039_, DyeColor p_155040_) {
+-        this(p_155038_, p_155039_);
+-        this.baseColor = p_155040_;
+-    }
+-
+-    public void fromItem(ItemStack p_58490_, DyeColor p_58491_) {
+-        this.baseColor = p_58491_;
+-        this.applyComponentsFromItemStack(p_58490_);
+-    }
+-
+-    @Override
+-    public Component getName() {
+-        return (Component)(this.name != null ? this.name : Component.translatable("block.minecraft.banner"));
+-    }
+-
+-    @Nullable
+-    @Override
+-    public Component getCustomName() {
+-        return this.name;
+-    }
+-
+-    @Override
+-    protected void saveAdditional(CompoundTag p_187456_, HolderLookup.Provider p_329292_) {
+-        super.saveAdditional(p_187456_, p_329292_);
+-        if (!this.patterns.equals(BannerPatternLayers.EMPTY)) {
+-            p_187456_.put("patterns", BannerPatternLayers.CODEC.encodeStart(p_329292_.createSerializationContext(NbtOps.INSTANCE), this.patterns).getOrThrow());
+-        }
+-
+-        if (this.name != null) {
+-            p_187456_.putString("CustomName", Component.Serializer.toJson(this.name, p_329292_));
+-        }
+-    }
+-
+-    @Override
+-    protected void loadAdditional(CompoundTag p_334165_, HolderLookup.Provider p_330621_) {
+-        super.loadAdditional(p_334165_, p_330621_);
+-        if (p_334165_.contains("CustomName", 8)) {
+-            this.name = parseCustomNameSafe(p_334165_.getString("CustomName"), p_330621_);
+-        }
+-
+-        if (p_334165_.contains("patterns")) {
+-            BannerPatternLayers.CODEC
+-                .parse(p_330621_.createSerializationContext(NbtOps.INSTANCE), p_334165_.get("patterns"))
+-                .resultOrPartial(p_331027_ -> LOGGER.error("Failed to parse banner patterns: '{}'", p_331027_))
+-                .ifPresent(p_332298_ -> this.patterns = p_332298_);
+-        }
+-    }
+-
+-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+-        return ClientboundBlockEntityDataPacket.create(this);
+-    }
+-
+-    @Override
+-    public CompoundTag getUpdateTag(HolderLookup.Provider p_335241_) {
+-        return this.saveWithoutMetadata(p_335241_);
+-    }
+-
+-    public BannerPatternLayers getPatterns() {
+-        return this.patterns;
+-    }
+-
+-    public ItemStack getItem() {
+-        ItemStack itemstack = new ItemStack(BannerBlock.byColor(this.baseColor));
+-        itemstack.applyComponents(this.collectComponents());
+-        return itemstack;
+-    }
+-
+-    public DyeColor getBaseColor() {
+-        return this.baseColor;
+-    }
+-
+-    @Override
+-    protected void applyImplicitComponents(BlockEntity.DataComponentInput p_328647_) {
+-        super.applyImplicitComponents(p_328647_);
+-        this.patterns = p_328647_.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+-        this.name = p_328647_.get(DataComponents.CUSTOM_NAME);
+-    }
+-
+-    @Override
+-    protected void collectImplicitComponents(DataComponentMap.Builder p_332512_) {
+-        super.collectImplicitComponents(p_332512_);
+-        p_332512_.set(DataComponents.BANNER_PATTERNS, this.patterns);
+-        p_332512_.set(DataComponents.CUSTOM_NAME, this.name);
+-    }
+-
+-    @Override
+-    public void removeComponentsFromTag(CompoundTag p_336055_) {
+-        p_336055_.remove("patterns");
+-        p_336055_.remove("CustomName");
+-    }
++   public static final int MAX_PATTERNS = 6;
++   public static final String TAG_PATTERNS = "Patterns";
++   public static final String TAG_PATTERN = "Pattern";
++   public static final String TAG_COLOR = "Color";
++   @Nullable
++   private Component name;
++   public DyeColor baseColor;
++   @Nullable
++   public ListTag itemPatterns;
++   @Nullable
++   private List<Pair<Holder<BannerPattern>, DyeColor>> patterns;
++
++   public BannerBlockEntity(BlockPos p_155035_, BlockState p_155036_) {
++      super(BlockEntityType.BANNER, p_155035_, p_155036_);
++      this.baseColor = ((AbstractBannerBlock)p_155036_.getBlock()).getColor();
++   }
++
++   public BannerBlockEntity(BlockPos p_155038_, BlockState p_155039_, DyeColor p_155040_) {
++      this(p_155038_, p_155039_);
++      this.baseColor = p_155040_;
++   }
++
++   @Nullable
++   public static ListTag getItemPatterns(ItemStack p_58488_) {
++      ListTag listtag = null;
++      CompoundTag compoundtag = BlockItem.getBlockEntityData(p_58488_);
++      if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
++         listtag = compoundtag.getList("Patterns", 10).copy();
++      }
++
++      return listtag;
++   }
++
++   public void fromItem(ItemStack p_58490_, DyeColor p_58491_) {
++      this.baseColor = p_58491_;
++      this.fromItem(p_58490_);
++   }
++
++   public void fromItem(ItemStack p_187454_) {
++      this.itemPatterns = getItemPatterns(p_187454_);
++      this.patterns = null;
++      this.name = p_187454_.hasCustomHoverName() ? p_187454_.getHoverName() : null;
++   }
++
++   public Component getName() {
++      return (Component)(this.name != null ? this.name : Component.translatable("block.minecraft.banner"));
++   }
++
++   @Nullable
++   public Component getCustomName() {
++      return this.name;
++   }
++
++   public void setCustomName(Component p_58502_) {
++      this.name = p_58502_;
++   }
++
++   protected void saveAdditional(CompoundTag p_187456_) {
++      super.saveAdditional(p_187456_);
++      if (this.itemPatterns != null) {
++         p_187456_.put("Patterns", this.itemPatterns);
++      }
++
++      if (this.name != null) {
++         p_187456_.putString("CustomName", Component.Serializer.toJson(this.name));
++      }
++
++   }
++
++   public void load(CompoundTag p_155042_) {
++      super.load(p_155042_);
++      if (p_155042_.contains("CustomName", 8)) {
++         this.name = Component.Serializer.fromJson(p_155042_.getString("CustomName"));
++      }
++
++      this.itemPatterns = p_155042_.getList("Patterns", 10);
 +      // CraftBukkit start
 +      while (this.itemPatterns.size() > 20) {
 +         this.itemPatterns.remove(20);
 +      }
 +      // CraftBukkit end
-       this.patterns = null;
-    }
- 
++      this.patterns = null;
++   }
++
++   public ClientboundBlockEntityDataPacket getUpdatePacket() {
++      return ClientboundBlockEntityDataPacket.create(this);
++   }
++
++   public CompoundTag getUpdateTag() {
++      return this.saveWithoutMetadata();
++   }
++
++   public static int getPatternCount(ItemStack p_58505_) {
++      CompoundTag compoundtag = BlockItem.getBlockEntityData(p_58505_);
++      return compoundtag != null && compoundtag.contains("Patterns") ? compoundtag.getList("Patterns", 10).size() : 0;
++   }
++
++   public List<Pair<Holder<BannerPattern>, DyeColor>> getPatterns() {
++      if (this.patterns == null) {
++         this.patterns = createPatterns(this.baseColor, this.itemPatterns);
++      }
++
++      return this.patterns;
++   }
++
++   public static List<Pair<Holder<BannerPattern>, DyeColor>> createPatterns(DyeColor p_58485_, @Nullable ListTag p_58486_) {
++      List<Pair<Holder<BannerPattern>, DyeColor>> list = Lists.newArrayList();
++      list.add(Pair.of(BuiltInRegistries.BANNER_PATTERN.getHolderOrThrow(BannerPatterns.BASE), p_58485_));
++      if (p_58486_ != null) {
++         for(int i = 0; i < p_58486_.size(); ++i) {
++            CompoundTag compoundtag = p_58486_.getCompound(i);
++            Holder<BannerPattern> holder = BannerPattern.byHash(compoundtag.getString("Pattern"));
++            if (holder != null) {
++               int j = compoundtag.getInt("Color");
++               list.add(Pair.of(holder, DyeColor.byId(j)));
++            }
++         }
++      }
++
++      return list;
++   }
++
++   public static void removeLastPattern(ItemStack p_58510_) {
++      CompoundTag compoundtag = BlockItem.getBlockEntityData(p_58510_);
++      if (compoundtag != null && compoundtag.contains("Patterns", 9)) {
++         ListTag listtag = compoundtag.getList("Patterns", 10);
++         if (!listtag.isEmpty()) {
++            listtag.remove(listtag.size() - 1);
++            if (listtag.isEmpty()) {
++               compoundtag.remove("Patterns");
++            }
++         }
++
++         compoundtag.remove("id");
++         BlockItem.setBlockEntityData(p_58510_, BlockEntityType.BANNER, compoundtag);
++      }
++   }
++
++   public ItemStack getItem() {
++      ItemStack itemstack = new ItemStack(BannerBlock.byColor(this.baseColor));
++      if (this.itemPatterns != null && !this.itemPatterns.isEmpty()) {
++         CompoundTag compoundtag = new CompoundTag();
++         compoundtag.put("Patterns", this.itemPatterns.copy());
++         BlockItem.setBlockEntityData(itemstack, this.getType(), compoundtag);
++      }
++
++      if (this.name != null) {
++         itemstack.setHoverName(this.name);
++      }
++
++      return itemstack;
++   }
++
++   public DyeColor getBaseColor() {
++      return this.baseColor;
++   }
+ }

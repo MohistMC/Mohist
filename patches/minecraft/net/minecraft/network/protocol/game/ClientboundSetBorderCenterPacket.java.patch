@@ -1,15 +1,27 @@
 --- a/net/minecraft/network/protocol/game/ClientboundSetBorderCenterPacket.java
 +++ b/net/minecraft/network/protocol/game/ClientboundSetBorderCenterPacket.java
-@@ -9,8 +_,10 @@
-    private final double newCenterZ;
+@@ -1,9 +_,7 @@
+ package net.minecraft.network.protocol.game;
  
-    public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
--      this.newCenterX = p_179214_.getCenterX();
--      this.newCenterZ = p_179214_.getCenterZ();
+ import net.minecraft.network.FriendlyByteBuf;
+-import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.network.protocol.Packet;
+-import net.minecraft.network.protocol.PacketType;
+ import net.minecraft.world.level.border.WorldBorder;
+ 
+ public class ClientboundSetBorderCenterPacket implements Packet<ClientGamePacketListener> {
+@@ -13,9 +_,11 @@
+     private final double newCenterX;
+     private final double newCenterZ;
+ 
+-    public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
+-        this.newCenterX = p_179214_.getCenterX();
+-        this.newCenterZ = p_179214_.getCenterZ();
++   public ClientboundSetBorderCenterPacket(WorldBorder p_179214_) {
 +      // CraftBukkit start - multiply out nether border
 +      this.newCenterX = p_179214_.getCenterX() * (p_179214_.world != null ? p_179214_.world.dimensionType().coordinateScale() : 1.0);
 +      this.newCenterZ = p_179214_.getCenterZ() * (p_179214_.world != null ? p_179214_.world.dimensionType().coordinateScale() : 1.0);
 +      // CraftBukkit end
-    }
+     }
  
-    public ClientboundSetBorderCenterPacket(FriendlyByteBuf p_179216_) {
+     private ClientboundSetBorderCenterPacket(FriendlyByteBuf p_179216_) {

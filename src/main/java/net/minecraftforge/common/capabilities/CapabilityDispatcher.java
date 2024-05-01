@@ -5,9 +5,9 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.ArrayList;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;

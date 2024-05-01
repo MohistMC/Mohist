@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/entity/ai/behavior/ResetProfession.java
 +++ b/net/minecraft/world/entity/ai/behavior/ResetProfession.java
-@@ -5,6 +_,9 @@
+@@ -1,33 +_,35 @@
+ package net.minecraft.world.entity.ai.behavior;
+ 
+-import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
+-import net.minecraft.world.entity.ai.behavior.declarative.MemoryAccessor;
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
  import net.minecraft.world.entity.npc.Villager;
  import net.minecraft.world.entity.npc.VillagerData;
  import net.minecraft.world.entity.npc.VillagerProfession;
@@ -9,12 +15,33 @@
 +import org.bukkit.event.entity.VillagerCareerChangeEvent;
  
  public class ResetProfession {
-    public static BehaviorControl<Villager> create() {
-@@ -13,7 +_,13 @@
-             return (p_260244_, p_260084_, p_259597_) -> {
-                VillagerData villagerdata = p_260084_.getVillagerData();
-                if (villagerdata.getProfession() != VillagerProfession.NONE && villagerdata.getProfession() != VillagerProfession.NITWIT && p_260084_.getVillagerXp() == 0 && villagerdata.getLevel() <= 1) {
--                  p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(VillagerProfession.NONE));
+-    public static BehaviorControl<Villager> create() {
+-        return BehaviorBuilder.create(
+-            p_259684_ -> p_259684_.group(p_259684_.absent(MemoryModuleType.JOB_SITE))
+-                    .apply(
+-                        p_259684_,
+-                        p_260035_ -> (p_260244_, p_260084_, p_259597_) -> {
+-                                VillagerData villagerdata = p_260084_.getVillagerData();
+-                                if (villagerdata.getProfession() != VillagerProfession.NONE
+-                                    && villagerdata.getProfession() != VillagerProfession.NITWIT
+-                                    && p_260084_.getVillagerXp() == 0
+-                                    && villagerdata.getLevel() <= 1) {
+-                                    p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(VillagerProfession.NONE));
+-                                    p_260084_.refreshBrain(p_260244_);
+-                                    return true;
+-                                } else {
+-                                    return false;
+-                                }
+-                            }
+-                    )
+-        );
+-    }
++   public static BehaviorControl<Villager> create() {
++      return BehaviorBuilder.create((p_259684_) -> {
++         return p_259684_.group(p_259684_.absent(MemoryModuleType.JOB_SITE)).apply(p_259684_, (p_260035_) -> {
++            return (p_260244_, p_260084_, p_259597_) -> {
++               VillagerData villagerdata = p_260084_.getVillagerData();
++               if (villagerdata.getProfession() != VillagerProfession.NONE && villagerdata.getProfession() != VillagerProfession.NITWIT && p_260084_.getVillagerXp() == 0 && villagerdata.getLevel() <= 1) {
 +                  // CraftBukkit start
 +                  VillagerCareerChangeEvent event = CraftEventFactory.callVillagerCareerChangeEvent(p_260084_, CraftVillager.CraftProfession.minecraftToBukkit(VillagerProfession.NONE), VillagerCareerChangeEvent.ChangeReason.LOSING_JOB);
 +                  if (event.isCancelled()) {
@@ -22,6 +49,13 @@
 +                  }
 +                  p_260084_.setVillagerData(p_260084_.getVillagerData().setProfession(CraftVillager.CraftProfession.bukkitToMinecraft(event.getProfession())));
 +                  // CraftBukkit end
-                   p_260084_.refreshBrain(p_260244_);
-                   return true;
-                } else {
++                  p_260084_.refreshBrain(p_260244_);
++                  return true;
++               } else {
++                  return false;
++               }
++            };
++         });
++      });
++   }
+ }

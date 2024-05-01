@@ -1,11 +1,76 @@
 --- a/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/target/OwnerHurtTargetGoal.java
-@@ -33,7 +_,7 @@
-    }
+@@ -7,40 +_,38 @@
+ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
  
-    public void start() {
--      this.mob.setTarget(this.ownerLastHurt);
+ public class OwnerHurtTargetGoal extends TargetGoal {
+-    private final TamableAnimal tameAnimal;
+-    private LivingEntity ownerLastHurt;
+-    private int timestamp;
+-
+-    public OwnerHurtTargetGoal(TamableAnimal p_26114_) {
+-        super(p_26114_, false);
+-        this.tameAnimal = p_26114_;
+-        this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+-    }
+-
+-    @Override
+-    public boolean canUse() {
+-        if (this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) {
+-            LivingEntity livingentity = this.tameAnimal.getOwner();
+-            if (livingentity == null) {
+-                return false;
+-            } else {
+-                this.ownerLastHurt = livingentity.getLastHurtMob();
+-                int i = livingentity.getLastHurtMobTimestamp();
+-                return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && this.tameAnimal.wantsToAttack(this.ownerLastHurt, livingentity);
+-            }
+-        } else {
++   private final TamableAnimal tameAnimal;
++   private LivingEntity ownerLastHurt;
++   private int timestamp;
++
++   public OwnerHurtTargetGoal(TamableAnimal p_26114_) {
++      super(p_26114_, false);
++      this.tameAnimal = p_26114_;
++      this.setFlags(EnumSet.of(Goal.Flag.TARGET));
++   }
++
++   public boolean canUse() {
++      if (this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) {
++         LivingEntity livingentity = this.tameAnimal.getOwner();
++         if (livingentity == null) {
+             return false;
+-        }
+-    }
+-
+-    @Override
+-    public void start() {
+-        this.mob.setTarget(this.ownerLastHurt);
+-        LivingEntity livingentity = this.tameAnimal.getOwner();
+-        if (livingentity != null) {
+-            this.timestamp = livingentity.getLastHurtMobTimestamp();
+-        }
+-
+-        super.start();
+-    }
++         } else {
++            this.ownerLastHurt = livingentity.getLastHurtMob();
++            int i = livingentity.getLastHurtMobTimestamp();
++            return i != this.timestamp && this.canAttack(this.ownerLastHurt, TargetingConditions.DEFAULT) && this.tameAnimal.wantsToAttack(this.ownerLastHurt, livingentity);
++         }
++      } else {
++         return false;
++      }
++   }
++
++   public void start() {
 +      this.mob.setTarget(this.ownerLastHurt, org.bukkit.event.entity.EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true); // CraftBukkit - reason
-       LivingEntity livingentity = this.tameAnimal.getOwner();
-       if (livingentity != null) {
-          this.timestamp = livingentity.getLastHurtMobTimestamp();
++      LivingEntity livingentity = this.tameAnimal.getOwner();
++      if (livingentity != null) {
++         this.timestamp = livingentity.getLastHurtMobTimestamp();
++      }
++
++      super.start();
++   }
+ }

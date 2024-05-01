@@ -3,10 +3,13 @@ package org.bukkit;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.mohistmc.dynamicenum.MohistDynamEnum;
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.minecraft.resources.ResourceLocation;
 import org.bukkit.MinecraftExperimental.Requires;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -114,6 +117,7 @@ import org.bukkit.block.data.type.Vault;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallHangingSign;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -4682,11 +4686,21 @@ public enum Material implements Keyed, Translatable {
     private final short durability;
     public final Class<?> data;
     private final boolean legacy;
-    private final NamespacedKey key;
+    public NamespacedKey key;
+    public boolean isForgeBlock = false;
+    public boolean isForgeItem = false;
 
     private Material(final int id) {
         this(id, 64);
     }
+
+    // Mohist start - constructor used to set if the Material is a block or not
+    private Material(final int id, final int stack, boolean isForgeBlock, boolean isForgeItem) {
+        this(id, stack);
+        this.isForgeBlock = isForgeBlock;
+        this.isForgeItem = isForgeItem;
+    }
+    // Mohist end
 
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
@@ -4859,6 +4873,9 @@ public enum Material implements Keyed, Translatable {
      * @return true if this material is a block
      */
     public boolean isBlock() {
+        if (isForgeBlock) {
+            return true;
+        }
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isBlock">
             case ACACIA_BUTTON:
@@ -8862,6 +8879,9 @@ public enum Material implements Keyed, Translatable {
      * @return true if this material is an item
      */
     public boolean isItem() {
+        if (isForgeItem && !isForgeBlock) {
+            return true;
+        }
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isItem">
             case ACACIA_WALL_HANGING_SIGN:
@@ -11501,5 +11521,24 @@ public enum Material implements Keyed, Translatable {
      */
     public boolean isEnabledByFeature(@NotNull World world) {
         return Bukkit.getDataPackManager().isEnabledByFeature(this, world);
+    }
+
+    public static Material addMaterial(String materialName, int id, int stack, boolean isBlock, boolean isItem, ResourceLocation resourceLocation) {
+        if (isBlock) {
+            Material material = BY_NAME.get(materialName);
+            if (material != null){
+                material.isForgeBlock = true;
+            }else {
+                material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE), List.of(id, stack, isBlock, isItem));
+            }
+            BY_NAME.put(materialName, material);
+            material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
+            return material;
+        } else { // Forge Items
+            Material material = MohistDynamEnum.addEnum(Material.class, materialName, List.of(Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE), List.of(id, stack, isBlock, isItem));
+            BY_NAME.put(materialName, material);
+            material.key = CraftNamespacedKey.fromMinecraft(resourceLocation);
+            return material;
+        }
     }
 }

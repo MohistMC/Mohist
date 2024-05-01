@@ -6,14 +6,13 @@
 package net.minecraftforge.network.tasks;
 
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraftforge.network.ChannelListManager;
 import net.minecraftforge.network.config.ConfigurationTaskContext;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Sends the list of known channels to the client using the
@@ -26,7 +25,6 @@ class RegisterChannelsTask implements ConfigurationTask {
 
     @Override
     public void start(ConfigurationTaskContext ctx) {
-        ChannelListManager.addChannels(ctx.getConnection(), Bukkit.getMessenger().getIncomingChannels().stream().map(ResourceLocation::new).collect(Collectors.toList()));
         ChannelListManager.addChannels(ctx.getConnection());
         ctx.finish(type());
     }

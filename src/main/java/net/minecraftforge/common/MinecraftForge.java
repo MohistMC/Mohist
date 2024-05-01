@@ -5,23 +5,28 @@
 
 package net.minecraftforge.common;
 
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.DualStackUtils;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class MinecraftForge
 {
@@ -47,7 +52,7 @@ public class MinecraftForge
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
-       TierSortingRegistry.init();
+       if (FMLEnvironment.dist == Dist.CLIENT) ClientCommandHandler.init();
        DualStackUtils.initialise();
    }
 
@@ -76,8 +81,8 @@ public class MinecraftForge
      */
     public static void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {
         ModLoadingContext.get().registerExtensionPoint(
-                ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(screenFunction)
+               ConfigScreenHandler.ConfigScreenFactory.class,
+               () -> new ConfigScreenHandler.ConfigScreenFactory(screenFunction)
         );
     }
 

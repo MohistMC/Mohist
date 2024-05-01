@@ -1,37 +1,76 @@
 --- a/net/minecraft/world/item/ItemDisplayContext.java
 +++ b/net/minecraft/world/item/ItemDisplayContext.java
-@@ -5,7 +_,7 @@
+@@ -5,37 +_,63 @@
  import net.minecraft.util.ByIdMap;
  import net.minecraft.util.StringRepresentable;
  
 -public enum ItemDisplayContext implements StringRepresentable {
+-    NONE(0, "none"),
+-    THIRD_PERSON_LEFT_HAND(1, "thirdperson_lefthand"),
+-    THIRD_PERSON_RIGHT_HAND(2, "thirdperson_righthand"),
+-    FIRST_PERSON_LEFT_HAND(3, "firstperson_lefthand"),
+-    FIRST_PERSON_RIGHT_HAND(4, "firstperson_righthand"),
+-    HEAD(5, "head"),
+-    GUI(6, "gui"),
+-    GROUND(7, "ground"),
+-    FIXED(8, "fixed");
+-
+-    public static final Codec<ItemDisplayContext> CODEC = StringRepresentable.fromEnum(ItemDisplayContext::values);
+-    public static final IntFunction<ItemDisplayContext> BY_ID = ByIdMap.continuous(ItemDisplayContext::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+-    private byte id;
+-    private final String name;
+-
+-    private ItemDisplayContext(final int p_270624_, final String p_270851_) {
+-        this.name = p_270851_;
+-        this.id = (byte)p_270624_;
+-    }
+-
+-    @Override
+-    public String getSerializedName() {
+-        return this.name;
+-    }
+-
+-    public byte getId() {
+-        return this.id;
+-    }
+-
+-    public boolean firstPerson() {
+-        return this == FIRST_PERSON_LEFT_HAND || this == FIRST_PERSON_RIGHT_HAND;
+-    }
 +public enum ItemDisplayContext implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
-    NONE(0, "none"),
-    THIRD_PERSON_LEFT_HAND(1, "thirdperson_lefthand"),
-    THIRD_PERSON_RIGHT_HAND(2, "thirdperson_righthand"),
-@@ -16,14 +_,16 @@
-    GROUND(7, "ground"),
-    FIXED(8, "fixed");
- 
--   public static final Codec<ItemDisplayContext> CODEC = StringRepresentable.fromEnum(ItemDisplayContext::values);
--   public static final IntFunction<ItemDisplayContext> BY_ID = ByIdMap.continuous(ItemDisplayContext::getId, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
++   NONE(0, "none"),
++   THIRD_PERSON_LEFT_HAND(1, "thirdperson_lefthand"),
++   THIRD_PERSON_RIGHT_HAND(2, "thirdperson_righthand"),
++   FIRST_PERSON_LEFT_HAND(3, "firstperson_lefthand"),
++   FIRST_PERSON_RIGHT_HAND(4, "firstperson_righthand"),
++   HEAD(5, "head"),
++   GUI(6, "gui"),
++   GROUND(7, "ground"),
++   FIXED(8, "fixed");
++
 +   public static final Codec<ItemDisplayContext> CODEC = net.minecraft.util.ExtraCodecs.lazyInitializedCodec(() -> net.minecraftforge.registries.ForgeRegistries.DISPLAY_CONTEXTS.get().getCodec());
 +   public static final IntFunction<ItemDisplayContext> BY_ID = id -> java.util.Objects.requireNonNullElse(((net.minecraftforge.registries.IForgeRegistryInternal<ItemDisplayContext>) net.minecraftforge.registries.ForgeRegistries.DISPLAY_CONTEXTS.get()).getValue(id < 0 ? Byte.MAX_VALUE + -id : id), NONE);
-    private byte id;
-    private final String name;
- 
-    private ItemDisplayContext(int p_270624_, String p_270851_) {
-       this.name = p_270851_;
-       this.id = (byte)p_270624_;
++   private byte id;
++   private final String name;
++
++   private ItemDisplayContext(int p_270624_, String p_270851_) {
++      this.name = p_270851_;
++      this.id = (byte)p_270624_;
 +      this.isModded = false;
 +      this.fallback = null;
-    }
- 
-    public String getSerializedName() {
-@@ -37,4 +_,29 @@
-    public boolean firstPerson() {
-       return this == FIRST_PERSON_LEFT_HAND || this == FIRST_PERSON_RIGHT_HAND;
-    }
++   }
++
++   public String getSerializedName() {
++      return this.name;
++   }
++
++   public byte getId() {
++      return this.id;
++   }
++
++   public boolean firstPerson() {
++      return this == FIRST_PERSON_LEFT_HAND || this == FIRST_PERSON_RIGHT_HAND;
++   }
 +
 +   // Forge start
 +   private final boolean isModded;

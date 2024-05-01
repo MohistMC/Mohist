@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -21,6 +_,9 @@
+@@ -7,7 +_,7 @@
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.InteractionHand;
+-import net.minecraft.world.ItemInteractionResult;
++import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.BlockItem;
+@@ -21,112 +_,135 @@
  import net.minecraft.world.level.block.state.StateDefinition;
  import net.minecraft.world.level.block.state.properties.BooleanProperty;
  import net.minecraft.world.phys.BlockHitResult;
@@ -9,19 +18,131 @@
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class RedStoneOreBlock extends Block {
-    public static final MapCodec<RedStoneOreBlock> CODEC = simpleCodec(RedStoneOreBlock::new);
-@@ -36,13 +_,26 @@
-    }
- 
-    public void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
--      interact(p_55467_, p_55468_, p_55469_);
+-    public static final MapCodec<RedStoneOreBlock> CODEC = simpleCodec(RedStoneOreBlock::new);
+-    public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
+-
+-    @Override
+-    public MapCodec<RedStoneOreBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public RedStoneOreBlock(BlockBehaviour.Properties p_55453_) {
+-        super(p_55453_);
+-        this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.valueOf(false)));
+-    }
+-
+-    @Override
+-    protected void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
+-        interact(p_55467_, p_55468_, p_55469_);
+-        super.attack(p_55467_, p_55468_, p_55469_, p_55470_);
+-    }
+-
+-    @Override
+-    public void stepOn(Level p_154299_, BlockPos p_154300_, BlockState p_154301_, Entity p_154302_) {
+-        if (!p_154302_.isSteppingCarefully()) {
+-            interact(p_154301_, p_154299_, p_154300_);
+-        }
+-
+-        super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
+-    }
+-
+-    @Override
+-    protected ItemInteractionResult useItemOn(
+-        ItemStack p_331692_, BlockState p_328847_, Level p_334994_, BlockPos p_336118_, Player p_329891_, InteractionHand p_331867_, BlockHitResult p_329149_
+-    ) {
+-        if (p_334994_.isClientSide) {
+-            spawnParticles(p_334994_, p_336118_);
+-        } else {
+-            interact(p_328847_, p_334994_, p_336118_);
+-        }
+-
+-        return p_331692_.getItem() instanceof BlockItem && new BlockPlaceContext(p_329891_, p_331867_, p_331692_, p_329149_).canPlace()
+-            ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
+-            : ItemInteractionResult.SUCCESS;
+-    }
+-
+-    private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
+-        spawnParticles(p_55494_, p_55495_);
+-        if (!p_55493_.getValue(LIT)) {
+-            p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
+-        }
+-    }
+-
+-    @Override
+-    protected boolean isRandomlyTicking(BlockState p_55486_) {
+-        return p_55486_.getValue(LIT);
+-    }
+-
+-    @Override
+-    protected void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
+-        if (p_221918_.getValue(LIT)) {
+-            p_221919_.setBlock(p_221920_, p_221918_.setValue(LIT, Boolean.valueOf(false)), 3);
+-        }
+-    }
+-
+-    @Override
+-    protected void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
+-        super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
+-        if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
+-            int i = 1 + p_221908_.random.nextInt(5);
+-            this.popExperience(p_221908_, p_221909_, i);
+-        }
+-    }
+-
+-    @Override
+-    public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
+-        if (p_221913_.getValue(LIT)) {
+-            spawnParticles(p_221914_, p_221915_);
+-        }
+-    }
+-
+-    private static void spawnParticles(Level p_55455_, BlockPos p_55456_) {
+-        double d0 = 0.5625;
+-        RandomSource randomsource = p_55455_.random;
+-
+-        for (Direction direction : Direction.values()) {
+-            BlockPos blockpos = p_55456_.relative(direction);
+-            if (!p_55455_.getBlockState(blockpos).isSolidRender(p_55455_, blockpos)) {
+-                Direction.Axis direction$axis = direction.getAxis();
+-                double d1 = direction$axis == Direction.Axis.X ? 0.5 + 0.5625 * (double)direction.getStepX() : (double)randomsource.nextFloat();
+-                double d2 = direction$axis == Direction.Axis.Y ? 0.5 + 0.5625 * (double)direction.getStepY() : (double)randomsource.nextFloat();
+-                double d3 = direction$axis == Direction.Axis.Z ? 0.5 + 0.5625 * (double)direction.getStepZ() : (double)randomsource.nextFloat();
+-                p_55455_.addParticle(
+-                    DustParticleOptions.REDSTONE,
+-                    (double)p_55456_.getX() + d1,
+-                    (double)p_55456_.getY() + d2,
+-                    (double)p_55456_.getZ() + d3,
+-                    0.0,
+-                    0.0,
+-                    0.0
+-                );
+-            }
+-        }
+-    }
+-
+-    @Override
+-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55484_) {
+-        p_55484_.add(LIT);
+-    }
++   public static final MapCodec<RedStoneOreBlock> CODEC = simpleCodec(RedStoneOreBlock::new);
++   public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
++
++   public MapCodec<RedStoneOreBlock> codec() {
++      return CODEC;
++   }
++
++   public RedStoneOreBlock(BlockBehaviour.Properties p_55453_) {
++      super(p_55453_);
++      this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.valueOf(false)));
++   }
++
++   public void attack(BlockState p_55467_, Level p_55468_, BlockPos p_55469_, Player p_55470_) {
 +      interact(p_55467_, p_55468_, p_55469_, p_55470_);  // CraftBukkit - add entityhuman
-       super.attack(p_55467_, p_55468_, p_55469_, p_55470_);
-    }
- 
-    public void stepOn(Level p_154299_, BlockPos p_154300_, BlockState p_154301_, Entity p_154302_) {
-       if (!p_154302_.isSteppingCarefully()) {
--         interact(p_154301_, p_154299_, p_154300_);
++      super.attack(p_55467_, p_55468_, p_55469_, p_55470_);
++   }
++
++   public void stepOn(Level p_154299_, BlockPos p_154300_, BlockState p_154301_, Entity p_154302_) {
++      if (!p_154302_.isSteppingCarefully()) {
 +         // CraftBukkit start
 +         if (p_154302_ instanceof Player player) {
 +            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(player, org.bukkit.event.block.Action.PHYSICAL, p_154300_, null, null, null);
@@ -36,52 +157,53 @@
 +            }
 +         }
 +         // CraftBukkit end
-       }
- 
-       super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
-@@ -52,16 +_,21 @@
-       if (p_55473_.isClientSide) {
-          spawnParticles(p_55473_, p_55474_);
-       } else {
--         interact(p_55472_, p_55473_, p_55474_);
++      }
++
++      super.stepOn(p_154299_, p_154300_, p_154301_, p_154302_);
++   }
++
++   public InteractionResult use(BlockState p_55472_, Level p_55473_, BlockPos p_55474_, Player p_55475_, InteractionHand p_55476_, BlockHitResult p_55477_) {
++      if (p_55473_.isClientSide) {
++         spawnParticles(p_55473_, p_55474_);
++      } else {
 +         interact(p_55472_, p_55473_, p_55474_, p_55475_); // CraftBukkit - add entityhuman
-       }
- 
-       ItemStack itemstack = p_55475_.getItemInHand(p_55476_);
-       return itemstack.getItem() instanceof BlockItem && (new BlockPlaceContext(p_55475_, p_55476_, itemstack, p_55477_)).canPlace() ? InteractionResult.PASS : InteractionResult.SUCCESS;
-    }
- 
--   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_) {
++      }
++
++      ItemStack itemstack = p_55475_.getItemInHand(p_55476_);
++      return itemstack.getItem() instanceof BlockItem && (new BlockPlaceContext(p_55475_, p_55476_, itemstack, p_55477_)).canPlace() ? InteractionResult.PASS : InteractionResult.SUCCESS;
++   }
++
 +   private static void interact(BlockState p_55493_, Level p_55494_, BlockPos p_55495_, Entity entity) { // CraftBukkit - add Entity
-       spawnParticles(p_55494_, p_55495_);
-       if (!p_55493_.getValue(LIT)) {
++      spawnParticles(p_55494_, p_55495_);
++      if (!p_55493_.getValue(LIT)) {
 +         // CraftBukkit start
 +         if (!CraftEventFactory.callEntityChangeBlockEvent(entity, p_55495_, p_55493_.setValue(LIT, true))) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
-       }
- 
-@@ -73,6 +_,11 @@
- 
-    public void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
-       if (p_221918_.getValue(LIT)) {
++         p_55494_.setBlock(p_55495_, p_55493_.setValue(LIT, Boolean.valueOf(true)), 3);
++      }
++
++   }
++
++   public boolean isRandomlyTicking(BlockState p_55486_) {
++      return p_55486_.getValue(LIT);
++   }
++
++   public void randomTick(BlockState p_221918_, ServerLevel p_221919_, BlockPos p_221920_, RandomSource p_221921_) {
++      if (p_221918_.getValue(LIT)) {
 +         // CraftBukkit start
 +         if (CraftEventFactory.callBlockFadeEvent(p_221919_, p_221920_, p_221918_.setValue(LIT, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-          p_221919_.setBlock(p_221920_, p_221918_.setValue(LIT, Boolean.valueOf(false)), 3);
-       }
- 
-@@ -80,12 +_,24 @@
- 
-    public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
-       super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
--      if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
--         int i = 1 + p_221908_.random.nextInt(5);
--         this.popExperience(p_221908_, p_221909_, i);
++         p_221919_.setBlock(p_221920_, p_221918_.setValue(LIT, Boolean.valueOf(false)), 3);
++      }
++
++   }
++
++   public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
++      super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
 +   }
 +
 +   @Override
@@ -95,11 +217,37 @@
 +      if (flag && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, itemstack) == 0) {
 +         int i = 1 + worldserver.random.nextInt(5);
 +         return i;
-       }
- 
++      }
++
 +      return 0;
-    }
++   }
 +   // CraftBukkit end
- 
-    public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
-       if (p_221913_.getValue(LIT)) {
++
++   public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
++      if (p_221913_.getValue(LIT)) {
++         spawnParticles(p_221914_, p_221915_);
++      }
++
++   }
++
++   private static void spawnParticles(Level p_55455_, BlockPos p_55456_) {
++      double d0 = 0.5625D;
++      RandomSource randomsource = p_55455_.random;
++
++      for(Direction direction : Direction.values()) {
++         BlockPos blockpos = p_55456_.relative(direction);
++         if (!p_55455_.getBlockState(blockpos).isSolidRender(p_55455_, blockpos)) {
++            Direction.Axis direction$axis = direction.getAxis();
++            double d1 = direction$axis == Direction.Axis.X ? 0.5D + 0.5625D * (double)direction.getStepX() : (double)randomsource.nextFloat();
++            double d2 = direction$axis == Direction.Axis.Y ? 0.5D + 0.5625D * (double)direction.getStepY() : (double)randomsource.nextFloat();
++            double d3 = direction$axis == Direction.Axis.Z ? 0.5D + 0.5625D * (double)direction.getStepZ() : (double)randomsource.nextFloat();
++            p_55455_.addParticle(DustParticleOptions.REDSTONE, (double)p_55456_.getX() + d1, (double)p_55456_.getY() + d2, (double)p_55456_.getZ() + d3, 0.0D, 0.0D, 0.0D);
++         }
++      }
++
++   }
++
++   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55484_) {
++      p_55484_.add(LIT);
++   }
+ }

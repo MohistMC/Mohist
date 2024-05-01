@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.fml.ModList;
@@ -14,6 +13,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class ConfigScreenHandler
 {
@@ -36,6 +36,7 @@ public class ConfigScreenHandler
             this((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
         }
     }
+
     public static Optional<BiFunction<Minecraft, Screen, Screen>> getScreenFactoryFor(IModInfo selectedMod)
     {
         return ModList.get().getModContainerById(selectedMod.getModId()).

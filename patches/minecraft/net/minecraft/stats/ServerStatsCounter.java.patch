@@ -1,32 +1,36 @@
 --- a/net/minecraft/stats/ServerStatsCounter.java
 +++ b/net/minecraft/stats/ServerStatsCounter.java
-@@ -41,6 +_,13 @@
-    public ServerStatsCounter(MinecraftServer p_12816_, File p_12817_) {
-       this.server = p_12816_;
-       this.file = p_12817_;
-+      // Spigot start
-+      for ( Map.Entry<ResourceLocation, Integer> entry : org.spigotmc.SpigotConfig.forcedStats.entrySet() )
-+      {
-+         Stat<ResourceLocation> wrapper = Stats.CUSTOM.get( entry.getKey() );
-+         this.stats.put( wrapper, entry.getValue().intValue() );
-+      }
-+      // Spigot end
-       if (p_12817_.isFile()) {
-          try {
-             this.parseLocal(p_12816_.getFixerUpper(), FileUtils.readFileToString(p_12817_));
-@@ -54,6 +_,7 @@
-    }
+@@ -42,6 +_,13 @@
+     public ServerStatsCounter(MinecraftServer p_12816_, File p_12817_) {
+         this.server = p_12816_;
+         this.file = p_12817_;
++      	// Spigot start
++      	for ( Map.Entry<ResourceLocation, Integer> entry : org.spigotmc.SpigotConfig.forcedStats.entrySet() )
++      	{
++         	Stat<ResourceLocation> wrapper = Stats.CUSTOM.get( entry.getKey() );
++         	this.stats.put( wrapper, entry.getValue().intValue() );
++      	}
++      	// Spigot end
+         if (p_12817_.isFile()) {
+             try {
+                 this.parseLocal(p_12816_.getFixerUpper(), FileUtils.readFileToString(p_12817_));
+@@ -53,7 +_,8 @@
+         }
+     }
  
-    public void save() {
-+      if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
-       try {
-          FileUtils.writeStringToFile(this.file, this.toJson());
-       } catch (IOException ioexception) {
-@@ -63,6 +_,7 @@
-    }
+-    public void save() {
++   	public void save() {
++      	if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
+         try {
+             FileUtils.writeStringToFile(this.file, this.toJson());
+         } catch (IOException ioexception) {
+@@ -62,7 +_,8 @@
+     }
  
-    public void setValue(Player p_12827_, Stat<?> p_12828_, int p_12829_) {
-+      if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
-       super.setValue(p_12827_, p_12828_, p_12829_);
-       this.dirty.add(p_12828_);
-    }
+     @Override
+-    public void setValue(Player p_12827_, Stat<?> p_12828_, int p_12829_) {
++   	public void setValue(Player p_12827_, Stat<?> p_12828_, int p_12829_) {
++      	if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
+         super.setValue(p_12827_, p_12828_, p_12829_);
+         this.dirty.add(p_12828_);
+     }

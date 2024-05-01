@@ -1,13 +1,30 @@
 --- a/net/minecraft/server/network/ConfigurationTask.java
 +++ b/net/minecraft/server/network/ConfigurationTask.java
-@@ -4,6 +_,10 @@
+@@ -4,14 +_,17 @@
  import net.minecraft.network.protocol.Packet;
  
  public interface ConfigurationTask {
+-    void start(Consumer<Packet<?>> p_299398_);
+-
+-    ConfigurationTask.Type type();
+-
+-    public static record Type(String id) {
+-        @Override
+-        public String toString() {
+-            return this.id;
+-        }
+-    }
 +   default void start(net.minecraftforge.network.config.ConfigurationTaskContext ctx) {
 +       start(ctx::send);
 +   }
 +
-    void start(Consumer<Packet<?>> p_299398_);
- 
-    ConfigurationTask.Type type();
++   void start(Consumer<Packet<?>> p_299398_);
++
++   ConfigurationTask.Type type();
++
++   public static record Type(String id) {
++      public String toString() {
++         return this.id;
++      }
++   }
+ }

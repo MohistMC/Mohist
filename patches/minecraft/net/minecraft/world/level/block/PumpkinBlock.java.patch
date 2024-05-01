@@ -1,11 +1,93 @@
 --- a/net/minecraft/world/level/block/PumpkinBlock.java
 +++ b/net/minecraft/world/level/block/PumpkinBlock.java
-@@ -31,7 +_,7 @@
+@@ -7,8 +_,7 @@
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.world.InteractionHand;
+-import net.minecraft.world.ItemInteractionResult;
+-import net.minecraft.world.entity.LivingEntity;
++import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -20,47 +_,37 @@
+ import net.minecraft.world.phys.BlockHitResult;
  
-    public InteractionResult use(BlockState p_55289_, Level p_55290_, BlockPos p_55291_, Player p_55292_, InteractionHand p_55293_, BlockHitResult p_55294_) {
-       ItemStack itemstack = p_55292_.getItemInHand(p_55293_);
--      if (itemstack.is(Items.SHEARS)) {
+ public class PumpkinBlock extends Block {
+-    public static final MapCodec<PumpkinBlock> CODEC = simpleCodec(PumpkinBlock::new);
+-
+-    @Override
+-    public MapCodec<PumpkinBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public PumpkinBlock(BlockBehaviour.Properties p_55284_) {
+-        super(p_55284_);
+-    }
+-
+-    @Override
+-    protected ItemInteractionResult useItemOn(
+-        ItemStack p_330568_, BlockState p_330263_, Level p_327756_, BlockPos p_328675_, Player p_334049_, InteractionHand p_331851_, BlockHitResult p_329008_
+-    ) {
+-        if (!p_330568_.is(Items.SHEARS)) {
+-            return super.useItemOn(p_330568_, p_330263_, p_327756_, p_328675_, p_334049_, p_331851_, p_329008_);
+-        } else if (p_327756_.isClientSide) {
+-            return ItemInteractionResult.sidedSuccess(p_327756_.isClientSide);
+-        } else {
+-            Direction direction = p_329008_.getDirection();
+-            Direction direction1 = direction.getAxis() == Direction.Axis.Y ? p_334049_.getDirection().getOpposite() : direction;
+-            p_327756_.playSound(null, p_328675_, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0F, 1.0F);
+-            p_327756_.setBlock(p_328675_, Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction1), 11);
+-            ItemEntity itementity = new ItemEntity(
+-                p_327756_,
+-                (double)p_328675_.getX() + 0.5 + (double)direction1.getStepX() * 0.65,
+-                (double)p_328675_.getY() + 0.1,
+-                (double)p_328675_.getZ() + 0.5 + (double)direction1.getStepZ() * 0.65,
+-                new ItemStack(Items.PUMPKIN_SEEDS, 4)
+-            );
+-            itementity.setDeltaMovement(
+-                0.05 * (double)direction1.getStepX() + p_327756_.random.nextDouble() * 0.02,
+-                0.05,
+-                0.05 * (double)direction1.getStepZ() + p_327756_.random.nextDouble() * 0.02
+-            );
+-            p_327756_.addFreshEntity(itementity);
+-            p_330568_.hurtAndBreak(1, p_334049_, LivingEntity.getSlotForHand(p_331851_));
+-            p_327756_.gameEvent(p_334049_, GameEvent.SHEAR, p_328675_);
+-            p_334049_.awardStat(Stats.ITEM_USED.get(Items.SHEARS));
+-            return ItemInteractionResult.sidedSuccess(p_327756_.isClientSide);
+-        }
+-    }
++   public static final MapCodec<PumpkinBlock> CODEC = simpleCodec(PumpkinBlock::new);
++
++   public MapCodec<PumpkinBlock> codec() {
++      return CODEC;
++   }
++
++   public PumpkinBlock(BlockBehaviour.Properties p_55284_) {
++      super(p_55284_);
++   }
++
++   public InteractionResult use(BlockState p_55289_, Level p_55290_, BlockPos p_55291_, Player p_55292_, InteractionHand p_55293_, BlockHitResult p_55294_) {
++      ItemStack itemstack = p_55292_.getItemInHand(p_55293_);
 +      if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_CARVE)) {
-          if (!p_55290_.isClientSide) {
-             Direction direction = p_55294_.getDirection();
-             Direction direction1 = direction.getAxis() == Direction.Axis.Y ? p_55292_.getDirection().getOpposite() : direction;
++         if (!p_55290_.isClientSide) {
++            Direction direction = p_55294_.getDirection();
++            Direction direction1 = direction.getAxis() == Direction.Axis.Y ? p_55292_.getDirection().getOpposite() : direction;
++            p_55290_.playSound((Player)null, p_55291_, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0F, 1.0F);
++            p_55290_.setBlock(p_55291_, Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction1), 11);
++            ItemEntity itementity = new ItemEntity(p_55290_, (double)p_55291_.getX() + 0.5D + (double)direction1.getStepX() * 0.65D, (double)p_55291_.getY() + 0.1D, (double)p_55291_.getZ() + 0.5D + (double)direction1.getStepZ() * 0.65D, new ItemStack(Items.PUMPKIN_SEEDS, 4));
++            itementity.setDeltaMovement(0.05D * (double)direction1.getStepX() + p_55290_.random.nextDouble() * 0.02D, 0.05D, 0.05D * (double)direction1.getStepZ() + p_55290_.random.nextDouble() * 0.02D);
++            p_55290_.addFreshEntity(itementity);
++            itemstack.hurtAndBreak(1, p_55292_, (p_55287_) -> {
++               p_55287_.broadcastBreakEvent(p_55293_);
++            });
++            p_55290_.gameEvent(p_55292_, GameEvent.SHEAR, p_55291_);
++            p_55292_.awardStat(Stats.ITEM_USED.get(Items.SHEARS));
++         }
++
++         return InteractionResult.sidedSuccess(p_55290_.isClientSide);
++      } else {
++         return super.use(p_55289_, p_55290_, p_55291_, p_55292_, p_55293_, p_55294_);
++      }
++   }
+ }

@@ -21,32 +21,33 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntent;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.StructureModifier;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
 import org.jetbrains.annotations.ApiStatus;
 
 @SuppressWarnings("deprecation")
@@ -161,7 +162,7 @@ public class ServerLifecycleHooks {
         if (!allowLogins.get())
             return rejectConnection(connection, ctx.getType(), "Server is still starting! Please wait before reconnecting.");
 
-        if (packet.nextProtocol() != ConnectionProtocol.LOGIN)
+        if (packet.intention() != ClientIntent.LOGIN)
             return true;
 
         if (ctx.getType() == ConnectionType.MODDED && ctx.getNetVersion() != NetworkContext.NET_VERSION)
@@ -175,7 +176,7 @@ public class ServerLifecycleHooks {
     }
 
     private static boolean rejectConnection(final Connection connection, ConnectionType type, String message) {
-        connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
+        //connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
         LOGGER.info(SERVERHOOKS, "[{}] Disconnecting {} connection attempt: {}", connection.getLoggableAddress(true), type, message); // TODO: Respect logIP setting
         var text = Component.literal(message);
         connection.send(new ClientboundLoginDisconnectPacket(text));

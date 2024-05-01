@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -1,8 +_,11 @@
+@@ -1,79 +_,135 @@
  package net.minecraft.server.network;
  
 +import java.net.InetAddress;
@@ -9,13 +9,83 @@
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
 +import net.minecraft.network.chat.MutableComponent;
- import net.minecraft.network.protocol.handshake.ClientIntent;
++import net.minecraft.network.protocol.handshake.ClientIntent;
  import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
  import net.minecraft.network.protocol.handshake.ServerHandshakePacketListener;
-@@ -14,6 +_,15 @@
-    private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
-    private final MinecraftServer server;
-    private final Connection connection;
+ import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
+-import net.minecraft.network.protocol.login.LoginProtocols;
+ import net.minecraft.network.protocol.status.ServerStatus;
+-import net.minecraft.network.protocol.status.StatusProtocols;
+ import net.minecraft.server.MinecraftServer;
+ 
+ public class ServerHandshakePacketListenerImpl implements ServerHandshakePacketListener {
+-    private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
+-    private final MinecraftServer server;
+-    private final Connection connection;
+-
+-    public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
+-        this.server = p_9969_;
+-        this.connection = p_9970_;
+-    }
+-
+-    @Override
+-    public void handleIntention(ClientIntentionPacket p_9975_) {
+-        switch (p_9975_.intention()) {
+-            case LOGIN:
+-                this.beginLogin(p_9975_, false);
+-                break;
+-            case STATUS:
+-                ServerStatus serverstatus = this.server.getStatus();
+-                this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
+-                if (this.server.repliesToStatus() && serverstatus != null) {
+-                    this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverstatus, this.connection));
+-                } else {
+-                    this.connection.disconnect(IGNORE_STATUS_REASON);
+-                }
+-                break;
+-            case TRANSFER:
+-                if (!this.server.acceptsTransfers()) {
+-                    this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
+-                    Component component = Component.translatable("multiplayer.disconnect.transfers_disabled");
+-                    this.connection.send(new ClientboundLoginDisconnectPacket(component));
+-                    this.connection.disconnect(component);
+-                } else {
+-                    this.beginLogin(p_9975_, true);
+-                }
+-                break;
+-            default:
+-                throw new UnsupportedOperationException("Invalid intention " + p_9975_.intention());
+-        }
+-    }
+-
+-    private void beginLogin(ClientIntentionPacket p_330592_, boolean p_332714_) {
+-        this.connection.setupOutboundProtocol(LoginProtocols.CLIENTBOUND);
+-        if (p_330592_.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
+-            Component component;
+-            if (p_330592_.protocolVersion() < 754) {
+-                component = Component.translatable("multiplayer.disconnect.outdated_client", SharedConstants.getCurrentVersion().getName());
+-            } else {
+-                component = Component.translatable("multiplayer.disconnect.incompatible", SharedConstants.getCurrentVersion().getName());
+-            }
+-
+-            this.connection.send(new ClientboundLoginDisconnectPacket(component));
+-            this.connection.disconnect(component);
+-        } else {
+-            this.connection.setupInboundProtocol(LoginProtocols.SERVERBOUND, new ServerLoginPacketListenerImpl(this.server, this.connection, p_332714_));
+-        }
+-    }
+-
+-    @Override
+-    public void onDisconnect(Component p_9973_) {
+-    }
+-
+-    @Override
+-    public boolean isAcceptingMessages() {
+-        return this.connection.isConnected();
+-    }
++   private static final Component IGNORE_STATUS_REASON = Component.translatable("disconnect.ignoring_status_request");
++   private final MinecraftServer server;
++   private final Connection connection;
 +   // CraftBukkit start - add fields
 +   private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
 +   private static int throttleCounter = 0;
@@ -25,18 +95,18 @@
 +   static final java.util.regex.Pattern HOST_PATTERN = java.util.regex.Pattern.compile("[0-9a-f\\.:]{0,45}");
 +   static final java.util.regex.Pattern PROP_PATTERN = java.util.regex.Pattern.compile("\\w{0,16}");
 +   // Spigot end
- 
-    public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
-       this.server = p_9969_;
-@@ -21,28 +_,89 @@
-    }
- 
-    public void handleIntention(ClientIntentionPacket p_9975_) {
++
++   public ServerHandshakePacketListenerImpl(MinecraftServer p_9969_, Connection p_9970_) {
++      this.server = p_9969_;
++      this.connection = p_9970_;
++   }
++
++   public void handleIntention(ClientIntentionPacket p_9975_) {
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
 +      this.connection.hostname = p_9975_.hostName() + ":" + p_9975_.port(); // CraftBukkit  - set hostname
-       switch (p_9975_.intention()) {
-          case LOGIN:
-             this.connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
++      switch (p_9975_.intention()) {
++         case LOGIN:
++            this.connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
 +            // CraftBukkit start - Connection throttle
 +            try {
 +               long currentTime = System.currentTimeMillis();
@@ -71,21 +141,18 @@
 +               org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
 +            }
 +            // CraftBukkit end
-             if (p_9975_.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
-                Component component;
--               if (p_9975_.protocolVersion() < 754) {
--                  component = Component.translatable("multiplayer.disconnect.outdated_client", SharedConstants.getCurrentVersion().getName());
++            if (p_9975_.protocolVersion() != SharedConstants.getCurrentVersion().getProtocolVersion()) {
++               Component component;
 +               if (p_9975_.protocolVersion() < SharedConstants.getCurrentVersion().getProtocolVersion()) { // Spigot - SPIGOT-7546: Handle version check correctly for outdated client message
 +                  component = Component.literal( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedClientMessage.replaceAll("'", "''"), SharedConstants.getCurrentVersion().getName())); // Spigot
-                } else {
--                  component = Component.translatable("multiplayer.disconnect.incompatible", SharedConstants.getCurrentVersion().getName());
++               } else {
 +                  component = Component.literal( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedServerMessage.replaceAll("'", "''"), SharedConstants.getCurrentVersion().getName())); // Spigot
-                }
- 
-                this.connection.send(new ClientboundLoginDisconnectPacket(component));
-                this.connection.disconnect(component);
-             } else {
-                this.connection.setListener(new ServerLoginPacketListenerImpl(this.server, this.connection));
++               }
++
++               this.connection.send(new ClientboundLoginDisconnectPacket(component));
++               this.connection.disconnect(component);
++            } else {
++               this.connection.setListener(new ServerLoginPacketListenerImpl(this.server, this.connection));
 +               // Spigot Start
 +               String[] split = p_9975_.hostName().split("\00");
 +               if (org.spigotmc.SpigotConfig.bungee) {
@@ -111,14 +178,27 @@
 +                  return;
 +               }
 +               // Spigot End
-             }
-             break;
-          case STATUS:
-             ServerStatus serverstatus = this.server.getStatus();
-             if (this.server.repliesToStatus() && serverstatus != null) {
-                this.connection.setClientboundProtocolAfterHandshake(ClientIntent.STATUS);
--               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection));
++            }
++            break;
++         case STATUS:
++            ServerStatus serverstatus = this.server.getStatus();
++            if (this.server.repliesToStatus() && serverstatus != null) {
++               this.connection.setClientboundProtocolAfterHandshake(ClientIntent.STATUS);
 +               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection, this.server.getStatusJson()));
-             } else {
-                this.connection.disconnect(IGNORE_STATUS_REASON);
-             }
++            } else {
++               this.connection.disconnect(IGNORE_STATUS_REASON);
++            }
++            break;
++         default:
++            throw new UnsupportedOperationException("Invalid intention " + p_9975_.intention());
++      }
++
++   }
++
++   public void onDisconnect(Component p_9973_) {
++   }
++
++   public boolean isAcceptingMessages() {
++      return this.connection.isConnected();
++   }
+ }

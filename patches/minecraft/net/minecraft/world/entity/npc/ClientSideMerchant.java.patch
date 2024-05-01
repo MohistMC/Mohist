@@ -1,22 +1,124 @@
 --- a/net/minecraft/world/entity/npc/ClientSideMerchant.java
 +++ b/net/minecraft/world/entity/npc/ClientSideMerchant.java
-@@ -8,6 +_,7 @@
+@@ -8,66 +_,61 @@
  import net.minecraft.world.item.trading.Merchant;
  import net.minecraft.world.item.trading.MerchantOffer;
  import net.minecraft.world.item.trading.MerchantOffers;
 +import org.bukkit.craftbukkit.inventory.CraftMerchant;
  
  public class ClientSideMerchant implements Merchant {
-    private final Player source;
-@@ -42,6 +_,11 @@
- 
-    public boolean isClientSide() {
-       return this.source.level().isClientSide;
+-    private final Player source;
+-    private MerchantOffers offers = new MerchantOffers();
+-    private int xp;
+-
+-    public ClientSideMerchant(Player p_35344_) {
+-        this.source = p_35344_;
+-    }
+-
+-    @Override
+-    public Player getTradingPlayer() {
+-        return this.source;
+-    }
+-
+-    @Override
+-    public void setTradingPlayer(@Nullable Player p_35356_) {
+-    }
+-
+-    @Override
+-    public MerchantOffers getOffers() {
+-        return this.offers;
+-    }
+-
+-    @Override
+-    public void overrideOffers(MerchantOffers p_35348_) {
+-        this.offers = p_35348_;
+-    }
+-
+-    @Override
+-    public void notifyTrade(MerchantOffer p_35346_) {
+-        p_35346_.increaseUses();
+-    }
+-
+-    @Override
+-    public void notifyTradeUpdated(ItemStack p_35358_) {
+-    }
+-
+-    @Override
+-    public boolean isClientSide() {
+-        return this.source.level().isClientSide;
+-    }
+-
+-    @Override
+-    public int getVillagerXp() {
+-        return this.xp;
+-    }
+-
+-    @Override
+-    public void overrideXp(int p_35360_) {
+-        this.xp = p_35360_;
+-    }
+-
+-    @Override
+-    public boolean showProgressBar() {
+-        return true;
+-    }
+-
+-    @Override
+-    public SoundEvent getNotifyTradeSound() {
+-        return SoundEvents.VILLAGER_YES;
+-    }
++   private final Player source;
++   private MerchantOffers offers = new MerchantOffers();
++   private int xp;
++
++   public ClientSideMerchant(Player p_35344_) {
++      this.source = p_35344_;
++   }
++
++   public Player getTradingPlayer() {
++      return this.source;
++   }
++
++   public void setTradingPlayer(@Nullable Player p_35356_) {
++   }
++
++   public MerchantOffers getOffers() {
++      return this.offers;
++   }
++
++   public void overrideOffers(MerchantOffers p_35348_) {
++      this.offers = p_35348_;
++   }
++
++   public void notifyTrade(MerchantOffer p_35346_) {
++      p_35346_.increaseUses();
++   }
++
++   public void notifyTradeUpdated(ItemStack p_35358_) {
++   }
++
++   public boolean isClientSide() {
++      return this.source.level().isClientSide;
 +   }
 +
 +   @Override
 +   public CraftMerchant getCraftMerchant() {
 +      return null;
-    }
- 
-    public int getVillagerXp() {
++   }
++
++   public int getVillagerXp() {
++      return this.xp;
++   }
++
++   public void overrideXp(int p_35360_) {
++      this.xp = p_35360_;
++   }
++
++   public boolean showProgressBar() {
++      return true;
++   }
++
++   public SoundEvent getNotifyTradeSound() {
++      return SoundEvents.VILLAGER_YES;
++   }
+ }

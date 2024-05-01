@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/PacketUtils.java
 +++ b/net/minecraft/network/protocol/PacketUtils.java
-@@ -6,6 +_,7 @@
+@@ -7,6 +_,7 @@
  import net.minecraft.network.PacketListener;
  import net.minecraft.server.RunningOnDifferentThreadException;
  import net.minecraft.server.level.ServerLevel;
@@ -8,11 +8,11 @@
  import net.minecraft.util.thread.BlockableEventLoop;
  import org.slf4j.Logger;
  
-@@ -19,6 +_,7 @@
-    public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> p_131364_, T p_131365_, BlockableEventLoop<?> p_131366_) throws RunningOnDifferentThreadException {
-       if (!p_131366_.isSameThread()) {
-          p_131366_.executeIfPossible(() -> {
-+            if (p_131365_ instanceof ServerCommonPacketListenerImpl serverCommonPacketListener && serverCommonPacketListener.processedDisconnect) return; // CraftBukkit - Don't handle sync packets for kicked players
-             if (p_131365_.shouldHandleMessage(p_131364_)) {
-                try {
-                   p_131364_.handle(p_131365_);
+@@ -20,6 +_,7 @@
+     public static <T extends PacketListener> void ensureRunningOnSameThread(Packet<T> p_131364_, T p_131365_, BlockableEventLoop<?> p_131366_) throws RunningOnDifferentThreadException {
+         if (!p_131366_.isSameThread()) {
+             p_131366_.executeIfPossible(() -> {
++            	if (p_131365_ instanceof ServerCommonPacketListenerImpl serverCommonPacketListener && serverCommonPacketListener.processedDisconnect) return; // CraftBukkit - Don't handle sync packets for kicked players
+                 if (p_131365_.shouldHandleMessage(p_131364_)) {
+                     try {
+                         p_131364_.handle(p_131365_);

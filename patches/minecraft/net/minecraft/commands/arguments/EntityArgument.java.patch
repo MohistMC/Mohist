@@ -1,9 +1,10 @@
 --- a/net/minecraft/commands/arguments/EntityArgument.java
 +++ b/net/minecraft/commands/arguments/EntityArgument.java
-@@ -110,12 +_,31 @@
-       }
-    }
+@@ -110,12 +_,30 @@
+         }
+     }
  
+-    @Override
 +   public EntitySelector parse(StringReader pReader, boolean overridePermissions) throws CommandSyntaxException {
 +      EntitySelectorParser entityselectorparser = new EntitySelectorParser(pReader);
 +      EntitySelector entityselector = entityselectorparser.parse(overridePermissions);
@@ -23,13 +24,12 @@
 +      }
 +   }
 +
-    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_91482_, SuggestionsBuilder p_91483_) {
-       S s = p_91482_.getSource();
-       if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
-          StringReader stringreader = new StringReader(p_91483_.getInput());
-          stringreader.setCursor(p_91483_.getStart());
--         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
-+         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
+     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_91482_, SuggestionsBuilder p_91483_) {
+         if (p_91482_.getSource() instanceof SharedSuggestionProvider sharedsuggestionprovider) {
+             StringReader stringreader = new StringReader(p_91483_.getInput());
+             stringreader.setCursor(p_91483_.getStart());
+-            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
++            EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
  
-          try {
-             entityselectorparser.parse();
+             try {
+                 entityselectorparser.parse();

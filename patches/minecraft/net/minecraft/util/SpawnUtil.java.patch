@@ -1,19 +1,48 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
-@@ -17,18 +_,25 @@
+@@ -1,8 +_,10 @@
+ package net.minecraft.util;
+ 
+ import java.util.Optional;
++import java.util.function.Consumer;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
++import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.Mob;
+@@ -15,37 +_,35 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SpawnUtil {
-+
-    public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_) {
--      BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.mutable();
+-    public static <T extends Mob> Optional<T> trySpawnMob(
+-        EntityType<T> p_216404_,
+-        MobSpawnType p_216405_,
+-        ServerLevel p_216406_,
+-        BlockPos p_216407_,
+-        int p_216408_,
+-        int p_216409_,
+-        int p_216410_,
+-        SpawnUtil.Strategy p_216411_
+-    ) {
+-        BlockPos.MutableBlockPos blockpos$mutableblockpos = p_216407_.mutable();
 -
--      for(int i = 0; i < p_216408_; ++i) {
--         int j = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
--         int k = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
--         blockpos$mutableblockpos.setWithOffset(p_216407_, j, p_216410_, k);
--         if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
--            T t = p_216404_.create(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
+-        for (int i = 0; i < p_216408_; i++) {
+-            int j = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
+-            int k = Mth.randomBetweenInclusive(p_216406_.random, -p_216409_, p_216409_);
+-            blockpos$mutableblockpos.setWithOffset(p_216407_, j, p_216410_, k);
+-            if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
+-                T t = (T)p_216404_.create(p_216406_, null, blockpos$mutableblockpos, p_216405_, false, false);
+-                if (t != null) {
+-                    if (t.checkSpawnRules(p_216406_, p_216405_) && t.checkSpawnObstruction(p_216406_)) {
+-                        p_216406_.addFreshEntityWithPassengers(t);
+-                        return Optional.of(t);
+-                    }
+-
+-                    t.discard();
+-                }
++
++   public static <T extends Mob> Optional<T> trySpawnMob(EntityType<T> p_216404_, MobSpawnType p_216405_, ServerLevel p_216406_, BlockPos p_216407_, int p_216408_, int p_216409_, int p_216410_, SpawnUtil.Strategy p_216411_) {
 +      // CraftBukkit start
 +      return trySpawnMob(p_216404_, p_216405_, p_216406_, p_216407_, p_216408_, p_216409_, p_216410_, p_216411_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
 +   }
@@ -28,11 +57,22 @@
 +         blockpos$mutableblockpos.setWithOffset(pPos, j, pYOffset, k);
 +         if (pLevel.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(pLevel, pYOffset, blockpos$mutableblockpos, pStrategy)) {
 +            T t = pEntityType.create(pLevel, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, pSpawnType, false, false);
-             if (t != null) {
--               if (t.checkSpawnRules(p_216406_, p_216405_) && t.checkSpawnObstruction(p_216406_)) {
--                  p_216406_.addFreshEntityWithPassengers(t);
++            if (t != null) {
 +               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, pLevel, pSpawnType)) {
 +                  pLevel.addFreshEntityWithPassengers(t, reason); // CraftBukkit
-                   return Optional.of(t);
-                }
++                  return Optional.of(t);
++               }
++
++               t.discard();
+             }
+-        }
++         }
++      }
  
+-        return Optional.empty();
+-    }
++      return Optional.empty();
++   }
+ 
+     private static boolean moveToPossibleSpawnPosition(ServerLevel p_216399_, int p_216400_, BlockPos.MutableBlockPos p_216401_, SpawnUtil.Strategy p_216402_) {
+         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos().set(p_216401_);

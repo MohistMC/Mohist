@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DefaultDispenseItemBehavior.java
-@@ -6,8 +_,24 @@
+@@ -6,9 +_,24 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.block.DispenserBlock;
@@ -10,6 +10,7 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class DefaultDispenseItemBehavior implements DispenseItemBehavior {
+-    @Override
 +
 +   // CraftBukkit start // Mohist TODO super();
 +   private boolean dropper = true;
@@ -22,26 +23,30 @@
 +      this.dropper = dropper;
 +   }
 +
-    public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
-       ItemStack itemstack = this.execute(p_123391_, p_123392_);
-       this.playSound(p_123391_);
-@@ -19,7 +_,11 @@
-       Direction direction = p_301824_.state().getValue(DispenserBlock.FACING);
-       Position position = DispenserBlock.getDispensePosition(p_301824_);
-       ItemStack itemstack = p_123386_.split(1);
--      spawnItem(p_301824_.level(), itemstack, 6, direction, position);
+     public final ItemStack dispense(BlockSource p_123391_, ItemStack p_123392_) {
+         ItemStack itemstack = this.execute(p_123391_, p_123392_);
+         this.playSound(p_123391_);
+@@ -20,9 +_,13 @@
+         Direction direction = p_301824_.state().getValue(DispenserBlock.FACING);
+         Position position = DispenserBlock.getDispensePosition(p_301824_);
+         ItemStack itemstack = p_123386_.split(1);
+-        spawnItem(p_301824_.level(), itemstack, 6, direction, position);
+-        return p_123386_;
+-    }
 +      // CraftBukkit start
 +      if (!spawnItem(p_301824_.level(), itemstack, 6, direction, p_301824_, dropper)){
 +         itemstack.grow(1);
 +      }
 +      // CraftBukkit end
-       return p_123386_;
-    }
++      return p_123386_;
++   }
  
-@@ -38,6 +_,59 @@
-       itementity.setDeltaMovement(p_123379_.random.triangle((double)p_123382_.getStepX() * d3, 0.0172275D * (double)p_123381_), p_123379_.random.triangle(0.2D, 0.0172275D * (double)p_123381_), p_123379_.random.triangle((double)p_123382_.getStepZ() * d3, 0.0172275D * (double)p_123381_));
-       p_123379_.addFreshEntity(itementity);
-    }
+     public static void spawnItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
+         double d0 = p_123383_.x();
+@@ -43,6 +_,59 @@
+         );
+         p_123379_.addFreshEntity(itementity);
+     }
 +
 +   // CraftBukkit start
 +   private static ItemEntity prepareItem(Level p_123379_, ItemStack p_123380_, int p_123381_, Direction p_123382_, Position p_123383_) {
@@ -96,5 +101,5 @@
 +   }
 +   // CraftBukkit end
  
-    protected void playSound(BlockSource p_123384_) {
-       p_123384_.level().levelEvent(1000, p_123384_.pos(), 0);
+     protected void playSound(BlockSource p_123384_) {
+         p_123384_.level().levelEvent(1000, p_123384_.pos(), 0);

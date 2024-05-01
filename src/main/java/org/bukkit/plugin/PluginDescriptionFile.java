@@ -3,6 +3,14 @@ package org.bukkit.plugin;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.mohistmc.org.yaml.snakeyaml.DumperOptions;
+import com.mohistmc.org.yaml.snakeyaml.LoaderOptions;
+import com.mohistmc.org.yaml.snakeyaml.Yaml;
+import com.mohistmc.org.yaml.snakeyaml.constructor.AbstractConstruct;
+import com.mohistmc.org.yaml.snakeyaml.constructor.SafeConstructor;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Node;
+import com.mohistmc.org.yaml.snakeyaml.nodes.Tag;
+import com.mohistmc.org.yaml.snakeyaml.representer.Representer;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
@@ -24,14 +32,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.AbstractConstruct;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * This type is the runtime-container for the information in the plugin.yml.

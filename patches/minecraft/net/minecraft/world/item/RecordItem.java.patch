@@ -1,24 +1,94 @@
 --- a/net/minecraft/world/item/RecordItem.java
 +++ b/net/minecraft/world/item/RecordItem.java
-@@ -22,17 +_,42 @@
+@@ -16,73 +_,99 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Blocks;
+ import net.minecraft.world.level.block.JukeboxBlock;
++import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  
  public class RecordItem extends Item {
+-    private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
+-    private final int analogOutput;
+-    private final SoundEvent sound;
+-    private final int lengthInTicks;
+-
+-    public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
+-        super(p_239616_);
+-        this.analogOutput = p_239614_;
+-        this.sound = p_239615_;
+-        this.lengthInTicks = p_239617_ * 20;
+-        BY_NAME.put(this.sound, this);
+-    }
+-
+-    @Override
+-    public InteractionResult useOn(UseOnContext p_43048_) {
+-        Level level = p_43048_.getLevel();
+-        BlockPos blockpos = p_43048_.getClickedPos();
+-        BlockState blockstate = level.getBlockState(blockpos);
+-        if (blockstate.is(Blocks.JUKEBOX) && !blockstate.getValue(JukeboxBlock.HAS_RECORD)) {
+-            ItemStack itemstack = p_43048_.getItemInHand();
+-            if (!level.isClientSide) {
+-                Player player = p_43048_.getPlayer();
+-                if (level.getBlockEntity(blockpos) instanceof JukeboxBlockEntity jukeboxblockentity) {
+-                    jukeboxblockentity.setTheItem(itemstack.copy());
+-                    level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, blockstate));
+-                }
+-
+-                itemstack.shrink(1);
+-                if (player != null) {
+-                    player.awardStat(Stats.PLAY_RECORD);
+-                }
+-            }
+-
+-            return InteractionResult.sidedSuccess(level.isClientSide);
+-        } else {
+-            return InteractionResult.PASS;
+-        }
+-    }
+-
+-    public int getAnalogOutput() {
+-        return this.analogOutput;
+-    }
+-
+-    @Override
+-    public void appendHoverText(ItemStack p_43043_, Item.TooltipContext p_333662_, List<Component> p_43045_, TooltipFlag p_43046_) {
+-        p_43045_.add(this.getDisplayName().withStyle(ChatFormatting.GRAY));
+-    }
+-
+-    public MutableComponent getDisplayName() {
+-        return Component.translatable(this.getDescriptionId() + ".desc");
+-    }
+-
+-    @Nullable
+-    public static RecordItem getBySound(SoundEvent p_43041_) {
+-        return BY_NAME.get(p_43041_);
+-    }
+-
+-    public SoundEvent getSound() {
+-        return this.sound;
+-    }
+-
+-    public int getLengthInTicks() {
+-        return this.lengthInTicks;
+-    }
 +   @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
-    private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
-    private final int analogOutput;
++   private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
++   private final int analogOutput;
 +   @Deprecated // Forge: refer to soundSupplier
-    private final SoundEvent sound;
-    private final int lengthInTicks;
++   private final SoundEvent sound;
++   private final int lengthInTicks;
 +   private final java.util.function.Supplier<SoundEvent> soundSupplier;
- 
++
 +   @Deprecated // Forge: Use the constructor that takes a supplier instead
-    public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
-       super(p_239616_);
-       this.analogOutput = p_239614_;
-       this.sound = p_239615_;
-       this.lengthInTicks = p_239617_ * 20;
-       BY_NAME.put(this.sound, this);
++   public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
++      super(p_239616_);
++      this.analogOutput = p_239614_;
++      this.sound = p_239615_;
++      this.lengthInTicks = p_239617_ * 20;
++      BY_NAME.put(this.sound, this);
 +      this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.sound);
 +   }
 +
@@ -40,15 +110,57 @@
 +      this.sound = null;
 +      this.soundSupplier = soundSupplier;
 +      this.lengthInTicks = lengthInTicks;
-    }
- 
-    public InteractionResult useOn(UseOnContext p_43048_) {
-@@ -80,7 +_,7 @@
-    }
- 
-    public SoundEvent getSound() {
--      return this.sound;
++   }
++
++   public InteractionResult useOn(UseOnContext p_43048_) {
++      Level level = p_43048_.getLevel();
++      BlockPos blockpos = p_43048_.getClickedPos();
++      BlockState blockstate = level.getBlockState(blockpos);
++      if (blockstate.is(Blocks.JUKEBOX) && !blockstate.getValue(JukeboxBlock.HAS_RECORD)) {
++         ItemStack itemstack = p_43048_.getItemInHand();
++         if (!level.isClientSide) {
++            Player player = p_43048_.getPlayer();
++            BlockEntity blockentity = level.getBlockEntity(blockpos);
++            if (blockentity instanceof JukeboxBlockEntity) {
++               JukeboxBlockEntity jukeboxblockentity = (JukeboxBlockEntity)blockentity;
++               jukeboxblockentity.setTheItem(itemstack.copy());
++               level.gameEvent(GameEvent.BLOCK_CHANGE, blockpos, GameEvent.Context.of(player, blockstate));
++            }
++
++            itemstack.shrink(1);
++            if (player != null) {
++               player.awardStat(Stats.PLAY_RECORD);
++            }
++         }
++
++         return InteractionResult.sidedSuccess(level.isClientSide);
++      } else {
++         return InteractionResult.PASS;
++      }
++   }
++
++   public int getAnalogOutput() {
++      return this.analogOutput;
++   }
++
++   public void appendHoverText(ItemStack p_43043_, @Nullable Level p_43044_, List<Component> p_43045_, TooltipFlag p_43046_) {
++      p_43045_.add(this.getDisplayName().withStyle(ChatFormatting.GRAY));
++   }
++
++   public MutableComponent getDisplayName() {
++      return Component.translatable(this.getDescriptionId() + ".desc");
++   }
++
++   @Nullable
++   public static RecordItem getBySound(SoundEvent p_43041_) {
++      return BY_NAME.get(p_43041_);
++   }
++
++   public SoundEvent getSound() {
 +      return this.soundSupplier.get();
-    }
- 
-    public int getLengthInTicks() {
++   }
++
++   public int getLengthInTicks() {
++      return this.lengthInTicks;
++   }
+ }

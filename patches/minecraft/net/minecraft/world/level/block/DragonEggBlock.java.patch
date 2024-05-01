@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/level/block/DragonEggBlock.java
 +++ b/net/minecraft/world/level/block/DragonEggBlock.java
-@@ -16,6 +_,8 @@
+@@ -4,6 +_,7 @@
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.util.Mth;
++import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.BlockGetter;
+@@ -15,74 +_,79 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -8,11 +16,104 @@
 +import org.bukkit.event.block.BlockFromToEvent;
  
  public class DragonEggBlock extends FallingBlock {
-    public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
-@@ -48,6 +_,18 @@
-       for(int i = 0; i < 1000; ++i) {
-          BlockPos blockpos = p_52938_.offset(p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16), p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8), p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16));
-          if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos)) {
+-    public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
+-    protected static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 16.0, 15.0);
+-
+-    @Override
+-    public MapCodec<DragonEggBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public DragonEggBlock(BlockBehaviour.Properties p_52911_) {
+-        super(p_52911_);
+-    }
+-
+-    @Override
+-    protected VoxelShape getShape(BlockState p_52930_, BlockGetter p_52931_, BlockPos p_52932_, CollisionContext p_52933_) {
+-        return SHAPE;
+-    }
+-
+-    @Override
+-    protected InteractionResult useWithoutItem(BlockState p_52923_, Level p_52924_, BlockPos p_52925_, Player p_52926_, BlockHitResult p_52928_) {
+-        this.teleport(p_52923_, p_52924_, p_52925_);
+-        return InteractionResult.sidedSuccess(p_52924_.isClientSide);
+-    }
+-
+-    @Override
+-    protected void attack(BlockState p_52918_, Level p_52919_, BlockPos p_52920_, Player p_52921_) {
+-        this.teleport(p_52918_, p_52919_, p_52920_);
+-    }
+-
+-    private void teleport(BlockState p_52936_, Level p_52937_, BlockPos p_52938_) {
+-        WorldBorder worldborder = p_52937_.getWorldBorder();
+-
+-        for (int i = 0; i < 1000; i++) {
+-            BlockPos blockpos = p_52938_.offset(
+-                p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16),
+-                p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8),
+-                p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16)
+-            );
+-            if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos)) {
+-                if (p_52937_.isClientSide) {
+-                    for (int j = 0; j < 128; j++) {
+-                        double d0 = p_52937_.random.nextDouble();
+-                        float f = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
+-                        float f1 = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
+-                        float f2 = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
+-                        double d1 = Mth.lerp(d0, (double)blockpos.getX(), (double)p_52938_.getX()) + (p_52937_.random.nextDouble() - 0.5) + 0.5;
+-                        double d2 = Mth.lerp(d0, (double)blockpos.getY(), (double)p_52938_.getY()) + p_52937_.random.nextDouble() - 0.5;
+-                        double d3 = Mth.lerp(d0, (double)blockpos.getZ(), (double)p_52938_.getZ()) + (p_52937_.random.nextDouble() - 0.5) + 0.5;
+-                        p_52937_.addParticle(ParticleTypes.PORTAL, d1, d2, d3, (double)f, (double)f1, (double)f2);
+-                    }
+-                } else {
+-                    p_52937_.setBlock(blockpos, p_52936_, 2);
+-                    p_52937_.removeBlock(p_52938_, false);
+-                }
+-
+-                return;
+-            }
+-        }
+-    }
+-
+-    @Override
+-    protected int getDelayAfterPlace() {
+-        return 5;
+-    }
+-
+-    @Override
+-    protected boolean isPathfindable(BlockState p_52913_, PathComputationType p_52916_) {
+-        return false;
+-    }
++   public static final MapCodec<DragonEggBlock> CODEC = simpleCodec(DragonEggBlock::new);
++   protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
++
++   public MapCodec<DragonEggBlock> codec() {
++      return CODEC;
++   }
++
++   public DragonEggBlock(BlockBehaviour.Properties p_52911_) {
++      super(p_52911_);
++   }
++
++   public VoxelShape getShape(BlockState p_52930_, BlockGetter p_52931_, BlockPos p_52932_, CollisionContext p_52933_) {
++      return SHAPE;
++   }
++
++   public InteractionResult use(BlockState p_52923_, Level p_52924_, BlockPos p_52925_, Player p_52926_, InteractionHand p_52927_, BlockHitResult p_52928_) {
++      this.teleport(p_52923_, p_52924_, p_52925_);
++      return InteractionResult.sidedSuccess(p_52924_.isClientSide);
++   }
++
++   public void attack(BlockState p_52918_, Level p_52919_, BlockPos p_52920_, Player p_52921_) {
++      this.teleport(p_52918_, p_52919_, p_52920_);
++   }
++
++   private void teleport(BlockState p_52936_, Level p_52937_, BlockPos p_52938_) {
++      WorldBorder worldborder = p_52937_.getWorldBorder();
++
++      for(int i = 0; i < 1000; ++i) {
++         BlockPos blockpos = p_52938_.offset(p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16), p_52937_.random.nextInt(8) - p_52937_.random.nextInt(8), p_52937_.random.nextInt(16) - p_52937_.random.nextInt(16));
++         if (p_52937_.getBlockState(blockpos).isAir() && worldborder.isWithinBounds(blockpos)) {
 +            // CraftBukkit start
 +            org.bukkit.block.Block from = CraftBlock.at(p_52937_, p_52938_);
 +            org.bukkit.block.Block to = CraftBlock.at(p_52937_, blockpos);
@@ -25,6 +126,33 @@
 +
 +            blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
 +            // CraftBukkit end
-             if (p_52937_.isClientSide) {
-                for(int j = 0; j < 128; ++j) {
-                   double d0 = p_52937_.random.nextDouble();
++            if (p_52937_.isClientSide) {
++               for(int j = 0; j < 128; ++j) {
++                  double d0 = p_52937_.random.nextDouble();
++                  float f = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
++                  float f1 = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
++                  float f2 = (p_52937_.random.nextFloat() - 0.5F) * 0.2F;
++                  double d1 = Mth.lerp(d0, (double)blockpos.getX(), (double)p_52938_.getX()) + (p_52937_.random.nextDouble() - 0.5D) + 0.5D;
++                  double d2 = Mth.lerp(d0, (double)blockpos.getY(), (double)p_52938_.getY()) + p_52937_.random.nextDouble() - 0.5D;
++                  double d3 = Mth.lerp(d0, (double)blockpos.getZ(), (double)p_52938_.getZ()) + (p_52937_.random.nextDouble() - 0.5D) + 0.5D;
++                  p_52937_.addParticle(ParticleTypes.PORTAL, d1, d2, d3, (double)f, (double)f1, (double)f2);
++               }
++            } else {
++               p_52937_.setBlock(blockpos, p_52936_, 2);
++               p_52937_.removeBlock(p_52938_, false);
++            }
++
++            return;
++         }
++      }
++
++   }
++
++   protected int getDelayAfterPlace() {
++      return 5;
++   }
++
++   public boolean isPathfindable(BlockState p_52913_, BlockGetter p_52914_, BlockPos p_52915_, PathComputationType p_52916_) {
++      return false;
++   }
+ }

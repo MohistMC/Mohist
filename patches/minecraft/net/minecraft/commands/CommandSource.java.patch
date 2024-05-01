@@ -1,9 +1,19 @@
 --- a/net/minecraft/commands/CommandSource.java
 +++ b/net/minecraft/commands/CommandSource.java
-@@ -18,6 +_,13 @@
-       public boolean shouldInformAdmins() {
-          return false;
-       }
+@@ -3,7 +_,7 @@
+ import net.minecraft.network.chat.Component;
+ 
+ public interface CommandSource {
+-    CommandSource NULL = new CommandSource() {
++   CommandSource NULL = new CommandSource() {
+         @Override
+         public void sendSystemMessage(Component p_230799_) {
+         }
+@@ -22,7 +_,14 @@
+         public boolean shouldInformAdmins() {
+             return false;
+         }
+-    };
 +
 +      // CraftBukkit start
 +      @Override
@@ -11,16 +21,16 @@
 +         return wrapper.getServer().console;
 +      }
 +      // CraftBukkit end
-    };
++   };
  
-    void sendSystemMessage(Component p_230797_);
-@@ -30,5 +_,9 @@
+     void sendSystemMessage(Component p_230797_);
  
-    default boolean alwaysAccepts() {
-       return false;
-+   }
+@@ -35,4 +_,8 @@
+     default boolean alwaysAccepts() {
+         return false;
+     }
 +
 +   default org.bukkit.command.CommandSender getBukkitSender(CommandSourceStack wrapper) {
 +      return NULL.getBukkitSender(wrapper);
-    }
++   }
  }

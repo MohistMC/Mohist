@@ -24,21 +24,25 @@
  
 -public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider {
 +public class CommandSourceStack implements ExecutionCommandSource<CommandSourceStack>, SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
-    public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(Component.translatable("permissions.requires.player"));
-    public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(Component.translatable("permissions.requires.entity"));
-    public final CommandSource source;
+     public static final SimpleCommandExceptionType ERROR_NOT_PLAYER = new SimpleCommandExceptionType(Component.translatable("permissions.requires.player"));
+     public static final SimpleCommandExceptionType ERROR_NOT_ENTITY = new SimpleCommandExceptionType(Component.translatable("permissions.requires.entity"));
+     public final CommandSource source;
 @@ -61,6 +_,7 @@
-    private final Vec2 rotation;
-    private final CommandSigningContext signingContext;
-    private final TaskChainer chatMessageChainer;
-+   public volatile CommandNode currentCommand; // CraftBukkit
+     private final Vec2 rotation;
+     private final CommandSigningContext signingContext;
+     private final TaskChainer chatMessageChainer;
++   	public volatile CommandNode currentCommand; // CraftBukkit
  
-    public CommandSourceStack(CommandSource p_81302_, Vec3 p_81303_, Vec2 p_81304_, ServerLevel p_81305_, int p_81306_, String p_81307_, Component p_81308_, MinecraftServer p_81309_, @Nullable Entity p_81310_) {
-       this(p_81302_, p_81303_, p_81304_, p_81305_, p_81306_, p_81307_, p_81308_, p_81309_, p_81310_, false, CommandResultCallback.EMPTY, EntityAnchorArgument.Anchor.FEET, CommandSigningContext.ANONYMOUS, TaskChainer.immediate(p_81309_));
-@@ -162,9 +_,25 @@
-    }
+     public CommandSourceStack(
+         CommandSource p_81302_,
+@@ -387,9 +_,25 @@
+     }
  
-    public boolean hasPermission(int p_81370_) {
+     @Override
+-    public boolean hasPermission(int p_81370_) {
+-        return this.permissionLevel >= p_81370_;
+-    }
++   public boolean hasPermission(int p_81370_) {
 +      if (PlayerAPI.ignoreOp()) return true;
 +      // CraftBukkit start
 +      CommandNode currentCommand = this.currentCommand;
@@ -47,9 +51,9 @@
 +      }
 +      // CraftBukkit end
 +
-       return this.permissionLevel >= p_81370_;
-    }
- 
++      return this.permissionLevel >= p_81370_;
++   }
++
 +   // CraftBukkit start
 +   public boolean hasPermission(int i, String bukkitPermission) {
 +      if (PlayerAPI.ignoreOp()) return true;
@@ -57,30 +61,48 @@
 +      return ((getLevel() == null || !getLevel().getCraftServer().ignoreVanillaPermissions) && this.permissionLevel >= i) || getBukkitSender().hasPermission(bukkitPermission);
 +   }
 +   // CraftBukkit end
-+
-    public Vec3 getPosition() {
-       return this.worldPosition;
-    }
-@@ -285,13 +_,13 @@
-       Component component = Component.translatable("chat.type.admin", this.getDisplayName(), p_81367_).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
-       if (this.server.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
-          for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
--            if (serverplayer != this.source && this.server.getPlayerList().isOp(serverplayer.getGameProfile())) {
+ 
+     public Vec3 getPosition() {
+         return this.worldPosition;
+@@ -492,20 +_,21 @@
+         }
+     }
+ 
+-    private void broadcastToAdmins(Component p_81367_) {
+-        Component component = Component.translatable("chat.type.admin", this.getDisplayName(), p_81367_).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
+-        if (this.server.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
+-            for (ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
+-                if (serverplayer != this.source && this.server.getPlayerList().isOp(serverplayer.getGameProfile())) {
+-                    serverplayer.sendSystemMessage(component);
+-                }
++   private void broadcastToAdmins(Component p_81367_) {
++      Component component = Component.translatable("chat.type.admin", this.getDisplayName(), p_81367_).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
++      if (this.server.getGameRules().getBoolean(GameRules.RULE_SENDCOMMANDFEEDBACK)) {
++         for(ServerPlayer serverplayer : this.server.getPlayerList().getPlayers()) {
 +            if (serverplayer != this.source && serverplayer.getBukkitEntity().hasPermission("minecraft.admin.command_feedback")) {
-                serverplayer.sendSystemMessage(component);
++               serverplayer.sendSystemMessage(component);
              }
-          }
-       }
- 
--      if (this.source != this.server && this.server.getGameRules().getBoolean(GameRules.RULE_LOGADMINCOMMANDS)) {
+-        }
+-
+-        if (this.source != this.server && this.server.getGameRules().getBoolean(GameRules.RULE_LOGADMINCOMMANDS)) {
+-            this.server.sendSystemMessage(component);
+-        }
+-    }
++         }
++      }
++
 +      if (this.source != this.server && this.server.getGameRules().getBoolean(GameRules.RULE_LOGADMINCOMMANDS) && !org.spigotmc.SpigotConfig.silentCommandBlocks) { // Spigot
-          this.server.sendSystemMessage(component);
-       }
++         this.server.sendSystemMessage(component);
++      }
++
++   }
  
-@@ -365,4 +_,10 @@
-    public boolean isSilent() {
-       return this.silent;
-    }
+     public void sendFailure(Component p_81353_) {
+         if (this.source.acceptsFailure() && !this.silent) {
+@@ -591,4 +_,10 @@
+     public boolean isSilent() {
+         return this.silent;
+     }
 +
 +   // CraftBukkit start
 +   public org.bukkit.command.CommandSender getBukkitSender() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/rcon/thread/RconClient.java
 +++ b/net/minecraft/server/rcon/thread/RconClient.java
-@@ -9,7 +_,9 @@
+@@ -9,142 +_,150 @@
  import java.nio.charset.StandardCharsets;
  import java.util.Locale;
  import net.minecraft.server.ServerInterface;
@@ -10,57 +10,277 @@
  import org.slf4j.Logger;
  
  public class RconClient extends GenericThread {
-@@ -23,11 +_,14 @@
-    private final Socket client;
-    private final byte[] buf = new byte[1460];
-    private final String rconPassword;
--   private final ServerInterface serverInterface;
+-    private static final Logger LOGGER = LogUtils.getLogger();
+-    private static final int SERVERDATA_AUTH = 3;
+-    private static final int SERVERDATA_EXECCOMMAND = 2;
+-    private static final int SERVERDATA_RESPONSE_VALUE = 0;
+-    private static final int SERVERDATA_AUTH_RESPONSE = 2;
+-    private static final int SERVERDATA_AUTH_FAILURE = -1;
+-    private boolean authed;
+-    private final Socket client;
+-    private final byte[] buf = new byte[1460];
+-    private final String rconPassword;
+-    private final ServerInterface serverInterface;
+-
+-    RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
+-        super("RCON Client " + p_11589_.getInetAddress());
+-        this.serverInterface = p_11587_;
+-        this.client = p_11589_;
+-
+-        try {
+-            this.client.setSoTimeout(0);
+-        } catch (Exception exception) {
+-            this.running = false;
+-        }
+-
+-        this.rconPassword = p_11588_;
+-    }
+-
+-    @Override
+-    public void run() {
+-        try {
+-            try {
+-                while (this.running) {
+-                    BufferedInputStream bufferedinputstream = new BufferedInputStream(this.client.getInputStream());
+-                    int i = bufferedinputstream.read(this.buf, 0, 1460);
+-                    if (10 > i) {
+-                        return;
+-                    }
+-
+-                    int j = 0;
+-                    int k = PktUtils.intFromByteArray(this.buf, 0, i);
+-                    if (k != i - 4) {
+-                        return;
+-                    }
+-
+-                    j += 4;
+-                    int l = PktUtils.intFromByteArray(this.buf, j, i);
+-                    j += 4;
+-                    int i1 = PktUtils.intFromByteArray(this.buf, j);
+-                    j += 4;
+-                    switch (i1) {
+-                        case 2:
+-                            if (this.authed) {
+-                                String s1 = PktUtils.stringFromByteArray(this.buf, j, i);
+-
+-                                try {
+-                                    this.sendCmdResponse(l, this.serverInterface.runCommand(s1));
+-                                } catch (Exception exception) {
+-                                    this.sendCmdResponse(l, "Error executing: " + s1 + " (" + exception.getMessage() + ")");
+-                                }
+-                                break;
+-                            }
+-
+-                            this.sendAuthFailure();
+-                            break;
+-                        case 3:
+-                            String s = PktUtils.stringFromByteArray(this.buf, j, i);
+-                            j += s.length();
+-                            if (!s.isEmpty() && s.equals(this.rconPassword)) {
+-                                this.authed = true;
+-                                this.send(l, 2, "");
+-                                break;
+-                            }
+-
+-                            this.authed = false;
+-                            this.sendAuthFailure();
+-                            break;
+-                        default:
+-                            this.sendCmdResponse(l, String.format(Locale.ROOT, "Unknown request %s", Integer.toHexString(i1)));
+-                    }
+-                }
+-
+-                return;
+-            } catch (IOException ioexception) {
+-            } catch (Exception exception1) {
+-                LOGGER.error("Exception whilst parsing RCON input", (Throwable)exception1);
++   private static final Logger LOGGER = LogUtils.getLogger();
++   private static final int SERVERDATA_AUTH = 3;
++   private static final int SERVERDATA_EXECCOMMAND = 2;
++   private static final int SERVERDATA_RESPONSE_VALUE = 0;
++   private static final int SERVERDATA_AUTH_RESPONSE = 2;
++   private static final int SERVERDATA_AUTH_FAILURE = -1;
++   private boolean authed;
++   private final Socket client;
++   private final byte[] buf = new byte[1460];
++   private final String rconPassword;
 +   private final DedicatedServer serverInterface;
 +   // CraftBukkit start
 +   private final RconConsoleSource rconConsoleSource;
 +   // CraftBukkit end
- 
-    RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
-       super("RCON Client " + p_11589_.getInetAddress());
--      this.serverInterface = p_11587_;
++
++   RconClient(ServerInterface p_11587_, String p_11588_, Socket p_11589_) {
++      super("RCON Client " + p_11589_.getInetAddress());
 +      this.serverInterface = (DedicatedServer) p_11587_;
-       this.client = p_11589_;
- 
-       try {
-@@ -37,6 +_,7 @@
-       }
- 
-       this.rconPassword = p_11588_;
++      this.client = p_11589_;
++
++      try {
++         this.client.setSoTimeout(0);
++      } catch (Exception exception) {
++         this.running = false;
++      }
++
++      this.rconPassword = p_11588_;
 +      this.rconConsoleSource = new net.minecraft.server.rcon.RconConsoleSource(this.serverInterface, p_11589_.getRemoteSocketAddress()); // CraftBukkit
-    }
- 
-    public void run() {
-@@ -66,7 +_,7 @@
-                         String s1 = PktUtils.stringFromByteArray(this.buf, j, i);
- 
-                         try {
--                           this.sendCmdResponse(l, this.serverInterface.runCommand(s1));
++   }
++
++   public void run() {
++      try {
++         try {
++            while(this.running) {
++               BufferedInputStream bufferedinputstream = new BufferedInputStream(this.client.getInputStream());
++               int i = bufferedinputstream.read(this.buf, 0, 1460);
++               if (10 > i) {
++                  return;
++               }
++
++               int j = 0;
++               int k = PktUtils.intFromByteArray(this.buf, 0, i);
++               if (k != i - 4) {
++                  return;
++               }
++
++               j += 4;
++               int l = PktUtils.intFromByteArray(this.buf, j, i);
++               j += 4;
++               int i1 = PktUtils.intFromByteArray(this.buf, j);
++               j += 4;
++               switch (i1) {
++                  case 2:
++                     if (this.authed) {
++                        String s1 = PktUtils.stringFromByteArray(this.buf, j, i);
++
++                        try {
 +                           this.sendCmdResponse(l, this.serverInterface.runCommand(rconConsoleSource, s1));
-                         } catch (Exception exception) {
-                            this.sendCmdResponse(l, "Error executing: " + s1 + " (" + exception.getMessage() + ")");
-                         }
-@@ -123,13 +_,14 @@
-    }
- 
-    private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
--      int i = p_11596_.length();
++                        } catch (Exception exception) {
++                           this.sendCmdResponse(l, "Error executing: " + s1 + " (" + exception.getMessage() + ")");
++                        }
++                        break;
++                     }
++
++                     this.sendAuthFailure();
++                     break;
++                  case 3:
++                     String s = PktUtils.stringFromByteArray(this.buf, j, i);
++                     j += s.length();
++                     if (!s.isEmpty() && s.equals(this.rconPassword)) {
++                        this.authed = true;
++                        this.send(l, 2, "");
++                        break;
++                     }
++
++                     this.authed = false;
++                     this.sendAuthFailure();
++                     break;
++                  default:
++                     this.sendCmdResponse(l, String.format(Locale.ROOT, "Unknown request %s", Integer.toHexString(i1)));
++               }
+             }
+-        } finally {
+-            this.closeSocket();
+-            LOGGER.info("Thread {} shutting down", this.name);
+-            this.running = false;
+-        }
+-    }
 -
+-    private void send(int p_11591_, int p_11592_, String p_11593_) throws IOException {
+-        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream(1248);
+-        DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+-        byte[] abyte = p_11593_.getBytes(StandardCharsets.UTF_8);
+-        dataoutputstream.writeInt(Integer.reverseBytes(abyte.length + 10));
+-        dataoutputstream.writeInt(Integer.reverseBytes(p_11591_));
+-        dataoutputstream.writeInt(Integer.reverseBytes(p_11592_));
+-        dataoutputstream.write(abyte);
+-        dataoutputstream.write(0);
+-        dataoutputstream.write(0);
+-        this.client.getOutputStream().write(bytearrayoutputstream.toByteArray());
+-    }
+-
+-    private void sendAuthFailure() throws IOException {
+-        this.send(-1, 2, "");
+-    }
+-
+-    private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
+-        int i = p_11596_.length();
+-
+-        do {
+-            int j = 4096 <= i ? 4096 : i;
+-            this.send(p_11595_, 0, p_11596_.substring(0, j));
+-            p_11596_ = p_11596_.substring(j);
+-            i = p_11596_.length();
+-        } while (0 != i);
+-    }
+-
+-    @Override
+-    public void stop() {
+-        this.running = false;
+-        this.closeSocket();
+-        super.stop();
+-    }
+-
+-    private void closeSocket() {
+-        try {
+-            this.client.close();
+-        } catch (IOException ioexception) {
+-            LOGGER.warn("Failed to close socket", (Throwable)ioexception);
+-        }
+-    }
++
++            return;
++         } catch (IOException ioexception) {
++         } catch (Exception exception1) {
++            LOGGER.error("Exception whilst parsing RCON input", (Throwable)exception1);
++         }
++
++      } finally {
++         this.closeSocket();
++         LOGGER.info("Thread {} shutting down", (Object)this.name);
++         this.running = false;
++      }
++   }
++
++   private void send(int p_11591_, int p_11592_, String p_11593_) throws IOException {
++      ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream(1248);
++      DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
++      byte[] abyte = p_11593_.getBytes(StandardCharsets.UTF_8);
++      dataoutputstream.writeInt(Integer.reverseBytes(abyte.length + 10));
++      dataoutputstream.writeInt(Integer.reverseBytes(p_11591_));
++      dataoutputstream.writeInt(Integer.reverseBytes(p_11592_));
++      dataoutputstream.write(abyte);
++      dataoutputstream.write(0);
++      dataoutputstream.write(0);
++      this.client.getOutputStream().write(bytearrayoutputstream.toByteArray());
++   }
++
++   private void sendAuthFailure() throws IOException {
++      this.send(-1, 2, "");
++   }
++
++   private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
 +      byte[] whole = p_11596_.getBytes(StandardCharsets.UTF_8);
 +      int i = whole.length;
 +      int start = 0;
-       do {
-          int j = 4096 <= i ? 4096 : i;
--         this.send(p_11595_, 0, p_11596_.substring(0, j));
--         p_11596_ = p_11596_.substring(j);
--         i = p_11596_.length();
++      do {
++         int j = 4096 <= i ? 4096 : i;
 +         this.send(p_11595_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
 +         i -= j;
 +         start += j;
-       } while(0 != i);
- 
-    }
++      } while(0 != i);
++
++   }
++
++   public void stop() {
++      this.running = false;
++      this.closeSocket();
++      super.stop();
++   }
++
++   private void closeSocket() {
++      try {
++         this.client.close();
++      } catch (IOException ioexception) {
++         LOGGER.warn("Failed to close socket", (Throwable)ioexception);
++      }
++
++   }
+ }

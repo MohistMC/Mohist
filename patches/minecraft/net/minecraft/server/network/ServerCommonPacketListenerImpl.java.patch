@@ -11,10 +11,11 @@
  import net.minecraft.CrashReport;
  import net.minecraft.CrashReportCategory;
  import net.minecraft.ReportedException;
-@@ -19,9 +_,21 @@
+@@ -19,166 +_,273 @@
  import net.minecraft.network.protocol.common.ServerboundKeepAlivePacket;
  import net.minecraft.network.protocol.common.ServerboundPongPacket;
  import net.minecraft.network.protocol.common.ServerboundResourcePackPacket;
+-import net.minecraft.network.protocol.cookie.ServerboundCookieResponsePacket;
 +import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 +import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
 +import net.minecraft.resources.ResourceLocation;
@@ -33,24 +34,68 @@
  import org.slf4j.Logger;
  
  public abstract class ServerCommonPacketListenerImpl implements ServerCommonPacketListener {
-@@ -29,18 +_,30 @@
-    public static final int LATENCY_CHECK_INTERVAL = 15000;
-    private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
-    protected final MinecraftServer server;
--   protected final Connection connection;
+-    private static final Logger LOGGER = LogUtils.getLogger();
+-    public static final int LATENCY_CHECK_INTERVAL = 15000;
+-    private static final int CLOSED_LISTENER_TIMEOUT = 15000;
+-    private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
+-    static final Component DISCONNECT_UNEXPECTED_QUERY = Component.translatable("multiplayer.disconnect.unexpected_query_response");
+-    protected final MinecraftServer server;
+-    protected final Connection connection;
+-    private final boolean transferred;
+-    private long keepAliveTime;
+-    private boolean keepAlivePending;
+-    private long keepAliveChallenge;
+-    private long closedListenerTime;
+-    private boolean closed = false;
+-    private int latency;
+-    private volatile boolean suspendFlushingOnServerThread = false;
+-
+-    public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
+-        this.server = p_299469_;
+-        this.connection = p_300872_;
+-        this.keepAliveTime = Util.getMillis();
+-        this.latency = p_300277_.latency();
+-        this.transferred = p_300277_.transferred();
+-    }
+-
+-    private void close() {
+-        if (!this.closed) {
+-            this.closedListenerTime = Util.getMillis();
+-            this.closed = true;
+-        }
+-    }
+-
+-    @Override
+-    public void onDisconnect(Component p_300550_) {
+-        if (this.isSingleplayerOwner()) {
+-            LOGGER.info("Stopping singleplayer server as player logged out");
+-            this.server.halt(false);
+-        }
+-    }
+-
+-    @Override
+-    public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
+-        if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
+-            int i = (int)(Util.getMillis() - this.keepAliveTime);
+-            this.latency = (this.latency * 3 + i) / 4;
+-            this.keepAlivePending = false;
+-        } else if (!this.isSingleplayerOwner()) {
++   private static final Logger LOGGER = LogUtils.getLogger();
++   public static final int LATENCY_CHECK_INTERVAL = 15000;
++   private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
++   protected final MinecraftServer server;
 +   public final Connection connection;
-    private long keepAliveTime;
-    private boolean keepAlivePending;
-    private long keepAliveChallenge;
-    private int latency;
-    private volatile boolean suspendFlushingOnServerThread = false;
- 
--   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_) {
++   private long keepAliveTime;
++   private boolean keepAlivePending;
++   private long keepAliveChallenge;
++   private int latency;
++   private volatile boolean suspendFlushingOnServerThread = false;
++
 +   public ServerCommonPacketListenerImpl(MinecraftServer p_299469_, Connection p_300872_, CommonListenerCookie p_300277_, ServerPlayer player) {
-       this.server = p_299469_;
-       this.connection = p_300872_;
-       this.keepAliveTime = Util.getMillis();
-       this.latency = p_300277_.latency();
++      this.server = p_299469_;
++      this.connection = p_300872_;
++      this.keepAliveTime = Util.getMillis();
++      this.latency = p_300277_.latency();
 +      // CraftBukkit start - add fields and methods
 +      this.player = player;
 +      this.cserver = p_299469_.server;
@@ -63,26 +108,35 @@
 +   public CraftPlayer getCraftPlayer() {
 +      return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
 +      // CraftBukkit end
-    }
- 
-    public void onDisconnect(Component p_300550_) {
-@@ -52,6 +_,7 @@
-    }
- 
-    public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
++   }
++
++   public void onDisconnect(Component p_300550_) {
++      if (this.isSingleplayerOwner()) {
++         LOGGER.info("Stopping singleplayer server as player logged out");
++         this.server.halt(false);
++      }
++
++   }
++
++   public void handleKeepAlive(ServerboundKeepAlivePacket p_299975_) {
 +      PacketUtils.ensureRunningOnSameThread(p_299975_, this, this.player.serverLevel()); // CraftBukkit
-       if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
-          int i = (int)(Util.getMillis() - this.keepAliveTime);
-          this.latency = (this.latency * 3 + i) / 4;
-@@ -65,8 +_,62 @@
-    public void handlePong(ServerboundPongPacket p_299461_) {
-    }
- 
++      if (this.keepAlivePending && p_299975_.getId() == this.keepAliveChallenge) {
++         int i = (int)(Util.getMillis() - this.keepAliveTime);
++         this.latency = (this.latency * 3 + i) / 4;
++         this.keepAlivePending = false;
++      } else if (!this.isSingleplayerOwner()) {
++         this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
++      }
++
++   }
++
++   public void handlePong(ServerboundPongPacket p_299461_) {
++   }
++
 +   // CraftBukkit start
 +   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
 +   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
-    public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
--   }
++   public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
 +      if (p_300164_.payload() instanceof DiscardedPayload payload && payload.data() != null) {
 +         var readerIndex = payload.data().readerIndex();
 +         var buf = new byte[payload.data().readableBytes()];
@@ -135,29 +189,155 @@
 +      return !this.player.joining && !this.connection.isConnected();
 +   }
 +   // CraftBukkit end
- 
-    public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
-       PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
-@@ -74,13 +_,13 @@
-          LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
-          this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
-       }
--
++
++   public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
++      PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
++      if (p_300656_.action() == ServerboundResourcePackPacket.Action.DECLINED && this.server.isResourcePackRequired()) {
++         LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
++         this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
++      }
 +      this.cserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getCraftPlayer(), p_300656_.id(), PlayerResourcePackStatusEvent.Status.values()[p_300656_.action().ordinal()])); // CraftBukkit
-    }
- 
-    protected void keepConnectionAlive() {
-       this.server.getProfiler().push("keepAlive");
-       long i = Util.getMillis();
--      if (i - this.keepAliveTime >= 15000L) {
++   }
++
++   protected void keepConnectionAlive() {
++      this.server.getProfiler().push("keepAlive");
++      long i = Util.getMillis();
 +      if (i - this.keepAliveTime >= 25000L) { // CraftBukkit
-          if (this.keepAlivePending) {
++         if (this.keepAlivePending) {
              this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
-          } else {
-@@ -108,6 +_,13 @@
-    }
- 
-    public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
+-        }
+-    }
+-
+-    @Override
+-    public void handlePong(ServerboundPongPacket p_299461_) {
+-    }
+-
+-    @Override
+-    public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
+-    }
+-
+-    @Override
+-    public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
+-        PacketUtils.ensureRunningOnSameThread(p_300656_, this, this.server);
+-        if (p_300656_.action() == ServerboundResourcePackPacket.Action.DECLINED && this.server.isResourcePackRequired()) {
+-            LOGGER.info("Disconnecting {} due to resource pack {} rejection", this.playerProfile().getName(), p_300656_.id());
+-            this.disconnect(Component.translatable("multiplayer.requiredTexturePrompt.disconnect"));
+-        }
+-    }
+-
+-    @Override
+-    public void handleCookieResponse(ServerboundCookieResponsePacket p_335443_) {
+-        this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
+-    }
+-
+-    protected void keepConnectionAlive() {
+-        this.server.getProfiler().push("keepAlive");
+-        long i = Util.getMillis();
+-        if (!this.isSingleplayerOwner() && i - this.keepAliveTime >= 15000L) {
+-            if (this.keepAlivePending) {
+-                this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
+-            } else if (this.checkIfClosed(i)) {
+-                this.keepAlivePending = true;
+-                this.keepAliveTime = i;
+-                this.keepAliveChallenge = i;
+-                this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
+-            }
+-        }
+-
+-        this.server.getProfiler().pop();
+-    }
+-
+-    private boolean checkIfClosed(long p_331601_) {
+-        if (this.closed) {
+-            if (p_331601_ - this.closedListenerTime >= 15000L) {
+-                this.disconnect(TIMEOUT_DISCONNECTION_MESSAGE);
+-            }
+-
+-            return false;
+-        } else {
+-            return true;
+-        }
+-    }
+-
+-    public void suspendFlushing() {
+-        this.suspendFlushingOnServerThread = true;
+-    }
+-
+-    public void resumeFlushing() {
+-        this.suspendFlushingOnServerThread = false;
+-        this.connection.flushChannel();
+-    }
+-
+-    public void send(Packet<?> p_300558_) {
+-        this.send(p_300558_, null);
+-    }
+-
+-    public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
+-        if (p_300325_.isTerminal()) {
+-            this.close();
+-        }
+-
+-        boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
+-
+-        try {
+-            this.connection.send(p_300325_, p_301165_, flag);
+-        } catch (Throwable throwable) {
+-            CrashReport crashreport = CrashReport.forThrowable(throwable, "Sending packet");
+-            CrashReportCategory crashreportcategory = crashreport.addCategory("Packet being sent");
+-            crashreportcategory.setDetail("Packet class", () -> p_300325_.getClass().getCanonicalName());
+-            throw new ReportedException(crashreport);
+-        }
+-    }
+-
+-    public void disconnect(Component p_299122_) {
+-        this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> this.connection.disconnect(p_299122_)));
+-        this.connection.setReadOnly();
+-        this.server.executeBlocking(this.connection::handleDisconnection);
+-    }
+-
+-    protected boolean isSingleplayerOwner() {
+-        return this.server.isSingleplayerOwner(this.playerProfile());
+-    }
+-
+-    protected abstract GameProfile playerProfile();
+-
+-    @VisibleForDebug
+-    public GameProfile getOwner() {
+-        return this.playerProfile();
+-    }
+-
+-    public int latency() {
+-        return this.latency;
+-    }
+-
+-    protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
+-        return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_, this.transferred);
+-    }
++         } else {
++            this.keepAlivePending = true;
++            this.keepAliveTime = i;
++            this.keepAliveChallenge = i;
++            this.send(new ClientboundKeepAlivePacket(this.keepAliveChallenge));
++         }
++      }
++
++      this.server.getProfiler().pop();
++   }
++
++   public void suspendFlushing() {
++      this.suspendFlushingOnServerThread = true;
++   }
++
++   public void resumeFlushing() {
++      this.suspendFlushingOnServerThread = false;
++      this.connection.flushChannel();
++   }
++
++   public void send(Packet<?> p_300558_) {
++      this.send(p_300558_, (PacketSendListener)null);
++   }
++
++   public void send(Packet<?> p_300325_, @Nullable PacketSendListener p_301165_) {
 +      // CraftBukkit start
 +      if (p_300325_ == null) {
 +         return;
@@ -165,18 +345,23 @@
 +         this.player.compassTarget = CraftLocation.toBukkit(packet6.pos, this.getCraftPlayer().getWorld());
 +      }
 +      // CraftBukkit end
-       boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
- 
-       try {
-@@ -122,12 +_,62 @@
-       }
-    }
- 
++      boolean flag = !this.suspendFlushingOnServerThread || !this.server.isSameThread();
++
++      try {
++         this.connection.send(p_300325_, p_301165_, flag);
++      } catch (Throwable throwable) {
++         CrashReport crashreport = CrashReport.forThrowable(throwable, "Sending packet");
++         CrashReportCategory crashreportcategory = crashreport.addCategory("Packet being sent");
++         crashreportcategory.setDetail("Packet class", () -> {
++            return p_300325_.getClass().getCanonicalName();
++         });
++         throw new ReportedException(crashreport);
++      }
++   }
++
 +   // CraftBukkit start
 +   @Deprecated
-    public void disconnect(Component p_299122_) {
--      this.connection.send(new ClientboundDisconnectPacket(p_299122_), PacketSendListener.thenRun(() -> {
--         this.connection.disconnect(p_299122_);
++   public void disconnect(Component p_299122_) {
 +      disconnect(CraftChatMessage.fromComponent(p_299122_));
 +   }
 +    // CraftBukkit end
@@ -225,22 +410,33 @@
 +      // CraftBukkit end
 +      this.connection.send(new ClientboundDisconnectPacket(ichatbasecomponent), PacketSendListener.thenRun(() -> {
 +         this.connection.disconnect(ichatbasecomponent);
-       }));
++      }));
 +      this.onDisconnect(ichatbasecomponent); // CraftBukkit - fire quit instantly
-       this.connection.setReadOnly();
--      this.server.executeBlocking(this.connection::handleDisconnection);
++      this.connection.setReadOnly();
 +      // CraftBukkit - Don't wait
 +      this.server.wrapRunnable(this.connection::handleDisconnection);
-    }
- 
-    protected boolean isSingleplayerOwner() {
-@@ -147,5 +_,9 @@
- 
-    protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
-       return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_);
++   }
++
++   protected boolean isSingleplayerOwner() {
++      return this.server.isSingleplayerOwner(this.playerProfile());
++   }
++
++   protected abstract GameProfile playerProfile();
++
++   @VisibleForDebug
++   public GameProfile getOwner() {
++      return this.playerProfile();
++   }
++
++   public int latency() {
++      return this.latency;
++   }
++
++   protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
++      return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_);
 +   }
 +
 +   public Connection getConnection() {
 +      return this.connection;
-    }
++   }
  }

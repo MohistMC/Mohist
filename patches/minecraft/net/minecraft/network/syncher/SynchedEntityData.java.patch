@@ -1,85 +1,18 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -18,8 +_,12 @@
- import net.minecraft.CrashReportCategory;
- import net.minecraft.ReportedException;
- import net.minecraft.network.FriendlyByteBuf;
-+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-+import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.world.entity.Entity;
-+import net.minecraft.world.entity.LivingEntity;
- import org.apache.commons.lang3.ObjectUtils;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
- import org.slf4j.Logger;
+@@ -27,11 +_,13 @@
+     }
  
- public class SynchedEntityData {
-@@ -36,11 +_,13 @@
-    }
- 
-    public static <T> EntityDataAccessor<T> defineId(Class<? extends Entity> p_135354_, EntityDataSerializer<T> p_135355_) {
--      if (LOGGER.isDebugEnabled()) {
-+      if (true || LOGGER.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
-          try {
-             Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
-             if (!oclass.equals(p_135354_)) {
--               LOGGER.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
-+               // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
-+               if (LOGGER.isDebugEnabled()) LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
-+               else LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass);
+     public static <T> EntityDataAccessor<T> defineId(Class<? extends SyncedDataHolder> p_135354_, EntityDataSerializer<T> p_135355_) {
+-        if (LOGGER.isDebugEnabled()) {
++        if (true) { // Forge: This is very useful for mods that register keys on classes that are not their own
+             try {
+                 Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
+                 if (!oclass.equals(p_135354_)) {
+-                    LOGGER.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
++                    // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
++                    if (LOGGER.isDebugEnabled()) LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
++                    else LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass);
+                 }
+             } catch (ClassNotFoundException classnotfoundexception) {
              }
-          } catch (ClassNotFoundException classnotfoundexception) {
-          }
-@@ -123,6 +_,10 @@
-    }
- 
-    public <T> void set(EntityDataAccessor<T> p_276368_, T p_276363_, boolean p_276370_) {
-+      if (p_276368_ == LivingEntity.DATA_HEALTH_ID && this.entity instanceof ServerPlayer serverPlayer && serverPlayer.initialized) {
-+         CraftPlayer player = serverPlayer.getBukkitEntity();
-+         player.setRealHealth(((Float) p_276363_));
-+      }
-       SynchedEntityData.DataItem<T> dataitem = this.getItem(p_276368_);
-       if (p_276370_ || ObjectUtils.notEqual(p_276363_, dataitem.getValue())) {
-          dataitem.setValue(p_276363_);
-@@ -209,6 +_,42 @@
-    public boolean isEmpty() {
-       return this.itemsById.isEmpty();
-    }
-+
-+   // CraftBukkit start - add method from above
-+   public <T> void markDirty(EntityDataAccessor<T> datawatcherobject) {
-+      this.getItem(datawatcherobject).setDirty(true);
-+      this.isDirty = true;
-+   }
-+   // CraftBukkit end
-+
-+
-+   // CraftBukkit start
-+   public void refresh(ServerPlayer to) {
-+      if (!this.isEmpty()) {
-+         List<SynchedEntityData.DataValue<?>> list = this.getNonDefaultValues();
-+
-+         if (list != null) {
-+            to.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), list));
-+         }
-+      }
-+   }
-+    // CraftBukkit end
-+
-+
-+   // This method allows you to specifically resend certain data accessor keys to the client
-+   public void resendPossiblyDesyncedDataValues(List<EntityDataAccessor<?>> keys, ServerPlayer to) {
-+      if (!to.getBukkitEntity().canSee(this.entity.getBukkitEntity())) {
-+         return;
-+      }
-+      List<SynchedEntityData.DataValue<?>> values = new ArrayList<>(keys.size());
-+      for (EntityDataAccessor<?> key : keys) {
-+         SynchedEntityData.DataItem<?> synchedValue = this.getItem(key);
-+         values.add(synchedValue.value());
-+      }
-+
-+      to.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), values));
-+   }
-+   // Paper end
- 
-    public static class DataItem<T> {
-       final EntityDataAccessor<T> accessor;

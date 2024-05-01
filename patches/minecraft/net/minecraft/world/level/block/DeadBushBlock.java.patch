@@ -1,11 +1,50 @@
 --- a/net/minecraft/world/level/block/DeadBushBlock.java
 +++ b/net/minecraft/world/level/block/DeadBushBlock.java
-@@ -9,7 +_,7 @@
+@@ -9,27 +_,24 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class DeadBushBlock extends BushBlock {
+-    public static final MapCodec<DeadBushBlock> CODEC = simpleCodec(DeadBushBlock::new);
+-    protected static final float AABB_OFFSET = 6.0F;
+-    protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 13.0, 14.0);
+-
+-    @Override
+-    public MapCodec<DeadBushBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public DeadBushBlock(BlockBehaviour.Properties p_52417_) {
+-        super(p_52417_);
+-    }
+-
+-    @Override
+-    protected VoxelShape getShape(BlockState p_52419_, BlockGetter p_52420_, BlockPos p_52421_, CollisionContext p_52422_) {
+-        return SHAPE;
+-    }
+-
+-    @Override
+-    protected boolean mayPlaceOn(BlockState p_52424_, BlockGetter p_52425_, BlockPos p_52426_) {
+-        return p_52424_.is(BlockTags.DEAD_BUSH_MAY_PLACE_ON);
+-    }
 +public class DeadBushBlock extends BushBlock implements net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<DeadBushBlock> CODEC = simpleCodec(DeadBushBlock::new);
-    protected static final float AABB_OFFSET = 6.0F;
-    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
++   public static final MapCodec<DeadBushBlock> CODEC = simpleCodec(DeadBushBlock::new);
++   protected static final float AABB_OFFSET = 6.0F;
++   protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
++
++   public MapCodec<DeadBushBlock> codec() {
++      return CODEC;
++   }
++
++   public DeadBushBlock(BlockBehaviour.Properties p_52417_) {
++      super(p_52417_);
++   }
++
++   public VoxelShape getShape(BlockState p_52419_, BlockGetter p_52420_, BlockPos p_52421_, CollisionContext p_52422_) {
++      return SHAPE;
++   }
++
++   protected boolean mayPlaceOn(BlockState p_52424_, BlockGetter p_52425_, BlockPos p_52426_) {
++      return p_52424_.is(BlockTags.DEAD_BUSH_MAY_PLACE_ON);
++   }
+ }

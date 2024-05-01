@@ -1,18 +1,35 @@
 --- a/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundUseItemPacket.java
-@@ -7,6 +_,7 @@
+@@ -1,9 +_,7 @@
+ package net.minecraft.network.protocol.game;
+ 
+ import net.minecraft.network.FriendlyByteBuf;
+-import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.network.protocol.Packet;
+-import net.minecraft.network.protocol.PacketType;
+ import net.minecraft.world.InteractionHand;
+ 
  public class ServerboundUseItemPacket implements Packet<ServerGamePacketListener> {
-    private final InteractionHand hand;
-    private final int sequence;
-+   public long timestamp; // Spigot
+@@ -12,16 +_,18 @@
+     );
+     private final InteractionHand hand;
+     private final int sequence;
++   	public long timestamp; // Spigot
  
-    public ServerboundUseItemPacket(InteractionHand p_238011_, int p_238012_) {
-       this.hand = p_238011_;
-@@ -14,6 +_,7 @@
-    }
+     public ServerboundUseItemPacket(InteractionHand p_238011_, int p_238012_) {
+         this.hand = p_238011_;
+         this.sequence = p_238012_;
+     }
  
-    public ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
+-    private ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
+-        this.hand = p_179798_.readEnum(InteractionHand.class);
+-        this.sequence = p_179798_.readVarInt();
+-    }
++   public ServerboundUseItemPacket(FriendlyByteBuf p_179798_) {
 +      this.timestamp = System.currentTimeMillis(); // Spigot
-       this.hand = p_179798_.readEnum(InteractionHand.class);
-       this.sequence = p_179798_.readVarInt();
-    }
++      this.hand = p_179798_.readEnum(InteractionHand.class);
++      this.sequence = p_179798_.readVarInt();
++   }
+ 
+     private void write(FriendlyByteBuf p_134719_) {
+         p_134719_.writeEnum(this.hand);

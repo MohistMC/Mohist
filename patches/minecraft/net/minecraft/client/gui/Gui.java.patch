@@ -1,77 +1,295 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -131,7 +_,7 @@
-    public float vignetteBrightness = 1.0F;
-    protected int toolHighlightTimer;
-    protected ItemStack lastToolHighlight = ItemStack.EMPTY;
--   protected final DebugScreenOverlay debugOverlay;
-+   protected DebugScreenOverlay debugOverlay;
-    protected final SubtitleOverlay subtitleOverlay;
-    protected final SpectatorGui spectatorGui;
-    protected final PlayerTabOverlay tabList;
-@@ -454,6 +_,8 @@
+@@ -70,88 +_,88 @@
  
-          for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
-             MobEffect mobeffect = mobeffectinstance.getEffect();
-+            var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
-+            if (!renderer.isVisibleInGui(mobeffectinstance)) continue;
-             if (mobeffectinstance.showIcon()) {
-                int i = this.screenWidth;
-                int j = 1;
-@@ -482,6 +_,7 @@
-                   }
-                }
+ @OnlyIn(Dist.CLIENT)
+ public class Gui {
+-    protected static final ResourceLocation CROSSHAIR_SPRITE = new ResourceLocation("hud/crosshair");
+-    protected static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_FULL_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_full");
+-    protected static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_BACKGROUND_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_background");
+-    protected static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_PROGRESS_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_progress");
+-    protected static final ResourceLocation EFFECT_BACKGROUND_AMBIENT_SPRITE = new ResourceLocation("hud/effect_background_ambient");
+-    protected static final ResourceLocation EFFECT_BACKGROUND_SPRITE = new ResourceLocation("hud/effect_background");
+-    protected static final ResourceLocation HOTBAR_SPRITE = new ResourceLocation("hud/hotbar");
+-    protected static final ResourceLocation HOTBAR_SELECTION_SPRITE = new ResourceLocation("hud/hotbar_selection");
+-    protected static final ResourceLocation HOTBAR_OFFHAND_LEFT_SPRITE = new ResourceLocation("hud/hotbar_offhand_left");
+-    protected static final ResourceLocation HOTBAR_OFFHAND_RIGHT_SPRITE = new ResourceLocation("hud/hotbar_offhand_right");
+-    protected static final ResourceLocation HOTBAR_ATTACK_INDICATOR_BACKGROUND_SPRITE = new ResourceLocation("hud/hotbar_attack_indicator_background");
+-    protected static final ResourceLocation HOTBAR_ATTACK_INDICATOR_PROGRESS_SPRITE = new ResourceLocation("hud/hotbar_attack_indicator_progress");
+-    protected static final ResourceLocation JUMP_BAR_BACKGROUND_SPRITE = new ResourceLocation("hud/jump_bar_background");
+-    protected static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = new ResourceLocation("hud/jump_bar_cooldown");
+-    protected static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/jump_bar_progress");
+-    protected static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE = new ResourceLocation("hud/experience_bar_background");
+-    protected static final ResourceLocation EXPERIENCE_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/experience_bar_progress");
+-    protected static final ResourceLocation ARMOR_EMPTY_SPRITE = new ResourceLocation("hud/armor_empty");
+-    protected static final ResourceLocation ARMOR_HALF_SPRITE = new ResourceLocation("hud/armor_half");
+-    protected static final ResourceLocation ARMOR_FULL_SPRITE = new ResourceLocation("hud/armor_full");
+-    protected static final ResourceLocation FOOD_EMPTY_HUNGER_SPRITE = new ResourceLocation("hud/food_empty_hunger");
+-    protected static final ResourceLocation FOOD_HALF_HUNGER_SPRITE = new ResourceLocation("hud/food_half_hunger");
+-    protected static final ResourceLocation FOOD_FULL_HUNGER_SPRITE = new ResourceLocation("hud/food_full_hunger");
+-    protected static final ResourceLocation FOOD_EMPTY_SPRITE = new ResourceLocation("hud/food_empty");
+-    protected static final ResourceLocation FOOD_HALF_SPRITE = new ResourceLocation("hud/food_half");
+-    protected static final ResourceLocation FOOD_FULL_SPRITE = new ResourceLocation("hud/food_full");
+-    protected static final ResourceLocation AIR_SPRITE = new ResourceLocation("hud/air");
+-    protected static final ResourceLocation AIR_BURSTING_SPRITE = new ResourceLocation("hud/air_bursting");
+-    protected static final ResourceLocation HEART_VEHICLE_CONTAINER_SPRITE = new ResourceLocation("hud/heart/vehicle_container");
+-    protected static final ResourceLocation HEART_VEHICLE_FULL_SPRITE = new ResourceLocation("hud/heart/vehicle_full");
+-    protected static final ResourceLocation HEART_VEHICLE_HALF_SPRITE = new ResourceLocation("hud/heart/vehicle_half");
+-    protected static final ResourceLocation VIGNETTE_LOCATION = new ResourceLocation("textures/misc/vignette.png");
+-    protected static final ResourceLocation PUMPKIN_BLUR_LOCATION = new ResourceLocation("textures/misc/pumpkinblur.png");
+-    protected static final ResourceLocation SPYGLASS_SCOPE_LOCATION = new ResourceLocation("textures/misc/spyglass_scope.png");
+-    protected static final ResourceLocation POWDER_SNOW_OUTLINE_LOCATION = new ResourceLocation("textures/misc/powder_snow_outline.png");
+-    protected static final Comparator<PlayerScoreEntry> SCORE_DISPLAY_ORDER = Comparator.comparing(PlayerScoreEntry::value)
++    private static final ResourceLocation CROSSHAIR_SPRITE = new ResourceLocation("hud/crosshair");
++    private static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_FULL_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_full");
++    private static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_BACKGROUND_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_background");
++    private static final ResourceLocation CROSSHAIR_ATTACK_INDICATOR_PROGRESS_SPRITE = new ResourceLocation("hud/crosshair_attack_indicator_progress");
++    private static final ResourceLocation EFFECT_BACKGROUND_AMBIENT_SPRITE = new ResourceLocation("hud/effect_background_ambient");
++    private static final ResourceLocation EFFECT_BACKGROUND_SPRITE = new ResourceLocation("hud/effect_background");
++    private static final ResourceLocation HOTBAR_SPRITE = new ResourceLocation("hud/hotbar");
++    private static final ResourceLocation HOTBAR_SELECTION_SPRITE = new ResourceLocation("hud/hotbar_selection");
++    private static final ResourceLocation HOTBAR_OFFHAND_LEFT_SPRITE = new ResourceLocation("hud/hotbar_offhand_left");
++    private static final ResourceLocation HOTBAR_OFFHAND_RIGHT_SPRITE = new ResourceLocation("hud/hotbar_offhand_right");
++    private static final ResourceLocation HOTBAR_ATTACK_INDICATOR_BACKGROUND_SPRITE = new ResourceLocation("hud/hotbar_attack_indicator_background");
++    private static final ResourceLocation HOTBAR_ATTACK_INDICATOR_PROGRESS_SPRITE = new ResourceLocation("hud/hotbar_attack_indicator_progress");
++    private static final ResourceLocation JUMP_BAR_BACKGROUND_SPRITE = new ResourceLocation("hud/jump_bar_background");
++    private static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = new ResourceLocation("hud/jump_bar_cooldown");
++    private static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/jump_bar_progress");
++    private static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE = new ResourceLocation("hud/experience_bar_background");
++    private static final ResourceLocation EXPERIENCE_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/experience_bar_progress");
++    private static final ResourceLocation ARMOR_EMPTY_SPRITE = new ResourceLocation("hud/armor_empty");
++    private static final ResourceLocation ARMOR_HALF_SPRITE = new ResourceLocation("hud/armor_half");
++    private static final ResourceLocation ARMOR_FULL_SPRITE = new ResourceLocation("hud/armor_full");
++    private static final ResourceLocation FOOD_EMPTY_HUNGER_SPRITE = new ResourceLocation("hud/food_empty_hunger");
++    private static final ResourceLocation FOOD_HALF_HUNGER_SPRITE = new ResourceLocation("hud/food_half_hunger");
++    private static final ResourceLocation FOOD_FULL_HUNGER_SPRITE = new ResourceLocation("hud/food_full_hunger");
++    private static final ResourceLocation FOOD_EMPTY_SPRITE = new ResourceLocation("hud/food_empty");
++    private static final ResourceLocation FOOD_HALF_SPRITE = new ResourceLocation("hud/food_half");
++    private static final ResourceLocation FOOD_FULL_SPRITE = new ResourceLocation("hud/food_full");
++    private static final ResourceLocation AIR_SPRITE = new ResourceLocation("hud/air");
++    private static final ResourceLocation AIR_BURSTING_SPRITE = new ResourceLocation("hud/air_bursting");
++    private static final ResourceLocation HEART_VEHICLE_CONTAINER_SPRITE = new ResourceLocation("hud/heart/vehicle_container");
++    private static final ResourceLocation HEART_VEHICLE_FULL_SPRITE = new ResourceLocation("hud/heart/vehicle_full");
++    private static final ResourceLocation HEART_VEHICLE_HALF_SPRITE = new ResourceLocation("hud/heart/vehicle_half");
++    private static final ResourceLocation VIGNETTE_LOCATION = new ResourceLocation("textures/misc/vignette.png");
++    private static final ResourceLocation PUMPKIN_BLUR_LOCATION = new ResourceLocation("textures/misc/pumpkinblur.png");
++    private static final ResourceLocation SPYGLASS_SCOPE_LOCATION = new ResourceLocation("textures/misc/spyglass_scope.png");
++    private static final ResourceLocation POWDER_SNOW_OUTLINE_LOCATION = new ResourceLocation("textures/misc/powder_snow_outline.png");
++    private static final Comparator<PlayerScoreEntry> SCORE_DISPLAY_ORDER = Comparator.comparing(PlayerScoreEntry::value)
+         .reversed()
+         .thenComparing(PlayerScoreEntry::owner, String.CASE_INSENSITIVE_ORDER);
+-    protected static final Component DEMO_EXPIRED_TEXT = Component.translatable("demo.demoExpired");
+-    protected static final Component SAVING_TEXT = Component.translatable("menu.savingLevel");
+-    protected static final int COLOR_WHITE = 16777215;
+-    protected static final float MIN_CROSSHAIR_ATTACK_SPEED = 5.0F;
+-    protected static final int NUM_HEARTS_PER_ROW = 10;
+-    protected static final int LINE_HEIGHT = 10;
+-    protected static final String SPACER = ": ";
+-    protected static final float PORTAL_OVERLAY_ALPHA_MIN = 0.2F;
+-    protected static final int HEART_SIZE = 9;
+-    protected static final int HEART_SEPARATION = 8;
+-    protected static final float AUTOSAVE_FADE_SPEED_FACTOR = 0.2F;
+-    protected final RandomSource random = RandomSource.create();
+-    protected final Minecraft minecraft;
+-    protected final ChatComponent chat;
+-    protected int tickCount;
++    private static final Component DEMO_EXPIRED_TEXT = Component.translatable("demo.demoExpired");
++    private static final Component SAVING_TEXT = Component.translatable("menu.savingLevel");
++    private static final int COLOR_WHITE = 16777215;
++    private static final float MIN_CROSSHAIR_ATTACK_SPEED = 5.0F;
++    private static final int NUM_HEARTS_PER_ROW = 10;
++    private static final int LINE_HEIGHT = 10;
++    private static final String SPACER = ": ";
++    private static final float PORTAL_OVERLAY_ALPHA_MIN = 0.2F;
++    private static final int HEART_SIZE = 9;
++    private static final int HEART_SEPARATION = 8;
++    private static final float AUTOSAVE_FADE_SPEED_FACTOR = 0.2F;
++    private final RandomSource random = RandomSource.create();
++    private final Minecraft minecraft;
++    private final ChatComponent chat;
++    private int tickCount;
+     @Nullable
+-    protected Component overlayMessageString;
+-    protected int overlayMessageTime;
+-    protected boolean animateOverlayMessageColor;
+-    protected boolean chatDisabledByPlayerShown;
++    private Component overlayMessageString;
++    private int overlayMessageTime;
++    private boolean animateOverlayMessageColor;
++    private boolean chatDisabledByPlayerShown;
+     public float vignetteBrightness = 1.0F;
+-    protected int toolHighlightTimer;
+-    protected ItemStack lastToolHighlight = ItemStack.EMPTY;
+-    protected final DebugScreenOverlay debugOverlay;
+-    protected final SubtitleOverlay subtitleOverlay;
+-    protected final SpectatorGui spectatorGui;
+-    protected final PlayerTabOverlay tabList;
+-    protected final BossHealthOverlay bossOverlay;
+-    protected int titleTime;
+-    @Nullable
+-    protected Component title;
+-    @Nullable
+-    protected Component subtitle;
+-    protected int titleFadeInTime;
+-    protected int titleStayTime;
+-    protected int titleFadeOutTime;
+-    protected int lastHealth;
+-    protected int displayHealth;
+-    protected long lastHealthTime;
+-    protected long healthBlinkTime;
+-    protected float autosaveIndicatorValue;
+-    protected float lastAutosaveIndicatorValue;
++    private int toolHighlightTimer;
++    private ItemStack lastToolHighlight = ItemStack.EMPTY;
++    protected DebugScreenOverlay debugOverlay;
++    private final SubtitleOverlay subtitleOverlay;
++    private final SpectatorGui spectatorGui;
++    private final PlayerTabOverlay tabList;
++    private final BossHealthOverlay bossOverlay;
++    private int titleTime;
++    @Nullable
++    private Component title;
++    @Nullable
++    private Component subtitle;
++    private int titleFadeInTime;
++    private int titleStayTime;
++    private int titleFadeOutTime;
++    private int lastHealth;
++    private int displayHealth;
++    private long lastHealthTime;
++    private long healthBlinkTime;
++    private float autosaveIndicatorValue;
++    private float lastAutosaveIndicatorValue;
+     private final LayeredDraw layers = new LayeredDraw();
+-    protected float scopeScale;
++    private float scopeScale;
  
-+               if (renderer.renderGuiIcon(mobeffectinstance, this, p_282812_, i, j, 0, f)) continue;
-                TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffect);
-                int i1 = j;
-                float f1 = f;
-@@ -602,16 +_,21 @@
-    }
+     public Gui(Minecraft p_330021_) {
+         this.minecraft = p_330021_;
+@@ -353,7 +_,7 @@
+         }
+     }
  
-    public void renderSelectedItemName(GuiGraphics p_283501_) {
-+      renderSelectedItemName(p_283501_, 0);
-+   }
+-    protected void drawBackdrop(GuiGraphics p_282548_, Font p_93041_, int p_93042_, int p_93043_, int p_93044_) {
++    private void drawBackdrop(GuiGraphics p_282548_, Font p_93041_, int p_93042_, int p_93043_, int p_93044_) {
+         int i = this.minecraft.options.getBackgroundColor(0.0F);
+         if (i != 0) {
+             int j = -p_93043_ / 2;
+@@ -444,6 +_,8 @@
+ 
+             for (MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
+                 Holder<MobEffect> holder = mobeffectinstance.getEffect();
++                var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
++                if (!renderer.isVisibleInGui(mobeffectinstance)) continue;
+                 if (mobeffectinstance.showIcon()) {
+                     int i = p_282812_.guiWidth();
+                     int j = 1;
+@@ -473,6 +_,7 @@
+                         }
+                     }
+ 
++                    if (renderer.renderGuiIcon(mobeffectinstance, this, p_282812_, i, j, 0, f)) continue;
+                     TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
+                     int l1 = i;
+                     int i1 = j;
+@@ -635,6 +_,10 @@
+     }
+ 
+     private void renderSelectedItemName(GuiGraphics p_283501_) {
++        renderSelectedItemName(p_283501_, 0);
++    }
 +
-+   public void renderSelectedItemName(GuiGraphics p_283501_, int yShift) {
-       this.minecraft.getProfiler().push("selectedItemName");
-       if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
--         MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color);
-+         MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().getStyleModifier());
-          if (this.lastToolHighlight.hasCustomHoverName()) {
-             mutablecomponent.withStyle(ChatFormatting.ITALIC);
-          }
- 
--         int i = this.getFont().width(mutablecomponent);
-+         Component highlightTip = this.lastToolHighlight.getHighlightTip(mutablecomponent);
-+         int i = this.getFont().width(highlightTip);
-          int j = (this.screenWidth - i) / 2;
--         int k = this.screenHeight - 59;
-+         int k = this.screenHeight - Math.max(yShift, 59);
-          if (!this.minecraft.gameMode.canHurtPlayer()) {
-             k += 14;
-          }
-@@ -623,7 +_,13 @@
- 
-          if (l > 0) {
-             p_283501_.fill(j - 2, k - 2, j + i + 2, k + 9 + 2, this.minecraft.options.getBackgroundColor(0));
--            p_283501_.drawString(this.getFont(), mutablecomponent, j, k, 16777215 + (l << 24));
-+            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
-+            if (font == null) {
-+               p_283501_.drawString(this.getFont(), highlightTip, j, k, 16777215 + (l << 24));
-+            } else {
-+               j = (this.screenWidth - font.width(highlightTip)) / 2;
-+               p_283501_.drawString(font, highlightTip, j, k, 16777215 + (l << 24));
-+            }
-          }
-       }
- 
-@@ -1080,7 +_,7 @@
-          ItemStack itemstack = this.minecraft.player.getInventory().getSelected();
-          if (itemstack.isEmpty()) {
-             this.toolHighlightTimer = 0;
--         } else if (!this.lastToolHighlight.isEmpty() && itemstack.is(this.lastToolHighlight.getItem()) && itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName())) {
-+         } else if (!this.lastToolHighlight.isEmpty() && itemstack.getItem() == this.lastToolHighlight.getItem() && (itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName()) && itemstack.getHighlightTip(itemstack.getHoverName()).equals(lastToolHighlight.getHighlightTip(lastToolHighlight.getHoverName())))) {
-             if (this.toolHighlightTimer > 0) {
-                --this.toolHighlightTimer;
++    public void renderSelectedItemName(GuiGraphics p_283501_, int yShift) {
+         this.minecraft.getProfiler().push("selectedItemName");
+         if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
+             MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
+@@ -642,9 +_,10 @@
+                 mutablecomponent.withStyle(ChatFormatting.ITALIC);
              }
+ 
+-            int i = this.getFont().width(mutablecomponent);
++            Component highlightTip = this.lastToolHighlight.getHighlightTip(mutablecomponent);
++            int i = this.getFont().width(highlightTip);
+             int j = (p_283501_.guiWidth() - i) / 2;
+-            int k = p_283501_.guiHeight() - 59;
++            int k = p_283501_.guiHeight() - Math.max(yShift, 59);
+             if (!this.minecraft.gameMode.canHurtPlayer()) {
+                 k += 14;
+             }
+@@ -657,6 +_,13 @@
+             if (l > 0) {
+                 p_283501_.fill(j - 2, k - 2, j + i + 2, k + 9 + 2, this.minecraft.options.getBackgroundColor(0));
+                 p_283501_.drawString(this.getFont(), mutablecomponent, j, k, 16777215 + (l << 24));
++                Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
++                if (font == null) {
++                    p_283501_.drawString(this.getFont(), highlightTip, j, k, 16777215 + (l << 24));
++                } else {
++                    j = (p_283501_.guiWidth() - font.width(highlightTip)) / 2;
++                    p_283501_.drawString(font, highlightTip, j, k, 16777215 + (l << 24));
++                }
+             }
+         }
+ 
+@@ -682,7 +_,7 @@
+         }
+     }
+ 
+-    public void displayScoreboardSidebar(GuiGraphics p_282008_, Objective p_283455_) {
++    private void displayScoreboardSidebar(GuiGraphics p_282008_, Objective p_283455_) {
+         Scoreboard scoreboard = p_283455_.getScoreboard();
+         NumberFormat numberformat = p_283455_.numberFormatOrDefault(StyledFormat.SIDEBAR_DEFAULT);
+ 
+@@ -875,7 +_,7 @@
+         }
+     }
+ 
+-    protected void renderHearts(
++    private void renderHearts(
+         GuiGraphics p_282497_,
+         Player p_168690_,
+         int p_168691_,
+@@ -1014,7 +_,7 @@
+         }
+     }
+ 
+-    protected void renderTextureOverlay(GuiGraphics p_282304_, ResourceLocation p_281622_, float p_281504_) {
++    private void renderTextureOverlay(GuiGraphics p_282304_, ResourceLocation p_281622_, float p_281504_) {
+         RenderSystem.disableDepthTest();
+         RenderSystem.depthMask(false);
+         RenderSystem.enableBlend();
+@@ -1026,7 +_,7 @@
+         p_282304_.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+     }
+ 
+-    public void renderSpyglassOverlay(GuiGraphics p_282069_, float p_283442_) {
++    private void renderSpyglassOverlay(GuiGraphics p_282069_, float p_283442_) {
+         float f = (float)Math.min(p_282069_.guiWidth(), p_282069_.guiHeight());
+         float f1 = Math.min((float)p_282069_.guiWidth() / f, (float)p_282069_.guiHeight() / f) * p_283442_;
+         int i = Mth.floor(f * f1);
+@@ -1051,7 +_,7 @@
+         this.vignetteBrightness = this.vignetteBrightness + (f1 - this.vignetteBrightness) * 0.01F;
+     }
+ 
+-    public void renderVignette(GuiGraphics p_283063_, @Nullable Entity p_283439_) {
++    private void renderVignette(GuiGraphics p_283063_, @Nullable Entity p_283439_) {
+         WorldBorder worldborder = this.minecraft.level.getWorldBorder();
+         float f = 0.0F;
+         if (p_283439_ != null) {
+@@ -1086,7 +_,7 @@
+         RenderSystem.disableBlend();
+     }
+ 
+-    protected void renderPortalOverlay(GuiGraphics p_283375_, float p_283296_) {
++    private void renderPortalOverlay(GuiGraphics p_283375_, float p_283296_) {
+         if (p_283296_ < 1.0F) {
+             p_283296_ *= p_283296_;
+             p_283296_ *= p_283296_;
+@@ -1155,7 +_,7 @@
+             ItemStack itemstack = this.minecraft.player.getInventory().getSelected();
+             if (itemstack.isEmpty()) {
+                 this.toolHighlightTimer = 0;
+-            } else if (this.lastToolHighlight.isEmpty() || !itemstack.is(this.lastToolHighlight.getItem()) || !itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName())) {
++            } else if (this.lastToolHighlight.isEmpty() || !itemstack.is(this.lastToolHighlight.getItem()) || !itemstack.getHoverName().equals(this.lastToolHighlight.getHoverName()) || !itemstack.getHighlightTip(itemstack.getHoverName()).equals(lastToolHighlight.getHighlightTip(lastToolHighlight.getHoverName()))) {
+                 this.toolHighlightTimer = (int)(40.0 * this.minecraft.options.notificationDisplayTime().get());
+             } else if (this.toolHighlightTimer > 0) {
+                 this.toolHighlightTimer--;

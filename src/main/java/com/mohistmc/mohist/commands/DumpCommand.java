@@ -18,6 +18,7 @@
 
 package com.mohistmc.mohist.commands;
 
+import com.mohistmc.mohist.Mohist;
 import com.mohistmc.mohist.api.ChatComponentAPI;
 import com.mohistmc.mohist.api.ServerAPI;
 import com.mohistmc.mohist.util.I18n;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -248,8 +250,8 @@ public class DumpCommand extends Command {
 
     private void dumpAdvancements(CommandSender sender, String mode) {
         StringBuilder sb = new StringBuilder();
-        for (Advancement channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
-            sb.append(channel.getId()).append("\n");
+        for (AdvancementHolder channel : ServerAPI.getNMSServer().getAdvancements().getAllAdvancements()) {
+            sb.append(channel.id()).append("\n");
         }
         dump(sender, "advancements", sb, mode);
     }
@@ -287,7 +289,7 @@ public class DumpCommand extends Command {
         try {
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            MohistMC.LOGGER.error(e);
+            Mohist.LOGGER.error(e);
         }
     }
 }

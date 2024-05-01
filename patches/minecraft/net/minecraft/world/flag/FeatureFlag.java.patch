@@ -1,11 +1,20 @@
 --- a/net/minecraft/world/flag/FeatureFlag.java
 +++ b/net/minecraft/world/flag/FeatureFlag.java
-@@ -1,7 +_,7 @@
+@@ -1,11 +_,11 @@
  package net.minecraft.world.flag;
  
  public class FeatureFlag {
--   final FeatureFlagUniverse universe;
+-    final FeatureFlagUniverse universe;
+-    final long mask;
 +   public final FeatureFlagUniverse universe;
-    final long mask;
++   final long mask;
  
-    FeatureFlag(FeatureFlagUniverse p_249115_, int p_251067_) {
+-    FeatureFlag(FeatureFlagUniverse p_249115_, int p_251067_) {
+-        this.universe = p_249115_;
+-        this.mask = 1L << p_251067_;
+-    }
++   FeatureFlag(FeatureFlagUniverse p_249115_, int p_251067_) {
++      this.universe = p_249115_;
++      this.mask = 1L << p_251067_;
++   }
+ }

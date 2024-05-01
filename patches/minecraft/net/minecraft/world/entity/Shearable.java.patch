@@ -6,9 +6,11 @@
  
 +@Deprecated // Forge: Use IForgeShearable
  public interface Shearable {
+-    void shear(SoundSource p_21749_);
 +   @Deprecated // Forge: Use IForgeShearable
-    void shear(SoundSource p_21749_);
++   void shear(SoundSource p_21749_);
  
+-    boolean readyForShearing();
 +   @Deprecated // Forge: Use IForgeShearable
-    boolean readyForShearing();
++   boolean readyForShearing();
  }

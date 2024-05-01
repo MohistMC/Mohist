@@ -1,12 +1,6 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -5,12 +_,14 @@
- import net.minecraft.server.level.ServerLevel;
- import net.minecraft.tags.FluidTags;
- import net.minecraft.world.entity.EntityType;
--import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.entity.vehicle.Boat;
- import net.minecraft.world.entity.vehicle.ChestBoat;
+@@ -10,6 +_,9 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.block.DispenserBlock;
  import net.minecraft.world.phys.Vec3;
@@ -15,11 +9,21 @@
 +import org.bukkit.event.block.BlockDispenseEvent;
  
  public class BoatDispenseItemBehavior extends DefaultDispenseItemBehavior {
-    private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
-@@ -35,6 +_,36 @@
-       double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
-       double d3 = vec3.z() + (double)direction.getStepZ() * d0;
-       BlockPos blockpos = p_123375_.pos().relative(direction);
+     private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+@@ -31,29 +_,56 @@
+         ServerLevel serverlevel = p_123375_.level();
+         Vec3 vec3 = p_123375_.center();
+         double d0 = 0.5625 + (double)EntityType.BOAT.getWidth() / 2.0;
+-        double d1 = vec3.x() + (double)direction.getStepX() * d0;
+-        double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
+-        double d3 = vec3.z() + (double)direction.getStepZ() * d0;
+-        BlockPos blockpos = p_123375_.pos().relative(direction);
+-        double d4;
+-        if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
++      double d1 = vec3.x() + (double)direction.getStepX() * d0;
++      double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
++      double d3 = vec3.z() + (double)direction.getStepZ() * d0;
++      BlockPos blockpos = p_123375_.pos().relative(direction);
 +      // CraftBukkit start
 +      ItemStack itemstack1 = p_123376_.split(1);
 +      org.bukkit.block.Block block = CraftBlock.at(serverlevel, p_123375_.pos());
@@ -50,21 +54,30 @@
 +      // CraftBukkit end
 +      boat.setVariant(this.type);
 +      boat.setYRot(direction.toYRot());
-       double d4;
-       if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
-          d4 = 1.0D;
-@@ -46,12 +_,8 @@
-          d4 = 0.0D;
-       }
++      double d4;
++        if (boat.canBoatInFluid(serverlevel.getFluidState(blockpos))) {
+             d4 = 1.0;
+         } else {
+-            if (!serverlevel.getBlockState(blockpos).isAir() || !serverlevel.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
++            if (!serverlevel.getBlockState(blockpos).isAir() || !boat.canBoatInFluid(serverlevel.getFluidState(blockpos.below()))) {
+                 return this.defaultDispenseItemBehavior.dispense(p_123375_, p_123376_);
+             }
  
--      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d1, d2 + d4, d3) : new Boat(serverlevel, d1, d2 + d4, d3));
--      EntityType.<Boat>createDefaultStackConfig(serverlevel, p_123376_, (Player)null).accept(boat);
--      boat.setVariant(this.type);
--      boat.setYRot(direction.toYRot());
--      serverlevel.addFreshEntity(boat);
--      p_123376_.shrink(1);
-+      boat.setPos(d1, d2 + d4, d3);
-+      if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
-       return p_123376_;
-    }
+             d4 = 0.0;
+         }
  
+-        Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d1, d2 + d4, d3) : new Boat(serverlevel, d1, d2 + d4, d3));
+         EntityType.<Boat>createDefaultStackConfig(serverlevel, p_123376_, null).accept(boat);
+-        boat.setVariant(this.type);
+-        boat.setYRot(direction.toYRot());
+-        serverlevel.addFreshEntity(boat);
+-        p_123376_.shrink(1);
+-        return p_123376_;
+-    }
++      	boat.setPos(d1, d2 + d4, d3);
++      	if (!serverlevel.addFreshEntity(boat)) p_123376_.grow(1); // CraftBukkit
++      	return p_123376_;
++   }
+ 
+     @Override
+     protected void playSound(BlockSource p_123373_) {

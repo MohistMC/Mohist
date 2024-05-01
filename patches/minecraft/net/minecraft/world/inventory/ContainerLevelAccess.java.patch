@@ -1,17 +1,51 @@
 --- a/net/minecraft/world/inventory/ContainerLevelAccess.java
 +++ b/net/minecraft/world/inventory/ContainerLevelAccess.java
-@@ -5,6 +_,7 @@
+@@ -5,34 +_,58 @@
  import java.util.function.BiFunction;
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.level.Level;
 +import org.bukkit.World;
  
  public interface ContainerLevelAccess {
-    ContainerLevelAccess NULL = new ContainerLevelAccess() {
-@@ -18,6 +_,17 @@
-          public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
-             return Optional.of(p_39311_.apply(p_39290_, p_39291_));
-          }
+-    ContainerLevelAccess NULL = new ContainerLevelAccess() {
+-        @Override
+-        public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39304_) {
+-            return Optional.empty();
+-        }
+-    };
+-
+-    static ContainerLevelAccess create(final Level p_39290_, final BlockPos p_39291_) {
+-        return new ContainerLevelAccess() {
+-            @Override
+-            public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
+-                return Optional.of(p_39311_.apply(p_39290_, p_39291_));
+-            }
+-        };
+-    }
+-
+-    <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39298_);
+-
+-    default <T> T evaluate(BiFunction<Level, BlockPos, T> p_39300_, T p_39301_) {
+-        return this.evaluate(p_39300_).orElse(p_39301_);
+-    }
+-
+-    default void execute(BiConsumer<Level, BlockPos> p_39293_) {
+-        this.evaluate((p_39296_, p_39297_) -> {
+-            p_39293_.accept(p_39296_, p_39297_);
+-            return Optional.empty();
+-        });
+-    }
++   ContainerLevelAccess NULL = new ContainerLevelAccess() {
++      public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39304_) {
++         return Optional.empty();
++      }
++   };
++
++   static ContainerLevelAccess create(final Level p_39290_, final BlockPos p_39291_) {
++      return new ContainerLevelAccess() {
++         public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
++            return Optional.of(p_39311_.apply(p_39290_, p_39291_));
++         }
 +         // CraftBukkit start
 +         @Override
 +         public Level getWorld() {
@@ -23,13 +57,21 @@
 +            return p_39291_;
 +         }
 +         // CraftBukkit end
-       };
-    }
- 
-@@ -33,4 +_,18 @@
-          return Optional.empty();
-       });
-    }
++      };
++   }
++
++   <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39298_);
++
++   default <T> T evaluate(BiFunction<Level, BlockPos, T> p_39300_, T p_39301_) {
++      return this.evaluate(p_39300_).orElse(p_39301_);
++   }
++
++   default void execute(BiConsumer<Level, BlockPos> p_39293_) {
++      this.evaluate((p_39296_, p_39297_) -> {
++         p_39293_.accept(p_39296_, p_39297_);
++         return Optional.empty();
++      });
++   }
 +
 +   // CraftBukkit start
 +   default Level getWorld() {

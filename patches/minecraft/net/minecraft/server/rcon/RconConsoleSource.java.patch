@@ -1,7 +1,10 @@
 --- a/net/minecraft/server/rcon/RconConsoleSource.java
 +++ b/net/minecraft/server/rcon/RconConsoleSource.java
-@@ -8,6 +_,10 @@
- import net.minecraft.world.entity.Entity;
+@@ -5,49 +_,68 @@
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.entity.Entity;
  import net.minecraft.world.phys.Vec2;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.command.CommandSender;
@@ -10,13 +13,52 @@
 +import java.net.SocketAddress;
  
  public class RconConsoleSource implements CommandSource {
-    private static final String RCON = "Rcon";
-@@ -15,8 +_,14 @@
-    private final StringBuffer buffer = new StringBuffer();
-    private final MinecraftServer server;
- 
--   public RconConsoleSource(MinecraftServer p_11505_) {
--      this.server = p_11505_;
+-    private static final String RCON = "Rcon";
+-    private static final Component RCON_COMPONENT = Component.literal("Rcon");
+-    private final StringBuffer buffer = new StringBuffer();
+-    private final MinecraftServer server;
+-
+-    public RconConsoleSource(MinecraftServer p_11505_) {
+-        this.server = p_11505_;
+-    }
+-
+-    public void prepareForCommand() {
+-        this.buffer.setLength(0);
+-    }
+-
+-    public String getCommandResponse() {
+-        return this.buffer.toString();
+-    }
+-
+-    public CommandSourceStack createCommandSourceStack() {
+-        ServerLevel serverlevel = this.server.overworld();
+-        return new CommandSourceStack(this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, null);
+-    }
+-
+-    @Override
+-    public void sendSystemMessage(Component p_215653_) {
+-        this.buffer.append(p_215653_.getString());
+-    }
+-
+-    @Override
+-    public boolean acceptsSuccess() {
+-        return true;
+-    }
+-
+-    @Override
+-    public boolean acceptsFailure() {
+-        return true;
+-    }
+-
+-    @Override
+-    public boolean shouldInformAdmins() {
+-        return this.server.shouldRconBroadcast();
+-    }
++   private static final String RCON = "Rcon";
++   private static final Component RCON_COMPONENT = Component.literal("Rcon");
++   private final StringBuffer buffer = new StringBuffer();
++   private final MinecraftServer server;
++
 +   // CraftBukkit start
 +   public final SocketAddress socketAddress;
 +   private final CraftRemoteConsoleCommandSender remoteConsole = new CraftRemoteConsoleCommandSender(this);
@@ -25,22 +67,36 @@
 +      this.socketAddress = socketAddress;
 +      // CraftBukkit end
 +      this.server = pServer;
-    }
- 
-    public void prepareForCommand() {
-@@ -33,7 +_,7 @@
-    }
- 
-    public void sendSystemMessage(Component p_215653_) {
--      this.buffer.append(p_215653_.getString());
++   }
++
++   public void prepareForCommand() {
++      this.buffer.setLength(0);
++   }
++
++   public String getCommandResponse() {
++      return this.buffer.toString();
++   }
++
++   public CommandSourceStack createCommandSourceStack() {
++      ServerLevel serverlevel = this.server.overworld();
++      return new CommandSourceStack(this, Vec3.atLowerCornerOf(serverlevel.getSharedSpawnPos()), Vec2.ZERO, serverlevel, 4, "Rcon", RCON_COMPONENT, this.server, (Entity)null);
++   }
++
++   public void sendSystemMessage(Component p_215653_) {
 +      this.buffer.append(p_215653_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
-    }
- 
-    public boolean acceptsSuccess() {
-@@ -47,4 +_,16 @@
-    public boolean shouldInformAdmins() {
-       return this.server.shouldRconBroadcast();
-    }
++   }
++
++   public boolean acceptsSuccess() {
++      return true;
++   }
++
++   public boolean acceptsFailure() {
++      return true;
++   }
++
++   public boolean shouldInformAdmins() {
++      return this.server.shouldRconBroadcast();
++   }
 +
 +
 +   // CraftBukkit start - Send a String

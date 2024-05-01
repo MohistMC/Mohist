@@ -8,7 +8,15 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.sounds.SoundEvents;
-@@ -27,6 +_,9 @@
+@@ -8,7 +_,6 @@
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.InteractionHand;
+ import net.minecraft.world.InteractionResult;
+-import net.minecraft.world.ItemInteractionResult;
+ import net.minecraft.world.entity.Entity;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+@@ -28,116 +_,108 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -17,35 +25,179 @@
 +import org.bukkit.event.player.PlayerHarvestBlockEvent;
  
  public class SweetBerryBushBlock extends BushBlock implements BonemealableBlock {
-    public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
-@@ -63,10 +_,11 @@
- 
-    public void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {
-       int i = p_222563_.getValue(AGE);
--      if (i < 3 && p_222566_.nextInt(5) == 0 && p_222564_.getRawBrightness(p_222565_.above(), 0) >= 9) {
+-    public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
+-    private static final float HURT_SPEED_THRESHOLD = 0.003F;
+-    public static final int MAX_AGE = 3;
+-    public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
+-    private static final VoxelShape SAPLING_SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 8.0, 13.0);
+-    private static final VoxelShape MID_GROWTH_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 16.0, 15.0);
+-
+-    @Override
+-    public MapCodec<SweetBerryBushBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public SweetBerryBushBlock(BlockBehaviour.Properties p_57249_) {
+-        super(p_57249_);
+-        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)));
+-    }
+-
+-    @Override
+-    public ItemStack getCloneItemStack(LevelReader p_312054_, BlockPos p_57257_, BlockState p_57258_) {
+-        return new ItemStack(Items.SWEET_BERRIES);
+-    }
+-
+-    @Override
+-    protected VoxelShape getShape(BlockState p_57291_, BlockGetter p_57292_, BlockPos p_57293_, CollisionContext p_57294_) {
+-        if (p_57291_.getValue(AGE) == 0) {
+-            return SAPLING_SHAPE;
+-        } else {
+-            return p_57291_.getValue(AGE) < 3 ? MID_GROWTH_SHAPE : super.getShape(p_57291_, p_57292_, p_57293_, p_57294_);
+-        }
+-    }
+-
+-    @Override
+-    protected boolean isRandomlyTicking(BlockState p_57284_) {
+-        return p_57284_.getValue(AGE) < 3;
+-    }
+-
+-    @Override
+-    protected void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {
+-        int i = p_222563_.getValue(AGE);
+-        if (i < 3 && p_222566_.nextInt(5) == 0 && p_222564_.getRawBrightness(p_222565_.above(), 0) >= 9) {
+-            BlockState blockstate = p_222563_.setValue(AGE, Integer.valueOf(i + 1));
+-            p_222564_.setBlock(p_222565_, blockstate, 2);
+-            p_222564_.gameEvent(GameEvent.BLOCK_CHANGE, p_222565_, GameEvent.Context.of(blockstate));
+-        }
+-    }
+-
+-    @Override
+-    protected void entityInside(BlockState p_57270_, Level p_57271_, BlockPos p_57272_, Entity p_57273_) {
+-        if (p_57273_ instanceof LivingEntity && p_57273_.getType() != EntityType.FOX && p_57273_.getType() != EntityType.BEE) {
+-            p_57273_.makeStuckInBlock(p_57270_, new Vec3(0.8F, 0.75, 0.8F));
+-            if (!p_57271_.isClientSide && p_57270_.getValue(AGE) > 0 && (p_57273_.xOld != p_57273_.getX() || p_57273_.zOld != p_57273_.getZ())
+-                )
+-             {
+-                double d0 = Math.abs(p_57273_.getX() - p_57273_.xOld);
+-                double d1 = Math.abs(p_57273_.getZ() - p_57273_.zOld);
+-                if (d0 >= 0.003F || d1 >= 0.003F) {
+-                    p_57273_.hurt(p_57271_.damageSources().sweetBerryBush(), 1.0F);
+-                }
++   public static final MapCodec<SweetBerryBushBlock> CODEC = simpleCodec(SweetBerryBushBlock::new);
++   private static final float HURT_SPEED_THRESHOLD = 0.003F;
++   public static final int MAX_AGE = 3;
++   public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
++   private static final VoxelShape SAPLING_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 8.0D, 13.0D);
++   private static final VoxelShape MID_GROWTH_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
++
++   public MapCodec<SweetBerryBushBlock> codec() {
++      return CODEC;
++   }
++
++   public SweetBerryBushBlock(BlockBehaviour.Properties p_57249_) {
++      super(p_57249_);
++      this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)));
++   }
++
++   public ItemStack getCloneItemStack(LevelReader p_312054_, BlockPos p_57257_, BlockState p_57258_) {
++      return new ItemStack(Items.SWEET_BERRIES);
++   }
++
++   public VoxelShape getShape(BlockState p_57291_, BlockGetter p_57292_, BlockPos p_57293_, CollisionContext p_57294_) {
++      if (p_57291_.getValue(AGE) == 0) {
++         return SAPLING_SHAPE;
++      } else {
++         return p_57291_.getValue(AGE) < 3 ? MID_GROWTH_SHAPE : super.getShape(p_57291_, p_57292_, p_57293_, p_57294_);
++      }
++   }
++
++   public boolean isRandomlyTicking(BlockState p_57284_) {
++      return p_57284_.getValue(AGE) < 3;
++   }
++
++   public void randomTick(BlockState p_222563_, ServerLevel p_222564_, BlockPos p_222565_, RandomSource p_222566_) {
++      int i = p_222563_.getValue(AGE);
 +      if (i < 3 && p_222564_.getRawBrightness(p_222565_.above(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222564_, p_222565_, p_222563_, p_222566_.nextFloat() < (p_222564_.spigotConfig.sweetBerryModifier / (100.0f * 5)) && p_222564_.getRawBrightness(p_222565_.above(), 0) >= 9)) {  // Spigot - SPIGOT-7159: Better modifier resolution
-          BlockState blockstate = p_222563_.setValue(AGE, Integer.valueOf(i + 1));
--         p_222564_.setBlock(p_222565_, blockstate, 2);
++         BlockState blockstate = p_222563_.setValue(AGE, Integer.valueOf(i + 1));
 +         if (!CraftEventFactory.handleBlockGrowEvent(p_222564_, p_222565_, blockstate, 2)) return; // CraftBukkit
-          p_222564_.gameEvent(GameEvent.BLOCK_CHANGE, p_222565_, GameEvent.Context.of(blockstate));
++         p_222564_.gameEvent(GameEvent.BLOCK_CHANGE, p_222565_, GameEvent.Context.of(blockstate));
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222564_, p_222565_, p_222563_);
-       }
- 
-    }
-@@ -78,7 +_,7 @@
-             double d0 = Math.abs(p_57273_.getX() - p_57273_.xOld);
-             double d1 = Math.abs(p_57273_.getZ() - p_57273_.zOld);
-             if (d0 >= (double)0.003F || d1 >= (double)0.003F) {
--               p_57273_.hurt(p_57271_.damageSources().sweetBerryBush(), 1.0F);
++      }
++
++   }
++
++   public void entityInside(BlockState p_57270_, Level p_57271_, BlockPos p_57272_, Entity p_57273_) {
++      if (p_57273_ instanceof LivingEntity && p_57273_.getType() != EntityType.FOX && p_57273_.getType() != EntityType.BEE) {
++         p_57273_.makeStuckInBlock(p_57270_, new Vec3((double)0.8F, 0.75D, (double)0.8F));
++         if (!p_57271_.isClientSide && p_57270_.getValue(AGE) > 0 && (p_57273_.xOld != p_57273_.getX() || p_57273_.zOld != p_57273_.getZ())) {
++            double d0 = Math.abs(p_57273_.getX() - p_57273_.xOld);
++            double d1 = Math.abs(p_57273_.getZ() - p_57273_.zOld);
++            if (d0 >= (double)0.003F || d1 >= (double)0.003F) {
 +               p_57273_.hurt(p_57271_.damageSources().sweetBerryBush().directBlock(p_57271_, p_57272_), 1.0F); // CraftBukkit
              }
-          }
- 
-@@ -92,7 +_,15 @@
-          return InteractionResult.PASS;
-       } else if (i > 1) {
-          int j = 1 + p_57276_.random.nextInt(2);
--         popResource(p_57276_, p_57277_, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
+-        }
+-    }
+-
+-    @Override
+-    protected ItemInteractionResult useItemOn(
+-        ItemStack p_333126_, BlockState p_333435_, Level p_336209_, BlockPos p_329457_, Player p_336064_, InteractionHand p_336388_, BlockHitResult p_334205_
+-    ) {
+-        int i = p_333435_.getValue(AGE);
+-        boolean flag = i == 3;
+-        return !flag && p_333126_.is(Items.BONE_MEAL)
+-            ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
+-            : super.useItemOn(p_333126_, p_333435_, p_336209_, p_329457_, p_336064_, p_336388_, p_334205_);
+-    }
+-
+-    @Override
+-    protected InteractionResult useWithoutItem(BlockState p_330186_, Level p_334365_, BlockPos p_328580_, Player p_332233_, BlockHitResult p_329481_) {
+-        int i = p_330186_.getValue(AGE);
+-        boolean flag = i == 3;
+-        if (i > 1) {
+-            int j = 1 + p_334365_.random.nextInt(2);
+-            popResource(p_334365_, p_328580_, new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0)));
+-            p_334365_.playSound(null, p_328580_, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + p_334365_.random.nextFloat() * 0.4F);
+-            BlockState blockstate = p_330186_.setValue(AGE, Integer.valueOf(1));
+-            p_334365_.setBlock(p_328580_, blockstate, 2);
+-            p_334365_.gameEvent(GameEvent.BLOCK_CHANGE, p_328580_, GameEvent.Context.of(p_332233_, blockstate));
+-            return InteractionResult.sidedSuccess(p_334365_.isClientSide);
+-        } else {
+-            return super.useWithoutItem(p_330186_, p_334365_, p_328580_, p_332233_, p_329481_);
+-        }
+-    }
+-
+-    @Override
+-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57282_) {
+-        p_57282_.add(AGE);
+-    }
+-
+-    @Override
+-    public boolean isValidBonemealTarget(LevelReader p_256056_, BlockPos p_57261_, BlockState p_57262_) {
+-        return p_57262_.getValue(AGE) < 3;
+-    }
+-
+-    @Override
+-    public boolean isBonemealSuccess(Level p_222558_, RandomSource p_222559_, BlockPos p_222560_, BlockState p_222561_) {
+-        return true;
+-    }
+-
+-    @Override
+-    public void performBonemeal(ServerLevel p_222553_, RandomSource p_222554_, BlockPos p_222555_, BlockState p_222556_) {
+-        int i = Math.min(3, p_222556_.getValue(AGE) + 1);
+-        p_222553_.setBlock(p_222555_, p_222556_.setValue(AGE, Integer.valueOf(i)), 2);
+-    }
++         }
++
++      }
++   }
++
++   public InteractionResult use(BlockState p_57275_, Level p_57276_, BlockPos p_57277_, Player p_57278_, InteractionHand p_57279_, BlockHitResult p_57280_) {
++      int i = p_57275_.getValue(AGE);
++      boolean flag = i == 3;
++      if (!flag && p_57278_.getItemInHand(p_57279_).is(Items.BONE_MEAL)) {
++         return InteractionResult.PASS;
++      } else if (i > 1) {
++         int j = 1 + p_57276_.random.nextInt(2);
 +         // CraftBukkit start
 +         PlayerHarvestBlockEvent event = CraftEventFactory.callPlayerHarvestBlockEvent(p_57276_, p_57277_, p_57278_, p_57279_, Collections.singletonList(new ItemStack(Items.SWEET_BERRIES, j + (flag ? 1 : 0))));
 +         if (event.isCancelled()) {
@@ -55,6 +207,30 @@
 +            popResource(p_57276_, p_57277_, CraftItemStack.asNMSCopy(itemStack));
 +         }
 +         // CraftBukkit end
-          p_57276_.playSound((Player)null, p_57277_, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + p_57276_.random.nextFloat() * 0.4F);
-          BlockState blockstate = p_57275_.setValue(AGE, Integer.valueOf(1));
-          p_57276_.setBlock(p_57277_, blockstate, 2);
++         p_57276_.playSound((Player)null, p_57277_, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + p_57276_.random.nextFloat() * 0.4F);
++         BlockState blockstate = p_57275_.setValue(AGE, Integer.valueOf(1));
++         p_57276_.setBlock(p_57277_, blockstate, 2);
++         p_57276_.gameEvent(GameEvent.BLOCK_CHANGE, p_57277_, GameEvent.Context.of(p_57278_, blockstate));
++         return InteractionResult.sidedSuccess(p_57276_.isClientSide);
++      } else {
++         return super.use(p_57275_, p_57276_, p_57277_, p_57278_, p_57279_, p_57280_);
++      }
++   }
++
++   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57282_) {
++      p_57282_.add(AGE);
++   }
++
++   public boolean isValidBonemealTarget(LevelReader p_256056_, BlockPos p_57261_, BlockState p_57262_) {
++      return p_57262_.getValue(AGE) < 3;
++   }
++
++   public boolean isBonemealSuccess(Level p_222558_, RandomSource p_222559_, BlockPos p_222560_, BlockState p_222561_) {
++      return true;
++   }
++
++   public void performBonemeal(ServerLevel p_222553_, RandomSource p_222554_, BlockPos p_222555_, BlockState p_222556_) {
++      int i = Math.min(3, p_222556_.getValue(AGE) + 1);
++      p_222553_.setBlock(p_222555_, p_222556_.setValue(AGE, Integer.valueOf(i)), 2);
++   }
+ }

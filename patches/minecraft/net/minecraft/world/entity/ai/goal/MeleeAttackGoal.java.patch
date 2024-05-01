@@ -1,18 +1,185 @@
 --- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
-@@ -21,6 +_,8 @@
-    private final int attackInterval = 20;
-    private long lastCanUseCheck;
-    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
+@@ -9,146 +_,162 @@
+ import net.minecraft.world.level.pathfinder.Path;
+ 
+ public class MeleeAttackGoal extends Goal {
+-    protected final PathfinderMob mob;
+-    private final double speedModifier;
+-    private final boolean followingTargetEvenIfNotSeen;
+-    private Path path;
+-    private double pathedTargetX;
+-    private double pathedTargetY;
+-    private double pathedTargetZ;
+-    private int ticksUntilNextPathRecalculation;
+-    private int ticksUntilNextAttack;
+-    private final int attackInterval = 20;
+-    private long lastCanUseCheck;
+-    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
+-
+-    public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
+-        this.mob = p_25552_;
+-        this.speedModifier = p_25553_;
+-        this.followingTargetEvenIfNotSeen = p_25554_;
+-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+-    }
+-
+-    @Override
+-    public boolean canUse() {
+-        long i = this.mob.level().getGameTime();
+-        if (i - this.lastCanUseCheck < 20L) {
+-            return false;
+-        } else {
+-            this.lastCanUseCheck = i;
+-            LivingEntity livingentity = this.mob.getTarget();
+-            if (livingentity == null) {
+-                return false;
+-            } else if (!livingentity.isAlive()) {
+-                return false;
+-            } else {
+-                this.path = this.mob.getNavigation().createPath(livingentity, 0);
+-                return this.path != null ? true : this.mob.isWithinMeleeAttackRange(livingentity);
+-            }
+-        }
+-    }
+-
+-    @Override
+-    public boolean canContinueToUse() {
+-        LivingEntity livingentity = this.mob.getTarget();
+-        if (livingentity == null) {
+-            return false;
+-        } else if (!livingentity.isAlive()) {
+-            return false;
+-        } else if (!this.followingTargetEvenIfNotSeen) {
+-            return !this.mob.getNavigation().isDone();
+-        } else {
+-            return !this.mob.isWithinRestriction(livingentity.blockPosition())
+-                ? false
+-                : !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player)livingentity).isCreative();
+-        }
+-    }
+-
+-    @Override
+-    public void start() {
+-        this.mob.getNavigation().moveTo(this.path, this.speedModifier);
+-        this.mob.setAggressive(true);
+-        this.ticksUntilNextPathRecalculation = 0;
+-        this.ticksUntilNextAttack = 0;
+-    }
+-
+-    @Override
+-    public void stop() {
+-        LivingEntity livingentity = this.mob.getTarget();
+-        if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+-            this.mob.setTarget(null);
+-        }
+-
+-        this.mob.setAggressive(false);
+-        this.mob.getNavigation().stop();
+-    }
+-
+-    @Override
+-    public boolean requiresUpdateEveryTick() {
+-        return true;
+-    }
+-
+-    @Override
+-    public void tick() {
+-        LivingEntity livingentity = this.mob.getTarget();
+-        if (livingentity != null) {
+-            this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+-            this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
+-            if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity))
+-                && this.ticksUntilNextPathRecalculation <= 0
+-                && (
+-                    this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0
+-                        || livingentity.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0
+-                        || this.mob.getRandom().nextFloat() < 0.05F
+-                )) {
+-                this.pathedTargetX = livingentity.getX();
+-                this.pathedTargetY = livingentity.getY();
+-                this.pathedTargetZ = livingentity.getZ();
+-                this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
+-                double d0 = this.mob.distanceToSqr(livingentity);
+-                if (d0 > 1024.0) {
+-                    this.ticksUntilNextPathRecalculation += 10;
+-                } else if (d0 > 256.0) {
+-                    this.ticksUntilNextPathRecalculation += 5;
+-                }
+-
+-                if (!this.mob.getNavigation().moveTo(livingentity, this.speedModifier)) {
+-                    this.ticksUntilNextPathRecalculation += 15;
+-                }
+-
+-                this.ticksUntilNextPathRecalculation = this.adjustedTickDelay(this.ticksUntilNextPathRecalculation);
+-            }
+-
+-            this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+-            this.checkAndPerformAttack(livingentity);
+-        }
+-    }
+-
+-    protected void checkAndPerformAttack(LivingEntity p_25557_) {
+-        if (this.canPerformAttack(p_25557_)) {
+-            this.resetAttackCooldown();
+-            this.mob.swing(InteractionHand.MAIN_HAND);
+-            this.mob.doHurtTarget(p_25557_);
+-        }
+-    }
+-
+-    protected void resetAttackCooldown() {
+-        this.ticksUntilNextAttack = this.adjustedTickDelay(20);
+-    }
+-
+-    protected boolean isTimeToAttack() {
+-        return this.ticksUntilNextAttack <= 0;
+-    }
+-
+-    protected boolean canPerformAttack(LivingEntity p_301160_) {
+-        return this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(p_301160_) && this.mob.getSensing().hasLineOfSight(p_301160_);
+-    }
+-
+-    protected int getTicksUntilNextAttack() {
+-        return this.ticksUntilNextAttack;
+-    }
+-
+-    protected int getAttackInterval() {
+-        return this.adjustedTickDelay(20);
+-    }
++   protected final PathfinderMob mob;
++   private final double speedModifier;
++   private final boolean followingTargetEvenIfNotSeen;
++   private Path path;
++   private double pathedTargetX;
++   private double pathedTargetY;
++   private double pathedTargetZ;
++   private int ticksUntilNextPathRecalculation;
++   private int ticksUntilNextAttack;
++   private final int attackInterval = 20;
++   private long lastCanUseCheck;
++   private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
 +   private int failedPathFindingPenalty = 0;
 +   private boolean canPenalize = false;
- 
-    public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
-       this.mob = p_25552_;
-@@ -41,6 +_,15 @@
-          } else if (!livingentity.isAlive()) {
-             return false;
-          } else {
++
++   public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
++      this.mob = p_25552_;
++      this.speedModifier = p_25553_;
++      this.followingTargetEvenIfNotSeen = p_25554_;
++      this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
++   }
++
++   public boolean canUse() {
++      long i = this.mob.level().getGameTime();
++      if (i - this.lastCanUseCheck < 20L) {
++         return false;
++      } else {
++         this.lastCanUseCheck = i;
++         LivingEntity livingentity = this.mob.getTarget();
++         if (livingentity == null) {
++            return false;
++         } else if (!livingentity.isAlive()) {
++            return false;
++         } else {
 +           if (canPenalize) {
 +               if (--this.ticksUntilNextPathRecalculation <= 0) {
 +                  this.path = this.mob.getNavigation().createPath(livingentity, 0);
@@ -22,13 +189,63 @@
 +                  return true;
 +               }
 +            }
-             this.path = this.mob.getNavigation().createPath(livingentity, 0);
-             if (this.path != null) {
-                return true;
-@@ -98,6 +_,18 @@
-             this.pathedTargetZ = livingentity.getZ();
-             this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-             double d0 = this.mob.distanceToSqr(livingentity);
++            this.path = this.mob.getNavigation().createPath(livingentity, 0);
++            if (this.path != null) {
++               return true;
++            } else {
++               return this.mob.isWithinMeleeAttackRange(livingentity);
++            }
++         }
++      }
++   }
++
++   public boolean canContinueToUse() {
++      LivingEntity livingentity = this.mob.getTarget();
++      if (livingentity == null) {
++         return false;
++      } else if (!livingentity.isAlive()) {
++         return false;
++      } else if (!this.followingTargetEvenIfNotSeen) {
++         return !this.mob.getNavigation().isDone();
++      } else if (!this.mob.isWithinRestriction(livingentity.blockPosition())) {
++         return false;
++      } else {
++         return !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player)livingentity).isCreative();
++      }
++   }
++
++   public void start() {
++      this.mob.getNavigation().moveTo(this.path, this.speedModifier);
++      this.mob.setAggressive(true);
++      this.ticksUntilNextPathRecalculation = 0;
++      this.ticksUntilNextAttack = 0;
++   }
++
++   public void stop() {
++      LivingEntity livingentity = this.mob.getTarget();
++      if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
++         this.mob.setTarget((LivingEntity)null);
++      }
++
++      this.mob.setAggressive(false);
++      this.mob.getNavigation().stop();
++   }
++
++   public boolean requiresUpdateEveryTick() {
++      return true;
++   }
++
++   public void tick() {
++      LivingEntity livingentity = this.mob.getTarget();
++      if (livingentity != null) {
++         this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
++         this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
++         if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity)) && this.ticksUntilNextPathRecalculation <= 0 && (this.pathedTargetX == 0.0D && this.pathedTargetY == 0.0D && this.pathedTargetZ == 0.0D || livingentity.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0D || this.mob.getRandom().nextFloat() < 0.05F)) {
++            this.pathedTargetX = livingentity.getX();
++            this.pathedTargetY = livingentity.getY();
++            this.pathedTargetZ = livingentity.getZ();
++            this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
++            double d0 = this.mob.distanceToSqr(livingentity);
 +         if (this.canPenalize) {
 +            this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
 +            if (this.mob.getNavigation().getPath() != null) {
@@ -41,6 +258,50 @@
 +               failedPathFindingPenalty += 10;
 +            }
 +         }
-             if (d0 > 1024.0D) {
-                this.ticksUntilNextPathRecalculation += 10;
-             } else if (d0 > 256.0D) {
++            if (d0 > 1024.0D) {
++               this.ticksUntilNextPathRecalculation += 10;
++            } else if (d0 > 256.0D) {
++               this.ticksUntilNextPathRecalculation += 5;
++            }
++
++            if (!this.mob.getNavigation().moveTo(livingentity, this.speedModifier)) {
++               this.ticksUntilNextPathRecalculation += 15;
++            }
++
++            this.ticksUntilNextPathRecalculation = this.adjustedTickDelay(this.ticksUntilNextPathRecalculation);
++         }
++
++         this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
++         this.checkAndPerformAttack(livingentity);
++      }
++   }
++
++   protected void checkAndPerformAttack(LivingEntity p_25557_) {
++      if (this.canPerformAttack(p_25557_)) {
++         this.resetAttackCooldown();
++         this.mob.swing(InteractionHand.MAIN_HAND);
++         this.mob.doHurtTarget(p_25557_);
++      }
++
++   }
++
++   protected void resetAttackCooldown() {
++      this.ticksUntilNextAttack = this.adjustedTickDelay(20);
++   }
++
++   protected boolean isTimeToAttack() {
++      return this.ticksUntilNextAttack <= 0;
++   }
++
++   protected boolean canPerformAttack(LivingEntity p_301160_) {
++      return this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(p_301160_) && this.mob.getSensing().hasLineOfSight(p_301160_);
++   }
++
++   protected int getTicksUntilNextAttack() {
++      return this.ticksUntilNextAttack;
++   }
++
++   protected int getAttackInterval() {
++      return this.adjustedTickDelay(20);
++   }
+ }

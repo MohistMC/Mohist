@@ -1,9 +1,18 @@
 --- a/net/minecraft/network/protocol/game/ServerboundInteractPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundInteractPacket.java
-@@ -158,4 +_,14 @@
-          p_179665_.writeEnum(this.hand);
-       }
-    }
+@@ -96,7 +_,7 @@
+         void write(FriendlyByteBuf p_179625_);
+     }
+ 
+-    public static enum ActionType {
++    static enum ActionType {
+         INTERACT(ServerboundInteractPacket.InteractionAction::new),
+         ATTACK(p_179639_ -> ServerboundInteractPacket.ATTACK_ACTION),
+         INTERACT_AT(ServerboundInteractPacket.InteractionAtLocationAction::new);
+@@ -175,4 +_,14 @@
+             p_179665_.writeEnum(this.hand);
+         }
+     }
 +
 +   // Paper start - PlayerUseUnknownEntityEvent
 +   public int getEntityId() {

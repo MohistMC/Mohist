@@ -1,10 +1,58 @@
 --- a/net/minecraft/world/item/SignItem.java
 +++ b/net/minecraft/world/item/SignItem.java
-@@ -12,6 +_,7 @@
+@@ -7,29 +_,34 @@
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.SignBlock;
++import net.minecraft.world.level.block.entity.BlockEntity;
+ import net.minecraft.world.level.block.entity.SignBlockEntity;
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SignItem extends StandingAndWallBlockItem {
+-    public SignItem(Item.Properties p_43126_, Block p_43127_, Block p_43128_) {
+-        super(p_43127_, p_43128_, p_43126_, Direction.DOWN);
+-    }
+-
+-    public SignItem(Item.Properties p_278081_, Block p_277743_, Block p_277375_, Direction p_278052_) {
+-        super(p_277743_, p_277375_, p_278081_, p_278052_);
+-    }
+-
+-    @Override
+-    protected boolean updateCustomBlockEntityTag(BlockPos p_43130_, Level p_43131_, @Nullable Player p_43132_, ItemStack p_43133_, BlockState p_43134_) {
+-        boolean flag = super.updateCustomBlockEntityTag(p_43130_, p_43131_, p_43132_, p_43133_, p_43134_);
+-        if (!p_43131_.isClientSide
+-            && !flag
+-            && p_43132_ != null
+-            && p_43131_.getBlockEntity(p_43130_) instanceof SignBlockEntity signblockentity
+-            && p_43131_.getBlockState(p_43130_).getBlock() instanceof SignBlock signblock) {
+-            signblock.openTextEdit(p_43132_, signblockentity, true);
+-        }
+-
+-        return flag;
+-    }
 +   public static BlockPos openSign; // CraftBukkit
-    public SignItem(Item.Properties p_43126_, Block p_43127_, Block p_43128_) {
-       super(p_43127_, p_43128_, p_43126_, Direction.DOWN);
-    }
++   public SignItem(Item.Properties p_43126_, Block p_43127_, Block p_43128_) {
++      super(p_43127_, p_43128_, p_43126_, Direction.DOWN);
++   }
++
++   public SignItem(Item.Properties p_278081_, Block p_277743_, Block p_277375_, Direction p_278052_) {
++      super(p_277743_, p_277375_, p_278081_, p_278052_);
++   }
++
++   protected boolean updateCustomBlockEntityTag(BlockPos p_43130_, Level p_43131_, @Nullable Player p_43132_, ItemStack p_43133_, BlockState p_43134_) {
++      boolean flag = super.updateCustomBlockEntityTag(p_43130_, p_43131_, p_43132_, p_43133_, p_43134_);
++      if (!p_43131_.isClientSide && !flag && p_43132_ != null) {
++         BlockEntity blockentity = p_43131_.getBlockEntity(p_43130_);
++         if (blockentity instanceof SignBlockEntity) {
++            SignBlockEntity signblockentity = (SignBlockEntity)blockentity;
++            Block block = p_43131_.getBlockState(p_43130_).getBlock();
++            if (block instanceof SignBlock) {
++               SignBlock signblock = (SignBlock)block;
++               signblock.openTextEdit(p_43132_, signblockentity, true);
++            }
++         }
++      }
++
++      return flag;
++   }
+ }

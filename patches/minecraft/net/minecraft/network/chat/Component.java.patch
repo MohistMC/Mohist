@@ -8,7 +8,7 @@
  import com.google.gson.Gson;
  import com.google.gson.GsonBuilder;
  import com.google.gson.JsonDeserializationContext;
-@@ -18,9 +_,11 @@
+@@ -18,11 +_,13 @@
  import java.util.ArrayList;
  import java.util.Collections;
  import java.util.Date;
@@ -18,13 +18,19 @@
  import java.util.UUID;
 +import java.util.stream.Stream;
  import javax.annotation.Nullable;
- import net.minecraft.Util;
+-import net.minecraft.core.HolderLookup;
++import net.minecraft.Util;
  import net.minecraft.network.chat.contents.DataSource;
-@@ -34,7 +_,19 @@
+ import net.minecraft.network.chat.contents.KeybindContents;
+ import net.minecraft.network.chat.contents.NbtContents;
+@@ -34,10 +_,22 @@
  import net.minecraft.util.FormattedCharSequence;
  import net.minecraft.world.level.ChunkPos;
  
 -public interface Component extends Message, FormattedText {
+-    Style getStyle();
+-
+-    ComponentContents getContents();
 +public interface Component extends Message, FormattedText, Iterable<Component> { // CraftBukkit
 +
 +   // CraftBukkit start
@@ -38,6 +44,16 @@
 +   }
 +   // CraftBukkit end
 +
-    Style getStyle();
++   Style getStyle();
++
++   ComponentContents getContents();
  
-    ComponentContents getContents();
+     @Override
+     default String getString() {
+@@ -269,5 +_,5 @@
+         public JsonElement serialize(Component p_309493_, Type p_310679_, JsonSerializationContext p_312693_) {
+             return Component.Serializer.serialize(p_309493_, this.registries);
+         }
+-    }
++   }
+ }

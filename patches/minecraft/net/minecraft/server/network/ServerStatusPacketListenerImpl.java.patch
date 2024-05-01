@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -1,5 +_,8 @@
+@@ -1,47 +_,95 @@
  package net.minecraft.server.network;
  
 +import com.mohistmc.mohist.api.event.MohistServerListPingEvent;
@@ -8,10 +8,13 @@
 +import net.minecraft.SharedConstants;
  import net.minecraft.network.Connection;
  import net.minecraft.network.chat.Component;
- import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
-@@ -8,16 +_,28 @@
+-import net.minecraft.network.protocol.ping.ClientboundPongResponsePacket;
+-import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket;
++import net.minecraft.network.protocol.status.ClientboundPongResponsePacket;
+ import net.minecraft.network.protocol.status.ClientboundStatusResponsePacket;
+ import net.minecraft.network.protocol.status.ServerStatus;
  import net.minecraft.network.protocol.status.ServerStatusPacketListener;
- import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
++import net.minecraft.network.protocol.status.ServerboundPingRequestPacket;
  import net.minecraft.network.protocol.status.ServerboundStatusRequestPacket;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.level.ServerPlayer;
@@ -22,28 +25,66 @@
 +import java.util.Optional;
  
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
-    private static final Component DISCONNECT_REASON = Component.translatable("multiplayer.status.request_handled");
-    private final ServerStatus status;
+-    private static final Component DISCONNECT_REASON = Component.translatable("multiplayer.status.request_handled");
+-    private final ServerStatus status;
+-    private final Connection connection;
+-    private boolean hasRequestedStatus;
+-
+-    public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
+-        this.status = p_272864_;
+-        this.connection = p_273586_;
+-    }
+-
+-    @Override
+-    public void onDisconnect(Component p_10091_) {
+-    }
+-
+-    @Override
+-    public boolean isAcceptingMessages() {
+-        return this.connection.isConnected();
+-    }
+-
+-    @Override
+-    public void handleStatusRequest(ServerboundStatusRequestPacket p_10095_) {
+-        if (this.hasRequestedStatus) {
+-            this.connection.disconnect(DISCONNECT_REASON);
+-        } else {
+-            this.hasRequestedStatus = true;
+-            this.connection.send(new ClientboundStatusResponsePacket(this.status));
+-        }
+-    }
+-
+-    @Override
+-    public void handlePingRequest(ServerboundPingRequestPacket p_333596_) {
+-        this.connection.send(new ClientboundPongResponsePacket(p_333596_.getTime()));
+-        this.connection.disconnect(DISCONNECT_REASON);
+-    }
++   private static final Component DISCONNECT_REASON = Component.translatable("multiplayer.status.request_handled");
++   private final ServerStatus status;
 +   private final @org.jetbrains.annotations.Nullable String statusCache; // FORGE: cache status JSON
-    private final Connection connection;
-    private boolean hasRequestedStatus;
- 
-    public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
++   private final Connection connection;
++   private boolean hasRequestedStatus;
++
++   public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_) {
 +      this(p_272864_, p_273586_, null);
 +   }
 +   public ServerStatusPacketListenerImpl(ServerStatus p_272864_, Connection p_273586_, @org.jetbrains.annotations.Nullable String statusCache) {
-       this.status = p_272864_;
-       this.connection = p_273586_;
++      this.status = p_272864_;
++      this.connection = p_273586_;
 +      this.statusCache = statusCache;
-    }
- 
-    public void onDisconnect(Component p_10091_) {
-@@ -31,8 +_,45 @@
-       if (this.hasRequestedStatus) {
-          this.connection.disconnect(DISCONNECT_REASON);
-       } else {
--         this.hasRequestedStatus = true;
--         this.connection.send(new ClientboundStatusResponsePacket(this.status));
++   }
++
++   public void onDisconnect(Component p_10091_) {
++   }
++
++   public boolean isAcceptingMessages() {
++      return this.connection.isConnected();
++   }
++
++   public void handleStatusRequest(ServerboundStatusRequestPacket p_10095_) {
++      if (this.hasRequestedStatus) {
++         this.connection.disconnect(DISCONNECT_REASON);
++      } else {
 +          this.hasRequestedStatus = true;
 +          MohistServerListPingEvent event = new MohistServerListPingEvent(connection, MinecraftServer.getServer());
 +          Bukkit.getPluginManager().callEvent(event);
@@ -83,6 +124,11 @@
 +         );
 +         this.connection.send(new ClientboundStatusResponsePacket(ping, this.statusCache));
 +         // CraftBukkit end
-       }
-    }
- 
++      }
++   }
++
++   public void handlePingRequest(ServerboundPingRequestPacket p_10093_) {
++      this.connection.send(new ClientboundPongResponsePacket(p_10093_.getTime()));
++      this.connection.disconnect(DISCONNECT_REASON);
++   }
+ }

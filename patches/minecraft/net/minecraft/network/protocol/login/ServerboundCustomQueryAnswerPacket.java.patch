@@ -1,62 +1,30 @@
 --- a/net/minecraft/network/protocol/login/ServerboundCustomQueryAnswerPacket.java
 +++ b/net/minecraft/network/protocol/login/ServerboundCustomQueryAnswerPacket.java
-@@ -6,7 +_,7 @@
+@@ -8,7 +_,7 @@
  import net.minecraft.network.protocol.login.custom.CustomQueryAnswerPayload;
  import net.minecraft.network.protocol.login.custom.DiscardedQueryAnswerPayload;
  
 -public record ServerboundCustomQueryAnswerPacket(int transactionId, @Nullable CustomQueryAnswerPayload payload) implements Packet<ServerLoginPacketListener> {
 +public record ServerboundCustomQueryAnswerPacket(int transactionId, @Nullable CustomQueryAnswerPayload payload) implements Packet<ServerLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomQueryAnswerPacket> {
-    private static final int MAX_PAYLOAD_SIZE = 1048576;
- 
-    public static ServerboundCustomQueryAnswerPacket read(FriendlyByteBuf p_300962_) {
-@@ -15,14 +_,23 @@
-    }
- 
-    private static CustomQueryAnswerPayload readPayload(int p_298211_, FriendlyByteBuf p_300600_) {
--      return readUnknownPayload(p_300600_);
-+      // Paper start - MC Utils - default query payloads
-+      FriendlyByteBuf buffer = p_300600_.readNullable((buf2) -> {
-+         int i = buf2.readableBytes();
-+         if (i >= 0 && i <= MAX_PAYLOAD_SIZE) {
-+            return new FriendlyByteBuf(buf2.readBytes(i));
-+         } else {
-+            throw new IllegalArgumentException("Payload may not be larger than " + MAX_PAYLOAD_SIZE + " bytes");
-+         }
-+      });
-+      return buffer == null ? null : new net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket.QueryAnswerPayload(buffer);
-+      // Paper end - MC Utils - default query payloads
-    }
- 
-    private static CustomQueryAnswerPayload readUnknownPayload(FriendlyByteBuf p_299934_) {
-       int i = p_299934_.readableBytes();
-       if (i >= 0 && i <= 1048576) {
--         p_299934_.skipBytes(i);
--         return DiscardedQueryAnswerPayload.INSTANCE;
-+         return new DiscardedQueryAnswerPayload(new FriendlyByteBuf(p_299934_.readBytes(i)));
-       } else {
-          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
-       }
-@@ -38,4 +_,23 @@
-    public void handle(ServerLoginPacketListener p_298492_) {
-       p_298492_.handleCustomQueryPacket(this);
-    }
+     public static final StreamCodec<FriendlyByteBuf, ServerboundCustomQueryAnswerPacket> STREAM_CODEC = Packet.codec(
+         ServerboundCustomQueryAnswerPacket::write, ServerboundCustomQueryAnswerPacket::read
+     );
+@@ -26,8 +_,7 @@
+     private static CustomQueryAnswerPayload readUnknownPayload(FriendlyByteBuf p_299934_) {
+         int i = p_299934_.readableBytes();
+         if (i >= 0 && i <= 1048576) {
+-            p_299934_.skipBytes(i);
+-            return DiscardedQueryAnswerPayload.INSTANCE;
++            return new DiscardedQueryAnswerPayload(new FriendlyByteBuf(p_299934_.readBytes(i)));
+         } else {
+             throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+         }
+@@ -46,4 +_,8 @@
+     public void handle(ServerLoginPacketListener p_298492_) {
+         p_298492_.handleCustomQueryPacket(this);
+     }
 +
-+   @Nullable @Override public FriendlyByteBuf getInternalData() { return this.payload instanceof DiscardedQueryAnswerPayload dc ? dc.data() : null; }
-+   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.NetworkInitialization.LOGIN_NAME; }
-+   @Override public int getIndex() { return transactionId(); }
-+   // Paper start - MC Utils - default query payloads
-+   public static final class QueryAnswerPayload implements CustomQueryAnswerPayload {
-+
-+      public final FriendlyByteBuf buffer;
-+
-+      public QueryAnswerPayload(final net.minecraft.network.FriendlyByteBuf buffer) {
-+         this.buffer = buffer;
-+      }
-+
-+      @Override
-+      public void write(final net.minecraft.network.FriendlyByteBuf buf) {
-+         buf.writeBytes(this.buffer.copy());
-+      }
-+   }
-+   // Paper end - MC Utils - default query payloads
++    @Nullable @Override public FriendlyByteBuf getInternalData() { return this.payload instanceof DiscardedQueryAnswerPayload dc ? dc.data() : null; }
++    @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.NetworkInitialization.LOGIN_NAME; }
++    @Override public int getIndex() { return transactionId(); }
  }

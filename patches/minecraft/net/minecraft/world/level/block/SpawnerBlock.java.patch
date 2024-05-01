@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpawnerBlock.java
 +++ b/net/minecraft/world/level/block/SpawnerBlock.java
-@@ -2,10 +_,17 @@
+@@ -2,13 +_,20 @@
  
  import com.mojang.serialization.MapCodec;
  import java.util.List;
@@ -14,17 +14,80 @@
  import net.minecraft.network.chat.Component;
 +import net.minecraft.resources.ResourceLocation;
  import net.minecraft.server.level.ServerLevel;
+-import net.minecraft.world.item.Item;
 +import net.minecraft.world.item.BlockItem;
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.TooltipFlag;
- import net.minecraft.world.level.BlockGetter;
-@@ -40,12 +_,24 @@
++import net.minecraft.world.level.BlockGetter;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.Spawner;
+ import net.minecraft.world.level.block.entity.BlockEntity;
+@@ -19,45 +_,52 @@
+ import net.minecraft.world.level.block.state.BlockState;
  
-    public void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
-       super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
--      if (p_222481_) {
--         int i = 15 + p_222478_.random.nextInt(15) + p_222478_.random.nextInt(15);
--         this.popExperience(p_222478_, p_222479_, i);
+ public class SpawnerBlock extends BaseEntityBlock {
+-    public static final MapCodec<SpawnerBlock> CODEC = simpleCodec(SpawnerBlock::new);
+-
+-    @Override
+-    public MapCodec<SpawnerBlock> codec() {
+-        return CODEC;
+-    }
+-
+-    public SpawnerBlock(BlockBehaviour.Properties p_56781_) {
+-        super(p_56781_);
+-    }
+-
+-    @Override
+-    public BlockEntity newBlockEntity(BlockPos p_154687_, BlockState p_154688_) {
+-        return new SpawnerBlockEntity(p_154687_, p_154688_);
+-    }
+-
+-    @Nullable
+-    @Override
+-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_154683_, BlockState p_154684_, BlockEntityType<T> p_154685_) {
+-        return createTickerHelper(p_154685_, BlockEntityType.MOB_SPAWNER, p_154683_.isClientSide ? SpawnerBlockEntity::clientTick : SpawnerBlockEntity::serverTick);
+-    }
+-
+-    @Override
+-    protected void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
+-        super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
+-        if (p_222481_) {
+-            int i = 15 + p_222478_.random.nextInt(15) + p_222478_.random.nextInt(15);
+-            this.popExperience(p_222478_, p_222479_, i);
+-        }
+-    }
+-
+-    @Override
+-    protected RenderShape getRenderShape(BlockState p_56794_) {
+-        return RenderShape.MODEL;
+-    }
+-
+-    @Override
+-    public void appendHoverText(ItemStack p_255714_, Item.TooltipContext p_331610_, List<Component> p_255708_, TooltipFlag p_255667_) {
+-        super.appendHoverText(p_255714_, p_331610_, p_255708_, p_255667_);
+-        Spawner.appendHoverText(p_255714_, p_255708_, "SpawnData");
+-    }
++   public static final MapCodec<SpawnerBlock> CODEC = simpleCodec(SpawnerBlock::new);
++
++   public MapCodec<SpawnerBlock> codec() {
++      return CODEC;
++   }
++
++   public SpawnerBlock(BlockBehaviour.Properties p_56781_) {
++      super(p_56781_);
++   }
++
++   public BlockEntity newBlockEntity(BlockPos p_154687_, BlockState p_154688_) {
++      return new SpawnerBlockEntity(p_154687_, p_154688_);
++   }
++
++   @Nullable
++   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_154683_, BlockState p_154684_, BlockEntityType<T> p_154685_) {
++      return createTickerHelper(p_154685_, BlockEntityType.MOB_SPAWNER, p_154683_.isClientSide ? SpawnerBlockEntity::clientTick : SpawnerBlockEntity::serverTick);
++   }
++
++   public void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
++      super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
 +
 +   }
 +
@@ -39,11 +102,17 @@
 +      if (flag) {
 +         int i = 15 + worldserver.random.nextInt(15) + worldserver.random.nextInt(15);
 +         return i;
-       }
--
++      }
 +      return 0;
-    }
++   }
 +   // CraftBukkit end
- 
-    public RenderShape getRenderShape(BlockState p_56794_) {
-       return RenderShape.MODEL;
++
++   public RenderShape getRenderShape(BlockState p_56794_) {
++      return RenderShape.MODEL;
++   }
++
++   public void appendHoverText(ItemStack p_255714_, @Nullable BlockGetter p_255801_, List<Component> p_255708_, TooltipFlag p_255667_) {
++      super.appendHoverText(p_255714_, p_255801_, p_255708_, p_255667_);
++      Spawner.appendHoverText(p_255714_, p_255708_, "SpawnData");
++   }
+ }

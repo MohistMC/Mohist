@@ -1,11 +1,41 @@
 --- a/net/minecraft/server/players/StoredUserEntry.java
 +++ b/net/minecraft/server/players/StoredUserEntry.java
-@@ -12,7 +_,7 @@
-    }
+@@ -4,21 +_,21 @@
+ import javax.annotation.Nullable;
  
-    @Nullable
--   T getUser() {
+ public abstract class StoredUserEntry<T> {
+-    @Nullable
+-    private final T user;
+-
+-    public StoredUserEntry(@Nullable T p_11371_) {
+-        this.user = p_11371_;
+-    }
+-
+-    @Nullable
+-    T getUser() {
+-        return this.user;
+-    }
+-
+-    boolean hasExpired() {
+-        return false;
+-    }
+-
+-    protected abstract void serialize(JsonObject p_11372_);
++   @Nullable
++   private final T user;
++
++   public StoredUserEntry(@Nullable T p_11371_) {
++      this.user = p_11371_;
++   }
++
++   @Nullable
 +   public T getUser() {
-       return this.user;
-    }
- 
++      return this.user;
++   }
++
++   boolean hasExpired() {
++      return false;
++   }
++
++   protected abstract void serialize(JsonObject p_11372_);
+ }

@@ -1,36 +1,144 @@
 --- a/net/minecraft/world/item/HoeItem.java
 +++ b/net/minecraft/world/item/HoeItem.java
-@@ -22,6 +_,12 @@
+@@ -12,7 +_,6 @@
+ import net.minecraft.sounds.SoundSource;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.world.InteractionResult;
+-import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.context.UseOnContext;
+ import net.minecraft.world.level.ItemLike;
+@@ -23,68 +_,70 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  
  public class HoeItem extends DiggerItem {
+-    protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> TILLABLES = Maps.newHashMap(
+-        ImmutableMap.of(
+-            Blocks.GRASS_BLOCK,
+-            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
+-            Blocks.DIRT_PATH,
+-            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
+-            Blocks.DIRT,
+-            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())),
+-            Blocks.COARSE_DIRT,
+-            Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.DIRT.defaultBlockState())),
+-            Blocks.ROOTED_DIRT,
+-            Pair.of(p_238242_ -> true, changeIntoStateAndDropItem(Blocks.DIRT.defaultBlockState(), Items.HANGING_ROOTS))
+-        )
+-    );
+-
+-    public HoeItem(Tier p_41336_, Item.Properties p_41339_) {
+-        super(p_41336_, BlockTags.MINEABLE_WITH_HOE, p_41339_);
+-    }
+-
+-    @Override
+-    public InteractionResult useOn(UseOnContext p_41341_) {
+-        Level level = p_41341_.getLevel();
+-        BlockPos blockpos = p_41341_.getClickedPos();
+-        Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = TILLABLES.get(level.getBlockState(blockpos).getBlock());
+-        if (pair == null) {
+-            return InteractionResult.PASS;
+-        } else {
+-            Predicate<UseOnContext> predicate = pair.getFirst();
+-            Consumer<UseOnContext> consumer = pair.getSecond();
+-            if (predicate.test(p_41341_)) {
+-                Player player = p_41341_.getPlayer();
+-                level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+-                if (!level.isClientSide) {
+-                    consumer.accept(p_41341_);
+-                    if (player != null) {
+-                        p_41341_.getItemInHand().hurtAndBreak(1, player, LivingEntity.getSlotForHand(p_41341_.getHand()));
+-                    }
+-                }
+-
+-                return InteractionResult.sidedSuccess(level.isClientSide);
+-            } else {
+-                return InteractionResult.PASS;
 +   /**
 +    * @deprecated Forge: This map is patched out of vanilla code.
 +    * Listen to {@link net.minecraftforge.event.world.BlockEvent.BlockToolModificationEvent}
 +    * or override {@link net.minecraftforge.common.extensions.IForgeBlock#getToolModifiedState(BlockState, UseOnContext, net.minecraftforge.common.ToolAction, boolean)}.
 +    */
 +   @Deprecated
-    protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> TILLABLES = Maps.newHashMap(ImmutableMap.of(Blocks.GRASS_BLOCK, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT_PATH, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.COARSE_DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.DIRT.defaultBlockState())), Blocks.ROOTED_DIRT, Pair.of((p_238242_) -> {
-       return true;
-    }, changeIntoStateAndDropItem(Blocks.DIRT.defaultBlockState(), Items.HANGING_ROOTS))));
-@@ -33,7 +_,8 @@
-    public InteractionResult useOn(UseOnContext p_41341_) {
-       Level level = p_41341_.getLevel();
-       BlockPos blockpos = p_41341_.getClickedPos();
--      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = TILLABLES.get(level.getBlockState(blockpos).getBlock());
++   protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> TILLABLES = Maps.newHashMap(ImmutableMap.of(Blocks.GRASS_BLOCK, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT_PATH, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.COARSE_DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.DIRT.defaultBlockState())), Blocks.ROOTED_DIRT, Pair.of((p_238242_) -> {
++      return true;
++   }, changeIntoStateAndDropItem(Blocks.DIRT.defaultBlockState(), Items.HANGING_ROOTS))));
++
++   public HoeItem(Tier p_41336_, int p_41337_, float p_41338_, Item.Properties p_41339_) {
++      super((float)p_41337_, p_41338_, p_41336_, BlockTags.MINEABLE_WITH_HOE, p_41339_);
++   }
++
++   public InteractionResult useOn(UseOnContext p_41341_) {
++      Level level = p_41341_.getLevel();
++      BlockPos blockpos = p_41341_.getClickedPos();
 +      BlockState toolModifiedState = level.getBlockState(blockpos).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
 +      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, changeIntoState(toolModifiedState));
-       if (pair == null) {
-          return InteractionResult.PASS;
-       } else {
-@@ -75,5 +_,10 @@
- 
-    public static boolean onlyIfAirAbove(UseOnContext p_150857_) {
-       return p_150857_.getClickedFace() != Direction.DOWN && p_150857_.getLevel().getBlockState(p_150857_.getClickedPos().above()).isAir();
++      if (pair == null) {
++         return InteractionResult.PASS;
++      } else {
++         Predicate<UseOnContext> predicate = pair.getFirst();
++         Consumer<UseOnContext> consumer = pair.getSecond();
++         if (predicate.test(p_41341_)) {
++            Player player = p_41341_.getPlayer();
++            level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
++            if (!level.isClientSide) {
++               consumer.accept(p_41341_);
++               if (player != null) {
++                  p_41341_.getItemInHand().hurtAndBreak(1, player, (p_150845_) -> {
++                     p_150845_.broadcastBreakEvent(p_41341_.getHand());
++                  });
++               }
+             }
+-        }
+-    }
+-
+-    public static Consumer<UseOnContext> changeIntoState(BlockState p_150859_) {
+-        return p_327147_ -> {
+-            p_327147_.getLevel().setBlock(p_327147_.getClickedPos(), p_150859_, 11);
+-            p_327147_.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, p_327147_.getClickedPos(), GameEvent.Context.of(p_327147_.getPlayer(), p_150859_));
+-        };
+-    }
+-
+-    public static Consumer<UseOnContext> changeIntoStateAndDropItem(BlockState p_150850_, ItemLike p_150851_) {
+-        return p_327150_ -> {
+-            p_327150_.getLevel().setBlock(p_327150_.getClickedPos(), p_150850_, 11);
+-            p_327150_.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, p_327150_.getClickedPos(), GameEvent.Context.of(p_327150_.getPlayer(), p_150850_));
+-            Block.popResourceFromFace(p_327150_.getLevel(), p_327150_.getClickedPos(), p_327150_.getClickedFace(), new ItemStack(p_150851_));
+-        };
+-    }
+-
+-    public static boolean onlyIfAirAbove(UseOnContext p_150857_) {
+-        return p_150857_.getClickedFace() != Direction.DOWN && p_150857_.getLevel().getBlockState(p_150857_.getClickedPos().above()).isAir();
+-    }
++
++            return InteractionResult.sidedSuccess(level.isClientSide);
++         } else {
++            return InteractionResult.PASS;
++         }
++      }
++   }
++
++   public static Consumer<UseOnContext> changeIntoState(BlockState p_150859_) {
++      return (p_238241_) -> {
++         p_238241_.getLevel().setBlock(p_238241_.getClickedPos(), p_150859_, 11);
++         p_238241_.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, p_238241_.getClickedPos(), GameEvent.Context.of(p_238241_.getPlayer(), p_150859_));
++      };
++   }
++
++   public static Consumer<UseOnContext> changeIntoStateAndDropItem(BlockState p_150850_, ItemLike p_150851_) {
++      return (p_238246_) -> {
++         p_238246_.getLevel().setBlock(p_238246_.getClickedPos(), p_150850_, 11);
++         p_238246_.getLevel().gameEvent(GameEvent.BLOCK_CHANGE, p_238246_.getClickedPos(), GameEvent.Context.of(p_238246_.getPlayer(), p_150850_));
++         Block.popResourceFromFace(p_238246_.getLevel(), p_238246_.getClickedPos(), p_238246_.getClickedFace(), new ItemStack(p_150851_));
++      };
++   }
++
++   public static boolean onlyIfAirAbove(UseOnContext p_150857_) {
++      return p_150857_.getClickedFace() != Direction.DOWN && p_150857_.getLevel().getBlockState(p_150857_.getClickedPos().above()).isAir();
 +   }
 +
 +   @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_HOE_ACTIONS.contains(toolAction);
-    }
++   }
  }

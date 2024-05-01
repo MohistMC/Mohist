@@ -1,26 +1,132 @@
 --- a/net/minecraft/world/entity/projectile/Fireball.java
 +++ b/net/minecraft/world/entity/projectile/Fireball.java
-@@ -1,5 +_,6 @@
+@@ -1,80 +_,63 @@
  package net.minecraft.world.entity.projectile;
  
 +import net.minecraft.Util;
  import net.minecraft.nbt.CompoundTag;
  import net.minecraft.network.syncher.EntityDataAccessor;
  import net.minecraft.network.syncher.EntityDataSerializers;
-@@ -32,7 +_,7 @@
+ import net.minecraft.network.syncher.SynchedEntityData;
+ import net.minecraft.world.entity.EntityType;
+ import net.minecraft.world.entity.LivingEntity;
+-import net.minecraft.world.entity.SlotAccess;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
  
-    }
- 
--   protected ItemStack getItemRaw() {
+ public abstract class Fireball extends AbstractHurtingProjectile implements ItemSupplier {
+-    private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(Fireball.class, EntityDataSerializers.ITEM_STACK);
+-
+-    public Fireball(EntityType<? extends Fireball> p_37006_, Level p_37007_) {
+-        super(p_37006_, p_37007_);
+-    }
+-
+-    public Fireball(
+-        EntityType<? extends Fireball> p_36990_,
+-        double p_36991_,
+-        double p_36992_,
+-        double p_36993_,
+-        double p_36994_,
+-        double p_36995_,
+-        double p_36996_,
+-        Level p_36997_
+-    ) {
+-        super(p_36990_, p_36991_, p_36992_, p_36993_, p_36994_, p_36995_, p_36996_, p_36997_);
+-    }
+-
+-    public Fireball(EntityType<? extends Fireball> p_36999_, LivingEntity p_37000_, double p_37001_, double p_37002_, double p_37003_, Level p_37004_) {
+-        super(p_36999_, p_37000_, p_37001_, p_37002_, p_37003_, p_37004_);
+-    }
+-
+-    public void setItem(ItemStack p_37011_) {
+-        if (p_37011_.isEmpty()) {
+-            this.getEntityData().set(DATA_ITEM_STACK, this.getDefaultItem());
+-        } else {
+-            this.getEntityData().set(DATA_ITEM_STACK, p_37011_.copyWithCount(1));
+-        }
+-    }
+-
+-    @Override
+-    public ItemStack getItem() {
+-        return this.getEntityData().get(DATA_ITEM_STACK);
+-    }
+-
+-    @Override
+-    protected void defineSynchedData(SynchedEntityData.Builder p_330316_) {
+-        p_330316_.define(DATA_ITEM_STACK, this.getDefaultItem());
+-    }
+-
+-    @Override
+-    public void addAdditionalSaveData(CompoundTag p_37013_) {
+-        super.addAdditionalSaveData(p_37013_);
+-        p_37013_.put("Item", this.getItem().save(this.registryAccess()));
+-    }
+-
+-    @Override
+-    public void readAdditionalSaveData(CompoundTag p_37009_) {
+-        super.readAdditionalSaveData(p_37009_);
+-        if (p_37009_.contains("Item", 10)) {
+-            this.setItem(ItemStack.parse(this.registryAccess(), p_37009_.getCompound("Item")).orElse(this.getDefaultItem()));
+-        } else {
+-            this.setItem(this.getDefaultItem());
+-        }
+-    }
+-
+-    private ItemStack getDefaultItem() {
+-        return new ItemStack(Items.FIRE_CHARGE);
+-    }
+-
+-    @Override
+-    public SlotAccess getSlot(int p_332914_) {
+-        return p_332914_ == 0 ? SlotAccess.of(this::getItem, this::setItem) : super.getSlot(p_332914_);
+-    }
++   private static final EntityDataAccessor<ItemStack> DATA_ITEM_STACK = SynchedEntityData.defineId(Fireball.class, EntityDataSerializers.ITEM_STACK);
++
++   public Fireball(EntityType<? extends Fireball> p_37006_, Level p_37007_) {
++      super(p_37006_, p_37007_);
++   }
++
++   public Fireball(EntityType<? extends Fireball> p_36990_, double p_36991_, double p_36992_, double p_36993_, double p_36994_, double p_36995_, double p_36996_, Level p_36997_) {
++      super(p_36990_, p_36991_, p_36992_, p_36993_, p_36994_, p_36995_, p_36996_, p_36997_);
++   }
++
++   public Fireball(EntityType<? extends Fireball> p_36999_, LivingEntity p_37000_, double p_37001_, double p_37002_, double p_37003_, Level p_37004_) {
++      super(p_36999_, p_37000_, p_37001_, p_37002_, p_37003_, p_37004_);
++   }
++
++   public void setItem(ItemStack p_37011_) {
++      if (!p_37011_.is(Items.FIRE_CHARGE) || p_37011_.hasTag()) {
++         this.getEntityData().set(DATA_ITEM_STACK, p_37011_.copyWithCount(1));
++      }
++
++   }
++
 +   public ItemStack getItemRaw() {
-       return this.getEntityData().get(DATA_ITEM_STACK);
-    }
- 
-@@ -57,6 +_,6 @@
-    public void readAdditionalSaveData(CompoundTag p_37009_) {
-       super.readAdditionalSaveData(p_37009_);
-       ItemStack itemstack = ItemStack.of(p_37009_.getCompound("Item"));
--      this.setItem(itemstack);
++      return this.getEntityData().get(DATA_ITEM_STACK);
++   }
++
++   public ItemStack getItem() {
++      ItemStack itemstack = this.getItemRaw();
++      return itemstack.isEmpty() ? new ItemStack(Items.FIRE_CHARGE) : itemstack;
++   }
++
++   protected void defineSynchedData() {
++      this.getEntityData().define(DATA_ITEM_STACK, ItemStack.EMPTY);
++   }
++
++   public void addAdditionalSaveData(CompoundTag p_37013_) {
++      super.addAdditionalSaveData(p_37013_);
++      ItemStack itemstack = this.getItemRaw();
++      if (!itemstack.isEmpty()) {
++         p_37013_.put("Item", itemstack.save(new CompoundTag()));
++      }
++
++   }
++
++   public void readAdditionalSaveData(CompoundTag p_37009_) {
++      super.readAdditionalSaveData(p_37009_);
++      ItemStack itemstack = ItemStack.of(p_37009_.getCompound("Item"));
 +      if (!itemstack.isEmpty()) this.setItem(itemstack); // CraftBukkit - SPIGOT-5474 probably came from bugged earlier versions
-    }
++   }
  }

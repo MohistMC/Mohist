@@ -5,8 +5,6 @@
 
 package net.minecraftforge.items;
 
-import com.mohistmc.mohist.bukkit.inventory.InventoryOwner;
-import net.minecraft.world.Container;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +20,6 @@ import net.minecraft.world.level.Level;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,25 +37,10 @@ public class VanillaInventoryCodeHooks
         return getItemHandler(level, dest, Direction.UP)
                 .map(itemHandlerResult -> {
                     IItemHandler handler = itemHandlerResult.getKey();
-                    Container container = HopperBlockEntity.getSourceContainer(level, dest);
+
                     for (int i = 0; i < handler.getSlots(); i++)
                     {
-                        ItemStack extractItem = handler.extractItem(i, level.spigotConfig.hopperAmount, true);
-                        if (!extractItem.isEmpty()) {
-                            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(extractItem);
-
-                            org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get(dest);
-                            org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(handler);
-                            if (destinationInventory != null) {
-                                InventoryMoveItemEvent event = new InventoryMoveItemEvent(InventoryOwner.getInventory(container), oitemstack.clone(), destinationInventory, true);
-                                Bukkit.getPluginManager().callEvent(event);
-                                if (event.isCancelled()) {
-                                    extractItem = ItemStack.EMPTY;
-                                } else {
-                                    extractItem = CraftItemStack.asNMSCopy(event.getItem());
-                                }
-                            }
-                        }
+                        ItemStack extractItem = handler.extractItem(i, 1, true);
                         if (!extractItem.isEmpty())
                         {
                             for (int j = 0; j < dest.getContainerSize(); j++)
@@ -99,18 +79,10 @@ public class VanillaInventoryCodeHooks
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
                     Object destination = destinationResult.getValue();
-                    // CraftBukkit start - Fire event when pushing items into other inventories
-                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().split(1));
-                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
-                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
-                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(dropper.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
-                    Bukkit.getPluginManager().callEvent(event);
-                    if (event.isCancelled()) {
-                        return false;
-                    }
-                    ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, CraftItemStack.asNMSCopy(event.getItem()));
+                    ItemStack dispensedStack = stack.copy().split(1);
+                    ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, dispensedStack);
 
-                    if (event.getItem().equals(oitemstack) && remainder.isEmpty())
+                    if (remainder.isEmpty())
                     {
                         remainder = stack.copy();
                         remainder.shrink(1);
@@ -147,32 +119,14 @@ public class VanillaInventoryCodeHooks
                             if (!hopper.getItem(i).isEmpty())
                             {
                                 ItemStack originalSlotContents = hopper.getItem(i).copy();
-                                ItemStack insertStack = hopper.removeItem(i, hopper.getLevel().spigotConfig.hopperAmount);
-                                ItemStack stack = insertStack;
-                                if (!insertStack.isEmpty()) {
-                                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(insertStack);
-                                    org.bukkit.inventory.InventoryHolder owner = InventoryOwner.get((BlockEntity) destination);
-                                    org.bukkit.inventory.Inventory destinationInventory = owner != null ? owner.getInventory() : InventoryOwner.inventoryFromForge(itemHandler);
-                                    if (destinationInventory != null) {
-                                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(InventoryOwner.getInventory(hopper), oitemstack.clone(), destinationInventory, true);
-                                        Bukkit.getPluginManager().callEvent(event);
-                                        if (event.isCancelled()) {
-                                            hopper.setItem(i, originalSlotContents);
-                                            hopper.setCooldown(hopper.getLevel().spigotConfig.hopperTransfer); // Spigot
-                                            return true;
-                                        }
-                                        stack = CraftItemStack.asNMSCopy(event.getItem());
-                                    }
-                                }
-                                int origCount = insertStack.getCount();
-                                ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, stack);
+                                ItemStack insertStack = hopper.removeItem(i, 1);
+                                ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
 
                                 if (remainder.isEmpty())
                                 {
                                     return true;
                                 }
 
-                                originalSlotContents.shrink(origCount - remainder.getCount()); // Spigot
                                 hopper.setItem(i, originalSlotContents);
                             }
                         }

@@ -8,43 +8,38 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mohistmc.mohist.MohistConfig;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeI18n;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class LanguageHook
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
     private static final Pattern PATTERN = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-    private static List<Map<String, String>> capturedTables = new ArrayList<>(2);
+    private static final List<Map<String, String>> CAPTURED_TABLES = new ArrayList<>();
     private static Map<String, String> modTable;
     /**
      * Loads lang files on the server
      */
     public static void captureLanguageMap(Map<String, String> table)
     {
-        capturedTables.add(table);
+        CAPTURED_TABLES.add(table);
         if (modTable != null) {
-            capturedTables.forEach(t->t.putAll(modTable));
+            CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         }
     }
 
@@ -75,20 +70,14 @@ public class LanguageHook
     }
 
     private static void loadLanguage(String langName, MinecraftServer server) {
-        String langFile = String.format(Locale.ROOT, "lang/%s.json", "en_us");
-        String langFile_mohist = String.format(Locale.ROOT, "lang/%s.json", langName);
+        String langFile = String.format(Locale.ROOT, "lang/%s.json", langName);
         ResourceManager resourceManager = server.getServerResources().resourceManager();
         resourceManager.getNamespaces().forEach(namespace -> {
             try {
-                ResourceLocation langResource = new ResourceLocation(namespace, langFile_mohist);
+                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
                 loadLocaleData(resourceManager.getResourceStack(langResource));
             } catch (Exception exception) {
-                try {
-                    ResourceLocation langResource = new ResourceLocation(namespace, langFile);
-                    loadLocaleData(resourceManager.getResourceStack(langResource));
-                } catch (Exception exception1) {
-                    LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception1);
-                }
+                LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
             }
         });
 
@@ -100,17 +89,17 @@ public class LanguageHook
         final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
         loadLocaleData(mc);
         loadLocaleData(forge);
-        capturedTables.forEach(t->t.putAll(modTable));
+        CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         ForgeI18n.loadLanguageData(modTable);
     }
 
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         // Possible multi-language server support?
-        for (String lang : Arrays.asList(MohistConfig.mohist_lang().toLowerCase())) {
+        for (String lang : Arrays.asList("en_us")) {
             loadLanguage(lang, server);
         }
-        capturedTables.forEach(t->t.putAll(modTable));
+        CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         ForgeI18n.loadLanguageData(modTable);
     }
 }

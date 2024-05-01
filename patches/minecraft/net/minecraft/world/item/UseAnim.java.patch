@@ -1,10 +1,28 @@
 --- a/net/minecraft/world/item/UseAnim.java
 +++ b/net/minecraft/world/item/UseAnim.java
-@@ -10,5 +_,10 @@
-    CROSSBOW,
-    SPYGLASS,
-    TOOT_HORN,
--   BRUSH;
+@@ -1,14 +_,19 @@
+ package net.minecraft.world.item;
+ 
+ public enum UseAnim {
+-    NONE,
+-    EAT,
+-    DRINK,
+-    BLOCK,
+-    BOW,
+-    SPEAR,
+-    CROSSBOW,
+-    SPYGLASS,
+-    TOOT_HORN,
+-    BRUSH;
++   NONE,
++   EAT,
++   DRINK,
++   BLOCK,
++   BOW,
++   SPEAR,
++   CROSSBOW,
++   SPYGLASS,
++   TOOT_HORN,
 +   BRUSH,
 +   /**
 +    * Items with custom arm animation should return this in `Item#getUseAnimation`

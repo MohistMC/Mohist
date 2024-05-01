@@ -1,11 +1,87 @@
 --- a/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
 +++ b/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
-@@ -36,7 +_,7 @@
-          if (optional.isPresent()) {
-             ItemStack itemstack = optional.get().value().getResultItem(p_81269_.getLevel().registryAccess());
-             if (!itemstack.isEmpty()) {
--               return itemstack.copyWithCount(p_81268_.getCount());
+@@ -1,9 +_,8 @@
+ package net.minecraft.world.level.storage.loot.functions;
+ 
+ import com.mojang.logging.LogUtils;
+-import com.mojang.serialization.MapCodec;
++import com.mojang.serialization.Codec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+-import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
+ import java.util.List;
+ import java.util.Optional;
+ import net.minecraft.world.SimpleContainer;
+@@ -16,41 +_,37 @@
+ import org.slf4j.Logger;
+ 
+ public class SmeltItemFunction extends LootItemConditionalFunction {
+-    private static final Logger LOGGER = LogUtils.getLogger();
+-    public static final MapCodec<SmeltItemFunction> CODEC = RecordCodecBuilder.mapCodec(
+-        p_298512_ -> commonFields(p_298512_).apply(p_298512_, SmeltItemFunction::new)
+-    );
+-
+-    private SmeltItemFunction(List<LootItemCondition> p_298857_) {
+-        super(p_298857_);
+-    }
+-
+-    @Override
+-    public LootItemFunctionType<SmeltItemFunction> getType() {
+-        return LootItemFunctions.FURNACE_SMELT;
+-    }
+-
+-    @Override
+-    public ItemStack run(ItemStack p_81268_, LootContext p_81269_) {
+-        if (p_81268_.isEmpty()) {
+-            return p_81268_;
+-        } else {
+-            Optional<RecipeHolder<SmeltingRecipe>> optional = p_81269_.getLevel()
+-                .getRecipeManager()
+-                .getRecipeFor(RecipeType.SMELTING, new SimpleContainer(p_81268_), p_81269_.getLevel());
+-            if (optional.isPresent()) {
+-                ItemStack itemstack = optional.get().value().getResultItem(p_81269_.getLevel().registryAccess());
+-                if (!itemstack.isEmpty()) {
+-                    return itemstack.copyWithCount(p_81268_.getCount());
+-                }
++   private static final Logger LOGGER = LogUtils.getLogger();
++   public static final Codec<SmeltItemFunction> CODEC = RecordCodecBuilder.create((p_298512_) -> {
++      return commonFields(p_298512_).apply(p_298512_, SmeltItemFunction::new);
++   });
++
++   private SmeltItemFunction(List<LootItemCondition> p_298857_) {
++      super(p_298857_);
++   }
++
++   public LootItemFunctionType getType() {
++      return LootItemFunctions.FURNACE_SMELT;
++   }
++
++   public ItemStack run(ItemStack p_81268_, LootContext p_81269_) {
++      if (p_81268_.isEmpty()) {
++         return p_81268_;
++      } else {
++         Optional<RecipeHolder<SmeltingRecipe>> optional = p_81269_.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(p_81268_), p_81269_.getLevel());
++         if (optional.isPresent()) {
++            ItemStack itemstack = optional.get().value().getResultItem(p_81269_.getLevel().registryAccess());
++            if (!itemstack.isEmpty()) {
 +               return itemstack.copyWithCount(p_81268_.getCount() * itemstack.getCount()); // Forge: Support smelting returning multiple
              }
-          }
- 
+-
+-            LOGGER.warn("Couldn't smelt {} because there is no smelting recipe", p_81268_);
+-            return p_81268_;
+-        }
+-    }
+-
+-    public static LootItemConditionalFunction.Builder<?> smelted() {
+-        return simpleBuilder(SmeltItemFunction::new);
+-    }
++         }
++
++         LOGGER.warn("Couldn't smelt {} because there is no smelting recipe", (Object)p_81268_);
++         return p_81268_;
++      }
++   }
++
++   public static LootItemConditionalFunction.Builder<?> smelted() {
++      return simpleBuilder(SmeltItemFunction::new);
++   }
+ }

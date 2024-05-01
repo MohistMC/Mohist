@@ -1,10 +1,35 @@
 --- a/net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
 +++ b/net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
-@@ -20,6 +_,7 @@
-    public static final LootContextParam<BlockEntity> BLOCK_ENTITY = create("block_entity");
-    public static final LootContextParam<ItemStack> TOOL = create("tool");
-    public static final LootContextParam<Float> EXPLOSION_RADIUS = create("explosion_radius");
+@@ -10,18 +_,19 @@
+ import net.minecraft.world.phys.Vec3;
+ 
+ public class LootContextParams {
+-    public static final LootContextParam<Entity> THIS_ENTITY = create("this_entity");
+-    public static final LootContextParam<Player> LAST_DAMAGE_PLAYER = create("last_damage_player");
+-    public static final LootContextParam<DamageSource> DAMAGE_SOURCE = create("damage_source");
+-    public static final LootContextParam<Entity> KILLER_ENTITY = create("killer_entity");
+-    public static final LootContextParam<Entity> DIRECT_KILLER_ENTITY = create("direct_killer_entity");
+-    public static final LootContextParam<Vec3> ORIGIN = create("origin");
+-    public static final LootContextParam<BlockState> BLOCK_STATE = create("block_state");
+-    public static final LootContextParam<BlockEntity> BLOCK_ENTITY = create("block_entity");
+-    public static final LootContextParam<ItemStack> TOOL = create("tool");
+-    public static final LootContextParam<Float> EXPLOSION_RADIUS = create("explosion_radius");
++   public static final LootContextParam<Entity> THIS_ENTITY = create("this_entity");
++   public static final LootContextParam<Player> LAST_DAMAGE_PLAYER = create("last_damage_player");
++   public static final LootContextParam<DamageSource> DAMAGE_SOURCE = create("damage_source");
++   public static final LootContextParam<Entity> KILLER_ENTITY = create("killer_entity");
++   public static final LootContextParam<Entity> DIRECT_KILLER_ENTITY = create("direct_killer_entity");
++   public static final LootContextParam<Vec3> ORIGIN = create("origin");
++   public static final LootContextParam<BlockState> BLOCK_STATE = create("block_state");
++   public static final LootContextParam<BlockEntity> BLOCK_ENTITY = create("block_entity");
++   public static final LootContextParam<ItemStack> TOOL = create("tool");
++   public static final LootContextParam<Float> EXPLOSION_RADIUS = create("explosion_radius");
 +   public static final LootContextParam<Integer> LOOTING_MOD = new LootContextParam<>(new ResourceLocation("bukkit:looting_mod")); // CraftBukkit
  
-    private static <T> LootContextParam<T> create(String p_81467_) {
-       return new LootContextParam<>(new ResourceLocation(p_81467_));
+-    private static <T> LootContextParam<T> create(String p_81467_) {
+-        return new LootContextParam<>(new ResourceLocation(p_81467_));
+-    }
++   private static <T> LootContextParam<T> create(String p_81467_) {
++      return new LootContextParam<>(new ResourceLocation(p_81467_));
++   }
+ }
