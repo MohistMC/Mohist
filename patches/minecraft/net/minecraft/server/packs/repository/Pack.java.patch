@@ -1,380 +1,54 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
-@@ -1,16 +_,18 @@
- package net.minecraft.server.packs.repository;
- 
-+import com.mojang.brigadier.arguments.StringArgumentType;
- import com.mojang.logging.LogUtils;
- import java.util.List;
- import java.util.function.Function;
- import javax.annotation.Nullable;
-+import net.minecraft.ChatFormatting;
- import net.minecraft.SharedConstants;
- import net.minecraft.network.chat.Component;
-+import net.minecraft.network.chat.ComponentUtils;
-+import net.minecraft.network.chat.HoverEvent;
- import net.minecraft.server.packs.FeatureFlagsMetadataSection;
- import net.minecraft.server.packs.OverlayMetadataSection;
--import net.minecraft.server.packs.PackLocationInfo;
- import net.minecraft.server.packs.PackResources;
--import net.minecraft.server.packs.PackSelectionConfig;
- import net.minecraft.server.packs.PackType;
- import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
- import net.minecraft.util.InclusiveRange;
-@@ -18,176 +_,187 @@
- import org.slf4j.Logger;
- 
+@@ -20,9 +_,10 @@
  public class Pack {
--    private static final Logger LOGGER = LogUtils.getLogger();
--    private final PackLocationInfo location;
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final PackLocationInfo location;
 -    public final Pack.ResourcesSupplier resources;
--    private final Pack.Metadata metadata;
--    private final PackSelectionConfig selectionConfig;
--
--    @Nullable
--    public static Pack readMetaAndCreate(PackLocationInfo p_333251_, Pack.ResourcesSupplier p_252210_, PackType p_250595_, PackSelectionConfig p_334202_) {
--        int i = SharedConstants.getCurrentVersion().getPackVersion(p_250595_);
--        Pack.Metadata pack$metadata = readPackMetadata(p_333251_, p_252210_, i);
--        return pack$metadata != null ? new Pack(p_333251_, p_252210_, pack$metadata, p_334202_) : null;
--    }
--
--    public Pack(PackLocationInfo p_330003_, Pack.ResourcesSupplier p_249377_, Pack.Metadata p_330761_, PackSelectionConfig p_334769_) {
--        this.location = p_330003_;
--        this.resources = p_249377_;
--        this.metadata = p_330761_;
--        this.selectionConfig = p_334769_;
--    }
--
--    @Nullable
--    public static Pack.Metadata readPackMetadata(PackLocationInfo p_330799_, Pack.ResourcesSupplier p_331172_, int p_333544_) {
--        try {
--            Pack.Metadata pack$metadata;
--            try (PackResources packresources = p_331172_.openPrimary(p_330799_)) {
--                PackMetadataSection packmetadatasection = packresources.getMetadataSection(PackMetadataSection.TYPE);
--                if (packmetadatasection == null) {
--                    LOGGER.warn("Missing metadata in pack {}", p_330799_.id());
--                    return null;
--                }
--
--                FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.getMetadataSection(FeatureFlagsMetadataSection.TYPE);
--                FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.flags() : FeatureFlagSet.of();
--                InclusiveRange<Integer> inclusiverange = getDeclaredPackVersions(p_330799_.id(), packmetadatasection);
--                PackCompatibility packcompatibility = PackCompatibility.forVersion(inclusiverange, p_333544_);
--                OverlayMetadataSection overlaymetadatasection = packresources.getMetadataSection(OverlayMetadataSection.TYPE);
--                List<String> list = overlaymetadatasection != null ? overlaymetadatasection.overlaysForVersion(p_333544_) : List.of();
--                pack$metadata = new Pack.Metadata(packmetadatasection.description(), packcompatibility, featureflagset, list);
--            }
--
--            return pack$metadata;
--        } catch (Exception exception) {
--            LOGGER.warn("Failed to read pack {} metadata", p_330799_.id(), exception);
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   private final String id;
-+   public final Pack.ResourcesSupplier resources;
-+   private final Component title;
-+   private final Pack.Info info;
-+   private final Pack.Position defaultPosition;
-+   private final boolean required;
-+   private final boolean fixedPosition;
-+   private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely
-+   private final PackSource packSource;
-+
-+   @Nullable
-+   public static Pack readMetaAndCreate(String p_249649_, Component p_248632_, boolean p_251594_, Pack.ResourcesSupplier p_252210_, PackType p_250595_, Pack.Position p_248706_, PackSource p_251233_) {
-+      int i = SharedConstants.getCurrentVersion().getPackVersion(p_250595_);
-+      Pack.Info pack$info = readPackInfo(p_249649_, p_252210_, i);
-+      return pack$info != null ? create(p_249649_, p_248632_, p_251594_, p_252210_, pack$info, p_248706_, false, p_251233_) : null;
-+   }
-+
-+   public static Pack create(String p_252257_, Component p_248717_, boolean p_248811_, Pack.ResourcesSupplier p_248969_, Pack.Info p_251314_, Pack.Position p_252110_, boolean p_250237_, PackSource p_248524_) {
-+      return new Pack(p_252257_, p_248811_, p_248969_, p_248717_, p_251314_, p_252110_, p_250237_, p_248524_);
-+   }
-+
-+   private Pack(String p_252218_, boolean p_248829_, Pack.ResourcesSupplier p_249377_, Component p_251718_, Pack.Info p_250162_, Pack.Position p_251298_, boolean p_249753_, PackSource p_251608_) {
-+      this.id = p_252218_;
-+      this.resources = p_249377_;
-+      this.title = p_251718_;
-+      this.info = p_250162_;
-+      this.required = p_248829_;
-+      this.defaultPosition = p_251298_;
-+      this.fixedPosition = p_249753_;
-+      this.packSource = p_251608_;
-+      this.hidden = p_250162_.hidden();
-+   }
-+
-+   @Nullable
-+   public static Pack.Info readPackInfo(String p_250591_, Pack.ResourcesSupplier p_250739_, int p_299232_) {
-+      try (PackResources packresources = p_250739_.openPrimary(p_250591_)) {
-+         PackMetadataSection packmetadatasection = packresources.getMetadataSection(PackMetadataSection.TYPE);
-+         if (packmetadatasection == null) {
-+            LOGGER.warn("Missing metadata in pack {}", (Object)p_250591_);
-             return null;
--        }
--    }
-+         } else {
-+            FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.getMetadataSection(FeatureFlagsMetadataSection.TYPE);
-+            FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.flags() : FeatureFlagSet.of();
-+            InclusiveRange<Integer> inclusiverange = getDeclaredPackVersions(p_250591_, packmetadatasection);
-+            PackCompatibility packcompatibility = PackCompatibility.forVersion(inclusiverange, p_299232_);
-+            OverlayMetadataSection overlaymetadatasection = packresources.getMetadataSection(OverlayMetadataSection.TYPE);
-+            List<String> list = overlaymetadatasection != null ? overlaymetadatasection.overlaysForVersion(p_299232_) : List.of();
-+            return new Pack.Info(packmetadatasection.description(), packcompatibility, featureflagset, list, packresources.isHidden());
-+         }
-+      } catch (Exception exception) {
-+         LOGGER.warn("Failed to read pack {} metadata", p_250591_, exception);
-+         return null;
-+      }
-+   }
++    private final Pack.ResourcesSupplier resources;
+     private final Pack.Metadata metadata;
+     private final PackSelectionConfig selectionConfig;
++    private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely
  
--    private static InclusiveRange<Integer> getDeclaredPackVersions(String p_299045_, PackMetadataSection p_298414_) {
--        int i = p_298414_.packFormat();
--        if (p_298414_.supportedFormats().isEmpty()) {
-+   private static InclusiveRange<Integer> getDeclaredPackVersions(String p_299045_, PackMetadataSection p_298414_) {
-+      int i = p_298414_.packFormat();
-+      if (p_298414_.supportedFormats().isEmpty()) {
-+         return new InclusiveRange<>(i);
-+      } else {
-+         InclusiveRange<Integer> inclusiverange = p_298414_.supportedFormats().get();
-+         if (!inclusiverange.isValueInRange(i)) {
-+            LOGGER.warn("Pack {} declared support for versions {} but declared main format is {}, defaulting to {}", p_299045_, inclusiverange, i, i);
-             return new InclusiveRange<>(i);
--        } else {
--            InclusiveRange<Integer> inclusiverange = p_298414_.supportedFormats().get();
--            if (!inclusiverange.isValueInRange(i)) {
--                LOGGER.warn("Pack {} declared support for versions {} but declared main format is {}, defaulting to {}", p_299045_, inclusiverange, i, i);
--                return new InclusiveRange<>(i);
--            } else {
--                return inclusiverange;
--            }
--        }
--    }
--
--    public PackLocationInfo location() {
--        return this.location;
--    }
--
--    public Component getTitle() {
--        return this.location.title();
--    }
--
--    public Component getDescription() {
--        return this.metadata.description();
--    }
--
--    public Component getChatLink(boolean p_10438_) {
--        return this.location.createChatLink(p_10438_, this.metadata.description);
--    }
--
--    public PackCompatibility getCompatibility() {
--        return this.metadata.compatibility();
--    }
--
--    public FeatureFlagSet getRequestedFeatures() {
--        return this.metadata.requestedFeatures();
--    }
--
--    public PackResources open() {
--        return this.resources.openFull(this.location, this.metadata);
--    }
--
--    public String getId() {
--        return this.location.id();
--    }
--
--    public PackSelectionConfig selectionConfig() {
--        return this.selectionConfig;
--    }
--
--    public boolean isRequired() {
--        return this.selectionConfig.required();
--    }
--
--    public boolean isFixedPosition() {
--        return this.selectionConfig.fixedPosition();
--    }
--
--    public Pack.Position getDefaultPosition() {
--        return this.selectionConfig.defaultPosition();
--    }
--
--    public PackSource getPackSource() {
--        return this.location.source();
--    }
--
--    @Override
--    public boolean equals(Object p_10448_) {
--        if (this == p_10448_) {
--            return true;
--        } else {
--            return !(p_10448_ instanceof Pack pack) ? false : this.location.equals(pack.location);
--        }
--    }
--
--    @Override
--    public int hashCode() {
--        return this.location.hashCode();
--    }
--
+     @Nullable
+     public static Pack readMetaAndCreate(PackLocationInfo p_333251_, Pack.ResourcesSupplier p_252210_, PackType p_250595_, PackSelectionConfig p_334202_) {
+@@ -36,6 +_,7 @@
+         this.resources = p_249377_;
+         this.metadata = p_330761_;
+         this.selectionConfig = p_334769_;
++        this.hidden = p_330761_.isHidden();
+     }
+ 
+     @Nullable
+@@ -55,7 +_,7 @@
+                 PackCompatibility packcompatibility = PackCompatibility.forVersion(inclusiverange, p_333544_);
+                 OverlayMetadataSection overlaymetadatasection = packresources.getMetadataSection(OverlayMetadataSection.TYPE);
+                 List<String> list = overlaymetadatasection != null ? overlaymetadatasection.overlaysForVersion(p_333544_) : List.of();
+-                pack$metadata = new Pack.Metadata(packmetadatasection.description(), packcompatibility, featureflagset, list);
++                pack$metadata = new Pack.Metadata(packmetadatasection.description(), packcompatibility, featureflagset, list, packresources.isHidden());
+             }
+ 
+             return pack$metadata;
+@@ -132,6 +_,10 @@
+         return this.location.source();
+     }
+ 
++    public boolean isHidden() {
++        return this.hidden;
++    }
++
+     @Override
+     public boolean equals(Object p_10448_) {
+         if (this == p_10448_) {
+@@ -146,7 +_,10 @@
+         return this.location.hashCode();
+     }
+ 
 -    public static record Metadata(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
--    }
--
--    public static enum Position {
--        TOP,
--        BOTTOM;
--
--        public <T> int insert(List<T> p_10471_, T p_10472_, Function<T, PackSelectionConfig> p_10473_, boolean p_10474_) {
--            Pack.Position pack$position = p_10474_ ? this.opposite() : this;
--            if (pack$position == BOTTOM) {
--                int j;
--                for (j = 0; j < p_10471_.size(); j++) {
--                    PackSelectionConfig packselectionconfig1 = p_10473_.apply(p_10471_.get(j));
--                    if (!packselectionconfig1.fixedPosition() || packselectionconfig1.defaultPosition() != this) {
--                        break;
--                    }
--                }
--
--                p_10471_.add(j, p_10472_);
--                return j;
--            } else {
--                int i;
--                for (i = p_10471_.size() - 1; i >= 0; i--) {
--                    PackSelectionConfig packselectionconfig = p_10473_.apply(p_10471_.get(i));
--                    if (!packselectionconfig.fixedPosition() || packselectionconfig.defaultPosition() != this) {
--                        break;
--                    }
--                }
--
--                p_10471_.add(i + 1, p_10472_);
--                return i + 1;
--            }
--        }
--
--        public Pack.Position opposite() {
--            return this == TOP ? BOTTOM : TOP;
--        }
--    }
--
--    public interface ResourcesSupplier {
--        PackResources openPrimary(PackLocationInfo p_332103_);
--
--        PackResources openFull(PackLocationInfo p_330351_, Pack.Metadata p_333429_);
--    }
-+         } else {
-+            return inclusiverange;
-+         }
-+      }
-+   }
-+
-+   public Component getTitle() {
-+      return this.title;
-+   }
-+
-+   public Component getDescription() {
-+      return this.info.description();
-+   }
-+
-+   public Component getChatLink(boolean p_10438_) {
-+      return ComponentUtils.wrapInSquareBrackets(this.packSource.decorate(Component.literal(this.id))).withStyle((p_296599_) -> {
-+         return p_296599_.withColor(p_10438_ ? ChatFormatting.GREEN : ChatFormatting.RED).withInsertion(StringArgumentType.escapeIfRequired(this.id)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.empty().append(this.title).append("\n").append(this.info.description)));
-+      });
-+   }
-+
-+   public PackCompatibility getCompatibility() {
-+      return this.info.compatibility();
-+   }
-+
-+   public FeatureFlagSet getRequestedFeatures() {
-+      return this.info.requestedFeatures();
-+   }
-+
-+   public PackResources open() {
-+      return this.resources.openFull(this.id, this.info);
-+   }
-+
-+   public String getId() {
-+      return this.id;
-+   }
-+
-+   public boolean isRequired() {
-+      return this.required;
-+   }
-+
-+   public boolean isFixedPosition() {
-+      return this.fixedPosition;
-+   }
-+
-+   public Pack.Position getDefaultPosition() {
-+      return this.defaultPosition;
-+   }
-+
-+   public PackSource getPackSource() {
-+      return this.packSource;
-+   }
-+
-+   public boolean isHidden() {
-+      return hidden;
-+   }
-+
-+   public boolean equals(Object p_10448_) {
-+      if (this == p_10448_) {
-+         return true;
-+      } else if (!(p_10448_ instanceof Pack)) {
-+         return false;
-+      } else {
-+         Pack pack = (Pack)p_10448_;
-+         return this.id.equals(pack.id);
-+      }
-+   }
-+
-+   public int hashCode() {
-+      return this.id.hashCode();
-+   }
-+
-+   public static record Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays, boolean hidden) {
-+      public Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
-+         this(description, compatibility, requestedFeatures, overlays, false);
-+      }
-+   }
-+
-+   public static enum Position {
-+      TOP,
-+      BOTTOM;
-+
-+      public <T> int insert(List<T> p_10471_, T p_10472_, Function<T, Pack> p_10473_, boolean p_10474_) {
-+         Pack.Position pack$position = p_10474_ ? this.opposite() : this;
-+         if (pack$position == BOTTOM) {
-+            int j;
-+            for(j = 0; j < p_10471_.size(); ++j) {
-+               Pack pack1 = p_10473_.apply(p_10471_.get(j));
-+               if (!pack1.isFixedPosition() || pack1.getDefaultPosition() != this) {
-+                  break;
-+               }
-+            }
-+
-+            p_10471_.add(j, p_10472_);
-+            return j;
-+         } else {
-+            int i;
-+            for(i = p_10471_.size() - 1; i >= 0; --i) {
-+               Pack pack = p_10473_.apply(p_10471_.get(i));
-+               if (!pack.isFixedPosition() || pack.getDefaultPosition() != this) {
-+                  break;
-+               }
-+            }
-+
-+            p_10471_.add(i + 1, p_10472_);
-+            return i + 1;
-+         }
-+      }
-+
-+      public Pack.Position opposite() {
-+         return this == TOP ? BOTTOM : TOP;
-+      }
-+   }
-+
-+   public interface ResourcesSupplier {
-+      PackResources openPrimary(String p_298664_);
-+
-+      PackResources openFull(String p_251717_, Pack.Info p_298253_);
-+   }
- }
++    public static record Metadata(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays, boolean isHidden) {
++        public Metadata(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
++            this(description, compatibility, requestedFeatures, overlays, false);
++        }
+     }
+ 
+     public static enum Position {

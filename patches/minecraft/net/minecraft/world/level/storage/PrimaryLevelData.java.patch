@@ -35,7 +35,7 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.GameType;
-@@ -32,550 +_,520 @@
+@@ -32,248 +_,197 @@
  import net.minecraft.world.level.LevelSettings;
  import net.minecraft.world.level.WorldDataConfiguration;
  import net.minecraft.world.level.border.WorldBorder;
@@ -285,310 +285,6 @@
 -            p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
 -        }
 -    }
--
--    private static ListTag stringCollectionToTag(Set<String> p_277880_) {
--        ListTag listtag = new ListTag();
--        p_277880_.stream().map(StringTag::valueOf).forEach(listtag::add);
--        return listtag;
--    }
--
--    @Override
--    public BlockPos getSpawnPos() {
--        return this.spawnPos;
--    }
--
--    @Override
--    public float getSpawnAngle() {
--        return this.spawnAngle;
--    }
--
--    @Override
--    public long getGameTime() {
--        return this.gameTime;
--    }
--
--    @Override
--    public long getDayTime() {
--        return this.dayTime;
--    }
--
--    @Nullable
--    @Override
--    public CompoundTag getLoadedPlayerTag() {
--        return this.loadedPlayerTag;
--    }
--
--    @Override
--    public void setGameTime(long p_78519_) {
--        this.gameTime = p_78519_;
--    }
--
--    @Override
--    public void setDayTime(long p_78567_) {
--        this.dayTime = p_78567_;
--    }
--
--    @Override
--    public void setSpawn(BlockPos p_78540_, float p_78541_) {
--        this.spawnPos = p_78540_.immutable();
--        this.spawnAngle = p_78541_;
--    }
--
--    @Override
--    public String getLevelName() {
--        return this.settings.levelName();
--    }
--
--    @Override
--    public int getVersion() {
--        return this.version;
--    }
--
--    @Override
--    public int getClearWeatherTime() {
--        return this.clearWeatherTime;
--    }
--
--    @Override
--    public void setClearWeatherTime(int p_78517_) {
--        this.clearWeatherTime = p_78517_;
--    }
--
--    @Override
--    public boolean isThundering() {
--        return this.thundering;
--    }
--
--    @Override
--    public void setThundering(boolean p_78562_) {
--        this.thundering = p_78562_;
--    }
--
--    @Override
--    public int getThunderTime() {
--        return this.thunderTime;
--    }
--
--    @Override
--    public void setThunderTime(int p_78589_) {
--        this.thunderTime = p_78589_;
--    }
--
--    @Override
--    public boolean isRaining() {
--        return this.raining;
--    }
--
--    @Override
--    public void setRaining(boolean p_78576_) {
--        this.raining = p_78576_;
--    }
--
--    @Override
--    public int getRainTime() {
--        return this.rainTime;
--    }
--
--    @Override
--    public void setRainTime(int p_78592_) {
--        this.rainTime = p_78592_;
--    }
--
--    @Override
--    public GameType getGameType() {
--        return this.settings.gameType();
--    }
--
--    @Override
--    public void setGameType(GameType p_78525_) {
--        this.settings = this.settings.withGameType(p_78525_);
--    }
--
--    @Override
--    public boolean isHardcore() {
--        return this.settings.hardcore();
--    }
--
--    @Override
--    public boolean isAllowCommands() {
--        return this.settings.allowCommands();
--    }
--
--    @Override
--    public boolean isInitialized() {
--        return this.initialized;
--    }
--
--    @Override
--    public void setInitialized(boolean p_78581_) {
--        this.initialized = p_78581_;
--    }
--
--    @Override
--    public GameRules getGameRules() {
--        return this.settings.gameRules();
--    }
--
--    @Override
--    public WorldBorder.Settings getWorldBorder() {
--        return this.worldBorder;
--    }
--
--    @Override
--    public void setWorldBorder(WorldBorder.Settings p_78527_) {
--        this.worldBorder = p_78527_;
--    }
--
--    @Override
--    public Difficulty getDifficulty() {
--        return this.settings.difficulty();
--    }
--
--    @Override
--    public void setDifficulty(Difficulty p_78521_) {
--        this.settings = this.settings.withDifficulty(p_78521_);
--    }
--
--    @Override
--    public boolean isDifficultyLocked() {
--        return this.difficultyLocked;
--    }
--
--    @Override
--    public void setDifficultyLocked(boolean p_78586_) {
--        this.difficultyLocked = p_78586_;
--    }
--
--    @Override
--    public TimerQueue<MinecraftServer> getScheduledEvents() {
--        return this.scheduledEvents;
--    }
--
--    @Override
--    public void fillCrashReportCategory(CrashReportCategory p_164972_, LevelHeightAccessor p_164973_) {
--        ServerLevelData.super.fillCrashReportCategory(p_164972_, p_164973_);
--        WorldData.super.fillCrashReportCategory(p_164972_);
--    }
--
--    @Override
--    public WorldOptions worldGenOptions() {
--        return this.worldOptions;
--    }
--
--    @Override
--    public boolean isFlatWorld() {
--        return this.specialWorldProperty == PrimaryLevelData.SpecialWorldProperty.FLAT;
--    }
--
--    @Override
--    public boolean isDebugWorld() {
--        return this.specialWorldProperty == PrimaryLevelData.SpecialWorldProperty.DEBUG;
--    }
--
--    @Override
--    public Lifecycle worldGenSettingsLifecycle() {
--        return this.worldGenSettingsLifecycle;
--    }
--
--    @Override
--    public EndDragonFight.Data endDragonFightData() {
--        return this.endDragonFightData;
--    }
--
--    @Override
--    public void setEndDragonFightData(EndDragonFight.Data p_289770_) {
--        this.endDragonFightData = p_289770_;
--    }
--
--    @Override
--    public WorldDataConfiguration getDataConfiguration() {
--        return this.settings.getDataConfiguration();
--    }
--
--    @Override
--    public void setDataConfiguration(WorldDataConfiguration p_252328_) {
--        this.settings = this.settings.withDataConfiguration(p_252328_);
--    }
--
--    @Nullable
--    @Override
--    public CompoundTag getCustomBossEvents() {
--        return this.customBossEvents;
--    }
--
--    @Override
--    public void setCustomBossEvents(@Nullable CompoundTag p_78571_) {
--        this.customBossEvents = p_78571_;
--    }
--
--    @Override
--    public int getWanderingTraderSpawnDelay() {
--        return this.wanderingTraderSpawnDelay;
--    }
--
--    @Override
--    public void setWanderingTraderSpawnDelay(int p_78595_) {
--        this.wanderingTraderSpawnDelay = p_78595_;
--    }
--
--    @Override
--    public int getWanderingTraderSpawnChance() {
--        return this.wanderingTraderSpawnChance;
--    }
--
--    @Override
--    public void setWanderingTraderSpawnChance(int p_78598_) {
--        this.wanderingTraderSpawnChance = p_78598_;
--    }
--
--    @Nullable
--    @Override
--    public UUID getWanderingTraderId() {
--        return this.wanderingTraderId;
--    }
--
--    @Override
--    public void setWanderingTraderId(UUID p_78553_) {
--        this.wanderingTraderId = p_78553_;
--    }
--
--    @Override
--    public void setModdedInfo(String p_78550_, boolean p_78551_) {
--        this.knownServerBrands.add(p_78550_);
--        this.wasModded |= p_78551_;
--    }
--
--    @Override
--    public boolean wasModded() {
--        return this.wasModded;
--    }
--
--    @Override
--    public Set<String> getKnownServerBrands() {
--        return ImmutableSet.copyOf(this.knownServerBrands);
--    }
--
--    @Override
--    public Set<String> getRemovedFeatureFlags() {
--        return Set.copyOf(this.removedFeatureFlags);
--    }
--
--    @Override
--    public ServerLevelData overworldData() {
--        return this;
--    }
--
--    @Override
--    public LevelSettings getLevelSettings() {
--        return this.settings.copy();
--    }
--
--    @Deprecated
--    public static enum SpecialWorldProperty {
--        NONE,
--        FLAT,
--        DEBUG;
--    }
 +   private static final Logger LOGGER = LogUtils.getLogger();
 +   public static final String LEVEL_NAME = "LevelName";
 +   protected static final String PLAYER = "Player";
@@ -768,94 +464,13 @@
 +      }
 +
 +   }
-+
-+   private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-+      ListTag listtag = new ListTag();
-+      p_277880_.stream().map(StringTag::valueOf).forEach(listtag::add);
-+      return listtag;
-+   }
-+
-+   public int getXSpawn() {
-+      return this.xSpawn;
-+   }
-+
-+   public int getYSpawn() {
-+      return this.ySpawn;
-+   }
-+
-+   public int getZSpawn() {
-+      return this.zSpawn;
-+   }
-+
-+   public float getSpawnAngle() {
-+      return this.spawnAngle;
-+   }
-+
-+   public long getGameTime() {
-+      return this.gameTime;
-+   }
-+
-+   public long getDayTime() {
-+      return this.dayTime;
-+   }
-+
-+   @Nullable
-+   public CompoundTag getLoadedPlayerTag() {
-+      return this.loadedPlayerTag;
-+   }
-+
-+   public void setXSpawn(int p_78565_) {
-+      this.xSpawn = p_78565_;
-+   }
-+
-+   public void setYSpawn(int p_78579_) {
-+      this.ySpawn = p_78579_;
-+   }
-+
-+   public void setZSpawn(int p_78584_) {
-+      this.zSpawn = p_78584_;
-+   }
-+
-+   public void setSpawnAngle(float p_78515_) {
-+      this.spawnAngle = p_78515_;
-+   }
-+
-+   public void setGameTime(long p_78519_) {
-+      this.gameTime = p_78519_;
-+   }
-+
-+   public void setDayTime(long p_78567_) {
-+      this.dayTime = p_78567_;
-+   }
-+
-+   public void setSpawn(BlockPos p_78540_, float p_78541_) {
-+      this.xSpawn = p_78540_.getX();
-+      this.ySpawn = p_78540_.getY();
-+      this.zSpawn = p_78540_.getZ();
-+      this.spawnAngle = p_78541_;
-+   }
-+
-+   public String getLevelName() {
-+      return this.settings.levelName();
-+   }
-+
-+   public int getVersion() {
-+      return this.version;
-+   }
-+
-+   public int getClearWeatherTime() {
-+      return this.clearWeatherTime;
-+   }
-+
-+   public void setClearWeatherTime(int p_78517_) {
-+      this.clearWeatherTime = p_78517_;
-+   }
-+
-+   public boolean isThundering() {
-+      return this.thundering;
-+   }
-+
-+   public void setThundering(boolean p_78562_) {
+ 
+     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
+         ListTag listtag = new ListTag();
+@@ -350,6 +_,20 @@
+ 
+     @Override
+     public void setThundering(boolean p_78562_) {
 +      // CraftBukkit start
 +      if (this.thundering == p_78562_) {
 +         return;
@@ -870,22 +485,13 @@
 +         }
 +      }
 +      // CraftBukkit end
-+      this.thundering = p_78562_;
-+   }
-+
-+   public int getThunderTime() {
-+      return this.thunderTime;
-+   }
-+
-+   public void setThunderTime(int p_78589_) {
-+      this.thunderTime = p_78589_;
-+   }
-+
-+   public boolean isRaining() {
-+      return this.raining;
-+   }
-+
-+   public void setRaining(boolean p_78576_) {
+         this.thundering = p_78562_;
+     }
+ 
+@@ -370,6 +_,20 @@
+ 
+     @Override
+     public void setRaining(boolean p_78576_) {
 +      // CraftBukkit start
 +      if (this.raining == p_78576_) {
 +         return;
@@ -900,191 +506,41 @@
 +         }
 +      }
 +      // CraftBukkit end
-+      this.raining = p_78576_;
-+   }
+         this.raining = p_78576_;
+     }
+ 
+@@ -436,6 +_,11 @@
+     @Override
+     public void setDifficulty(Difficulty p_78521_) {
+         this.settings = this.settings.withDifficulty(p_78521_);
++      	// CraftBukkit start
++      	ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.getDifficulty(), this.isDifficultyLocked());
++      	for (ServerPlayer player : (java.util.List<ServerPlayer>) (java.util.List) world.players()) {
++         	player.connection.send(packet);
++	  	}
+     }
+ 
+     @Override
+@@ -572,10 +_,28 @@
+         return this.settings.copy();
+     }
+ 
++    public boolean hasConfirmedExperimentalWarning() {
++        return this.confirmedExperimentalWarning;
++    }
 +
-+   public int getRainTime() {
-+      return this.rainTime;
-+   }
++    public PrimaryLevelData withConfirmedWarning(boolean confirmedWarning) { // Builder-like to not patch ctor
++        this.confirmedExperimentalWarning = confirmedWarning;
++        return this;
++    }
 +
-+   public void setRainTime(int p_78592_) {
-+      this.rainTime = p_78592_;
-+   }
 +
-+   public GameType getGameType() {
-+      return this.settings.gameType();
-+   }
-+
-+   public void setGameType(GameType p_78525_) {
-+      this.settings = this.settings.withGameType(p_78525_);
-+   }
-+
-+   public boolean isHardcore() {
-+      return this.settings.hardcore();
-+   }
-+
-+   public boolean getAllowCommands() {
-+      return this.settings.allowCommands();
-+   }
-+
-+   public boolean isInitialized() {
-+      return this.initialized;
-+   }
-+
-+   public void setInitialized(boolean p_78581_) {
-+      this.initialized = p_78581_;
-+   }
-+
-+   public GameRules getGameRules() {
-+      return this.settings.gameRules();
-+   }
-+
-+   public WorldBorder.Settings getWorldBorder() {
-+      return this.worldBorder;
-+   }
-+
-+   public void setWorldBorder(WorldBorder.Settings p_78527_) {
-+      this.worldBorder = p_78527_;
-+   }
-+
-+   public Difficulty getDifficulty() {
-+      return this.settings.difficulty();
-+   }
-+
-+   public void setDifficulty(Difficulty p_78521_) {
-+      this.settings = this.settings.withDifficulty(p_78521_);
-+      // CraftBukkit start
-+      ClientboundChangeDifficultyPacket packet = new ClientboundChangeDifficultyPacket(this.getDifficulty(), this.isDifficultyLocked());
-+      for (ServerPlayer player : (java.util.List<ServerPlayer>) (java.util.List) world.players()) {
-+         player.connection.send(packet);
-+      }
-+      // CraftBukkit end
-+   }
-+
-+   public boolean isDifficultyLocked() {
-+      return this.difficultyLocked;
-+   }
-+
-+   public void setDifficultyLocked(boolean p_78586_) {
-+      this.difficultyLocked = p_78586_;
-+   }
-+
-+   public TimerQueue<MinecraftServer> getScheduledEvents() {
-+      return this.scheduledEvents;
-+   }
-+
-+   public void fillCrashReportCategory(CrashReportCategory p_164972_, LevelHeightAccessor p_164973_) {
-+      ServerLevelData.super.fillCrashReportCategory(p_164972_, p_164973_);
-+      WorldData.super.fillCrashReportCategory(p_164972_);
-+   }
-+
-+   public WorldOptions worldGenOptions() {
-+      return this.worldOptions;
-+   }
-+
-+   public boolean isFlatWorld() {
-+      return this.specialWorldProperty == PrimaryLevelData.SpecialWorldProperty.FLAT;
-+   }
-+
-+   public boolean isDebugWorld() {
-+      return this.specialWorldProperty == PrimaryLevelData.SpecialWorldProperty.DEBUG;
-+   }
-+
-+   public Lifecycle worldGenSettingsLifecycle() {
-+      return this.worldGenSettingsLifecycle;
-+   }
-+
-+   public EndDragonFight.Data endDragonFightData() {
-+      return this.endDragonFightData;
-+   }
-+
-+   public void setEndDragonFightData(EndDragonFight.Data p_289770_) {
-+      this.endDragonFightData = p_289770_;
-+   }
-+
-+   public WorldDataConfiguration getDataConfiguration() {
-+      return this.settings.getDataConfiguration();
-+   }
-+
-+   public void setDataConfiguration(WorldDataConfiguration p_252328_) {
-+      this.settings = this.settings.withDataConfiguration(p_252328_);
-+   }
-+
-+   @Nullable
-+   public CompoundTag getCustomBossEvents() {
-+      return this.customBossEvents;
-+   }
-+
-+   public void setCustomBossEvents(@Nullable CompoundTag p_78571_) {
-+      this.customBossEvents = p_78571_;
-+   }
-+
-+   public int getWanderingTraderSpawnDelay() {
-+      return this.wanderingTraderSpawnDelay;
-+   }
-+
-+   public void setWanderingTraderSpawnDelay(int p_78595_) {
-+      this.wanderingTraderSpawnDelay = p_78595_;
-+   }
-+
-+   public int getWanderingTraderSpawnChance() {
-+      return this.wanderingTraderSpawnChance;
-+   }
-+
-+   public void setWanderingTraderSpawnChance(int p_78598_) {
-+      this.wanderingTraderSpawnChance = p_78598_;
-+   }
-+
-+   @Nullable
-+   public UUID getWanderingTraderId() {
-+      return this.wanderingTraderId;
-+   }
-+
-+   public void setWanderingTraderId(UUID p_78553_) {
-+      this.wanderingTraderId = p_78553_;
-+   }
-+
-+   public void setModdedInfo(String p_78550_, boolean p_78551_) {
-+      this.knownServerBrands.add(p_78550_);
-+      this.wasModded |= p_78551_;
-+   }
-+
-+   public boolean wasModded() {
-+      return this.wasModded;
-+   }
-+
-+   public Set<String> getKnownServerBrands() {
-+      return ImmutableSet.copyOf(this.knownServerBrands);
-+   }
-+
-+   public Set<String> getRemovedFeatureFlags() {
-+      return Set.copyOf(this.removedFeatureFlags);
-+   }
-+
-+   public ServerLevelData overworldData() {
-+      return this;
-+   }
-+
-+   public LevelSettings getLevelSettings() {
-+      return this.settings.copy();
-+   }
-+
-+   public boolean hasConfirmedExperimentalWarning() {
-+      return this.confirmedExperimentalWarning;
-+   }
-+
-+   public PrimaryLevelData withConfirmedWarning(boolean confirmedWarning) { // Builder-like to not patch ctor
-+      this.confirmedExperimentalWarning = confirmedWarning;
-+      return this;
-+   }
-+
-+   /** @deprecated */
-+   @Deprecated
-+   public static enum SpecialWorldProperty {
-+      NONE,
-+      FLAT,
-+      DEBUG;
-+   }
+     @Deprecated
+     public static enum SpecialWorldProperty {
+         NONE,
+         FLAT,
+         DEBUG;
+     }
 +
 +   // CraftBukkit start - Check if the name stored in NBT is the correct one
 +   public void checkName(String name) {

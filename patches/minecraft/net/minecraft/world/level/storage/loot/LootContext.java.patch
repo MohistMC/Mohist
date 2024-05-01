@@ -1,320 +1,76 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
-@@ -5,7 +_,6 @@
- import java.util.Set;
- import java.util.function.Consumer;
- import javax.annotation.Nullable;
--import net.minecraft.core.HolderGetter;
- import net.minecraft.resources.ResourceLocation;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.server.level.ServerLevel;
-@@ -19,137 +_,176 @@
- import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+@@ -23,11 +_,17 @@
+     private final RandomSource random;
+     private final HolderGetter.Provider lootDataResolver;
+     private final Set<LootContext.VisitedEntry<?>> visitedElements = Sets.newLinkedHashSet();
++    private ResourceLocation queriedLootTableId;
  
- public class LootContext {
--    private final LootParams params;
--    private final RandomSource random;
--    private final HolderGetter.Provider lootDataResolver;
--    private final Set<LootContext.VisitedEntry<?>> visitedElements = Sets.newLinkedHashSet();
--
--    LootContext(LootParams p_287722_, RandomSource p_287702_, HolderGetter.Provider p_330439_) {
--        this.params = p_287722_;
--        this.random = p_287702_;
--        this.lootDataResolver = p_330439_;
--    }
--
--    public boolean hasParam(LootContextParam<?> p_78937_) {
--        return this.params.hasParam(p_78937_);
--    }
--
--    public <T> T getParam(LootContextParam<T> p_165125_) {
--        return this.params.getParameter(p_165125_);
--    }
--
--    public void addDynamicDrops(ResourceLocation p_78943_, Consumer<ItemStack> p_78944_) {
--        this.params.addDynamicDrops(p_78943_, p_78944_);
--    }
--
--    @Nullable
--    public <T> T getParamOrNull(LootContextParam<T> p_78954_) {
--        return this.params.getParamOrNull(p_78954_);
--    }
--
--    public boolean hasVisitedElement(LootContext.VisitedEntry<?> p_279182_) {
--        return this.visitedElements.contains(p_279182_);
--    }
--
--    public boolean pushVisitedElement(LootContext.VisitedEntry<?> p_279152_) {
--        return this.visitedElements.add(p_279152_);
--    }
--
--    public void popVisitedElement(LootContext.VisitedEntry<?> p_279198_) {
--        this.visitedElements.remove(p_279198_);
--    }
--
--    public HolderGetter.Provider getResolver() {
--        return this.lootDataResolver;
--    }
--
--    public RandomSource getRandom() {
--        return this.random;
--    }
--
--    public float getLuck() {
--        return this.params.getLuck();
--    }
--
--    public ServerLevel getLevel() {
--        return this.params.getLevel();
--    }
--
--    public static LootContext.VisitedEntry<LootTable> createVisitedEntry(LootTable p_279327_) {
--        return new LootContext.VisitedEntry<>(LootDataType.TABLE, p_279327_);
--    }
--
--    public static LootContext.VisitedEntry<LootItemCondition> createVisitedEntry(LootItemCondition p_279250_) {
--        return new LootContext.VisitedEntry<>(LootDataType.PREDICATE, p_279250_);
--    }
--
--    public static LootContext.VisitedEntry<LootItemFunction> createVisitedEntry(LootItemFunction p_279163_) {
--        return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
--    }
--
--    public static class Builder {
--        private final LootParams params;
--        @Nullable
--        private RandomSource random;
--
--        public Builder(LootParams p_287628_) {
--            this.params = p_287628_;
--        }
--
--        public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
--            if (p_78966_ != 0L) {
--                this.random = RandomSource.create(p_78966_);
--            }
--
--            return this;
--        }
--
--        public ServerLevel getLevel() {
--            return this.params.getLevel();
--        }
--
--        public LootContext create(Optional<ResourceLocation> p_299315_) {
--            ServerLevel serverlevel = this.getLevel();
--            MinecraftServer minecraftserver = serverlevel.getServer();
--            RandomSource randomsource = Optional.ofNullable(this.random).or(() -> p_299315_.map(serverlevel::getRandomSequence)).orElseGet(serverlevel::getRandom);
+     LootContext(LootParams p_287722_, RandomSource p_287702_, HolderGetter.Provider p_330439_) {
++        this(p_287722_, p_287702_, p_330439_, null);
++    }
++
++    LootContext(LootParams p_287722_, RandomSource p_287702_, HolderGetter.Provider p_330439_, ResourceLocation queriedLootTableId) {
+         this.params = p_287722_;
+         this.random = p_287702_;
+         this.lootDataResolver = p_330439_;
++        this.queriedLootTableId = queriedLootTableId;
+     }
+ 
+     public boolean hasParam(LootContextParam<?> p_78937_) {
+@@ -87,15 +_,34 @@
+         return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
+     }
+ 
++    public int getLootingModifier() {
++        return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
++    }
++
++    public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
++        if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
++    }
++
++    public ResourceLocation getQueriedLootTableId() {
++        return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
++    }
++
+     public static class Builder {
+         private final LootParams params;
+         @Nullable
+         private RandomSource random;
++        private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
+ 
+         public Builder(LootParams p_287628_) {
+             this.params = p_287628_;
+         }
+ 
++        public Builder(LootContext context) {
++            this.params = context.params;
++            this.random = context.random;
++            this.queriedLootTableId = context.queriedLootTableId;
++        }
++
+         public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
+             if (p_78966_ != 0L) {
+                 this.random = RandomSource.create(p_78966_);
+@@ -104,6 +_,11 @@
+             return this;
+         }
+ 
++        public LootContext.Builder withQueriedLootTableId(ResourceLocation queriedLootTableId) {
++            this.queriedLootTableId = queriedLootTableId;
++            return this;
++        }
++
+         public ServerLevel getLevel() {
+             return this.params.getLevel();
+         }
+@@ -112,7 +_,7 @@
+             ServerLevel serverlevel = this.getLevel();
+             MinecraftServer minecraftserver = serverlevel.getServer();
+             RandomSource randomsource = Optional.ofNullable(this.random).or(() -> p_299315_.map(serverlevel::getRandomSequence)).orElseGet(serverlevel::getRandom);
 -            return new LootContext(this.params, randomsource, minecraftserver.reloadableRegistries().lookup());
--        }
--    }
--
--    public static enum EntityTarget implements StringRepresentable {
--        THIS("this", LootContextParams.THIS_ENTITY),
--        KILLER("killer", LootContextParams.KILLER_ENTITY),
--        DIRECT_KILLER("direct_killer", LootContextParams.DIRECT_KILLER_ENTITY),
--        KILLER_PLAYER("killer_player", LootContextParams.LAST_DAMAGE_PLAYER);
--
--        public static final StringRepresentable.EnumCodec<LootContext.EntityTarget> CODEC = StringRepresentable.fromEnum(LootContext.EntityTarget::values);
--        private final String name;
--        private final LootContextParam<? extends Entity> param;
--
--        private EntityTarget(final String p_79001_, final LootContextParam<? extends Entity> p_79002_) {
--            this.name = p_79001_;
--            this.param = p_79002_;
--        }
--
--        public LootContextParam<? extends Entity> getParam() {
--            return this.param;
--        }
--
--        public static LootContext.EntityTarget getByName(String p_79007_) {
--            LootContext.EntityTarget lootcontext$entitytarget = CODEC.byName(p_79007_);
--            if (lootcontext$entitytarget != null) {
--                return lootcontext$entitytarget;
--            } else {
--                throw new IllegalArgumentException("Invalid entity target " + p_79007_);
--            }
--        }
--
--        @Override
--        public String getSerializedName() {
--            return this.name;
--        }
--    }
--
--    public static record VisitedEntry<T>(LootDataType<T> type, T value) {
--    }
-+   private final LootParams params;
-+   private final RandomSource random;
-+   private final LootDataResolver lootDataResolver;
-+   private final Set<LootContext.VisitedEntry<?>> visitedElements = Sets.newLinkedHashSet();
-+
-+   LootContext(LootParams p_287722_, RandomSource p_287702_, LootDataResolver p_287619_) {
-+      this.params = p_287722_;
-+      this.random = p_287702_;
-+      this.lootDataResolver = p_287619_;
-+   }
-+
-+   public boolean hasParam(LootContextParam<?> p_78937_) {
-+      return this.params.hasParam(p_78937_);
-+   }
-+
-+   public <T> T getParam(LootContextParam<T> p_165125_) {
-+      return this.params.getParameter(p_165125_);
-+   }
-+
-+   public void addDynamicDrops(ResourceLocation p_78943_, Consumer<ItemStack> p_78944_) {
-+      this.params.addDynamicDrops(p_78943_, p_78944_);
-+   }
-+
-+   @Nullable
-+   public <T> T getParamOrNull(LootContextParam<T> p_78954_) {
-+      return this.params.getParamOrNull(p_78954_);
-+   }
-+
-+   public boolean hasVisitedElement(LootContext.VisitedEntry<?> p_279182_) {
-+      return this.visitedElements.contains(p_279182_);
-+   }
-+
-+   public boolean pushVisitedElement(LootContext.VisitedEntry<?> p_279152_) {
-+      return this.visitedElements.add(p_279152_);
-+   }
-+
-+   public void popVisitedElement(LootContext.VisitedEntry<?> p_279198_) {
-+      this.visitedElements.remove(p_279198_);
-+   }
-+
-+   public LootDataResolver getResolver() {
-+      return this.lootDataResolver;
-+   }
-+
-+   public RandomSource getRandom() {
-+      return this.random;
-+   }
-+
-+   public float getLuck() {
-+      return this.params.getLuck();
-+   }
-+
-+   public ServerLevel getLevel() {
-+      return this.params.getLevel();
-+   }
-+
-+   public static LootContext.VisitedEntry<LootTable> createVisitedEntry(LootTable p_279327_) {
-+      return new LootContext.VisitedEntry<>(LootDataType.TABLE, p_279327_);
-+   }
-+
-+   public static LootContext.VisitedEntry<LootItemCondition> createVisitedEntry(LootItemCondition p_279250_) {
-+      return new LootContext.VisitedEntry<>(LootDataType.PREDICATE, p_279250_);
-+   }
-+
-+   public static LootContext.VisitedEntry<LootItemFunction> createVisitedEntry(LootItemFunction p_279163_) {
-+      return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
-+   }
-+
-+   // ============================== FORGE START ==============================
-+   public int getLootingModifier() {
-+      return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
-+   }
-+
-+   private ResourceLocation queriedLootTableId;
-+
-+   private LootContext(LootParams p_287722_, RandomSource p_287702_, LootDataResolver p_287619_, ResourceLocation queriedLootTableId) {
-+      this(p_287722_, p_287702_, p_287619_);
-+      this.queriedLootTableId = queriedLootTableId;
-+   }
-+
-+   public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
-+      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
-+   }
-+
-+   public ResourceLocation getQueriedLootTableId() {
-+      return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
-+   }
-+   // =============================== FORGE END ===============================
-+
-+   public static class Builder {
-+      private final LootParams params;
-+      @Nullable
-+      private RandomSource random;
-+      private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
-+
-+      public Builder(LootParams p_287628_) {
-+         this.params = p_287628_;
-+      }
-+
-+      public Builder(LootContext context) {
-+         this.params = context.params;
-+         this.random = context.random;
-+         this.queriedLootTableId = context.queriedLootTableId;
-+      }
-+
-+      public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
-+         if (p_78966_ != 0L) {
-+            this.random = RandomSource.create(p_78966_);
-+         }
-+
-+         return this;
-+      }
-+
-+      public LootContext.Builder withQueriedLootTableId(ResourceLocation queriedLootTableId) {
-+         this.queriedLootTableId = queriedLootTableId;
-+         return this;
-+      }
-+
-+      public ServerLevel getLevel() {
-+         return this.params.getLevel();
-+      }
-+
-+      public LootContext create(Optional<ResourceLocation> p_299315_) {
-+         ServerLevel serverlevel = this.getLevel();
-+         MinecraftServer minecraftserver = serverlevel.getServer();
-+         RandomSource randomsource = Optional.ofNullable(this.random).or(() -> {
-+            return p_299315_.map(serverlevel::getRandomSequence);
-+         }).orElseGet(serverlevel::getRandom);
-+         return new LootContext(this.params, randomsource, minecraftserver.getLootData(), queriedLootTableId);
-+      }
-+   }
-+
-+   public static enum EntityTarget implements StringRepresentable {
-+      THIS("this", LootContextParams.THIS_ENTITY),
-+      KILLER("killer", LootContextParams.KILLER_ENTITY),
-+      DIRECT_KILLER("direct_killer", LootContextParams.DIRECT_KILLER_ENTITY),
-+      KILLER_PLAYER("killer_player", LootContextParams.LAST_DAMAGE_PLAYER);
-+
-+      public static final StringRepresentable.EnumCodec<LootContext.EntityTarget> CODEC = StringRepresentable.fromEnum(LootContext.EntityTarget::values);
-+      private final String name;
-+      private final LootContextParam<? extends Entity> param;
-+
-+      private EntityTarget(String p_79001_, LootContextParam<? extends Entity> p_79002_) {
-+         this.name = p_79001_;
-+         this.param = p_79002_;
-+      }
-+
-+      public LootContextParam<? extends Entity> getParam() {
-+         return this.param;
-+      }
-+
-+      // Forge: This method is patched in to expose the same name used in getByName so that ContextNbtProvider#forEntity serializes it properly
-+      public String getName() {
-+         return this.name;
-+      }
-+
-+      public static LootContext.EntityTarget getByName(String p_79007_) {
-+         LootContext.EntityTarget lootcontext$entitytarget = CODEC.byName(p_79007_);
-+         if (lootcontext$entitytarget != null) {
-+            return lootcontext$entitytarget;
-+         } else {
-+            throw new IllegalArgumentException("Invalid entity target " + p_79007_);
-+         }
-+      }
-+
-+      public String getSerializedName() {
-+         return this.name;
-+      }
-+   }
-+
-+   public static record VisitedEntry<T>(LootDataType<T> type, T value) {
-+   }
- }
++            return new LootContext(this.params, randomsource, minecraftserver.reloadableRegistries().lookup(), queriedLootTableId);
+         }
+     }
+ 

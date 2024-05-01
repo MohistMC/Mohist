@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
-@@ -1,62 +_,115 @@
+@@ -1,29 +_,59 @@
  package net.minecraft.core.dispenser;
  
 +import java.util.concurrent.atomic.AtomicReference;
@@ -34,41 +34,6 @@
 -        if (!serverlevel.isClientSide()) {
 -            BlockPos blockpos = p_301806_.pos().relative(p_301806_.state().getValue(DispenserBlock.FACING));
 -            this.setSuccess(tryShearBeehive(serverlevel, blockpos) || tryShearLivingEntity(serverlevel, blockpos));
--            if (this.isSuccess()) {
--                p_123581_.hurtAndBreak(1, serverlevel.getRandom(), null, () -> p_123581_.setCount(0));
--            }
--        }
--
--        return p_123581_;
--    }
--
--    private static boolean tryShearBeehive(ServerLevel p_123577_, BlockPos p_123578_) {
--        BlockState blockstate = p_123577_.getBlockState(p_123578_);
--        if (blockstate.is(BlockTags.BEEHIVES, p_202454_ -> p_202454_.hasProperty(BeehiveBlock.HONEY_LEVEL) && p_202454_.getBlock() instanceof BeehiveBlock)) {
--            int i = blockstate.getValue(BeehiveBlock.HONEY_LEVEL);
--            if (i >= 5) {
--                p_123577_.playSound(null, p_123578_, SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
--                BeehiveBlock.dropHoneycomb(p_123577_, p_123578_);
--                ((BeehiveBlock)blockstate.getBlock()).releaseBeesAndResetHoneyLevel(p_123577_, blockstate, p_123578_, null, BeehiveBlockEntity.BeeReleaseStatus.BEE_RELEASED);
--                p_123577_.gameEvent(null, GameEvent.SHEAR, p_123578_);
--                return true;
--            }
--        }
--
--        return false;
--    }
--
--    private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_) {
--        for (LivingEntity livingentity : p_123583_.getEntitiesOfClass(LivingEntity.class, new AABB(p_123584_), EntitySelector.NO_SPECTATORS)) {
--            if (livingentity instanceof Shearable shearable && shearable.readyForShearing()) {
--                shearable.shear(SoundSource.BLOCKS);
--                p_123583_.gameEvent(null, GameEvent.SHEAR, p_123584_);
--                return true;
--            }
--        }
--
--        return false;
--    }
 +   protected ItemStack execute(BlockSource p_301806_, ItemStack p_123581_) {
 +      ServerLevel serverlevel = p_301806_.level();
 +      // CraftBukkit start
@@ -99,32 +64,19 @@
 +         BlockPos blockpos = p_301806_.pos().relative(p_301806_.state().getValue(DispenserBlock.FACING));
 +         bukkitBlockAndcraftItem(bukkitBlock, craftItem); // Mohist
 +         this.setSuccess(tryShearBeehive(serverlevel, blockpos) || tryShearLivingEntity(serverlevel, blockpos));
-+         if (this.isSuccess() && p_123581_.hurt(1, serverlevel.getRandom(), (ServerPlayer)null)) {
-+            p_123581_.setCount(0);
-+         }
-+      }
-+
-+      return p_123581_;
-+   }
-+
-+   private static boolean tryShearBeehive(ServerLevel p_123577_, BlockPos p_123578_) {
-+      BlockState blockstate = p_123577_.getBlockState(p_123578_);
-+      if (blockstate.is(BlockTags.BEEHIVES, (p_202454_) -> {
-+         return p_202454_.hasProperty(BeehiveBlock.HONEY_LEVEL) && p_202454_.getBlock() instanceof BeehiveBlock;
-+      })) {
-+         int i = blockstate.getValue(BeehiveBlock.HONEY_LEVEL);
-+         if (i >= 5) {
-+            p_123577_.playSound((Player)null, p_123578_, SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
-+            BeehiveBlock.dropHoneycomb(p_123577_, p_123578_);
-+            ((BeehiveBlock)blockstate.getBlock()).releaseBeesAndResetHoneyLevel(p_123577_, blockstate, p_123578_, (Player)null, BeehiveBlockEntity.BeeReleaseStatus.BEE_RELEASED);
-+            p_123577_.gameEvent((Entity)null, GameEvent.SHEAR, p_123578_);
-+            return true;
-+         }
-+      }
-+
-+      return false;
-+   }
-+
+             if (this.isSuccess()) {
+                 p_123581_.hurtAndBreak(1, serverlevel.getRandom(), null, () -> p_123581_.setCount(0));
+             }
+@@ -48,15 +_,36 @@
+         return false;
+     }
+ 
+-    private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_) {
+-        for (LivingEntity livingentity : p_123583_.getEntitiesOfClass(LivingEntity.class, new AABB(p_123584_), EntitySelector.NO_SPECTATORS)) {
+-            if (livingentity instanceof Shearable shearable && shearable.readyForShearing()) {
+-                shearable.shear(SoundSource.BLOCKS);
+-                p_123583_.gameEvent(null, GameEvent.SHEAR, p_123584_);
+-                return true;
 +   private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_) {
 +      for(LivingEntity livingentity : p_123583_.getEntitiesOfClass(LivingEntity.class, new AABB(p_123584_), EntitySelector.NO_SPECTATORS)) {
 +         if (livingentity instanceof Shearable shearable) {
@@ -137,7 +89,11 @@
 +               shearable.shear(SoundSource.BLOCKS);
 +               p_123583_.gameEvent((Entity)null, GameEvent.SHEAR, p_123584_);
 +               return true;
-+            }
+             }
+-        }
+-
+-        return false;
+-    }
 +         }
 +      }
 +

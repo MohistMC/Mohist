@@ -1,40 +1,10 @@
 --- a/net/minecraft/world/effect/HungerMobEffect.java
 +++ b/net/minecraft/world/effect/HungerMobEffect.java
-@@ -4,21 +_,20 @@
- import net.minecraft.world.entity.player.Player;
+@@ -11,6 +_,7 @@
+     @Override
+     public boolean applyEffectTick(LivingEntity p_301304_, int p_301079_) {
+         if (p_301304_ instanceof Player player) {
++         	player.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.HUNGER_EFFECT); // CraftBukkit - EntityExhaustionEvent
+             player.causeFoodExhaustion(0.005F * (float)(p_301079_ + 1));
+         }
  
- class HungerMobEffect extends MobEffect {
--    protected HungerMobEffect(MobEffectCategory p_299451_, int p_297803_) {
--        super(p_299451_, p_297803_);
--    }
--
--    @Override
--    public boolean applyEffectTick(LivingEntity p_301304_, int p_301079_) {
--        if (p_301304_ instanceof Player player) {
--            player.causeFoodExhaustion(0.005F * (float)(p_301079_ + 1));
--        }
--
--        return true;
--    }
--
--    @Override
--    public boolean shouldApplyEffectTickThisTick(int p_301244_, int p_298950_) {
--        return true;
--    }
-+   protected HungerMobEffect(MobEffectCategory p_299451_, int p_297803_) {
-+      super(p_299451_, p_297803_);
-+   }
-+
-+   public void applyEffectTick(LivingEntity p_301304_, int p_301079_) {
-+      super.applyEffectTick(p_301304_, p_301079_);
-+      if (p_301304_ instanceof Player player) {
-+         player.exhaustionReason(org.bukkit.event.entity.EntityExhaustionEvent.ExhaustionReason.HUNGER_EFFECT); // CraftBukkit - EntityExhaustionEvent
-+         player.causeFoodExhaustion(0.005F * (float)(p_301079_ + 1));
-+      }
-+
-+   }
-+
-+   public boolean shouldApplyEffectTickThisTick(int p_301244_, int p_298950_) {
-+      return true;
-+   }
- }

@@ -1,30 +1,25 @@
 --- a/net/minecraft/world/level/ServerLevelAccessor.java
 +++ b/net/minecraft/world/level/ServerLevelAccessor.java
-@@ -2,11 +_,22 @@
+@@ -2,6 +_,7 @@
  
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.world.entity.Entity;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
  
  public interface ServerLevelAccessor extends LevelAccessor {
--    ServerLevel getLevel();
--
--    default void addFreshEntityWithPassengers(Entity p_47206_) {
--        p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
--    }
-+   ServerLevel getLevel();
+     ServerLevel getLevel();
+@@ -9,4 +_,14 @@
+     default void addFreshEntityWithPassengers(Entity p_47206_) {
+         p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
+     }
 +
-+   default void addFreshEntityWithPassengers(Entity p_47206_) {
-+      p_47206_.getSelfAndPassengers().forEach(this::addFreshEntity);
-+   }
++   	default void addFreshEntityWithPassengers(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {
++      	pEntity.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, reason));
++   	}
 +
-+   default void addFreshEntityWithPassengers(Entity pEntity, CreatureSpawnEvent.SpawnReason reason) {
-+      pEntity.getSelfAndPassengers().forEach((e) -> this.addFreshEntity(e, reason));
-+   }
-+
-+   @Override
-+   default ServerLevel getMinecraftWorld() {
-+      return getLevel();
-+   }
-+   // CraftBukkit end
++   	@Override
++   	default ServerLevel getMinecraftWorld() {
++      	return getLevel();
++   	}
++   	// CraftBukkit end
  }
