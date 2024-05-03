@@ -26,11 +26,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -87,6 +90,14 @@ public class EntityEventDispatcher {
         Bukkit.getPluginManager().callEvent(eventCB);
 
         if (drops.isEmpty()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void callEntityTameEvent(AnimalTameEvent event) {
+        var bukkit = CraftEventFactory.callEntityTameEvent(event.getAnimal(), ((CraftHumanEntity) event.getAnimal().getBukkitEntity().getPassenger()).getHandle());
+        if (bukkit.isCancelled()) {
             event.setCanceled(true);
         }
     }

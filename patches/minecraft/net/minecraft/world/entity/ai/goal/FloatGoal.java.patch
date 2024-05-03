@@ -1,53 +1,11 @@
 --- a/net/minecraft/world/entity/ai/goal/FloatGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/FloatGoal.java
-@@ -5,28 +_,26 @@
- import net.minecraft.world.entity.Mob;
+@@ -15,7 +_,7 @@
  
- public class FloatGoal extends Goal {
--    private final Mob mob;
--
--    public FloatGoal(Mob p_25230_) {
--        this.mob = p_25230_;
--        this.setFlags(EnumSet.of(Goal.Flag.JUMP));
--        p_25230_.getNavigation().setCanFloat(true);
--    }
--
--    @Override
--    public boolean canUse() {
+     @Override
+     public boolean canUse() {
 -        return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava();
--    }
--
--    @Override
--    public boolean requiresUpdateEveryTick() {
--        return true;
--    }
--
--    @Override
--    public void tick() {
--        if (this.mob.getRandom().nextFloat() < 0.8F) {
--            this.mob.getJumpControl().jump();
--        }
--    }
-+   private final Mob mob;
-+
-+   public FloatGoal(Mob p_25230_) {
-+      this.mob = p_25230_;
-+      this.setFlags(EnumSet.of(Goal.Flag.JUMP));
-+      p_25230_.getNavigation().setCanFloat(true);
-+   }
-+
-+   public boolean canUse() {
-+      return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava() || this.mob.isInFluidType((fluidType, height) -> this.mob.canSwimInFluidType(fluidType) && height > this.mob.getFluidJumpThreshold());
-+   }
-+
-+   public boolean requiresUpdateEveryTick() {
-+      return true;
-+   }
-+
-+   public void tick() {
-+      if (this.mob.getRandom().nextFloat() < 0.8F) {
-+         this.mob.getJumpControl().jump();
-+      }
-+
-+   }
- }
++        return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava() || this.mob.isInFluidType((fluidType, height) -> this.mob.canSwimInFluidType(fluidType) && height > this.mob.getFluidJumpThreshold());
+     }
+ 
+     @Override

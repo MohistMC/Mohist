@@ -91,7 +91,7 @@
  import net.minecraft.world.level.ClipContext;
  import net.minecraft.world.level.GameRules;
  import net.minecraft.world.level.Level;
-@@ -120,3419 +_,4013 @@
+@@ -120,3419 +_,4024 @@
  import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
  import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
  import net.minecraft.world.phys.AABB;
@@ -113,6 +113,7 @@
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
++import org.bukkit.event.entity.EntityRemoveEvent;
 +import org.bukkit.event.entity.EntityResurrectEvent;
 +import org.bukkit.event.entity.EntityTeleportEvent;
 +import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -1819,11 +1820,21 @@
 +      onEquipItem(pSlot, pOldItem, pNewItem);
 +   }
 +   // CraftBukkit end
++
++   public AtomicReference<EntityRemoveEvent.Cause> remove$cause = new AtomicReference<>(null);
++   public void remove$cause(EntityRemoveEvent.Cause reason) {
++      remove$cause.set(reason);
++   }
 +   // Mohist end
 +   
 +   public void remove(Entity.RemovalReason p_276115_) {
 +      super.remove(p_276115_);
 +      this.brain.clearMemories();
++   }
++
++   @Override
++   public void remove(Entity.RemovalReason entity_removalreason, EntityRemoveEvent.Cause cause) {
++
 +   }
 +
 +   public void addAdditionalSaveData(CompoundTag p_21145_) {

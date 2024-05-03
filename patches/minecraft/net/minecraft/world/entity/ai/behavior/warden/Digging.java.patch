@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/ai/behavior/warden/Digging.java
++++ b/net/minecraft/world/entity/ai/behavior/warden/Digging.java
+@@ -9,6 +_,7 @@
+ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+ import net.minecraft.world.entity.ai.memory.MemoryStatus;
+ import net.minecraft.world.entity.monster.warden.Warden;
++import org.bukkit.event.entity.EntityRemoveEvent;
+ 
+ public class Digging<E extends Warden> extends Behavior<E> {
+     public Digging(int p_217515_) {
+@@ -35,6 +_,7 @@
+ 
+     protected void stop(ServerLevel p_217543_, E p_217544_, long p_217545_) {
+         if (p_217544_.getRemovalReason() == null) {
++            p_217544_.remove$cause(EntityRemoveEvent.Cause.DESPAWN); // CraftBukkit - Add bukkit remove cause
+             p_217544_.remove(Entity.RemovalReason.DISCARDED);
+         }
+     }

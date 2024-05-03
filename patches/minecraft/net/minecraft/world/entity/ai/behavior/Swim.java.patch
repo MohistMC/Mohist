@@ -1,52 +1,11 @@
 --- a/net/minecraft/world/entity/ai/behavior/Swim.java
 +++ b/net/minecraft/world/entity/ai/behavior/Swim.java
-@@ -6,28 +_,25 @@
- import net.minecraft.world.entity.Mob;
+@@ -14,7 +_,7 @@
+     }
  
- public class Swim extends Behavior<Mob> {
--    private final float chance;
--
--    public Swim(float p_24383_) {
--        super(ImmutableMap.of());
--        this.chance = p_24383_;
--    }
--
--    public static boolean shouldSwim(Mob p_327994_) {
+     public static boolean shouldSwim(Mob p_327994_) {
 -        return p_327994_.isInWater() && p_327994_.getFluidHeight(FluidTags.WATER) > p_327994_.getFluidJumpThreshold() || p_327994_.isInLava();
--    }
--
--    protected boolean checkExtraStartConditions(ServerLevel p_24388_, Mob p_24389_) {
--        return shouldSwim(p_24389_);
--    }
--
--    protected boolean canStillUse(ServerLevel p_24391_, Mob p_24392_, long p_24393_) {
--        return this.checkExtraStartConditions(p_24391_, p_24392_);
--    }
--
--    protected void tick(ServerLevel p_24399_, Mob p_24400_, long p_24401_) {
--        if (p_24400_.getRandom().nextFloat() < this.chance) {
--            p_24400_.getJumpControl().jump();
--        }
--    }
-+   private final float chance;
-+
-+   public Swim(float p_24383_) {
-+      super(ImmutableMap.of());
-+      this.chance = p_24383_;
-+   }
-+
-+   protected boolean checkExtraStartConditions(ServerLevel p_24388_, Mob p_24389_) {
-+      return p_24389_.isInWater() && p_24389_.getFluidHeight(FluidTags.WATER) > p_24389_.getFluidJumpThreshold() || p_24389_.isInLava() || p_24389_.isInFluidType((fluidType, height) -> p_24389_.canSwimInFluidType(fluidType) && height > p_24389_.getFluidJumpThreshold());
-+   }
-+
-+   protected boolean canStillUse(ServerLevel p_24391_, Mob p_24392_, long p_24393_) {
-+      return this.checkExtraStartConditions(p_24391_, p_24392_);
-+   }
-+
-+   protected void tick(ServerLevel p_24399_, Mob p_24400_, long p_24401_) {
-+      if (p_24400_.getRandom().nextFloat() < this.chance) {
-+         p_24400_.getJumpControl().jump();
-+      }
-+
-+   }
- }
++        return p_327994_.isInWater() &&p_327994_.getFluidHeight(FluidTags.WATER) > p_327994_.getFluidJumpThreshold() || p_327994_.isInLava() || p_327994_.isInFluidType((fluidType, height) -> p_327994_.canSwimInFluidType(fluidType) && height > p_327994_.getFluidJumpThreshold());
+     }
+ 
+     protected boolean checkExtraStartConditions(ServerLevel p_24388_, Mob p_24389_) {
