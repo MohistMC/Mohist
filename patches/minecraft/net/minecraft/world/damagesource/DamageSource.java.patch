@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/damagesource/DamageSource.java
 +++ b/net/minecraft/world/damagesource/DamageSource.java
-@@ -2,7 +_,6 @@
- 
- import javax.annotation.Nullable;
- import net.minecraft.core.Holder;
--import net.minecraft.core.component.DataComponents;
- import net.minecraft.network.chat.Component;
- import net.minecraft.resources.ResourceKey;
- import net.minecraft.tags.TagKey;
-@@ -21,7 +_,87 @@
+@@ -21,7 +_,88 @@
      @Nullable
      private final Vec3 damageSourcePosition;
  
@@ -94,6 +86,7 @@
 +   }
 +   // CraftBukkit end
 +   
++   	@Override
      public String toString() {
          return "DamageSource (" + this.type().msgId() + ")";
      }
