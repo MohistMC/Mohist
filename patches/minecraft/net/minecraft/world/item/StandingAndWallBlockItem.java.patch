@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
-@@ -4,50 +_,68 @@
+@@ -4,14 +_,18 @@
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.Direction;
@@ -16,72 +16,19 @@
  
  public class StandingAndWallBlockItem extends BlockItem {
 -    public final Block wallBlock;
--    private final Direction attachmentDirection;
--
--    public StandingAndWallBlockItem(Block p_248873_, Block p_251044_, Item.Properties p_249308_, Direction p_250800_) {
--        super(p_248873_, p_249308_);
--        this.wallBlock = p_251044_;
--        this.attachmentDirection = p_250800_;
--    }
--
--    protected boolean canPlace(LevelReader p_250350_, BlockState p_249311_, BlockPos p_250328_) {
--        return p_249311_.canSurvive(p_250350_, p_250328_);
--    }
--
--    @Nullable
--    @Override
--    protected BlockState getPlacementState(BlockPlaceContext p_43255_) {
--        BlockState blockstate = this.wallBlock.getStateForPlacement(p_43255_);
--        BlockState blockstate1 = null;
--        LevelReader levelreader = p_43255_.getLevel();
--        BlockPos blockpos = p_43255_.getClickedPos();
--
--        for (Direction direction : p_43255_.getNearestLookingDirections()) {
--            if (direction != this.attachmentDirection.getOpposite()) {
--                BlockState blockstate2 = direction == this.attachmentDirection ? this.getBlock().getStateForPlacement(p_43255_) : blockstate;
--                if (blockstate2 != null && this.canPlace(levelreader, blockstate2, blockpos)) {
--                    blockstate1 = blockstate2;
--                    break;
--                }
-+   public final Block wallBlock;
-+   private final Direction attachmentDirection;
-+
-+   public StandingAndWallBlockItem(Block p_248873_, Block p_251044_, Item.Properties p_249308_, Direction p_250800_) {
-+      super(p_248873_, p_249308_);
-+      this.wallBlock = p_251044_;
-+      this.attachmentDirection = p_250800_;
-+   }
-+
-+   protected boolean canPlace(LevelReader p_250350_, BlockState p_249311_, BlockPos p_250328_) {
-+      return p_249311_.canSurvive(p_250350_, p_250328_);
-+   }
-+
-+   @Nullable
-+   protected BlockState getPlacementState(BlockPlaceContext p_43255_) {
-+      BlockState blockstate = this.wallBlock.getStateForPlacement(p_43255_);
-+      BlockState blockstate1 = null;
-+      LevelReader levelreader = p_43255_.getLevel();
-+      BlockPos blockpos = p_43255_.getClickedPos();
-+
-+      for(Direction direction : p_43255_.getNearestLookingDirections()) {
-+         if (direction != this.attachmentDirection.getOpposite()) {
-+            BlockState blockstate2 = direction == this.attachmentDirection ? this.getBlock().getStateForPlacement(p_43255_) : blockstate;
-+            if (blockstate2 != null && this.canPlace(levelreader, blockstate2, blockpos)) {
-+               blockstate1 = blockstate2;
-+               break;
++   	public final Block wallBlock;
+     private final Direction attachmentDirection;
+ 
+     public StandingAndWallBlockItem(Block p_248873_, Block p_251044_, Item.Properties p_249308_, Direction p_250800_) {
+@@ -41,13 +_,29 @@
+                 }
              }
--        }
+         }
 -
 -        return blockstate1 != null && levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty()) ? blockstate1 : null;
 -    }
 -
 -    @Override
--    public void registerBlocks(Map<Block, Item> p_43252_, Item p_43253_) {
--        super.registerBlocks(p_43252_, p_43253_);
--        p_43252_.put(this.wallBlock, p_43253_);
--    }
-+         }
-+      }
 +      // CraftBukkit start
 +      if (blockstate1 != null) {
 +         boolean defaultReturn = levelreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty());
@@ -97,13 +44,14 @@
 +      // CraftBukkit end
 +   }
 +
-+   public void registerBlocks(Map<Block, Item> p_43252_, Item p_43253_) {
-+      super.registerBlocks(p_43252_, p_43253_);
-+      p_43252_.put(this.wallBlock, p_43253_);
-+   }
++ 	@Override
+     public void registerBlocks(Map<Block, Item> p_43252_, Item p_43253_) {
+         super.registerBlocks(p_43252_, p_43253_);
+         p_43252_.put(this.wallBlock, p_43253_);
++    }
 +
-+   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-+      super.removeFromBlockToItemMap(blockToItemMap, itemIn);
-+      blockToItemMap.remove(this.wallBlock);
-+   }
++    public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++        super.removeFromBlockToItemMap(blockToItemMap, itemIn);
++        blockToItemMap.remove(this.wallBlock);
+     }
  }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/StonecutterRecipe.java
 +++ b/net/minecraft/world/item/crafting/StonecutterRecipe.java
-@@ -1,22 +_,40 @@
+@@ -1,9 +_,14 @@
  package net.minecraft.world.item.crafting;
  
 +import com.mohistmc.mohist.bukkit.inventory.MohistSpecialRecipe;
@@ -14,30 +14,11 @@
 +import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
  
  public class StonecutterRecipe extends SingleItemRecipe {
--    public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {
--        super(RecipeType.STONECUTTING, RecipeSerializer.STONECUTTER, p_44479_, p_44480_, p_301701_);
--    }
--
--    @Override
--    public boolean matches(Container p_44483_, Level p_44484_) {
--        return this.ingredient.test(p_44483_.getItem(0));
--    }
--
--    @Override
--    public ItemStack getToastSymbol() {
--        return new ItemStack(Blocks.STONECUTTER);
--    }
-+   public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {
-+      super(RecipeType.STONECUTTING, RecipeSerializer.STONECUTTER, p_44479_, p_44480_, p_301701_);
-+   }
-+
-+   public boolean matches(Container p_44483_, Level p_44484_) {
-+      return this.ingredient.test(p_44483_.getItem(0));
-+   }
-+
-+   public ItemStack getToastSymbol() {
-+      return new ItemStack(Blocks.STONECUTTER);
-+   }
+     public StonecutterRecipe(String p_44479_, Ingredient p_44480_, ItemStack p_301701_) {
+@@ -19,4 +_,19 @@
+     public ItemStack getToastSymbol() {
+         return new ItemStack(Blocks.STONECUTTER);
+     }
 +
 +   // CraftBukkit start
 +   @Override

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoatItem.java
 +++ b/net/minecraft/world/item/BoatItem.java
-@@ -16,72 +_,88 @@
+@@ -16,62 +_,80 @@
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
@@ -123,31 +123,11 @@
              }
 -        }
 -    }
--
--    private Boat getBoat(Level p_220017_, HitResult p_220018_, ItemStack p_311821_, Player p_313119_) {
--        Vec3 vec3 = p_220018_.getLocation();
--        Boat boat = (Boat)(this.hasChest
--            ? new ChestBoat(p_220017_, vec3.x, vec3.y, vec3.z)
--            : new Boat(p_220017_, vec3.x, vec3.y, vec3.z));
--        if (p_220017_ instanceof ServerLevel serverlevel) {
--            EntityType.<Boat>createDefaultStackConfig(serverlevel, p_311821_, p_313119_).accept(boat);
--        }
--
--        return boat;
--    }
 +         } else {
 +            return InteractionResultHolder.pass(itemstack);
 +         }
 +      }
 +   }
-+
-+   private Boat getBoat(Level p_220017_, HitResult p_220018_, ItemStack p_311821_, Player p_313119_) {
-+      Vec3 vec3 = p_220018_.getLocation();
-+      Boat boat = (Boat)(this.hasChest ? new ChestBoat(p_220017_, vec3.x, vec3.y, vec3.z) : new Boat(p_220017_, vec3.x, vec3.y, vec3.z));
-+      if (p_220017_ instanceof ServerLevel serverlevel) {
-+         EntityType.<Boat>createDefaultStackConfig(serverlevel, p_311821_, p_313119_).accept(boat);
-+      }
-+
-+      return boat;
-+   }
- }
+ 
+     private Boat getBoat(Level p_220017_, HitResult p_220018_, ItemStack p_311821_, Player p_313119_) {
+         Vec3 vec3 = p_220018_.getLocation();

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/SnowballItem.java
 +++ b/net/minecraft/world/item/SnowballItem.java
-@@ -1,51 +_,40 @@
+@@ -1,47 +_,42 @@
  package net.minecraft.world.item;
  
 -import net.minecraft.core.Direction;
@@ -45,12 +45,6 @@
 -        return InteractionResultHolder.sidedSuccess(itemstack, p_43142_.isClientSide());
 -    }
 -
--    @Override
--    public Projectile asProjectile(Level p_331733_, Position p_331858_, ItemStack p_327677_, Direction p_328077_) {
--        Snowball snowball = new Snowball(p_331733_, p_331858_.x(), p_331858_.y(), p_331858_.z());
--        snowball.setItem(p_327677_);
--        return snowball;
--    }
 +public class SnowballItem extends Item {
 +   public SnowballItem(Item.Properties p_43140_) {
 +      super(p_43140_);
@@ -79,4 +73,6 @@
 +
 +      return InteractionResultHolder.sidedSuccess(itemstack, p_43142_.isClientSide());
 +   }
- }
+     @Override
+     public Projectile asProjectile(Level p_331733_, Position p_331858_, ItemStack p_327677_, Direction p_328077_) {
+         Snowball snowball = new Snowball(p_331733_, p_331858_.x(), p_331858_.y(), p_331858_.z());

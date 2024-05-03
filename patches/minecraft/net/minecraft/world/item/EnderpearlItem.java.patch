@@ -1,13 +1,9 @@
 --- a/net/minecraft/world/item/EnderpearlItem.java
 +++ b/net/minecraft/world/item/EnderpearlItem.java
-@@ -10,33 +_,35 @@
- import net.minecraft.world.level.Level;
+@@ -14,29 +_,31 @@
+         super(p_41188_);
+     }
  
- public class EnderpearlItem extends Item {
--    public EnderpearlItem(Item.Properties p_41188_) {
--        super(p_41188_);
--    }
--
 -    @Override
 -    public InteractionResultHolder<ItemStack> use(Level p_41190_, Player p_41191_, InteractionHand p_41192_) {
 -        ItemStack itemstack = p_41191_.getItemInHand(p_41192_);
@@ -33,10 +29,6 @@
 -        itemstack.consume(1, p_41191_);
 -        return InteractionResultHolder.sidedSuccess(itemstack, p_41190_.isClientSide());
 -    }
-+   public EnderpearlItem(Item.Properties p_41188_) {
-+      super(p_41188_);
-+   }
-+
 +   public InteractionResultHolder<ItemStack> use(Level p_41190_, Player p_41191_, InteractionHand p_41192_) {
 +      ItemStack itemstack = p_41191_.getItemInHand(p_41192_);
 +

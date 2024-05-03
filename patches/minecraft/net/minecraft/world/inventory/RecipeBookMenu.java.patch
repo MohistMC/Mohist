@@ -1,61 +1,11 @@
 --- a/net/minecraft/world/inventory/RecipeBookMenu.java
 +++ b/net/minecraft/world/inventory/RecipeBookMenu.java
-@@ -8,29 +_,33 @@
- import net.minecraft.world.item.crafting.RecipeHolder;
+@@ -33,4 +_,8 @@
+     public abstract RecipeBookType getRecipeBookType();
  
- public abstract class RecipeBookMenu<C extends Container> extends AbstractContainerMenu {
--    public RecipeBookMenu(MenuType<?> p_40115_, int p_40116_) {
--        super(p_40115_, p_40116_);
--    }
--
--    public void handlePlacement(boolean p_40119_, RecipeHolder<?> p_297420_, ServerPlayer p_40121_) {
--        new ServerPlaceRecipe<>(this).recipeClicked(p_40121_, (RecipeHolder<? extends Recipe<C>>)p_297420_, p_40119_);
--    }
--
--    public abstract void fillCraftSlotsStackedContents(StackedContents p_40117_);
--
--    public abstract void clearCraftingContent();
--
--    public abstract boolean recipeMatches(RecipeHolder<? extends Recipe<C>> p_297792_);
--
--    public abstract int getResultSlotIndex();
--
--    public abstract int getGridWidth();
--
--    public abstract int getGridHeight();
--
--    public abstract int getSize();
--
--    public abstract RecipeBookType getRecipeBookType();
--
--    public abstract boolean shouldMoveToInventory(int p_150635_);
-+   public RecipeBookMenu(MenuType<?> p_40115_, int p_40116_) {
-+      super(p_40115_, p_40116_);
-+   }
+     public abstract boolean shouldMoveToInventory(int p_150635_);
 +
-+   public void handlePlacement(boolean p_40119_, RecipeHolder<?> p_297420_, ServerPlayer p_40121_) {
-+      (new ServerPlaceRecipe(this)).recipeClicked(p_40121_, p_297420_, p_40119_);
-+   }
-+
-+   public abstract void fillCraftSlotsStackedContents(StackedContents p_40117_);
-+
-+   public abstract void clearCraftingContent();
-+
-+   public abstract boolean recipeMatches(RecipeHolder<? extends Recipe<C>> p_297792_);
-+
-+   public abstract int getResultSlotIndex();
-+
-+   public abstract int getGridWidth();
-+
-+   public abstract int getGridHeight();
-+
-+   public abstract int getSize();
-+
-+   public java.util.List<net.minecraft.client.RecipeBookCategories> getRecipeBookCategories() {
-+       return net.minecraft.client.RecipeBookCategories.getCategories(this.getRecipeBookType());
-+   }
-+
-+   public abstract RecipeBookType getRecipeBookType();
-+
-+   public abstract boolean shouldMoveToInventory(int p_150635_);
++    public java.util.List<net.minecraft.client.RecipeBookCategories> getRecipeBookCategories() {
++        return net.minecraft.client.RecipeBookCategories.getCategories(this.getRecipeBookType());
++    }
  }

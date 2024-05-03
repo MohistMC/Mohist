@@ -1,89 +1,55 @@
 --- a/net/minecraft/world/inventory/ContainerLevelAccess.java
 +++ b/net/minecraft/world/inventory/ContainerLevelAccess.java
-@@ -5,34 +_,58 @@
+@@ -5,6 +_,8 @@
  import java.util.function.BiFunction;
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.level.Level;
 +import org.bukkit.World;
++import org.bukkit.craftbukkit.CraftWorld;
  
  public interface ContainerLevelAccess {
--    ContainerLevelAccess NULL = new ContainerLevelAccess() {
--        @Override
--        public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39304_) {
--            return Optional.empty();
--        }
--    };
--
--    static ContainerLevelAccess create(final Level p_39290_, final BlockPos p_39291_) {
--        return new ContainerLevelAccess() {
--            @Override
--            public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
--                return Optional.of(p_39311_.apply(p_39290_, p_39291_));
--            }
--        };
--    }
--
--    <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39298_);
--
--    default <T> T evaluate(BiFunction<Level, BlockPos, T> p_39300_, T p_39301_) {
--        return this.evaluate(p_39300_).orElse(p_39301_);
--    }
--
--    default void execute(BiConsumer<Level, BlockPos> p_39293_) {
--        this.evaluate((p_39296_, p_39297_) -> {
--            p_39293_.accept(p_39296_, p_39297_);
--            return Optional.empty();
--        });
--    }
-+   ContainerLevelAccess NULL = new ContainerLevelAccess() {
-+      public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39304_) {
-+         return Optional.empty();
-+      }
-+   };
+     ContainerLevelAccess NULL = new ContainerLevelAccess() {
+@@ -20,6 +_,17 @@
+             public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
+                 return Optional.of(p_39311_.apply(p_39290_, p_39291_));
+             }
++         	// CraftBukkit start
++         	@Override
++         	public Level getWorld() {
++            	return p_39290_;
++         	}
 +
-+   static ContainerLevelAccess create(final Level p_39290_, final BlockPos p_39291_) {
-+      return new ContainerLevelAccess() {
-+         public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39311_) {
-+            return Optional.of(p_39311_.apply(p_39290_, p_39291_));
-+         }
-+         // CraftBukkit start
-+         @Override
-+         public Level getWorld() {
-+            return p_39290_;
-+         }
++         	@Override
++         	public BlockPos getPosition() {
++            	return p_39291_;
++         	}
++         	// CraftBukkit end
+         };
+     }
+ 
+@@ -35,4 +_,25 @@
+             return Optional.empty();
+         });
+     }
 +
-+         @Override
-+         public BlockPos getPosition() {
-+            return p_39291_;
-+         }
-+         // CraftBukkit end
-+      };
-+   }
++   	// CraftBukkit start
++   	default Level getWorld() {
++     	return this.evaluate((level, blockpos) -> level).orElse(null); // Mohist
++   	}
 +
-+   <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_39298_);
++   	default BlockPos getPosition() {
++      	return this.evaluate((level, blockpos) -> blockpos).orElse(null); // Mohist
++   	}
 +
-+   default <T> T evaluate(BiFunction<Level, BlockPos, T> p_39300_, T p_39301_) {
-+      return this.evaluate(p_39300_).orElse(p_39301_);
-+   }
-+
-+   default void execute(BiConsumer<Level, BlockPos> p_39293_) {
-+      this.evaluate((p_39296_, p_39297_) -> {
-+         p_39293_.accept(p_39296_, p_39297_);
-+         return Optional.empty();
-+      });
-+   }
-+
-+   // CraftBukkit start
-+   default Level getWorld() {
-+     return this.evaluate((level, blockpos) -> level).orElse(null); // Mohist
-+   }
-+
-+   default BlockPos getPosition() {
-+      return this.evaluate((level, blockpos) -> blockpos).orElse(null); // Mohist
-+   }
-+
-+   default org.bukkit.Location getLocation() {
-+      return new org.bukkit.Location(getWorld().getWorld(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
-+   }
-+   // CraftBukkit end
++   	default org.bukkit.Location getLocation() {
++        BlockPos blockPos = getPosition();
++        if (blockPos == null) {
++            return null;
++        } else {
++            Level level = getWorld();
++            CraftWorld world = level == null ? null : level.getWorld();
++            return new org.bukkit.Location(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
++        }
++    }
++   	// CraftBukkit end
  }

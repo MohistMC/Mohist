@@ -1,104 +1,17 @@
 --- a/net/minecraft/world/item/Equipable.java
 +++ b/net/minecraft/world/item/Equipable.java
-@@ -1,7 +_,7 @@
+@@ -1,5 +_,6 @@
  package net.minecraft.world.item;
  
 +import com.mohistmc.mohist.plugins.ban.bans.BanItem;
  import javax.annotation.Nullable;
--import net.minecraft.core.Holder;
+ import net.minecraft.core.Holder;
  import net.minecraft.sounds.SoundEvent;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.stats.Stats;
-@@ -14,49 +_,47 @@
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.block.Block;
+@@ -23,6 +_,7 @@
  
--public interface Equipable {
--    EquipmentSlot getEquipmentSlot();
--
--    default Holder<SoundEvent> getEquipSound() {
--        return SoundEvents.ARMOR_EQUIP_GENERIC;
--    }
--
--    default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
--        ItemStack itemstack = p_270300_.getItemInHand(p_270262_);
--        EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
--        if (!p_270300_.canUseSlot(equipmentslot)) {
--            return InteractionResultHolder.pass(itemstack);
--        } else {
--            ItemStack itemstack1 = p_270300_.getItemBySlot(equipmentslot);
--            if ((!EnchantmentHelper.hasBindingCurse(itemstack1) || p_270300_.isCreative()) && !ItemStack.matches(itemstack, itemstack1)) {
--                if (!p_270395_.isClientSide()) {
--                    p_270300_.awardStat(Stats.ITEM_USED.get(p_270453_));
--                }
--
--                ItemStack itemstack2 = itemstack1.isEmpty() ? itemstack : itemstack1.copyAndClear();
--                ItemStack itemstack3 = p_270300_.isCreative() ? itemstack.copy() : itemstack.copyAndClear();
--                p_270300_.setItemSlot(equipmentslot, itemstack3);
--                return InteractionResultHolder.sidedSuccess(itemstack2, p_270395_.isClientSide());
--            } else {
--                return InteractionResultHolder.fail(itemstack);
--            }
--        }
--    }
--
--    @Nullable
--    static Equipable get(ItemStack p_270317_) {
--        Item $$3 = p_270317_.getItem();
--        if ($$3 instanceof Equipable) {
--            return (Equipable)$$3;
--        } else {
--            if (p_270317_.getItem() instanceof BlockItem blockitem) {
--                Block block = blockitem.getBlock();
--                if (block instanceof Equipable) {
--                    return (Equipable)block;
--                }
--            }
--
--            return null;
--        }
--    }
-+public interface Equipable extends Vanishable {
-+   EquipmentSlot getEquipmentSlot();
-+
-+   default SoundEvent getEquipSound() {
-+      return SoundEvents.ARMOR_EQUIP_GENERIC;
-+   }
-+
-+   default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
-+      ItemStack itemstack = p_270300_.getItemInHand(p_270262_);
+     default InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item p_270453_, Level p_270395_, Player p_270300_, InteractionHand p_270262_) {
+         ItemStack itemstack = p_270300_.getItemInHand(p_270262_);
 +      if (BanItem.check(p_270300_, itemstack)) return InteractionResultHolder.fail(itemstack);
-+      EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
-+      ItemStack itemstack1 = p_270300_.getItemBySlot(equipmentslot);
-+      if ((!EnchantmentHelper.hasBindingCurse(itemstack1) || p_270300_.isCreative()) && !ItemStack.matches(itemstack, itemstack1)) {
-+         if (!p_270395_.isClientSide()) {
-+            p_270300_.awardStat(Stats.ITEM_USED.get(p_270453_));
-+         }
-+
-+         ItemStack itemstack2 = itemstack1.isEmpty() ? itemstack : itemstack1.copyAndClear();
-+         ItemStack itemstack3 = itemstack.copyAndClear();
-+         p_270300_.setItemSlot(equipmentslot, itemstack3);
-+         return InteractionResultHolder.sidedSuccess(itemstack2, p_270395_.isClientSide());
-+      } else {
-+         return InteractionResultHolder.fail(itemstack);
-+      }
-+   }
-+
-+   @Nullable
-+   static Equipable get(ItemStack p_270317_) {
-+      Item $$3 = p_270317_.getItem();
-+      if ($$3 instanceof Equipable equipable) {
-+         return equipable;
-+      } else {
-+         Item item1 = p_270317_.getItem();
-+         if (item1 instanceof BlockItem blockitem) {
-+            Block block = blockitem.getBlock();
-+            if (block instanceof Equipable equipable1) {
-+               return equipable1;
-+            }
-+         }
-+
-+         return null;
-+      }
-+   }
- }
+         EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
+         if (!p_270300_.canUseSlot(equipmentslot)) {
+             return InteractionResultHolder.pass(itemstack);

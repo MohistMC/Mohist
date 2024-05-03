@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/FishingRodItem.java
 +++ b/net/minecraft/world/item/FishingRodItem.java
-@@ -5,64 +_,68 @@
+@@ -5,54 +_,52 @@
  import net.minecraft.stats.Stats;
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResultHolder;
@@ -52,18 +52,6 @@
 -                int j = EnchantmentHelper.getFishingLuckBonus(itemstack);
 -                p_41290_.addFreshEntity(new FishingHook(p_41291_, p_41290_, j, k));
 -            }
--
--            p_41291_.awardStat(Stats.ITEM_USED.get(this));
--            p_41291_.gameEvent(GameEvent.ITEM_INTERACT_START);
--        }
--
--        return InteractionResultHolder.sidedSuccess(itemstack, p_41290_.isClientSide());
--    }
--
--    @Override
--    public int getEnchantmentValue() {
--        return 1;
--    }
 +import org.bukkit.craftbukkit.CraftEquipmentSlot;
 +import org.bukkit.event.player.PlayerFishEvent;
 +
@@ -105,22 +93,17 @@
 +            p_41290_.addFreshEntity(entityfishinghook);
 +            // CraftBukkit end
 +         }
-+
-+         p_41291_.awardStat(Stats.ITEM_USED.get(this));
-+         p_41291_.gameEvent(GameEvent.ITEM_INTERACT_START);
-+      }
-+
-+      return InteractionResultHolder.sidedSuccess(itemstack, p_41290_.isClientSide());
-+   }
-+
-+   public int getEnchantmentValue() {
-+      return 1;
-+   }
-+
-+    /* ******************** FORGE START ******************** */
+ 
+             p_41291_.awardStat(Stats.ITEM_USED.get(this));
+             p_41291_.gameEvent(GameEvent.ITEM_INTERACT_START);
+@@ -64,5 +_,10 @@
+     @Override
+     public int getEnchantmentValue() {
+         return 1;
++    }
 +
 +    @Override
-+   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
-+      return net.minecraftforge.common.ToolActions.DEFAULT_FISHING_ROD_ACTIONS.contains(toolAction);
-+   }
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++        return net.minecraftforge.common.ToolActions.DEFAULT_FISHING_ROD_ACTIONS.contains(toolAction);
+     }
  }

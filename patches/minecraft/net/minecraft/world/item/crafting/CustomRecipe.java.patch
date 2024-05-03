@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/CustomRecipe.java
 +++ b/net/minecraft/world/item/crafting/CustomRecipe.java
-@@ -1,27 +_,32 @@
+@@ -1,7 +_,8 @@
  package net.minecraft.world.item.crafting;
  
 -import net.minecraft.core.HolderLookup;
@@ -9,43 +9,11 @@
 +import org.bukkit.NamespacedKey;
  
  public abstract class CustomRecipe implements CraftingRecipe {
--    private final CraftingBookCategory category;
--
--    public CustomRecipe(CraftingBookCategory p_249010_) {
--        this.category = p_249010_;
--    }
--
--    @Override
--    public boolean isSpecial() {
--        return true;
--    }
--
--    @Override
--    public ItemStack getResultItem(HolderLookup.Provider p_329886_) {
--        return ItemStack.EMPTY;
--    }
--
--    @Override
--    public CraftingBookCategory category() {
--        return this.category;
--    }
-+   private final CraftingBookCategory category;
-+
-+   public CustomRecipe(CraftingBookCategory p_249010_) {
-+      this.category = p_249010_;
-+   }
-+
-+   public boolean isSpecial() {
-+      return true;
-+   }
-+
-+   public ItemStack getResultItem(RegistryAccess p_267025_) {
-+      return ItemStack.EMPTY;
-+   }
-+
-+   public CraftingBookCategory category() {
-+      return this.category;
-+   }
+     private final CraftingBookCategory category;
+@@ -24,4 +_,11 @@
+     public CraftingBookCategory category() {
+         return this.category;
+     }
 +
 +   // CraftBukkit start
 +   @Override

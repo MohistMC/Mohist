@@ -1,28 +1,9 @@
 --- a/net/minecraft/world/item/EggItem.java
 +++ b/net/minecraft/world/item/EggItem.java
-@@ -1,51 +_,41 @@
- package net.minecraft.world.item;
- 
--import net.minecraft.core.Direction;
--import net.minecraft.core.Position;
- import net.minecraft.sounds.SoundEvents;
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.stats.Stats;
- import net.minecraft.world.InteractionHand;
- import net.minecraft.world.InteractionResultHolder;
- import net.minecraft.world.entity.player.Player;
--import net.minecraft.world.entity.projectile.Projectile;
- import net.minecraft.world.entity.projectile.ThrownEgg;
- import net.minecraft.world.level.Level;
- 
--public class EggItem extends Item implements ProjectileItem {
--    public EggItem(Item.Properties p_41126_) {
--        super(p_41126_);
--    }
--
--    @Override
--    public InteractionResultHolder<ItemStack> use(Level p_41128_, Player p_41129_, InteractionHand p_41130_) {
--        ItemStack itemstack = p_41129_.getItemInHand(p_41130_);
+@@ -20,29 +_,30 @@
+     @Override
+     public InteractionResultHolder<ItemStack> use(Level p_41128_, Player p_41129_, InteractionHand p_41130_) {
+         ItemStack itemstack = p_41129_.getItemInHand(p_41130_);
 -        p_41128_.playSound(
 -            null,
 -            p_41129_.getX(),
@@ -46,18 +27,6 @@
 -    }
 -
 -    @Override
--    public Projectile asProjectile(Level p_334937_, Position p_334000_, ItemStack p_330091_, Direction p_336145_) {
--        ThrownEgg thrownegg = new ThrownEgg(p_334937_, p_334000_.x(), p_334000_.y(), p_334000_.z());
--        thrownegg.setItem(p_330091_);
--        return thrownegg;
--    }
-+public class EggItem extends Item {
-+   public EggItem(Item.Properties p_41126_) {
-+      super(p_41126_);
-+   }
-+
-+   public InteractionResultHolder<ItemStack> use(Level p_41128_, Player p_41129_, InteractionHand p_41130_) {
-+      ItemStack itemstack = p_41129_.getItemInHand(p_41130_);
 +      if (!p_41128_.isClientSide) {
 +         ThrownEgg thrownegg = new ThrownEgg(p_41128_, p_41129_);
 +         thrownegg.setItem(itemstack);
@@ -80,4 +49,8 @@
 +
 +      return InteractionResultHolder.sidedSuccess(itemstack, p_41128_.isClientSide());
 +   }
- }
++   
++   @Override
+     public Projectile asProjectile(Level p_334937_, Position p_334000_, ItemStack p_330091_, Direction p_336145_) {
+         ThrownEgg thrownegg = new ThrownEgg(p_334937_, p_334000_.x(), p_334000_.y(), p_334000_.z());
+         thrownegg.setItem(p_330091_);

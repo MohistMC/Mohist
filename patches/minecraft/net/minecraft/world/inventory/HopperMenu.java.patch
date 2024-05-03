@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/HopperMenu.java
 +++ b/net/minecraft/world/inventory/HopperMenu.java
-@@ -5,70 +_,88 @@
+@@ -5,18 +_,37 @@
  import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.item.ItemStack;
@@ -18,60 +18,6 @@
 -    public HopperMenu(int p_39643_, Inventory p_39644_, Container p_39645_) {
 -        super(MenuType.HOPPER, p_39643_);
 -        this.hopper = p_39645_;
--        checkContainerSize(p_39645_, 5);
--        p_39645_.startOpen(p_39644_.player);
--        int i = 51;
--
--        for (int j = 0; j < 5; j++) {
--            this.addSlot(new Slot(p_39645_, j, 44 + j * 18, 20));
--        }
--
--        for (int l = 0; l < 3; l++) {
--            for (int k = 0; k < 9; k++) {
--                this.addSlot(new Slot(p_39644_, k + l * 9 + 9, 8 + k * 18, l * 18 + 51));
--            }
--        }
--
--        for (int i1 = 0; i1 < 9; i1++) {
--            this.addSlot(new Slot(p_39644_, i1, 8 + i1 * 18, 109));
--        }
--    }
--
--    @Override
--    public boolean stillValid(Player p_39647_) {
--        return this.hopper.stillValid(p_39647_);
--    }
--
--    @Override
--    public ItemStack quickMoveStack(Player p_39651_, int p_39652_) {
--        ItemStack itemstack = ItemStack.EMPTY;
--        Slot slot = this.slots.get(p_39652_);
--        if (slot != null && slot.hasItem()) {
--            ItemStack itemstack1 = slot.getItem();
--            itemstack = itemstack1.copy();
--            if (p_39652_ < this.hopper.getContainerSize()) {
--                if (!this.moveItemStackTo(itemstack1, this.hopper.getContainerSize(), this.slots.size(), true)) {
--                    return ItemStack.EMPTY;
--                }
--            } else if (!this.moveItemStackTo(itemstack1, 0, this.hopper.getContainerSize(), false)) {
--                return ItemStack.EMPTY;
--            }
--
--            if (itemstack1.isEmpty()) {
--                slot.setByPlayer(ItemStack.EMPTY);
--            } else {
--                slot.setChanged();
--            }
--        }
--
--        return itemstack;
--    }
--
--    @Override
--    public void removed(Player p_39649_) {
--        super.removed(p_39649_);
--        this.hopper.stopOpen(p_39649_);
--    }
 +   public static final int CONTAINER_SIZE = 5;
 +   private final Container hopper;
 +
@@ -99,57 +45,14 @@
 +      super(MenuType.HOPPER, p_39643_);
 +      this.hopper = p_39645_;
 +      this.player = p_39644_; // CraftBukkit - save player
-+      checkContainerSize(p_39645_, 5);
-+      p_39645_.startOpen(p_39644_.player);
-+      int i = 51;
-+
-+      for(int j = 0; j < 5; ++j) {
-+         this.addSlot(new Slot(p_39645_, j, 44 + j * 18, 20));
-+      }
-+
-+      for(int l = 0; l < 3; ++l) {
-+         for(int k = 0; k < 9; ++k) {
-+            this.addSlot(new Slot(p_39644_, k + l * 9 + 9, 8 + k * 18, l * 18 + 51));
-+         }
-+      }
-+
-+      for(int i1 = 0; i1 < 9; ++i1) {
-+         this.addSlot(new Slot(p_39644_, i1, 8 + i1 * 18, 109));
-+      }
-+
-+   }
-+
-+   public boolean stillValid(Player p_39647_) {
-+      if (!this.checkReachable) return true; // CraftBukkit
-+      return this.hopper.stillValid(p_39647_);
-+   }
-+
-+   public ItemStack quickMoveStack(Player p_39651_, int p_39652_) {
-+      ItemStack itemstack = ItemStack.EMPTY;
-+      Slot slot = this.slots.get(p_39652_);
-+      if (slot != null && slot.hasItem()) {
-+         ItemStack itemstack1 = slot.getItem();
-+         itemstack = itemstack1.copy();
-+         if (p_39652_ < this.hopper.getContainerSize()) {
-+            if (!this.moveItemStackTo(itemstack1, this.hopper.getContainerSize(), this.slots.size(), true)) {
-+               return ItemStack.EMPTY;
-+            }
-+         } else if (!this.moveItemStackTo(itemstack1, 0, this.hopper.getContainerSize(), false)) {
-+            return ItemStack.EMPTY;
-+         }
-+
-+         if (itemstack1.isEmpty()) {
-+            slot.setByPlayer(ItemStack.EMPTY);
-+         } else {
-+            slot.setChanged();
-+         }
-+      }
-+
-+      return itemstack;
-+   }
-+
-+   public void removed(Player p_39649_) {
-+      super.removed(p_39649_);
-+      this.hopper.stopOpen(p_39649_);
-+   }
- }
+         checkContainerSize(p_39645_, 5);
+         p_39645_.startOpen(p_39644_.player);
+         int i = 51;
+@@ -38,6 +_,7 @@
+ 
+     @Override
+     public boolean stillValid(Player p_39647_) {
++      	if (!this.checkReachable) return true; // CraftBukkit
+         return this.hopper.stillValid(p_39647_);
+     }
+ 

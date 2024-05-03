@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/LecternMenu.java
 +++ b/net/minecraft/world/inventory/LecternMenu.java
-@@ -2,94 +_,121 @@
+@@ -2,38 +_,60 @@
  
  import net.minecraft.world.Container;
  import net.minecraft.world.SimpleContainer;
@@ -41,64 +41,6 @@
 -            }
 -        });
 -        this.addDataSlots(p_39826_);
--    }
--
--    @Override
--    public boolean clickMenuButton(Player p_39833_, int p_39834_) {
--        if (p_39834_ >= 100) {
--            int k = p_39834_ - 100;
--            this.setData(0, k);
--            return true;
--        } else {
--            switch (p_39834_) {
--                case 1:
--                    int j = this.lecternData.get(0);
--                    this.setData(0, j - 1);
--                    return true;
--                case 2:
--                    int i = this.lecternData.get(0);
--                    this.setData(0, i + 1);
--                    return true;
--                case 3:
--                    if (!p_39833_.mayBuild()) {
--                        return false;
--                    }
--
--                    ItemStack itemstack = this.lectern.removeItemNoUpdate(0);
--                    this.lectern.setChanged();
--                    if (!p_39833_.getInventory().add(itemstack)) {
--                        p_39833_.drop(itemstack, false);
--                    }
--
--                    return true;
--                default:
--                    return false;
--            }
--        }
--    }
--
--    @Override
--    public ItemStack quickMoveStack(Player p_219987_, int p_219988_) {
--        return ItemStack.EMPTY;
--    }
--
--    @Override
--    public void setData(int p_39828_, int p_39829_) {
--        super.setData(p_39828_, p_39829_);
--        this.broadcastChanges();
--    }
--
--    @Override
--    public boolean stillValid(Player p_39831_) {
--        return this.lectern.stillValid(p_39831_);
--    }
--
--    public ItemStack getBook() {
--        return this.lectern.getItem(0);
--    }
--
--    public int getPage() {
--        return this.lecternData.get(0);
 -    }
 +   private static final int DATA_COUNT = 1;
 +   private static final int SLOT_COUNT = 1;
@@ -144,67 +86,29 @@
 +      this.addDataSlots(pLecternData);
 +      player = (org.bukkit.entity.Player) playerinventory.player.getBukkitEntity(); // CraftBukkit
 +   }
-+
-+   public boolean clickMenuButton(Player p_39833_, int p_39834_) {
-+      if (p_39834_ >= 100) {
-+         int k = p_39834_ - 100;
-+         this.setData(0, k);
-+         return true;
-+      } else {
-+         switch (p_39834_) {
-+            case 1:
-+               int j = this.lecternData.get(0);
-+               this.setData(0, j - 1);
-+               return true;
-+            case 2:
-+               int i = this.lecternData.get(0);
-+               this.setData(0, i + 1);
-+               return true;
-+            case 3:
-+               if (!p_39833_.mayBuild()) {
-+                  return false;
-+               }
-+
-+               // CraftBukkit start - Event for taking the book
-+               PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(player, ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
-+               Bukkit.getServer().getPluginManager().callEvent(event);
-+               if (event.isCancelled()) {
-+                  return false;
-+               }
-+               // CraftBukkit end
-+               ItemStack itemstack = this.lectern.removeItemNoUpdate(0);
-+               this.lectern.setChanged();
-+               if (!p_39833_.getInventory().add(itemstack)) {
-+                  p_39833_.drop(itemstack, false);
-+               }
-+
-+               return true;
-+            default:
-+               return false;
-+         }
-+      }
-+   }
-+
-+   public ItemStack quickMoveStack(Player p_219987_, int p_219988_) {
-+      return ItemStack.EMPTY;
-+   }
-+
-+   public void setData(int p_39828_, int p_39829_) {
-+      super.setData(p_39828_, p_39829_);
-+      this.broadcastChanges();
-+   }
-+
-+   public boolean stillValid(Player p_39831_) {
+ 
+     @Override
+     public boolean clickMenuButton(Player p_39833_, int p_39834_) {
+@@ -56,6 +_,13 @@
+                         return false;
+                     }
+ 
++               		// CraftBukkit start - Event for taking the book
++               		PlayerTakeLecternBookEvent event = new PlayerTakeLecternBookEvent(player, ((CraftInventoryLectern) getBukkitView().getTopInventory()).getHolder());
++               		Bukkit.getServer().getPluginManager().callEvent(event);
++               		if (event.isCancelled()) {
++                  		return false;
++               		}
++               		// CraftBukkit end
+                     ItemStack itemstack = this.lectern.removeItemNoUpdate(0);
+                     this.lectern.setChanged();
+                     if (!p_39833_.getInventory().add(itemstack)) {
+@@ -82,6 +_,8 @@
+ 
+     @Override
+     public boolean stillValid(Player p_39831_) {
 +      if (lectern instanceof LecternInventory && !((LecternInventory) lectern).getLectern().hasBook()) return false; // CraftBukkit
 +      if (!this.checkReachable) return true; // CraftBukkit
-+      return this.lectern.stillValid(p_39831_);
-+   }
-+
-+   public ItemStack getBook() {
-+      return this.lectern.getItem(0);
-+   }
-+
-+   public int getPage() {
-+      return this.lecternData.get(0);
-+   }
- }
+         return this.lectern.stillValid(p_39831_);
+     }
+ 

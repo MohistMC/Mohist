@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -1,301 +_,337 @@
+@@ -1,269 +_,301 @@
  package net.minecraft.world.inventory;
  
 +import com.mohistmc.mohist.MohistConfig;
@@ -353,40 +353,6 @@
 -            this.cost.set(0);
 -        }
 -    }
--
--    public static int calculateIncreasedRepairCost(int p_39026_) {
--        return (int)Math.min((long)p_39026_ * 2L + 1L, 2147483647L);
--    }
--
--    public boolean setItemName(String p_288970_) {
--        String s = validateName(p_288970_);
--        if (s != null && !s.equals(this.itemName)) {
--            this.itemName = s;
--            if (this.getSlot(2).hasItem()) {
--                ItemStack itemstack = this.getSlot(2).getItem();
--                if (StringUtil.isBlank(s)) {
--                    itemstack.remove(DataComponents.CUSTOM_NAME);
--                } else {
--                    itemstack.set(DataComponents.CUSTOM_NAME, Component.literal(s));
--                }
--            }
--
--            this.createResult();
--            return true;
--        } else {
--            return false;
--        }
--    }
--
--    @Nullable
--    private static String validateName(String p_288995_) {
--        String s = StringUtil.filterText(p_288995_);
--        return s.length() <= 50 ? s : null;
--    }
--
--    public int getCost() {
--        return this.cost.get();
--    }
 +         }
 +      } else {
 +         this.inputSlots.setItem(1, ItemStack.EMPTY);
@@ -582,42 +548,16 @@
 +         this.broadcastChanges();
 +      }
 +   }
+ 
+     public static int calculateIncreasedRepairCost(int p_39026_) {
+         return (int)Math.min((long)p_39026_ * 2L + 1L, 2147483647L);
+@@ -297,5 +_,9 @@
+ 
+     public int getCost() {
+         return this.cost.get();
++    }
 +
-+   public static int calculateIncreasedRepairCost(int p_39026_) {
-+      return p_39026_ * 2 + 1;
-+   }
-+
-+   public boolean setItemName(String p_288970_) {
-+      String s = validateName(p_288970_);
-+      if (s != null && !s.equals(this.itemName)) {
-+         this.itemName = s;
-+         if (this.getSlot(2).hasItem()) {
-+            ItemStack itemstack = this.getSlot(2).getItem();
-+            if (Util.isBlank(s)) {
-+               itemstack.resetHoverName();
-+            } else {
-+               itemstack.setHoverName(Component.literal(s));
-+            }
-+         }
-+
-+         this.createResult();
-+         return true;
-+      } else {
-+         return false;
-+      }
-+   }
-+
-+   @Nullable
-+   private static String validateName(String p_288995_) {
-+      String s = SharedConstants.filterText(p_288995_);
-+      return s.length() <= 50 ? s : null;
-+   }
-+
-+   public int getCost() {
-+      return this.cost.get();
-+   }
-+
-+   public void setMaximumCost(int value) {
-+      this.cost.set(value);
-+   }
++    public void setMaximumCost(int value) {
++       this.cost.set(value);
+     }
  }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -1,264 +_,310 @@
+@@ -1,42 +_,51 @@
  package net.minecraft.world.inventory;
  
 -import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
@@ -47,230 +47,6 @@
 -        }
 -    };
 -    private final ContainerLevelAccess access;
--
--    public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
--        this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
--    }
--
--    public GrindstoneMenu(int p_39566_, Inventory p_39567_, final ContainerLevelAccess p_39568_) {
--        super(MenuType.GRINDSTONE, p_39566_);
--        this.access = p_39568_;
--        this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
--            @Override
--            public boolean mayPlace(ItemStack p_39607_) {
--                return p_39607_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39607_);
--            }
--        });
--        this.addSlot(new Slot(this.repairSlots, 1, 49, 40) {
--            @Override
--            public boolean mayPlace(ItemStack p_39616_) {
--                return p_39616_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39616_);
--            }
--        });
--        this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
--            @Override
--            public boolean mayPlace(ItemStack p_39630_) {
--                return false;
--            }
--
--            @Override
--            public void onTake(Player p_150574_, ItemStack p_150575_) {
--                p_39568_.execute((p_39634_, p_39635_) -> {
--                    if (p_39634_ instanceof ServerLevel) {
--                        ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
--                    }
--
--                    p_39634_.levelEvent(1042, p_39635_, 0);
--                });
--                GrindstoneMenu.this.repairSlots.setItem(0, ItemStack.EMPTY);
--                GrindstoneMenu.this.repairSlots.setItem(1, ItemStack.EMPTY);
--            }
--
--            private int getExperienceAmount(Level p_39632_) {
--                int l = 0;
--                l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
--                l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
--                if (l > 0) {
--                    int i1 = (int)Math.ceil((double)l / 2.0);
--                    return i1 + p_39632_.random.nextInt(i1);
--                } else {
--                    return 0;
--                }
--            }
--
--            private int getExperienceFromItem(ItemStack p_39637_) {
--                int l = 0;
--                ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(p_39637_);
--
--                for (Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
--                    Enchantment enchantment = entry.getKey().value();
--                    int i1 = entry.getIntValue();
--                    if (!enchantment.isCurse()) {
--                        l += enchantment.getMinCost(i1);
--                    }
--                }
--
--                return l;
--            }
--        });
--
--        for (int i = 0; i < 3; i++) {
--            for (int j = 0; j < 9; j++) {
--                this.addSlot(new Slot(p_39567_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
--            }
--        }
--
--        for (int k = 0; k < 9; k++) {
--            this.addSlot(new Slot(p_39567_, k, 8 + k * 18, 142));
--        }
--    }
--
--    @Override
--    public void slotsChanged(Container p_39570_) {
--        super.slotsChanged(p_39570_);
--        if (p_39570_ == this.repairSlots) {
--            this.createResult();
--        }
--    }
--
--    private void createResult() {
--        this.resultSlots.setItem(0, this.computeResult(this.repairSlots.getItem(0), this.repairSlots.getItem(1)));
--        this.broadcastChanges();
--    }
--
--    private ItemStack computeResult(ItemStack p_335167_, ItemStack p_329934_) {
--        boolean flag = !p_335167_.isEmpty() || !p_329934_.isEmpty();
--        if (!flag) {
--            return ItemStack.EMPTY;
--        } else if (p_335167_.getCount() <= 1 && p_329934_.getCount() <= 1) {
--            boolean flag1 = !p_335167_.isEmpty() && !p_329934_.isEmpty();
--            if (!flag1) {
--                ItemStack itemstack = !p_335167_.isEmpty() ? p_335167_ : p_329934_;
--                return !EnchantmentHelper.hasAnyEnchantments(itemstack) ? ItemStack.EMPTY : this.removeNonCursesFrom(itemstack.copy());
--            } else {
--                return this.mergeItems(p_335167_, p_329934_);
--            }
--        } else {
--            return ItemStack.EMPTY;
--        }
--    }
--
--    private ItemStack mergeItems(ItemStack p_327826_, ItemStack p_328339_) {
--        if (!p_327826_.is(p_328339_.getItem())) {
--            return ItemStack.EMPTY;
--        } else {
--            int i = Math.max(p_327826_.getMaxDamage(), p_328339_.getMaxDamage());
--            int j = p_327826_.getMaxDamage() - p_327826_.getDamageValue();
--            int k = p_328339_.getMaxDamage() - p_328339_.getDamageValue();
--            int l = j + k + i * 5 / 100;
--            int i1 = 1;
--            if (!p_327826_.isDamageableItem()) {
--                if (p_327826_.getMaxStackSize() < 2 || !ItemStack.matches(p_327826_, p_328339_)) {
--                    return ItemStack.EMPTY;
--                }
--
--                i1 = 2;
--            }
--
--            ItemStack itemstack = p_327826_.copyWithCount(i1);
--            if (itemstack.isDamageableItem()) {
--                itemstack.set(DataComponents.MAX_DAMAGE, i);
--                itemstack.setDamageValue(Math.max(i - l, 0));
--            }
--
--            this.mergeEnchantsFrom(itemstack, p_328339_);
--            return this.removeNonCursesFrom(itemstack);
--        }
--    }
--
--    private void mergeEnchantsFrom(ItemStack p_332353_, ItemStack p_333431_) {
--        EnchantmentHelper.updateEnchantments(p_332353_, p_327085_ -> {
--            ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(p_333431_);
--
--            for (Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
--                Enchantment enchantment = entry.getKey().value();
--                if (!enchantment.isCurse() || p_327085_.getLevel(enchantment) == 0) {
--                    p_327085_.upgrade(enchantment, entry.getIntValue());
--                }
--            }
--        });
--    }
--
--    private ItemStack removeNonCursesFrom(ItemStack p_332592_) {
--        ItemEnchantments itemenchantments = EnchantmentHelper.updateEnchantments(
--            p_332592_, p_327083_ -> p_327083_.removeIf(p_327086_ -> !p_327086_.value().isCurse())
--        );
--        if (p_332592_.is(Items.ENCHANTED_BOOK) && itemenchantments.isEmpty()) {
--            p_332592_ = p_332592_.transmuteCopy(Items.BOOK, p_332592_.getCount());
--        }
--
--        int i = 0;
--
--        for (int j = 0; j < itemenchantments.size(); j++) {
--            i = AnvilMenu.calculateIncreasedRepairCost(i);
--        }
--
--        p_332592_.set(DataComponents.REPAIR_COST, i);
--        return p_332592_;
--    }
--
--    @Override
--    public void removed(Player p_39586_) {
--        super.removed(p_39586_);
--        this.access.execute((p_39575_, p_39576_) -> this.clearContainer(p_39586_, this.repairSlots));
--    }
--
--    @Override
--    public boolean stillValid(Player p_39572_) {
--        return stillValid(this.access, p_39572_, Blocks.GRINDSTONE);
--    }
--
--    @Override
--    public ItemStack quickMoveStack(Player p_39588_, int p_39589_) {
--        ItemStack itemstack = ItemStack.EMPTY;
--        Slot slot = this.slots.get(p_39589_);
--        if (slot != null && slot.hasItem()) {
--            ItemStack itemstack1 = slot.getItem();
--            itemstack = itemstack1.copy();
--            ItemStack itemstack2 = this.repairSlots.getItem(0);
--            ItemStack itemstack3 = this.repairSlots.getItem(1);
--            if (p_39589_ == 2) {
--                if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
--                    return ItemStack.EMPTY;
--                }
--
--                slot.onQuickCraft(itemstack1, itemstack);
--            } else if (p_39589_ != 0 && p_39589_ != 1) {
--                if (!itemstack2.isEmpty() && !itemstack3.isEmpty()) {
--                    if (p_39589_ >= 3 && p_39589_ < 30) {
--                        if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
--                            return ItemStack.EMPTY;
--                        }
--                    } else if (p_39589_ >= 30 && p_39589_ < 39 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
--                        return ItemStack.EMPTY;
--                    }
--                } else if (!this.moveItemStackTo(itemstack1, 0, 2, false)) {
--                    return ItemStack.EMPTY;
--                }
--            } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
--                return ItemStack.EMPTY;
--            }
--
--            if (itemstack1.isEmpty()) {
--                slot.setByPlayer(ItemStack.EMPTY);
--            } else {
--                slot.setChanged();
--            }
--
--            if (itemstack1.getCount() == itemstack.getCount()) {
--                return ItemStack.EMPTY;
--            }
--
--            slot.onTake(p_39588_, itemstack1);
--        }
--
--        return itemstack;
--    }
 +   public static final int MAX_NAME_LENGTH = 35;
 +   public static final int INPUT_SLOT = 0;
 +   public static final int ADDITIONAL_SLOT = 1;
@@ -295,251 +71,79 @@
 +   };
 +   private final ContainerLevelAccess access;
 +   private int xp = -1;
-+
-+   public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
-+      this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
-+   }
-+
-+   public GrindstoneMenu(int p_39566_, Inventory p_39567_, final ContainerLevelAccess p_39568_) {
-+      super(MenuType.GRINDSTONE, p_39566_);
-+      this.access = p_39568_;
-+      this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
-+         public boolean mayPlace(ItemStack p_39607_) {
-+            return p_39607_.isDamageableItem() || p_39607_.is(Items.ENCHANTED_BOOK) || p_39607_.isEnchanted() || p_39607_.canGrindstoneRepair();
-+         }
-+      });
-+      this.addSlot(new Slot(this.repairSlots, 1, 49, 40) {
-+         public boolean mayPlace(ItemStack p_39616_) {
-+            return p_39616_.isDamageableItem() || p_39616_.is(Items.ENCHANTED_BOOK) || p_39616_.isEnchanted() || p_39616_.canGrindstoneRepair();
-+         }
-+      });
-+      this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
-+         public boolean mayPlace(ItemStack p_39630_) {
-+            return false;
-+         }
-+
-+         public void onTake(Player p_150574_, ItemStack p_150575_) {
-+            if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.repairSlots, p_39568_, this::getExperienceAmount)) return;
-+            p_39568_.execute((p_39634_, p_39635_) -> {
-+               if (p_39634_ instanceof ServerLevel) {
-+                  ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
-+               }
-+
-+               p_39634_.levelEvent(1042, p_39635_, 0);
-+            });
-+            GrindstoneMenu.this.repairSlots.setItem(0, ItemStack.EMPTY);
-+            GrindstoneMenu.this.repairSlots.setItem(1, ItemStack.EMPTY);
-+         }
-+
-+         private int getExperienceAmount(Level p_39632_) {
-+            if (xp > -1) return xp;
-+            int l = 0;
-+            l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
-+            l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
-+            if (l > 0) {
-+               int i1 = (int)Math.ceil((double)l / 2.0D);
-+               return i1 + p_39632_.random.nextInt(i1);
-+            } else {
-+               return 0;
-+            }
-+         }
-+
-+         private int getExperienceFromItem(ItemStack p_39637_) {
-+            int l = 0;
-+            Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(p_39637_);
-+
-+            for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
-+               Enchantment enchantment = entry.getKey();
-+               Integer integer = entry.getValue();
-+               if (!enchantment.isCurse()) {
-+                  l += enchantment.getMinCost(integer);
-+               }
-+            }
-+
-+            return l;
-+         }
-+      });
-+
-+      for(int i = 0; i < 3; ++i) {
-+         for(int j = 0; j < 9; ++j) {
-+            this.addSlot(new Slot(p_39567_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-+         }
-+      }
-+
-+      for(int k = 0; k < 9; ++k) {
-+         this.addSlot(new Slot(p_39567_, k, 8 + k * 18, 142));
-+      }
+ 
+     public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
+         this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
+@@ -48,13 +_,13 @@
+         this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
+             @Override
+             public boolean mayPlace(ItemStack p_39607_) {
+-                return p_39607_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39607_);
++                return p_39607_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39607_) || p_39607_.canGrindstoneRepair();
+             }
+         });
+         this.addSlot(new Slot(this.repairSlots, 1, 49, 40) {
+             @Override
+             public boolean mayPlace(ItemStack p_39616_) {
+-                return p_39616_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39616_);
++                return p_39616_.isDamageableItem() || EnchantmentHelper.hasAnyEnchantments(p_39616_) || p_39616_.canGrindstoneRepair();
+             }
+         });
+         this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
+@@ -65,6 +_,7 @@
+ 
+             @Override
+             public void onTake(Player p_150574_, ItemStack p_150575_) {
++                if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.repairSlots, p_39568_, this::getExperienceAmount)) return;
+                 p_39568_.execute((p_39634_, p_39635_) -> {
+                     if (p_39634_ instanceof ServerLevel) {
+                         ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
+@@ -77,6 +_,7 @@
+             }
+ 
+             private int getExperienceAmount(Level p_39632_) {
++                if (xp > -1) return xp;
+                 int l = 0;
+                 l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
+                 l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
+@@ -113,6 +_,7 @@
+         for (int k = 0; k < 9; k++) {
+             this.addSlot(new Slot(p_39567_, k, 8 + k * 18, 142));
+         }
 +      player = (org.bukkit.entity.Player) p_39567_.player.getBukkitEntity(); // CraftBukkit
-+   }
+     }
+ 
+     @Override
+@@ -129,6 +_,17 @@
+     }
+ 
+     private ItemStack computeResult(ItemStack p_335167_, ItemStack p_329934_) {
++        var event = net.minecraftforge.event.ForgeEventFactory.onGrindstoneChange(p_335167_, p_329934_, this.resultSlots, -1);
++        if (event.isCanceled()) {
++            this.xp = -1;
++            return ItemStack.EMPTY;
++        } else if (!event.getOutput().isEmpty()) {
++            this.xp = event.getXp();
++            return event.getOutput();
++        } else {
++            this.xp = Integer.MIN_VALUE;
++        }
 +
-+   public void slotsChanged(Container p_39570_) {
-+      super.slotsChanged(p_39570_);
-+      if (p_39570_ == this.repairSlots) {
-+         this.createResult();
-+      }
-+
-+   }
-+
-+   private void createResult() {
-+      ItemStack itemstack = this.repairSlots.getItem(0);
-+      ItemStack itemstack1 = this.repairSlots.getItem(1);
-+      boolean flag = !itemstack.isEmpty() || !itemstack1.isEmpty();
-+      boolean flag1 = !itemstack.isEmpty() && !itemstack1.isEmpty();
-+      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, this.resultSlots, -1);
-+      if (this.xp == Integer.MIN_VALUE)
-+      if (!flag) {
-+         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-+      } else {
-+         boolean flag2 = !itemstack.isEmpty() && !itemstack.is( Items.ENCHANTED_BOOK) && !itemstack.isEnchanted() || !itemstack1.isEmpty() && !itemstack1.is(Items.ENCHANTED_BOOK) && !itemstack1.isEnchanted();
-+         if (itemstack.getCount() > 1 || itemstack1.getCount() > 1 || !flag1 && flag2) {
-+            CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-+            this.broadcastChanges();
-+            return;
-+         }
-+
-+         int j = 1;
-+         int i;
-+         ItemStack itemstack2;
-+         if (flag1) {
-+            if (!itemstack.is(itemstack1.getItem())) {
-+               CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-+               this.broadcastChanges();
-+               return;
-+            }
-+
-+            Item item = itemstack.getItem();
-+            int k = itemstack.getMaxDamage() - itemstack.getDamageValue();
-+            int l = itemstack.getMaxDamage() - itemstack1.getDamageValue();
-+            int i1 = k + l + itemstack.getMaxDamage() * 5 / 100;
-+            i = Math.max(itemstack.getMaxDamage() - i1, 0);
-+            itemstack2 = this.mergeEnchants(itemstack, itemstack1);
-+            if (!itemstack2.isRepairable()) i = itemstack.getDamageValue();
-+            if (!itemstack2.isDamageableItem() || !itemstack2.isRepairable()) {
-+               if (!ItemStack.matches(itemstack, itemstack1)) {
-+                  CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), ItemStack.EMPTY); // CraftBukkit
-+                  this.broadcastChanges();
-+                  return;
-+               }
-+
-+               j = 2;
-+            }
-+         } else {
-+            boolean flag3 = !itemstack.isEmpty();
-+            i = flag3 ? itemstack.getDamageValue() : itemstack1.getDamageValue();
-+            itemstack2 = flag3 ? itemstack : itemstack1;
-+         }
-+
-+         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
-+         if (j > itemstack2.getMaxStackSize())
-+            this.resultSlots.setItem(0, ItemStack.EMPTY);
-+         else
-+         CraftEventFactory.callPrepareGrindstoneEvent(getBukkitView(), this.removeNonCurses(itemstack2, i, j)); // CraftBukkit
-+      }
-+
-+      sendAllDataToRemote(); // CraftBukkit - SPIGOT-6686: Always send completed inventory to stay in sync with client
-+      this.broadcastChanges();
-+   }
-+
-+   private ItemStack mergeEnchants(ItemStack p_39591_, ItemStack p_39592_) {
-+      ItemStack itemstack = p_39591_.copy();
-+      Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(p_39592_);
-+
-+      for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
-+         Enchantment enchantment = entry.getKey();
-+         if (!enchantment.isCurse() || EnchantmentHelper.getTagEnchantmentLevel(enchantment, itemstack) == 0) {
-+            itemstack.enchant(enchantment, entry.getValue());
-+         }
-+      }
-+
-+      return itemstack;
-+   }
-+
-+   private ItemStack removeNonCurses(ItemStack p_39580_, int p_39581_, int p_39582_) {
-+      ItemStack itemstack = p_39580_.copyWithCount(p_39582_);
-+      itemstack.removeTagKey("Enchantments");
-+      itemstack.removeTagKey("StoredEnchantments");
-+      if (p_39581_ > 0) {
-+         itemstack.setDamageValue(p_39581_);
-+      } else {
-+         itemstack.removeTagKey("Damage");
-+      }
-+
-+      Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(p_39580_).entrySet().stream().filter((p_39584_) -> {
-+         return p_39584_.getKey().isCurse();
-+      }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-+      EnchantmentHelper.setEnchantments(map, itemstack);
-+      itemstack.setRepairCost(0);
-+      if (itemstack.is(Items.ENCHANTED_BOOK) && map.size() == 0) {
-+         itemstack = new ItemStack(Items.BOOK);
-+         if (p_39580_.hasCustomHoverName()) {
-+            itemstack.setHoverName(p_39580_.getHoverName());
-+         }
-+      }
-+
-+      for(int i = 0; i < map.size(); ++i) {
-+         itemstack.setRepairCost(AnvilMenu.calculateIncreasedRepairCost(itemstack.getBaseRepairCost()));
-+      }
-+
-+      return itemstack;
-+   }
-+
-+   public void removed(Player p_39586_) {
-+      super.removed(p_39586_);
-+      this.access.execute((p_39575_, p_39576_) -> {
-+         this.clearContainer(p_39586_, this.repairSlots);
-+      });
-+   }
-+
-+   public boolean stillValid(Player p_39572_) {
+         boolean flag = !p_335167_.isEmpty() || !p_329934_.isEmpty();
+         if (!flag) {
+             return ItemStack.EMPTY;
+@@ -212,6 +_,7 @@
+ 
+     @Override
+     public boolean stillValid(Player p_39572_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
-+      return stillValid(this.access, p_39572_, Blocks.GRINDSTONE);
-+   }
-+
-+   public ItemStack quickMoveStack(Player p_39588_, int p_39589_) {
-+      ItemStack itemstack = ItemStack.EMPTY;
-+      Slot slot = this.slots.get(p_39589_);
-+      if (slot != null && slot.hasItem()) {
-+         ItemStack itemstack1 = slot.getItem();
-+         itemstack = itemstack1.copy();
-+         ItemStack itemstack2 = this.repairSlots.getItem(0);
-+         ItemStack itemstack3 = this.repairSlots.getItem(1);
-+         if (p_39589_ == 2) {
-+            if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
-+               return ItemStack.EMPTY;
-+            }
-+
-+            slot.onQuickCraft(itemstack1, itemstack);
-+         } else if (p_39589_ != 0 && p_39589_ != 1) {
-+            if (!itemstack2.isEmpty() && !itemstack3.isEmpty()) {
-+               if (p_39589_ >= 3 && p_39589_ < 30) {
-+                  if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
-+                     return ItemStack.EMPTY;
-+                  }
-+               } else if (p_39589_ >= 30 && p_39589_ < 39 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
-+                  return ItemStack.EMPTY;
-+               }
-+            } else if (!this.moveItemStackTo(itemstack1, 0, 2, false)) {
-+               return ItemStack.EMPTY;
-+            }
-+         } else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
-+            return ItemStack.EMPTY;
-+         }
-+
-+         if (itemstack1.isEmpty()) {
-+            slot.setByPlayer(ItemStack.EMPTY);
-+         } else {
-+            slot.setChanged();
-+         }
-+
-+         if (itemstack1.getCount() == itemstack.getCount()) {
-+            return ItemStack.EMPTY;
-+         }
-+
-+         slot.onTake(p_39588_, itemstack1);
-+      }
-+
-+      return itemstack;
-+   }
+         return stillValid(this.access, p_39572_, Blocks.GRINDSTONE);
+     }
+ 
+@@ -261,4 +_,20 @@
+ 
+         return itemstack;
+     }
 +
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
