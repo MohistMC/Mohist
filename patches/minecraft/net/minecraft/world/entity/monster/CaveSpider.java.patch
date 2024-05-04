@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/CaveSpider.java
 +++ b/net/minecraft/world/entity/monster/CaveSpider.java
-@@ -1,60 +_,68 @@
+@@ -1,14 +_,17 @@
  package net.minecraft.world.entity.monster;
  
  import javax.annotation.Nullable;
@@ -18,95 +18,12 @@
  import net.minecraft.world.entity.SpawnGroupData;
  import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
  import net.minecraft.world.entity.ai.attributes.Attributes;
- import net.minecraft.world.level.Level;
- import net.minecraft.world.level.ServerLevelAccessor;
--import net.minecraft.world.phys.Vec3;
-+import org.joml.Vector3f;
+@@ -37,7 +_,7 @@
+                 }
  
- public class CaveSpider extends Spider {
--    public CaveSpider(EntityType<? extends CaveSpider> p_32254_, Level p_32255_) {
--        super(p_32254_, p_32255_);
--    }
--
--    public static AttributeSupplier.Builder createCaveSpider() {
--        return Spider.createAttributes().add(Attributes.MAX_HEALTH, 12.0);
--    }
--
--    @Override
--    public boolean doHurtTarget(Entity p_32257_) {
--        if (super.doHurtTarget(p_32257_)) {
--            if (p_32257_ instanceof LivingEntity) {
--                int i = 0;
--                if (this.level().getDifficulty() == Difficulty.NORMAL) {
--                    i = 7;
--                } else if (this.level().getDifficulty() == Difficulty.HARD) {
--                    i = 15;
--                }
--
--                if (i > 0) {
+                 if (i > 0) {
 -                    ((LivingEntity)p_32257_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this);
--                }
--            }
--
--            return true;
--        } else {
--            return false;
--        }
--    }
--
--    @Nullable
--    @Override
--    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_32259_, DifficultyInstance p_32260_, MobSpawnType p_32261_, @Nullable SpawnGroupData p_32262_) {
--        return p_32262_;
--    }
--
--    @Override
--    public Vec3 getVehicleAttachmentPoint(Entity p_329499_) {
--        return p_329499_.getBbWidth() <= this.getBbWidth() ? new Vec3(0.0, 0.21875 * (double)this.getScale(), 0.0) : super.getVehicleAttachmentPoint(p_329499_);
--    }
-+   public CaveSpider(EntityType<? extends CaveSpider> p_32254_, Level p_32255_) {
-+      super(p_32254_, p_32255_);
-+   }
-+
-+   public static AttributeSupplier.Builder createCaveSpider() {
-+      return Spider.createAttributes().add(Attributes.MAX_HEALTH, 12.0D);
-+   }
-+
-+   public boolean doHurtTarget(Entity p_32257_) {
-+      if (super.doHurtTarget(p_32257_)) {
-+         if (p_32257_ instanceof LivingEntity) {
-+            int i = 0;
-+            if (this.level().getDifficulty() == Difficulty.NORMAL) {
-+               i = 7;
-+            } else if (this.level().getDifficulty() == Difficulty.HARD) {
-+               i = 15;
-+            }
-+
-+            if (i > 0) {
-+               ((LivingEntity)p_32257_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
-+            }
-+         }
-+
-+         return true;
-+      } else {
-+         return false;
-+      }
-+   }
-+
-+   @Nullable
-+   public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_32259_, DifficultyInstance p_32260_, MobSpawnType p_32261_, @Nullable SpawnGroupData p_32262_, @Nullable CompoundTag p_32263_) {
-+      return p_32262_;
-+   }
-+
-+   protected float getStandingEyeHeight(Pose p_32265_, EntityDimensions p_32266_) {
-+      return 0.45F;
-+   }
-+
-+   protected Vector3f getPassengerAttachmentPoint(Entity p_300102_, EntityDimensions p_300349_, float p_301347_) {
-+      return new Vector3f(0.0F, p_300349_.height, 0.0F);
-+   }
-+
-+   protected float ridingOffset(Entity p_301036_) {
-+      return p_301036_.getBbWidth() <= this.getBbWidth() ? -0.21875F : 0.0F;
-+   }
- }
++               		((LivingEntity)p_32257_).addEffect(new MobEffectInstance(MobEffects.POISON, i * 20, 0), this, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+                 }
+             }
+ 

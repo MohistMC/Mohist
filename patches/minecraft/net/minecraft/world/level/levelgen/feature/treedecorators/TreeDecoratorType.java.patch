@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/treedecorators/TreeDecoratorType.java
++++ b/net/minecraft/world/level/levelgen/feature/treedecorators/TreeDecoratorType.java
+@@ -17,7 +_,7 @@
+         return Registry.register(BuiltInRegistries.TREE_DECORATOR_TYPE, p_70053_, new TreeDecoratorType<>(p_329425_));
+     }
+ 
+-    private TreeDecoratorType(MapCodec<P> p_332594_) {
++    public TreeDecoratorType(MapCodec<P> p_332594_) {
+         this.codec = p_332594_;
+     }
+ 

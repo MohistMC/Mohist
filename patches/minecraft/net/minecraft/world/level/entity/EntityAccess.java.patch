@@ -1,54 +1,23 @@
 --- a/net/minecraft/world/level/entity/EntityAccess.java
 +++ b/net/minecraft/world/level/entity/EntityAccess.java
-@@ -5,25 +_,32 @@
+@@ -5,6 +_,7 @@
  import net.minecraft.core.BlockPos;
  import net.minecraft.world.entity.Entity;
  import net.minecraft.world.phys.AABB;
 +import org.bukkit.event.entity.EntityRemoveEvent;
  
  public interface EntityAccess {
--    int getId();
--
--    UUID getUUID();
--
--    BlockPos blockPosition();
--
--    AABB getBoundingBox();
--
--    void setLevelCallback(EntityInLevelCallback p_156797_);
--
--    Stream<? extends EntityAccess> getSelfAndPassengers();
--
--    Stream<? extends EntityAccess> getPassengersAndSelf();
--
--    void setRemoved(Entity.RemovalReason p_156798_);
--
--    boolean shouldBeSaved();
--
--    boolean isAlwaysTicking();
-+   int getId();
+     int getId();
+@@ -22,6 +_,12 @@
+     Stream<? extends EntityAccess> getPassengersAndSelf();
+ 
+     void setRemoved(Entity.RemovalReason p_156798_);
 +
-+   UUID getUUID();
-+
-+   BlockPos blockPosition();
-+
-+   AABB getBoundingBox();
-+
-+   void setLevelCallback(EntityInLevelCallback p_156797_);
-+
-+   Stream<? extends EntityAccess> getSelfAndPassengers();
-+
-+   Stream<? extends EntityAccess> getPassengersAndSelf();
-+
-+   void setRemoved(Entity.RemovalReason p_156798_);
-+
-+   // CraftBukkit start - add Bukkit remove cause
-+   default void setRemoved(Entity.RemovalReason p_156798_, EntityRemoveEvent.Cause cause) {
-+      setRemoved(p_156798_);
-+   }
-+   // CraftBukkit end
-+
-+   boolean shouldBeSaved();
-+
-+   boolean isAlwaysTicking();
- }
++   	// CraftBukkit start - add Bukkit remove cause
++   	default void setRemoved(Entity.RemovalReason p_156798_, EntityRemoveEvent.Cause cause) {
++      	setRemoved(p_156798_);
++   	}
++   	// CraftBukkit end
+ 
+     boolean shouldBeSaved();
+ 

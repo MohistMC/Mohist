@@ -10,7 +10,7 @@
  import net.minecraft.util.Mth;
  import net.minecraft.world.damagesource.DamageSource;
  import net.minecraft.world.entity.Entity;
-@@ -25,256 +_,331 @@
+@@ -25,13 +_,16 @@
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
  import org.apache.commons.lang3.Validate;
@@ -20,114 +20,32 @@
  import org.slf4j.Logger;
  
  public abstract class HangingEntity extends Entity {
--    private static final Logger LOGGER = LogUtils.getLogger();
--    protected static final Predicate<Entity> HANGING_ENTITY = p_31734_ -> p_31734_ instanceof HangingEntity;
--    private int checkInterval;
+     private static final Logger LOGGER = LogUtils.getLogger();
+     protected static final Predicate<Entity> HANGING_ENTITY = p_31734_ -> p_31734_ instanceof HangingEntity;
+     private int checkInterval;
 -    public BlockPos pos;
--    protected Direction direction = Direction.SOUTH;
--
--    protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
--        super(p_31703_, p_31704_);
--    }
--
--    protected HangingEntity(EntityType<? extends HangingEntity> p_31706_, Level p_31707_, BlockPos p_31708_) {
--        this(p_31706_, p_31707_);
--        this.pos = p_31708_;
++    protected BlockPos pos;
+     protected Direction direction = Direction.SOUTH;
+ 
+     protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
+@@ -87,23 +_,76 @@
+         }
+     }
+ 
+-    private double offs(int p_31710_) {
+-        return p_31710_ % 32 == 0 ? 0.5 : 0.0;
 -    }
 -
 -    @Override
--    protected void defineSynchedData(SynchedEntityData.Builder p_330814_) {
--    }
--
--    protected void setDirection(Direction p_31728_) {
--        Validate.notNull(p_31728_);
--        Validate.isTrue(p_31728_.getAxis().isHorizontal());
--        this.direction = p_31728_;
--        this.setYRot((float)(this.direction.get2DDataValue() * 90));
--        this.yRotO = this.getYRot();
--        this.recalculateBoundingBox();
--    }
--
--    protected void recalculateBoundingBox() {
--        if (this.direction != null) {
--            double d0 = (double)this.pos.getX() + 0.5;
--            double d1 = (double)this.pos.getY() + 0.5;
--            double d2 = (double)this.pos.getZ() + 0.5;
--            double d3 = 0.46875;
--            double d4 = this.offs(this.getWidth());
--            double d5 = this.offs(this.getHeight());
--            d0 -= (double)this.direction.getStepX() * 0.46875;
--            d2 -= (double)this.direction.getStepZ() * 0.46875;
--            d1 += d5;
--            Direction direction = this.direction.getCounterClockWise();
--            d0 += d4 * (double)direction.getStepX();
--            d2 += d4 * (double)direction.getStepZ();
--            this.setPosRaw(d0, d1, d2);
--            double d6 = (double)this.getWidth();
--            double d7 = (double)this.getHeight();
--            double d8 = (double)this.getWidth();
--            if (this.direction.getAxis() == Direction.Axis.Z) {
--                d8 = 1.0;
-+   private static final Logger LOGGER = LogUtils.getLogger();
-+   protected static final Predicate<Entity> HANGING_ENTITY = (p_31734_) -> {
-+      return p_31734_ instanceof HangingEntity;
-+   };
-+   private int checkInterval;
-+   public BlockPos pos;
-+   protected Direction direction = Direction.SOUTH;
-+
-+   protected HangingEntity(EntityType<? extends HangingEntity> p_31703_, Level p_31704_) {
-+      super(p_31703_, p_31704_);
-+   }
-+
-+   protected HangingEntity(EntityType<? extends HangingEntity> p_31706_, Level p_31707_, BlockPos p_31708_) {
-+      this(p_31706_, p_31707_);
-+      this.pos = p_31708_;
-+   }
-+
-+   protected void defineSynchedData() {
-+   }
-+
-+   public void setDirection(Direction p_31728_) {
-+      Validate.notNull(p_31728_);
-+      Validate.isTrue(p_31728_.getAxis().isHorizontal());
-+      this.direction = p_31728_;
-+      this.setYRot((float)(this.direction.get2DDataValue() * 90));
-+      this.yRotO = this.getYRot();
-+      this.recalculateBoundingBox();
-+   }
-+
-+   protected void recalculateBoundingBox() {
-+      if (this.direction != null) {
-+         double d0 = (double)this.pos.getX() + 0.5D;
-+         double d1 = (double)this.pos.getY() + 0.5D;
-+         double d2 = (double)this.pos.getZ() + 0.5D;
-+         double d3 = 0.46875D;
-+         double d4 = this.offs(this.getWidth());
-+         double d5 = this.offs(this.getHeight());
-+         d0 -= (double)this.direction.getStepX() * 0.46875D;
-+         d2 -= (double)this.direction.getStepZ() * 0.46875D;
-+         d1 += d5;
-+         Direction direction = this.direction.getCounterClockWise();
-+         d0 += d4 * (double)direction.getStepX();
-+         d2 += d4 * (double)direction.getStepZ();
-+         this.setPosRaw(d0, d1, d2);
-+         double d6 = (double)this.getWidth();
-+         double d7 = (double)this.getHeight();
-+         double d8 = (double)this.getWidth();
-+         if (this.direction.getAxis() == Direction.Axis.Z) {
-+            d8 = 1.0D;
-+         } else {
-+            d6 = 1.0D;
-+         }
-+
-+         d6 /= 32.0D;
-+         d7 /= 32.0D;
-+         d8 /= 32.0D;
-+         this.setBoundingBox(new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
-+      }
-+   }
-+
+-    public void tick() {
+-        if (!this.level().isClientSide) {
+-            this.checkBelowWorld();
+-            if (this.checkInterval++ == 100) {
+-                this.checkInterval = 0;
+-                if (!this.isRemoved() && !this.survives()) {
+-                    this.discard();
+-                    this.dropItem(null);
+-                }
 +   // CraftBukkit start - break out BB calc into own method
 +   public static AABB calculateBoundingBox(Entity entity, BlockPos pos, Direction direction, int width, int height) {
 +      double d0 = (double) pos.getX() + 0.5D;
@@ -193,140 +111,29 @@
 +               // CraftBukkit end
 +               this.discard();
 +               this.dropItem((Entity)null);
-+            }
+             }
+-        }
+-    }
 +         }
 +      }
 +
 +   }
-+
-+   public boolean survives() {
-+      if (!this.level().noCollision(this)) {
-+         return false;
-+      } else {
-+         int i = Math.max(1, this.getWidth() / 16);
-+         int j = Math.max(1, this.getHeight() / 16);
-+         BlockPos blockpos = this.pos.relative(this.direction.getOpposite());
-+         Direction direction = this.direction.getCounterClockWise();
-+         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+
-+         for(int k = 0; k < i; ++k) {
-+            for(int l = 0; l < j; ++l) {
-+               int i1 = (i - 1) / -2;
-+               int j1 = (j - 1) / -2;
-+               blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
-+               BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-+               if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
-+                  continue;
-+               if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
-+                  return false;
-+               }
-+            }
-+         }
-+
-+         return this.level().getEntities(this, this.getBoundingBox(), HANGING_ENTITY).isEmpty();
-+      }
-+   }
-+
-+   public boolean isPickable() {
-+      return true;
-+   }
-+
-+   public boolean skipAttackInteraction(Entity p_31750_) {
-+      if (p_31750_ instanceof Player player) {
-+         return !this.level().mayInteract(player, this.pos) ? true : this.hurt(this.damageSources().playerAttack(player), 0.0F);
-+      } else {
-+         return false;
-+      }
-+   }
-+
-+   public Direction getDirection() {
-+      return this.direction;
-+   }
-+
-+   public boolean hurt(DamageSource p_31715_, float p_31716_) {
-+      if (this.isInvulnerableTo(p_31715_)) {
-+         return false;
-+      } else {
-+         if (!this.isRemoved() && !this.level().isClientSide) {
-+            // CraftBukkit start - fire break events
-+            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
-+            HangingBreakEvent event;
-+            if (damager != null) {
-+               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
-             } else {
--                d6 = 1.0;
--            }
--
--            d6 /= 32.0;
--            d7 /= 32.0;
--            d8 /= 32.0;
--            this.setBoundingBox(new AABB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
--        }
--    }
--
--    private double offs(int p_31710_) {
--        return p_31710_ % 32 == 0 ? 0.5 : 0.0;
--    }
--
--    @Override
--    public void tick() {
--        if (!this.level().isClientSide) {
--            this.checkBelowWorld();
--            if (this.checkInterval++ == 100) {
--                this.checkInterval = 0;
--                if (!this.isRemoved() && !this.survives()) {
--                    this.discard();
--                    this.dropItem(null);
--                }
--            }
--        }
--    }
--
--    public boolean survives() {
--        if (!this.level().noCollision(this)) {
--            return false;
--        } else {
--            int i = Math.max(1, this.getWidth() / 16);
--            int j = Math.max(1, this.getHeight() / 16);
--            BlockPos blockpos = this.pos.relative(this.direction.getOpposite());
--            Direction direction = this.direction.getCounterClockWise();
--            BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
--
--            for (int k = 0; k < i; k++) {
--                for (int l = 0; l < j; l++) {
--                    int i1 = (i - 1) / -2;
--                    int j1 = (j - 1) / -2;
--                    blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
--                    BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
--                    if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
--                        return false;
--                    }
--                }
--            }
--
--            return this.level().getEntities(this, this.getBoundingBox(), HANGING_ENTITY).isEmpty();
--        }
--    }
--
--    @Override
--    public boolean isPickable() {
--        return true;
--    }
--
--    @Override
--    public boolean skipAttackInteraction(Entity p_31750_) {
--        if (p_31750_ instanceof Player player) {
--            return !this.level().mayInteract(player, this.pos) ? true : this.hurt(this.damageSources().playerAttack(player), 0.0F);
--        } else {
--            return false;
--        }
--    }
--
--    @Override
--    public Direction getDirection() {
--        return this.direction;
--    }
--
+ 
+     public boolean survives() {
+         if (!this.level().noCollision(this)) {
+@@ -121,6 +_,8 @@
+                     int j1 = (j - 1) / -2;
+                     blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
+                     BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
++                    if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
++                        continue;
+                     if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
+                         return false;
+                     }
+@@ -150,44 +_,77 @@
+         return this.direction;
+     }
+ 
 -    @Override
 -    public boolean hurt(DamageSource p_31715_, float p_31716_) {
 -        if (this.isInvulnerableTo(p_31715_)) {
@@ -365,72 +172,17 @@
 -        p_31736_.putInt("TileY", blockpos.getY());
 -        p_31736_.putInt("TileZ", blockpos.getZ());
 -    }
--
--    @Override
--    public void readAdditionalSaveData(CompoundTag p_31730_) {
--        BlockPos blockpos = new BlockPos(p_31730_.getInt("TileX"), p_31730_.getInt("TileY"), p_31730_.getInt("TileZ"));
--        if (!blockpos.closerThan(this.blockPosition(), 16.0)) {
--            LOGGER.error("Hanging entity at invalid position: {}", blockpos);
--        } else {
--            this.pos = blockpos;
--        }
--    }
--
--    public abstract int getWidth();
--
--    public abstract int getHeight();
--
--    public abstract void dropItem(@Nullable Entity p_31717_);
--
--    public abstract void playPlacementSound();
--
--    @Override
--    public ItemEntity spawnAtLocation(ItemStack p_31722_, float p_31723_) {
--        ItemEntity itementity = new ItemEntity(
--            this.level(),
--            this.getX() + (double)((float)this.direction.getStepX() * 0.15F),
--            this.getY() + (double)p_31723_,
--            this.getZ() + (double)((float)this.direction.getStepZ() * 0.15F),
--            p_31722_
--        );
--        itementity.setDefaultPickUpDelay();
--        this.level().addFreshEntity(itementity);
--        return itementity;
--    }
--
--    @Override
--    protected boolean repositionEntityAfterLoad() {
--        return false;
--    }
--
--    @Override
--    public void setPos(double p_31739_, double p_31740_, double p_31741_) {
--        this.pos = BlockPos.containing(p_31739_, p_31740_, p_31741_);
--        this.recalculateBoundingBox();
--        this.hasImpulse = true;
--    }
--
--    public BlockPos getPos() {
--        return this.pos;
--    }
--
--    @Override
--    public float rotate(Rotation p_31727_) {
--        if (this.direction.getAxis() != Direction.Axis.Y) {
--            switch (p_31727_) {
--                case CLOCKWISE_180:
--                    this.direction = this.direction.getOpposite();
--                    break;
--                case COUNTERCLOCKWISE_90:
--                    this.direction = this.direction.getCounterClockWise();
--                    break;
--                case CLOCKWISE_90:
--                    this.direction = this.direction.getClockWise();
--            }
--        }
--
--        float f = Mth.wrapDegrees(this.getYRot());
--        switch (p_31727_) {
++   public boolean hurt(DamageSource p_31715_, float p_31716_) {
++      if (this.isInvulnerableTo(p_31715_)) {
++         return false;
++      } else {
++         if (!this.isRemoved() && !this.level().isClientSide) {
++            // CraftBukkit start - fire break events
++            Entity damager = (p_31715_.isIndirect()) ? p_31715_.getEntity() : p_31715_.getDirectEntity();
++            HangingBreakEvent event;
++            if (damager != null) {
++               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
++            } else {
 +               event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), p_31715_.is(DamageTypeTags.IS_EXPLOSION) ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
 +            }
 +
@@ -491,99 +243,6 @@
 +      p_31736_.putInt("TileY", blockpos.getY());
 +      p_31736_.putInt("TileZ", blockpos.getZ());
 +   }
-+
-+   public void readAdditionalSaveData(CompoundTag p_31730_) {
-+      BlockPos blockpos = new BlockPos(p_31730_.getInt("TileX"), p_31730_.getInt("TileY"), p_31730_.getInt("TileZ"));
-+      if (!blockpos.closerThan(this.blockPosition(), 16.0D)) {
-+         LOGGER.debug("Hanging entity at invalid position: {}", (Object)blockpos);
-+      } else {
-+         this.pos = blockpos;
-+      }
-+   }
-+
-+   public abstract int getWidth();
-+
-+   public abstract int getHeight();
-+
-+   public abstract void dropItem(@Nullable Entity p_31717_);
-+
-+   public abstract void playPlacementSound();
-+
-+   public ItemEntity spawnAtLocation(ItemStack p_31722_, float p_31723_) {
-+      ItemEntity itementity = new ItemEntity(this.level(), this.getX() + (double)((float)this.direction.getStepX() * 0.15F), this.getY() + (double)p_31723_, this.getZ() + (double)((float)this.direction.getStepZ() * 0.15F), p_31722_);
-+      itementity.setDefaultPickUpDelay();
-+      this.level().addFreshEntity(itementity);
-+      return itementity;
-+   }
-+
-+   protected boolean repositionEntityAfterLoad() {
-+      return false;
-+   }
-+
-+   public void setPos(double p_31739_, double p_31740_, double p_31741_) {
-+      this.pos = BlockPos.containing(p_31739_, p_31740_, p_31741_);
-+      this.recalculateBoundingBox();
-+      this.hasImpulse = true;
-+   }
-+
-+   public BlockPos getPos() {
-+      return this.pos;
-+   }
-+
-+   public float rotate(Rotation p_31727_) {
-+      if (this.direction.getAxis() != Direction.Axis.Y) {
-+         switch (p_31727_) {
-             case CLOCKWISE_180:
--                return f + 180.0F;
-+               this.direction = this.direction.getOpposite();
-+               break;
-             case COUNTERCLOCKWISE_90:
--                return f + 90.0F;
-+               this.direction = this.direction.getCounterClockWise();
-+               break;
-             case CLOCKWISE_90:
--                return f + 270.0F;
--            default:
--                return f;
--        }
--    }
--
--    @Override
--    public float mirror(Mirror p_31725_) {
--        return this.rotate(p_31725_.getRotation(this.direction));
--    }
--
--    @Override
--    public void thunderHit(ServerLevel p_31712_, LightningBolt p_31713_) {
--    }
--
--    @Override
--    public void refreshDimensions() {
--    }
-+               this.direction = this.direction.getClockWise();
-+         }
-+      }
-+
-+      float f = Mth.wrapDegrees(this.getYRot());
-+      switch (p_31727_) {
-+         case CLOCKWISE_180:
-+            return f + 180.0F;
-+         case COUNTERCLOCKWISE_90:
-+            return f + 90.0F;
-+         case CLOCKWISE_90:
-+            return f + 270.0F;
-+         default:
-+            return f;
-+      }
-+   }
-+
-+   public float mirror(Mirror p_31725_) {
-+      return this.rotate(p_31725_.getRotation(this.direction));
-+   }
-+
-+   public void thunderHit(ServerLevel p_31712_, LightningBolt p_31713_) {
-+   }
-+
-+   public void refreshDimensions() {
-+   }
- }
+ 
+     @Override
+     public void readAdditionalSaveData(CompoundTag p_31730_) {

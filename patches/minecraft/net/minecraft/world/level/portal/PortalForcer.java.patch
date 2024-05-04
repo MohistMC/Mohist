@@ -17,31 +17,21 @@
  import net.minecraft.world.entity.ai.village.poi.PoiManager;
  import net.minecraft.world.entity.ai.village.poi.PoiRecord;
  import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-@@ -19,183 +_,198 @@
+@@ -19,8 +_,9 @@
  import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  import net.minecraft.world.level.border.WorldBorder;
  import net.minecraft.world.level.levelgen.Heightmap;
--
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
+ 
 -public class PortalForcer {
--    public static final int TICKET_RADIUS = 3;
--    private static final int SEARCH_RADIUS = 128;
--    private static final int CREATE_RADIUS = 16;
--    private static final int FRAME_HEIGHT = 5;
--    private static final int FRAME_WIDTH = 4;
--    private static final int FRAME_BOX = 3;
--    private static final int FRAME_HEIGHT_START = -1;
--    private static final int FRAME_HEIGHT_END = 4;
--    private static final int FRAME_WIDTH_START = -1;
--    private static final int FRAME_WIDTH_END = 3;
--    private static final int FRAME_BOX_START = -1;
--    private static final int FRAME_BOX_END = 2;
--    private static final int NOTHING_FOUND = -1;
--    protected final ServerLevel level;
--
--    public PortalForcer(ServerLevel p_77650_) {
--        this.level = p_77650_;
--    }
--
++public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
+     public static final int TICKET_RADIUS = 3;
+     private static final int SEARCH_RADIUS = 128;
+     private static final int CREATE_RADIUS = 16;
+@@ -40,136 +_,152 @@
+         this.level = p_77650_;
+     }
+ 
 -    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_) {
 -        PoiManager poimanager = this.level.getPoiManager();
 -        int i = p_192987_ ? 16 : 128;
@@ -172,56 +162,6 @@
 -            }
 -        }
 -
--        return Optional.of(new BlockUtil.FoundRectangle(blockpos.immutable(), 2, 3));
--    }
--
--    private boolean canPortalReplaceBlock(BlockPos.MutableBlockPos p_248971_) {
--        BlockState blockstate = this.level.getBlockState(p_248971_);
--        return blockstate.canBeReplaced() && blockstate.getFluidState().isEmpty();
--    }
--
--    private boolean canHostFrame(BlockPos p_77662_, BlockPos.MutableBlockPos p_77663_, Direction p_77664_, int p_77665_) {
--        Direction direction = p_77664_.getClockWise();
--
--        for (int i = -1; i < 3; i++) {
--            for (int j = -1; j < 4; j++) {
--                p_77663_.setWithOffset(
--                    p_77662_, p_77664_.getStepX() * i + direction.getStepX() * p_77665_, j, p_77664_.getStepZ() * i + direction.getStepZ() * p_77665_
--                );
--                if (j < 0 && !this.level.getBlockState(p_77663_).isSolid()) {
--                    return false;
--                }
--
--                if (j >= 0 && !this.canPortalReplaceBlock(p_77663_)) {
--                    return false;
--                }
--            }
--        }
--
--        return true;
--    }
-+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
-+
-+public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
-+   private static final int TICKET_RADIUS = 3;
-+   private static final int SEARCH_RADIUS = 128;
-+   private static final int CREATE_RADIUS = 16;
-+   private static final int FRAME_HEIGHT = 5;
-+   private static final int FRAME_WIDTH = 4;
-+   private static final int FRAME_BOX = 3;
-+   private static final int FRAME_HEIGHT_START = -1;
-+   private static final int FRAME_HEIGHT_END = 4;
-+   private static final int FRAME_WIDTH_START = -1;
-+   private static final int FRAME_WIDTH_END = 3;
-+   private static final int FRAME_BOX_START = -1;
-+   private static final int FRAME_BOX_END = 2;
-+   private static final int NOTHING_FOUND = -1;
-+   protected final ServerLevel level;
-+
-+   public PortalForcer(ServerLevel p_77650_) {
-+      this.level = p_77650_;
-+   }
-+
 +   private AtomicInteger searchRadius = new AtomicInteger(-1);
 +
 +   public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pPos, WorldBorder pWorldBorder, int i) {
@@ -368,30 +308,6 @@
 +      }
 +      blockList.updateList();
 +      // CraftBukkit end
-+      return Optional.of(new BlockUtil.FoundRectangle(blockpos.immutable(), 2, 3));
-+   }
-+
-+   private boolean canPortalReplaceBlock(BlockPos.MutableBlockPos p_248971_) {
-+      BlockState blockstate = this.level.getBlockState(p_248971_);
-+      return blockstate.canBeReplaced() && blockstate.getFluidState().isEmpty();
-+   }
-+
-+   private boolean canHostFrame(BlockPos p_77662_, BlockPos.MutableBlockPos p_77663_, Direction p_77664_, int p_77665_) {
-+      Direction direction = p_77664_.getClockWise();
-+
-+      for(int i = -1; i < 3; ++i) {
-+         for(int j = -1; j < 4; ++j) {
-+            p_77663_.setWithOffset(p_77662_, p_77664_.getStepX() * i + direction.getStepX() * p_77665_, j, p_77664_.getStepZ() * i + direction.getStepZ() * p_77665_);
-+            if (j < 0 && !this.level.getBlockState(p_77663_).isSolid()) {
-+               return false;
-+            }
-+
-+            if (j >= 0 && !this.canPortalReplaceBlock(p_77663_)) {
-+               return false;
-+            }
-+         }
-+      }
-+
-+      return true;
-+   }
- }
+         return Optional.of(new BlockUtil.FoundRectangle(blockpos.immutable(), 2, 3));
+     }
+ 

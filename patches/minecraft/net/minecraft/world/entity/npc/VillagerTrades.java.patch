@@ -1,0 +1,113 @@
+--- a/net/minecraft/world/entity/npc/VillagerTrades.java
++++ b/net/minecraft/world/entity/npc/VillagerTrades.java
+@@ -1287,7 +_,7 @@
+         return itemstack;
+     }
+ 
+-    static class DyedArmorForEmeralds implements VillagerTrades.ItemListing {
++    public static class DyedArmorForEmeralds implements VillagerTrades.ItemListing {
+         private final Item item;
+         private final int value;
+         private final int maxUses;
+@@ -1330,7 +_,7 @@
+         }
+     }
+ 
+-    static class EmeraldForItems implements VillagerTrades.ItemListing {
++    public static class EmeraldForItems implements VillagerTrades.ItemListing {
+         private final ItemCost itemStack;
+         private final int maxUses;
+         private final int villagerXp;
+@@ -1359,7 +_,7 @@
+         }
+     }
+ 
+-    static class EmeraldsForVillagerTypeItem implements VillagerTrades.ItemListing {
++    public static class EmeraldsForVillagerTypeItem implements VillagerTrades.ItemListing {
+         private final Map<VillagerType, Item> trades;
+         private final int cost;
+         private final int maxUses;
+@@ -1387,7 +_,7 @@
+         }
+     }
+ 
+-    static class EnchantBookForEmeralds implements VillagerTrades.ItemListing {
++    public static class EnchantBookForEmeralds implements VillagerTrades.ItemListing {
+         private final int villagerXp;
+         private final List<Enchantment> tradeableEnchantments;
+         private final int minLevel;
+@@ -1433,7 +_,7 @@
+         }
+     }
+ 
+-    static class EnchantedItemForEmeralds implements VillagerTrades.ItemListing {
++    public static class EnchantedItemForEmeralds implements VillagerTrades.ItemListing {
+         private final ItemStack itemStack;
+         private final int baseEmeraldCost;
+         private final int maxUses;
+@@ -1462,7 +_,10 @@
+         }
+     }
+ 
+-    static class FailureItemListing implements VillagerTrades.ItemListing {
++    public static class FailureItemListing implements VillagerTrades.ItemListing {
++        FailureItemListing() {
++        }
++
+         @Override
+         public MerchantOffer getOffer(Entity p_298567_, RandomSource p_297389_) {
+             return null;
+@@ -1474,7 +_,7 @@
+         MerchantOffer getOffer(Entity p_219693_, RandomSource p_219694_);
+     }
+ 
+-    static class ItemsAndEmeraldsToItems implements VillagerTrades.ItemListing {
++    public static class ItemsAndEmeraldsToItems implements VillagerTrades.ItemListing {
+         private final ItemCost fromItem;
+         private final int emeraldCost;
+         private final ItemStack toItem;
+@@ -1515,7 +_,7 @@
+         }
+     }
+ 
+-    static class ItemsForEmeralds implements VillagerTrades.ItemListing {
++    public static class ItemsForEmeralds implements VillagerTrades.ItemListing {
+         private final ItemStack itemStack;
+         private final int emeraldCost;
+         private final int maxUses;
+@@ -1557,7 +_,7 @@
+         }
+     }
+ 
+-    static class SuspiciousStewForEmerald implements VillagerTrades.ItemListing {
++    public static class SuspiciousStewForEmerald implements VillagerTrades.ItemListing {
+         private final SuspiciousStewEffects effects;
+         private final int xp;
+         private final float priceMultiplier;
+@@ -1581,7 +_,7 @@
+         }
+     }
+ 
+-    static class TippedArrowForItemsAndEmeralds implements VillagerTrades.ItemListing {
++    public static class TippedArrowForItemsAndEmeralds implements VillagerTrades.ItemListing {
+         private final ItemStack toItem;
+         private final int toCount;
+         private final int emeraldCost;
+@@ -1616,7 +_,7 @@
+         }
+     }
+ 
+-    static class TreasureMapForEmeralds implements VillagerTrades.ItemListing {
++    public static class TreasureMapForEmeralds implements VillagerTrades.ItemListing {
+         private final int emeraldCost;
+         private final TagKey<Structure> destination;
+         private final String displayName;
+@@ -1658,7 +_,7 @@
+         }
+     }
+ 
+-    static record TypeSpecificTrade(Map<VillagerType, VillagerTrades.ItemListing> trades) implements VillagerTrades.ItemListing {
++    public static record TypeSpecificTrade(Map<VillagerType, VillagerTrades.ItemListing> trades) implements VillagerTrades.ItemListing {
+         public static VillagerTrades.TypeSpecificTrade oneTradeInBiomes(VillagerTrades.ItemListing p_297877_, VillagerType... p_298107_) {
+             return new VillagerTrades.TypeSpecificTrade(
+                 Arrays.stream(p_298107_).collect(Collectors.toMap(p_298558_ -> (VillagerType)p_298558_, p_298770_ -> p_297877_))

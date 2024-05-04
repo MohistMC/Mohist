@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType.java
++++ b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType.java
+@@ -22,7 +_,7 @@
+         return Registry.register(BuiltInRegistries.TRUNK_PLACER_TYPE, p_70327_, new TrunkPlacerType<>(p_328214_));
+     }
+ 
+-    private TrunkPlacerType(MapCodec<P> p_335575_) {
++    public TrunkPlacerType(MapCodec<P> p_335575_) {
+         this.codec = p_335575_;
+     }
+ 

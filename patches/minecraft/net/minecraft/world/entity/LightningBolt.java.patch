@@ -13,170 +13,58 @@
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.sounds.SoundEvents;
-@@ -25,179 +_,160 @@
+@@ -25,19 +_,21 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class LightningBolt extends Entity {
--    private static final int START_LIFE = 2;
--    private static final double DAMAGE_RADIUS = 3.0;
--    private static final double DETECTION_RADIUS = 15.0;
+     private static final int START_LIFE = 2;
+     private static final double DAMAGE_RADIUS = 3.0;
+     private static final double DETECTION_RADIUS = 15.0;
 -    public int life;
--    public long seed;
++    private int life;
+     public long seed;
 -    public int flashes;
 -    public boolean visualOnly;
--    @Nullable
--    private ServerPlayer cause;
--    private final Set<Entity> hitEntities = Sets.newHashSet();
--    private int blocksSetOnFire;
--
--    public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
--        super(p_20865_, p_20866_);
--        this.noCulling = true;
--        this.life = 2;
--        this.seed = this.random.nextLong();
--        this.flashes = this.random.nextInt(3) + 1;
--    }
--
--    public void setVisualOnly(boolean p_20875_) {
--        this.visualOnly = p_20875_;
--    }
--
--    @Override
--    public SoundSource getSoundSource() {
--        return SoundSource.WEATHER;
--    }
--
--    @Nullable
--    public ServerPlayer getCause() {
--        return this.cause;
--    }
--
--    public void setCause(@Nullable ServerPlayer p_20880_) {
--        this.cause = p_20880_;
--    }
--
--    private void powerLightningRod() {
--        BlockPos blockpos = this.getStrikePosition();
--        BlockState blockstate = this.level().getBlockState(blockpos);
--        if (blockstate.is(Blocks.LIGHTNING_ROD)) {
--            ((LightningRodBlock)blockstate.getBlock()).onLightningStrike(blockstate, this.level(), blockpos);
--        }
--    }
--
--    @Override
--    public void tick() {
--        super.tick();
--        if (this.life == 2) {
--            if (this.level().isClientSide()) {
--                this.level()
--                    .playLocalSound(
--                        this.getX(),
--                        this.getY(),
--                        this.getZ(),
--                        SoundEvents.LIGHTNING_BOLT_THUNDER,
--                        SoundSource.WEATHER,
--                        10000.0F,
--                        0.8F + this.random.nextFloat() * 0.2F,
--                        false
--                    );
--                this.level()
--                    .playLocalSound(
--                        this.getX(),
--                        this.getY(),
--                        this.getZ(),
--                        SoundEvents.LIGHTNING_BOLT_IMPACT,
--                        SoundSource.WEATHER,
--                        2.0F,
--                        0.5F + this.random.nextFloat() * 0.2F,
--                        false
--                    );
--            } else {
--                Difficulty difficulty = this.level().getDifficulty();
--                if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
--                    this.spawnFire(4);
--                }
--
--                this.powerLightningRod();
--                clearCopperOnLightningStrike(this.level(), this.getStrikePosition());
--                this.gameEvent(GameEvent.LIGHTNING_STRIKE);
--            }
--        }
--
--        this.life--;
--        if (this.life < 0) {
--            if (this.flashes == 0) {
--                if (this.level() instanceof ServerLevel) {
--                    List<Entity> list = this.level()
--                        .getEntities(
--                            this,
--                            new AABB(
--                                this.getX() - 15.0,
--                                this.getY() - 15.0,
--                                this.getZ() - 15.0,
--                                this.getX() + 15.0,
--                                this.getY() + 6.0 + 15.0,
--                                this.getZ() + 15.0
--                            ),
--                            p_147140_ -> p_147140_.isAlive() && !this.hitEntities.contains(p_147140_)
--                        );
--
--                    for (ServerPlayer serverplayer : ((ServerLevel)this.level()).getPlayers(p_326774_ -> p_326774_.distanceTo(this) < 256.0F)) {
--                        CriteriaTriggers.LIGHTNING_STRIKE.trigger(serverplayer, this, list);
--                    }
--                }
--
--                this.discard();
--            } else if (this.life < -this.random.nextInt(10)) {
--                this.flashes--;
--                this.life = 1;
--                this.seed = this.random.nextLong();
--                this.spawnFire(0);
--            }
--        }
--
--        if (this.life >= 0) {
--            if (!(this.level() instanceof ServerLevel)) {
--                this.level().setSkyFlashTime(2);
--            } else if (!this.visualOnly) {
--                List<Entity> list1 = this.level()
--                    .getEntities(
--                        this,
--                        new AABB(
--                            this.getX() - 3.0,
--                            this.getY() - 3.0,
--                            this.getZ() - 3.0,
--                            this.getX() + 3.0,
--                            this.getY() + 6.0 + 3.0,
--                            this.getZ() + 3.0
--                        ),
--                        Entity::isAlive
--                    );
--
--                for (Entity entity : list1) {
--                    entity.thunderHit((ServerLevel)this.level(), this);
--                }
--
--                this.hitEntities.addAll(list1);
--                if (this.cause != null) {
--                    CriteriaTriggers.CHANNELED_LIGHTNING.trigger(this.cause, list1);
--                }
--            }
--        }
--    }
--
--    private BlockPos getStrikePosition() {
--        Vec3 vec3 = this.position();
--        return BlockPos.containing(vec3.x, vec3.y - 1.0E-6, vec3.z);
--    }
--
--    private void spawnFire(int p_20871_) {
--        if (!this.visualOnly && !this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
--            BlockPos blockpos = this.blockPosition();
--            BlockState blockstate = BaseFireBlock.getState(this.level(), blockpos);
--            if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
++    private int flashes;
++    private boolean visualOnly;
+     @Nullable
+     private ServerPlayer cause;
+     private final Set<Entity> hitEntities = Sets.newHashSet();
+     private int blocksSetOnFire;
++    private float damage = 5.0F;
+ 
+     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
+         super(p_20865_, p_20866_);
+@@ -65,6 +_,14 @@
+         this.cause = p_20880_;
+     }
+ 
++    public void setDamage(float damage) {
++        this.damage = damage;
++    }
++
++    public float getDamage() {
++        return this.damage;
++    }
++
+     private void powerLightningRod() {
+         BlockPos blockpos = this.getStrikePosition();
+         BlockState blockstate = this.level().getBlockState(blockpos);
+@@ -163,6 +_,7 @@
+                     );
+ 
+                 for (Entity entity : list1) {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
+                     entity.thunderHit((ServerLevel)this.level(), this);
+                 }
+ 
+@@ -184,20 +_,29 @@
+             BlockPos blockpos = this.blockPosition();
+             BlockState blockstate = BaseFireBlock.getState(this.level(), blockpos);
+             if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
 -                this.level().setBlockAndUpdate(blockpos, blockstate);
 -                this.blocksSetOnFire++;
 -            }
@@ -191,134 +79,6 @@
 -            }
 -        }
 -    }
-+   private static final int START_LIFE = 2;
-+   private static final double DAMAGE_RADIUS = 3.0D;
-+   private static final double DETECTION_RADIUS = 15.0D;
-+   public int life;
-+   public long seed;
-+   public int flashes;
-+   public boolean visualOnly;
-+   @Nullable
-+   private ServerPlayer cause;
-+   private final Set<Entity> hitEntities = Sets.newHashSet();
-+   private int blocksSetOnFire;
-+   private float damage = 5.0F;
-+
-+   public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
-+      super(p_20865_, p_20866_);
-+      this.noCulling = true;
-+      this.life = 2;
-+      this.seed = this.random.nextLong();
-+      this.flashes = this.random.nextInt(3) + 1;
-+   }
-+
-+   public void setVisualOnly(boolean p_20875_) {
-+      this.visualOnly = p_20875_;
-+   }
-+
-+   public SoundSource getSoundSource() {
-+      return SoundSource.WEATHER;
-+   }
-+
-+   @Nullable
-+   public ServerPlayer getCause() {
-+      return this.cause;
-+   }
-+
-+   public void setCause(@Nullable ServerPlayer p_20880_) {
-+      this.cause = p_20880_;
-+   }
-+
-+   private void powerLightningRod() {
-+      BlockPos blockpos = this.getStrikePosition();
-+      BlockState blockstate = this.level().getBlockState(blockpos);
-+      if (blockstate.is(Blocks.LIGHTNING_ROD)) {
-+         ((LightningRodBlock)blockstate.getBlock()).onLightningStrike(blockstate, this.level(), blockpos);
-+      }
-+
-+   }
-+
-+   public void setDamage(float damage) {
-+      this.damage = damage;
-+   }
-+
-+   public float getDamage() {
-+      return this.damage;
-+   }
-+
-+   public void tick() {
-+      super.tick();
-+      if (this.life == 2) {
-+         if (this.level().isClientSide()) {
-+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10000.0F, 0.8F + this.random.nextFloat() * 0.2F, false);
-+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 2.0F, 0.5F + this.random.nextFloat() * 0.2F, false);
-+         } else {
-+            Difficulty difficulty = this.level().getDifficulty();
-+            if (difficulty == Difficulty.NORMAL || difficulty == Difficulty.HARD) {
-+               this.spawnFire(4);
-+            }
-+
-+            this.powerLightningRod();
-+            clearCopperOnLightningStrike(this.level(), this.getStrikePosition());
-+            this.gameEvent(GameEvent.LIGHTNING_STRIKE);
-+         }
-+      }
-+
-+      --this.life;
-+      if (this.life < 0) {
-+         if (this.flashes == 0) {
-+            if (this.level() instanceof ServerLevel) {
-+               List<Entity> list = this.level().getEntities(this, new AABB(this.getX() - 15.0D, this.getY() - 15.0D, this.getZ() - 15.0D, this.getX() + 15.0D, this.getY() + 6.0D + 15.0D, this.getZ() + 15.0D), (p_147140_) -> {
-+                  return p_147140_.isAlive() && !this.hitEntities.contains(p_147140_);
-+               });
-+
-+               for(ServerPlayer serverplayer : ((ServerLevel)this.level()).getPlayers((p_147157_) -> {
-+                  return p_147157_.distanceTo(this) < 256.0F;
-+               })) {
-+                  CriteriaTriggers.LIGHTNING_STRIKE.trigger(serverplayer, this, list);
-+               }
-+            }
-+
-+            this.discard();
-+         } else if (this.life < -this.random.nextInt(10)) {
-+            --this.flashes;
-+            this.life = 1;
-+            this.seed = this.random.nextLong();
-+            this.spawnFire(0);
-+         }
-+      }
-+
-+      if (this.life >= 0 && !this.visualOnly) { // CraftBukkit - add !this.visualOnly
-+         if (!(this.level() instanceof ServerLevel)) {
-+            this.level().setSkyFlashTime(2);
-+         } else if (!this.visualOnly) {
-+            List<Entity> list1 = this.level().getEntities(this, new AABB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
-+
-+            for(Entity entity : list1) {
-+               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
-+               entity.thunderHit((ServerLevel)this.level(), this);
-+            }
-+
-+            this.hitEntities.addAll(list1);
-+            if (this.cause != null) {
-+               CriteriaTriggers.CHANNELED_LIGHTNING.trigger(this.cause, list1);
-+            }
-+         }
-+      }
-+
-+   }
-+
-+   private BlockPos getStrikePosition() {
-+      Vec3 vec3 = this.position();
-+      return BlockPos.containing(vec3.x, vec3.y - 1.0E-6D, vec3.z);
-+   }
-+
-+   private void spawnFire(int p_20871_) {
-+      if (BanEvents.banFireTick()) return;
-+      if (!this.visualOnly && !this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
-+         BlockPos blockpos = this.blockPosition();
-+         BlockState blockstate = BaseFireBlock.getState(this.level(), blockpos);
-+         if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
 +            // CraftBukkit start - add "!visualOnly"
 +            if (!visualOnly && !CraftEventFactory.callBlockIgniteEvent(level, blockpos, this).isCancelled()) {
 +               this.level.setBlockAndUpdate(blockpos, blockstate);

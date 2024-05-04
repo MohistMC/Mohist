@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/levelgen/NoiseGeneratorSettings.java
++++ b/net/minecraft/world/level/levelgen/NoiseGeneratorSettings.java
+@@ -76,7 +_,7 @@
+         p_334698_.register(FLOATING_ISLANDS, floatingIslands(p_334698_));
+     }
+ 
+-    private static NoiseGeneratorSettings end(BootstrapContext<?> p_330746_) {
++    public static NoiseGeneratorSettings end(BootstrapContext<?> p_330746_) {
+         return new NoiseGeneratorSettings(
+             NoiseSettings.END_NOISE_SETTINGS,
+             Blocks.END_STONE.defaultBlockState(),
+@@ -92,7 +_,7 @@
+         );
+     }
+ 
+-    private static NoiseGeneratorSettings nether(BootstrapContext<?> p_329279_) {
++    public static NoiseGeneratorSettings nether(BootstrapContext<?> p_329279_) {
+         return new NoiseGeneratorSettings(
+             NoiseSettings.NETHER_NOISE_SETTINGS,
+             Blocks.NETHERRACK.defaultBlockState(),
+@@ -108,7 +_,7 @@
+         );
+     }
+ 
+-    private static NoiseGeneratorSettings overworld(BootstrapContext<?> p_332236_, boolean p_256427_, boolean p_256318_) {
++    public static NoiseGeneratorSettings overworld(BootstrapContext<?> p_332236_, boolean p_256427_, boolean p_256318_) {
+         return new NoiseGeneratorSettings(
+             NoiseSettings.OVERWORLD_NOISE_SETTINGS,
+             Blocks.STONE.defaultBlockState(),
+@@ -124,7 +_,7 @@
+         );
+     }
+ 
+-    private static NoiseGeneratorSettings caves(BootstrapContext<?> p_330713_) {
++    public static NoiseGeneratorSettings caves(BootstrapContext<?> p_330713_) {
+         return new NoiseGeneratorSettings(
+             NoiseSettings.CAVES_NOISE_SETTINGS,
+             Blocks.STONE.defaultBlockState(),
+@@ -140,7 +_,7 @@
+         );
+     }
+ 
+-    private static NoiseGeneratorSettings floatingIslands(BootstrapContext<?> p_335454_) {
++    public static NoiseGeneratorSettings floatingIslands(BootstrapContext<?> p_335454_) {
+         return new NoiseGeneratorSettings(
+             NoiseSettings.FLOATING_ISLANDS_NOISE_SETTINGS,
+             Blocks.STONE.defaultBlockState(),
